@@ -16,8 +16,6 @@
         </Layers>
         <Scripts>
             <OnLoad method="OnLoad"/>
-            <OnEnter method="OnMouseEnter"/>
-            <OnLeave method="OnMouseLeave"/>
         </Scripts>
     </Frame>
 </Ui>

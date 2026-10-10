@@ -74,6 +74,7 @@ export function ResultView({ version, onRerun, onEdit, onOpenVersion, options }:
             {t("Calculé le {date} · niveau {from} → {to}", { date: date(meta.created), from: route.from_level, to: route.to_level })}
             {meta.data && <> · {meta.data.split(":")[0]}</>}
             {meta.imported && <> · {t("importé")}</>}
+            {meta.character && <> · {t("depuis {name}", { name: meta.character })}</>}
           </div>
         </div>
         <div className="result-figures">

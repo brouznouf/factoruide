@@ -26,6 +26,11 @@ export interface Params {
   elite_pull_levels: number;
   pvp_quests: boolean;
   pvp_mark_time: number;
+  /** Crowded server (a launch): escorts, events and targets with few spawns take waiting. */
+  crowded: boolean;
+  crowd_event_time: number;
+  crowd_spawn_time: number;
+  crowd_level: number;
   quest_log_size: number;
   flight_learn_radius: number;
   along_corridor: number;
@@ -118,6 +123,55 @@ export interface PlanRequest {
   locale?: string | null;
   /** Classes of the other players leveling together (empty: solo). */
   group?: string[];
+  /** The character as the addon recorded it in game: the guide goes on from there. */
+  start?: StartState | null;
+}
+
+/** A point of a game map (uiMapID, percent coordinates). */
+export interface MapPos {
+  map: number;
+  x: number;
+  y: number;
+}
+
+/** A character as the addon recorded it (`/fg profile`, or at each logout); mirror of `fg_route::job::StartState`. */
+export interface StartState {
+  /** "Name-Realm". */
+  name: string;
+  /** ChrRaces ID and class file name (MAGE...). */
+  race: number;
+  class: string;
+  faction: string;
+  level: number;
+  xp: number;
+  xp_max: number;
+  rested: number;
+  resting: boolean;
+  completed: number[];
+  log: { id: number; complete: boolean; objectives: { text: string; done: number; need: number; finished: boolean }[] }[];
+  position: MapPos | null;
+  instance: boolean;
+  bind: { name: string; position: MapPos | null } | null;
+  /** Flight paths known (TaxiNodes IDs). */
+  flights: number[];
+  professions: { line: number; rank: number }[];
+  riding: number;
+  gear: number[];
+  spells: number[];
+  /** Copper. */
+  money: number;
+  /** When it was recorded (unix seconds). */
+  time: number;
+}
+
+/** A character found in the game's saved variables. */
+export interface CharacterInfo {
+  /** Race key (null: a race this game version does not know). */
+  race: string | null;
+  class: string;
+  /** Professions it has: key and skill. */
+  professions: [string, number][];
+  profile: StartState;
 }
 
 export interface Breakdown {
@@ -246,6 +300,8 @@ export const api = {
   /** Adds a guide received as a .fgguide (or .bqroute) file (its content), as a new version. */
   importGuide: (content: string) => invoke<VersionMeta>("import_guide", { content }),
   mapIndex: () => invoke<MapInfo[]>("map_index"),
+  /** Characters the addon recorded in the game client of the current game version, most recently played first. */
+  listCharacters: () => invoke<CharacterInfo[]>("list_characters"),
   mapImage: (id: number) => invoke<string>("map_image", { id }),
   exportRequest: (request: PlanRequest) => invoke<string>("export_request", { request }),
   /** Copies the addon into the game with the installed guides. */
@@ -288,6 +344,8 @@ export interface VersionMeta {
   data: string | null;
   /** Received from someone else (.fgguide file). */
   imported?: boolean;
+  /** The character met in game the guide starts from ("Name-Realm"). */
+  character?: string | null;
 }
 
 /** A guide and its versions, newest first; `installed`: version in the addon. */

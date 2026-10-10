@@ -150,8 +150,7 @@ impl Planner<'_> {
             let mob_xp = (q.start_kills
                 * self.rules().mob_xp(s.level, q.start_mob_level, content)
                 * self.params.group_xp_share()) as i64;
-            s.spent.mob_xp += mob_xp;
-            self.growth().gain(s, mob_xp);
+            s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
         }
         s.accepted[i as usize] = true;
         s.log += 1;
@@ -225,7 +224,11 @@ impl Planner<'_> {
     fn gate_level(&self, s: &State, stop: Stop) -> i64 {
         let i = stop.index as usize;
         match stop.kind {
-            Kind::Accept => self.quest(stop.index).min_level,
+            Kind::Accept => {
+                let q = self.quest(stop.index);
+                q.min_level.max(self.combat().guard_level(&q.start_guard, s.bonus))
+            }
+            Kind::TurnIn => self.combat().guard_level(&self.quest(stop.index).end_guard, s.bonus),
             Kind::Objective(k) => self.combat().level(self.quest(stop.index), k, s.bonus),
             Kind::Dungeon => self.model.dungeons[i].min_level,
             _ => 0,
@@ -378,8 +381,7 @@ impl Planner<'_> {
         s.time += kill_work + other;
         s.spent.fighting += kill_work + other;
         let mob_xp = (kills * self.combat().mob_xp(s.level, o)) as i64;
-        s.spent.mob_xp += mob_xp;
-        self.growth().gain(s, mob_xp);
+        s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
         s.objectives[i] |= 1 << k;
         (kill_work, uses * self.params.object_time)
     }
@@ -396,8 +398,7 @@ impl Planner<'_> {
             * self.rules().mob_xp(s.level, d.mob_level, d.content)
             * self.rules().dungeon_kill_xp
             * self.params.dungeon_xp_share) as i64;
-        s.spent.mob_xp += gained;
-        self.growth().gain(s, gained);
+        s.spent.mob_xp += self.growth().gain_kills(s, gained);
         s.dungeons |= 1u128 << i;
         if let Some(p) = &self.model.power {
             let mut changed = false;

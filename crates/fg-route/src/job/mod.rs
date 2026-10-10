@@ -8,12 +8,14 @@ mod overrides;
 mod race;
 mod request;
 mod routes;
+mod start;
 
 pub use options::{NamedId, Options, RaceOption, ZoneOption, options, race_classes};
 pub use overrides::{Overrides, RaceDef};
 pub use race::optimize;
 pub use request::{PlanOutcome, PlanRequest, Prepared};
 pub use routes::{load_routes, save_route, slug, write_addon_config, write_addon_routes};
+pub use start::{Bind, LogObjective, LogQuest, MapPos, Skill, StartState};
 
 use crate::export;
 use crate::model::{self, Profile};
@@ -61,14 +63,26 @@ pub fn prepare(
     req: &PlanRequest,
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<Prepared> {
-    let (profile, params) = character::character(conn, overrides, req)?;
+    let (profile, mut params) = character::character(conn, overrides, req)?;
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
     let world = load_world(conn, overrides, &profile, &params, progress)?;
     progress("Loading quests");
     progress(r#"@progress {"phase":"prepare","step":"quests"}"#);
-    let model = model::load(conn, &world, &profile, &params)?;
-    let notes = notes::model_notes(&model, &world, progress);
+    let mut model = model::load(conn, &world, &profile, &params)?;
+    let mut start_notes = Vec::new();
+    if let Some(start) = &req.start {
+        model.initial = start.initial(&model, &world, &mut params, &mut start_notes);
+        progress(&format!(
+            "Starting from {} (level {}): {} quests done, {} in the log",
+            start.name,
+            start.level,
+            model.initial.turned.len(),
+            model.initial.accepted.len()
+        ));
+    }
+    let mut notes = notes::model_notes(&model, &world, progress);
+    notes.extend(start_notes);
     Ok(Prepared {
         profile,
         params,

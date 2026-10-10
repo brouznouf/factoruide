@@ -185,8 +185,7 @@ impl Planner<'_> {
                 s.time += work;
                 s.spent.fighting += work;
                 let mob_xp = (kills * self.combat().mob_xp(s.level, o)) as i64;
-                s.spent.mob_xp += mob_xp;
-                self.growth().gain(s, mob_xp);
+                s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
             } else {
                 let work = kills * self.params.object_time;
                 s.time += work;
@@ -251,9 +250,8 @@ impl Planner<'_> {
         let gained = gained as i64;
         s.time += time;
         s.spent.farming += time;
-        s.spent.farm_xp += gained;
         s.grind_used += gained;
-        self.growth().gain(s, gained);
+        s.spent.farm_xp += self.growth().gain_kills(s, gained);
         record(
             s,
             Event::Farm {

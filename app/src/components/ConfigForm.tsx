@@ -1,7 +1,8 @@
-import { useMemo, useRef, useState } from "react";
-import { type Options, type Params, type PlanRequest, type ProfessionGoal } from "../api";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { api, type CharacterInfo, type Options, type Params, type PlanRequest, type ProfessionGoal, type StartState } from "../api";
 import { SIMPLE_KEYS, budgets, presets, sections } from "../paramSchema";
 import { ClassName } from "./Character";
+import { CharacterPicker } from "./CharacterPicker";
 import { DungeonPicker } from "./DungeonPicker";
 import { ParamField } from "./ParamField";
 import { ProfessionPicker } from "./ProfessionPicker";
@@ -95,6 +96,30 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
     setGroup([...group, factionClasses.find((c) => c.key !== klass)?.key ?? klass]);
   };
   const [newClassQuest, setNewClassQuest] = useState("");
+  // The character met in game the guide starts from, and those the addon recorded.
+  const [start, setStart] = useState<StartState | null>(initial?.start ?? null);
+  const [characters, setCharacters] = useState<CharacterInfo[] | null>(null);
+  useEffect(() => {
+    api
+      .listCharacters()
+      .then(setCharacters)
+      .catch(() => setCharacters([]));
+  }, []);
+  const pickCharacter = (c: CharacterInfo | null) => {
+    setStart(c?.profile ?? null);
+    if (!c) {
+      setFromLevel(1);
+      return;
+    }
+    if (c.race) setRace(c.race);
+    setKlass(c.class);
+    setFromLevel(c.profile.level);
+    if (toLevel <= c.profile.level) setToLevel(options.max_level);
+    if (!name.trim()) setName(`${c.profile.name.split("-")[0]} ${c.profile.level}-${Math.max(toLevel, c.profile.level + 1)}`);
+    // The professions it has are leveled on (their curve goes through its skill).
+    const added = c.professions.filter(([key]) => !professions.some((g) => g.key === key));
+    if (added.length) setProfessions([...professions, ...added.map(([key]) => ({ key, target: 300 }))]);
+  };
 
   const className = options.classes.find((c) => c.key === klass)?.name.toLowerCase() ?? klass;
   // Class quests follow the class unless they come from the configuration being edited (adjusted
@@ -150,6 +175,7 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
     professions,
     locale,
     group,
+    start,
   });
 
   return (
@@ -193,6 +219,7 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
           <div className="config-col">
             <section className="panel">
               <h3>{t("Personnage")}</h3>
+              <CharacterPicker characters={characters} start={start} onPick={pickCharacter} />
               <label className={`field${nameMissing ? " invalid" : ""}`}>
                 <span>
                   {t("Nom du guide")} <em className="required">*</em>
@@ -210,7 +237,7 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
               <div className="row">
                 <label className="field grow">
                   <span>{t("Race")}</span>
-                  <select value={race} onChange={(e) => setRace(e.target.value)}>
+                  <select value={race} disabled={!!start} onChange={(e) => setRace(e.target.value)}>
                     {factions.map((f) => (
                       <optgroup key={f} label={gameName(f)}>
                         {options.races
@@ -226,7 +253,7 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
                 </label>
                 <label className="field grow">
                   <span>{t("Classe")}</span>
-                  <select value={klass} onChange={(e) => setKlass(e.target.value)}>
+                  <select value={klass} disabled={!!start} onChange={(e) => setKlass(e.target.value)}>
                     {raceClasses.map((c) => (
                       <option key={c.key} value={c.key}>
                         {gameName(c.name)}
@@ -238,7 +265,7 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
               <div className="row">
                 <label className="field grow">
                   <span>{t("Du niveau")}</span>
-                  <input type="number" min={1} max={options.max_level - 1} value={fromLevel} onChange={(e) => setFromLevel(Number(e.target.value))} />
+                  <input type="number" min={1} max={options.max_level - 1} value={fromLevel} disabled={!!start} onChange={(e) => setFromLevel(Number(e.target.value))} />
                 </label>
                 <label className="field grow">
                   <span>{t("Au niveau")}</span>
@@ -284,6 +311,12 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
                 help={t("Les mobs croisés à pied sont tués au passage. Ce farm remplace le farm pur et reste limité à {n} % de chaque niveau (réglable dans les réglages avancés).", { n: Math.round(params.grind_cap * 100) })}
                 checked={params.farm_on_way}
                 onChange={(v) => set("farm_on_way", v)}
+              />
+              <Toggle
+                label={t("Serveur blindé (lancement)")}
+                help={t("Les escortes, les événements et les mobs ou objets peu nombreux sont disputés : le guide compte l'attente et les évite quand d'autres quêtes rapportent plus.")}
+                checked={params.crowded}
+                onChange={(v) => set("crowded", v)}
               />
               <Toggle
                 label={t("Faire les donjons rentables en groupe")}

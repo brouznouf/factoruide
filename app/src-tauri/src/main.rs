@@ -2,7 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use fg_route::Route;
-use fg_route::job::{self, Options, Overrides, PlanOutcome, PlanRequest};
+use fg_route::job::{self, Options, Overrides, PlanOutcome, PlanRequest, StartState};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
@@ -338,6 +338,9 @@ struct VersionMeta {
     /// Received from someone else (imported from a .fgguide file).
     #[serde(default)]
     imported: bool,
+    /// The character met in game the guide starts from ("Name-Realm").
+    #[serde(default)]
+    character: Option<String>,
 }
 
 /// A guide with its versions, newest first.
@@ -445,6 +448,7 @@ impl AppState {
             quests: route.quests,
             data,
             imported,
+            character: request.start.as_ref().map(|s| s.name.clone()),
         };
         let folder = self.guides().join(&id).join(format!("v{version}"));
         std::fs::create_dir_all(&folder).map_err(err)?;
@@ -748,6 +752,71 @@ fn import_guide(state: State<'_, AppState>, content: String) -> CmdResult<Versio
     state.add_version(&shared.request, &shared.outcome, data, true, now()?)
 }
 
+// Characters -------------------------------------------------------------------------
+
+/// A character the addon recorded (`/fg profile`, or at each logout), to start a guide from.
+#[derive(Serialize)]
+struct CharacterInfo {
+    /// Race key of `races.toml` (None: a race this game version does not know).
+    race: Option<String>,
+    class: String,
+    /// Professions it has, by key, with their skill.
+    professions: Vec<(String, i64)>,
+    profile: StartState,
+}
+
+/// Rested XP gained while logged out since the profile was saved: 5% of a level every 8 hours
+/// in an inn or a city, a quarter of it elsewhere, up to a level and a half.
+fn rested_now(p: &StartState, now: i64) -> i64 {
+    if p.xp_max <= 0 || p.time <= 0 {
+        return p.rested;
+    }
+    let hours = (now - p.time).max(0) as f64 / 3600.0;
+    let per_hour = 0.05 / 8.0 * p.xp_max as f64 * if p.resting { 1.0 } else { 0.25 };
+    let cap = p.xp_max * 3 / 2;
+    (p.rested + (hours * per_hour) as i64).min(cap.max(p.rested))
+}
+
+/// The characters of the game client of the current edition, most recently played first.
+#[tauri::command]
+#[expect(
+    clippy::needless_pass_by_value,
+    reason = "tauri commands take their arguments by value"
+)]
+fn list_characters(state: State<'_, AppState>) -> CmdResult<Vec<CharacterInfo>> {
+    let settings = state.settings();
+    let client_dir = settings.wow_dir.join(settings.edition.client_folder());
+    let files = fg_contrib::collector::find_saved_variables(&client_dir);
+    let races = overrides(settings.edition)?.races;
+    let now = i64::try_from(now()?).map_err(err)?;
+    Ok(fg_contrib::profile::read(&files)
+        .map_err(err)?
+        .into_iter()
+        .filter_map(|json| serde_json::from_value::<StartState>(json).ok())
+        .map(|mut profile| {
+            profile.rested = rested_now(&profile, now);
+            CharacterInfo {
+                race: races
+                    .iter()
+                    .find(|(_, r)| r.id == profile.race)
+                    .map(|(key, _)| key.clone()),
+                class: profile.class.to_lowercase(),
+                professions: profile
+                    .professions
+                    .iter()
+                    .filter_map(|s| {
+                        let def = fg_route::profession::PROFESSIONS
+                            .iter()
+                            .find(|d| d.skill_id == s.line)?;
+                        Some((def.key.to_owned(), s.rank))
+                    })
+                    .collect(),
+                profile,
+            }
+        })
+        .collect())
+}
+
 // Maps -----------------------------------------------------------------------------
 
 /// Map index written by `fg maps` (ids, names, sizes, world bounds).
@@ -874,6 +943,7 @@ fn main() {
             import_guide,
             map_index,
             map_image,
+            list_characters,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Factoruide");

@@ -26,6 +26,8 @@ Personalized leveling guides for WoW Forever, Classic Era / Hardcore and TBC Ann
 - Elite camps need one more level of power per extra elite pulled, at any level.
 - Quests started by an item need the power to kill the mob dropping it (no level 24 rare at level 11).
 - Exploring and escorting count as fighting; talking and delivering don't.
+- Givers, turn-ins and objects in the middle of a camp wait until you can fight through it (Sven's Revenge ends among level 25-27 Defias).
+- New "Crowded server (launch)" option: escorts and events wait for their turn, mobs and objects with few spawns are fought over; the guide counts the wait (in full in the starting zones, half above level 20) and avoids them when other quests pay more.
 
 ### Grinding
 
@@ -36,6 +38,16 @@ Personalized leveling guides for WoW Forever, Classic Era / Hardcore and TBC Ann
 - Beyond it the guide takes quests instead, even less rewarding ones.
 - New "Grinding allowed" option: without it, the guide takes more quests instead, even if longer.
 - Quest objects lying among the mobs of another quest are gathered between kills, while resting.
+
+### Start from your character
+
+- The addon keeps a profile of your character up to date (every minute and at logout; `/fg profile` writes it at once): level, XP, quests done and in the log, position, hearthstone, flight paths, professions, gear, spells, rested XP.
+- New guide: pick one of your characters in the list (no file to move); race, class and level follow it.
+- The guide goes on from where it stands: quests done are left out, those in the log are finished (objectives already done count), with its hearthstone and flight paths.
+- Quests the guide does not plan still take their place in the log; follow-ups of quests done long ago are known exactly.
+- Rested XP doubles kill XP until it runs out (it builds up while logged out).
+- Gear worn, spells learned and profession skills set the character's power, training and profession curves.
+- Flight paths are only known from a flight master's map: open one in game if the list shows none.
 
 ### Professions
 
@@ -91,10 +103,13 @@ Personalized leveling guides for WoW Forever, Classic Era / Hardcore and TBC Ann
 - New "Look" option: automatic, game style or dark.
 - Other skins can style it through `FactoruideAPI.RegisterSkin`.
 - A big arrow points to the current step: green ahead, red behind, distance below.
+- Ctrl + mouse wheel over a window, or `/fg scale 1.3`, changes the size of the windows in game (kept for every character; `/fg scale` alone goes back to the app's size).
 - Single scrollbar: only the content area scrolls.
 
 ### Fixes
 
+- Addon: quests marked done by hand (right click, `/fg skip`) and skipped steps belonged to the character: they also counted in other guides (quests never taken shown done). They now belong to their guide; a new version of a guide keeps the quests marked.
+- Addon: opening the world map raised a Lua error (step pins).
 - TBC: mobs of the blood elf and draenei starting zones give Azeroth XP (they counted as Outland: five times too much). Guides to 20 there are longer and take more quests.
 - TBC: grinding XP follows where you are (Outland mobs from Hellfire Peninsula on, not from level 60); the Caverns of Time dungeons count as Outland.
 - A quest dropped from the log no longer opens its follow-up (the guide asked for quests you could not get).

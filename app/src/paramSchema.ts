@@ -36,6 +36,10 @@ export const sections: Section[] = [
       { key: "max_quest_above", kind: "number", label: "Quêtes au-dessus du niveau visé prises en compte", help: "Jusqu'à N niveaux au-dessus du niveau visé : prises en route, rendues avant si c'est rentable.", min: 0, max: 60, step: 1 },
       { key: "pvp_quests", kind: "bool", label: "Quêtes de champ de bataille (PvP)", help: "Marques d'honneur et objectifs de champ de bataille, comptés à la durée des parties." },
       { key: "pvp_mark_time", kind: "number", label: "Temps de champ de bataille par marque ou objectif", unit: "min", scale: 60, min: 5, max: 60, step: 5 },
+      { key: "crowded", kind: "bool", label: "Serveur blindé (lancement)", help: "Les escortes, les événements et les mobs ou objets peu nombreux sont disputés : le guide compte l'attente et les évite quand d'autres quêtes rapportent plus." },
+      { key: "crowd_event_time", kind: "number", label: "Attente d'une escorte ou d'un événement", unit: "min", scale: 60, min: 0, max: 60, step: 5 },
+      { key: "crowd_spawn_time", kind: "number", label: "Attente par mob ou objet disputé", help: "Pour une cible qui n'apparaît qu'à 4 endroits ou moins ; moins quand elle apparaît à plus d'endroits.", unit: "min", scale: 60, min: 0, max: 15, step: 0.5 },
+      { key: "crowd_level", kind: "number", label: "Niveau jusqu'où l'attente est entière", help: "Les zones de départ sont les plus chargées ; au-dessus, l'attente est divisée par deux.", min: 1, max: 60, step: 1 },
       { key: "min_efficiency", kind: "number", label: "Rentabilité minimum d'une quête", help: "Par rapport au farm : 0.5 = une quête doit rapporter au moins la moitié de l'XP/heure du farm.", min: 0, max: 3, step: 0.1 },
       { key: "quest_log_size", kind: "number", label: "Taille du journal de quêtes", min: 5, max: 40, step: 1 },
     ],
@@ -163,7 +167,7 @@ export const sections: Section[] = [
 ];
 
 /** Settings of the simple view (left out of the advanced sections). */
-export const SIMPLE_KEYS: (keyof Params)[] = ["dungeons", "allow_elite"];
+export const SIMPLE_KEYS: (keyof Params)[] = ["dungeons", "allow_elite", "crowded"];
 
 /** Speed presets applied on top of the defaults. */
 export const presets: { label: string; values: Partial<Params> }[] = [

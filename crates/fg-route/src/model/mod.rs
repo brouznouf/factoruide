@@ -2,11 +2,13 @@
 
 mod builder;
 mod chains;
+mod crowd;
 mod dungeons;
 mod entities;
 mod explore;
 mod farm;
 mod givers;
+mod guard;
 mod item;
 mod names;
 mod objectives;
@@ -19,9 +21,11 @@ mod sources;
 mod types;
 
 pub use farm::FarmMobs;
+pub use guard::Guards;
 pub use names::Names;
 pub use types::{
-    Dungeon, DungeonDef, EntityKind, ExploreArea, Initial, Loc, Model, Objective, ProfessionPlan, Profile, Quest, Spots,
+    Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Model, Objective, ProfessionPlan, Profile,
+    Quest, Spots,
 };
 
 use crate::params::Params;

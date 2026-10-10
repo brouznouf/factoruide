@@ -187,6 +187,7 @@ impl Planner<'_> {
                 let old = &run.states[k];
                 if s.level == old.level
                     && s.xp == old.xp
+                    && s.rested == old.rested
                     && s.known == old.known
                     && s.log == old.log
                     && s.pos == old.pos

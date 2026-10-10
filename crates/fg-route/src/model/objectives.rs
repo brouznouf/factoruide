@@ -5,7 +5,7 @@ use super::builder::{QuestBuilder, Skip};
 use super::entities::best_cluster;
 use super::givers::Givers;
 use super::sources::{ObjectiveKind, QuestRow, SourceKind, asks_for_work, count_for, on_reachable, parse_requirements};
-use super::types::{EntityKind, Loc, Objective, Spots};
+use super::types::{EntityKind, Guard, Loc, Objective, Spots};
 use crate::world::Pos;
 use std::collections::HashMap;
 
@@ -41,6 +41,7 @@ impl Objective {
             mobs: vec![],
             pull: 1.0,
             spots: None,
+            guard: Guard::default(),
         }
     }
 }
@@ -65,6 +66,12 @@ impl QuestBuilder<'_> {
         for o in objs.iter_mut().filter(|o| o.elite) {
             o.pull = self.sources.elites.pull(o.mobs.iter().map(|(id, _)| *id));
         }
+        // Mobs to kill set the power by themselves; objects, areas and NPCs to talk to may
+        // stand among stronger ones.
+        for o in objs.iter_mut().filter(|o| o.kills <= 0.0 && o.dungeon.is_none()) {
+            o.guard = self.sources.guards.around(&o.loc.pos);
+        }
+        self.crowd(r, &mut objs);
         self.add_dungeon_givers(r, &mut objs);
         Ok(objs)
     }

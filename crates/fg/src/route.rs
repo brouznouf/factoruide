@@ -64,6 +64,7 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
         professions: opts.professions.clone(),
         locale: opts.locale.clone(),
         group: opts.group.clone(),
+        start: None,
     };
     let outcome = job::plan(conn, &overrides, &request, &|m| {
         if !m.starts_with('@') {

@@ -19,6 +19,7 @@ function FGStepPinMixin:OnAcquired(x, y, n, text, current)
     end
 end
 
+-- The map canvas calls these itself (pins must not set OnEnter/OnLeave scripts).
 function FGStepPinMixin:OnMouseEnter()
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:SetText(self.text or "", 1, 1, 1, 1, true)

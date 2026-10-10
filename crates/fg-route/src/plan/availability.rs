@@ -52,28 +52,28 @@ impl Availability<'_> {
     pub(crate) fn prereqs_met(&self, s: &State, q: &Quest) -> bool {
         let done = |id: &i64| match self.model.index.get(id) {
             Some(&i) => s.rewarded(i),
-            // Not plannable (other class, removed...): assume done only when starting mid-way.
-            None => self.profile.from_level > 1,
+            // Not plannable (other class, removed, gray...): known for a character met in game,
+            // else assumed done only when starting mid-way.
+            None => self.model.initial.done_outside(*id, self.profile.from_level),
         };
         q.pre_all.iter().all(done) && (q.pre_any.is_empty() || q.pre_any.iter().any(done))
     }
 
     pub(crate) fn blocked(&self, s: &State, q: &Quest) -> bool {
         // A quest given up no longer holds its exclusive group.
-        let taken = |id: &i64| {
-            self.model
-                .index
-                .get(id)
-                .is_some_and(|&i| s.accepted[i] || s.rewarded(i))
+        let taken = |id: &i64| match self.model.index.get(id) {
+            Some(&i) => s.accepted[i] || s.rewarded(i),
+            None => self.model.initial.completed.as_ref().is_some_and(|c| c.contains(id)),
         };
         q.exclusive.iter().any(taken) || q.breadcrumb_for.as_ref().is_some_and(taken)
     }
 
     /// An exclusive alternative (often the same quest for another race) was done instead.
     pub(crate) fn alternative_done(&self, s: &State, q: &Quest) -> bool {
-        q.exclusive
-            .iter()
-            .any(|id| self.model.index.get(id).is_some_and(|&i| s.rewarded(i)))
+        q.exclusive.iter().any(|id| match self.model.index.get(id) {
+            Some(&i) => s.rewarded(i),
+            None => self.model.initial.completed.as_ref().is_some_and(|c| c.contains(id)),
+        })
     }
 
     pub(crate) fn can_accept(&self, s: &State, i: u32) -> bool {

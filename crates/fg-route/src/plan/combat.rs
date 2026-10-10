@@ -1,7 +1,7 @@
 //! How long fights take and what the character can take on: kill times, the power an
 //! objective requires, the level it is done at, the XP of its mobs, grinding.
 
-use crate::model::{Dungeon, EntityKind, Objective, Quest};
+use crate::model::{Dungeon, EntityKind, Guard, Objective, Quest};
 use crate::params::Params;
 use crate::world::Pos;
 use crate::xp;
@@ -34,8 +34,9 @@ impl Combat<'_> {
     /// elite expected in each pull (a camp of elites). Exploring an area or escorting requires
     /// the quest's level; talking and delivering nothing.
     pub fn need(self, q: &Quest, o: &Objective) -> f64 {
+        let guard = self.guard_need(&o.guard);
         if o.kills <= 0.0 && o.uses <= 0.0 && o.loc.kind != EntityKind::Area {
-            return 0.0;
+            return guard;
         }
         let mut need = q.level as f64;
         if o.kills > 0.0 {
@@ -45,7 +46,29 @@ impl Combat<'_> {
             }
             need = need.max(mob);
         }
-        need
+        need.max(guard)
+    }
+
+    /// Power needed to go where hostile mobs stand (`Guard`), as for an objective killing them:
+    /// one less for one or two of them, `pack_extra` more for a pack, two more with an elite.
+    /// 0 for nobody.
+    pub fn guard_need(self, g: &Guard) -> f64 {
+        if g.count == 0 {
+            return 0.0;
+        }
+        let pack = if g.count <= 2 { -1.0 } else { self.params.pack_extra() };
+        g.level as f64 + pack + if g.elite { 2.0 } else { 0.0 }
+    }
+
+    /// Lowest level at which the character, with `bonus` levels of power, goes to a place
+    /// guarded by `g` (0 when nobody guards it).
+    pub fn guard_level(self, g: &Guard, bonus: f64) -> i64 {
+        let need = self.guard_need(g);
+        if need <= 0.0 {
+            0
+        } else {
+            self.params.level_for(need, bonus)
+        }
     }
 
     /// Lowest level at which the character, with `bonus` levels of power, takes on objective `k`

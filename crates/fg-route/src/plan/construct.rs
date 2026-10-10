@@ -42,9 +42,14 @@ impl Planner<'_> {
                     continue;
                 }
                 let class = if self.quest(i).mandatory { 0.6 } else { 1.0 };
+                // Givers and turn-ins among mobs too strong for the character wait.
+                let reach = self.params.reach(s.level, s.bonus);
+                let guarded = |g| self.combat().guard_need(g) > reach;
                 if s.accepted[iu] {
                     if self.availability().objectives_done(&s, i) {
-                        consider(Stop::quest(i, Kind::TurnIn), 0.7 * class, &s);
+                        if !guarded(&self.quest(i).end_guard) {
+                            consider(Stop::quest(i, Kind::TurnIn), 0.7 * class, &s);
+                        }
                     } else {
                         let q = self.quest(i);
                         for k in 0..q.objectives.len() {
@@ -55,13 +60,17 @@ impl Planner<'_> {
                             }
                         }
                     }
-                } else if self.quest(i).min_level <= s.level && self.availability().can_accept(&s, i) && {
-                    let trip = self
-                        .trips()
-                        .fastest(&s, &self.places().pos(&s, Stop::quest(i, Kind::Accept)))
-                        .0;
-                    self.worth().worth_it(&s, i, s.level, trip)
-                } {
+                } else if self.quest(i).min_level <= s.level
+                    && !guarded(&self.quest(i).start_guard)
+                    && self.availability().can_accept(&s, i)
+                    && {
+                        let trip = self
+                            .trips()
+                            .fastest(&s, &self.places().pos(&s, Stop::quest(i, Kind::Accept)))
+                            .0;
+                        self.worth().worth_it(&s, i, s.level, trip)
+                    }
+                {
                     // Dungeon quests: worth a detour only when the dungeon is close in level.
                     // Quests of a dungeon close in level: forced ones first, the others weighed by
                     // `dungeon_quest_weight` (the optimizer then keeps the runs that pay off).

@@ -149,11 +149,12 @@ impl<'a> Planner<'a> {
             zone,
             time: 0.0,
             level,
-            xp: 0,
+            xp: init.xp.min(self.rules().to_next_level(level) - 1).max(0),
+            rested: init.rested,
             known: init.known,
             bind: init.bind.unwrap_or(self.model.start_inn),
             hearth_ready: 0.0,
-            trained: level,
+            trained: init.trained.unwrap_or(level).min(level),
             dungeons: 0,
             accepted: vec![false; n],
             turned: vec![false; n],
@@ -181,7 +182,24 @@ impl<'a> Planner<'a> {
             if !s.turned[i] {
                 s.accepted[i] = true;
                 s.log += 1;
+                for &(_, k, _) in init.progress.iter().filter(|p| p.0 == i && p.2 >= 1.0) {
+                    s.objectives[i] |= 1 << k;
+                }
                 self.open_along(&mut s, i as u32);
+            }
+        }
+        // Objectives started: their kills (or uses) so far count as done on the way.
+        for &(q, k, share) in &init.progress {
+            if let Some(entry) = s.along.iter_mut().find(|e| e.0 as usize == q && e.1 == k) {
+                let o = &self.model.quests[q].objectives[k as usize];
+                entry.2 = share * if o.kills > 0.0 { o.kills } else { o.uses };
+            }
+        }
+        if let Some(power) = &self.model.power {
+            for &id in &init.gear {
+                if let Some(item) = power.item(id) {
+                    power.equip(&mut s.gear, item, 1.0, level);
+                }
             }
         }
         self.growth().refresh_power(&mut s);

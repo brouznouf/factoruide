@@ -16,6 +16,12 @@ dungeons, forced dungeons, class quests to keep, professions to level.
 `world.rs` gives the geography: zone coordinates converted to world coordinates, the passes
 between zones, boats, zeppelins and tram (`overrides/`), and the flight path network.
 
+A guide can start from a character met in game (`job/start.rs`): the profile the addon saves
+(`Profile.lua`, read by the app from the SavedVariables) becomes the simulation's initial state:
+quests turned in, quests in the log with their objectives' progress, position, hearthstone, known
+flight paths, XP and rested XP, gear worn, last training (from the spells learned). Profession
+curves go through the character's skill.
+
 `xp.rs` holds the rules of each game version (WoW Forever, Classic Era, TBC): XP per level,
 quest XP penalty by level difference, mob XP, max level, quest log size, mount level.
 

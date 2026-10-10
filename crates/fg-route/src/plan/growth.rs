@@ -76,6 +76,15 @@ impl<'g> Growth<'g> {
         }
     }
 
+    /// XP of kills: doubled while the character is rested, up to its rested XP. Returns the XP
+    /// gained.
+    pub(crate) fn gain_kills(self, s: &mut State, amount: i64) -> i64 {
+        let bonus = amount.min(s.rested).max(0);
+        s.rested -= bonus;
+        self.gain(s, amount + bonus);
+        amount + bonus
+    }
+
     pub(crate) fn gain(self, s: &mut State, amount: i64) {
         s.xp += amount;
         let before = s.level;
@@ -139,11 +148,15 @@ impl<'g> Growth<'g> {
                 dungeons: &self.model.dungeons,
             };
             let rate = combat.grind_rate(s.level, s.bonus, &s.pos);
+            // Rested XP doubles the kills' XP: only half of what it covers is killed.
+            let killed = need - (need / 2).min(s.rested.max(0));
             let over = (need - self.grind_budget(s).max(0)).max(0);
-            t += need as f64 / rate;
-            s.spent.grind_over += over as f64 / rate;
+            let time = killed as f64 / rate;
+            t += time;
+            s.spent.grind_over += over as f64 / need as f64 * time;
             s.spent.grind_xp += need;
             s.grind_used += need;
+            s.rested -= need - killed;
             self.gain(s, need);
         }
         s.time += t;

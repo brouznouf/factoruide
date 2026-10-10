@@ -667,6 +667,27 @@ impl PowerModel {
         !self.families.is_empty()
     }
 
+    /// Level of the last training of a character of `level` knowing `spells` (IDs): the level
+    /// before the first rank it lacks (a rank counts as learned when a higher one of its family
+    /// is). `None` when none of its spells is one of the ranks (other data).
+    pub fn trained_level(&self, spells: &std::collections::HashSet<i64>, level: i64) -> Option<i64> {
+        let mut trained = level;
+        let mut matched = false;
+        for f in &self.families {
+            let top = f.list.iter().rposition(|r| spells.contains(&r.id));
+            matched |= top.is_some();
+            let missing = f
+                .list
+                .iter()
+                .enumerate()
+                .find(|(k, r)| r.level <= level && top.is_none_or(|t| *k > t));
+            if let Some((_, r)) = missing {
+                trained = trained.min(r.level - 1);
+            }
+        }
+        matched.then_some(trained.max(1))
+    }
+
     /// Spell ranks that count learned when training at `level` after training at `trained`.
     pub fn new_ranks(&self, trained: i64, level: i64) -> Vec<&Rank> {
         let mut out: Vec<&Rank> = self

@@ -1,9 +1,9 @@
 import { useMemo, useRef, useState } from "react";
 import { fmtTime, type Step } from "../api";
 import { useT } from "../i18n";
+import { useWidth } from "./useWidth";
 
-const W = 720;
-const H = 240;
+const H = 260;
 const PAD = { left: 40, right: 16, top: 12, bottom: 28 };
 
 /** Character level over game time, with a crosshair tooltip. */
@@ -11,6 +11,7 @@ export function LevelChart({ steps, fromLevel, toLevel }: { steps: Step[]; fromL
   const t = useT();
   const svg = useRef<SVGSVGElement>(null);
   const [hover, setHover] = useState<number | null>(null);
+  const [frame, W] = useWidth(720);
 
   const points = useMemo(() => [{ time: 0, level: fromLevel, step: null as Step | null }, ...steps.map((s) => ({ time: s.time, level: s.level, step: s }))], [steps, fromLevel]);
   const maxTime = Math.max(1, points[points.length - 1]?.time ?? 1);
@@ -36,8 +37,8 @@ export function LevelChart({ steps, fromLevel, toLevel }: { steps: Step[]; fromL
   return (
     <figure className="chart">
       <figcaption>{t("Niveau selon le temps de jeu")}</figcaption>
-      <div className="chart-plot">
-        <svg ref={svg} viewBox={`0 0 ${W} ${H}`} onPointerMove={onMove} onPointerLeave={() => setHover(null)} role="img" aria-label={t("Niveau selon le temps de jeu")}>
+      <div className="chart-plot" ref={frame}>
+        <svg ref={svg} width={W} height={H} viewBox={`0 0 ${W} ${H}`} onPointerMove={onMove} onPointerLeave={() => setHover(null)} role="img" aria-label={t("Niveau selon le temps de jeu")}>
           {Array.from({ length: Math.floor(hours / hourStep) + 1 }, (_, i) => i * hourStep).map((hr) => (
             <g key={`x${hr}`}>
               <line className="grid" x1={x(hr * 3600)} x2={x(hr * 3600)} y1={PAD.top} y2={H - PAD.bottom} />

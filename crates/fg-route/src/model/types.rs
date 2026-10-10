@@ -94,6 +94,29 @@ pub struct Objective {
     pub spots: Option<Spots>,
     /// Elites expected per pull: 1 for a lone elite (Hogger), more in a camp of elites.
     pub pull: f64,
+    /// Hostile mobs around where it is done.
+    pub guard: Guard,
+}
+
+/// Hostile mobs standing around a place (see `Guards`): the strongest level among them, how
+/// many are close to it, and whether one of those is an elite. Default: nobody.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct Guard {
+    pub level: i64,
+    pub count: u32,
+    pub elite: bool,
+}
+
+impl Guard {
+    /// The harder of two places.
+    #[must_use]
+    pub fn max(self, other: Self) -> Self {
+        if (other.level, other.count, other.elite) > (self.level, self.count, self.elite) {
+            other
+        } else {
+            self
+        }
+    }
 }
 
 /// Spawn points of an objective's mobs on one continent, one per cell of a small grid.
@@ -161,6 +184,9 @@ pub struct Quest {
     /// Class quest making the character stronger: index in `Profile::class_powers` (quests of
     /// the same name share it) and power gained when turned in.
     pub power: Option<(u8, f64)>,
+    /// Hostile mobs around its givers and its turn-ins (the hardest of them).
+    pub start_guard: Guard,
+    pub end_guard: Guard,
 }
 
 pub struct Model {
@@ -222,6 +248,25 @@ pub struct Initial {
     pub bind: Option<usize>,
     /// Known flight paths (bit per taxi node).
     pub known: u128,
+    /// XP into the starting level, and rested XP (kills give double up to it).
+    pub xp: i64,
+    pub rested: i64,
+    /// Objectives of the quests in the log already started: (quest, objective, share done).
+    pub progress: Vec<(usize, u8, f64)>,
+    /// Items worn (IDs).
+    pub gear: Vec<i64>,
+    /// Level of the last class training (default: the starting level).
+    pub trained: Option<i64>,
+    /// Every quest turned in, in the model or not, for a character met in game: prerequisites
+    /// the model lacks are then known instead of assumed done past level 1.
+    pub completed: Option<HashSet<i64>>,
+}
+
+impl Initial {
+    /// Whether quest `id`, which the model does not have, was turned in before the route.
+    pub fn done_outside(&self, id: i64, from_level: i64) -> bool {
+        self.completed.as_ref().map_or(from_level > 1, |c| c.contains(&id))
+    }
 }
 
 /// Per-dungeon settings from `overrides/dungeons.toml`.

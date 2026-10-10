@@ -33,6 +33,10 @@ pub struct PlanRequest {
     /// Classes of the other players leveling with the character (empty: solo).
     #[serde(default)]
     pub group: Vec<String>,
+    /// The character as the addon recorded it in game: the route goes on from there (its level
+    /// replaces `from_level`).
+    #[serde(default)]
+    pub start: Option<super::StartState>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

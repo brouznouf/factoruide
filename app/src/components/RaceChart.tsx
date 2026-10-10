@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { fmtTime } from "../api";
 import { useT } from "../i18n";
 import type { OptimizeState, RaceRoute, RaceSeries } from "./OptimizeProgress";
+import { useWidth } from "./useWidth";
 
 /** Color of a route: its categorical slot, gray without one. */
 const color = (slot: number | undefined) => (slot == null ? "var(--text-muted)" : `var(--cat-${slot + 1})`);
@@ -41,6 +42,7 @@ export function RaceChart({ state, series, colors }: Props) {
   const t = useT();
   const plot = useRef<SVGSVGElement>(null);
   const [hover, setHover] = useState<number | null>(null);
+  const [frame, W] = useWidth(900);
   const routes: RaceRoute[] = state?.routes ?? [];
   const selected = state?.selected ?? null;
   const qualifying = state?.stage === "qualify";
@@ -73,8 +75,7 @@ export function RaceChart({ state, series, colors }: Props) {
     );
   }
 
-  const W = 900;
-  const H = 240;
+  const H = 260;
   const pad = { l: 56, r: 16, t: 12, b: 24 };
   const elapsed = state?.elapsed ?? 0;
   const x0 = state?.stage ? (state.qualify ?? 0) : 0;
@@ -114,8 +115,8 @@ export function RaceChart({ state, series, colors }: Props) {
           : t("Temps des {n} chemins au fil de l'optimisation", { n: routes.length })}
       </figcaption>
       {legend}
-      <div className="chart-plot">
-        <svg ref={plot} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={byTime.map((r) => fmtTime(r.time)).join(", ")} onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
+      <div className="chart-plot" ref={frame}>
+        <svg ref={plot} width={W} height={H} viewBox={`0 0 ${W} ${H}`} role="img" aria-label={byTime.map((r) => fmtTime(r.time)).join(", ")} onMouseMove={onMove} onMouseLeave={() => setHover(null)}>
           {ticks(ylo, yhi).map((v) => (
             <g key={v}>
               <line x1={pad.l} x2={W - pad.r} y1={y(v)} y2={y(v)} className="grid" />

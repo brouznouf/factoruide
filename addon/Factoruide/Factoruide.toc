@@ -15,6 +15,7 @@ TalentBuilds_forever.lua
 TalentBuilds_classic.lua
 TalentBuilds_tbc.lua
 Collector.lua
+Profile.lua
 Automation.lua
 Routes.lua
 Arrow.lua

@@ -176,6 +176,11 @@ export function GuidesPage({ options, onRerun, onEdit }: Props) {
                     </span>
                   )}
                   {latest.imported && <span className="tag">{t("importé")}</span>}
+                  {latest.character && (
+                    <span className="tag" title={t("Part du personnage {name} tel qu'enregistré en jeu", { name: latest.character })}>
+                      {latest.character.split("-")[0]}
+                    </span>
+                  )}
                 </td>
                 <td>
                   <Character race={latest.race} klass={latest.class} group={latest.group} options={options} />

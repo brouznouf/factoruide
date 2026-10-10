@@ -71,6 +71,13 @@ pub struct Params {
     /// `pvp_mark_time` seconds of battleground.
     pub pvp_quests: bool,
     pub pvp_mark_time: f64,
+    /// Crowded server (a launch): escorts and events wait `crowd_event_time` for their turn,
+    /// mobs and objects with few spawns `crowd_spawn_time` per kill or use (less the more spawns
+    /// they have). Full up to quests of level `crowd_level` (starting zones), half above.
+    pub crowded: bool,
+    pub crowd_event_time: f64,
+    pub crowd_spawn_time: f64,
+    pub crowd_level: i64,
     /// Without `allow_elite`, elite objectives of at most this many kills are kept anyway: the
     /// lone elites a player kills solo (Hogger, Tharil'zun, Mor'Ladim...). 0 = none.
     pub solo_elite_kills: f64,
@@ -252,6 +259,10 @@ impl Default for Params {
             allow_elite: false,
             pvp_quests: false,
             pvp_mark_time: 900.0,
+            crowded: false,
+            crowd_event_time: 900.0,
+            crowd_spawn_time: 180.0,
+            crowd_level: 20,
             solo_elite_kills: 2.0,
             zone_stay: 2.5,
             construction_random: true,

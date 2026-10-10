@@ -117,6 +117,14 @@ UnitClass = function() return "Mage", "MAGE", 8 end
 UnitFactionGroup = function() return "Alliance" end
 UnitLevel = function() return playerLevel end
 UnitXP = function() return 0 end
+UnitXPMax = function() return 400 end
+GetXPExhaustion = function() return 600 end
+IsResting = function() return true end
+local bindLocation = "Coldridge Valley"
+GetBindLocation = function() return bindLocation end
+GetInventoryItemID = function(_, slot) return slot == 5 and 6125 or nil end
+local reloaded = false
+ReloadUI = function() reloaded = true end
 UnitGUID = function(u)
     if u == "npc" then return "Creature-0-1-2-3-658-0000" end
     return "Player-1-2"
@@ -321,6 +329,32 @@ assert(char.guide.step == 5, "current quest skipped by hand, step " .. char.guid
 SlashCmdList.FACTORUIDE("skip 5004")
 assert(char.guide.step == 3, "undo brings the quest back, step " .. char.guide.step)
 print("skip ok")
+
+-- Progress belongs to its guide: a quest marked done by hand in one is still to do in another,
+-- and coming back finds the marks again. A new version keeps the quests, not the step marks.
+SlashCmdList.FACTORUIDE("skip")
+FG.Routes["other-test"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 21,
+    toLevel = 60,
+    time = 1,
+    steps = {
+        { k = "accept", t = "Accept Current Quest", q = 5004, lvl = 21 },
+        { k = "turnin", t = "Turn in Current Quest", q = 5004, lvl = 21 },
+    },
+}
+SlashCmdList.FACTORUIDE("route other-test")
+assert(char.guide.step == 1 and not char.guide.skippedQuests[5004], "marked in another guide only")
+SlashCmdList.FACTORUIDE("route skip-test")
+assert(char.guide.step == 5 and char.guide.skippedQuests[5004], "back to the first guide")
+char.guide.marks[1] = "skip"
+FG.Routes["skip-test"].time = 2
+SlashCmdList.FACTORUIDE("route other-test")
+SlashCmdList.FACTORUIDE("route skip-test")
+assert(not char.guide.marks[1] and char.guide.skippedQuests[5004], "new version")
+print("progress per guide ok")
 
 -- Checkpoints: reached in level before the planned step, the steps up to it are skipped but the
 -- kept ones (a chain going on after it).
@@ -563,3 +597,52 @@ assert(close(FG.Arrow.Angle(0, 10, 0), math.pi / 2), "west, facing north: to the
 assert(close(FG.Arrow.Angle(0, -10, math.pi / 2), math.pi), "east, facing west: behind")
 assert(close(FG.Arrow.Angle(0, 10, math.pi / 2), 0), "west, facing west: ahead")
 print("arrow ok")
+
+-- Profile: what the app plans a guide from, saved at login, logout and on /fg profile.
+local profile = FactoruideDB.profiles["Brouz-Realm"]
+assert(profile and profile.level == 1 and profile.race == 7 and profile.class == "MAGE", "profile saved")
+assert(profile.rested == 600 and profile.xp_max == 400 and profile.resting, "XP and rested XP")
+assert(profile.gear[1] == 6125, "gear worn")
+assert(profile.bind.name == "Coldridge Valley" and not profile.bind.position, "hearthstone, place unknown")
+bindLocation = "Kharanos"
+fire("CHAT_MSG_SYSTEM", "Kharanos is now your home.")
+assert(profile.bind.name == "Kharanos" and profile.bind.position.map == 1426, "hearthstone bound here")
+C_TaxiMap.GetAllTaxiNodes = function()
+    return { { nodeID = 6, state = 0 }, { nodeID = 7, state = 1 }, { nodeID = 8, state = 2 } }
+end
+fire("TAXIMAP_OPENED")
+assert(profile.flights[6] and profile.flights[7] and not profile.flights[8], "flight paths known")
+C_QuestLog.GetQuestObjectives = function()
+    return { { text = "Tough Wolf Meat: 3/8", numFulfilled = 3, numRequired = 8, finished = false } }
+end
+C_QuestLog.GetAllCompletedQuestIDs = function() return { 179, 233 } end
+SlashCmdList.FACTORUIDE("profile")
+assert(reloaded, "the interface reloads to write the profile")
+assert(#profile.completed == 2, "quests done")
+assert(profile.log[1].id == 233 and profile.log[1].objectives[1].done == 3, "log with its objectives")
+print("profile ok")
+
+-- Window size: Ctrl + mouse wheel over a window, or /fg scale; saved, nothing: the app's.
+SlashCmdList.FACTORUIDE("scale 1.3")
+assert(FG:Get("scale") == 1.3 and FactoruideDB.ui.scale == 1.3, "scale saved")
+local wheel
+for _, f in ipairs(frames) do
+    if rawget(f, "OnMouseWheel") then wheel = f end
+end
+fire("MODIFIER_STATE_CHANGED", "LCTRL", 1)
+wheel.OnMouseWheel(wheel, 1)
+assert(FG:Get("scale") == 1.35, "zoomed in: " .. FG:Get("scale"))
+SlashCmdList.FACTORUIDE("scale")
+assert(FG:Get("scale") == 1 and FactoruideDB.ui.scale == nil, "back to the app's size")
+print("scale ok")
+
+-- A part of the profile the game fails to give keeps its previous value, the error is kept.
+local inventory = GetInventoryItemID
+GetInventoryItemID = function() error("gone") end
+FG.Profile:Snapshot()
+assert(profile.gear[1] == 6125 and profile.errors.gear, "gear kept")
+assert(#profile.log == 1, "the other parts are saved")
+GetInventoryItemID = inventory
+FG.Profile:Snapshot()
+assert(not profile.errors, "no error left")
+print("profile parts ok")

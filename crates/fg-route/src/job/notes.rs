@@ -6,12 +6,14 @@ use std::collections::BTreeMap;
 
 pub(super) fn model_notes(model: &Model, world: &World, progress: &(dyn Fn(&str) + Sync)) -> Vec<String> {
     list_skipped_for_debugging(model, progress);
-    let mut notes = vec![format!(
-        "{} plannable quests, start at {} ({})",
-        model.quests.len(),
-        model.start.name,
-        world.zone_name(model.start.zone)
-    )];
+    let start = match model.initial.pos {
+        Some((pos, zone)) => format!(
+            "where the character stands ({})",
+            world.place_name(&pos).unwrap_or_else(|| world.zone_name(zone))
+        ),
+        None => format!("at {} ({})", model.start.name, world.zone_name(model.start.zone)),
+    };
+    let mut notes = vec![format!("{} plannable quests, start {start}", model.quests.len())];
     let mut reasons: BTreeMap<&str, usize> = BTreeMap::new();
     for (_, _, reason) in &model.skipped {
         *reasons.entry(reason).or_default() += 1;

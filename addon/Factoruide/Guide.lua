@@ -424,6 +424,8 @@ local function CreateUI()
     end
     ApplyScale(FG:Get("scale"))
     FG:OnSetting("scale", ApplyScale)
+    FG:Zoomable(todoBox)
+    FG:Zoomable(nextBox)
     FG:OnSetting("nextLines", function() Guide:Refresh() end)
     FG:OnSetting("guideShown", function() Guide:Refresh() end)
     FG:OnSetting("waypoints", function(on)
@@ -638,9 +640,45 @@ end
 
 function Guide:RouteHasQuest(questID) return routeQuests[questID] or false end
 
+--- Fields of the guide state that belong to the route in use: the step shown, the steps
+--- marked by their index and the quests marked done by hand.
+local PROGRESS = { "step", "marks", "skippedQuests" }
+
+--- Progress is kept per route: another guide starts from its first step with nothing marked,
+--- coming back to a guide finds where it was. A new version of the same guide keeps the
+--- quests marked by hand, not the steps marked by index (its steps moved).
+local function SwitchProgress(name)
+    local r = name and FG.Routes and FG.Routes[name]
+    local version = r and string.format("%s:%d", tostring(r.time), #r.steps) or nil
+    if state.route ~= name then
+        state.saved = state.saved or {}
+        if state.route then
+            local keep = { version = state.version }
+            for _, k in ipairs(PROGRESS) do
+                keep[k] = state[k]
+            end
+            state.saved[state.route] = keep
+        end
+        local back = name and state.saved[name] or {}
+        if name then state.saved[name] = nil end
+        for _, k in ipairs(PROGRESS) do
+            state[k] = back[k]
+        end
+        state.version = back.version
+    end
+    -- Saved before versions were tracked: taken as the same version.
+    if state.version and state.version ~= version then state.marks = {} end
+    state.version = version
+    state.step = state.step or 1
+    state.marks = state.marks or {}
+    state.skippedQuests = state.skippedQuests or {}
+end
+
 local function UseRoute(name)
     route = FG.Routes and FG.Routes[name]
-    state.route = route and name or nil
+    name = route and name or nil
+    SwitchProgress(name)
+    state.route = name
     wipe(acceptIndex)
     wipe(routeQuests)
     for i, s in ipairs(route and route.steps or {}) do
@@ -674,8 +712,6 @@ FG:On("PLAYER_LOGIN", function()
     state = char.guide
     state.shown = nil -- moved to settings in 0.2
     state.flightLearned = nil -- replaced by marks in 0.3
-    state.marks = state.marks or {}
-    state.skippedQuests = state.skippedQuests or {}
     UseRoute(PickRoute(char))
     CreateUI()
     Guide:Resync()
@@ -750,7 +786,6 @@ function Guide:Command(cmd, arg)
     elseif cmd == "route" then
         if arg and FG.Routes and FG.Routes[arg] then
             UseRoute(arg)
-            state.marks = {}
             self:Resync()
         else
             local names = {}

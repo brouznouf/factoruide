@@ -116,6 +116,7 @@ local SKILL_NAMES = {
     [185] = { "Cooking", "Cuisine" },
     [356] = { "Fishing", "Pêche" },
     [129] = { "First Aid", "Secourisme" },
+    [762] = { "Riding", "Monte" },
 }
 
 --- Skill of a profession by skill line ID: rank, max rank, localized name (nil if unknown).
@@ -157,9 +158,13 @@ SlashCmdList.FACTORUIDE = function(msg)
         FG.Collector:PrintStatus()
     elseif FG.Collector and cmd == "reset" then
         FG.Collector:Reset()
+    elseif cmd == "scale" then
+        FG:ScaleCommand(arg)
+    elseif FG.Profile and (cmd == "profile" or cmd == "profil") then
+        FG.Profile:Save()
     else
         FG:Print(
-            "/fg config | guide | next | prev | step <n> | skip [id] | lines <n> | route [name] | macro | waypoint | status | reset | debug"
+            "/fg config | guide | next | prev | step <n> | skip [id] | lines <n> | route [name] | macro | waypoint | scale [size] | status | reset | profile | debug"
         )
     end
 end

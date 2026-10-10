@@ -6,6 +6,8 @@ pub mod collector;
 pub mod contribution;
 #[cfg(feature = "local")]
 pub mod lua;
+#[cfg(feature = "local")]
+pub mod profile;
 pub mod receipt;
 pub mod validate;
 pub mod wdb;

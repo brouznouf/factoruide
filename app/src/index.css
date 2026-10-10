@@ -405,8 +405,6 @@ h3 {
   position: relative;
 }
 .chart svg {
-  width: 100%;
-  height: auto;
   display: block;
 }
 .grid {
@@ -415,7 +413,7 @@ h3 {
 }
 .axis {
   fill: var(--text-muted);
-  font-size: 11px;
+  font-size: 12px;
 }
 .series-line {
   fill: none;
@@ -1063,8 +1061,6 @@ button.big {
   font-weight: 600;
 }
 .race-chart svg {
-  width: 100%;
-  height: auto;
   display: block;
 }
 .race-times {
@@ -1323,4 +1319,17 @@ button.big {
 }
 .contribute-figures small {
   overflow-wrap: anywhere;
+}
+.character-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin-top: 6px;
+  font-size: 12px;
+}
+.character-summary > span {
+  padding: 1px 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-secondary);
 }

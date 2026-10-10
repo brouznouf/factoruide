@@ -25,6 +25,17 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
     let mut params = req.params.clone().unwrap_or_else(|| overrides.params.clone());
     params.group_size = 1 + group.len() as i64;
     let class = class_name.to_lowercase();
+    let from_level = req.start.as_ref().map_or(req.from_level, |s| s.level);
+    if from_level >= req.to_level {
+        bail!(
+            "the character is level {from_level}: nothing to plan up to level {}",
+            req.to_level
+        );
+    }
+    let mut professions = req.professions.clone();
+    if let Some(start) = &req.start {
+        start.anchor_professions(&mut professions);
+    }
     let profile = Profile {
         name: req.name.clone().unwrap_or_else(|| format!("{race_key}-{class}")),
         race_id: race.id,
@@ -32,7 +43,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
         class_name: class_name.clone(),
         faction: race.faction,
         start_npc: race.start_npc,
-        from_level: req.from_level,
+        from_level,
         to_level: req.to_level,
         required_class_quests: required_class_quests(overrides, req, &class, &group),
         class_powers: overrides.class_powers.get(&class).cloned().unwrap_or_default(),
@@ -42,7 +53,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
             .map(|m| m.iter().map(|(k, v)| (k.clone(), v.clone())).collect())
             .unwrap_or_default(),
         dungeons: overrides.dungeons.clone(),
-        professions: req.professions.clone(),
+        professions,
         locale: req.locale.clone(),
         group_class_ids: group.iter().map(|(id, _)| *id).collect(),
     };

@@ -19,6 +19,12 @@ impl QuestBuilder<'_> {
         let level = r.level.unwrap_or(1).max(1);
         let class_quest = r.sort == Some(-class_sort(self.profile.class_id));
         let (pre_all, pre_any) = self.prerequisites(r.id, &givers.item_pre);
+        let guard = |locs: &[super::types::Loc]| {
+            locs.iter()
+                .map(|l| self.sources.guards.around(&l.pos))
+                .fold(super::types::Guard::default(), super::types::Guard::max)
+        };
+        let (start_guard, end_guard) = (guard(&givers.starts), guard(&givers.ends));
         Quest {
             id: r.id,
             name: r.name.clone(),
@@ -42,6 +48,8 @@ impl QuestBuilder<'_> {
                 .then(|| self.profile.class_powers.iter().position(|(n, _)| n == &r.name))
                 .flatten()
                 .map(|k| (k as u8, self.profile.class_powers[k].1)),
+            start_guard,
+            end_guard,
         }
     }
 

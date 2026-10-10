@@ -211,6 +211,7 @@ local function Create()
     rows, buttons = {}, {}
     frame:SetScale(FG:Get("scale"))
     FG:OnSetting("scale", function(v) frame:SetScale(v) end)
+    FG:Zoomable(frame)
 end
 
 function Tracker:Refresh()
@@ -273,7 +274,7 @@ function Tracker:Refresh()
                 if rank >= maxRank and maxRank < math.min(p.target, 300) and want >= maxRank then
                     text = text .. "  |cffff9040" .. L.trainer .. "|r"
                 end
-                text = text .. string.format("  |cff9d9d9d%s %d → %d|r", L.lvl, goalLevel, curveAt(goalLevel))
+                text = text .. string.format("  |cff9d9d9d%s %d: %d|r", L.lvl, goalLevel, curveAt(goalLevel))
             end
             add(text)
         end

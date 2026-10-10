@@ -108,6 +108,8 @@ pub(super) type Relations = HashMap<i64, Vec<(Role, EntityKind, i64)>>;
 pub(super) struct Sources {
     pub(super) entities: Entities,
     pub(super) elites: EliteSpawns,
+    /// Hostile mobs around places (givers, turn-ins, objectives).
+    pub(super) guards: super::Guards,
     /// Where the character starts, and the continents it can reach from there.
     pub(super) start: Loc,
     pub(super) reachable: HashSet<i64>,
@@ -144,6 +146,7 @@ impl Sources {
         let (item_origins, drop_chance) = item_origins(conn, params)?;
         Ok(Self {
             elites: EliteSpawns::new(&entities, world),
+            guards: super::Guards::load(conn, world)?,
             class_quest_ids: class_quest_ids(&rows, profile),
             relations: relations(conn)?,
             links: links(conn)?,
@@ -216,7 +219,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
         "SELECT id, coalesce(name, ''), level, min_level, coalesce(xp, 0), zone_or_sort, races_mask, classes_mask,
                 special_flags, required_skill_id, required_min_rep_faction, required_spell, breadcrumb_for,
                 requirements, source_item_id, json_extract(extra, '$.required_source_items'), {observed},
-                required_skill_value, reputation_reward, sources
+                required_skill_value, reputation_reward, sources, quest_flags
          FROM m_quest WHERE status = 'available'"
     ))?;
     let rows = stmt.query_map([], |r| {
@@ -241,6 +244,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
             skill_value: r.get(17)?,
             reputation: r.get(18)?,
             sources: r.get(19)?,
+            flags: r.get(20)?,
         })
     })?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
@@ -417,6 +421,8 @@ pub(super) struct QuestRow {
     pub(super) reputation: Option<String>,
     /// Sources of the quest, comma-separated.
     pub(super) sources: Option<String>,
+    /// QuestFlags (2: an escort or an event).
+    pub(super) flags: Option<i64>,
 }
 
 impl QuestRow {

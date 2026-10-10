@@ -128,6 +128,8 @@ pub(crate) struct State {
     pub(crate) time: f64,
     pub(crate) level: i64,
     pub(crate) xp: i64,
+    /// Rested XP left: kills give double up to it.
+    pub(crate) rested: i64,
     pub(crate) known: u128,
     pub(crate) bind: usize,
     pub(crate) hearth_ready: f64,
