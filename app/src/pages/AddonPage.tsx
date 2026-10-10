@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api, type Settings } from "../api";
-import { useT } from "../i18n";
+import { gameLocale, LANGS, useLang, useT } from "../i18n";
 
 type Option =
   | { key: string; kind: "bool"; label: string; help?: string; default: boolean }
@@ -102,6 +102,7 @@ const OPTIONS: { title: string; options: Option[] }[] = [
 
 export function AddonPage() {
   const t = useT();
+  const lang = useLang();
   const [settings, setSettings] = useState<Settings | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -113,6 +114,8 @@ export function AddonPage() {
 
   const value = (o: Option) => settings.addon[o.key] ?? o.default;
   const update = (key: string, v: boolean | number | string) => setSettings({ ...settings, addon: { ...settings.addon, [key]: v } });
+  // Guides in the app language until another one is chosen.
+  const guideLocale = settings.guide_locale ?? gameLocale(lang);
 
   const save = async (install: boolean) => {
     setError(null);
@@ -120,7 +123,7 @@ export function AddonPage() {
       // Every option is written so the addon always gets explicit values.
       const addon: Record<string, boolean | number | string> = {};
       for (const g of OPTIONS) for (const o of g.options) addon[o.key] = value(o);
-      const next = { ...settings, addon };
+      const next = { ...settings, addon, guide_locale: guideLocale };
       await api.setSettings(next);
       setSettings(next);
       setMessage(install ? t("Guides dans l'addon : {n} — faites /reload en jeu", { n: await api.installAddon() }) : t("Réglages enregistrés"));
@@ -140,6 +143,20 @@ export function AddonPage() {
       {message && <div className="success">{message}</div>}
       {error && <div className="error">{error}</div>}
       <div className="addon-grid">
+        <section className="panel">
+          <h3>{t("Langue")}</h3>
+          <label className="field">
+            <span>{t("Langue des guides dans l'addon")}</span>
+            <select value={guideLocale} onChange={(e) => setSettings({ ...settings, guide_locale: e.target.value })}>
+              {LANGS.map((l) => (
+                <option key={l.key} value={l.locale}>
+                  {l.label}
+                </option>
+              ))}
+            </select>
+            <small>{t("Phrases du guide et noms des quêtes, PNJ, objets et zones ; anglais quand une traduction manque. Un guide calculé par une ancienne version de l'application garde sa langue.")}</small>
+          </label>
+        </section>
         {OPTIONS.map((g) => (
           <section className="panel" key={g.title}>
             <h3>{t(g.title)}</h3>

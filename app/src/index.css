@@ -117,7 +117,10 @@ input[type="checkbox"] {
   grid-template-columns: 200px 1fr;
   /* The row stays the window's height (its content scrolls inside instead of growing it). */
   grid-template-rows: minmax(0, 1fr);
-  height: 100vh;
+  /* Fixed to the window: nothing inside can make the page itself scroll (the body hides its
+     scrollbar, so the user could not scroll it back). */
+  position: fixed;
+  inset: 0;
 }
 .sidebar {
   background: var(--surface-1);
@@ -827,6 +830,8 @@ button.big {
   font-weight: 600;
 }
 .toggle {
+  /* Holds its hidden checkbox (focused on click: placed elsewhere, the page scrolled to it). */
+  position: relative;
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 12px;

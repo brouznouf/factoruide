@@ -46,6 +46,20 @@ pub struct PlanOutcome {
     pub notes: Vec<String>,
 }
 
+impl PlanOutcome {
+    /// An outcome as saved (JSON), its guide migrated to the current format.
+    pub fn from_value(mut value: serde_json::Value) -> anyhow::Result<Self> {
+        if let Some(route) = value.get_mut("route") {
+            crate::export::format::migrate(route)?;
+        }
+        Ok(serde_json::from_value(value)?)
+    }
+
+    pub fn from_json(json: &str) -> anyhow::Result<Self> {
+        Self::from_value(serde_json::from_str(json)?)
+    }
+}
+
 /// Everything a planner needs, loaded for a request.
 pub struct Prepared {
     pub profile: Profile,

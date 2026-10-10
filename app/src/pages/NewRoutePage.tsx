@@ -98,7 +98,7 @@ export function NewRoutePage({ options, start, onBusy }: { options: Options; sta
     setLog([]);
     try {
       const meta = await api.planRoute(request);
-      setResult(await api.getVersion(meta.guide, meta.version));
+      setResult(await api.getVersion(meta.guide, meta.version, gameLocale(lang)));
       setStep("result");
     } catch (e) {
       setError(String(e));
@@ -154,7 +154,7 @@ export function NewRoutePage({ options, start, onBusy }: { options: Options; sta
           key={`${result.meta.guide}-${result.meta.version}`}
           version={result}
           options={options}
-          onOpenVersion={(n) => api.getVersion(result.meta.guide, n).then(setResult)}
+          onOpenVersion={(n) => api.getVersion(result.meta.guide, n, gameLocale(lang)).then(setResult)}
           onRerun={(v) => run(v.request)}
           onEdit={(r) => {
             setInitial(r.request);

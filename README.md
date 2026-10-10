@@ -29,8 +29,9 @@ zones to do, the level to reach before moving on from each, and where the XP is.
 - **Your character**: race, class and level range: start a guide at level 1, or from your
   character as it is in game. The addon records it at each logout (or at once with
   `/fg profile`): pick it in the list of the new guide and the guide goes on from where it
-  stands: its quests done are left out, those in its log are finished, from its position, with
-  its hearthstone, flight paths, rested XP, gear, spells and professions.
+  stands: its quests done are left out, those in its log are taken again when they help (as if
+  never taken) and abandoned as the first step otherwise, from its position, with its
+  hearthstone, flight paths, rested XP, gear, spells and professions.
 - **Your professions**: two primary professions and the secondary ones, with the skill to have
   at each level from the level you take them (curves from classic guides, editable). They add no
   time to the route: the addon shows whether you are ahead or behind, and their quests are
@@ -46,7 +47,8 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   solo or in a group, a crowded server at launch (escorts, events and rare spawns fought over).
 - **Your group**: level in a duo or a group with other classes: faster fights, shared XP with the
   group bonus, quest items for everyone, each class's quests and trainers.
-- **Your language**: the app and the guide in 10 languages.
+- **Your language**: the app and the guide in 10 languages. A guide is computed once and shown in
+  the app's language; the addon writes it in the language you choose on its page.
 
 ## It adapts as you play
 

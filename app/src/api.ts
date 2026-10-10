@@ -279,6 +279,8 @@ export interface Settings {
   language?: string | null;
   /** Addon behaviour, written to Config.lua on install. */
   addon: Record<string, boolean | number | string>;
+  /** Language of the guides in the addon (game locale); unset: each guide in the language it was made in. */
+  guide_locale?: string | null;
 }
 
 export const api = {
@@ -290,7 +292,8 @@ export const api = {
   planRoute: (request: PlanRequest) => invoke<VersionMeta>("plan_route", { request }),
   listGuides: () => invoke<GuideSummary[]>("list_guides"),
   getGuide: (id: string) => invoke<GuideSummary>("get_guide", { id }),
-  getVersion: (guide: string, version: number) => invoke<GuideVersion>("get_version", { guide, version }),
+  /** A version, its guide written in `locale` (game locale). */
+  getVersion: (guide: string, version: number, locale: string) => invoke<GuideVersion>("get_version", { guide, version, locale }),
   /** Installs this version of the guide in the addon (`null`: removes the guide from it). */
   setInstalled: (guide: string, version: number | null) => invoke<number>("set_installed", { guide, version }),
   deleteVersion: (guide: string, version: number) => invoke<void>("delete_version", { guide, version }),

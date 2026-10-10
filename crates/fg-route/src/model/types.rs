@@ -283,6 +283,9 @@ pub struct Initial {
     /// Every quest turned in, in the model or not, for a character met in game: prerequisites
     /// the model lacks are then known instead of assumed done past level 1.
     pub completed: Option<HashSet<i64>>,
+    /// The log of a character met in game (ID, name): its quests are left to the guide as if
+    /// never taken (it takes again those it wants), the others are abandoned at its start.
+    pub log: Vec<(i64, String)>,
 }
 
 impl Initial {

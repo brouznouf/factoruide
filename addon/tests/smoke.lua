@@ -356,6 +356,28 @@ SlashCmdList.FACTORUIDE("route skip-test")
 assert(not char.guide.marks[1] and char.guide.skippedQuests[5004], "new version")
 print("progress per guide ok")
 
+-- A quest of the log the guide does not take is abandoned first: the step is done once it has
+-- left the log.
+FG.Routes["abandon-test"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 21,
+    toLevel = 60,
+    time = 1,
+    steps = {
+        { k = "abandon", t = "Abandon Unused Quest", q = 7001, lvl = 21 },
+        { k = "accept", t = "Accept Current Quest", q = 5004, lvl = 21 },
+    },
+}
+onQuest[7001] = true
+SlashCmdList.FACTORUIDE("route abandon-test")
+assert(char.guide.step == 1, "waits while the quest is in the log, step " .. char.guide.step)
+onQuest[7001] = nil
+fire("QUEST_REMOVED", 7001)
+assert(char.guide.step == 2, "quest abandoned, step " .. char.guide.step)
+print("abandon ok")
+
 -- Checkpoints: reached in level before the planned step, the steps up to it are skipped but the
 -- kept ones (a chain going on after it).
 playerLevel = 22

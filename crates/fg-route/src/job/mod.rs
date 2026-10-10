@@ -14,7 +14,7 @@ pub use options::{NamedId, Options, RaceOption, ZoneOption, options, race_classe
 pub use overrides::{Overrides, RaceDef};
 pub use race::optimize;
 pub use request::{PlanOutcome, PlanRequest, Prepared};
-pub use routes::{load_routes, save_route, slug, write_addon_config, write_addon_routes};
+pub use routes::{load_routes, render_routes, save_route, slug, write_addon_config, write_addon_routes};
 pub use start::{Bind, LogObjective, LogQuest, MapPos, Skill, StartState};
 
 use crate::export;
@@ -73,12 +73,22 @@ pub fn prepare(
     let mut start_notes = Vec::new();
     if let Some(start) = &req.start {
         model.initial = start.initial(&model, &world, &mut params, &mut start_notes);
+        // Quests of the log the model does not have: named from the database, for their abandon.
+        for (id, name) in model.initial.log.iter_mut().filter(|(_, name)| name.is_empty()) {
+            *name = conn
+                .query_row("SELECT name FROM m_quest WHERE id = ?1", [*id], |r| {
+                    r.get::<_, Option<String>>(0)
+                })
+                .ok()
+                .flatten()
+                .unwrap_or_else(|| format!("Quest {id}"));
+        }
         progress(&format!(
             "Starting from {} (level {}): {} quests done, {} in the log",
             start.name,
             start.level,
             model.initial.turned.len(),
-            model.initial.accepted.len()
+            model.initial.log.len()
         ));
     }
     let mut notes = notes::model_notes(&model, &world, progress);

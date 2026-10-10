@@ -1,5 +1,6 @@
 //! What a guide is made of: its steps, their kinds and targets, and the route around them.
 
+use super::phrase::Phrase;
 use crate::faction::Faction;
 use crate::model::EntityKind;
 use crate::plan::Breakdown;
@@ -128,11 +129,20 @@ pub struct Step {
     pub bg: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub objective: Option<u8>,
+    /// The step's sentence in a language: written from `say` (`render`), else (a guide of
+    /// format 1) kept as it was written.
+    #[serde(default)]
     pub text: String,
+    /// The step's sentences, language-neutral.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub say: Vec<Phrase>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub target: Option<Target>,
+    /// Zone of the step (its English name, written in a language by `render`) and its ID.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub zone: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub zone_id: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub map: Option<MapPointOut>,
     /// World position: [continent (map ID), x, y], to draw the route on any map.
@@ -146,9 +156,12 @@ pub struct Step {
     /// Profession skill line of that skill.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub line: Option<i64>,
-    /// Mobs to target (kill, or that drop the item), in the guide's language: for the target macro.
+    /// Mobs to target (kill, or that drop the item), for the target macro: their names (English,
+    /// written in a language by `render`) and IDs.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub mobs: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub mob_ids: Vec<i64>,
     /// Objective on elite mobs, and the level of its mobs (hardcore warnings).
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub elite: bool,
@@ -205,6 +218,10 @@ impl From<MapPoint> for MapPointOut {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Route {
+    /// Format of the guide file (`format::FORMAT`); files of an older format are migrated
+    /// when read (`format::migrate`).
+    #[serde(default = "super::format::first")]
+    pub format: u32,
     pub name: String,
     pub race_id: i64,
     pub class_id: i64,
@@ -218,7 +235,7 @@ pub struct Route {
     pub breakdown: Breakdown,
     #[serde(default)]
     pub professions: Vec<RouteProfession>,
-    /// Language of the texts.
+    /// Language the guide was made in (its texts are written in it, and in others by `render`).
     #[serde(default)]
     pub locale: Option<String>,
     /// Class spells worth learning (spell IDs, every rank): the addon buys only these.

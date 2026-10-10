@@ -46,22 +46,36 @@ fn prepare_group(
     start: Option<StartState>,
     group: &[&str],
 ) -> Prepared {
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+    prepare_request(&PlanRequest {
+        group: group.iter().map(|c| (*c).to_owned()).collect(),
+        start,
+        ..request(race, class, to_level, params)
+    })
+}
+
+fn overrides() -> Overrides {
+    Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap()
+}
+
+fn request(race: &str, class: &str, to_level: i64, params: &[&str]) -> PlanRequest {
     let params: Vec<String> = params.iter().map(|p| (*p).to_owned()).collect();
-    let request = PlanRequest {
+    PlanRequest {
         race: race.into(),
         class: class.into(),
         from_level: 1,
         to_level,
         name: None,
-        params: Some(overrides.params.with_overrides(&params).unwrap()),
+        params: Some(overrides().params.with_overrides(&params).unwrap()),
         required_class_quests: None,
         professions: vec![],
         locale: None,
-        group: group.iter().map(|c| (*c).to_owned()).collect(),
-        start,
-    };
-    job::prepare(&database(), &overrides, &request, &|_| {}).unwrap()
+        group: vec![],
+        start: None,
+    }
+}
+
+fn prepare_request(request: &PlanRequest) -> Prepared {
+    job::prepare(&database(), &overrides(), request, &|_| {}).unwrap()
 }
 
 /// Orc warlock to 30, cautious: shared by the tests below.
@@ -444,7 +458,7 @@ fn orc_met_in_game(objectives: Vec<LogObjective>, complete: bool, rested: i64) -
 }
 
 /// A character met in game goes on from where it stands: its level, the quests it did open
-/// their follow-ups, and a quest of its log is turned in on the spot without being taken again.
+/// their follow-ups, and a quest of its log is there to take (as if never taken) next to it.
 #[test]
 fn a_character_met_in_game_goes_on_from_where_it_stands() {
     let new = orc_warlock();
@@ -464,15 +478,15 @@ fn a_character_met_in_game_goes_on_from_where_it_stands() {
     );
     assert_eq!(p.profile.from_level, 4);
     let scorpids = quest(&p, 789).unwrap();
-    let turn_in = Stop::quest(scorpids, Kind::TurnIn);
+    let accept = Stop::quest(scorpids, Kind::Accept);
     let mut trace = Vec::new();
     assert!(
-        planner(&p).simulate(&[turn_in], Some(&mut trace)).is_some(),
-        "turned in without being taken"
+        planner(&p).simulate(&[accept], Some(&mut trace)).is_some(),
+        "Cutting Teeth done: open"
     );
     let at = trace
         .iter()
-        .find(|t| matches!(t.event, Event::Stop { stop, .. } if stop == turn_in))
+        .find(|t| matches!(t.event, Event::Stop { stop, .. } if stop == accept))
         .unwrap();
     assert!(at.time < 30.0, "next to Gornek: no walk ({} s)", at.time);
     assert!(at.level >= 4);
@@ -497,7 +511,10 @@ fn rested_xp_doubles_kill_xp() {
             Some(orc_met_in_game(objectives(), false, rested)),
         );
         let scorpids = quest(&p, 789).unwrap();
-        let route = [Stop::quest(scorpids, Kind::Objective(0))];
+        let route = [
+            Stop::quest(scorpids, Kind::Accept),
+            Stop::quest(scorpids, Kind::Objective(0)),
+        ];
         planner(&p).simulate_full(&route, None).unwrap().1.mob_xp
     };
     let (plain, rested) = (mob_xp(0), mob_xp(100_000));
@@ -505,33 +522,33 @@ fn rested_xp_doubles_kill_xp() {
     assert!((rested - 2 * plain).abs() <= 10, "{rested} vs 2 x {plain}");
 }
 
-/// An objective half done in the log only needs its other half.
+/// The quests of the log count as never taken: the guide takes again those it wants, and
+/// abandons the others at its start (the quest the model does not have too).
 #[test]
-fn objective_started_in_game_needs_only_the_rest() {
-    let fighting = |done| {
-        let objectives = vec![LogObjective {
-            text: "Scorpid Worker Tail: 5/10".into(),
-            done,
-            need: 10,
-            finished: false,
-        }];
-        let p = prepare_from(
-            "orc",
-            "warlock",
-            30,
-            &["progression=cautious", "farm_on_way=false"],
-            Some(orc_met_in_game(objectives, false, 0)),
-        );
-        let scorpids = quest(&p, 789).unwrap();
-        let route = [Stop::quest(scorpids, Kind::Objective(0))];
-        planner(&p).simulate_full(&route, None).unwrap().1.fighting
+fn quests_of_the_log_the_guide_does_not_take_are_abandoned_first() {
+    let mut start = orc_met_in_game(vec![], false, 0);
+    start.log.push(LogQuest {
+        id: 999_999,
+        ..LogQuest::default()
+    });
+    let p = prepare_from("orc", "warlock", 30, &["progression=cautious"], Some(start));
+    let planner = planner(&p);
+    let scorpids = quest(&p, 789).unwrap();
+    let abandoned = |route: &[Stop]| -> Vec<i64> {
+        let guide = fg_route::export::build(&planner, &p.profile, route);
+        guide
+            .steps
+            .iter()
+            .take_while(|s| s.kind == fg_route::export::StepKind::Abandon)
+            .filter_map(|s| s.quest)
+            .collect()
     };
-    let (none, half) = (fighting(0), fighting(5));
-    assert!(half < 0.7 * none, "half done: {half} s, not started: {none} s");
+    assert_eq!(abandoned(&[]), [789, 999_999]);
+    assert_eq!(abandoned(&[Stop::quest(scorpids, Kind::Accept)]), [999_999]);
 }
 
 /// The hearthstone goes where the character bound it, the flight paths it knows are known, and
-/// the quests of its log the guide does not have keep their place in the log.
+/// the quests of its log leave the whole log to the guide (it abandons those it does not take).
 #[test]
 fn hearthstone_flight_paths_and_log_of_a_character_met_in_game() {
     let mut p = prepare("orc", "warlock", 30, &["progression=cautious"]);
@@ -554,7 +571,8 @@ fn hearthstone_flight_paths_and_log_of_a_character_met_in_game() {
     let initial = start.initial(&p.model, &p.world, &mut p.params, &mut notes);
     assert_eq!(initial.bind, Some(inn));
     assert_eq!(initial.known, 1 << node);
-    assert_eq!(p.params.quest_log_size, log_size - 1);
+    assert_eq!(p.params.quest_log_size, log_size);
+    assert_eq!(initial.log, [(999_999, String::new())]);
     assert_eq!(
         initial.pos.map(|(pos, _)| pos),
         Some(p.model.inns[inn].pos),
@@ -847,4 +865,67 @@ fn each_companion_keeps_its_race() {
         );
     }
     assert!(hunter.keys().all(|id| both.contains_key(id)));
+}
+
+/// A guide is saved without a language: it is written in any of them when shown or installed.
+/// The guide saved is the same whatever language it is made in, but for its texts.
+#[test]
+fn a_guide_is_written_in_any_language() {
+    use fg_route::export::{StepKind, read_route, render};
+    use fg_route::model::Names;
+    let saved = |locale: &str| {
+        let p = prepare_request(&PlanRequest {
+            locale: Some(locale.into()),
+            ..request("orc", "warlock", 4, &[])
+        });
+        let planner = planner(&p);
+        let route = planner.construct(|_| {});
+        let mut saved = serde_json::to_value(fg_route::export::build(&planner, &p.profile, &route)).unwrap();
+        for step in saved["steps"].as_array_mut().unwrap() {
+            step.as_object_mut().unwrap().remove("text");
+        }
+        saved.as_object_mut().unwrap().remove("locale");
+        saved
+    };
+    let in_english = saved("enUS");
+    assert_eq!(saved("frFR"), in_english);
+    let guide = read_route(in_english).unwrap();
+    let conn = database();
+    let names = |locale: &str| Names::load(&conn, locale).unwrap();
+    let accept = |g: &fg_route::Route| {
+        g.steps
+            .iter()
+            .find(|s| s.kind == StepKind::Accept && s.quest == Some(788))
+            .unwrap()
+            .clone()
+    };
+    let en = render(&guide, &names("enUS"));
+    let fr = render(&guide, &names("frFR"));
+    let de = render(&guide, &names("deDE"));
+    assert_eq!(accept(&en).quest_name.as_deref(), Some("Cutting Teeth"));
+    assert!(
+        accept(&en).text.starts_with("Accept Cutting Teeth from "),
+        "{}",
+        accept(&en).text
+    );
+    assert_eq!(accept(&fr).quest_name.as_deref(), Some("La dent tranchante"));
+    assert!(
+        accept(&fr).text.starts_with("Prendre La dent tranchante auprès de "),
+        "{}",
+        accept(&fr).text
+    );
+    assert!(
+        accept(&de).text.starts_with("Scharfe Zähne bei "),
+        "{}",
+        accept(&de).text
+    );
+    for locale in [
+        "enUS", "frFR", "deDE", "esES", "esMX", "ptBR", "ruRU", "koKR", "zhCN", "zhTW",
+    ] {
+        let g = render(&guide, &names(locale));
+        assert_eq!(g.locale.as_deref(), Some(locale));
+        for s in &g.steps {
+            assert!(!s.text.is_empty() && !s.text.contains('{'), "{locale}: {s:?}");
+        }
+    }
 }

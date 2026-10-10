@@ -54,7 +54,7 @@ export function CharacterPicker({ characters, start, onPick }: Props) {
       )}
       <small>
         {start
-          ? t("Le guide part de ce personnage : ses quêtes faites sont ignorées, celles de son journal sont terminées. En jeu, /fg profile (ou une déconnexion) met le profil à jour.")
+          ? t("Le guide part de ce personnage : ses quêtes faites sont ignorées ; celles de son journal sont reprises si elles servent, sinon abandonnées en première étape. En jeu, /fg profile (ou une déconnexion) met le profil à jour.")
           : characters?.length === 0
             ? t("Aucun personnage enregistré : connectez-vous en jeu avec l'addon installé, puis tapez /fg profile.")
             : t("Choisissez un personnage enregistré en jeu pour reprendre là où il en est.")}

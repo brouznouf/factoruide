@@ -58,7 +58,7 @@ export function SettingsPage({ onLanguage }: Props) {
             </option>
           ))}
         </select>
-        <small>{t("Aussi la langue proposée par défaut pour les guides.")}</small>
+        <small>{t("Aussi celle des guides affichés dans l'application.")}</small>
       </label>
       <label className="field">
         <span>{t("Dossier World of Warcraft")}</span>

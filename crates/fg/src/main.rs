@@ -201,7 +201,7 @@ fn main() -> Result<()> {
             },
         )?,
         Command::Show { name, full } => route::show(&cli.routes, &name, full)?,
-        Command::Addon => route::write_addon_routes(&cli.routes, &cli.addon_dir)?,
+        Command::Addon => route::write_addon_routes(&open()?, &cli.routes, &cli.addon_dir)?,
         Command::Replay { file, time_limit } => route::replay(&open()?, &overrides, &file, time_limit, &cli.routes)?,
         Command::Travel { from, to, faction } => travel::run(&open()?, &overrides, &faction, &from, &to)?,
         Command::Talents { out } => talents::run(

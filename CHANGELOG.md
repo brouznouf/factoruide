@@ -4,10 +4,24 @@ The notes of each version are the message of its tag (`scripts/release.sh`), sho
 
 ## Unreleased
 
+Guides in every language, guides started from your character's quest log.
+
+### Languages
+
+- Guides are no longer tied to a language: the app shows them in its own language, and the addon page chooses the language of the guides in the game, without computing them again.
+- Guide sentences in 10 languages (they were in French or English only).
+- Guides computed by an earlier version keep their texts: generate them again to translate them.
+- Guide files carry a format number: a guide made by an earlier version is migrated when opened or imported, one from a newer version asks to update the app.
+
+### Starting from your character
+
+- A guide started from a character no longer has to finish the quests of its log: they count as never taken, the guide takes again those that help, and abandons the others as its first steps (the addon moves on once they have left the log).
+
 ### Fixes
 
 - Objects gathered between kills wait for the level their own step needs (an object among stronger mobs).
 - Group: a companion of a class the character's race cannot play (a human's druid) gets the class quests of a race that can, with their whole chain.
+- App: ticking a box at the bottom of a long page no longer leaves the window scrolled down for good.
 
 ## 0.2.0 (2026-10-10)
 

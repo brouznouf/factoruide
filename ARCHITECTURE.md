@@ -18,9 +18,10 @@ between zones, boats, zeppelins and tram (`overrides/`), and the flight path net
 
 A guide can start from a character met in game (`job/start.rs`): the profile the addon saves
 (`Profile.lua`, read by the app from the SavedVariables) becomes the simulation's initial state:
-quests turned in, quests in the log with their objectives' progress, position, hearthstone, known
-flight paths, XP and rested XP, gear worn, last training (from the spells learned). Profession
-curves go through the character's skill.
+quests turned in, position, hearthstone, known flight paths, XP and rested XP, gear worn, last
+training (from the spells learned). Profession curves go through the character's skill. The
+quests of its log count as never taken: the optimizer takes again those it wants, the export
+abandons the others as the guide's first steps.
 
 `xp.rs` holds the rules of each game version (WoW Forever, Classic Era, TBC): XP per level,
 quest XP penalty by level difference, mob XP, max level, quest log size, mount level.
@@ -158,5 +159,17 @@ calculation gives a shorter guide.
 
 ## 4. The guide
 
-`export.rs` turns the best route into steps: a guide for the app (JSON) and a route for the addon
+`export/` turns the best route into steps: a guide for the app (JSON) and a route for the addon
 (Lua). The app shows the route improving live while the search runs.
+
+A saved guide has no language. Each step keeps its sentences as phrases: a template key
+(`accept`, `objective.kill`, `grind.xp`...) and its arguments (quests, NPCs, objects, items and
+zones by ID with their English name, numbers, professions). `render` writes them in one of the
+ten game languages (`templates.rs`), with the names of the database's translations (English where
+one is missing): the app in its own language, the addon in the one chosen on its page (each guide
+computed once). Objectives in English keep the game's own text.
+
+A guide file carries its format (`format.rs`). Reading an older one migrates it one format after
+the other; a migration that cannot carry a guide over refuses it (to compute again), and a guide
+of a newer format asks to update the app. Format 1 (before phrases) keeps its texts as they were
+written.

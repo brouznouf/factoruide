@@ -161,6 +161,9 @@ function IsDone(step, index)
         return C_QuestLog.IsComplete(q)
     elseif step.k == "turnin" then
         return C_QuestLog.IsQuestFlaggedCompleted(q) or AcceptSkipped(step, index or state.step)
+    elseif step.k == "abandon" then
+        -- Done once the quest has left the log (or was never in it).
+        return not C_QuestLog.IsOnQuest(q)
     elseif step.k == "grind" then
         -- To a level, or to an XP amount in it (grind placed before the end of the level).
         local level = UnitLevel("player")

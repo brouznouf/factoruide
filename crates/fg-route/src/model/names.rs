@@ -12,9 +12,19 @@ pub struct Names {
     npc: HashMap<i64, String>,
     item: HashMap<i64, String>,
     object: HashMap<i64, String>,
+    /// Zones and dungeons (AreaTable IDs).
+    zone: HashMap<i64, String>,
 }
 
 impl Names {
+    /// No translation: the English names everywhere, sentences in `locale`.
+    pub fn new(locale: &str) -> Self {
+        Self {
+            locale: locale.to_owned(),
+            ..Default::default()
+        }
+    }
+
     pub fn load(conn: &Connection, locale: &str) -> Result<Self> {
         let mut names = Names {
             locale: locale.to_owned(),
@@ -37,6 +47,7 @@ impl Names {
                 "npc" => &mut names.npc,
                 "item" => &mut names.item,
                 "object" => &mut names.object,
+                "zone" => &mut names.zone,
                 _ => continue,
             };
             map.insert(id, name); // ordered so that the preferred source is inserted last
@@ -44,13 +55,14 @@ impl Names {
         Ok(names)
     }
 
-    /// Translated name of an entity ("quest", "npc", "item", "object"), else `english`.
+    /// Translated name of an entity ("quest", "npc", "item", "object", "zone"), else `english`.
     pub fn get<'a>(&'a self, kind: &str, id: i64, english: &'a str) -> &'a str {
         let map = match kind {
             "quest" => &self.quest,
             "npc" => &self.npc,
             "item" => &self.item,
             "object" => &self.object,
+            "zone" => &self.zone,
             _ => return english,
         };
         map.get(&id).map_or(english, String::as_str)

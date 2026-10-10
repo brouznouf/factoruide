@@ -3,12 +3,14 @@
 
 use fg_route::Route;
 use fg_route::job::{self, Options, Overrides, PlanOutcome, PlanRequest, StartState};
+use fg_route::model::Names;
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::path::{Path, PathBuf};
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use tauri::{AppHandle, Emitter, Manager, State};
 
 /// Game database, overrides and addon, embedded at build time (see build.rs).
@@ -38,6 +40,10 @@ struct Settings {
     /// Addon behaviour, written to the addon's Config.lua on install.
     #[serde(default)]
     addon: serde_json::Map<String, serde_json::Value>,
+    /// Language the guides are written in in the addon (game locale); unset: each guide in the
+    /// language it was made in.
+    #[serde(default)]
+    guide_locale: Option<String>,
 }
 
 impl Default for Settings {
@@ -55,6 +61,7 @@ impl Default for Settings {
             contributor: None,
             last_contribution: None,
             addon: serde_json::Map::new(),
+            guide_locale: None,
         }
     }
 }
@@ -73,7 +80,9 @@ struct AppState {
     config_file: PathBuf,
     /// Where the embedded databases are unpacked, and those unpacked so far.
     db_dir: PathBuf,
-    dbs: Mutex<std::collections::HashMap<Edition, PathBuf>>,
+    dbs: Mutex<HashMap<Edition, PathBuf>>,
+    /// Names of the game in each language read so far, to write guides in it.
+    names: Mutex<HashMap<(Edition, String), Arc<Names>>>,
     /// Saved guides and debug exports.
     data_dir: PathBuf,
 }
@@ -114,6 +123,21 @@ impl AppState {
     }
     fn open_db(&self) -> CmdResult<Connection> {
         open_db(&self.db_path(self.edition())?)
+    }
+    /// Names of the current edition in a game language, read once.
+    fn names(&self, locale: &str) -> CmdResult<Arc<Names>> {
+        let key = (self.edition(), locale.to_owned());
+        if let Some(n) = self.names.lock().unwrap().get(&key) {
+            return Ok(n.clone());
+        }
+        let names = Arc::new(Names::load(&self.open_db()?, locale).map_err(err)?);
+        self.names.lock().unwrap().insert(key, names.clone());
+        Ok(names)
+    }
+    /// A guide written in `locale` (None: the language it was made in).
+    fn render(&self, route: &Route, locale: Option<&str>) -> CmdResult<Route> {
+        let locale = locale.or(route.locale.as_deref()).unwrap_or("enUS");
+        Ok(fg_route::export::render(route, &*self.names(locale)?))
     }
 }
 
@@ -406,7 +430,7 @@ impl AppState {
         Ok(GuideVersion {
             meta: serde_json::from_str(&read("meta.json")?).map_err(err)?,
             request: serde_json::from_str(&read("request.json")?).map_err(err)?,
-            outcome: serde_json::from_str(&read("outcome.json")?).map_err(err)?,
+            outcome: PlanOutcome::from_json(&read("outcome.json")?).map_err(err)?,
         })
     }
 
@@ -507,7 +531,7 @@ fn migrate_results(state: &AppState) {
             Some((
                 serde_json::from_str(&read("meta.json")?).ok()?,
                 serde_json::from_str(&read("request.json")?).ok()?,
-                serde_json::from_str(&read("outcome.json")?).ok()?,
+                PlanOutcome::from_json(&read("outcome.json")?).ok()?,
             ))
         })
         .collect();
@@ -588,8 +612,17 @@ fn get_guide(state: State<'_, AppState>, id: String) -> CmdResult<GuideSummary> 
     clippy::needless_pass_by_value,
     reason = "tauri commands take their arguments by value"
 )]
-fn get_version(state: State<'_, AppState>, guide: String, version: u32) -> CmdResult<GuideVersion> {
-    state.version(&guide, version)
+fn get_version(
+    state: State<'_, AppState>,
+    guide: String,
+    version: u32,
+    locale: Option<String>,
+) -> CmdResult<GuideVersion> {
+    let mut v = state.version(&guide, version)?;
+    if let Some(locale) = locale {
+        v.outcome.route = state.render(&v.outcome.route, Some(&locale))?;
+    }
+    Ok(v)
 }
 
 /// Install `version` of a guide in the addon (`None`: remove the guide from the addon).
@@ -669,7 +702,11 @@ fn install_addon(state: State<'_, AppState>) -> CmdResult<usize> {
         }
         std::fs::write(path, bytes).map_err(err)?;
     }
-    let routes = state.installed_routes();
+    let routes = state
+        .installed_routes()
+        .iter()
+        .map(|r| state.render(r, settings.guide_locale.as_deref()))
+        .collect::<CmdResult<Vec<_>>>()?;
     std::fs::write(dest.join("Routes.lua"), fg_route::export::to_lua(&routes)).map_err(err)?;
     job::write_addon_config(&dest, &settings.addon).map_err(err)?;
     Ok(routes.len())
@@ -743,8 +780,15 @@ fn export_version(app: AppHandle, state: State<'_, AppState>, guide: String, ver
     reason = "tauri commands take their arguments by value"
 )]
 fn import_guide(state: State<'_, AppState>, content: String) -> CmdResult<VersionMeta> {
-    let shared: SharedGuide =
+    let mut shared: serde_json::Value =
         serde_json::from_str(&content).map_err(|e| format!("not a Factoruide guide file: {e}"))?;
+    // A guide made by another version of the app, in the format of this one.
+    if let Some(outcome) = shared.get_mut("outcome") {
+        let o = PlanOutcome::from_value(outcome.take()).map_err(err)?;
+        *outcome = serde_json::to_value(o).map_err(err)?;
+    }
+    let shared: SharedGuide =
+        serde_json::from_value(shared).map_err(|e| format!("not a Factoruide guide file: {e}"))?;
     if shared.format != SHARE_FORMAT && shared.format != LEGACY_SHARE_FORMAT {
         return Err("not a Factoruide guide file".into());
     }
@@ -832,8 +876,7 @@ fn map_index(state: State<'_, AppState>) -> CmdResult<serde_json::Value> {
         .map_err(err)?;
     let mut index: serde_json::Value = serde_json::from_str(&text).map_err(err)?;
     // Zone names in the game's languages (`names`: locale -> name), when the data has them.
-    let mut names: std::collections::HashMap<i64, serde_json::Map<String, serde_json::Value>> =
-        std::collections::HashMap::new();
+    let mut names: HashMap<i64, serde_json::Map<String, serde_json::Value>> = HashMap::new();
     if let Ok(mut stmt) =
         db.prepare("SELECT id, locale, name FROM l10n WHERE entity_type = 'zone' AND name IS NOT NULL")
     {
@@ -913,7 +956,8 @@ fn main() {
                 settings: Mutex::new(settings),
                 config_file,
                 db_dir,
-                dbs: Mutex::new(std::collections::HashMap::default()),
+                dbs: Mutex::new(HashMap::default()),
+                names: Mutex::new(HashMap::default()),
                 data_dir,
             });
             migrate_guides(&app.state::<AppState>().data_dir);

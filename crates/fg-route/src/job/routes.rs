@@ -1,7 +1,10 @@
 //! Routes saved as JSON, and the addon's data files.
 
 use crate::export::{self, Route};
+use crate::model::Names;
 use anyhow::Result;
+use rusqlite::Connection;
+use std::collections::HashMap;
 use std::fmt::Write as _;
 use std::path::Path;
 
@@ -18,7 +21,7 @@ pub fn load_routes(routes_dir: &Path) -> Result<Vec<Route>> {
     files.sort();
     Ok(files
         .iter()
-        .filter_map(|f| serde_json::from_str(&std::fs::read_to_string(f).ok()?).ok())
+        .filter_map(|f| export::read_route(serde_json::from_str(&std::fs::read_to_string(f).ok()?).ok()?).ok())
         .collect())
 }
 
@@ -29,11 +32,27 @@ pub fn save_route(routes_dir: &Path, route: &Route) -> Result<()> {
     Ok(())
 }
 
-/// Regenerate the addon's Routes.lua from every saved route.
-pub fn write_addon_routes(routes_dir: &Path, addon_dir: &Path) -> Result<usize> {
-    let routes = load_routes(routes_dir)?;
+/// Regenerate the addon's Routes.lua from every saved route, each written in its own language.
+pub fn write_addon_routes(conn: &Connection, routes_dir: &Path, addon_dir: &Path) -> Result<usize> {
+    let routes = render_routes(conn, &load_routes(routes_dir)?, None)?;
     std::fs::write(addon_dir.join("Routes.lua"), export::to_lua(&routes))?;
     Ok(routes.len())
+}
+
+/// Routes written in `locale` (None: each in the language it was made in), the names of each
+/// language read once from the database.
+pub fn render_routes(conn: &Connection, routes: &[Route], locale: Option<&str>) -> Result<Vec<Route>> {
+    let mut names: HashMap<String, Names> = HashMap::new();
+    routes
+        .iter()
+        .map(|r| {
+            let locale = locale.or(r.locale.as_deref()).unwrap_or("enUS").to_owned();
+            if !names.contains_key(&locale) {
+                names.insert(locale.clone(), Names::load(conn, &locale)?);
+            }
+            Ok(export::render(r, &names[&locale]))
+        })
+        .collect()
 }
 
 /// Write the addon's Config.lua from the app's addon settings (flat key -> bool/number/string).

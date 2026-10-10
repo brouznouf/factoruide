@@ -2,20 +2,63 @@
 
 mod along;
 mod checkpoints;
+pub mod format;
 mod grind_spots;
-mod language;
 mod lua;
-mod text;
+mod phrase;
+mod templates;
 mod types;
 mod writer;
 
+pub use format::{FORMAT, read_route};
 pub use lua::to_lua;
+pub use phrase::{Arg, Phrase};
+pub use templates::Lang;
 pub use types::{Checkpoint, MapPointOut, Route, RouteProfession, Step, StepKind, Target, TargetKind};
 
-use crate::model::Profile;
+use crate::model::{Names, Profile};
 use crate::plan::{Breakdown, Event, Kind, Planner, Stop, Timed, fmt_time};
-use language::Language;
+use std::collections::HashSet;
 use writer::StepWriter;
+
+/// The guide written in the language of `names`: its sentences, and the names of its quests,
+/// targets, mobs, zones and professions. A guide of format 1 (texts only) keeps its texts.
+pub fn render(route: &Route, names: &Names) -> Route {
+    let mut out = route.clone();
+    let lang = Lang::of(&names.locale);
+    for step in &mut out.steps {
+        if step.say.is_empty() {
+            continue;
+        }
+        step.text = phrase::render_all(&step.say, names);
+        if let (Some(id), Some(name)) = (step.quest, &step.quest_name) {
+            step.quest_name = Some(names.get("quest", id, name).to_owned());
+        }
+        if let Some(t) = &mut step.target {
+            let kind = match t.kind {
+                TargetKind::Npc => "npc",
+                TargetKind::Object => "object",
+                TargetKind::Item => "item",
+                TargetKind::Dungeon => "zone",
+                _ => "",
+            };
+            t.name = names.get(kind, t.id, &t.name).to_owned();
+        }
+        for (name, id) in step.mobs.iter_mut().zip(&step.mob_ids) {
+            *name = names.get("npc", *id, name).to_owned();
+        }
+        if let (Some(id), Some(zone)) = (step.zone_id, &step.zone) {
+            step.zone = Some(names.get("zone", id, zone).to_owned());
+        }
+    }
+    for p in &mut out.professions {
+        if let Some(name) = templates::profession_name(&p.key, lang) {
+            p.name = name.to_owned();
+        }
+    }
+    out.locale = Some(names.locale.clone());
+    out
+}
 
 pub fn build(planner: &Planner<'_>, profile: &Profile, route: &[Stop]) -> Route {
     let mut trace = Vec::new();
@@ -42,13 +85,26 @@ pub fn build_traced(
     let writer = StepWriter {
         planner,
         route,
-        lang: Language::new(&planner.model.names),
         background: planner.background_objectives(route),
         announced,
     };
     let mut steps = Vec::new();
     // XP the route has after each step (in its level).
     let mut xps = Vec::new();
+    // The quests of the character's log the guide does not take are abandoned first.
+    let taken: HashSet<i64> = trace
+        .iter()
+        .filter_map(|t| match &t.event {
+            Event::Stop { stop, .. } if stop.kind == Kind::Accept => Some(planner.model.quests[stop.index as usize].id),
+            _ => None,
+        })
+        .collect();
+    if let Some(first) = trace.first() {
+        for (id, name) in planner.model.initial.log.iter().filter(|(id, _)| !taken.contains(id)) {
+            steps.push(writer.abandon_unused(first, *id, name));
+            xps.push(planner.model.initial.xp);
+        }
+    }
     let mut farmed = 0;
     for (n, t) in trace.iter().enumerate() {
         if hidden.contains(&n) {
@@ -60,7 +116,7 @@ pub fn build_traced(
             _ => {
                 let mut step = writer.step(n, t);
                 if farmed > 0 {
-                    writer.add_farm(&mut step, farmed);
+                    StepWriter::add_farm(&mut step, farmed);
                     farmed = 0;
                 }
                 steps.push(step);
@@ -79,6 +135,10 @@ pub fn build_traced(
             checkpoints: &mut checkpoints,
         },
     );
+    // The texts in the language the guide is made in (other languages: `render`).
+    for step in &mut steps {
+        step.text = phrase::render_all(&step.say, &planner.model.names);
+    }
     route_of(planner, profile, route, (total, breakdown), checkpoints, steps)
 }
 
@@ -92,6 +152,7 @@ fn route_of(
 ) -> Route {
     let model = &planner.model;
     Route {
+        format: FORMAT,
         name: profile.name.clone(),
         race_id: profile.race_id,
         class_id: profile.class_id,

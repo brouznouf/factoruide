@@ -99,12 +99,12 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
     );
     eprintln!("  dungeons: {} runs, {}", b.dungeon_runs, m(b.dungeons));
     job::save_route(&opts.routes_dir, route)?;
-    write_addon_routes(&opts.routes_dir, &opts.addon_dir)
+    write_addon_routes(conn, &opts.routes_dir, &opts.addon_dir)
 }
 
-/// Regenerate the addon's Routes.lua from every route JSON.
-pub fn write_addon_routes(routes_dir: &Path, addon_dir: &Path) -> Result<()> {
-    let n = job::write_addon_routes(routes_dir, addon_dir)?;
+/// Regenerate the addon's Routes.lua from every route JSON (each in its own language).
+pub fn write_addon_routes(conn: &Connection, routes_dir: &Path, addon_dir: &Path) -> Result<()> {
+    let n = job::write_addon_routes(conn, routes_dir, addon_dir)?;
     eprintln!("wrote {} ({n} routes)", addon_dir.join("Routes.lua").display());
     Ok(())
 }
@@ -112,8 +112,9 @@ pub fn write_addon_routes(routes_dir: &Path, addon_dir: &Path) -> Result<()> {
 /// Print a route as zone segments, with time and level at each change.
 pub fn show(routes_dir: &Path, name: &str, full: bool) -> Result<()> {
     let path = routes_dir.join(format!("{}.json", job::slug(name)));
-    let route: Route =
-        serde_json::from_str(&std::fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?)?;
+    let route: Route = fg_route::export::read_route(serde_json::from_str(
+        &std::fs::read_to_string(&path).with_context(|| format!("reading {}", path.display()))?,
+    )?)?;
     let t = fg_route::plan::fmt_time;
     println!(
         "{}: level {} -> {} in {}, {} quests, {} steps",

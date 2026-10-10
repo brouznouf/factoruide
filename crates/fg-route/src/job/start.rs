@@ -2,7 +2,7 @@
 //! saved at each logout) becomes the planner's initial state, so that the guide goes on from
 //! where the character stands.
 
-use crate::model::{Initial, Model, Objective, Quest};
+use crate::model::{Initial, Model};
 use crate::params::Params;
 use crate::world::World;
 use serde::{Deserialize, Serialize};
@@ -125,8 +125,8 @@ impl StartState {
         }
     }
 
-    /// The planner's initial state. Quests the model does not have still take a place in the
-    /// log (`params.quest_log_size` shrinks); `notes` says what could not be placed.
+    /// The planner's initial state (its log: see `Initial::log`); `notes` says what could not
+    /// be placed.
     pub fn initial(&self, model: &Model, world: &World, params: &mut Params, notes: &mut Vec<String>) -> Initial {
         let mut init = Initial {
             xp: self.xp.max(0),
@@ -142,23 +142,16 @@ impl StartState {
             .filter(|id| !in_log.contains(id))
             .filter_map(|id| model.index.get(id).copied())
             .collect();
-        let mut foreign = 0;
-        for q in &self.log {
-            let Some(&i) = model.index.get(&q.id) else {
-                foreign += 1;
-                continue;
-            };
-            init.accepted.push(i);
-            for (k, share) in objective_progress(&model.quests[i], q) {
-                init.progress.push((i, k, share));
-            }
-        }
-        if foreign > 0 {
-            params.quest_log_size = params.quest_log_size.saturating_sub(foreign);
-            notes.push(format!(
-                "{foreign} quests of the log are not in the guide (they keep their place)"
-            ));
-        }
+        // The quests of the log count as never taken: the guide takes those it wants (the addon
+        // skips taking a quest already in the log), the others are abandoned at its start.
+        init.log = self
+            .log
+            .iter()
+            .map(|q| {
+                let name = model.index.get(&q.id).map(|&i| model.quests[i].name.clone());
+                (q.id, name.unwrap_or_default())
+            })
+            .collect();
         init.pos = self.position.and_then(|p| at(world, p)).or_else(|| {
             self.bind_inn(model, world)
                 .map(|i| (model.inns[i].pos, model.inns[i].zone))
@@ -217,51 +210,6 @@ impl StartState {
 fn at(world: &World, p: MapPos) -> Option<(crate::world::Pos, i64)> {
     let zone = world.zone_of_ui_map(p.map)?;
     Some((world.to_world(zone, p.x, p.y)?, zone))
-}
-
-/// What the log says of a quest's objectives: (objective, share done) for those started. The
-/// log lists them in its own order: matched by the name of their target, then by the amount
-/// asked, then by position.
-fn objective_progress(q: &Quest, log: &LogQuest) -> Vec<(u8, f64)> {
-    let n = q.objectives.len().min(32);
-    if log.complete {
-        return (0..n).map(|k| (k as u8, 1.0)).collect();
-    }
-    let mut free = vec![true; n];
-    let mut out = Vec::new();
-    for (pos, lo) in log.objectives.iter().enumerate() {
-        let share = if lo.finished {
-            1.0
-        } else if lo.need > 0 {
-            (lo.done as f64 / lo.need as f64).clamp(0.0, 1.0)
-        } else {
-            0.0
-        };
-        let text = lo.text.to_lowercase();
-        let named = |o: &Objective| {
-            o.mobs
-                .iter()
-                .any(|(_, m)| !m.is_empty() && text.contains(&m.to_lowercase()))
-                || (!o.loc.name.is_empty() && text.contains(&o.loc.name.to_lowercase()))
-        };
-        let counted = |o: &Objective| lo.need > 0 && (o.count - lo.need as f64).abs() < 0.5;
-        let candidates = || (0..n).filter(|&k| free[k]);
-        let found = candidates()
-            .find(|&k| named(&q.objectives[k]) && counted(&q.objectives[k]))
-            .or_else(|| candidates().find(|&k| named(&q.objectives[k])))
-            .or_else(|| {
-                let mut c = candidates().filter(|&k| counted(&q.objectives[k]));
-                c.next().filter(|_| c.next().is_none())
-            })
-            .or_else(|| (pos < n && free[pos]).then_some(pos));
-        if let Some(k) = found {
-            free[k] = false;
-            if share > 0.0 {
-                out.push((k as u8, share));
-            }
-        }
-    }
-    out
 }
 
 #[cfg(test)]

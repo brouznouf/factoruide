@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, type GuideSummary, type GuideVersion, type Options, type VersionMeta } from "../api";
 import { Character } from "../components/Character";
 import { ResultView } from "../components/ResultView";
-import { useDate, useGameName, useT } from "../i18n";
+import { gameLocale, useDate, useGameName, useLang, useT } from "../i18n";
 
 interface Props {
   /** Options of the game version (race names and factions), when loaded. */
@@ -45,7 +45,12 @@ export function GuidesPage({ options, onRerun, onEdit }: Props) {
       setError(String(e));
     }
   };
-  const openVersion = (guide: string, version: number) => api.getVersion(guide, version).then(setOpen).catch((e) => setError(String(e)));
+  const lang = useLang();
+  const openVersion = (guide: string, version: number) =>
+    api
+      .getVersion(guide, version, gameLocale(lang))
+      .then(setOpen)
+      .catch((e) => setError(String(e)));
 
   const sorted = useMemo(() => {
     if (!guides || !sort) return guides;

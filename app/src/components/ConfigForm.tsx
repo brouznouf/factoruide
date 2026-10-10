@@ -8,7 +8,7 @@ import { ParamField } from "./ParamField";
 import { ProfessionPicker } from "./ProfessionPicker";
 import { WorldMap, type ContinentView, type ZoneState } from "./WorldMap";
 import { ZonePicker } from "./ZonePicker";
-import { LANGS, useGameName, useT } from "../i18n";
+import { useGameName, useT } from "../i18n";
 
 interface Props {
   options: Options;
@@ -84,7 +84,8 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
   const [toLevel, setToLevel] = useState(initial?.to_level ?? options.max_level);
   const [name, setName] = useState(initial?.name ?? "");
   const nameMissing = triedRun && !name.trim();
-  const [locale, setLocale] = useState(initial?.locale ?? defaultLocale);
+  // The language the guide is first written in (shown and installed in any language later).
+  const locale = initial?.locale ?? defaultLocale;
   const [params, setParams] = useState<Params>({ ...defaults, ...(initial?.params ?? {}) });
   const [classQuests, setClassQuests] = useState<string[] | null>(initial?.required_class_quests ?? null);
   const [professions, setProfessions] = useState<ProfessionGoal[]>(initial?.professions ?? []);
@@ -272,17 +273,6 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
                   <input type="number" min={2} max={options.max_level} value={toLevel} onChange={(e) => setToLevel(Number(e.target.value))} />
                 </label>
               </div>
-              <label className="field">
-                <span>{t("Langue du guide")}</span>
-                <select value={locale} onChange={(e) => setLocale(e.target.value)}>
-                  {LANGS.map((l) => (
-                    <option key={l.locale} value={l.locale}>
-                      {l.label}
-                    </option>
-                  ))}
-                </select>
-                <small>{t("Noms des quêtes, PNJ et objets traduits ; anglais quand une traduction manque. Phrases en français ou en anglais.")}</small>
-              </label>
             </section>
 
             <section className="panel">
