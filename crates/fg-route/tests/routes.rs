@@ -1,6 +1,7 @@
 //! Planner behavior on the Classic database: reproductions of the problems met on real guides.
 
 use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, StartState};
+use fg_route::model::{Guard, Initial, Objective, Spots};
 use fg_route::plan::{Event, Kind, Planner, Stop};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
@@ -33,6 +34,18 @@ fn prepare(race: &str, class: &str, to_level: i64, params: &[&str]) -> Prepared 
 
 /// The same for a character met in game (`start`).
 fn prepare_from(race: &str, class: &str, to_level: i64, params: &[&str], start: Option<StartState>) -> Prepared {
+    prepare_group(race, class, to_level, params, start, &[])
+}
+
+/// The same leveling with other players (`group`: their classes).
+fn prepare_group(
+    race: &str,
+    class: &str,
+    to_level: i64,
+    params: &[&str],
+    start: Option<StartState>,
+    group: &[&str],
+) -> Prepared {
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let params: Vec<String> = params.iter().map(|p| (*p).to_owned()).collect();
     let request = PlanRequest {
@@ -45,7 +58,7 @@ fn prepare_from(race: &str, class: &str, to_level: i64, params: &[&str], start: 
         required_class_quests: None,
         professions: vec![],
         locale: None,
-        group: vec![],
+        group: group.iter().map(|c| (*c).to_owned()).collect(),
         start,
     };
     job::prepare(&database(), &overrides, &request, &|_| {}).unwrap()
@@ -68,6 +81,41 @@ fn planner(p: &Prepared) -> Planner<'_> {
 
 fn quest(p: &Prepared, id: i64) -> Option<u32> {
     p.model.index.get(&id).map(|&i| i as u32)
+}
+
+/// Level 1 human warrior with only `n` quests of its own: taken and turned in at the start NPC,
+/// nothing to do, no XP (each test sets what it checks). Nothing done on the way.
+fn quests_at_start(n: usize) -> Prepared {
+    let mut p = prepare("human", "warrior", 2, &[]);
+    let here = p.model.start.clone();
+    let template = p.model.quests[0].clone();
+    p.model.quests = (0..n)
+        .map(|i| {
+            let mut q = template.clone();
+            (q.id, q.name, q.level, q.min_level, q.xp, q.xp_observed) =
+                (900_000 + i as i64, format!("quest {i}"), 1, 1, 0, true);
+            (q.starts, q.ends) = (vec![here.clone()], vec![here.clone()]);
+            q.objectives.clear();
+            (q.pre_all, q.pre_any, q.exclusive, q.breadcrumb_for) = (vec![], vec![], vec![], None);
+            (q.start_kills, q.start_uses, q.mandatory, q.skill, q.power) = (0.0, 0.0, false, None, None);
+            (q.start_guard, q.end_guard) = (Guard::default(), Guard::default());
+            q
+        })
+        .collect();
+    p.model.index = p.model.quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+    (p.model.chain_top, p.model.unlocks, p.model.rewards) = (vec![1; n], vec![0.0; n], vec![(vec![], vec![]); n]);
+    p.model.initial = Initial::default();
+    p.model.power = None;
+    p.model.trainers.clear();
+    p.model.explore.clear();
+    p.model.explore_by_zone.clear();
+    (
+        p.params.camp_radius,
+        p.params.along_corridor,
+        p.params.farm_on_way,
+        p.params.flight_learn_radius,
+    ) = (0.0, 0.0, false, 0.0);
+    p
 }
 
 /// Mobs killed on the way to an objective finish it: arriving there does not kill them again.
@@ -517,4 +565,106 @@ fn crowded_server_waits_for_escorts_and_rare_spawns() {
     assert!(wait(309) >= 900.0, "escort: {} s", wait(309));
     assert!(wait(34) >= 90.0, "Bellygrub: {} s", wait(34));
     assert!(wait(33) / 8.0 < wait(34) / 2.0, "wolves: {} s for 8 meats", wait(33));
+}
+
+/// The clean-up at the end of the search never makes the route worse: cutting the stops after
+/// the target level would drop a turn-in planned there that was made at hand before, losing its
+/// XP to grinding (it did).
+#[test]
+fn clean_up_keeps_a_quest_turned_in_at_hand() {
+    let mut p = quests_at_start(1);
+    (p.model.quests[0].xp, p.params.camp_radius) = (400, 80.0);
+    let planner = planner(&p);
+    let route = vec![Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)];
+    let (before, spent) = planner.simulate_full(&route, None).unwrap();
+    assert_eq!(spent.quest_xp, 400, "turned in at hand at the first stop");
+    let cleaned = planner.improve(route, std::time::Duration::ZERO, |_| {}, |_, _, _| {});
+    let (after, spent) = planner.simulate_full(&cleaned, None).unwrap();
+    assert_eq!(spent.quest_xp, 400);
+    assert!(after <= before + 0.5, "{before} -> {after}");
+}
+
+/// A quest taken at hand needs what its own stop needs: the camp around its giver (three level
+/// 25 mobs) is fought through at the same level, not at level 1 because another giver stands
+/// nearby (it was).
+#[test]
+fn quest_at_hand_waits_for_its_camp() {
+    let mut p = quests_at_start(2);
+    p.params.camp_radius = 80.0;
+    p.model.quests[1].start_guard = Guard {
+        level: 25,
+        count: 3,
+        elite: false,
+    };
+    let planner = planner(&p);
+    let taken_at = |route: &[Stop]| {
+        let mut trace = Vec::new();
+        planner.simulate_full(route, Some(&mut trace)).unwrap();
+        trace.iter().find_map(|t| {
+            matches!(t.event, Event::Stop { stop, .. } if stop == Stop::quest(1, Kind::Accept)).then_some(t.level)
+        })
+    };
+    let own_stop = taken_at(&[Stop::quest(1, Kind::Accept)]).unwrap();
+    assert!(own_stop > 20, "taken at level {own_stop}");
+    let at_hand = taken_at(&[Stop::quest(0, Kind::Accept), Stop::quest(1, Kind::Accept)]).unwrap();
+    assert_eq!(at_hand, own_stop);
+}
+
+/// The fixed time of an objective (the wait of a crowded server) is paid even when its mobs
+/// are met on the way: done there or at its stop, it takes as long (the wait was lost).
+#[test]
+fn wait_of_a_crowded_target_is_paid_on_the_way() {
+    let mut p = quests_at_start(1);
+    let here = p.model.start.pos;
+    let mut loc = p.model.start.clone();
+    loc.pos.x += 50.0;
+    let point = (here.x + 25.0, here.y);
+    p.model.quests[0].objectives = vec![Objective {
+        loc,
+        text: "crowded target".into(),
+        kills: 1.0,
+        mob_level: 1,
+        uses: 0.0,
+        extra: 900.0,
+        dungeon: None,
+        elite: false,
+        count: 1.0,
+        mobs: vec![],
+        pull: 1.0,
+        spots: Some(Spots {
+            continent: here.continent,
+            min: point,
+            max: point,
+            points: vec![point],
+        }),
+        guard: Guard::default(),
+    }];
+    p.model.initial.accepted = vec![0];
+    let fighting = |p: &Prepared| {
+        let route = [Stop::quest(0, Kind::Objective(0))];
+        planner(p).simulate_full(&route, None).unwrap().1.fighting
+    };
+    let at_its_stop = fighting(&p);
+    assert!(at_its_stop > 900.0);
+    p.params.along_corridor = 35.0;
+    let on_the_way = fighting(&p);
+    assert!(
+        (on_the_way - at_its_stop).abs() < 1.0,
+        "{at_its_stop} s at its stop, {on_the_way} s on the way"
+    );
+}
+
+/// In a group, the class quests required of each class are required, not only the
+/// character's: a warrior leveling with a warlock goes for the felsteed.
+#[test]
+fn group_class_quests_are_required() {
+    let p = prepare_group("human", "warrior", 40, &[], None, &["warlock"]);
+    let felsteed: Vec<bool> = p
+        .model
+        .quests
+        .iter()
+        .filter(|q| q.name == "Summon Felsteed")
+        .map(|q| q.mandatory)
+        .collect();
+    assert!(!felsteed.is_empty() && felsteed.iter().all(|&m| m), "{felsteed:?}");
 }

@@ -108,6 +108,10 @@ Personalized leveling guides for WoW Forever, Classic Era / Hardcore and TBC Ann
 
 ### Fixes
 
+- Quests taken or turned in on the way wait for the level their own step needs (a camp to fight through around the NPC).
+- The end of the calculation no longer drops a quest turned in on the way (its XP was replaced by grinding).
+- Crowded server: the wait for a contested target counts even when it is killed on the way.
+- Group: the class quests required of every class in the group are required, not only the character's.
 - Addon: quests marked done by hand (right click, `/fg skip`) and skipped steps belonged to the character: they also counted in other guides (quests never taken shown done). They now belong to their guide; a new version of a guide keeps the quests marked.
 - Addon: opening the world map raised a Lua error (step pins).
 - TBC: mobs of the blood elf and draenei starting zones give Azeroth XP (they counted as Outland: five times too much). Guides to 20 there are longer and take more quests.

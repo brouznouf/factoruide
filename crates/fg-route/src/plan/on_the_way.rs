@@ -180,14 +180,16 @@ impl Planner<'_> {
                 n += 1;
                 continue;
             }
+            // Its fixed time (the wait of a crowded server) is paid by share of the targets.
+            let wait = o.extra * kills / total;
             if o.kills > 0.0 {
-                let work = kills * self.combat().kill_time(s.level, s.bonus, o);
+                let work = kills * self.combat().kill_time(s.level, s.bonus, o) + wait;
                 s.time += work;
                 s.spent.fighting += work;
                 let mob_xp = (kills * self.combat().mob_xp(s.level, o)) as i64;
                 s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
             } else {
-                let work = kills * self.params.object_time;
+                let work = kills * self.params.object_time + wait;
                 s.time += work;
                 s.spent.fighting += work;
             }
@@ -306,11 +308,13 @@ impl Planner<'_> {
                         // Quests the route takes soon anyway (at the hub, instead of coming
                         // back). Taking one early must not break the route: keep room in the log
                         // for the quests it takes before it, do not block a quest it takes
-                        // later (an exclusive one, the breadcrumb to this one).
+                        // later (an exclusive one, the breadcrumb to this one). Nor go where the
+                        // route would not yet: its level, a camp to fight through (`gate_level`).
+                        let at_level = self.gate_level(s, Stop::quest(i, kind)) <= s.level;
                         let wanted = if start {
                             s.planned.flags[i as usize] & 1 != 0
                                 && s.planned.accept_at[i as usize] <= s.at + CAMP_AHEAD
-                                && q.min_level <= s.level
+                                && at_level
                                 && s.log + 1 + CAMP_LOG_MARGIN <= self.params.quest_log_size
                                 && self.availability().can_accept(s, i)
                                 && !self.blocks[i as usize].iter().any(|&y| {
@@ -326,6 +330,7 @@ impl Planner<'_> {
                                 && s.accepted[i as usize]
                                 && !s.turned[i as usize]
                                 && self.availability().objectives_done(s, i)
+                                && at_level
                         };
                         // Nearest to where we are, turn-ins first at the same distance (they
                         // unlock follow-ups).

@@ -18,6 +18,9 @@ impl QuestBuilder<'_> {
     ) -> Quest {
         let level = r.level.unwrap_or(1).max(1);
         let class_quest = r.sort == Some(-class_sort(self.profile.class_id));
+        // The class quests the group requires are those of every class in it (the power they
+        // give is the character's own class only).
+        let group_class_quest = self.profile.class_ids().iter().any(|&c| r.sort == Some(-class_sort(c)));
         let (pre_all, pre_any) = self.prerequisites(r.id, &givers.item_pre);
         let guard = |locs: &[super::types::Loc]| {
             locs.iter()
@@ -42,7 +45,7 @@ impl QuestBuilder<'_> {
             start_kills: givers.start_work.0,
             start_mob_level: givers.start_work.1,
             start_uses: givers.start_work.2,
-            mandatory: class_quest && self.profile.required_class_quests.iter().any(|n| n == &r.name),
+            mandatory: group_class_quest && self.profile.required_class_quests.iter().any(|n| n == &r.name),
             skill: skill.flatten(),
             power: class_quest
                 .then(|| self.profile.class_powers.iter().position(|(n, _)| n == &r.name))

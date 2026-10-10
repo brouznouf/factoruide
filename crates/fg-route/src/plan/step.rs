@@ -220,8 +220,9 @@ impl Planner<'_> {
     }
 
     /// Level the character needs before the stop (the optimizer avoids grinding to it when
-    /// quests are better).
-    fn gate_level(&self, s: &State, stop: Stop) -> i64 {
+    /// quests are better): the quest's own, or the one to fight through the camp around its
+    /// giver or turn-in. Quests taken or turned in at hand need it too (`while_here`).
+    pub(crate) fn gate_level(&self, s: &State, stop: Stop) -> i64 {
         let i = stop.index as usize;
         match stop.kind {
             Kind::Accept => {
@@ -376,8 +377,15 @@ impl Planner<'_> {
         } else {
             (0.0, (o.uses - done).max(0.0))
         };
+        // The fixed time, by share of the targets left (those met on the way paid theirs).
+        let total = if o.kills > 0.0 { o.kills } else { o.uses };
+        let left = if total > 0.0 {
+            (total - done).max(0.0) / total
+        } else {
+            1.0
+        };
         let kill_work = kills * self.combat().kill_time(s.level, s.bonus, o);
-        let other = uses * self.params.object_time + o.extra;
+        let other = uses * self.params.object_time + o.extra * left;
         s.time += kill_work + other;
         s.spent.fighting += kill_work + other;
         let mob_xp = (kills * self.combat().mob_xp(s.level, o)) as i64;
