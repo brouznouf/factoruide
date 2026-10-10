@@ -2,7 +2,7 @@
 
 The notes of each version are the message of its tag (`scripts/release.sh`), shown in the app.
 
-## Unreleased
+## 0.3.0 (2026-10-11)
 
 Guides in every language, guides started from your character's quest log.
 
