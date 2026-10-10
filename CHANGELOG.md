@@ -2,7 +2,7 @@
 
 The notes of each version are the message of its tag (`scripts/release.sh`), shown in the app.
 
-## Unreleased (0.2.0)
+## 0.2.0 (2026-10-10)
 
 Personalized leveling guides for WoW Forever, Classic Era / Hardcore and TBC Anniversary.
 
