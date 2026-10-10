@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { api, type GuideVersion, type Options, type PlanRequest } from "../api";
 import { ConfigForm } from "../components/ConfigForm";
-import type { Gain, OptimizeState } from "../components/OptimizeProgress";
+import { RACE_COLORS, type OptimizeState, type RaceSeries } from "../components/OptimizeProgress";
 import { ResultView } from "../components/ResultView";
 import { RunView } from "../components/RunView";
 import type { WorldPoint } from "../components/WorldMap";
@@ -29,25 +29,46 @@ export function NewRoutePage({ options, start, onBusy }: { options: Options; sta
   const [step, setStep] = useState<Step>("config");
   const [initial, setInitial] = useState<PlanRequest | null>(start.initial);
   const [optimize, setOptimize] = useState<OptimizeState | null>(null);
-  const [gains, setGains] = useState<Gain[]>([]);
-  const [history, setHistory] = useState<[number, number][]>([]);
+  // Time of each followed route over the optimization, and its color slot.
+  const [series, setSeries] = useState<RaceSeries>({});
+  const [colors, setColors] = useState<Record<number, number>>({});
   const [route, setRoute] = useState<WorldPoint[]>([]);
   const [log, setLog] = useState<string[]>([]);
   const [result, setResult] = useState<GuideVersion | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const lastBest = useRef<number | null>(null);
+  const slots = useRef(new Map<number, number>());
   const running = useRef(false);
 
   useEffect(() => {
     const off = api.onPlanProgress((m) => {
       if (m.startsWith("@progress ")) {
         const next = JSON.parse(m.slice(10)) as OptimizeState;
-        const prev = lastBest.current;
-        if (next.best != null) {
-          if (prev != null && next.best < prev - 0.5) setGains((g) => [...g.slice(-50), { saved: prev - next.best!, at: next.elapsed ?? 0 }]);
-          if (prev == null || next.best < prev - 0.5) setHistory((h) => [...h, [next.elapsed ?? 0, next.best!]]);
-          lastBest.current = next.best;
+        const routes = next.routes ?? [];
+        // Color follows the route: a route keeps its slot while shown, a new one takes a free slot.
+        const shown = new Set(routes.map((r) => r.id));
+        for (const id of [...slots.current.keys()]) if (!shown.has(id)) slots.current.delete(id);
+        for (const r of routes) {
+          if (slots.current.has(r.id)) continue;
+          const used = new Set(slots.current.values());
+          const free = [...Array(RACE_COLORS).keys()].find((k) => !used.has(k));
+          if (free != null) slots.current.set(r.id, free);
+        }
+        setColors(Object.fromEntries(slots.current));
+        // Once the best starts are picked (or without a race), each route's time is drawn from
+        // the end of the qualification.
+        if (next.phase === "optimize" && next.stage !== "qualify" && routes.length) {
+          const at = next.elapsed ?? 0;
+          setSeries((prev) => {
+            const out = { ...prev };
+            for (const r of routes) {
+              const points = out[r.id] ?? [];
+              const last = points[points.length - 1];
+              if (!last) out[r.id] = [[next.qualify ?? 0, r.time]];
+              else if (Math.abs(last[1] - r.time) > 0.5) out[r.id] = [...points, [at, r.time]];
+            }
+            return out;
+          });
         }
         setOptimize(next);
       } else if (m.startsWith("@route ")) {
@@ -70,11 +91,11 @@ export function NewRoutePage({ options, start, onBusy }: { options: Options; sta
     setError(null);
     setMessage(null);
     setOptimize(null);
-    setGains([]);
-    setHistory([]);
+    setSeries({});
+    setColors({});
+    slots.current.clear();
     setRoute([]);
     setLog([]);
-    lastBest.current = null;
     try {
       const meta = await api.planRoute(request);
       setResult(await api.getVersion(meta.guide, meta.version));
@@ -127,11 +148,12 @@ export function NewRoutePage({ options, start, onBusy }: { options: Options; sta
           }}
         />
       )}
-      {step === "run" && <RunView state={optimize} gains={gains} history={history} route={route} log={log} />}
+      {step === "run" && <RunView state={optimize} series={series} colors={colors} route={route} log={log} />}
       {step === "result" && result && (
         <ResultView
           key={`${result.meta.guide}-${result.meta.version}`}
           version={result}
+          options={options}
           onOpenVersion={(n) => api.getVersion(result.meta.guide, n).then(setResult)}
           onRerun={(v) => run(v.request)}
           onEdit={(r) => {

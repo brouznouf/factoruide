@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { api, fmtTime, type GuideSummary, type GuideVersion } from "../api";
+import { api, fmtTime, type GuideSummary, type GuideVersion, type Options } from "../api";
+import { Character } from "./Character";
 import { fmtGain } from "./OptimizeProgress";
 import { RouteView } from "./RouteView";
-import { useDate, useGameName, useT } from "../i18n";
+import { useDate, useT } from "../i18n";
 import { WorldMap, routeMarkers, type ContinentView, type WorldPoint } from "./WorldMap";
 
 interface Props {
@@ -13,6 +14,8 @@ interface Props {
   onEdit: (version: GuideVersion) => void;
   /** Show another version of the guide. */
   onOpenVersion?: (n: number) => void;
+  /** Options of the game version (race names and factions), when loaded. */
+  options?: Options | null;
 }
 
 /** Time difference as "identique", "−3 min" (faster) or "+1h02" (slower). */
@@ -23,10 +26,9 @@ function Delta({ seconds }: { seconds: number }) {
 }
 
 /** A guide version: its figures, its versions, its map and steps, and what to do with it. */
-export function ResultView({ version, onRerun, onEdit, onOpenVersion }: Props) {
+export function ResultView({ version, onRerun, onEdit, onOpenVersion, options }: Props) {
   const t = useT();
   const date = useDate();
-  const gameName = useGameName();
   const { meta, outcome } = version;
   const route = outcome.route;
   const [guide, setGuide] = useState<GuideSummary | null>(null);
@@ -68,12 +70,10 @@ export function ResultView({ version, onRerun, onEdit, onOpenVersion }: Props) {
             {installed && <span className="tag installed">{t("installée")}</span>}
           </h2>
           <div className="muted">
+            <Character race={version.request.race} klass={version.request.class} group={version.request.group} options={options} /> ·{" "}
             {t("Calculé le {date} · niveau {from} → {to}", { date: date(meta.created), from: route.from_level, to: route.to_level })}
             {meta.data && <> · {meta.data.split(":")[0]}</>}
             {meta.imported && <> · {t("importé")}</>}
-            {(version.request.group?.length ?? 0) > 0 && (
-              <> · {t("groupe : {classes}", { classes: [version.request.class, ...(version.request.group ?? [])].map(gameName).join(", ") })}</>
-            )}
           </div>
         </div>
         <div className="result-figures">

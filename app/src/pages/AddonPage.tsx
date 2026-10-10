@@ -47,7 +47,7 @@ const OPTIONS: { title: string; options: Option[] }[] = [
     title: "Quêtes",
     options: [
       { key: "autoAccept", kind: "bool", label: "Accepter les quêtes automatiquement", help: "Maintenir Maj en parlant au PNJ pour désactiver.", default: true },
-      { key: "routeQuestsOnly", kind: "bool", label: "Seulement les quêtes du guide", default: false },
+      { key: "routeQuestsOnly", kind: "bool", label: "Seulement les quêtes du guide", help: "Les autres quêtes ne sont pas acceptées automatiquement ; vous pouvez toujours les prendre à la main.", default: true },
       { key: "autoTurnIn", kind: "bool", label: "Rendre les quêtes automatiquement", default: true },
       { key: "autoReward", kind: "bool", label: "Choisir la récompense (meilleur prix de vente)", help: "Celle prévue par le guide d'abord, sinon la meilleure amélioration d'équipement.", default: false },
     ],

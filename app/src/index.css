@@ -12,6 +12,15 @@
   --grid: #2c2c29;
   --good: #3fae5d;
   --bad: #e66767;
+  /* Categorical series, in this order (validated for color vision deficiencies). */
+  --cat-1: #3987e5;
+  --cat-2: #d95926;
+  --cat-3: #199e70;
+  --cat-4: #c98500;
+  --cat-5: #d55181;
+  --cat-6: #008300;
+  --cat-7: #9085e9;
+  --cat-8: #e66767;
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   font-size: 14px;
   background: var(--surface-0);
@@ -33,6 +42,14 @@
     --grid: #e4e3df;
     --good: #23803d;
     --bad: #c23a39;
+    --cat-1: #2a78d6;
+    --cat-2: #eb6834;
+    --cat-3: #1baf7a;
+    --cat-4: #eda100;
+    --cat-5: #e87ba4;
+    --cat-6: #008300;
+    --cat-7: #4a3aa7;
+    --cat-8: #e34948;
   }
 }
 
@@ -495,6 +512,45 @@ h3 {
   padding: 5px 6px;
   vertical-align: top;
 }
+.table th button.sort {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font-weight: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.table th button.sort:hover {
+  color: var(--text-primary);
+}
+.sort-arrow {
+  font-size: 10px;
+  color: var(--text-muted);
+}
+.table th[aria-sort="ascending"] .sort-arrow,
+.table th[aria-sort="descending"] .sort-arrow {
+  color: var(--accent);
+}
+.character {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.faction-icon {
+  flex: none;
+  vertical-align: middle;
+}
+/* Class colors are the game's: on a dark chip in both themes (the priest is white). */
+.class-name {
+  background: #1a1a19;
+  border-radius: 4px;
+  padding: 0 6px;
+  font-weight: 600;
+  line-height: 1.6;
+}
 .table tr.selected td {
   background: var(--surface-2);
 }
@@ -640,17 +696,6 @@ h3 {
 @media (prefers-reduced-motion: reduce) {
   .progress.indeterminate > div { animation: none; width: 100%; opacity: 0.4; }
 }
-.gains {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  font-size: 13px;
-}
-.gains li { color: var(--text-muted); }
-.gains li.latest { color: inherit; }
 
 /* Wizard ------------------------------------------------------------------ */
 .wizard {
@@ -990,27 +1035,6 @@ button.big {
 .run-sub {
   color: var(--text-secondary);
 }
-.run-saved {
-  color: var(--good);
-  font-weight: 600;
-}
-.run-toast {
-  padding: 10px 16px;
-  border-radius: 8px;
-  background: rgba(63, 174, 93, 0.15);
-  border: 1px solid var(--good);
-  font-size: 16px;
-  animation: toast-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
-}
-.run-toast strong {
-  color: var(--good);
-}
-@keyframes toast-in {
-  from {
-    transform: translateY(-8px) scale(0.92);
-    opacity: 0;
-  }
-}
 .progress.big {
   height: 10px;
 }
@@ -1024,66 +1048,82 @@ button.big {
     background-position: -200% 0;
   }
 }
-.run-grid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 12px;
-}
-@media (max-width: 1100px) {
-  .run-grid {
-    grid-template-columns: 1fr;
-  }
-}
-.run-side {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-.gains li {
-  animation: toast-in 0.35s ease-out;
-}
-.best-chart {
-  margin: 0;
-}
-.best-chart figcaption {
-  font-weight: 600;
-  margin-bottom: 6px;
-}
-.best-chart svg {
-  width: 100%;
-  height: auto;
-}
-.best-chart .grid {
-  stroke: var(--grid);
-}
-.best-chart .axis {
-  fill: var(--text-muted);
-  font-size: 11px;
-}
-.best-chart .series-line {
-  fill: none;
-  stroke: var(--series-1);
-  stroke-width: 2;
-}
-.best-chart .series-area {
-  fill: var(--series-1);
-  opacity: 0.12;
-}
-.best-chart .series-dot {
-  fill: var(--series-1);
-  stroke: var(--surface-1);
-  stroke-width: 2;
-}
 .empty-chart {
   color: var(--text-muted);
   padding: 30px 0;
   text-align: center;
 }
+.race-chart {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.race-chart figcaption {
+  font-weight: 600;
+}
+.race-chart svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.race-times {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+.race-times li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.race-times li.selected {
+  color: var(--text-primary);
+  font-size: 16px;
+}
+.swatch {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  vertical-align: middle;
+}
+.race-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  opacity: 0.85;
+}
+.race-line.selected {
+  stroke-width: 3.5;
+  opacity: 1;
+}
+.race-dot {
+  stroke: var(--surface-1);
+  stroke-width: 2;
+  transition: cy 0.4s ease-out;
+}
+.race-wait {
+  font-size: 13px;
+  paint-order: stroke;
+  stroke: var(--surface-1);
+  stroke-width: 8px;
+  stroke-linejoin: round;
+}
+.race-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  max-width: 900px;
+}
 @media (prefers-reduced-motion: reduce) {
   .route-line.live,
-  .progress.big > div,
-  .run-toast,
-  .gains li {
+  .progress.big > div {
     animation: none;
   }
 }

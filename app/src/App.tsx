@@ -133,6 +133,7 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
         {page === "results" && (
           <GuidesPage
             key={edition ?? ""}
+            options={options}
             onRerun={(v: GuideVersion) => openWizard({ initial: v.request, rerun: true })}
             onEdit={(v: GuideVersion) => openWizard({ initial: v.request, rerun: false })}
           />

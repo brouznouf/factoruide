@@ -1,6 +1,7 @@
 import { useMemo, useRef, useState } from "react";
 import { type Options, type Params, type PlanRequest, type ProfessionGoal } from "../api";
 import { SIMPLE_KEYS, budgets, presets, sections } from "../paramSchema";
+import { ClassName } from "./Character";
 import { DungeonPicker } from "./DungeonPicker";
 import { ParamField } from "./ParamField";
 import { ProfessionPicker } from "./ProfessionPicker";
@@ -317,7 +318,7 @@ export function ConfigForm({ options, initial, defaultLocale, onRun, onExport }:
               <div className="companions">
                 <div className="companion me">
                   <span className="muted">{t("Vous")}</span>
-                  <strong>{gameName(options.classes.find((c) => c.key === klass)?.name ?? klass)}</strong>
+                  <ClassName klass={klass} />
                 </div>
                 {group.map((c, i) => (
                   <div className="companion" key={i}>

@@ -1,19 +1,29 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { api, type GuideSummary, type GuideVersion } from "../api";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { api, type GuideSummary, type GuideVersion, type Options, type VersionMeta } from "../api";
+import { Character } from "../components/Character";
 import { ResultView } from "../components/ResultView";
 import { useDate, useGameName, useT } from "../i18n";
 
 interface Props {
+  /** Options of the game version (race names and factions), when loaded. */
+  options: Options | null;
   onRerun: (version: GuideVersion) => void;
   onEdit: (version: GuideVersion) => void;
 }
 
+type SortKey = "addon" | "name" | "character" | "levels" | "time" | "versions" | "created";
+
+/** The version a row shows: the one installed, else the latest. */
+const shownVersion = (g: GuideSummary): VersionMeta => g.versions.find((v) => v.version === g.installed) ?? g.versions[0];
+
 /** Every guide with its versions; a checkbox installs (the latest version of) a guide in the addon. */
-export function GuidesPage({ onRerun, onEdit }: Props) {
+export function GuidesPage({ options, onRerun, onEdit }: Props) {
   const t = useT();
   const date = useDate();
   const gameName = useGameName();
   const [guides, setGuides] = useState<GuideSummary[] | null>(null);
+  // Column sorted by (none: the saved order), ascending or not.
+  const [sort, setSort] = useState<{ key: SortKey; asc: boolean } | null>(null);
   const [open, setOpen] = useState<GuideVersion | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -37,6 +47,33 @@ export function GuidesPage({ onRerun, onEdit }: Props) {
   };
   const openVersion = (guide: string, version: number) => api.getVersion(guide, version).then(setOpen).catch((e) => setError(String(e)));
 
+  const sorted = useMemo(() => {
+    if (!guides || !sort) return guides;
+    const character = (v: VersionMeta) => `${gameName(options?.races.find((r) => r.key === v.race)?.name ?? v.race)} ${gameName(v.class)}`;
+    const compare: Record<SortKey, (a: GuideSummary, b: GuideSummary) => number> = {
+      addon: (a, b) => Number(a.installed != null) - Number(b.installed != null),
+      name: (a, b) => a.name.localeCompare(b.name),
+      character: (a, b) => character(a.versions[0]).localeCompare(character(b.versions[0])),
+      levels: (a, b) => shownVersion(a).from_level - shownVersion(b).from_level || shownVersion(a).to_level - shownVersion(b).to_level,
+      time: (a, b) => shownVersion(a).total_time - shownVersion(b).total_time,
+      versions: (a, b) => a.versions[0].version - b.versions[0].version,
+      created: (a, b) => a.versions[0].created - b.versions[0].created,
+    };
+    return [...guides].sort((a, b) => (sort.asc ? 1 : -1) * compare[sort.key](a, b) || a.name.localeCompare(b.name));
+  }, [guides, sort, gameName, options]);
+
+  /** A column header sorting the table: ascending first, then descending. */
+  const header = (key: SortKey, label: string, title?: string) => (
+    <th aria-sort={sort?.key === key ? (sort.asc ? "ascending" : "descending") : "none"} title={title}>
+      <button className="sort" onClick={() => setSort(sort?.key === key ? { key, asc: !sort.asc } : { key, asc: true })}>
+        {label}
+        <span className="sort-arrow" aria-hidden="true">
+          {sort?.key === key ? (sort.asc ? "▲" : "▼") : "↕"}
+        </span>
+      </button>
+    </th>
+  );
+
   if (open) {
     return (
       <div>
@@ -49,7 +86,14 @@ export function GuidesPage({ onRerun, onEdit }: Props) {
         >
           {t("← Tous les guides")}
         </button>
-        <ResultView key={`${open.meta.guide}-${open.meta.version}`} version={open} onRerun={onRerun} onEdit={onEdit} onOpenVersion={(n) => openVersion(open.meta.guide, n)} />
+        <ResultView
+          key={`${open.meta.guide}-${open.meta.version}`}
+          version={open}
+          options={options}
+          onRerun={onRerun}
+          onEdit={onEdit}
+          onOpenVersion={(n) => openVersion(open.meta.guide, n)}
+        />
       </div>
     );
   }
@@ -79,7 +123,7 @@ export function GuidesPage({ onRerun, onEdit }: Props) {
       {error && <div className="error">{error}</div>}
     </>
   );
-  if (!guides) return error ? notices : <div className="empty">{t("Chargement…")}</div>;
+  if (!guides || !sorted) return error ? notices : <div className="empty">{t("Chargement…")}</div>;
   if (guides.length === 0)
     return (
       <div className="results">
@@ -96,20 +140,20 @@ export function GuidesPage({ onRerun, onEdit }: Props) {
       <table className="table">
         <thead>
           <tr>
-            <th title={t("Installé dans l'addon")}>{t("Addon")}</th>
-            <th>{t("Guide")}</th>
-            <th>{t("Personnage")}</th>
-            <th>{t("Niveaux")}</th>
-            <th>{t("Temps estimé")}</th>
-            <th>{t("Versions")}</th>
-            <th>{t("Calculé le")}</th>
+            {header("addon", t("Addon"), t("Installé dans l'addon"))}
+            {header("name", t("Guide"))}
+            {header("character", t("Personnage"))}
+            {header("levels", t("Niveaux"))}
+            {header("time", t("Temps estimé"))}
+            {header("versions", t("Versions"))}
+            {header("created", t("Calculé le"))}
             <th />
           </tr>
         </thead>
         <tbody>
-          {guides.map((g) => {
+          {sorted.map((g) => {
             const latest = g.versions[0];
-            const shown = g.versions.find((v) => v.version === g.installed) ?? latest;
+            const shown = shownVersion(g);
             return (
               <tr key={g.id}>
                 <td>
@@ -133,7 +177,9 @@ export function GuidesPage({ onRerun, onEdit }: Props) {
                   )}
                   {latest.imported && <span className="tag">{t("importé")}</span>}
                 </td>
-                <td>{[latest.class, ...(latest.group ?? [])].map(gameName).join(", ")}</td>
+                <td>
+                  <Character race={latest.race} klass={latest.class} group={latest.group} options={options} />
+                </td>
                 <td>
                   {shown.from_level} → {shown.to_level}
                 </td>

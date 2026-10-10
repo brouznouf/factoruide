@@ -76,6 +76,14 @@ Personalized leveling guides for WoW Forever, Classic Era / Hardcore and TBC Ann
 - Fixed: Deeprun Tram quests, Frostmane Hold.
 - Fixed: the paladin's Tome of Divinity chain.
 
+### In the app
+
+- Generation: the times of the best routes are shown while they are picked, then each one's curve as it improves, in its own color; the guide kept is in bold, with why it is not always the shortest (it is scored on comfort too).
+- The calculation keeps to its time: 2 minutes by default (30 s to pick the best starts, then 1 min 30 to improve them), 6 minutes for a thorough one.
+- My guides: class colors, a Horde or Alliance emblem with the race, and every column sorts the list.
+- The guide page shows the character the same way.
+- The addon accepts only the guide's quests by default (Addon page, "Only the guide's quests"); others can still be taken by hand.
+
 ### Addon look
 
 - The addon takes the game's look by default.

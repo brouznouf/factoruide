@@ -9,6 +9,21 @@ professions, and how strong your character gets with its gear and spells) and se
 fastest route to your target level, killing the mobs met on the way and grinding only a small
 share of each level. The in-game addon then takes you through it step by step.
 
+![Generating a guide: the times of the best routes improving live, the guide kept in bold, and the route on the map](docs/generation.png)
+
+## An experiment
+
+Factoruide is experimental. A guide comes from a simulation of the game, and the simulation is
+not the game: it can produce inconsistencies (a quest you cannot get, a detour that makes no
+sense, a time far from yours). When you meet one, please
+[open an issue](https://github.com/brouznouf/factoruide/issues) with your guide attached: the
+"Share" button of its page saves it as a `.fgguide` file.
+
+It will never replace the guides written by hand, and that is not the goal: their authors play
+their route again and again, and a good one will most likely be faster. Factoruide builds a
+guide of your own that holds together as a whole and gives your leveling real directions: which
+zones to do, the level to reach before moving on from each, and where the XP is.
+
 ## A guide that fits you
 
 - **Your character**: race, class and level range: start a guide at level 1, or at the level
@@ -49,8 +64,10 @@ share of each level. The in-game addon then takes you through it step by step.
    code-signed). New versions are then offered by the app at startup.
 2. **Addon** page: choose your WoW folder, then "Save and install the addon".
 3. **New guide**: pick your character, professions, zones, dungeons and play style, then start
-   the generation. The route improves live (time saved, XP chart, route drawn on the map); the
-   longer the calculation, the shorter the guide.
+   the generation (2 minutes, 6 for a thorough one). The best starting routes are picked first,
+   then improved: their times go down live on the chart and the route is drawn on the map. The
+   guide kept (in bold) is the best balance between play time and comfort (little grinding, few
+   trips between zones), not always the very shortest.
 4. **My guides**: tick the version to install in the addon, then `/reload` in game.
 
 ## In game: the addon

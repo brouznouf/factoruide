@@ -175,6 +175,6 @@ export const presets: { label: string; values: Partial<Params> }[] = [
 /** Calculation presets: the whole optimization time. */
 export const budgets: { label: string; ms: number }[] = [
   { label: "Aperçu (10 s)", ms: 10_000 },
-  { label: "Normal (1 min)", ms: 60_000 },
-  { label: "Poussé (5 min)", ms: 300_000 },
+  { label: "Normal (2 min)", ms: 120_000 },
+  { label: "Poussé (6 min)", ms: 360_000 },
 ];

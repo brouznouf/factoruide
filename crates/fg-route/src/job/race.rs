@@ -30,6 +30,8 @@ pub fn optimize(planner: &Planner<'_>, progress: Progress<'_>) -> Vec<Stop> {
         quiet: plan.race,
         progress,
     };
+    // The budget counts from here: the first routes' construction is part of it.
+    live.started.get_or_init(Instant::now);
     let results = std::thread::scope(|scope| {
         scope.spawn(|| live.watch(&searcher));
         let finalists = if plan.race {
@@ -127,6 +129,15 @@ struct Live<'p> {
     candidates: usize,
     kept: usize,
     budget: Duration,
+    qualify: Duration,
+    /// When the final began (seconds into the optimization).
+    final_at: OnceLock<f64>,
+    /// Time spent building candidate routes, and how many were built.
+    built: Mutex<(Duration, u32)>,
+    /// Best (score, play time) of each candidate's route so far.
+    routes: Mutex<Vec<Option<(f64, f64)>>>,
+    /// Candidates in the final.
+    finalists: Mutex<Vec<usize>>,
     started: OnceLock<Instant>,
     /// (best start score, its play time, best score, its play time)
     scores: Mutex<(f64, f64, f64, f64)>,
@@ -145,6 +156,15 @@ impl<'p> Live<'p> {
             candidates: plan.candidates,
             kept: plan.kept,
             budget: plan.budget,
+            qualify: plan.qualify,
+            final_at: OnceLock::new(),
+            built: Mutex::new((Duration::ZERO, 0)),
+            routes: Mutex::new(vec![None; plan.candidates.max(plan.threads)]),
+            finalists: Mutex::new(if plan.race {
+                Vec::new()
+            } else {
+                (0..plan.threads).collect()
+            }),
             started: OnceLock::new(),
             scores: Mutex::new((f64::INFINITY, f64::INFINITY, f64::INFINITY, f64::INFINITY)),
             best_route: Mutex::new((Vec::new(), false)),
@@ -165,7 +185,33 @@ impl<'p> Live<'p> {
         }
     }
 
-    /// `@progress {json}`: phase, elapsed, budget, play time of the best start and best route.
+    /// The routes followed: while qualifying the best `kept` candidates so far, in the final the
+    /// finalists. Each as {id, time (play), score}; `selected` is the best score (the route kept).
+    fn followed(&self) -> (Vec<serde_json::Value>, Option<usize>) {
+        let routes = self.routes.lock().unwrap();
+        let ids: Vec<usize> = if self.final_stage.load(Ordering::Relaxed) {
+            self.finalists.lock().unwrap().clone()
+        } else {
+            let mut ranked: Vec<usize> = (0..routes.len()).filter(|&k| routes[k].is_some()).collect();
+            ranked.sort_by(|&a, &b| routes[a].unwrap().0.total_cmp(&routes[b].unwrap().0));
+            ranked.truncate(self.kept);
+            ranked
+        };
+        let shown: Vec<(usize, f64, f64)> = ids
+            .into_iter()
+            .filter_map(|k| routes.get(k).copied().flatten().map(|(score, play)| (k, score, play)))
+            .filter(|(_, score, _)| score.is_finite())
+            .collect();
+        let selected = shown.iter().min_by(|a, b| a.1.total_cmp(&b.1)).map(|r| r.0);
+        let list = shown
+            .iter()
+            .map(|&(id, score, play)| serde_json::json!({ "id": id, "time": play, "score": score }))
+            .collect();
+        (list, selected)
+    }
+
+    /// `@progress {json}`: phase, elapsed, budget, play time of the best start and best route,
+    /// and the routes followed (see `followed`).
     fn report(&self) {
         let (_, start, _, best) = *self.scores.lock().unwrap();
         let mut msg = match self.started.get() {
@@ -178,6 +224,11 @@ impl<'p> Live<'p> {
                 "best": if best.is_finite() { Some(best) } else { None },
             }),
         };
+        if self.started.get().is_some() {
+            let (routes, selected) = self.followed();
+            msg["routes"] = routes.into();
+            msg["selected"] = selected.into();
+        }
         if self.race {
             msg["stage"] = if self.final_stage.load(Ordering::Relaxed) {
                 "final"
@@ -188,6 +239,12 @@ impl<'p> Live<'p> {
             msg["candidates"] = self.candidates.into();
             msg["qualified"] = self.qualified.load(Ordering::Relaxed).into();
             msg["finalists"] = self.kept.into();
+            msg["qualify"] = self
+                .final_at
+                .get()
+                .copied()
+                .unwrap_or(self.qualify.as_secs_f64())
+                .into();
         }
         (self.progress)(&format!("@progress {msg}"));
     }
@@ -210,7 +267,10 @@ impl<'p> Live<'p> {
         (self.progress)(&format!("@route {}", serde_json::json!({ "points": points })));
     }
 
-    fn on_best(&self, first: &Cell<bool>, score: f64, play: f64, route: &[Stop]) {
+    fn on_best(&self, k: usize, first: &Cell<bool>, score: f64, play: f64, route: &[Stop]) {
+        if let Some(r) = self.routes.lock().unwrap().get_mut(k) {
+            *r = Some((score, play));
+        }
         let mut s = self.scores.lock().unwrap();
         if first.replace(false) && score < s.0 {
             (s.0, s.1) = (score, play);
@@ -246,14 +306,21 @@ impl Searcher<'_> {
             }
         };
         let first = Cell::new(route.is_none());
-        let start = route.unwrap_or_else(|| planner.construct(log));
+        let start = route.unwrap_or_else(|| {
+            let begun = Instant::now();
+            let route = planner.construct(log);
+            let mut built = self.live.built.lock().unwrap();
+            built.0 += begun.elapsed();
+            built.1 += 1;
+            route
+        });
         let begun = *self.live.started.get_or_init(Instant::now);
         let route = planner.improve(
             start,
             until.saturating_sub(begun.elapsed()),
             log,
             |score, play, route| {
-                self.live.on_best(&first, score, play, route);
+                self.live.on_best(k, &first, score, play, route);
             },
         );
         let base = Planner::new(self.model, self.world, self.params, self.profile);
@@ -261,13 +328,16 @@ impl Searcher<'_> {
     }
 }
 
-/// Qualification: every candidate gets the same short search, `threads` at a time; the best
+/// Qualification: every candidate gets the same short search, `threads` at a time, within
+/// `plan.qualify`: a new candidate starts only when its route can be built in the time left
+/// (building takes as long as it took the others; `plan.candidates` is a maximum). The best
 /// `kept` go to the final.
 fn qualify(searcher: &Searcher<'_>, plan: &RacePlan) -> Vec<(usize, Option<Vec<Stop>>)> {
     let rounds = plan.candidates.div_ceil(plan.threads) as u32;
     let slot = plan.qualify / rounds;
     let next = AtomicUsize::new(0);
     let qualified: Mutex<Vec<(f64, usize, Vec<Stop>)>> = Mutex::new(Vec::new());
+    let elapsed = || searcher.live.started.get().map_or(Duration::ZERO, Instant::elapsed);
     std::thread::scope(|scope| {
         for _ in 0..plan.threads {
             scope.spawn(|| {
@@ -276,8 +346,21 @@ fn qualify(searcher: &Searcher<'_>, plan: &RacePlan) -> Vec<(usize, Option<Vec<S
                     if k >= plan.candidates {
                         break;
                     }
+                    let (time, n) = *searcher.live.built.lock().unwrap();
+                    let building = time / n.max(1);
+                    if k >= plan.threads && elapsed() + building > plan.qualify {
+                        break;
+                    }
+                    // The thread's last candidate (no time to build another after it) improves
+                    // until the end of the qualification.
+                    let last = n > 0 && elapsed() + building * 2 > plan.qualify;
                     let round = (k / plan.threads) as u32 + 1;
-                    let (score, route) = searcher.search(k, None, slot * round);
+                    let until = if last {
+                        plan.qualify
+                    } else {
+                        (slot * round).min(plan.qualify)
+                    };
+                    let (score, route) = searcher.search(k, None, until);
                     qualified.lock().unwrap().push((score, k, route));
                     searcher.live.qualified.fetch_add(1, Ordering::Relaxed);
                 }
@@ -291,8 +374,11 @@ fn qualify(searcher: &Searcher<'_>, plan: &RacePlan) -> Vec<(usize, Option<Vec<S
             (searcher.progress)(&format!("candidate {k}: {}", fmt_time(*score)));
         }
     }
+    let kept: Vec<(usize, Option<Vec<Stop>>)> = q.into_iter().take(plan.kept).map(|(_, k, r)| (k, Some(r))).collect();
+    *searcher.live.finalists.lock().unwrap() = kept.iter().map(|(k, _)| *k).collect();
+    searcher.live.final_at.get_or_init(|| elapsed().as_secs_f64());
     searcher.live.final_stage.store(true, Ordering::Relaxed);
-    q.into_iter().take(plan.kept).map(|(_, k, r)| (k, Some(r))).collect()
+    kept
 }
 
 /// Final: the kept routes improved until the end of the budget.

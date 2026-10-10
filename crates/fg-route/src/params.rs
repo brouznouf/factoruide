@@ -82,7 +82,8 @@ pub struct Params {
     /// Greedy construction: weight of the quests of a dungeon close in level (lower = the
     /// dungeon is planned more readily; forced dungeons use 0.25).
     pub dungeon_quest_weight: f64,
-    /// Race: routes built (each its own seed and construction plan) and briefly improved...
+    /// Race: routes built (each its own seed and construction plan) and briefly improved, at most
+    /// (no new one once its construction would end after the qualification)...
     pub candidates: usize,
     /// ...during this share of `time_limit_ms` (0 = no race), then the best `threads` (or
     /// `finalists`) are optimized for the rest.
@@ -311,7 +312,7 @@ impl Default for Params {
             excluded_dungeons: vec![],
             dungeon_pickup_ahead: 8,
             construction: Construction::Greedy,
-            time_limit_ms: 60_000,
+            time_limit_ms: 120_000,
             threads: std::thread::available_parallelism().map_or(4, |n| n.get().min(8)),
             seed: 42,
             group_size: 1,
