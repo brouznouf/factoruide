@@ -1,0 +1,23 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Frame name="FGStepPinTemplate" mixin="FGStepPinMixin" virtual="true">
+        <Size x="18" y="18"/>
+        <Layers>
+            <Layer level="ARTWORK">
+                <Texture parentKey="Dot" file="Interface\COMMON\Indicator-Gray" setAllPoints="true"/>
+            </Layer>
+            <Layer level="OVERLAY">
+                <FontString parentKey="Number" inherits="GameFontNormalSmall" justifyH="CENTER">
+                    <Anchors>
+                        <Anchor point="CENTER"/>
+                    </Anchors>
+                    <Color r="1" g="1" b="1"/>
+                </FontString>
+            </Layer>
+        </Layers>
+        <Scripts>
+            <OnLoad method="OnLoad"/>
+            <OnEnter method="OnMouseEnter"/>
+            <OnLeave method="OnMouseLeave"/>
+        </Scripts>
+    </Frame>
+</Ui>

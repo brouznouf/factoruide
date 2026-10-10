@@ -1,0 +1,65 @@
+name: Release
+
+# Pushing a tag vX.Y.Z (scripts/release.sh) builds the Windows installer, signs the update and
+# publishes them as a GitHub release, with latest.json: installed apps offer it at startup.
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-${{ github.ref }}
+
+env:
+  CARGO_TERM_COLOR: always
+  # Built into the app: where the "Contribute" page sends the players' data.
+  FG_CONTRIBUTION_SERVER: https://factoruide.brouznouf.com
+  # A published build: it checks for updates (local and development builds do not).
+  FG_RELEASE: "1"
+
+jobs:
+  windows:
+    name: Windows installer
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v5
+      # The app version (Cargo.toml) comes from the tag; the tag message is the release notes.
+      - name: Version and notes from the tag
+        id: tag
+        shell: bash
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          sed -i "0,/^version = .*/s//version = \"$version\"/" app/src-tauri/Cargo.toml
+          git fetch --force origin "refs/tags/$GITHUB_REF_NAME:refs/tags/$GITHUB_REF_NAME"
+          {
+            echo "notes<<EOF"
+            git tag -l --format='%(contents)' "$GITHUB_REF_NAME"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+      - name: Rust toolchain (from rust-toolchain.toml)
+        run: rustup toolchain install
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - name: Frontend dependencies
+        working-directory: app
+        run: npm ci
+      - uses: tauri-apps/tauri-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+        with:
+          projectPath: app
+          tagName: ${{ github.ref_name }}
+          releaseName: Factoruide ${{ github.ref_name }}
+          releaseBody: ${{ steps.tag.outputs.notes }}
+          releaseDraft: false
+          prerelease: false
+          uploadUpdaterJson: true
+          updaterJsonPreferNsis: true

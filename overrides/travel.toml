@@ -1,0 +1,93 @@
+# Transport links (boats, zeppelins, trams, portals) used by the route planner.
+# Coordinates are zone percent coordinates (AreaTable zone ID, x, y) of where you board.
+# `seconds` = average wait + ride. Links work both ways unless `one_way = true`.
+#
+# Positions marked "npc" come from the zeppelin/ship masters' spawns in the database;
+# "approx" ones are estimates to replace with values recorded in game (`transit` events
+# of the Factoruide addon, imported by `fg collector`).
+
+# --- Horde (npc) ---
+[[link]]
+name = "Zeppelin Orgrimmar - Undercity"
+faction = "Horde"
+from = { zone = 14, x = 50.82, y = 13.54 } # Frezza
+to = { zone = 85, x = 60.74, y = 58.87 }   # Zapetta
+seconds = 240
+
+[[link]]
+name = "Zeppelin Orgrimmar - Grom'gol"
+faction = "Horde"
+from = { zone = 14, x = 50.69, y = 12.89 } # Snurk Bucksquick
+to = { zone = 33, x = 31.43, y = 29.91 }   # Nez'raz
+seconds = 240
+
+[[link]]
+name = "Zeppelin Undercity - Grom'gol"
+faction = "Horde"
+from = { zone = 85, x = 61.78, y = 59.18 } # Hin Denburg
+to = { zone = 33, x = 31.54, y = 29.36 }   # Squibby Overspeck
+seconds = 240
+
+# --- Neutral (npc) ---
+[[link]]
+name = "Boat Booty Bay - Ratchet"
+from = { zone = 33, x = 26.08, y = 73.35 } # Grizzlowe
+to = { zone = 17, x = 63.54, y = 38.61 }   # Grimble
+seconds = 210
+
+# --- Alliance (approx) ---
+[[link]]
+name = "Deeprun Tram Ironforge - Stormwind"
+faction = "Alliance"
+from = { zone = 1537, x = 84.1, y = 53.1 }  # Questie dungeon entrances
+to = { zone = 1519, x = 71.98, y = 27.61 } # Questie dungeon entrances
+seconds = 120
+
+[[link]]
+name = "Boat Menethil Harbor - Auberdine"
+faction = "Alliance"
+from = { zone = 11, x = 4.6, y = 57.1 }  # approx
+to = { zone = 148, x = 32.4, y = 43.8 }  # approx
+seconds = 210
+
+[[link]]
+name = "Boat Menethil Harbor - Theramore"
+faction = "Alliance"
+from = { zone = 11, x = 5.0, y = 63.5 }  # approx
+to = { zone = 15, x = 71.6, y = 56.4 }   # approx
+seconds = 210
+
+[[link]]
+name = "Boat Auberdine - Rut'theran Village"
+faction = "Alliance"
+from = { zone = 148, x = 33.2, y = 40.2 } # approx
+to = { zone = 141, x = 55.0, y = 93.0 }   # approx
+seconds = 150
+
+# --- Skyborne starting island (Zephras Isle) ---
+# The last island quest sends you away: "The Magical City of Dalaran" (Alliance) to Denaaris
+# Stargale in Dalaran, "The Earthen Ring" (Horde) to Alaana Stormwalker in Mulgore. The trip
+# is a teleport from the quest giver (no way back).
+[[link]]
+name = "Zephras Isle - Dalaran"
+faction = "Alliance"
+from = { zone = 16593, x = 66.59, y = 79.92 } # Quest giver of The Magical City of Dalaran
+to = { zone = 36, x = 12.37, y = 56.3 }       # Denaaris Stargale
+seconds = 30
+one_way = true
+
+[[link]]
+name = "Zephras Isle - Mulgore"
+faction = "Horde"
+from = { zone = 16593, x = 59.15, y = 79.73 } # Quest giver of The Earthen Ring
+to = { zone = 215, x = 33.4, y = 22.5 }       # Alaana Stormwalker
+seconds = 30
+one_way = true
+
+[[link]]
+name = "Skyborne Portal to Stormwind"
+faction = "Alliance"
+from = { zone = 36, x = 12.04, y = 56.21 } # portal object
+to = { zone = 1519, x = 74.0, y = 45.0 }   # approx: arrival in Stormwind
+seconds = 15
+one_way = true

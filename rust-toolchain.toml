@@ -1,0 +1,4 @@
+# Pinned so that a new clippy release can't break the CI: bump it on purpose.
+[toolchain]
+channel = "1.99.0"
+components = ["rustfmt", "clippy"]

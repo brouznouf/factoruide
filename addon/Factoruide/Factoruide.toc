@@ -1,0 +1,32 @@
+## Interface: 11508, 11509, 16001, 20505, 20506
+## Title: Factoruide
+## Notes: Leveling route guide for WoW Forever, quest automation and fast loot. Also records quest data while you play.
+## Notes-frFR: Guide de pexing pour WoW Forever, quêtes automatiques et loot rapide. Enregistre aussi les données de quêtes.
+## Author: Joel Wurtz
+## Version: 0.5.0
+## SavedVariables: FactoruideDB
+## OptionalDeps: ElvUI, EllesmereUI, SpartanUI
+
+Core.lua
+Config.lua
+Settings.lua
+Skin.lua
+TalentBuilds_forever.lua
+TalentBuilds_classic.lua
+TalentBuilds_tbc.lua
+Collector.lua
+Automation.lua
+Routes.lua
+Arrow.lua
+Guide.lua
+Macro.lua
+ItemButton.lua
+Merchant.lua
+Gear.lua
+Talents.lua
+Safety.lua
+Party.lua
+Timing.lua
+MapPins.lua
+MapPins.xml
+Tracker.lua

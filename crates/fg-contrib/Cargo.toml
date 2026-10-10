@@ -1,0 +1,21 @@
+[package]
+name = "fg-contrib"
+publish = false
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[dependencies]
+anyhow = "1"
+mlua = { version = "0.11", features = ["lua51", "vendored", "send"], optional = true }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+[features]
+default = ["local"]
+# Reading a game client folder (SavedVariables need Lua). Without it, only the contribution
+# format and its validation (what the contribution server needs).
+local = ["dep:mlua"]
+
+[lints]
+workspace = true

@@ -1,0 +1,36 @@
+# cargo deny check: known vulnerabilities, licenses and origin of the dependencies.
+
+[graph]
+all-features = true
+
+[advisories]
+# Unmaintained crates are reported, but only for direct dependencies.
+unmaintained = "workspace"
+ignore = []
+
+[licenses]
+confidence-threshold = 0.9
+allow = [
+    "MIT",
+    "MPL-2.0",
+    "CDLA-Permissive-2.0",
+    "Apache-2.0",
+    "Apache-2.0 WITH LLVM-exception",
+    "BSD-2-Clause",
+    "BSD-3-Clause",
+    "ISC",
+    "Unicode-3.0",
+    "Zlib",
+]
+
+[licenses.private]
+ignore = true
+
+[bans]
+multiple-versions = "allow"
+wildcards = "deny"
+allow-wildcard-paths = true
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

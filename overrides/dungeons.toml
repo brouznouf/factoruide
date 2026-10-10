@@ -1,0 +1,17 @@
+# Dungeons: entrances missing from Questie (new Forever dungeons) and per-dungeon tuning.
+# Defaults: levels from the dungeon's quests, minutes = 40 + level (50-120),
+# kills = 60 + 2 x level, XP shared by a 5-man group (see dungeon_xp_share).
+#
+# [[dungeon]]
+# area = 1581                  # AreaTable ID of the instance
+# name = "The Deadmines"
+# entrance = { zone = 40, x = 42.5, y = 71.7 }
+# min_level = 17
+# max_level = 26
+# minutes = 60
+# kills = 120
+
+[[dungeon]]
+area = 16919
+name = "The Hall of Thanes"
+entrance = { zone = 1537, x = 33.0, y = 47.5 } # approx: near its quest givers in Ironforge

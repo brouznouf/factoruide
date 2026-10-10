@@ -1,0 +1,262 @@
+# Walkable passages between zones (roads, gates, bridges, tunnels, passes).
+# Walking from one zone to another goes through these points instead of a straight line
+# over mountains or water. Zones are AreaTable IDs.
+#
+# Position: `subzone` = name of the explorable map area (position read from the game's
+# map exploration data), or `at` = zone percent coordinates. Entries marked "approx" are
+# estimates to refine (the collector records real zone crossings).
+
+# --- Eastern Kingdoms -----------------------------------------------------------
+
+[[pass]]
+name = "Stormwind gates"
+zones = [1519, 12] # Stormwind City, Elwynn Forest
+at = { zone = 12, x = 32.0, y = 49.5 } # approx
+
+[[pass]]
+name = "Elwynn - Westfall road"
+zones = [12, 40]
+subzone = "Forest's Edge"
+
+[[pass]]
+name = "Three Corners"
+zones = [12, 44] # Elwynn, Redridge
+subzone = "Three Corners"
+
+[[pass]]
+name = "Elwynn - Duskwood bridge"
+zones = [12, 10]
+subzone = "The Darkened Bank"
+
+[[pass]]
+name = "Westfall - Duskwood road"
+zones = [40, 10]
+subzone = "The Dust Plains"
+
+[[pass]]
+name = "Duskwood - Stranglethorn road"
+zones = [10, 33]
+subzone = "Rebel Camp"
+
+[[pass]]
+name = "Duskwood - Deadwind road"
+zones = [10, 41]
+subzone = "Tranquil Gardens Cemetery"
+
+[[pass]]
+name = "Lakeridge Highway"
+zones = [10, 44] # Duskwood, Redridge
+subzone = "Lakeridge Highway"
+
+[[pass]]
+name = "Deadwind - Swamp of Sorrows road"
+zones = [41, 8]
+subzone = "Misty Valley"
+
+[[pass]]
+name = "Swamp of Sorrows - Blasted Lands"
+zones = [8, 4]
+at = { zone = 8, x = 47.0, y = 86.0 } # approx
+
+[[pass]]
+name = "Redridge - Burning Steppes pass"
+zones = [44, 46]
+subzone = "Render's Camp"
+
+[[pass]]
+name = "Blackrock Mountain"
+zones = [46, 51] # Burning Steppes, Searing Gorge
+subzone = "Blackrock Mountain"
+
+[[pass]]
+name = "Gates of Ironforge"
+zones = [1, 1537]
+at = { zone = 1, x = 53.5, y = 35.0 } # approx
+
+[[pass]]
+name = "South Gate Outpost"
+zones = [1, 38] # Dun Morogh, Loch Modan
+subzone = "South Gate Outpost"
+
+[[pass]]
+name = "North Gate Outpost"
+zones = [1, 38]
+subzone = "North Gate Outpost"
+
+[[pass]]
+name = "Dun Algaz"
+zones = [38, 11] # Loch Modan, Wetlands
+at = { zone = 38, x = 25.5, y = 10.0 } # approx
+
+[[pass]]
+name = "Loch Modan - Badlands road"
+zones = [38, 3]
+at = { zone = 38, x = 46.0, y = 88.0 } # approx
+
+[[pass]]
+name = "Thandol Span"
+zones = [11, 45] # Wetlands, Arathi
+subzone = "Thandol Span"
+
+[[pass]]
+name = "Thoradin's Wall"
+zones = [45, 267] # Arathi, Hillsbrad
+subzone = "Thoradin's Wall"
+
+[[pass]]
+name = "Hillsbrad - Alterac road"
+zones = [267, 36]
+subzone = "Gallows' Corner"
+
+[[pass]]
+name = "Hillsbrad - Silverpine road"
+zones = [267, 130]
+subzone = "Southpoint Tower"
+
+[[pass]]
+name = "Hillsbrad - Hinterlands path"
+zones = [267, 47]
+subzone = "Aerie Peak"
+
+[[pass]]
+name = "Silverpine - Tirisfal road"
+zones = [130, 85]
+at = { zone = 85, x = 54.0, y = 88.0 } # approx
+
+[[pass]]
+name = "Undercity entrance"
+zones = [85, 1497]
+at = { zone = 85, x = 62.0, y = 73.0 } # approx
+
+[[pass]]
+name = "The Bulwark"
+zones = [85, 28] # Tirisfal, Western Plaguelands
+subzone = "The Bulwark"
+
+[[pass]]
+name = "Western - Eastern Plaguelands road"
+zones = [28, 139]
+at = { zone = 28, x = 69.0, y = 50.0 } # approx
+
+[[pass]]
+name = "Alterac - Western Plaguelands road"
+zones = [36, 28]
+subzone = "Dandred's Fold"
+
+# --- Kalimdor ---------------------------------------------------------------------
+
+[[pass]]
+name = "Darnassus entrance"
+zones = [141, 1657] # Teldrassil, Darnassus
+at = { zone = 141, x = 30.5, y = 51.0 } # approx
+
+[[pass]]
+name = "Darkshore - Ashenvale road"
+zones = [148, 331]
+subzone = "The Master's Glaive"
+
+[[pass]]
+name = "Ashenvale - Stonetalon path"
+zones = [331, 406]
+at = { zone = 331, x = 4.0, y = 63.0 } # approx
+
+[[pass]]
+name = "Mor'shan Rampart"
+zones = [331, 17] # Ashenvale, The Barrens
+subzone = "The Mor'shan Rampart"
+
+[[pass]]
+name = "Bough Shadow"
+zones = [331, 16] # Ashenvale, Azshara
+subzone = "Bough Shadow"
+
+[[pass]]
+name = "Ashenvale - Felwood road"
+zones = [331, 361]
+subzone = "Deadwood Village"
+
+[[pass]]
+name = "Timbermaw Hold"
+zones = [361, 618] # Felwood, Winterspring
+subzone = "Timbermaw Hold"
+
+[[pass]]
+name = "Felwood - Moonglade path"
+zones = [361, 493]
+at = { zone = 361, x = 62.5, y = 2.0 } # approx
+
+[[pass]]
+name = "Stonetalon - Barrens road"
+zones = [406, 17]
+at = { zone = 17, x = 34.0, y = 27.0 } # approx
+
+[[pass]]
+name = "Stonetalon - Desolace road"
+zones = [406, 405]
+at = { zone = 405, x = 55.0, y = 4.0 } # approx
+
+[[pass]]
+name = "Barrens - Durotar bridge"
+zones = [17, 14]
+at = { zone = 14, x = 34.0, y = 42.0 } # approx
+
+[[pass]]
+name = "Barrens - Mulgore road"
+zones = [17, 215]
+at = { zone = 215, x = 73.0, y = 48.0 } # approx
+
+[[pass]]
+name = "Barrens - Dustwallow road"
+zones = [17, 15]
+at = { zone = 15, x = 28.0, y = 48.0 } # approx
+
+[[pass]]
+name = "The Great Lift"
+zones = [17, 400] # The Barrens, Thousand Needles
+subzone = "The Great Lift"
+
+[[pass]]
+name = "Orgrimmar gates"
+zones = [14, 1637]
+at = { zone = 14, x = 45.5, y = 12.0 } # approx
+
+[[pass]]
+name = "Thunder Bluff lifts"
+zones = [215, 1638]
+subzone = "Thunder Bluff"
+
+[[pass]]
+name = "Thousand Needles - Feralas road"
+zones = [400, 357]
+at = { zone = 357, x = 89.0, y = 41.0 } # approx
+
+[[pass]]
+name = "Desolace - Feralas road"
+zones = [405, 357]
+at = { zone = 405, x = 45.0, y = 95.0 } # approx
+
+[[pass]]
+name = "Thousand Needles - Tanaris road"
+zones = [400, 440]
+at = { zone = 440, x = 51.0, y = 21.0 } # approx
+
+[[pass]]
+name = "Tanaris - Un'Goro path"
+zones = [440, 490]
+at = { zone = 440, x = 27.0, y = 57.0 } # approx
+
+[[pass]]
+name = "Un'Goro - Silithus path"
+zones = [490, 1377]
+at = { zone = 490, x = 29.0, y = 22.0 } # approx
+
+# --- Shortcuts (off-road; used when the "shortcuts" setting is on) -------------------
+
+[[pass]]
+# Climb the mountains north-east of Dun Morogh (from ~59.4,42.8 up to the ridge) and walk
+# down into the Wetlands next to Menethil Harbor, skipping Loch Modan and Dun Algaz.
+# Well-known route, see https://www.youtube.com/watch?v=9afQTimaiZQ
+name = "Dun Morogh -> Wetlands mountain skip"
+zones = [1, 11] # Dun Morogh, Wetlands
+at = { zone = 1, x = 66.9, y = 8.5 }
+shortcut = true

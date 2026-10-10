@@ -1,0 +1,41 @@
+# Class quests the route must include (by quest name; every race variant and the
+# prerequisites of the chain are included). Other class quests are optional: planned only
+# when worth the time, like normal quests.
+#
+# `power`: class quests that make the character stronger (a pet, a form), by quest name, with
+# the power gained when turned in: fights take `1 / power` of their time afterwards (1.25 = 25%
+# faster). It counts as levels of power like gear (1.4 = 3.2 levels), so the route goes for
+# these quests early. Several quests of the same name count once.
+
+[warrior]
+# Item rewards only (Bartleby, Elura, Weapons of Elunite...): none required by default.
+required = []
+
+[paladin]
+required = ["The Tome of Divinity"] # Redemption
+
+[hunter]
+required = ["Taming the Beast", "Training the Beast"] # pet
+power = { "Training the Beast" = 1.3 }                # pet
+
+[rogue]
+required = []
+
+[priest]
+required = []
+
+[shaman]
+required = ["Call of Earth", "Call of Fire", "Call of Water", "Call of Air"] # totems
+
+[mage]
+required = []
+
+[warlock]
+required = ["The Binding", "Summon Felsteed"] # demons, mount
+# Imp (Horde, human, dwarf and gnome quests: nearly doubles the damage early on), Voidwalker
+# (the first "The Binding").
+power = { "Vile Familiars" = 1.4, "The Stolen Tome" = 1.4, "Beginnings" = 1.4, "The Binding" = 1.2 }
+
+[druid]
+required = ["Body and Heart", "Aquatic Form"] # bear form, aquatic form
+power = { "Body and Heart" = 1.1 }             # bear form

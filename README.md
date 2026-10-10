@@ -1,0 +1,82 @@
+# Factoruide
+
+**A leveling guide built for you**: your character, your professions, your zones, your dungeons
+and the way you play. For **WoW Forever**, **Classic Era / Hardcore** and **TBC Anniversary**.
+
+Leveling guides follow one route written for everyone. Factoruide computes yours: it simulates
+the whole playthrough with your choices (travel, fights, drops, quest and mob XP, trainers,
+professions, and how strong your character gets with its gear and spells) and searches for the
+fastest route to your target level, killing the mobs met on the way and grinding only a small
+share of each level. The in-game addon then takes you through it step by step.
+
+## A guide that fits you
+
+- **Your character**: race, class and level range: start a guide at level 1, or at the level
+  you are now.
+- **Your professions**: two primary professions and the secondary ones, with the skill to have
+  at each level from the level you take them (curves from classic guides, editable). They add no
+  time to the route: the addon shows whether you are ahead or behind, and their quests are
+  suggested as optional steps.
+- **Your zones**: click the map to prefer the zones you like and exclude the ones you don't want
+  to see again.
+- **Your dungeons**: force or exclude each dungeon, do the worthwhile ones in a group, take their
+  quests a few levels ahead.
+- **Your class quests**: the ones you want to do are kept, even when they are not the fastest.
+- **Your play style**: a relaxed, normal or fast pace (time per fight, per loot, per stop), how far
+  above your level you take quests and fight mobs, how much grinding you accept, flights or
+  walking to save gold, finishing a zone before leaving, staying on one continent, elite quests
+  solo or in a group.
+- **Your group**: level in a duo or a group with other classes: faster fights, shared XP with the
+  group bonus, quest items for everyone, each class's quests and trainers.
+- **Your language**: the app and the guide in 10 languages.
+
+## It adapts as you play
+
+- The addon follows you: it advances by itself (quest accepted, objective done, quest turned in,
+  flight, level reached), points the arrow at the next step and compares your real time per level
+  with the guide's (`/fg time`).
+- Ahead, behind, changed your mind about a profession or a zone? Generate the guide again from your
+  current level: it becomes a new version of the guide, with the difference from the previous
+  one, and you choose the version installed in the addon.
+- The guides learn from the game: the XP and positions the addon records replace the estimates,
+  and players can share theirs ("Contribute" page) to improve the quest database for everyone.
+- Share a guide with a friend as a `.fgguide` file; they import it in their app.
+
+## Getting started
+
+1. Download the [Windows installer](https://github.com/brouznouf/factoruide/releases/latest) and
+   run it. Windows may warn about an unknown publisher the first time (the installer is not
+   code-signed). New versions are then offered by the app at startup.
+2. **Addon** page: choose your WoW folder, then "Save and install the addon".
+3. **New guide**: pick your character, professions, zones, dungeons and play style, then start
+   the generation. The route improves live (time saved, XP chart, route drawn on the map); the
+   longer the calculation, the shorter the guide.
+4. **My guides**: tick the version to install in the addon, then `/reload` in game.
+
+## In game: the addon
+
+- Guide: picks the route for your race and class and advances by itself; `/fg guide`, `/fg next`,
+  `/fg prev`, `/fg step <n>`, `/fg route [name]`, `/fg waypoint`.
+- Helpers: a big arrow towards the current step (green ahead, red behind, distance below),
+  targeting macro "FG Cible" (`/fg macro`), quest item button (key binding in the game's
+  key bindings, Factoruide section), the step's flight taken automatically, next steps numbered on
+  the world map.
+- Vendors: sells gray items, repairs, buys food, water and ammunition for your level (disabled by
+  default; hold Shift when opening to skip everything).
+- Gear and talents: the quest reward the guide planned (the route counts on wearing it), upgrades
+  in tooltips and on quest rewards, the recommended talent under the guide. At the class trainer,
+  only the spells that matter for leveling are bought.
+- Group and safety: party members' progress in the quest tracker, alerts on elite or high-level
+  targets and low health, elite objectives flagged in the guide.
+- Collector: records what you see (givers, positions, XP received) for the next guides;
+  `/fg status`, `/fg debug`, `/fg reset`.
+
+## How it works
+
+How the optimized route is computed: [ARCHITECTURE.md](ARCHITECTURE.md).
+
+## License
+
+The code is under the MIT license ([LICENSE](LICENSE)). The quest databases (`data/`) are under
+GPL-2.0-or-later, the license of the VMaNGOS data they include ([data/LICENSE](data/LICENSE));
+their sources and the terms of each are listed in [NOTICE.md](NOTICE.md).

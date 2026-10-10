@@ -1,0 +1,42 @@
+# Starting point of each race: the NPC players spawn next to.
+# `id` is the ChrRaces ID; `mask` is the quest race bit (QuestieDB Forever encoding).
+
+[human]
+id = 1
+faction = "Alliance"
+start_npc = 823 # Deputy Willem, Northshire
+
+[dwarf]
+id = 3
+faction = "Alliance"
+start_npc = 658 # Sten Stoutarm, Coldridge Valley
+
+[gnome]
+id = 7
+faction = "Alliance"
+start_npc = 658 # Sten Stoutarm, Coldridge Valley
+
+[nightelf]
+id = 4
+faction = "Alliance"
+start_npc = 2079 # Conservator Ilthalaine, Shadowglen
+
+[orc]
+id = 2
+faction = "Horde"
+start_npc = 3143 # Gornek, Valley of Trials
+
+[troll]
+id = 8
+faction = "Horde"
+start_npc = 3143 # Gornek, Valley of Trials
+
+[undead]
+id = 5
+faction = "Horde"
+start_npc = 1568 # Undertaker Mordo, Deathknell
+
+[tauren]
+id = 6
+faction = "Horde"
+start_npc = 2981 # Chief Hawkwind, Camp Narache

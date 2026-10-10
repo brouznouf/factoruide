@@ -1,0 +1,160 @@
+# Class trainer spells that make fights faster, by class: the share of the character's
+# fighting power each spell brings once trained at its best rank (damage, healing that cuts
+# the rest between fights, buffs). A spell not learned yet loses its whole share, a rank
+# behind loses part of it (rank strength from the game data: damage per cast time, healing,
+# buff value). `{ weight = w, ranks = false }`: only learning it matters, not its rank.
+#
+# Spells not listed do not count: the guide does not go to a trainer for them, and the
+# training steps only list the spells that count. Talents are not counted.
+
+[warrior]
+"Heroic Strike" = 0.20
+"Battle Shout" = 0.08
+"Rend" = 0.06
+"Overpower" = 0.05
+"Execute" = 0.04
+"Thunder Clap" = 0.03
+"Demoralizing Shout" = 0.02
+"Cleave" = 0.02
+"Slam" = 0.02
+"Whirlwind" = { weight = 0.04, ranks = false }
+"Charge" = { weight = 0.04, ranks = false }
+"Bloodrage" = { weight = 0.04, ranks = false }
+"Hamstring" = { weight = 0.01, ranks = false }
+
+[paladin]
+"Seal of Righteousness" = 0.20
+"Blessing of Might" = 0.08
+"Holy Light" = 0.08
+"Flash of Light" = 0.04
+"Devotion Aura" = 0.04
+"Retribution Aura" = 0.02
+"Exorcism" = 0.03
+"Consecration" = 0.03
+"Hammer of Wrath" = 0.02
+"Blessing of Wisdom" = 0.03
+"Seal of the Crusader" = { weight = 0.03, ranks = false }
+"Divine Protection" = { weight = 0.02, ranks = false }
+"Hammer of Justice" = { weight = 0.02, ranks = false }
+"Lay on Hands" = { weight = 0.02, ranks = false }
+
+[hunter]
+"Aspect of the Hawk" = 0.12
+"Serpent Sting" = 0.10
+"Arcane Shot" = 0.08
+"Hunter's Mark" = 0.06
+"Multi-Shot" = 0.06
+"Mend Pet" = 0.06
+"Raptor Strike" = 0.04
+"Mongoose Bite" = 0.02
+"Aspect of the Monkey" = { weight = 0.02, ranks = false }
+"Concussive Shot" = { weight = 0.02, ranks = false }
+"Rapid Fire" = { weight = 0.03, ranks = false }
+"Feign Death" = { weight = 0.02, ranks = false }
+"Wing Clip" = { weight = 0.01, ranks = false }
+
+[rogue]
+"Sinister Strike" = 0.20
+"Eviscerate" = 0.18
+"Rupture" = 0.03
+"Backstab" = 0.03
+"Ambush" = 0.02
+"Slice and Dice" = { weight = 0.08, ranks = false }
+"Evasion" = { weight = 0.03, ranks = false }
+"Gouge" = { weight = 0.02, ranks = false }
+"Kick" = { weight = 0.01, ranks = false }
+"Cheap Shot" = { weight = 0.02, ranks = false }
+"Kidney Shot" = { weight = 0.02, ranks = false }
+"Instant Poison II" = { weight = 0.03, ranks = false }
+"Instant Poison III" = { weight = 0.03, ranks = false }
+"Instant Poison IV" = { weight = 0.03, ranks = false }
+"Instant Poison V" = { weight = 0.02, ranks = false }
+"Instant Poison VI" = { weight = 0.02, ranks = false }
+
+[priest]
+"Smite" = 0.15
+"Shadow Word: Pain" = 0.15
+"Mind Blast" = 0.15
+"Power Word: Shield" = 0.10
+"Power Word: Fortitude" = 0.05
+"Inner Fire" = 0.05
+"Holy Fire" = 0.04
+"Renew" = 0.04
+"Lesser Heal" = 0.03
+"Heal" = 0.03
+"Flash Heal" = 0.03
+"Greater Heal" = 0.02
+"Psychic Scream" = { weight = 0.02, ranks = false }
+
+[shaman]
+"Rockbiter Weapon" = 0.12
+"Windfury Weapon" = 0.10
+"Lightning Bolt" = 0.10
+"Earth Shock" = 0.10
+"Flame Shock" = 0.08
+"Healing Wave" = 0.06
+"Lightning Shield" = 0.05
+"Flametongue Weapon" = 0.03
+"Strength of Earth Totem" = 0.04
+"Searing Totem" = 0.04
+"Lesser Healing Wave" = 0.03
+"Chain Lightning" = 0.03
+"Mana Spring Totem" = 0.03
+"Stoneskin Totem" = 0.02
+"Grace of Air Totem" = 0.02
+"Frost Shock" = 0.02
+
+[mage]
+"Frostbolt" = 0.30
+"Fireball" = 0.15
+"Fire Blast" = 0.08
+"Conjure Water" = 0.06
+"Frost Nova" = 0.05
+"Arcane Intellect" = 0.05
+"Arcane Missiles" = 0.04
+"Frost Armor" = 0.04
+"Ice Armor" = 0.04
+"Arcane Explosion" = 0.03
+"Cone of Cold" = 0.03
+"Blizzard" = 0.03
+"Conjure Food" = 0.02
+"Mana Shield" = 0.02
+"Scorch" = 0.02
+"Polymorph" = { weight = 0.02, ranks = false }
+"Evocation" = { weight = 0.02, ranks = false }
+
+[warlock]
+"Shadow Bolt" = 0.20
+"Corruption" = 0.12
+"Immolate" = 0.08
+"Curse of Agony" = 0.08
+"Drain Life" = 0.06
+"Life Tap" = 0.05
+"Demon Skin" = 0.04
+"Demon Armor" = 0.04
+"Health Funnel" = 0.03
+"Death Coil" = 0.03
+"Drain Soul" = 0.02
+"Searing Pain" = 0.02
+"Fear" = { weight = 0.03, ranks = false }
+
+[druid]
+"Wrath" = 0.10
+"Claw" = 0.10
+"Moonfire" = 0.06
+"Mark of the Wild" = 0.06
+"Maul" = 0.06
+"Rip" = 0.06
+"Ferocious Bite" = 0.06
+"Healing Touch" = 0.05
+"Rake" = 0.05
+"Rejuvenation" = 0.04
+"Thorns" = 0.04
+"Shred" = 0.04
+"Regrowth" = 0.03
+"Swipe" = 0.02
+"Tiger's Fury" = 0.02
+"Starfire" = 0.02
+"Faerie Fire" = 0.02
+"Cat Form" = { weight = 0.10, ranks = false }
+"Entangling Roots" = { weight = 0.02, ranks = false }
