@@ -219,17 +219,23 @@ fn farm_on_the_way_stays_under_the_grind_cap() {
     );
 }
 
-/// Quest objects lying among the mobs of another quest are gathered between the kills: doing both
-/// objectives together never takes longer than one after the other, and usually less (not when
-/// the mobs were all killed on the way there).
+/// Quest objects lying among the mobs of another quest are gathered between the kills: on real
+/// quests, doing both together never takes longer than one after the other. Every objective of
+/// both quests is done, so that both ways do the same work (an objective done along with
+/// another would be extra work).
 #[test]
-fn gathering_next_to_kills_overlaps_them() {
+fn gathering_with_kills_never_takes_longer() {
     let p = orc_warlock();
     let alone = p.params.with_overrides(&["gather_overlap=0".to_owned()]).unwrap();
     let (together, apart) = (planner(p), Planner::new(&p.model, &p.world, &alone, &p.profile));
     let quests = &p.model.quests;
-    let free = |q: &fg_route::model::Quest| q.pre_all.is_empty() && q.pre_any.is_empty() && q.level <= 15;
-    let mut faster = 0;
+    let free = |q: &fg_route::model::Quest| {
+        q.pre_all.is_empty()
+            && q.pre_any.is_empty()
+            && q.level <= 15
+            && q.objectives.iter().all(|o| o.dungeon.is_none())
+    };
+    let mut compared = 0;
     for (a, qa) in quests.iter().enumerate().filter(|(_, q)| free(q)) {
         let Some(ka) = qa.objectives.iter().position(|o| o.kills > 0.0 && o.dungeon.is_none()) else {
             continue;
@@ -245,12 +251,15 @@ fn gathering_next_to_kills_overlaps_them() {
                 continue;
             };
             let (a, b) = (a as u32, b as u32);
-            let route = [
-                Stop::quest(a, Kind::Accept),
-                Stop::quest(b, Kind::Accept),
-                Stop::quest(a, Kind::Objective(ka as u8)),
-                Stop::quest(b, Kind::Objective(kb as u8)),
-            ];
+            let objectives = |q: u32, first: usize| {
+                let n = quests[q as usize].objectives.len();
+                (0..n).map(move |k| Stop::quest(q, Kind::Objective(((first + k) % n) as u8)))
+            };
+            let route: Vec<Stop> = [Stop::quest(a, Kind::Accept), Stop::quest(b, Kind::Accept)]
+                .into_iter()
+                .chain(objectives(a, ka))
+                .chain(objectives(b, kb))
+                .collect();
             let (Some((_, with)), Some((_, without))) =
                 (together.simulate_full(&route, None), apart.simulate_full(&route, None))
             else {
@@ -264,10 +273,49 @@ fn gathering_next_to_kills_overlaps_them() {
                 with.fighting,
                 without.fighting
             );
-            faster += usize::from(with.fighting < without.fighting);
+            compared += 1;
         }
     }
-    assert!(faster > 0, "no kill and gathering objectives done together");
+    assert!(compared > 0, "no kill and gathering objectives close together");
+}
+
+/// Objects lying among the mobs to kill are gathered between the kills, while resting and
+/// looking for the next mob: both take less time than one after the other.
+#[test]
+fn gathering_next_to_kills_overlaps_them() {
+    let mut p = quests_at_start(2);
+    for (i, kills, uses, dx) in [(0, 6.0, 0.0, 80.0), (1, 0.0, 3.0, 90.0)] {
+        let mut loc = p.model.start.clone();
+        loc.pos.x += dx;
+        let point = (loc.pos.x, loc.pos.y);
+        p.model.quests[i].objectives = vec![Objective {
+            loc: loc.clone(),
+            text: format!("objective {i}"),
+            kills,
+            mob_level: 1,
+            uses,
+            extra: 0.0,
+            dungeon: None,
+            elite: false,
+            count: kills + uses,
+            mobs: vec![],
+            pull: 1.0,
+            spots: Some(Spots {
+                continent: loc.pos.continent,
+                min: point,
+                max: point,
+                points: vec![point],
+            }),
+            guard: Guard::default(),
+        }];
+    }
+    p.model.initial.accepted = vec![0, 1];
+    let route = [Stop::quest(0, Kind::Objective(0)), Stop::quest(1, Kind::Objective(0))];
+    let fighting = |p: &Prepared| planner(p).simulate_full(&route, None).unwrap().1.fighting;
+    let together = fighting(&p);
+    p.params.gather_overlap = 0.0;
+    let apart = fighting(&p);
+    assert!(together < apart, "{together:.0} s together, {apart:.0} s apart");
 }
 
 /// Each checkpoint has a step where a character behind the route grinds: at the last place
@@ -667,4 +715,136 @@ fn group_class_quests_are_required() {
         .map(|q| q.mandatory)
         .collect();
     assert!(!felsteed.is_empty() && felsteed.iter().all(|&m| m), "{felsteed:?}");
+}
+
+/// Moving a pet quest early (`power_first`, at the end of the search) may cost time, on purpose,
+/// but never more than `class_power_slack`; without slack the clean-up never makes the route
+/// worse.
+#[test]
+fn pet_quest_moves_early_within_its_slack() {
+    let mut p = quests_at_start(2);
+    p.world.terrain = fg_route::terrain::Terrain::default();
+    p.model.quests[0].power = Some((0, 1.4));
+    p.model.quests[0].ends[0].pos.x += 700.0;
+    let route = vec![
+        Stop::quest(0, Kind::Accept),
+        Stop::quest(1, Kind::Accept),
+        Stop::quest(1, Kind::TurnIn),
+        Stop::quest(0, Kind::TurnIn),
+    ];
+    let cost = |p: &Prepared| {
+        let planner = planner(p);
+        let before = planner.simulate(&route, None).unwrap();
+        let cleaned = planner.improve(route.clone(), std::time::Duration::ZERO, |_| {}, |_, _, _| {});
+        planner.simulate(&cleaned, None).unwrap() - before
+    };
+    let slack = p.params.class_power_slack;
+    let with_slack = cost(&p);
+    assert!(with_slack <= slack + 0.5, "{with_slack} s for a slack of {slack} s");
+    p.params.class_power_slack = 0.0;
+    let strict = cost(&p);
+    assert!(strict <= 0.5, "{strict} s without slack");
+}
+
+/// An object gathered between the kills of another objective needs what its own stop needs:
+/// guarded by three level 25 mobs, it is not picked up at level 1 next to an easy fight (it was).
+#[test]
+fn object_gathered_between_kills_waits_for_its_guards() {
+    let mut p = quests_at_start(2);
+    for (i, kills, uses, guard) in [
+        (0, 1.0, 0.0, Guard::default()),
+        (
+            1,
+            0.0,
+            1.0,
+            Guard {
+                level: 25,
+                count: 3,
+                elite: false,
+            },
+        ),
+    ] {
+        let mut loc = p.model.start.clone();
+        loc.pos.x += 80.0 * i as f64;
+        let point = (loc.pos.x, loc.pos.y);
+        p.model.quests[i].objectives = vec![Objective {
+            loc: loc.clone(),
+            text: format!("objective {i}"),
+            kills,
+            mob_level: 1,
+            uses,
+            extra: 0.0,
+            dungeon: None,
+            elite: false,
+            count: 1.0,
+            mobs: vec![],
+            pull: 1.0,
+            spots: Some(Spots {
+                continent: loc.pos.continent,
+                min: point,
+                max: point,
+                points: vec![point],
+            }),
+            guard,
+        }];
+    }
+    p.model.initial.accepted = vec![0, 1];
+    assert!(p.params.gather_overlap > 0.0);
+    let mut trace = Vec::new();
+    planner(&p)
+        .simulate_full(&[Stop::quest(0, Kind::Objective(0))], Some(&mut trace))
+        .unwrap();
+    assert!(
+        !trace.iter().any(|t| matches!(
+            t.event,
+            Event::Along {
+                quest: 1,
+                finished: true,
+                ..
+            }
+        )),
+        "the guarded object was gathered at level 1"
+    );
+}
+
+/// A companion of a class the character's race cannot play is of a race that can: a human
+/// leveling with a druid plans the druid's Aquatic Form, a night elf quest, and its chain.
+#[test]
+fn companion_class_quests_of_its_race() {
+    let p = prepare_group("human", "warrior", 30, &[], None, &["druid"]);
+    let aquatic: Vec<bool> = p
+        .model
+        .quests
+        .iter()
+        .filter(|q| q.name == "Aquatic Form")
+        .map(|q| q.mandatory)
+        .collect();
+    assert_eq!(aquatic, [true]);
+}
+
+/// Each companion keeps its own race: adding a druid (a night elf for a human) does not bring
+/// the night elf variants of the hunter's quests (the hunter is a dwarf, as without the druid).
+#[test]
+fn each_companion_keeps_its_race() {
+    let mandatory = |group: &[&str]| -> std::collections::HashMap<i64, String> {
+        let p = prepare_group("human", "warrior", 30, &[], None, group);
+        p.model
+            .quests
+            .iter()
+            .filter(|q| q.mandatory)
+            .map(|q| (q.id, q.name.clone()))
+            .collect()
+    };
+    let hunter = mandatory(&["hunter"]);
+    let both = mandatory(&["hunter", "druid"]);
+    assert!(!hunter.is_empty());
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+    let druid = &overrides.class_quests["druid"];
+    for (id, name) in &both {
+        assert!(
+            hunter.contains_key(id) || druid.contains(name),
+            "{name} ({id}) required with the druid, not without"
+        );
+    }
+    assert!(hunter.keys().all(|id| both.contains_key(id)));
 }

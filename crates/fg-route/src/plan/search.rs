@@ -140,9 +140,10 @@ impl Planner<'_> {
         evaluated
     }
 
-    /// The best route found, with the pet quests early again (`class_power_slack`), the quests
-    /// never turned in dropped and the stops after the target level cut, each change kept only
-    /// when it does not make the route worse.
+    /// The best route found, with the pet quests early again, the quests never turned in dropped
+    /// and the stops after the target level cut. Dropping and cutting are kept only when they do
+    /// not make the route worse; moving a pet quest early may, by up to `class_power_slack` each
+    /// (on purpose: a pet or a form early is worth more to the player than the model says).
     fn clean_up(&self, search: Search) -> (Vec<Stop>, Run) {
         let (mut route, mut run) = (search.route, search.run);
         if search.best.0 < run.total - 0.5 {

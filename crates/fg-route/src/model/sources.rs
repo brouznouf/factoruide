@@ -144,12 +144,13 @@ impl Sources {
         let rows = quest_rows(conn)?;
         let objectives = objective_rows(conn)?;
         let (item_origins, drop_chance) = item_origins(conn, params)?;
+        let links = links(conn)?;
         Ok(Self {
             elites: EliteSpawns::new(&entities, world),
             guards: super::Guards::load(conn, world)?,
-            class_quest_ids: class_quest_ids(&rows, profile),
+            class_quest_ids: class_quest_ids(&rows, profile, &links),
             relations: relations(conn)?,
-            links: links(conn)?,
+            links,
             default_xp: default_xp(conn, params)?,
             pvp: pvp_quests(conn, &rows, &objectives)?,
             reward_of: reward_of(conn)?,
@@ -250,9 +251,11 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
     Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
-/// The class quests the profile requires, of the classes in the group.
-fn class_quest_ids(rows: &[QuestRow], profile: &Profile) -> HashSet<i64> {
-    rows.iter()
+/// The class quests the profile requires, of the classes in the group; another player's come
+/// with the rest of their chain (its prerequisites are of that class too, under other names).
+fn class_quest_ids(rows: &[QuestRow], profile: &Profile, links: &HashMap<i64, Vec<(LinkKind, i64)>>) -> HashSet<i64> {
+    let mut ids: HashSet<i64> = rows
+        .iter()
         .filter(|r| {
             profile
                 .class_ids()
@@ -261,10 +264,25 @@ fn class_quest_ids(rows: &[QuestRow], profile: &Profile) -> HashSet<i64> {
         })
         .filter(|r| profile.required_class_quests.iter().any(|n| n == &r.name))
         .filter(|r| r.classes.is_some_and(|m| m & profile.group_class_mask() != 0))
-        .filter(|r| r.races.is_none_or(|m| m == 0 || m & profile.race_bit() != 0))
+        // The character's race, or the one deduced for the other player's class.
+        .filter(|r| r.races.is_none_or(|m| m == 0 || m & profile.quest_races(r.classes) != 0))
         .filter(|r| r.min_level.unwrap_or(1) <= profile.to_level)
         .map(|r| r.id)
-        .collect()
+        .collect();
+    let others: HashSet<i64> = rows
+        .iter()
+        .filter(|r| r.classes.is_some_and(|m| m != 0 && m & profile.class_bit() == 0))
+        .map(|r| r.id)
+        .collect();
+    let mut stack: Vec<i64> = ids.iter().copied().filter(|id| others.contains(id)).collect();
+    while let Some(id) = stack.pop() {
+        for &(kind, pre) in links.get(&id).into_iter().flatten() {
+            if matches!(kind, LinkKind::PreAll | LinkKind::PreAny) && others.contains(&pre) && ids.insert(pre) {
+                stack.push(pre);
+            }
+        }
+    }
+    ids
 }
 
 fn relations(conn: &Connection) -> Result<Relations> {

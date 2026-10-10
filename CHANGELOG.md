@@ -2,6 +2,13 @@
 
 The notes of each version are the message of its tag (`scripts/release.sh`), shown in the app.
 
+## Unreleased
+
+### Fixes
+
+- Objects gathered between kills wait for the level their own step needs (an object among stronger mobs).
+- Group: a companion of a class the character's race cannot play (a human's druid) gets the class quests of a race that can, with their whole chain.
+
 ## 0.2.0 (2026-10-10)
 
 Personalized leveling guides for WoW Forever, Classic Era / Hardcore and TBC Anniversary.

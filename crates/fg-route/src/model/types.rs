@@ -28,20 +28,43 @@ pub struct Profile {
     pub locale: Option<String>,
     /// Classes of the other players leveling with the character (ChrClasses IDs).
     pub group_class_ids: Vec<i64>,
+    /// The race deduced for each other player's class the character's race cannot play (a night
+    /// elf for a human's druid): (class ID, race bit). Its class quests are of that race.
+    pub group_races: Vec<(i64, i64)>,
+}
+
+/// Quest race bit of a race in QuestieDB Forever's encoding (Skyborne uses bits 32/33).
+pub fn race_bit(race_id: i64) -> i64 {
+    match race_id {
+        95 => 1 << 32,
+        96 => 1 << 33,
+        id => 1 << (id - 1),
+    }
 }
 
 impl Profile {
-    /// Quest race bit in QuestieDB Forever's encoding (Skyborne uses bits 32/33).
+    /// Quest race bit of the character.
     pub fn race_bit(&self) -> i64 {
-        match self.race_id {
-            95 => 1 << 32,
-            96 => 1 << 33,
-            id => 1 << (id - 1),
-        }
+        race_bit(self.race_id)
     }
 
     pub fn class_bit(&self) -> i64 {
         1 << (self.class_id - 1)
+    }
+
+    /// Race bits a quest of classes `classes` is taken for: the character's, or for another
+    /// player's class its race cannot play, the race deduced for that class only.
+    pub fn quest_races(&self, classes: Option<i64>) -> i64 {
+        let mask = classes.unwrap_or(0);
+        if mask == 0 || mask & self.class_bit() != 0 {
+            return self.race_bit();
+        }
+        let deduced = self
+            .group_races
+            .iter()
+            .filter(|(class, _)| mask & (1 << (class - 1)) != 0)
+            .fold(0, |m, (_, race)| m | race);
+        if deduced == 0 { self.race_bit() } else { deduced }
     }
 
     /// Distinct classes of the group, the character's first.

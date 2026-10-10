@@ -25,7 +25,7 @@ pub use guard::Guards;
 pub use names::Names;
 pub use types::{
     Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Model, Objective, ProfessionPlan, Profile,
-    Quest, Spots,
+    Quest, Spots, race_bit,
 };
 
 use crate::params::Params;

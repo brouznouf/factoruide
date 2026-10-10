@@ -13,9 +13,16 @@ impl QuestBuilder<'_> {
         let profile = self.profile;
         let level = r.level.unwrap_or(1).max(1);
         let min_level = r.min_level.unwrap_or(1).max(1);
-        let other_race = r.races.is_some_and(|m| m != 0 && m & profile.race_bit() == 0);
         let group_class_quest = self.sources.class_quest_ids.contains(&r.id)
             && r.classes.is_some_and(|m| m & profile.group_class_mask() != 0);
+        // Another player's class quest is of the race deduced for its class when the
+        // character's race cannot play it (`Profile::quest_races`).
+        let races = if group_class_quest && self.other_class(r) {
+            profile.quest_races(r.classes)
+        } else {
+            profile.race_bit()
+        };
+        let other_race = r.races.is_some_and(|m| m != 0 && m & races == 0);
         !other_race
             && (!self.other_class(r) || group_class_quest)
             && min_level <= profile.to_level

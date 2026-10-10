@@ -56,8 +56,39 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
         professions,
         locale: req.locale.clone(),
         group_class_ids: group.iter().map(|(id, _)| *id).collect(),
+        group_races: group_races(conn, overrides, race, &group)?,
     };
     Ok((profile, params))
+}
+
+/// The race of each other player whose class the character's race cannot play: the first race
+/// of the faction that can (one per class, so that its class quests are not planned once per
+/// race), as (class ID, race bit).
+fn group_races(
+    conn: &Connection,
+    overrides: &Overrides,
+    race: &RaceDef,
+    group: &[(i64, String)],
+) -> Result<Vec<(i64, i64)>> {
+    let mut races = Vec::new();
+    let own = race_classes(conn, race.id)?;
+    for (class_id, _) in group {
+        let key: String = conn.query_row(
+            "SELECT lower(Filename) FROM client_chrclasses WHERE ID = ?1",
+            [class_id],
+            |r| r.get(0),
+        )?;
+        if own.is_empty() || own.contains(&key) || races.iter().any(|(c, _)| c == class_id) {
+            continue;
+        }
+        for other in overrides.races.values().filter(|r| r.faction == race.faction) {
+            if race_classes(conn, other.id)?.contains(&key) {
+                races.push((*class_id, crate::model::race_bit(other.id)));
+                break;
+            }
+        }
+    }
+    Ok(races)
 }
 
 /// Class ID and name from a class file name or name (mage, WARRIOR...).

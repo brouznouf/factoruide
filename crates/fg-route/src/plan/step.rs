@@ -350,14 +350,17 @@ impl Planner<'_> {
             .iter()
             .filter(|&&(q, ok, _)| {
                 let other = &self.quest(q).objectives[ok as usize];
+                // Done together only when the character could do it on its own stop: its mobs,
+                // or the guards around its objects (`Combat::need`).
                 (q, ok) != (quest, k)
                     && other.loc.pos.continent == o.loc.pos.continent
                     && other.loc.pos.dist(&o.loc.pos) <= self.params.gather_radius
                     && if o.kills > 0.0 {
                         gathering(other)
                     } else {
-                        other.kills > 0.0 && self.combat().need(self.quest(q), other) <= reach
+                        other.kills > 0.0
                     }
+                    && self.combat().need(self.quest(q), other) <= reach
             })
             .map(|&(q, ok, _)| (q, ok))
             .collect()
