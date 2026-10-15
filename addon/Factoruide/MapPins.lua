@@ -48,7 +48,7 @@ function Provider:RemoveAllData() self:GetMap():RemoveAllPinsByTemplate("FGStepP
 function Provider:RefreshAllData()
     self:RemoveAllData()
     local route = FG.Guide and FG.Guide:Route()
-    if not FG:Get("mapPins") or not route then return end
+    if not FG:Get("uiShown") or not FG:Get("mapPins") or not route then return end
     local mapID = self:GetMap():GetMapID()
     local first = FG.Guide:CurrentStep()
     local n, shown = 0, 0
@@ -81,6 +81,7 @@ function MapPins:Refresh()
     if added and WorldMapFrame:IsShown() then Provider:RefreshAllData() end
 end
 
+FG:OnSetting("uiShown", function() MapPins:Refresh() end)
 FG:On("PLAYER_ENTERING_WORLD", Attach)
 FG:On("ADDON_LOADED", function(name)
     if name == "Blizzard_WorldMap" then Attach() end

@@ -5,6 +5,7 @@
 local _, FG = ...
 
 FG.defaults = {
+    uiShown = true,
     guideShown = true,
     uiTheme = "auto",
     pickupLines = 10,
@@ -74,6 +75,23 @@ function FG:Set(key, value)
     Changed(key)
 end
 
+-- Secure quest-item buttons protect the shared UI parent. Defer the whole change,
+-- including overlays on Blizzard frames, so all surfaces switch together after combat.
+local pendingUI
+function FG:SetUIShown(shown)
+    if InCombatLockdown() then
+        pendingUI = shown
+        self:Print("UI visibility will change when combat ends")
+        return
+    end
+    pendingUI = nil
+    self:Set("uiShown", shown)
+end
+
+FG:On("PLAYER_REGEN_ENABLED", function()
+    if pendingUI ~= nil then FG:SetUIShown(pendingUI) end
+end)
+
 --- Keep a setting changed in game (nil: back to the app's).
 function FG:Save(key, value)
     FactoruideDB.ui = FactoruideDB.ui or {}
@@ -115,6 +133,11 @@ function FG:OnSetting(key, fn)
     listeners[key] = listeners[key] or {}
     table.insert(listeners[key], fn)
 end
+
+FG:OnSetting("uiShown", function(shown)
+    FG.UIRoot:SetShown(shown)
+    if not shown and StaticPopup_Hide then StaticPopup_Hide("FACTORUIDE_RESET") end
+end)
 
 function FG:OpenSettings()
     if GetLocale() == "frFR" then

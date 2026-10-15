@@ -76,7 +76,7 @@ end
 
 local function Create()
     if frame or not CreateFrame then return frame end
-    frame = CreateFrame("Frame", "FactoruideArrow", UIParent)
+    frame = CreateFrame("Frame", "FactoruideArrow", FG.UIRoot)
     frame:SetSize(64, 64)
     frame:SetClampedToScreen(true)
     frame:SetMovable(true)

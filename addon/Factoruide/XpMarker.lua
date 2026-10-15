@@ -142,7 +142,7 @@ local function Hook(bar)
     if hooked == bar or not bar.HookScript then return end
     hooked = bar
     bar:HookScript("OnEnter", function()
-        local line = FG:Get("xpMarker") and XpMarker:Line()
+        local line = FG:Get("uiShown") and FG:Get("xpMarker") and XpMarker:Line()
         if line and GameTooltip:IsShown() then
             GameTooltip:AddLine(line, 1, 0.82, 0)
             local span = XpMarker:SpanLine()
@@ -155,7 +155,12 @@ end
 function XpMarker:Refresh()
     local planned = self:PlannedHere()
     local max = UnitXPMax("player")
-    local on = FG:Get("xpMarker") and FG:Get("guideShown") and max and max > 0 and self:Planned() ~= nil
+    local on = FG:Get("uiShown")
+        and FG:Get("xpMarker")
+        and FG:Get("guideShown")
+        and max
+        and max > 0
+        and self:Planned() ~= nil
     local bar = on and Bar()
     if own then own:SetShown(on and not bar) end
     if mark then mark:SetShown(on) end
@@ -194,4 +199,5 @@ for _, event in ipairs({ "PLAYER_XP_UPDATE", "PLAYER_LEVEL_UP", "PLAYER_ENTERING
 end
 FG:On("PLAYER_LOGIN", function()
     FG:OnSetting("xpMarker", function() XpMarker:Refresh() end)
+    FG:OnSetting("uiShown", function() XpMarker:Refresh() end)
 end)

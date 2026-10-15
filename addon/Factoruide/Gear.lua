@@ -165,7 +165,7 @@ function Gear:BestChoice(choices)
 end
 
 local function TooltipLine(tooltip, link)
-    if not FG:Get("gearAdvisor") or not link then return end
+    if not FG:Get("uiShown") or not FG:Get("gearAdvisor") or not link then return end
     local gain, share = Gear:Upgrade(link)
     if gain and gain > 0 then
         local text = share and string.format("+%d %%", math.floor(share * 100 + 0.5))
@@ -183,9 +183,10 @@ elseif GameTooltip and GameTooltip.HookScript then
 end
 
 -- Arrow on the best upgrade among quest rewards.
-local arrow
-FG:On("QUEST_COMPLETE", function()
+local arrow, rewardOpen
+local function RefreshRewardArrow()
     if arrow then arrow:Hide() end
+    if not rewardOpen or not FG:Get("uiShown") then return end
     local choices = GetNumQuestChoices()
     local best = choices > 1 and (Gear:PlannedChoice(choices) or Gear:BestChoice(choices))
     local button = best and _G["QuestInfoRewardsFrameQuestInfoItem" .. best]
@@ -198,4 +199,13 @@ FG:On("QUEST_COMPLETE", function()
     arrow:ClearAllPoints()
     arrow:SetPoint("TOPLEFT", button, "TOPLEFT", -4, 4)
     arrow:Show()
+end
+FG:On("QUEST_COMPLETE", function()
+    rewardOpen = true
+    RefreshRewardArrow()
 end)
+FG:On("QUEST_FINISHED", function()
+    rewardOpen = false
+    RefreshRewardArrow()
+end)
+FG:OnSetting("uiShown", RefreshRewardArrow)

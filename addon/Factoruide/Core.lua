@@ -17,6 +17,10 @@ end)()
 
 local frame = CreateFrame("Frame")
 FG.frame = frame
+
+-- Only visual frames belong to this parent: event handlers keep running while hidden.
+FG.UIRoot = CreateFrame("Frame", "FactoruideUI", UIParent)
+FG.UIRoot:SetAllPoints(UIParent)
 local handlers = {}
 
 --- Register a handler for an event; several modules may listen to the same event.

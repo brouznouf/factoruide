@@ -120,8 +120,10 @@ verified.
 ## In game: the addon
 
 - Guide: follows the guide chosen for the character in the app and advances by itself; `/fg guide`
-  toggles the guide window, `/fg hide` hides it and `/fg show` shows it. These visibility changes
-  last for the session and keep your progress; protected windows update when combat ends.
+  toggles only the guide window. `/fg hide` hides the whole addon UI (guide, quest/profession tracker,
+  arrows, item button, talent prompt, XP marker and map pins); `/fg show` restores it with each pane's
+  configured visibility intact. These changes last for the session, keep your progress and leave
+  background automation running. Commands issued in combat take effect together when combat ends.
   `/fg next`, `/fg prev`, `/fg step <n>`, `/fg route` (shows it), `/fg waypoint`.
 - Size: Ctrl + mouse wheel over a window, or `/fg scale <size>`.
 - Helpers: a big arrow towards the current step (green ahead, red behind, distance below),

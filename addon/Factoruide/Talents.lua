@@ -45,7 +45,7 @@ local function Unspent() return UnitCharacterPoints and UnitCharacterPoints("pla
 local frame
 local function UI()
     if frame or not CreateFrame then return frame end
-    frame = CreateFrame("Frame", "FactoruideTalents", UIParent, "BackdropTemplate")
+    frame = CreateFrame("Frame", "FactoruideTalents", FG.UIRoot, "BackdropTemplate")
     frame:SetSize(260, 26)
     frame.text = frame:CreateFontString(nil, "OVERLAY", "GameFontHighlightSmall")
     frame.text:SetPoint("LEFT", 6, 0)

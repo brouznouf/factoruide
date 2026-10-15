@@ -14,7 +14,7 @@ local button
 
 local function Create()
     if button or not CreateFrame then return button end
-    button = CreateFrame("Button", "FGItemButton", UIParent, "SecureActionButtonTemplate")
+    button = CreateFrame("Button", "FGItemButton", FG.UIRoot, "SecureActionButtonTemplate")
     button:SetSize(36, 36)
     button:RegisterForClicks("AnyUp", "AnyDown")
     button:SetAttribute("type", "item")

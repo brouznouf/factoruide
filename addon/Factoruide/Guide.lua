@@ -324,7 +324,9 @@ function Distance(step)
 end
 
 local function SetWaypoint(step)
-    if not step or not step.m or not FG:Get("waypoints") or step == waypointStep then return end
+    if not FG:Get("uiShown") or not step or not step.m or not FG:Get("waypoints") or step == waypointStep then
+        return
+    end
     waypointStep = step
     -- Map pins need a client that has them (not Classic Era).
     if C_Map.CanSetUserWaypointOnMap and C_Map.CanSetUserWaypointOnMap(step.m) then
@@ -398,7 +400,7 @@ end
 -- UI -------------------------------------------------------------------------
 
 local function CreateBox(name, title, kind)
-    local box = CreateFrame("Frame", name, UIParent, "BackdropTemplate")
+    local box = CreateFrame("Frame", name, FG.UIRoot, "BackdropTemplate")
     box:SetWidth(WIDTH)
     box:SetClampedToScreen(true)
 
@@ -608,6 +610,11 @@ local function CreateUI()
     FG:Zoomable(nextBox)
     FG:OnSetting("pickupLines", function() Guide:Refresh() end)
     FG:OnSetting("guideShown", function() Guide:Refresh() end)
+    FG:OnSetting("uiShown", function(shown)
+        if not shown and waypointStep and C_Map.ClearUserWaypoint then C_Map.ClearUserWaypoint() end
+        waypointStep = nil
+        Guide:Refresh()
+    end)
     FG:OnSetting("waypoints", function(on)
         waypointStep = nil
         if on then
@@ -1065,9 +1072,9 @@ function Guide:Command(cmd, arg)
     if cmd == "guide" then
         FG:Set("guideShown", not FG:Get("guideShown"))
     elseif cmd == "hide" then
-        FG:Set("guideShown", false)
+        FG:SetUIShown(false)
     elseif cmd == "show" then
-        FG:Set("guideShown", true)
+        FG:SetUIShown(true)
     elseif cmd == "next" then
         self:Go(state.step + 1)
     elseif cmd == "prev" then

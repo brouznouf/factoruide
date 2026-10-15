@@ -24,8 +24,16 @@ local function stub()
     return o
 end
 
-CreateFrame = function()
+CreateFrame = function(_, name, parent)
     local f = stub()
+    f.name, f.parent, f.shown = name, parent, true
+    function f:SetShown(value) self.shown = value end
+    function f:Show() self.shown = true end
+    function f:Hide() self.shown = false end
+    function f:IsShown() return self.shown end
+    function f:IsVisible()
+        return self.shown and (not self.parent or not self.parent.IsVisible or self.parent:IsVisible())
+    end
     table.insert(frames, f)
     return f
 end
@@ -1023,46 +1031,112 @@ fire("PLAYER_REGEN_ENABLED")
 assert(resized, "resized after the fight")
 print("combat layout ok")
 
--- Explicit visibility commands are idempotent, preserve progress and defer protected
--- frame changes until combat ends, just like the existing guide toggle.
-local visibilityBox = FG.Guide:Box()
-local previousSetShown = visibilityBox.SetShown
-local visible, visibilityWrites = true, 0
-visibilityBox.SetShown = function(_, value)
-    visible = value
-    visibilityWrites = visibilityWrites + 1
-end
+-- Hide/show controls every owned window without overwriting individual pane settings.
+local root = FG.UIRoot
 local stepBeforeHide = char.guide.step
+FG:Set("nextShown", false)
+FG:Set("arrowShown", false)
+local originalSetShown = root.SetShown
+local visibilityWrites = 0
+root.SetShown = function(self, shown)
+    assert(not InCombatLockdown(), "UI parent changed during combat")
+    visibilityWrites = visibilityWrites + 1
+    originalSetShown(self, shown)
+end
+FG.Talents:Refresh()
+local oldItemInfo, oldQuestIndex = GetQuestLogSpecialItemInfo, GetQuestLogIndexByID
+GetQuestLogIndexByID = function() return 1 end
+GetQuestLogSpecialItemInfo = function() return "item:123", 123 end
+FG.ItemButton:SetSteps({ { q = 7101 } })
+GetQuestLogSpecialItemInfo, GetQuestLogIndexByID = oldItemInfo, oldQuestIndex
+local owned = {}
+for _, f in ipairs(frames) do
+    if f.parent == root then owned[f.name] = f end
+end
+for _, name in ipairs({ "FactoruideTracker", "FactoruideArrow", "FactoruideTalents", "FGItemButton" }) do
+    assert(owned[name], name .. " belongs to the shared UI parent")
+end
+assert(FG.Guide:Box().parent == root, "guide belongs to the shared UI parent")
 SlashCmdList.FACTORUIDE("hide")
-assert(FG:Get("guideShown") == false and visible == false, "hide closes the guide")
+SlashCmdList.FACTORUIDE("hide")
+assert(not root:IsShown() and not FG:Get("uiShown"), "hide is idempotent")
 FG.Guide:Refresh()
-SlashCmdList.FACTORUIDE("hide")
-assert(visible == false, "hide stays hidden after refresh and repeated commands")
+FG.Tracker:Refresh()
+FG.Talents:Refresh()
+for _, f in pairs(owned) do
+    assert(not f:IsVisible(), "refresh cannot reveal " .. f.name)
+end
+assert(FG:Get("guideShown") and not FG:Get("nextShown") and not FG:Get("arrowShown"), "pane settings preserved")
+assert(char.guide.step == stepBeforeHide, "progress preserved")
 SlashCmdList.FACTORUIDE("show")
 SlashCmdList.FACTORUIDE("show")
-assert(FG:Get("guideShown") == true and visible == true, "show stays visible")
-assert(char.guide.step == stepBeforeHide, "visibility commands preserve progress")
+assert(root:IsShown() and FG:Get("uiShown"), "show is idempotent")
+assert(not FG:Get("nextShown") and not FG:Get("arrowShown"), "show does not enable disabled panes")
 SlashCmdList.FACTORUIDE("guide")
-assert(visible == false, "guide still toggles visibility")
+SlashCmdList.FACTORUIDE("hide")
 SlashCmdList.FACTORUIDE("show")
+assert(not FG:Get("guideShown") and root:IsShown(), "guide-only toggle remains independent")
+SlashCmdList.FACTORUIDE("guide")
+FG:Set("nextShown", true)
+FG:Set("arrowShown", true)
 
+-- All surfaces defer together; a later command replaces a pending request.
 InCombatLockdown = function() return true end
 local writesBeforeCombat = visibilityWrites
 SlashCmdList.FACTORUIDE("hide")
-assert(FG:Get("guideShown") == false, "hide records the requested visibility in combat")
-assert(visibilityWrites == writesBeforeCombat and visible == true, "hide defers protected changes")
+assert(root:IsShown() and FG:Get("uiShown"), "hide waits during combat")
+assert(visibilityWrites == writesBeforeCombat, "no protected writes in combat")
 InCombatLockdown = function() return false end
 fire("PLAYER_REGEN_ENABLED")
-assert(visible == false, "hidden after combat")
+assert(not root:IsShown(), "hidden after combat")
 InCombatLockdown = function() return true end
-writesBeforeCombat = visibilityWrites
 SlashCmdList.FACTORUIDE("show")
-assert(visibilityWrites == writesBeforeCombat and visible == false, "show defers protected changes")
+SlashCmdList.FACTORUIDE("hide")
 InCombatLockdown = function() return false end
 fire("PLAYER_REGEN_ENABLED")
-assert(visible == true, "shown after combat")
-visibilityBox.SetShown = previousSetShown
-print("guide hide/show ok")
+assert(not root:IsShown(), "last pending command wins")
+InCombatLockdown = function() return true end
+SlashCmdList.FACTORUIDE("show")
+assert(not root:IsShown(), "show waits during combat")
+InCombatLockdown = function() return false end
+fire("PLAYER_REGEN_ENABLED")
+assert(root:IsShown(), "shown after combat")
+root.SetShown = originalSetShown
+
+-- World-map pins disappear immediately and stay absent on later map refreshes.
+local provider, pins = nil, 0
+WorldMapFrame = {
+    AddDataProvider = function(self, p)
+        provider = p
+        p.GetMap = function() return self end
+    end,
+    IsShown = function() return true end,
+    RemoveAllPinsByTemplate = function() pins = 0 end,
+    GetMapID = function() return 1426 end,
+    AcquirePin = function() pins = pins + 1 end,
+}
+FG.Routes["visibility-test"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 1,
+    toLevel = 60,
+    time = 1,
+    steps = { { k = "grind", t = "Grind", lvl = 60, m = 1426, x = 45, y = 50 } },
+}
+useRoute("visibility-test")
+FG.MapPins:Refresh()
+assert(pins > 0 and waypoint, "map pins and waypoint initially visible")
+SlashCmdList.FACTORUIDE("hide")
+assert(not waypoint, "native waypoint cleared on hide")
+FG.Guide:Refresh()
+assert(not waypoint, "guide refresh does not restore waypoint while hidden")
+assert(pins == 0, "map pins removed on hide")
+provider:RefreshAllData()
+assert(pins == 0, "map refresh respects global hide")
+SlashCmdList.FACTORUIDE("show")
+assert(pins > 0 and waypoint, "map pins and waypoint restored on show")
+print("whole-addon hide/show ok")
 
 -- Classic Era (1.15) has no C_QuestLog log functions: the quest log is read through the older
 -- globals, and the guide still draws.
