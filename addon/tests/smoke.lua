@@ -1023,6 +1023,47 @@ fire("PLAYER_REGEN_ENABLED")
 assert(resized, "resized after the fight")
 print("combat layout ok")
 
+-- Explicit visibility commands are idempotent, preserve progress and defer protected
+-- frame changes until combat ends, just like the existing guide toggle.
+local visibilityBox = FG.Guide:Box()
+local previousSetShown = visibilityBox.SetShown
+local visible, visibilityWrites = true, 0
+visibilityBox.SetShown = function(_, value)
+    visible = value
+    visibilityWrites = visibilityWrites + 1
+end
+local stepBeforeHide = char.guide.step
+SlashCmdList.FACTORUIDE("hide")
+assert(FG:Get("guideShown") == false and visible == false, "hide closes the guide")
+FG.Guide:Refresh()
+SlashCmdList.FACTORUIDE("hide")
+assert(visible == false, "hide stays hidden after refresh and repeated commands")
+SlashCmdList.FACTORUIDE("show")
+SlashCmdList.FACTORUIDE("show")
+assert(FG:Get("guideShown") == true and visible == true, "show stays visible")
+assert(char.guide.step == stepBeforeHide, "visibility commands preserve progress")
+SlashCmdList.FACTORUIDE("guide")
+assert(visible == false, "guide still toggles visibility")
+SlashCmdList.FACTORUIDE("show")
+
+InCombatLockdown = function() return true end
+local writesBeforeCombat = visibilityWrites
+SlashCmdList.FACTORUIDE("hide")
+assert(FG:Get("guideShown") == false, "hide records the requested visibility in combat")
+assert(visibilityWrites == writesBeforeCombat and visible == true, "hide defers protected changes")
+InCombatLockdown = function() return false end
+fire("PLAYER_REGEN_ENABLED")
+assert(visible == false, "hidden after combat")
+InCombatLockdown = function() return true end
+writesBeforeCombat = visibilityWrites
+SlashCmdList.FACTORUIDE("show")
+assert(visibilityWrites == writesBeforeCombat and visible == false, "show defers protected changes")
+InCombatLockdown = function() return false end
+fire("PLAYER_REGEN_ENABLED")
+assert(visible == true, "shown after combat")
+visibilityBox.SetShown = previousSetShown
+print("guide hide/show ok")
+
 -- Classic Era (1.15) has no C_QuestLog log functions: the quest log is read through the older
 -- globals, and the guide still draws.
 local modern = {}

@@ -1064,6 +1064,10 @@ end
 function Guide:Command(cmd, arg)
     if cmd == "guide" then
         FG:Set("guideShown", not FG:Get("guideShown"))
+    elseif cmd == "hide" then
+        FG:Set("guideShown", false)
+    elseif cmd == "show" then
+        FG:Set("guideShown", true)
     elseif cmd == "next" then
         self:Go(state.step + 1)
     elseif cmd == "prev" then
