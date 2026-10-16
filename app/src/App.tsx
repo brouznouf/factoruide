@@ -10,11 +10,12 @@ import { SettingsPage } from "./pages/SettingsPage";
 import { CharactersPage } from "./pages/CharactersPage";
 import { ChangelogPage } from "./pages/ChangelogPage";
 import { ContributePage } from "./pages/ContributePage";
+import { IssueForm } from "./components/IssueForm";
 import { UpdateBanner } from "./components/UpdateBanner";
 
 const EDITION_LABELS: Record<Edition, string> = { forever: "Forever", classic: "Classic", tbc: "TBC" };
 
-type Page = "characters" | "plan" | "results" | "addon" | "contribute" | "settings" | "changelog";
+type Page = "characters" | "plan" | "results" | "addon" | "contribute" | "settings" | "changelog" | "report";
 
 const PAGES: { id: Page; label: string }[] = [
   { id: "plan", label: "Nouveau guide" },
@@ -160,6 +161,9 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
           <button className={page === "changelog" ? "active" : ""} onClick={() => away(() => setPage("changelog"))}>
             {t("Nouveautés")}
           </button>
+          <button className={page === "report" ? "active" : ""} onClick={() => away(() => setPage("report"))}>
+            {t("Signaler un problème")}
+          </button>
           {version && <span>Factoruide {version}</span>}
         </div>
       </nav>
@@ -222,6 +226,15 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
         )}
         {page === "addon" && <AddonPage />}
         {page === "changelog" && <ChangelogPage />}
+        {page === "report" && (
+          <div className="report-page">
+            <div className="page-head">
+              <h2>{t("Signaler un problème")}</h2>
+            </div>
+            <p className="muted">{t("Un problème dans un guide ? Ouvrez-le et cliquez sur « Signaler un problème » : vous pourrez y joindre les étapes concernées.")}</p>
+            <IssueForm key={edition ?? ""} />
+          </div>
+        )}
         {page === "contribute" && <ContributePage edition={edition} />}
         {page === "settings" && <SettingsPage onLanguage={onLanguage} version={version} />}
       </main>

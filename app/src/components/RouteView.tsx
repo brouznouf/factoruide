@@ -230,9 +230,12 @@ interface Props {
   compare?: ReactNode;
   /** Steps of the zone row opened (their positions), null when closed. */
   onHighlight?: (points: WorldPoint[] | null) => void;
+  /** Steps checked (a problem report), and checking one: a box on each step when given. */
+  selected?: Set<number>;
+  onSelect?: (index: number) => void;
 }
 
-export function RouteView({ route, notes, compare, onHighlight }: Props) {
+export function RouteView({ route, notes, compare, onHighlight, selected, onSelect }: Props) {
   const t = useT();
   const [filter, setFilter] = useState("");
   // Zones opened, the one shown on the maps (the opened zone whose steps are in view), and the
@@ -426,6 +429,15 @@ export function RouteView({ route, notes, compare, onHighlight }: Props) {
                         <td className={`num${x.time - begin >= 1800 ? " long" : ""}`}>{duration(x.time - begin)}</td>
                         <td>{x.level}</td>
                         <td>
+                          {onSelect && (
+                            <input
+                              type="checkbox"
+                              className="step-check"
+                              checked={selected?.has(k) ?? false}
+                              onChange={() => onSelect(k)}
+                              aria-label={t("Joindre l'étape {n} au signalement", { n: k + 1 })}
+                            />
+                          )}
                           <span className="step-n">{k + 1}</span> <span className={`kind kind-${x.kind}`}>{kindLabel(x)}</span> {x.text}
                           {x.bg && <span className="along"> {t("en chemin")}</span>}
                           {x.farm ? <span className="along"> {t("(tuer ~{n} mobs en chemin)", { n: x.farm })}</span> : null}

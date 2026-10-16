@@ -4,6 +4,7 @@
 
 pub mod collector;
 pub mod contribution;
+pub mod issue;
 #[cfg(feature = "local")]
 pub mod lua;
 #[cfg(feature = "local")]

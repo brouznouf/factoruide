@@ -162,7 +162,8 @@ button.link.danger {
   color: var(--bad);
 }
 input,
-select {
+select,
+textarea {
   background: var(--surface-0);
   border: 1px solid var(--control-edge);
   border-radius: var(--radius-sm);
@@ -171,11 +172,13 @@ select {
   transition: border-color 0.12s, box-shadow 0.12s;
 }
 input:hover,
-select:hover {
+select:hover,
+textarea:hover {
   border-color: var(--border-strong);
 }
 input:focus,
-select:focus {
+select:focus,
+textarea:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
@@ -3170,4 +3173,30 @@ button.link.cmp-jump {
 .compare-table td.cmp-n {
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
+}
+
+.issue-form {
+  margin: 12px 0;
+  max-width: 760px;
+}
+.issue-form textarea {
+  resize: vertical;
+  font: inherit;
+  color: inherit;
+}
+.issue-steps ul {
+  margin: 0 0 10px;
+  padding: 0;
+  list-style: none;
+  max-height: 180px;
+  overflow-y: auto;
+}
+.issue-steps li {
+  display: flex;
+  gap: 6px;
+  align-items: baseline;
+}
+.step-check {
+  margin-right: 6px;
+  vertical-align: middle;
 }

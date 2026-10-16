@@ -37,9 +37,9 @@ const MAX_UI_MAP: i64 = 10_000;
 const MAX_LEVEL: i64 = 80;
 const MAX_DATA_BYTES: usize = 2_048;
 /// 2023-11-14: nothing older can come from this app.
-const MIN_TIME: u64 = 1_700_000_000;
+pub(crate) const MIN_TIME: u64 = 1_700_000_000;
 /// Clocks may be a bit ahead.
-const CLOCK_SKEW: u64 = 86_400;
+pub(crate) const CLOCK_SKEW: u64 = 86_400;
 
 /// Whether an event type carries a quest id or an entity.
 #[derive(Clone, Copy, PartialEq)]
@@ -294,12 +294,12 @@ pub fn event_types() -> impl Iterator<Item = &'static str> {
     SCHEMAS.iter().map(|s| s.event)
 }
 
-fn is_hex(s: &str, len: usize) -> bool {
+pub(crate) fn is_hex(s: &str, len: usize) -> bool {
     s.len() == len && s.bytes().all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
 }
 
 /// Text without control characters (except line breaks and tabs when `multiline`).
-fn clean_text(s: &str, max: usize, multiline: bool) -> bool {
+pub(crate) fn clean_text(s: &str, max: usize, multiline: bool) -> bool {
     s.chars().count() <= max
         && s.chars()
             .all(|c| !c.is_control() || (multiline && matches!(c, '\n' | '\r' | '\t')))

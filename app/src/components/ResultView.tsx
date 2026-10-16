@@ -6,6 +6,7 @@ import { RouteView } from "./RouteView";
 import { useDate, useT } from "../i18n";
 import { WorldMap, routeMarkers, type WorldPoint } from "./WorldMap";
 import { Icon } from "./Icons";
+import { IssueForm } from "./IssueForm";
 
 interface Props {
   version: GuideVersion;
@@ -46,6 +47,15 @@ export function ResultView({ version, onRerun, onEdit, onClone, onEditSteps, onO
   const continents = useMemo(() => [...new Set(line.map((p) => p[0]))], [line]);
   // Steps of the zone opened in the route table, drawn over the route.
   const [highlight, setHighlight] = useState<WorldPoint[] | null>(null);
+  // A problem report open, and the steps checked for it.
+  const [reporting, setReporting] = useState(false);
+  const [reported, setReported] = useState<Set<number>>(new Set());
+  const toggleReported = (k: number) =>
+    setReported((r) => {
+      const next = new Set(r);
+      if (!next.delete(k)) next.add(k);
+      return next;
+    });
 
   const loadGuide = useCallback(() => {
     api.getGuide(meta.guide).then(setGuide).catch(() => setGuide(null));
@@ -117,7 +127,22 @@ export function ResultView({ version, onRerun, onEdit, onClone, onEditSteps, onO
         >
           <Icon name="share" /> {t("Partager")}
         </button>
+        <button onClick={() => setReporting(true)} disabled={reporting} title={t("Envoyer un signalement sur ce guide, avec les étapes concernées")}>
+          {t("Signaler un problème")}
+        </button>
       </div>
+      {reporting && (
+        <IssueForm
+          guide={{ guide: meta.guide, version: meta.version, steps: route.steps }}
+          selected={[...reported]}
+          onUnselect={toggleReported}
+          onSent={() => setReported(new Set())}
+          onClose={() => {
+            setReporting(false);
+            setReported(new Set());
+          }}
+        />
+      )}
       {message && <div className="success">{message}</div>}
       {error && <div className="error">{error}</div>}
 
@@ -203,6 +228,8 @@ export function ResultView({ version, onRerun, onEdit, onClone, onEditSteps, onO
           )
         }
         onHighlight={setHighlight}
+        selected={reporting ? reported : undefined}
+        onSelect={reporting ? toggleReported : undefined}
       />
     </div>
   );

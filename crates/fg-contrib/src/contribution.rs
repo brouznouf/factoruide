@@ -119,7 +119,7 @@ pub fn random_hex(bytes: usize) -> Result<String> {
 }
 
 /// Unix seconds now.
-fn now() -> Result<u64> {
+pub(crate) fn now() -> Result<u64> {
     Ok(std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)?
         .as_secs())

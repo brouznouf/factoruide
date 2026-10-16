@@ -1669,6 +1669,7 @@ fn main() {
             set_edition,
             contribution_preview,
             send_contribution,
+            send_issue,
             set_auto_contribute,
             list_guides,
             get_guide,
@@ -1857,6 +1858,11 @@ const DEFAULT_CONTRIBUTION_SERVER: Option<&str> = option_env!("FG_CONTRIBUTION_S
 
 /// Where contributions are posted, from the configured (or built-in) server address.
 fn contribution_endpoint(settings: &Settings) -> Option<String> {
+    server_endpoint(settings, "contributions")
+}
+
+/// `/v1/<path>` on the contribution server.
+fn server_endpoint(settings: &Settings, path: &str) -> Option<String> {
     let base = settings
         .contribution_url
         .as_deref()
@@ -1868,7 +1874,7 @@ fn contribution_endpoint(settings: &Settings) -> Option<String> {
         .trim_end_matches('/')
         .trim_end_matches("/v1/contributions")
         .trim_end_matches("/contributions");
-    Some(format!("{base}/v1/contributions"))
+    Some(format!("{base}/v1/{path}"))
 }
 
 /// This install's contributor id, created the first time (settings locked meanwhile: the
@@ -1991,7 +1997,7 @@ fn retry_after_secs(value: &str) -> Option<u64> {
     value.trim().parse::<u64>().ok().map(|s| s.min(MAX_RETRY_AFTER))
 }
 
-/// Post a contribution document. Nothing about this computer goes with it: a fixed user agent,
+/// Post a contribution document (or a report). Nothing about this computer goes with it: a fixed user agent,
 /// no cookie, no proxy from the environment, and no redirect followed (it could take the
 /// document to another host).
 fn post_contribution(url: &str, body: &[u8]) -> Posted {
@@ -2179,6 +2185,122 @@ async fn send_contribution(app: AppHandle) -> CmdResult<SendReport> {
             (None, Some(Posted::RateLimited(_))) => Err("rate_limited".to_owned()),
             (None, Some(Posted::Failed(message))) => Err(message),
             (None, _) => Err("nothing_to_send".to_owned()),
+        }
+    })
+    .await
+    .map_err(err)?
+}
+
+/// A problem the player reports, as the report form gives it.
+#[derive(Deserialize)]
+struct IssueDraft {
+    /// `guide` or `other`.
+    kind: String,
+    message: String,
+    #[serde(default)]
+    name: Option<String>,
+    /// The app's language.
+    language: String,
+    #[serde(default)]
+    guide: Option<IssueGuide>,
+}
+
+#[derive(Deserialize)]
+struct IssueGuide {
+    guide: String,
+    version: u32,
+    /// Indices of the steps pointed at.
+    #[serde(default)]
+    steps: Vec<usize>,
+    /// Language the steps were shown in.
+    locale: String,
+}
+
+/// What a report says of a guide: everything it was computed from, so that it is computed again
+/// exactly (all its settings, seed included), without the character's name.
+fn guide_report(state: &AppState, g: &IssueGuide) -> CmdResult<(Edition, fg_contrib::issue::GuideReport)> {
+    let v = state.version(&g.guide, g.version)?;
+    let mut request = v.request;
+    let edition = request.params.as_ref().map_or_else(|| state.edition(), |p| p.edition);
+    if request.params.is_none() {
+        request.params = Some(overrides(edition)?.params);
+    }
+    request.name = None;
+    if let Some(start) = &mut request.start {
+        start.name.clear();
+    }
+    let route = state.render(&v.outcome.route, Some(&g.locale))?;
+    let mut steps = Vec::new();
+    for &i in &g.steps {
+        let step = serde_json::to_value(route.steps.get(i).ok_or("no such step")?).map_err(err)?;
+        let map = &step["map"];
+        steps.push(fg_contrib::issue::ReportedStep {
+            index: i as u32,
+            kind: step["kind"].as_str().unwrap_or_default().to_owned(),
+            quest: step["quest"].as_u64().map(|q| q as u32),
+            objective: step["objective"].as_u64().map(|o| o as u32),
+            text: step["text"].as_str().unwrap_or_default().chars().take(500).collect(),
+            zone: step["zone"].as_str().map(str::to_owned),
+            level: step["level"].as_u64().unwrap_or_default() as u32,
+            map: map["ui_map"]
+                .as_u64()
+                .zip(map["x"].as_f64().zip(map["y"].as_f64()))
+                .map(|(m, (x, y))| (m as u32, x, y)),
+        });
+    }
+    Ok((
+        edition,
+        fg_contrib::issue::GuideReport {
+            request: serde_json::to_value(&request).map_err(err)?,
+            plan: serde_json::to_value(&v.outcome.plan).map_err(err)?,
+            data: v.meta.data,
+            version: g.version,
+            edited: v.meta.edited,
+            imported: v.meta.imported,
+            total_time: v.meta.total_time,
+            steps,
+        },
+    ))
+}
+
+/// Send a problem the player reports to the contribution server. Errors: "rate_limited", or
+/// the reason (the report's check, the server's message).
+#[tauri::command]
+async fn send_issue(app: AppHandle, draft: IssueDraft) -> CmdResult<&'static str> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let state = app.state::<AppState>();
+        let url = server_endpoint(&state.settings(), "issues").ok_or("no contribution server configured")?;
+        let (edition, guide) = match &draft.guide {
+            Some(g) => {
+                let (e, report) = guide_report(&state, g)?;
+                (e, Some(report))
+            }
+            None => (state.edition(), None),
+        };
+        let now = now()?;
+        let issue = fg_contrib::issue::Issue {
+            format: fg_contrib::issue::FORMAT.into(),
+            version: fg_contrib::issue::VERSION,
+            edition: edition.key().into(),
+            app_version: env!("CARGO_PKG_VERSION").into(),
+            contributor: contributor_id(&state)?,
+            day: (now / 86_400) as u32,
+            os: std::env::consts::OS.into(),
+            language: draft.language,
+            kind: draft.kind,
+            message: draft.message.trim().to_owned(),
+            name: draft.name.map(|n| n.trim().to_owned()).filter(|n| !n.is_empty()),
+            guide,
+        };
+        fg_contrib::issue::validate(&issue, now).map_err(err)?;
+        let body = serde_json::to_vec(&issue).map_err(err)?;
+        if body.len() > fg_contrib::issue::MAX_BYTES {
+            return Err("report too large".to_owned());
+        }
+        match post_contribution(&url, &body) {
+            Posted::RateLimited(_) => Err("rate_limited".to_owned()),
+            Posted::Failed(message) => Err(message),
+            posted => Ok(posted.status()),
         }
     })
     .await

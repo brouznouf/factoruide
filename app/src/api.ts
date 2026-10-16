@@ -412,6 +412,8 @@ export const api = {
   contributionPreview: () => invoke<ContributionPreview>("contribution_preview"),
   /** Sends what is new, in up to 3 documents (rejects with "nothing_to_send", "rate_limited" or the server's message when none was accepted). */
   sendContribution: () => invoke<SendReport>("send_contribution"),
+  /** Sends a problem report to the contribution server (rejects with "rate_limited" or the reason). */
+  sendIssue: (draft: IssueDraft) => invoke<"accepted" | "already_received">("send_issue", { draft }),
   /** Turns the automatic contributions on or off (that setting only). */
   setAutoContribute: (on: boolean) => invoke<void>("set_auto_contribute", { on }),
   /** Opens a version in the guide editor (`locale`: language of the lines and names shown). */
@@ -569,6 +571,16 @@ export interface AutoSendStatus {
   time: number;
   status: "accepted" | "already_received" | "rate_limited" | "error";
   message?: string | null;
+}
+
+/** A problem the player reports: about a guide (with the steps pointed at) or anything else. */
+export interface IssueDraft {
+  kind: "guide" | "other";
+  message: string;
+  /** Who to thank (optional). */
+  name?: string;
+  language: string;
+  guide?: { guide: string; version: number; steps: number[]; locale: string };
 }
 
 /** What a contribution of this computer would hold now (current game version): only what was not sent yet. */
