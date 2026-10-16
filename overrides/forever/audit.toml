@@ -1,0 +1,41 @@
+# Findings of `fg audit` known to be right on WoW Forever only (see ../audit.toml).
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84395"
+reason = "Undead Potatoes: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84396"
+reason = "Magma or Lava?: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84397"
+reason = "Northern Kalimdor - A Comprehensive Guide: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84398"
+reason = "A Study of the Light: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84399"
+reason = "Ka-Boom!: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84400"
+reason = "The Knight and the Lady: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84401"
+reason = "Scourge: Undead Menace or Misunderstood?: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"
+
+[[accept]]
+check = "other-class-quests"
+key = "quest 84402"
+reason = "Necromancy 101: a library book (Season of Discovery's mage quest), any class in Forever, turned in to a mage trainer"

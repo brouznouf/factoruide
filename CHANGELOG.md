@@ -25,6 +25,10 @@ Writing an entry: one short line per change, saying what the player sees or gets
 ### WoW data
 
 - WoW Forever: quests of a chain are taken in the order the game offers them (Walton and Vrang in the Barrens, Mankrik's Olgra, the Scourge paladin's quests…).
+- WoW Forever: Return to Quinn (Again) only after Wild Eyes, no longer at the same time as Return to Quinn.
+- WoW Forever: the dwarf shaman's Call of Water, the night elf hunter's Taming the Beast and the Skyborne and tauren druids' To Thunder Bluff and To Darnassus are back in their guides.
+- TBC: the human and dwarf paladin's Tome of Divinity and Tome of Valor, the draenei shaman's Call of Fire and the Horde rogue's Hinott's Assistance (Poisons) are back in their guides.
+- Data refreshed (Questie, AllTheThings, Wowhead) with the players' latest contributions.
 
 ## 0.10.0 (2026-10-15)
 

@@ -28,8 +28,10 @@ impl QuestBuilder<'_> {
         text: Option<String>,
         amount: Option<f64>,
     ) -> Result<Option<Objective>, Skip> {
-        if quest.row.source_item == Some(target) {
-            return Ok(None); // given when accepting
+        let in_given_bag =
+            |bag: i64| (self.sources.item_origins.get(&target)).is_some_and(|o| o.contains(&(SourceKind::Item, bag)));
+        if quest.row.source_item.is_some_and(|s| s == target || in_given_bag(s)) {
+            return Ok(None); // given when accepting, or in the bag given then (Call of Fire's satchel)
         }
         let name = self.sources.entities.name(EntityKind::Item, target);
         let count =
