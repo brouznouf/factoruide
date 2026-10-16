@@ -5,6 +5,8 @@
 type Entry = Partial<Record<"en" | "de" | "es" | "esMX" | "pt" | "ru" | "ko" | "zhCN" | "zhTW", string>>;
 
 export const CATALOG: Record<string, Entry> = {
+  "Installer automatiquement les mises à jour au lancement": { en: "Automatically install updates on launch" },
+  "Télécharge, installe et redémarre automatiquement si une nouvelle version est disponible. Prend effet au prochain lancement. Les versions locales restent manuelles.": { en: "Downloads, installs and restarts automatically when a new version is available. Takes effect on the next launch. Local builds still require manual updates." },
   "Mises à jour de l'application": { en: "Application updates" },
   "Vous utilisez la dernière version.": { en: "You’re up to date." },
   "Recherche de mises à jour…": { en: "Checking for updates…" },

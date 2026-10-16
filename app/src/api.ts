@@ -340,6 +340,8 @@ export interface Settings {
   contribution_url?: string | null;
   /** Send what is new to the contribution server on its own, once a day at most (off by default). */
   auto_contribute?: boolean;
+  /** Install updates on launch in published builds (off by default). */
+  auto_update?: boolean;
   /** Game version the app works on. */
   edition: Edition;
   /** App language (also the default guide language); unset: the system language. */

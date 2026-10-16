@@ -102,7 +102,12 @@ and verifies the publisher's update package before installation. Failed checks
 and installs show an error and can be retried. If the app cannot restart after
 installation, select **Restart Factoruide**; it does not download the update again.
 
-Published builds also check at startup. Local builds check only on request and
+Published builds also check at startup. In **Settings**, opt into
+**Automatically install updates on launch** to download, install, and restart
+without another prompt when a new version is detected. The checkbox is off by
+default, saves immediately, and takes effect on the next launch. A failed install
+leaves an error with a manual retry. If guide generation or unsaved edits have
+started while the check runs, the update is offered for manual installation. Local builds check only on request and
 warn before being replaced by an official release. Wait for guide generation to
 finish before installing; unsaved guide edits require confirmation.
 

@@ -32,6 +32,7 @@ interface Props {
 export function SettingsPage({ onLanguage, version }: Props) {
   const t = useT();
   const lang = useLang();
+  const [savingUpdate, setSavingUpdate] = useState(false);
   const [settings, setSettings] = useState<Settings | null>(null);
   // Game version folders in the WoW folder (null: not looked yet).
   const [found, setFound] = useState<string[] | null>(null);
@@ -56,6 +57,29 @@ export function SettingsPage({ onLanguage, version }: Props) {
       <div className="settings-grid">
     <section className="panel">
       <h3>{t("Général")}</h3>
+      <label className="field">
+        <span>
+          <input
+            type="checkbox"
+            checked={settings.auto_update ?? false}
+            disabled={savingUpdate}
+            onChange={async (e) => {
+              const next = { ...settings, auto_update: e.target.checked };
+              setSavingUpdate(true);
+              setError(null);
+              try {
+                await api.setSettings(next);
+                setSettings(next);
+              } catch (err) {
+                setError(String(err));
+              } finally {
+                setSavingUpdate(false);
+              }
+            }}
+          /> {t("Installer automatiquement les mises à jour au lancement")}
+        </span>
+        <small>{t("Télécharge, installe et redémarre automatiquement si une nouvelle version est disponible. Prend effet au prochain lancement. Les versions locales restent manuelles.")}</small>
+      </label>
       <label className="field">
         <span>
           {t("Langue de l'application")}

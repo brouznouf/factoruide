@@ -172,6 +172,7 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
         <UpdateBanner
           showCheck={page === "settings"}
           installBlocked={busy}
+          canAutoInstall={() => !unsaved.current}
           beforeInstall={() => !unsaved.current || confirm(t("Quitter l'édition sans enregistrer ? Les modifications seront perdues."))}
         />
         {/* Always mounted (hidden on other pages) so that a running generation goes on showing. */}

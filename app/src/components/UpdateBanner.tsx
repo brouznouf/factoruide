@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useEffectEvent, useRef, useState } from "react";
 import { listen } from "@tauri-apps/api/event";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check, type Update } from "@tauri-apps/plugin-updater";
@@ -11,12 +11,13 @@ interface Props {
   showCheck?: boolean;
   installBlocked?: boolean;
   beforeInstall?: () => boolean;
+  canAutoInstall?: () => boolean;
 }
 
 const allowInstall = () => true;
 
 /** Startup checks for releases; an explicit Settings check also works in local builds. */
-export function UpdateBanner({ showCheck = false, installBlocked = false, beforeInstall = allowInstall }: Props) {
+export function UpdateBanner({ showCheck = false, installBlocked = false, beforeInstall = allowInstall, canAutoInstall = allowInstall }: Props) {
   const t = useT();
   const [update, setUpdate] = useState<Update | null>(null);
   const [step, setStep] = useState<Step>({ kind: "idle" });
@@ -34,6 +35,49 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
     if (previous && previous !== next) void previous.close().catch(() => {});
   }, []);
 
+  const restart = async () => {
+    try {
+      await relaunch();
+    } catch (e) {
+      // Keep the installed state: retry restarting, never download/install twice.
+      setRestartError(String(e));
+    }
+  };
+  const [restartError, setRestartError] = useState<string | null>(null);
+  const performInstall = async (candidate: Update) => {
+    locked.current = true;
+    let total = 0;
+    let received = 0;
+    setStep({ kind: "downloading", percent: null });
+    try {
+      await candidate.downloadAndInstall((event) => {
+        if (event.event === "Started") total = event.data.contentLength ?? 0;
+        if (event.event === "Progress") {
+          received += event.data.chunkLength;
+          setStep({ kind: "downloading", percent: total ? Math.min(100, Math.round((received / total) * 100)) : null });
+        }
+        if (event.event === "Finished") setStep({ kind: "installing" });
+      });
+      setStep({ kind: "installed" });
+      await restart();
+    } catch (e) {
+      setStep({ kind: "failed", error: String(e) });
+      locked.current = false;
+    }
+  };
+
+  const autoInstall = useEffectEvent((candidate: Update) => {
+    // Never interrupt work started while the startup check was in flight.
+    if (!locked.current && !installBlocked && canAutoInstall()) void performInstall(candidate);
+  });
+  const install = async () => {
+    if (!update || locked.current || installBlocked || !beforeInstall()) return;
+    if (!confirm(t(local
+      ? "Installer la version officielle à la place de cette version locale et redémarrer ?"
+      : "Installer la mise à jour et redémarrer Factoruide ?"))) return;
+    await performInstall(update);
+  };
+
   useEffect(() => {
     let cancelled = false;
     // A manual check takes precedence over a late startup result.
@@ -47,6 +91,9 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
         return;
       }
       replaceUpdate(next);
+      // Read the preference after the network check, so disabling it while checking wins.
+      const settings = await api.getSettings();
+      if (!cancelled && manualChecks.current === 0 && next && settings.auto_update) autoInstall(next);
     }).catch(() => {});
     return () => {
       cancelled = true;
@@ -84,41 +131,6 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
   useEffect(() => {
     if (menuRequested && step.kind === "checking") banner.current?.scrollIntoView({ block: "start" });
   }, [menuRequested, step.kind]);
-
-  const restart = async () => {
-    try {
-      await relaunch();
-    } catch (e) {
-      // Keep the installed state: retry restarting, never download/install twice.
-      setRestartError(String(e));
-    }
-  };
-  const [restartError, setRestartError] = useState<string | null>(null);
-  const install = async () => {
-    if (!update || locked.current || installBlocked || !beforeInstall()) return;
-    if (!confirm(t(local
-      ? "Installer la version officielle à la place de cette version locale et redémarrer ?"
-      : "Installer la mise à jour et redémarrer Factoruide ?"))) return;
-    locked.current = true;
-    let total = 0;
-    let received = 0;
-    setStep({ kind: "downloading", percent: null });
-    try {
-      await update.downloadAndInstall((event) => {
-        if (event.event === "Started") total = event.data.contentLength ?? 0;
-        if (event.event === "Progress") {
-          received += event.data.chunkLength;
-          setStep({ kind: "downloading", percent: total ? Math.min(100, Math.round((received / total) * 100)) : null });
-        }
-        if (event.event === "Finished") setStep({ kind: "installing" });
-      });
-      setStep({ kind: "installed" });
-      await restart();
-    } catch (e) {
-      setStep({ kind: "failed", error: String(e) });
-      locked.current = false;
-    }
-  };
 
   const working = ["checking", "downloading", "installing", "installed"].includes(step.kind);
   if (!showCheck && !menuRequested && !update && step.kind !== "failed") return null;

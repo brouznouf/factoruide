@@ -43,6 +43,9 @@ struct Settings {
     /// the player turns it on).
     #[serde(default)]
     auto_contribute: bool,
+    /// Install updates on launch in published builds (explicit opt-in).
+    #[serde(default)]
+    auto_update: bool,
     /// Addon behaviour, written to the addon's Config.lua on install.
     #[serde(default)]
     addon: serde_json::Map<String, serde_json::Value>,
@@ -109,6 +112,7 @@ impl Default for Settings {
             contribution_url: None,
             contributor: None,
             auto_contribute: false,
+            auto_update: false,
             addon: serde_json::Map::new(),
             guide_addon: GuideAddon::Factoruide,
             guide_locale: None,
