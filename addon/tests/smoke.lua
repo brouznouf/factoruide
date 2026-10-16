@@ -990,6 +990,63 @@ assert(char.guide.step == 2, "a quest turned in before the level counts, step " 
 C_QuestLog.IsComplete = isComplete
 print("pending xp ok")
 
+-- Just accepted, the game has no objectives yet and may say the quest complete: the kill step
+-- is not skipped for it (Polestar #74, Kolkar Leaders went straight to the hand-in).
+FG.Routes["loading-test"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 1,
+    toLevel = 60,
+    time = 1,
+    steps = {
+        { k = "accept", t = "Accept Kolkar Leaders", q = 9301, id = 1, m = 1426, x = 29.93, y = 71.2, lvl = 3 },
+        { k = "objective", t = "Kill Barak", q = 9301, o = 1, n = "Barak Kodobane", lvl = 3 },
+        { k = "turnin", t = "Turn in Kolkar Leaders", q = 9301, rx = 500, id = 2, m = 1426, x = 50, y = 50, lvl = 3 },
+        { k = "grind", t = "Grind", lvl = 60 },
+    },
+}
+local loading, loadingDone = nil, false
+local objectivesBefore, numEntries, getInfo =
+    C_QuestLog.GetQuestObjectives, C_QuestLog.GetNumQuestLogEntries, C_QuestLog.GetInfo
+C_QuestLog.GetQuestObjectives = function(q)
+    if q == 9301 then return loading end
+    return objectivesBefore(q)
+end
+C_QuestLog.IsComplete = function(q) return q == 9301 and (loading == nil or loadingDone) end
+C_QuestLog.GetNumQuestLogEntries = function() return 1 end
+C_QuestLog.GetInfo = function() return { questID = 9301, title = "Kolkar Leaders", level = 3 } end
+useRoute("loading-test")
+assert(char.guide.step == 1, "accept first, step " .. char.guide.step)
+onQuest[9301] = true
+-- QUEST_ACCEPTED would add a collector row the checks further down do not expect.
+fire("QUEST_LOG_UPDATE")
+assert(char.guide.step == 2, "no objectives yet: not done, step " .. char.guide.step)
+loading = { { text = "", finished = false } }
+fire("QUEST_LOG_UPDATE")
+assert(char.guide.step == 2, "blank objectives: not done, step " .. char.guide.step)
+loading = { { text = "Barak Kodobane slain: 0/1", finished = false } }
+fire("QUEST_LOG_UPDATE")
+assert(char.guide.step == 2, "objective not finished, step " .. char.guide.step)
+loading, loadingDone = { { text = "Barak Kodobane slain: 1/1", finished = true } }, true
+fire("QUEST_LOG_UPDATE")
+assert(char.guide.step == 3, "objective finished, step " .. char.guide.step)
+-- The same while grinding: its XP is not counted before the objectives are there.
+FG.Routes["loading-test"].steps[1] = { k = "grind", t = "Be level 3 and 300 xp", lvl = 3, xp = 300 }
+loading, loadingDone = nil, false
+useRoute("loading-test")
+FG.Guide:Go(1)
+FG.Guide:Resync()
+assert(char.guide.step == 1, "loading quest XP not counted, step " .. char.guide.step)
+loading, loadingDone = { { text = "Barak Kodobane slain: 1/1", finished = true } }, true
+FG.Guide:Resync()
+assert(char.guide.step > 1, "complete quest XP counted, step " .. char.guide.step)
+C_QuestLog.GetQuestObjectives, C_QuestLog.GetNumQuestLogEntries, C_QuestLog.GetInfo =
+    objectivesBefore, numEntries, getInfo
+C_QuestLog.IsComplete = isComplete
+onQuest[9301] = nil
+print("objectives loading ok")
+
 -- XP bar mark: where the guide expects the character before the step shown, and the gap.
 FG.Routes["xp-test"] = {
     race = 7,

@@ -34,7 +34,10 @@ impl Worth<'_> {
         path.extend(q.objectives.iter().map(|o| o.loc.pos));
         path.push(q.ends[0].pos);
         // Walking or transport links (boats, zeppelins): quests may cross continents.
-        let travel: f64 = path.windows(2).map(|w| self.trips.leg(&w[0], &w[1], level, 0).0).sum();
+        let travel: f64 = path
+            .windows(2)
+            .map(|w| self.trips.leg(&w[0], &w[1], level, 0, u8::MAX).0)
+            .sum();
         let work: f64 = q
             .objectives
             .iter()

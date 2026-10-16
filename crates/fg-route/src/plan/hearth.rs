@@ -259,7 +259,8 @@ impl Planner<'_> {
             let target = self.places().pos(s, route[k]);
             let direct = self.trips().fastest(s, &target).0;
             let inn = &self.model.inns[inn_at(k)].pos;
-            direct - cast - self.trips().leg(inn, &target, s.level, s.known).0
+            let open = self.trips().open_links(s);
+            direct - cast - self.trips().leg(inn, &target, s.level, s.known, open).0
         };
         let mut uses = Vec::new();
         let mut ready = if recall {

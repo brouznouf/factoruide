@@ -135,8 +135,24 @@ pub fn build_traced(
                     .map_or((0.0, t.level, t.xp), |(s, x)| (s.time, s.level, *x));
                 let entered = (t.time - planner.model.dungeons[d].minutes * 60.0).max(start);
                 (step.time, step.level) = (entered, level);
+                // A quest started by a boss's drop is accepted in the run, not before it.
+                let from_boss = |s: &Step| {
+                    s.kind == StepKind::Accept
+                        && (planner.model.quests.iter()).any(|q| Some(q.id) == s.quest && q.start_dungeon == Some(d))
+                };
+                let mut looted = Vec::new();
+                while steps.last().is_some_and(from_boss) {
+                    let mut accept = steps.pop().unwrap();
+                    xps.pop();
+                    (accept.time, accept.level, accept.inside) = (entered, level, true);
+                    looted.insert(0, accept);
+                }
                 steps.push(step);
                 xps.push(xp);
+                for accept in looted {
+                    steps.push(accept);
+                    xps.push(xp);
+                }
                 let count = inside.len() as f64;
                 for (k, mut quest) in inside.into_iter().enumerate() {
                     quest.time = entered + (t.time - entered) * (k as f64 + 1.0) / count;

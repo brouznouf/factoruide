@@ -113,6 +113,17 @@ pub(super) fn load_dungeons(
             inside.insert((kind, id), d);
         }
     }
+    // Bosses no source places but filed under the dungeon (Forever's: The Baron, Ruins of Lordaeron).
+    let mut stmt = conn.prepare(
+        "SELECT id, zone_id FROM m_npc n WHERE zone_id IS NOT NULL
+           AND NOT EXISTS (SELECT 1 FROM m_spawn s WHERE s.entity_type = 'npc' AND s.entity_id = n.id)",
+    )?;
+    for row in stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))? {
+        let (id, zone) = row?;
+        if let Some(&d) = by_area.get(&zone) {
+            inside.entry((EntityKind::Npc, id)).or_insert(d);
+        }
+    }
     Ok((dungeons, by_area, inside))
 }
 

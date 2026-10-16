@@ -313,7 +313,8 @@ const SPELL_QUESTS_BELOW: i64 = 50;
 /// (overrides/class_quests.toml), then the class quests the data says teach a spell (a pet, a
 /// stance, a totem, Redemption...), by level: a guide does not leave a class spell out. The app
 /// lists them, the player takes out those not wanted. Those from level 50 (an epic mount,
-/// Inferno, Ritual of Doom: raids and elite dungeons) are endgame, not leveling.
+/// Inferno, Ritual of Doom: raids and elite dungeons) are endgame, not leveling. Then the start
+/// zone's letter to the class trainer (Encrypted Sigil): little XP, but it leads to the trainer.
 pub fn class_quests(conn: &Connection, overrides: &Overrides) -> Result<HashMap<String, Vec<String>>> {
     let mut out = overrides.class_quests.clone();
     // Databases built before the column existed: the configured ones only.
@@ -337,6 +338,21 @@ pub fn class_quests(conn: &Connection, overrides: &Overrides) -> Result<HashMap<
          GROUP BY name HAVING min(coalesce(min_level, level, 1)) < ?3
          ORDER BY min(coalesce(min_level, level, 1)), name",
     )?;
+    let has_subname: bool = conn.query_row(
+        "SELECT count(*) > 0 FROM pragma_table_info('m_npc') WHERE name = 'subname'",
+        [],
+        |r| r.get(0),
+    )?;
+    let mut letters = conn.prepare(if has_subname {
+        "SELECT DISTINCT q.name FROM m_quest q
+         JOIN m_quest_relation r ON r.quest_id = q.id AND r.role = 'end' AND r.entity_type = 'npc'
+         JOIN m_npc n ON n.id = r.entity_id
+         WHERE q.status = 'available' AND q.classes_mask = ?1 AND coalesce(q.level, 1) BETWEEN 0 AND 2
+           AND n.subname LIKE '% Trainer'
+         ORDER BY q.name"
+    } else {
+        "SELECT name FROM m_quest WHERE 0 AND ?1"
+    })?;
     for (id, key) in classes.into_iter().filter(|(id, _)| (1..=31).contains(id)) {
         let names: Vec<String> = stmt
             .query_map(
@@ -344,8 +360,11 @@ pub fn class_quests(conn: &Connection, overrides: &Overrides) -> Result<HashMap<
                 |r| r.get(0),
             )?
             .collect::<rusqlite::Result<_>>()?;
+        let letters: Vec<String> = letters
+            .query_map([1i64 << (id - 1)], |r| r.get(0))?
+            .collect::<rusqlite::Result<_>>()?;
         let list = out.entry(key).or_default();
-        for name in names {
+        for name in names.into_iter().chain(letters) {
             if !list.contains(&name) {
                 list.push(name);
             }
@@ -403,6 +422,28 @@ mod tests {
             ["The Tome of Divinity", "A Lesson in Divinity", "The Tome of Nobility"]
         );
         assert_eq!(quests["hunter"], ["Taming the Beast"]);
+    }
+
+    /// The start zone's letter to the class trainer is required; a level 1 class quest turned in
+    /// elsewhere, or a later one at the trainer, is not.
+    #[test]
+    fn letters_to_the_class_trainer_are_required() {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch(
+            "CREATE TABLE client_chrclasses (ID, Filename);
+             INSERT INTO client_chrclasses VALUES (4, 'ROGUE');
+             CREATE TABLE m_quest (id, name, level, min_level, classes_mask, zone_or_sort, status, reward_spell);
+             CREATE TABLE m_quest_relation (quest_id, role, entity_type, entity_id);
+             CREATE TABLE m_npc (id, subname);
+             INSERT INTO m_npc VALUES (1, 'Rogue Trainer'), (2, NULL);
+             INSERT INTO m_quest VALUES (1, 'Encrypted Sigil', 1, 1, 8, NULL, 'available', NULL),
+                                        (2, 'Plain Errand', 1, 1, 8, NULL, 'available', NULL),
+                                        (3, 'The Deadliest Trap', 12, 12, 8, NULL, 'available', NULL);
+             INSERT INTO m_quest_relation VALUES (1, 'end', 'npc', 1), (2, 'end', 'npc', 2), (3, 'end', 'npc', 1);",
+        )
+        .unwrap();
+        let quests = class_quests(&conn, &Overrides::default()).unwrap();
+        assert_eq!(quests["rogue"], ["Encrypted Sigil"]);
     }
 
     /// The factions available quests give reputation with, most quests first, with their side

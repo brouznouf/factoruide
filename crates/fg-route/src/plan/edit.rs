@@ -345,7 +345,7 @@ impl Planner<'_> {
     /// Boats, zeppelins or trams of an edited route: walking to the first one.
     fn edit_link(&self, s: &mut State, first: usize, last: usize, trace: &mut Vec<Timed>) -> Outcome {
         let links = &self.world.links;
-        let ride = self.world.link_chain[first][last];
+        let ride = self.world.link_chain(self.trips().open_links(s))[first][last];
         if !ride.is_finite() {
             return Outcome::Invalid("no such crossing");
         }

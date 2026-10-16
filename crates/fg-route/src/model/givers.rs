@@ -14,6 +14,8 @@ pub(super) struct Givers {
     /// The mob dropping that item (ID, name), when it is looted from one, and its spawns.
     pub(super) start_mob: Option<(i64, String)>,
     pub(super) start_spots: Option<Spots>,
+    /// The dungeon whose boss drops that item: taken during the run.
+    pub(super) start_dungeon: Option<usize>,
     /// Quests that must be done first to hold the item that starts this one.
     pub(super) item_pre: Vec<i64>,
 }
@@ -44,6 +46,7 @@ impl QuestBuilder<'_> {
             start_work: (0.0, 0, 0.0),
             start_mob: None,
             start_spots: None,
+            start_dungeon: None,
             item_pre: Vec::new(),
         };
         let mut rare_start = false;
@@ -65,6 +68,7 @@ impl QuestBuilder<'_> {
                 ItemStart::Looted { at, work, mob, spots } => {
                     givers.starts.push(at);
                     givers.start_work = work;
+                    givers.start_dungeon = mob.as_ref().and_then(|(n, _)| self.dungeon_of(EntityKind::Npc, *n));
                     givers.start_mob = mob;
                     givers.start_spots = spots;
                 }
@@ -103,6 +107,25 @@ impl QuestBuilder<'_> {
             .filter(|(t, _)| *t == SourceKind::Object)
             .flat_map(|(_, o)| entities.points(world, EntityKind::Object, *o))
             .collect();
+        // A boss's drop: looted during the run, with the group (the quest needs it,
+        // `add_dungeon_givers`).
+        let boss = sources.iter().find_map(|(t, n)| {
+            (*t == SourceKind::Npc).then(|| self.dungeon_of(EntityKind::Npc, *n).map(|d| (*n, d)))?
+        });
+        if let Some((npc, d)) = boss {
+            let entrance = &self.sources.dungeons[d].entrance;
+            return ItemStart::Looted {
+                at: Loc {
+                    kind: EntityKind::Item,
+                    id: item,
+                    name: entities.name(EntityKind::Item, item),
+                    ..entrance.clone()
+                },
+                work: (0.0, 0, 0.0),
+                mob: Some((npc, entities.name(EntityKind::Npc, npc))),
+                spots: None,
+            };
+        }
         let mobs: Vec<(i64, f64)> = sources
             .iter()
             .filter(|(t, n)| *t == SourceKind::Npc && (params.allow_elite || !entities.is_elite(*n)))

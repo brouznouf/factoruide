@@ -963,6 +963,46 @@ fn link_kept_to_a_race() {
     assert!(!has("human"));
 }
 
+/// A link a quest opens (Forever's Skyborne leave their island by the teleport the giver of its
+/// last quest offers) is not taken before that quest is.
+#[test]
+fn link_opened_by_a_quest() {
+    let mut p = quests_at_start(2);
+    let point = |zone, x, y| fg_route::world::ZonePoint { zone, x, y };
+    let link = fg_route::world::LinkDef {
+        name: "Opened by quest 1".into(),
+        faction: None,
+        from: point(12, 48.17, 42.94),
+        to: point(1537, 50.0, 50.0),
+        seconds: 5.0,
+        one_way: true,
+        instant: true,
+        races: vec![],
+        after_quest: Some(p.model.quests[1].id),
+    };
+    let (faction, speed, wait) = (
+        p.profile.faction,
+        p.params.run_speed / p.params.detour,
+        p.params.link_wait,
+    );
+    p.world.add_links(&[link], faction, speed, wait);
+    let mut o = one_kill_east_of_start(&p, 0.0);
+    (o.loc.pos, o.loc.zone) = (p.world.to_world(1537, 50.0, 50.0).unwrap(), 1537);
+    p.model.quests[0].objectives = vec![o];
+    let takes_it = |p: &mut Prepared, accepted: Vec<usize>| {
+        p.model.initial.accepted = accepted;
+        let mut trace = Vec::new();
+        planner(p)
+            .simulate_full(&[Stop::quest(0, Kind::Objective(0))], Some(&mut trace))
+            .unwrap();
+        trace
+            .iter()
+            .any(|t| matches!(t.event, Event::Link { first, .. } if p.world.links[first].name == "Opened by quest 1"))
+    };
+    assert!(!takes_it(&mut p, vec![0]), "quest 1 not taken: closed");
+    assert!(takes_it(&mut p, vec![0, 1]), "quest 1 taken: open");
+}
+
 /// A quest given up is not turned in: it opens no follow-up. Fire Hardened Mail, left in the log
 /// when Razorfen Kraul is not run, does not give Furen's Armor (it used to).
 #[test]

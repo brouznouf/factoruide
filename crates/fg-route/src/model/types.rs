@@ -329,6 +329,8 @@ pub struct Quest {
     /// and its spawns (the guide's other places to look for it).
     pub start_mob: Option<(i64, String)>,
     pub start_spots: Option<Spots>,
+    /// The dungeon whose boss drops the item that starts the quest: accepted during the run.
+    pub start_dungeon: Option<usize>,
     /// Class quests: always planned, the optimizer cannot drop them.
     pub mandatory: bool,
     /// Required because its zone is forced (`Params::forced_zones`), or as a prerequisite of

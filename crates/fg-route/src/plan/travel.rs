@@ -15,12 +15,12 @@ pub(crate) type FlightTable = (Vec<Vec<f64>>, Vec<Vec<f64>>);
 /// Flight tables by set of known flight paths, computed once each.
 pub(crate) type FlightTables = RefCell<FxHashMap<u128, Rc<FlightTable>>>;
 
-/// A point as a key: continent (16 bits), zone (32 bits) and a flag in one word, then the bits
-/// of its coordinates.
+/// A point as a key: links opened (6 bits), level (8 bits), continent (16 bits), zone (32 bits)
+/// and a flag in one word, then the bits of its coordinates.
 type PosKey = [u64; 3];
 
-/// Trips already computed (from with mounted or not, to, known flight paths): a replay asks the
-/// same trips again and again. 80 bytes a trip; emptied when full.
+/// Trips already computed (from with mounted or not and the links opened, to, known flight
+/// paths): a replay asks the same trips again and again. 80 bytes a trip; emptied when full.
 pub(crate) type Legs = RefCell<FxHashMap<(PosKey, PosKey, u128), (f64, Hop)>>;
 /// What a table of 2^18 buckets holds (7/8 of them): it never grows past them.
 const LEGS_MAX: usize = (1 << 18) / 8 * 7;
@@ -86,18 +86,27 @@ impl Trips<'_> {
         }
     }
 
-    /// Fastest trip from `from` to `b` without the hearthstone.
-    pub(crate) fn leg(&self, from: &Pos, b: &Pos, level: i64, known: u128) -> (f64, Leg) {
+    /// The links `s` may take (see `World::link_chain`): those a quest opens once it is taken,
+    /// or when the character cannot take it.
+    pub(crate) fn open_links(&self, s: &State) -> u8 {
+        (self.world.link_quests.iter().enumerate())
+            .filter(|&(_, id)| self.model.index.get(id).is_none_or(|&q| s.accepted[q] || s.turned[q]))
+            .fold(0, |open, (k, _)| open | 1 << k)
+    }
+
+    /// Fastest trip from `from` to `b` without the hearthstone, with the links of `open`.
+    pub(crate) fn leg(&self, from: &Pos, b: &Pos, level: i64, known: u128, open: u8) -> (f64, Leg) {
         // The level only matters through the speed: mounted or not.
         let mounted = level >= self.params.mount_level;
-        let (Some(a), Some(z)) = (pos_key(from, mounted, self.danger_level(level)), pos_key(b, false, 0)) else {
-            return self.compute_leg(from, b, level, known);
+        let (Some(mut a), Some(z)) = (pos_key(from, mounted, self.danger_level(level)), pos_key(b, false, 0)) else {
+            return self.compute_leg(from, b, level, known, open);
         };
+        a[0] |= u64::from(open) << 58;
         let key = (a, z, known);
         if let Some(&(t, hop)) = self.legs.borrow().get(&key) {
             return (t, hop.leg());
         }
-        let leg = self.compute_leg(from, b, level, known);
+        let leg = self.compute_leg(from, b, level, known, open);
         if let Some(hop) = Hop::of(leg.1) {
             let mut legs = self.legs.borrow_mut();
             if legs.len() >= LEGS_MAX {
@@ -108,10 +117,11 @@ impl Trips<'_> {
         leg
     }
 
-    fn compute_leg(&self, from: &Pos, b: &Pos, level: i64, known: u128) -> (f64, Leg) {
+    fn compute_leg(&self, from: &Pos, b: &Pos, level: i64, known: u128, open: u8) -> (f64, Leg) {
         let walk = self.walk(from, b, level);
         let mut best = (walk, Leg::Walk);
         let links = &self.world.links;
+        let chain = self.world.link_chain(open);
         if !self.explicit && !links.is_empty() && (from.continent != b.continent || walk > 240.0) {
             // The walks from each link to `b`, once (when a link is worth boarding).
             let mut to_b: Vec<f64> = Vec::new();
@@ -124,7 +134,7 @@ impl Trips<'_> {
                     to_b = links.iter().map(|lj| self.walk(&lj.to, b, level)).collect();
                 }
                 for (j, wb) in to_b.iter().enumerate() {
-                    let t = wa + self.world.link_chain[i][j] + wb;
+                    let t = wa + chain[i][j] + wb;
                     if t < best.0 {
                         best = (t, Leg::Link(i, j));
                     }
@@ -192,7 +202,8 @@ impl Trips<'_> {
     /// Fastest trip from the current position, a class teleport first when learned (trained at
     /// its level) and faster. The hearthstone is a stop of its own (`Kind::Hearth`).
     pub(crate) fn fastest(&self, s: &State, b: &Pos) -> (f64, Via) {
-        let (t, leg) = self.leg(&s.pos, b, s.level, s.known);
+        let open = self.open_links(s);
+        let (t, leg) = self.leg(&s.pos, b, s.level, s.known, open);
         let mut best = (t, Via { teleport: None, leg });
         for (i, tp) in self.model.teleports.iter().enumerate() {
             if self.explicit {
@@ -206,7 +217,7 @@ impl Trips<'_> {
             {
                 continue;
             }
-            let (t, leg) = self.leg(&tp.to.pos, b, s.level, s.known);
+            let (t, leg) = self.leg(&tp.to.pos, b, s.level, s.known, open);
             let t = t + self.params.teleport_cast;
             if t < best.0 {
                 best = (t, Via { teleport: Some(i), leg });

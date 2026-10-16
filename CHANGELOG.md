@@ -11,6 +11,13 @@ Writing an entry: one short line per change, saying what the player sees or gets
 - WoW Forever: the dungeon list shows the new dungeons with quests: Ruins of Lordaeron, Excavation Site: Wetlands, City of Dalaran (GitHub #18).
 - Classic and TBC: the dungeon list no longer shows The Hall of Thanes, a WoW Forever dungeon.
 
+### Guides
+
+- WoW Forever: Skyborne guides do Zephras Isle before leaving it by its teleport, instead of leaving at the first step.
+- The start zone's letter to the class trainer is always taken (Encrypted Sigil, Consecrated Rune, Simple Parchment…).
+- A quest started by a boss's drop is taken during the dungeon run, not before entering (Unending Torment, Ruins of Lordaeron).
+- "Speak with" objectives are talks, no longer kills of the NPC.
+
 ### Addon
 
 - New look in the app's colors: the guide is one card with the current tasks, progress bars, the next steps and the talent to learn.
@@ -21,6 +28,7 @@ Writing an entry: one short line per change, saying what the player sees or gets
 - Items to keep: the common items the guide's quests still need (cloth, meat…), in the bags and in the bank; at the bank, what to take and what can stay.
 - The addon speaks the app's 10 languages, in the language chosen on the Addon page (else the game's).
 - ElvUI, EllesmereUI and SpartanUI: their style only when "UI suite style" is on (Addon page).
+- Right after accepting a quest, its kill or loot step is no longer passed before the game shows the objectives (Kolkar Leaders).
 
 ### WoW data
 
@@ -28,6 +36,7 @@ Writing an entry: one short line per change, saying what the player sees or gets
 - WoW Forever: Return to Quinn (Again) only after Wild Eyes, no longer at the same time as Return to Quinn.
 - WoW Forever: the dwarf shaman's Call of Water, the night elf hunter's Taming the Beast and the Skyborne and tauren druids' To Thunder Bluff and To Darnassus are back in their guides.
 - TBC: the human and dwarf paladin's Tome of Divinity and Tome of Valor, the draenei shaman's Call of Fire and the Horde rogue's Hinott's Assistance (Poisons) are back in their guides.
+- WoW Forever: Beer Basted Boar Ribs is offered without Cooking, as in game.
 - Data refreshed (Questie, AllTheThings, Wowhead) with the players' latest contributions.
 
 ## 0.10.0 (2026-10-15)

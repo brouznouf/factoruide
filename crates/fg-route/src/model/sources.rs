@@ -553,6 +553,19 @@ pub(super) fn asks_for_work(json: Option<&str>) -> bool {
     })
 }
 
+/// Whether a requirement asks to talk to `name` ("Speak with Illaya Amberwind", "Listen to
+/// Ayessa"): the sources give some talks as creature objectives.
+pub(super) fn talks_to(reqs: &[(String, f64)], name: &str) -> bool {
+    let name = name.to_lowercase();
+    reqs.iter().any(|(r, _)| {
+        ["speak with ", "speak to ", "talk to ", "talk with ", "listen to ", "report to "]
+            .iter()
+            .filter_map(|verb| r.strip_prefix(verb))
+            // A first name alone: "Listen to Ayessa".
+            .any(|who| who.contains(&name) || (!who.contains(' ') && name.starts_with(&format!("{who} "))))
+    })
+}
+
 pub(super) fn count_for(reqs: &[(String, f64)], name: &str) -> Option<f64> {
     let name = name.to_lowercase();
     reqs.iter()
@@ -573,7 +586,7 @@ pub(super) fn one_place(points: &[(Pos, i64)]) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{QuestRow, asks_for_work};
+    use super::{QuestRow, asks_for_work, parse_requirements, talks_to};
 
     /// A class quest is filed under its class, or given to that class only: Forever's dwarf
     /// Call of Earth is filed under Dun Morogh.
@@ -616,6 +629,20 @@ mod tests {
         assert!(!asks_for_work(Some(r#"["The Defilers:"]"#)));
         assert!(!asks_for_work(Some(r#"["Speak with Lumina Windsinger"]"#)));
         assert!(asks_for_work(Some(r#"["Nord'el"]"#)));
+    }
+
+    /// Talks the sources give as creature objectives: named in a requirement after a verb.
+    #[test]
+    fn requirements_talking_to() {
+        let reqs = |json: &str| parse_requirements(Some(json.to_owned()));
+        assert!(talks_to(&reqs(r#"["Listen to Ayessa"]"#), "Ayessa Dawnsinger"));
+        assert!(talks_to(
+            &reqs(r#"["Find Aamelia Windfield","Listen to Alvarion Windfield's Story"]"#),
+            "Alvarion Windfield"
+        ));
+        assert!(!talks_to(&reqs(r#"["Find Aamelia Windfield"]"#), "Aamelia Windfield"));
+        assert!(!talks_to(&reqs(r#"["Speak with the Innkeeper"]"#), "Thelma"));
+        assert!(!talks_to(&reqs(r#"["Al'Aketh Convert x 7"]"#), "Al'Aketh Convert"));
         assert!(asks_for_work(Some(
             r#"["Dragonmaw Saboteur x 2","Dragonmaw Warder x 4"]"#
         )));

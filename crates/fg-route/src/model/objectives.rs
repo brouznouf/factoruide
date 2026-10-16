@@ -5,7 +5,8 @@ use super::builder::{QuestBuilder, Skip};
 use super::entities::{alternatives, best_cluster};
 use super::givers::Givers;
 use super::sources::{
-    ObjectiveKind, QuestRow, SourceKind, asks_for_work, count_for, on_reachable, one_place, parse_requirements,
+    ObjectiveKind, QuestRow, Role, SourceKind, asks_for_work, count_for, on_reachable, one_place, parse_requirements,
+    talks_to,
 };
 use super::types::{EntityKind, Guard, Loc, Objective, Spots};
 use crate::world::Pos;
@@ -306,7 +307,7 @@ impl QuestBuilder<'_> {
                 params.default_kill_count
             },
         );
-        let friendly = entities.friendly.contains(&target);
+        let friendly = entities.friendly.contains(&target) || talks_to(&quest.requirements, &name);
         let elite = ids.iter().any(|id| entities.is_elite(*id));
         if !params.allow_elite && needed > params.solo_elite_kills && !friendly && elite {
             return Err("elite objective");
@@ -440,10 +441,20 @@ impl QuestBuilder<'_> {
     /// A giver or turn-in that lives inside a dungeon (a corpse, a scout in the instance) is
     /// only met during a run of it.
     fn add_dungeon_givers(&self, r: &QuestRow, objs: &mut Vec<Objective>) {
-        for (_, kind, id) in self.sources.relations.get(&r.id).into_iter().flatten() {
-            if *kind == EntityKind::Item {
-                continue;
-            }
+        for (role, kind, id) in self.sources.relations.get(&r.id).into_iter().flatten() {
+            let (kind, id) = if *kind == EntityKind::Item {
+                // An item starting it dropped by a boss inside (Unending Torment's Abominable Head).
+                let boss = (self.sources.item_origins.get(id).into_iter().flatten()).find(|(t, n)| {
+                    *role == Role::Start && *t == SourceKind::Npc && self.dungeon_of(EntityKind::Npc, *n).is_some()
+                });
+                match boss {
+                    Some((_, n)) => (EntityKind::Npc, *n),
+                    None => continue,
+                }
+            } else {
+                (*kind, *id)
+            };
+            let (kind, id) = (&kind, &id);
             if let Some(d) = self.dungeon_of(*kind, *id)
                 && !objs.iter().any(|o| o.dungeon == Some(d))
             {

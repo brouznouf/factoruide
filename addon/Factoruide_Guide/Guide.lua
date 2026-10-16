@@ -108,6 +108,7 @@ local state -- per character: { route = name, step = n, point = {...}, flightLea
 local route
 local acceptIndex = {} -- quest -> index of its accept step
 local turninIndex = {} -- quest -> index of its turn-in step
+local objectiveQuests = {} -- quests with an objective step
 -- Whether the shown step was already done when we arrived on it (manual navigation): the
 -- guide only moves on when the shown step becomes done.
 local arrivedDone = false
@@ -129,6 +130,17 @@ local function FindObjective(step)
             if o.text and o.text:lower():find(name, 1, true) then return o end
         end
     end
+end
+
+--- Right after an accept the game lists no objectives (or blank ones) for a moment, while
+--- IsComplete may already read true: nothing about the quest's progress can be trusted yet.
+local function ObjectivesLoading(q)
+    local objectives = QuestLog.GetQuestObjectives(q)
+    if not objectives or #objectives == 0 then return true end
+    for _, o in ipairs(objectives) do
+        if not o.text or o.text == "" then return true end
+    end
+    return false
 end
 
 --- Skill line of a "profession" step (its target is the trainer), from the route professions.
@@ -167,7 +179,15 @@ local function PendingXP(step, index)
         local info = QuestLog.GetInfo(i)
         local q = info and not info.isHeader and info.questID
         local at = q and turninIndex[q]
-        if at and at > index and at <= last and route.steps[at].rx and QuestLog.IsComplete(q) then
+        if
+            at
+            and at > index
+            and at <= last
+            and route.steps[at].rx
+            and QuestLog.IsComplete(q)
+            -- Quests without objectives (deliveries) are complete from the accept on.
+            and not (objectiveQuests[q] and ObjectivesLoading(q))
+        then
             xp = xp + route.steps[at].rx
         end
     end
@@ -204,7 +224,7 @@ function IsDone(step, index)
     elseif step.k == "objective" then
         if QuestLog.IsQuestFlaggedCompleted(q) then return true end
         if AcceptSkipped(step, index or state.step) then return true, true end
-        if not QuestLog.IsOnQuest(q) then return false end
+        if not QuestLog.IsOnQuest(q) or ObjectivesLoading(q) then return false end
         local o = FindObjective(step)
         if o then return o.finished end
         return QuestLog.IsComplete(q)
@@ -987,11 +1007,13 @@ local function UseRoute(name)
     state.route = name
     wipe(acceptIndex)
     wipe(turninIndex)
+    wipe(objectiveQuests)
     wipe(wasDone)
     for i, s in ipairs(route and route.steps or {}) do
         if s.q then
             if s.k == "accept" and not acceptIndex[s.q] then acceptIndex[s.q] = i end
             if s.k == "turnin" and not turninIndex[s.q] then turninIndex[s.q] = i end
+            if s.k == "objective" then objectiveQuests[s.q] = true end
         end
     end
     BuildGroups()

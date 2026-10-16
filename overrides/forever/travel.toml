@@ -43,7 +43,7 @@ seconds = 170
 # --- Skyborne starting island (Zephras Isle) ---
 # The last island quest sends you away: "The Magical City of Dalaran" (Alliance) to Denaaris
 # Stargale in Dalaran, "The Earthen Ring" (Horde) to Alaana Stormwalker in Mulgore. The trip
-# is a teleport from the quest giver (no way back).
+# is a teleport from the quest giver (no way back), offered once the quest is taken.
 [[link]]
 name = "Zephras Isle - Dalaran"
 faction = "Alliance"
@@ -51,6 +51,7 @@ from = { zone = 16593, x = 66.59, y = 79.92 } # Quest giver of The Magical City 
 to = { zone = 36, x = 12.37, y = 56.3 }       # Denaaris Stargale
 seconds = 30
 one_way = true
+after_quest = 94946
 
 [[link]]
 name = "Zephras Isle - Mulgore"
@@ -59,6 +60,7 @@ from = { zone = 16593, x = 59.15, y = 79.73 } # Quest giver of The Earthen Ring
 to = { zone = 215, x = 33.4, y = 22.5 }       # Alaana Stormwalker
 seconds = 30
 one_way = true
+after_quest = 95349
 
 # Dalaran and Stormwind's Wizard's Sanctum: portals for the Skyborne only (players report that
 # other races cannot take them; not checked in game).

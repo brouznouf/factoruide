@@ -63,8 +63,11 @@ pub struct World {
     /// Price in copper of the direct flights, INFINITY when no direct path.
     pub direct_cost: Vec<Vec<f64>>,
     pub links: Vec<Link>,
-    /// Time to chain links i..j (boarding i, leaving j), walking in between.
-    pub link_chain: Vec<Vec<f64>>,
+    /// Quests whose taking opens links (`LinkDef::after_quest`).
+    pub link_quests: Vec<i64>,
+    /// Time to chain links i..j (boarding i, leaving j), walking in between, by set of opened
+    /// `link_quests` (bit k: quest k taken).
+    link_chains: Vec<Vec<Vec<f64>>>,
     /// Walkable passages between zones and the shortest walk between any two of them.
     pub passes: Vec<Pass>,
     pub pass_dist: Vec<Vec<f64>>,
@@ -227,7 +230,8 @@ impl World {
             direct: flight,
             direct_cost: cost,
             links: Vec::new(),
-            link_chain: Vec::new(),
+            link_quests: Vec::new(),
+            link_chains: vec![Vec::new()],
             passes: Vec::new(),
             pass_dist: Vec::new(),
             pass_next: Vec::new(),
@@ -493,7 +497,13 @@ pub struct LinkDef {
     /// Races allowed (keys of `races.toml`; empty: every race of the faction).
     #[serde(default)]
     pub races: Vec<String>,
+    /// Quest ID: usable only once that quest is taken (the teleport its giver offers).
+    #[serde(default)]
+    pub after_quest: Option<i64>,
 }
+
+/// At most this many quests open links: the set of opened ones is a byte of the trip cache key.
+pub const LINK_QUESTS_MAX: usize = 6;
 
 /// A directed transport link.
 #[derive(Debug, Clone)]
@@ -504,6 +514,7 @@ pub struct Link {
     pub to: Pos,
     pub to_zone: i64,
     pub seconds: f64,
+    pub after_quest: Option<i64>,
 }
 
 impl World {
@@ -528,20 +539,45 @@ impl World {
                 to,
                 to_zone: tz,
                 seconds: d.seconds + if d.instant { 0.0 } else { wait },
+                after_quest: d.after_quest,
             };
             self.links.push(make(a, d.from.zone, b, d.to.zone));
             if !d.one_way {
                 self.links.push(make(b, d.to.zone, a, d.from.zone));
             }
         }
+        self.link_quests.clear();
+        for q in self.links.iter().filter_map(|l| l.after_quest) {
+            if !self.link_quests.contains(&q) {
+                self.link_quests.push(q);
+            }
+        }
+        // Beyond the cache key's room, the links of the last quests are always open.
+        self.link_quests.truncate(LINK_QUESTS_MAX);
+        self.link_chains = (0..1usize << self.link_quests.len())
+            .map(|open| self.chain_links(open, walk_speed))
+            .collect();
+    }
+
+    /// The links' chain table (see `link_chains`) with the links of the quests not in `open`
+    /// closed.
+    fn chain_links(&self, open: usize, walk_speed: f64) -> Vec<Vec<f64>> {
+        let closed = |l: &Link| {
+            l.after_quest
+                .and_then(|q| self.link_quests.iter().position(|&k| k == q))
+                .is_some_and(|k| open & (1 << k) == 0)
+        };
         // chain[i][j]: board link i, ..., get off link j.
         let n = self.links.len();
         let mut chain = vec![vec![f64::INFINITY; n]; n];
         for (i, (row, a)) in chain.iter_mut().zip(&self.links).enumerate() {
+            if closed(a) {
+                continue;
+            }
             for (j, (cell, b)) in row.iter_mut().zip(&self.links).enumerate() {
                 if i == j {
                     *cell = a.seconds;
-                } else {
+                } else if !closed(b) {
                     let walk = self.walk_distance(&a.to, &b.from) / walk_speed;
                     *cell = a.seconds + walk + b.seconds;
                 }
@@ -557,7 +593,13 @@ impl World {
                 }
             }
         }
-        self.link_chain = chain;
+        chain
+    }
+
+    /// Time to chain links i..j (boarding i, leaving j) with the links of `link_quests` in
+    /// `open` (bit k: quest k taken).
+    pub fn link_chain(&self, open: u8) -> &[Vec<f64>] {
+        &self.link_chains[usize::from(open) & (self.link_chains.len() - 1)]
     }
 
     /// Continents reachable from `start` on foot and through links.
