@@ -5,6 +5,17 @@
 type Entry = Partial<Record<"en" | "de" | "es" | "esMX" | "pt" | "ru" | "ko" | "zhCN" | "zhTW", string>>;
 
 export const CATALOG: Record<string, Entry> = {
+  "Mises à jour de l'application": { en: "Application updates" },
+  "Vous utilisez la dernière version.": { en: "You’re up to date." },
+  "Recherche de mises à jour…": { en: "Checking for updates…" },
+  "Rechercher des mises à jour": { en: "Check for updates" },
+  "Version locale : une mise à jour la remplacera par la version officielle.": { en: "Local build: updating will replace it with the official release." },
+  "Attendez la fin de la génération avant de mettre à jour.": { en: "Wait for guide generation to finish before updating." },
+  "Redémarrage impossible : {error}": { en: "Could not restart: {error}" },
+  "Redémarrer Factoruide": { en: "Restart Factoruide" },
+  "Installer la version officielle à la place de cette version locale et redémarrer ?": { en: "Replace this local build with the official release and restart?" },
+  "Installer la mise à jour et redémarrer Factoruide ?": { en: "Install the update and restart Factoruide?" },
+
   "(guides classiques)": { en: "(classic guides)", de: "(klassische Guides)", es: "(guías clásicas)", pt: "(guias clássicos)", ru: "(классические гайды)", ko: "(클래식 가이드)", zhCN: "(经典指南)", zhTW: "(經典指南)" },
   "(personnalisés)": { en: "(custom)", de: "(angepasst)", es: "(personalizados)", pt: "(personalizados)", ru: "(свои)", ko: "(사용자 지정)", zhCN: "(自定义)", zhTW: "(自訂)" },
   "1 : des mobs qui vont par deux demandent un niveau de plus que des mobs isolés.": { en: "1: mobs standing in pairs require one level more than lone mobs.", de: "1: Mobs, die zu zweit stehen, verlangen eine Stufe mehr als einzelne Mobs.", es: "1: los monstruos que van de dos en dos requieren un nivel más que los aislados.", pt: "1: monstros que andam em pares exigem um nível a mais que os isolados.", ru: "1: мобы, стоящие парами, требуют на уровень больше, чем одиночные.", ko: "1: 둘씩 있는 몹은 혼자 있는 몹보다 한 레벨 더 필요합니다.", zhCN: "1：成对出现的怪物比单独的怪物多需要一级。", zhTW: "1：成對出現的怪物比單獨的怪物多需要一級。" },

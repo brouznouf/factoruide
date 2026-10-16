@@ -169,7 +169,11 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
       </nav>
       {/* Focused on each page change: the keyboard scrolls it and a screen reader starts there. */}
       <main className="content" ref={main} tabIndex={-1}>
-        <UpdateBanner />
+        <UpdateBanner
+          showCheck={page === "settings"}
+          installBlocked={busy}
+          beforeInstall={() => !unsaved.current || confirm(t("Quitter l'édition sans enregistrer ? Les modifications seront perdues."))}
+        />
         {/* Always mounted (hidden on other pages) so that a running generation goes on showing. */}
         {options && (
           <div hidden={page !== "plan"}>
