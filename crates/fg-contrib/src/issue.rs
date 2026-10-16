@@ -288,7 +288,7 @@ mod tests {
         assert!(check(&|i| i.name = Some(" ".into())));
         assert!(check(&|i| i.name = Some("x".repeat(MAX_NAME + 1))));
         assert!(check(&|i| {
-            i.guide.as_mut().unwrap().request = serde_json::json!({"a": {"b": {"c": {"d": {"e": {"f": {"g": {"h": {"i": {"j": {"k": {"l": {"m": 1}}}}}}}}}}}}})
+            i.guide.as_mut().unwrap().request = serde_json::json!({"a": {"b": {"c": {"d": {"e": {"f": {"g": {"h": {"i": {"j": {"k": {"l": {"m": 1}}}}}}}}}}}}});
         }));
         assert!(check(
             &|i| i.guide.as_mut().unwrap().request = serde_json::json!({"bad key": 1})

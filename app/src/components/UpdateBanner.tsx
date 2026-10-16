@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { listen } from "@tauri-apps/api/event";
 import { relaunch } from "@tauri-apps/plugin-process";
 import { check, type Update } from "@tauri-apps/plugin-updater";
 import { api } from "../api";
@@ -19,7 +20,9 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
   const t = useT();
   const [update, setUpdate] = useState<Update | null>(null);
   const [step, setStep] = useState<Step>({ kind: "idle" });
+  const [menuRequested, setMenuRequested] = useState(false);
   const [local, setLocal] = useState(false);
+  const banner = useRef<HTMLElement>(null);
   const locked = useRef(false);
   const manualChecks = useRef(0);
   const resource = useRef<Update | null>(null);
@@ -52,7 +55,7 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
     };
   }, [replaceUpdate]);
 
-  const checkNow = async () => {
+  const checkNow = useCallback(async () => {
     if (locked.current) return;
     locked.current = true;
     manualChecks.current += 1;
@@ -68,7 +71,19 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
     } finally {
       locked.current = false;
     }
-  };
+  }, [replaceUpdate]);
+
+  useEffect(() => {
+    const unlisten = listen("check-for-updates", () => {
+      setMenuRequested(true);
+      void checkNow();
+    });
+    return () => { void unlisten.then((stop) => stop()).catch(() => {}); };
+  }, [checkNow]);
+
+  useEffect(() => {
+    if (menuRequested && step.kind === "checking") banner.current?.scrollIntoView({ block: "start" });
+  }, [menuRequested, step.kind]);
 
   const restart = async () => {
     try {
@@ -106,16 +121,16 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
   };
 
   const working = ["checking", "downloading", "installing", "installed"].includes(step.kind);
-  if (!showCheck && !update && step.kind !== "failed") return null;
+  if (!showCheck && !menuRequested && !update && step.kind !== "failed") return null;
   return (
-    <section className="update-banner" aria-label={t("Mises à jour de l'application")}>
+    <section ref={banner} className="update-banner" aria-label={t("Mises à jour de l'application")}>
       <div className="update-text" role="status" aria-live="polite">
         <strong>{update ? t("Version {version} disponible", { version: update.version }) : t("Mises à jour de l'application")}</strong>
         {update?.body && <div className="update-notes">{update.body}</div>}
         {step.kind === "current" && <p>{t("Vous utilisez la dernière version.")}</p>}
         {step.kind === "checking" && <p>{t("Recherche de mises à jour…")}</p>}
         {step.kind === "failed" && <div className="error">{t("Échec de la mise à jour : {error}", { error: step.error })}</div>}
-        {local && showCheck && <p>{t("Version locale : une mise à jour la remplacera par la version officielle.")}</p>}
+        {local && (showCheck || menuRequested) && <p>{t("Version locale : une mise à jour la remplacera par la version officielle.")}</p>}
         {installBlocked && update && <p>{t("Attendez la fin de la génération avant de mettre à jour.")}</p>}
         {restartError && <div className="error">{t("Redémarrage impossible : {error}", { error: restartError })}</div>}
       </div>
@@ -126,7 +141,7 @@ export function UpdateBanner({ showCheck = false, installBlocked = false, before
         <button className="primary" disabled={installBlocked} onClick={install}>{t("Mettre à jour")}</button>
         <button onClick={() => { replaceUpdate(null); setStep({ kind: "idle" }); }}>{t("Plus tard")}</button>
       </>}
-      {showCheck && <button disabled={working} onClick={checkNow}>{t("Rechercher des mises à jour")}</button>}
+      {(showCheck || menuRequested) && <button disabled={working} onClick={checkNow}>{t("Rechercher des mises à jour")}</button>}
     </section>
   );
 }

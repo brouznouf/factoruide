@@ -1620,6 +1620,32 @@ fn main() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
+            #[cfg(target_os = "macos")]
+            {
+                let menu = tauri::menu::Menu::default(app.handle())?;
+                // Tauri's default macOS menu begins with the application submenu.
+                if let Some(app_menu) = menu.items()?.first().and_then(tauri::menu::MenuItemKind::as_submenu) {
+                    let check = tauri::menu::MenuItem::with_id(
+                        app,
+                        "check-for-updates",
+                        "Check for Updates…",
+                        true,
+                        None::<&str>,
+                    )?;
+                    app_menu.insert(&check, 1)?;
+                }
+                app.set_menu(menu)?;
+                app.on_menu_event(|app, event| {
+                    if event.id().as_ref() == "check-for-updates"
+                        && let Some(window) = app.get_webview_window("main")
+                    {
+                        let _ = window.show();
+                        let _ = window.unminimize();
+                        let _ = window.set_focus();
+                        let _ = window.emit("check-for-updates", ());
+                    }
+                });
+            }
             migrate_app_dirs(app.handle());
             let config_file = app.path().app_config_dir()?.join("settings.json");
             let data_dir = app.path().app_data_dir()?;

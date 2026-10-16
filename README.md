@@ -95,7 +95,8 @@ zones to do, the level to reach before moving on from each, and where the XP is.
 
 ### Checking for app updates
 
-Open **Settings** and select **Check for updates**. If a release is available,
+Open **Settings** and select **Check for updates**, or on macOS choose
+**Factoruide → Check for Updates…** from the menu bar. If a release is available,
 review its notes, select **Update**, and confirm the restart. The app downloads
 and verifies the publisher's update package before installation. Failed checks
 and installs show an error and can be retried. If the app cannot restart after
