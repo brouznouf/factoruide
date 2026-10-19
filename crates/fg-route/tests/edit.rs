@@ -121,6 +121,15 @@ fn every_thing_done_is_a_step_of_its_own() {
             panic!("step {k} ({step:?}) did nothing: {r:?}");
         };
         let kind = match step {
+            RouteStep::Service {
+                service: fg_route::plan::ServiceKind::Vendor,
+                ..
+            } => StepKind::Vendor,
+            RouteStep::Service {
+                service: fg_route::plan::ServiceKind::Mailbox,
+                ..
+            } => StepKind::Mailbox,
+            RouteStep::DungeonExit { .. } => StepKind::DungeonExit,
             RouteStep::Accept { .. } => StepKind::Accept,
             RouteStep::Objective { .. } => StepKind::Objective,
             RouteStep::TurnIn { .. } => StepKind::TurnIn,
@@ -133,7 +142,7 @@ fn every_thing_done_is_a_step_of_its_own() {
             RouteStep::Train { .. } => StepKind::Train,
             RouteStep::Dungeon { .. } => StepKind::Dungeon,
             RouteStep::Abandon { .. } => StepKind::Abandon,
-            RouteStep::Grind { .. } | RouteStep::GrindTo { .. } => StepKind::Grind,
+            RouteStep::Grind { .. } | RouteStep::GrindTo { .. } | RouteStep::CampGrind { .. } => StepKind::Grind,
         };
         assert_eq!(line.kind, kind, "step {k}: {step:?}");
     }

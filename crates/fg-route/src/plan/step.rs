@@ -244,7 +244,17 @@ impl Planner<'_> {
         let mut record = recorder(&mut trace);
         self.abandon_hopeless(s, &mut record);
         let before = s.time;
+        if !Self::already_done(s, stop) {
+            let target = self.places().pos(s, stop);
+            if stop.kind != Kind::Dungeon {
+                self.service_visits(s, Some(target), false, true, &mut record);
+            }
+        }
+        if !s.time.is_finite() {
+            return;
+        }
         self.do_apply(s, stop, &mut record);
+        self.service_visits(s, s.next, false, false, &mut record);
         // Counted in the zone the stop ends in.
         let preferred = &self.params.preferred_zones;
         if !preferred.is_empty() && !preferred.contains(&s.zone) {
@@ -276,6 +286,14 @@ impl Planner<'_> {
         // Chosen once, before grinding to it: the place the stop is gated by is the one gone to.
         let spot = self.spot_of(s, stop);
         self.grind_to_gate(s, stop, spot, record);
+        // Level-gating grinds may take hours. Service immediately before the
+        // actual trip to the entrance, after that grinding has finished.
+        if stop.kind == Kind::Dungeon {
+            self.service_visits(s, None, true, false, record);
+            if !s.time.is_finite() {
+                return;
+            }
+        }
         let loc = self.arrive(s, stop, spot, record);
         if !(stop.kind == Kind::TurnIn && Self::failed_in_time(s, stop.index, record)) {
             let picked = self.do_stop(s, stop, spot);
@@ -289,6 +307,15 @@ impl Planner<'_> {
                     },
                 );
             }
+        }
+        if !self.explicit && stop.kind == Kind::Dungeon && (self.params.vendor_visits || self.params.mailbox_visits) {
+            record(
+                s,
+                Event::DungeonExit {
+                    dungeon: stop.index as usize,
+                },
+            );
+            self.service_visits(s, s.next, false, false, record);
         }
         self.while_here(s, record);
         self.train(s, record);
@@ -525,6 +552,8 @@ impl Planner<'_> {
         s.time += run;
         s.spent.dungeons += run;
         s.spent.dungeon_runs += 1;
+        // Dungeon objectives are completed below without re-counting their kills.
+        s.add_kills(d.kills);
         let gained = (d.kills
             * self.rules().mob_xp(s.level, d.mob_level, d.content)
             * self.rules().dungeon_kill_xp

@@ -1483,6 +1483,55 @@ assert(char.guide.step == 2, "an old run is done back out, step " .. char.guide.
 onQuest[8001] = nil
 print("dungeon ok")
 
+-- Service visits are manual tasks. A dungeon exit must have actually been inside;
+-- completing its quests must not send the player out before the run is finished.
+FG.Routes["inventory-test"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 1,
+    toLevel = 60,
+    time = 1,
+    steps = {
+        { k = "vendor", t = "Sell and repair", lvl = 1 },
+        { k = "mailbox", t = "Mail items", lvl = 1 },
+        { k = "dungeon", t = "Run dungeon", lvl = 21 },
+        { k = "objective", t = "Dungeon quest", q = 8001, di = true, lvl = 21 },
+        { k = "dungeon_exit", t = "Finish the run, then leave", lvl = 1 },
+        { k = "vendor", t = "Vendor after dungeon", lvl = 1 },
+        { k = "mailbox", t = "Mailbox after dungeon", lvl = 1 },
+        { k = "grind", t = "Continue route", lvl = 60 },
+    },
+}
+local serviceLevel = playerLevel
+playerLevel = 20
+onQuest[8001] = true
+useRoute("inventory-test")
+assert(char.guide.step == 1, "a vendor visit is not skipped by level")
+FG.Guide:SkipCurrent()
+assert(char.guide.step == 2, "vendor completion leaves mailbox pending")
+FG.Guide:SkipCurrent()
+assert(char.guide.step == 3, "both visits precede the run")
+assert(char.guide.marks[5] == nil, "exit must not complete while still outside")
+inside = true
+fire("ZONE_CHANGED_NEW_AREA")
+assert(char.guide.step == 4 and char.guide.marks[5] == "inside", "entry is remembered for the exit gate")
+completed[8001] = true
+fire("QUEST_LOG_UPDATE")
+runTimers()
+assert(char.guide.step == 5, "quest completion waits for the dungeon exit")
+useRoute("inventory-test")
+assert(char.guide.step == 5 and char.guide.marks[5] == "inside", "pending exit survives progress reload")
+inside = false
+fire("ZONE_CHANGED_NEW_AREA")
+assert(char.guide.step == 6, "only leaving the dungeon releases the service trip")
+FG.Guide:SkipCurrent()
+assert(char.guide.step == 7, "mailbox is separate from vendor completion")
+FG.Guide:SkipCurrent()
+assert(char.guide.step == 8, "route continues after both services")
+completed[8001], onQuest[8001], playerLevel = nil, nil, serviceLevel
+print("inventory visits and dungeon exit ok")
+
 -- Only the guide's quests: those it still takes, not those it abandons, marked done by hand or
 -- out of it, nor escorts shared by the group (the event does not tell which quest).
 FG:Save("autoAccept", nil)
@@ -3385,7 +3434,14 @@ local function ExportImport()
         local lua = plain:gsub("gnome%-mage", name)
         if class then lua = lua:gsub("class = 8,", "class = " .. class .. ",", 1) end
         return lua
-            .. string.format("FG.Routes[%q].created = %d\nFG.Routes[%q].version = 3\n", name, created, name)
+            .. string.format(
+                "FG.Routes[%q].created = %d\nFG.Routes[%q].version = 3\nFG.Routes[%q].format = %d\n",
+                name,
+                created,
+                name,
+                name,
+                FG.Import.FORMAT
+            )
             .. (extra or "")
     end
     local function Empty(t) return t == nil or pairs(t)(t) == nil end

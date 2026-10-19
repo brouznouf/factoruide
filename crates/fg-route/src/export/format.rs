@@ -8,7 +8,7 @@ use anyhow::{Result, bail};
 use serde_json::Value;
 
 /// Format the app writes.
-pub const FORMAT: u32 = 2;
+pub const FORMAT: u32 = 3;
 
 /// Format of the files that do not say (before formats existed).
 pub(super) fn first() -> u32 {
@@ -17,7 +17,7 @@ pub(super) fn first() -> u32 {
 
 /// Migration from each format to the next (index: format - 1).
 type Migration = fn(&mut Value) -> Result<()>;
-const MIGRATIONS: [Migration; (FORMAT - 1) as usize] = [v1_to_v2];
+const MIGRATIONS: [Migration; (FORMAT - 1) as usize] = [v1_to_v2, v2_to_v3];
 
 /// Bring a route (as JSON) to the current format.
 pub fn migrate(route: &mut Value) -> Result<()> {
@@ -48,6 +48,13 @@ pub fn read_route(mut route: Value) -> Result<Route> {
 /// was made in: it is kept as it is (no phrase, the step is shown as it was).
 #[expect(clippy::unnecessary_wraps, reason = "every migration may refuse a guide")]
 fn v1_to_v2(_route: &mut Value) -> Result<()> {
+    Ok(())
+}
+
+// Format 3 adds explicit inventory visits and a dungeon-exit gate. Old routes have
+// no service steps; Params' serde defaults leave both services disabled.
+#[expect(clippy::unnecessary_wraps, reason = "every migration may refuse a guide")]
+fn v2_to_v3(_route: &mut Value) -> Result<()> {
     Ok(())
 }
 

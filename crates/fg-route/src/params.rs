@@ -5,6 +5,16 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Params {
+    /// Planned inventory stops; disabled until selected. Thresholds use expected mob kills since each visit.
+    pub vendor_visits: bool,
+    pub vendor_min_kills: f64,
+    pub vendor_max_kills: f64,
+    pub vendor_visit_seconds: f64,
+    pub mailbox_visits: bool,
+    pub mailbox_min_kills: f64,
+    pub mailbox_max_kills: f64,
+    pub mailbox_visit_seconds: f64,
+
     /// Running speed in yards/second.
     pub run_speed: f64,
     /// Level at which the character gets a mount, and its speed bonus.
@@ -321,9 +331,52 @@ pub struct Params {
     pub edition: crate::xp::Edition,
 }
 
+impl Params {
+    pub fn validate_services(&self) -> anyhow::Result<()> {
+        for (name, on, min, max, duration) in [
+            (
+                "Vendor",
+                self.vendor_visits,
+                self.vendor_min_kills,
+                self.vendor_max_kills,
+                self.vendor_visit_seconds,
+            ),
+            (
+                "Mailbox",
+                self.mailbox_visits,
+                self.mailbox_min_kills,
+                self.mailbox_max_kills,
+                self.mailbox_visit_seconds,
+            ),
+        ] {
+            if on {
+                anyhow::ensure!(
+                    min.is_finite()
+                        && max.is_finite()
+                        && duration.is_finite()
+                        && min >= 0.0
+                        && max > 0.0
+                        && min <= max
+                        && duration >= 0.0,
+                    "{name}: minimum kills must be nonnegative and no greater than maximum kills; maximum kills must be positive; visit duration must be nonnegative (all finite)"
+                );
+            }
+        }
+        Ok(())
+    }
+}
+
 impl Default for Params {
     fn default() -> Self {
         Self {
+            vendor_visits: false,
+            vendor_min_kills: 50.0,
+            vendor_max_kills: 100.0,
+            vendor_visit_seconds: 30.0,
+            mailbox_visits: false,
+            mailbox_min_kills: 50.0,
+            mailbox_max_kills: 100.0,
+            mailbox_visit_seconds: 30.0,
             run_speed: 7.0,
             mount_level: 40,
             mount_bonus: 0.6,

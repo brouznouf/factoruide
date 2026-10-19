@@ -380,6 +380,8 @@ pub struct Quest {
 }
 
 pub struct Model {
+    /// Vendor and mailbox service locations, in that order.
+    pub services: [Vec<Loc>; 2],
     pub quests: Vec<Quest>,
     pub dungeons: Vec<Dungeon>,
     pub professions: Vec<ProfessionPlan>,

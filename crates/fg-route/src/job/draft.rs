@@ -116,6 +116,11 @@ pub struct PlaceAt {
 /// The kind of guide step a step of the draft writes.
 fn kind_of(step: &RouteStep) -> StepKind {
     match step {
+        RouteStep::Service { service, .. } => match service {
+            crate::plan::ServiceKind::Vendor => StepKind::Vendor,
+            crate::plan::ServiceKind::Mailbox => StepKind::Mailbox,
+        },
+        RouteStep::DungeonExit { .. } => StepKind::DungeonExit,
         RouteStep::Accept { .. } => StepKind::Accept,
         RouteStep::Objective { .. } => StepKind::Objective,
         RouteStep::TurnIn { .. } => StepKind::TurnIn,
@@ -128,7 +133,7 @@ fn kind_of(step: &RouteStep) -> StepKind {
         RouteStep::Train { .. } => StepKind::Train,
         RouteStep::Dungeon { .. } => StepKind::Dungeon,
         RouteStep::Abandon { .. } => StepKind::Abandon,
-        RouteStep::Grind { .. } | RouteStep::GrindTo { .. } => StepKind::Grind,
+        RouteStep::CampGrind { .. } | RouteStep::Grind { .. } | RouteStep::GrindTo { .. } => StepKind::Grind,
     }
 }
 

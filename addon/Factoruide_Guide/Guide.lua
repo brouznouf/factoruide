@@ -52,6 +52,9 @@ local L = {
 }
 
 local KINDS = {
+    vendor = { icon = "Interface\\GossipFrame\\VendorGossipIcon", color = "e0b050", label = "Vendor" },
+    mailbox = { icon = "Interface\\Icons\\INV_Letter_15", color = "e0b050", label = "Mailbox" },
+    dungeon_exit = { icon = "Interface\\Icons\\INV_Misc_Key_10", color = "ff4040", label = "Leave dungeon" },
     accept = {
         icon = "Interface\\GossipFrame\\AvailableQuestIcon",
         color = "ffd100",
@@ -223,6 +226,30 @@ end
 
 --- Whether a step is done; the second value is true when it was passed rather than played
 --- (marked by hand, left behind, alternative taken, accept skipped).
+-- Observe only the run already reached, never an exit belonging to a future run.
+-- The persisted "inside" mark survives a reload while finishing dungeon quests.
+local function TrackServiceExit()
+    if not route or not state then return end
+    local run
+    for i = 1, math.min(state.step, #route.steps) do
+        if route.steps[i].k == "dungeon" then run = i end
+    end
+    if not run then return end
+    for i = run + 1, #route.steps do
+        local step = route.steps[i]
+        if step.k == "dungeon" then break end
+        if step.k == "dungeon_exit" then
+            if state.step > i then return end
+            if IsInInstance() then
+                state.marks[i] = "inside"
+            elseif state.marks[i] == "inside" then
+                state.marks[i] = true
+            end
+            return
+        end
+    end
+end
+
 function IsDone(step, index)
     local q = step.q
     if state.marks[index or state.step] == "skip" or (q and state.skippedQuests[q]) then
@@ -230,7 +257,14 @@ function IsDone(step, index)
     end
     -- Planned well below our level: left behind (a character resuming the route, a quest
     -- added to the game after we went through that zone), unless the quest is in the log.
-    if step.lvl and UnitLevel("player") - step.lvl >= OUTDATED_LEVELS and not (q and QuestLog.IsOnQuest(q)) then
+    if
+        step.k ~= "vendor"
+        and step.k ~= "mailbox"
+        and step.k ~= "dungeon_exit"
+        and step.lvl
+        and UnitLevel("player") - step.lvl >= OUTDATED_LEVELS
+        and not (q and QuestLog.IsOnQuest(q))
+    then
         return true, true
     end
     -- An exclusive alternative (or the quest a breadcrumb leads to) is done or in progress:
@@ -287,7 +321,16 @@ function IsDone(step, index)
         and (select(2, FG.ProfessionSkill(ProfessionLine(step))) or 0) >= step.sk
     then
         return true -- rank already learned
-    elseif step.k == "flight_master" or step.k == "train" or step.k == "bind" or step.k == "profession" then
+    elseif step.k == "dungeon_exit" then
+        return state.marks[index or state.step] == true
+    elseif
+        step.k == "flight_master"
+        or step.k == "train"
+        or step.k == "bind"
+        or step.k == "profession"
+        or step.k == "vendor"
+        or step.k == "mailbox"
+    then
         return state.marks[index or state.step] or false
     elseif step.k == "dungeon" then
         -- Followed by the quests done inside (steps of their own): done on entering the dungeon.
@@ -666,7 +709,15 @@ local function Ahead()
             for index = state.step, c.step - 1 do
                 local step = route.steps[index]
                 local finished = step.k == "turnin" and QuestLog.IsOnQuest(step.q) and QuestLog.IsComplete(step.q)
-                if not step.kp and not step.bg and not finished and not IsDone(step, index) then
+                if
+                    not step.kp
+                    and not step.bg
+                    and step.k ~= "vendor"
+                    and step.k ~= "mailbox"
+                    and step.k ~= "dungeon_exit"
+                    and not finished
+                    and not IsDone(step, index)
+                then
                     table.insert(skip, index)
                 end
             end
@@ -722,6 +773,7 @@ local TALKS = { accept = true, turnin = true, train = true, bind = true, flight_
 local PICKUP_NEAR = 100
 
 function Guide:Refresh()
+    TrackServiceExit()
     local ui = self:UI()
     if not ui then return end
     local shown = FG:Get("guideShown")
@@ -1271,6 +1323,7 @@ end)
 
 -- Dungeon steps: done once we entered the instance and came back out.
 local function TrackInstance()
+    TrackServiceExit()
     if not route then return end
     local index = state.step
     local step = route.steps[index]

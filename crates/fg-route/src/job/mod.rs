@@ -165,6 +165,7 @@ pub fn prepare(
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<Prepared> {
     let (profile, mut params) = character::character(conn, overrides, req)?;
+    params.validate_services()?;
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
     let world = load_world(conn, overrides, &profile, &params, progress)?;

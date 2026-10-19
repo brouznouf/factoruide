@@ -508,6 +508,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
             </div>
 
             <div className="config-col config-side">
+              {settingsSection(sections[0])}
               <DungeonPanel
                 dungeons={options.dungeons}
                 forced={params.forced_dungeons}

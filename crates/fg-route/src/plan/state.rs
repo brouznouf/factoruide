@@ -4,6 +4,21 @@ use crate::model::Loc;
 use crate::world::Pos;
 use std::rc::Rc;
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ServiceKind {
+    Vendor,
+    Mailbox,
+}
+impl ServiceKind {
+    pub(crate) fn index(self) -> usize {
+        match self {
+            Self::Vendor => 0,
+            Self::Mailbox => 1,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Kind {
     Accept,
@@ -66,6 +81,13 @@ pub(crate) struct Via {
 /// What happened while replaying a route, for export.
 #[derive(Debug, Clone)]
 pub enum Event {
+    Service {
+        kind: ServiceKind,
+        index: usize,
+    },
+    DungeonExit {
+        dungeon: usize,
+    },
     Hearth {
         inn: usize,
         /// Astral Recall rather than the hearthstone.
@@ -208,6 +230,8 @@ pub(crate) struct State {
     pub(crate) pos: Pos,
     pub(crate) zone: i64,
     pub(crate) time: f64,
+    /// Expected mobs killed since each service completed: vendor, mailbox.
+    pub(crate) service_kills: [f64; 2],
     pub(crate) level: i64,
     pub(crate) xp: i64,
     /// Rested XP left: kills give double up to it.
@@ -288,6 +312,13 @@ impl State {
         crate::params::Might {
             other: self.bonus - self.gear_bonus,
             gear: self.gear_quality,
+        }
+    }
+
+    /// Count physical mobs once, independently of XP, rested bonus and item stacks.
+    pub(crate) fn add_kills(&mut self, kills: f64) {
+        for count in &mut self.service_kills {
+            *count += kills;
         }
     }
 

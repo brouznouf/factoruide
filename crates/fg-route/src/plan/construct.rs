@@ -34,7 +34,7 @@ impl Planner<'_> {
         let mut held: Option<i64> = None;
         let mut detoured = false;
         let n = self.model.quests.len() as u32;
-        while !self.ended(&s) && !self.aborted() {
+        while s.time.is_finite() && !self.ended(&s) && !self.aborted() {
             let pull = match self.params.zone_detour[..] {
                 [after, level, zone] if !detoured && changes.len() as i64 >= after => {
                     if s.level < level {

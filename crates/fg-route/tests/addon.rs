@@ -129,6 +129,18 @@ fn places_of_services() {
 /// the newest it follows (Import.lua): a guide made for a newer addon asks to update it.
 #[test]
 fn each_guide_carries_its_format() {
+    let import = std::fs::read_to_string(repo().join("addon/Factoruide_Guide/Import.lua")).unwrap();
+    let addon_format: u32 = import
+        .lines()
+        .find_map(|line| line.strip_prefix("Import.FORMAT = "))
+        .unwrap()
+        .parse()
+        .unwrap();
+    assert_eq!(
+        job::GUIDE_FORMAT,
+        addon_format,
+        "app exports must match the addon's supported format"
+    );
     let conn = database();
     let mut other = route(&[("accept", 30.87, 66.2)]);
     other.name = "other".into();

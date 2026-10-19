@@ -27,6 +27,14 @@ export interface ProfileImported {
 
 /** Planner tunables, mirror of `fg_route::Params`. */
 export interface Params {
+  vendor_visits: boolean;
+  vendor_min_kills: number;
+  vendor_max_kills: number;
+  vendor_visit_seconds: number;
+  mailbox_visits: boolean;
+  mailbox_min_kills: number;
+  mailbox_max_kills: number;
+  mailbox_visit_seconds: number;
   run_speed: number;
   mount_level: number;
   mount_bonus: number;
@@ -779,6 +787,9 @@ export interface ContributionPreview {
 
 /** A step of a guide's route by game IDs, what the guide editor changes; mirror of `fg_route::job::RouteStep`. */
 export type RouteStep =
+  | { kind: "camp_grind"; mobs: number; at: [number, number, number]; zone: number }
+  | { kind: "service"; service: "vendor" | "mailbox"; id: number; at: [number, number, number] }
+  | { kind: "dungeon_exit"; dungeon: number }
   | { kind: "accept"; quest: number }
   /** `farm`: kill every normal mob met on the way to it (beyond the farming cap). */
   | { kind: "objective"; quest: number; objective: number; farm?: boolean; spot?: number }

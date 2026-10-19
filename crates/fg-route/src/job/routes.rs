@@ -84,7 +84,8 @@ pub fn write_data_addon(dir: &Path, lua: &str, interface: &str, version: &str, t
 /// (an addon site), the apps too: a newer addon reads every older guide, never the reverse. Bump
 /// it only when an addon that reads this format can no longer follow the guide correctly (a field
 /// it would misread, steps it would get wrong), not for what older addons can ignore.
-pub const GUIDE_FORMAT: u32 = 1;
+// Format 2 adds manual vendor/mailbox tasks and the dungeon-exit gate.
+pub const GUIDE_FORMAT: u32 = 2;
 
 /// The Lua of guides for the addon (what `/fg import` and the data addon run): each route
 /// (written as it is), with when its version was computed and its number (the addon keeps the

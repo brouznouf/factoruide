@@ -14,7 +14,7 @@ fn repo() -> PathBuf {
 }
 
 /// The Classic database, unpacked next to the packed one when missing or older.
-fn database() -> Connection {
+pub(crate) fn database() -> Connection {
     static UNPACK: Mutex<()> = Mutex::new(());
     let _guard = UNPACK.lock().unwrap();
     let (path, packed) = (

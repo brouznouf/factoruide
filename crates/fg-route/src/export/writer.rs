@@ -5,7 +5,7 @@
 use super::phrase::{Arg, Phrase};
 use super::types::{MapPointOut, Step, StepKind, Target, TargetKind};
 use crate::model::{EntityKind, Loc, Objective, Spots};
-use crate::plan::{Event, Kind, Planner, Stop, Timed};
+use crate::plan::{Event, Kind, Planner, ServiceKind, Stop, Timed};
 use crate::world::{MapPoint, Pos};
 use std::collections::HashSet;
 
@@ -64,6 +64,19 @@ impl StepWriter<'_> {
         let mut step = self.blank(t);
         let place = match &t.event {
             Event::Reward { .. } | Event::Farm { .. } => None,
+            Event::Service { kind, index } => self.service(&mut step, *kind, *index),
+            Event::DungeonExit { dungeon } => {
+                let d = &self.planner.model.dungeons[*dungeon];
+                step.kind = StepKind::DungeonExit;
+                step.target = Some(Target {
+                    kind: TargetKind::Dungeon,
+                    id: d.area,
+                    name: d.name.clone(),
+                });
+                step.say
+                    .push(Phrase::new("dungeon.exit").arg("dungeon", Arg::Zone(d.area, d.name.clone())));
+                self.place(&d.entrance.pos, Some(d.entrance.zone))
+            }
             Event::Abandon { quest } => self.abandon(&mut step, *quest),
             Event::Fly { from, to } => self.fly(&mut step, *from, *to),
             Event::Link { first, last } => self.link(&mut step, *first, *last),
@@ -355,6 +368,18 @@ impl StepWriter<'_> {
         let world = self.planner.world;
         let zone = zone.or_else(|| world.zone_at(p))?;
         world.to_map(zone, p).map(|m| (m, *p))
+    }
+
+    fn service(&self, step: &mut Step, kind: ServiceKind, index: usize) -> Place {
+        let loc = &self.planner.model.services[kind.index()][index];
+        let (step_kind, key) = match kind {
+            ServiceKind::Vendor => (StepKind::Vendor, "service.vendor"),
+            ServiceKind::Mailbox => (StepKind::Mailbox, "service.mailbox"),
+        };
+        step.kind = step_kind;
+        step.target = Some(Self::target(loc));
+        step.say.push(Phrase::new(key).arg("who", entity(loc)));
+        self.place(&loc.pos, Some(loc.zone))
     }
 
     fn target(loc: &Loc) -> Target {

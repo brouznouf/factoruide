@@ -18,6 +18,7 @@ mod pvp;
 mod quest;
 mod rewards;
 mod selection;
+mod services;
 mod sources;
 mod types;
 
@@ -78,7 +79,9 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
             vec![Vec::new(); sources.dungeons.len()],
         ),
     };
+    let services = services::load(conn, world, profile, params)?;
     Ok(Model {
+        services,
         quests,
         dungeons: sources.dungeons,
         professions: profile.professions.iter().filter_map(ProfessionPlan::new).collect(),

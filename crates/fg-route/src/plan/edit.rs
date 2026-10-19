@@ -1,33 +1,66 @@
 //! Replaying a route edited by hand: each step checked in turn (the impossible ones are reported
 //! and skipped), what each one did, and the time of the whole, as the optimizer counts it.
 
-use super::Planner;
 use super::state::{Breakdown, Event, Kind, Landed, State, Stop, Timed};
 use super::step::recorder;
+use super::{Planner, ServiceKind};
 use std::ops::Range;
 
 /// A step of a route edited by hand: one thing done (`Planner::explicit` does nothing else).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Edit {
+    /// Split grinding at a planned camp, world coordinates in thousandths of a yard.
+    CampGrind {
+        mobs: u32,
+        at: [i64; 3],
+        zone: i64,
+    },
+    Service {
+        kind: ServiceKind,
+        index: usize,
+    },
+    DungeonExit {
+        dungeon: usize,
+    },
     /// A stop of the route; `farm`: kill every normal mob met on the way to it, beyond
     /// `farm_cap`; `spot`: an objective's place (0 its own, then its `alts`; None: the best
     /// from where the character is).
-    Stop { stop: Stop, farm: bool, spot: Option<u8> },
+    Stop {
+        stop: Stop,
+        farm: bool,
+        spot: Option<u8>,
+    },
     /// Fly from a flight path to another (taxi node indexes), both known.
-    Fly { from: usize, to: usize },
+    Fly {
+        from: usize,
+        to: usize,
+    },
     /// Boats, zeppelins or trams: board link `first`, leave link `last` (`World::links`).
-    Link { first: usize, last: usize },
+    Link {
+        first: usize,
+        last: usize,
+    },
     /// Cast a class teleport (`Model::teleports`).
-    Teleport { to: usize },
+    Teleport {
+        to: usize,
+    },
     /// Learn the class spells at a trainer (`Model::trainers`).
-    Train { trainer: usize },
+    Train {
+        trainer: usize,
+    },
     /// Give up a quest of the log.
-    Abandon { quest: u32 },
+    Abandon {
+        quest: u32,
+    },
     /// Kill this many mobs of the character's level where it stands.
-    Grind { mobs: u32 },
+    Grind {
+        mobs: u32,
+    },
     /// Kill mobs of the character's level up to this level, at the camps of its levels (going
     /// there first).
-    GrindTo { level: i64 },
+    GrindTo {
+        level: i64,
+    },
 }
 
 /// What a step of an edited route did.
@@ -141,6 +174,46 @@ impl Planner<'_> {
                 Outcome::Skipped("target level reached")
             } else {
                 match *edit {
+                    Edit::CampGrind { mobs, at, zone } => {
+                        let near = crate::world::Pos {
+                            continent: at[0],
+                            x: at[1] as f64 / 1000.0,
+                            y: at[2] as f64 / 1000.0,
+                            zone,
+                        };
+                        self.go(&mut s, &near, zone, &mut recorder(&mut Some(&mut trace)));
+                        if s.time.is_finite() {
+                            let seconds = self.growth().grind_mobs(&mut s, mobs);
+                            recorder(&mut Some(&mut trace))(
+                                &s,
+                                Event::GrindMobs {
+                                    mobs,
+                                    seconds,
+                                    near,
+                                    zone,
+                                },
+                            );
+                            Outcome::Done
+                        } else {
+                            Outcome::Invalid("unreachable")
+                        }
+                    }
+                    Edit::Service { kind, index } => {
+                        if index >= self.model.services[kind.index()].len() {
+                            Outcome::Invalid("unknown service location")
+                        } else {
+                            self.service_at(&mut s, kind, index, &mut recorder(&mut Some(&mut trace)));
+                            Outcome::Done
+                        }
+                    }
+                    Edit::DungeonExit { dungeon } => {
+                        if dungeon >= self.model.dungeons.len() {
+                            Outcome::Invalid("unknown dungeon")
+                        } else {
+                            recorder(&mut Some(&mut trace))(&s, Event::DungeonExit { dungeon });
+                            Outcome::Done
+                        }
+                    }
                     Edit::Stop { stop, farm, spot } => {
                         s.at = at;
                         s.next = nexts[e].map(|next| self.places().pos(&s, next));
@@ -472,8 +545,23 @@ impl Planner<'_> {
                     Event::Link { first, last } => Edit::Link { first, last },
                     Event::Teleport { to } => Edit::Teleport { to },
                     Event::Train { trainer, .. } => Edit::Train { trainer },
+                    Event::Service { kind, index } => Edit::Service { kind, index },
+                    Event::DungeonExit { dungeon } => Edit::DungeonExit { dungeon },
                     Event::Abandon { quest } => Edit::Abandon { quest: quest as u32 },
                     Event::Grind { to_level, .. } => Edit::GrindTo { level: to_level },
+                    Event::GrindMobs { mobs, near, zone, .. }
+                        if self.params.vendor_visits || self.params.mailbox_visits =>
+                    {
+                        Edit::CampGrind {
+                            mobs,
+                            at: [
+                                near.continent,
+                                (near.x * 1000.0).round() as i64,
+                                (near.y * 1000.0).round() as i64,
+                            ],
+                            zone,
+                        }
+                    }
                     Event::GrindMobs { mobs, .. } => Edit::Grind { mobs },
                     Event::Reward { .. } | Event::Farm { .. } | Event::DeathSkip { .. } | Event::Shortcut { .. } => {
                         continue;
@@ -491,6 +579,20 @@ impl Planner<'_> {
                 Event::Fly { from, to } => out.push(Edit::Fly { from, to }),
                 Event::Link { first, last } => out.push(Edit::Link { first, last }),
                 Event::Teleport { to } => out.push(Edit::Teleport { to }),
+                Event::Service { kind, index } => out.push(Edit::Service { kind, index }),
+                Event::GrindMobs { mobs, near, zone, .. }
+                    if self.params.vendor_visits || self.params.mailbox_visits =>
+                {
+                    out.push(Edit::CampGrind {
+                        mobs,
+                        at: [
+                            near.continent,
+                            (near.x * 1000.0).round() as i64,
+                            (near.y * 1000.0).round() as i64,
+                        ],
+                        zone,
+                    });
+                }
                 _ => {}
             }
         }
@@ -521,8 +623,11 @@ fn is_own(edit: Edit, event: &Event) -> bool {
         (Edit::Link { first, last }, Event::Link { first: a, last: b }) => (first, last) == (*a, *b),
         (Edit::Teleport { to }, Event::Teleport { to: done }) => to == *done,
         (Edit::Train { trainer }, Event::Train { trainer: done, .. }) => trainer == *done,
+        (Edit::Service { kind, index }, Event::Service { kind: k, index: i }) => kind == *k && index == *i,
+        (Edit::DungeonExit { dungeon }, Event::DungeonExit { dungeon: d }) => dungeon == *d,
         (Edit::Abandon { quest }, Event::Abandon { quest: done }) => quest as usize == *done,
-        (Edit::Grind { .. }, Event::GrindMobs { .. }) | (Edit::GrindTo { .. }, Event::Grind { .. }) => true,
+        (Edit::Grind { .. } | Edit::CampGrind { .. }, Event::GrindMobs { .. })
+        | (Edit::GrindTo { .. }, Event::Grind { .. }) => true,
         _ => false,
     }
 }

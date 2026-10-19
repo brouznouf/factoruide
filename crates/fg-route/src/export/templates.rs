@@ -40,6 +40,18 @@ impl Lang {
 /// and traditional Chinese.
 pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
     (
+        "service.vendor",
+        ["Sell unwanted items and repair at {who}; mark this visit complete when finished."; 9],
+    ),
+    (
+        "service.mailbox",
+        ["Send items away at {who}; mark this visit complete when finished."; 9],
+    ),
+    (
+        "dungeon.exit",
+        ["Finish {dungeon}, then leave the instance before continuing."; 9],
+    ),
+    (
         "accept",
         [
             "Accept {quest} from {who}",

@@ -38,6 +38,7 @@ mod places;
 mod regions;
 mod report;
 mod search;
+mod services;
 mod share;
 mod spot;
 mod state;
@@ -46,6 +47,8 @@ mod together;
 mod travel;
 mod worth;
 
+#[cfg(test)]
+mod service_tests;
 #[cfg(test)]
 pub(crate) mod tests;
 
@@ -58,7 +61,7 @@ pub use places::Places;
 pub use regions::Group;
 pub use search::Effort;
 pub use share::{Exchange, Member};
-pub use state::{Breakdown, Event, Kind, Stop, Timed, fmt_time};
+pub use state::{Breakdown, Event, Kind, ServiceKind, Stop, Timed, fmt_time};
 
 use crate::model::{Model, Profile, Quest};
 use crate::params::Params;
@@ -264,6 +267,7 @@ impl<'a> Planner<'a> {
             pos,
             zone,
             time: 0.0,
+            service_kills: [0.0; 2],
             level,
             xp: init.xp.min(self.rules().to_next_level(level) - 1).max(0),
             rested: init.rested,

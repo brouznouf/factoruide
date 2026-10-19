@@ -24,7 +24,24 @@ impl Planner<'_> {
         let level = level.min(self.rules().max_level);
         // The camp ground at and the time spent there, recorded on leaving it.
         let mut at: Option<(Pos, i64, f64)> = None;
+        let mut stalled = 0;
         while s.level < level {
+            if !self.explicit
+                && [super::ServiceKind::Vendor, super::ServiceKind::Mailbox]
+                    .iter()
+                    .any(|&k| {
+                        let (on, min, _, _) = self.service_settings(k);
+                        on && s.service_kills[k.index()] >= min
+                    })
+            {
+                if let Some((camp, zone, seconds)) = at.take() {
+                    Self::ground(s, camp, zone, seconds, record);
+                }
+                self.service_visits(s, Some(s.pos), false, true, record);
+                if !s.time.is_finite() {
+                    break;
+                }
+            }
             let (near, zone) = self.camp(s).map_or((s.pos, s.zone), |c| (c, c.zone));
             if let Some((camp, zone, seconds)) = at.take_if(|c| c.0 != near) {
                 Self::ground(s, camp, zone, seconds, record);
@@ -40,6 +57,48 @@ impl Planner<'_> {
                     at = Some((near, zone, 0.0));
                     break;
                 }
+            }
+            if !self.explicit && (self.params.vendor_visits || self.params.mailbox_visits) {
+                if let Some((camp, zone, seconds)) = at.take() {
+                    Self::ground(s, camp, zone, seconds, record);
+                }
+                let next_level = s.level + 1;
+                let remaining_kills = [super::ServiceKind::Vendor, super::ServiceKind::Mailbox]
+                    .iter()
+                    .filter_map(|&kind| {
+                        let (on, min, max, _) = self.service_settings(kind);
+                        let kills = s.service_kills[kind.index()];
+                        on.then_some((if kills < min { min } else { max }) - kills)
+                    })
+                    .fold(f64::INFINITY, f64::min);
+                let start = s.time;
+                let mut mobs = 0;
+                while s.level < next_level && f64::from(mobs) < remaining_kills {
+                    self.growth().grind_mobs(s, 1);
+                    mobs += 1;
+                }
+                if mobs > 0 {
+                    stalled = 0;
+                    record(
+                        s,
+                        Event::GrindMobs {
+                            mobs,
+                            seconds: s.time - start,
+                            near,
+                            zone,
+                        },
+                    );
+                } else {
+                    stalled += 1;
+                    // Farming on repeated trips can exhaust the kill allowance before
+                    // reaching the camp. Reject that camp instead of
+                    // travelling forever without any leveling progress.
+                    if stalled >= 2 {
+                        s.time = f64::INFINITY;
+                        break;
+                    }
+                }
+                continue;
             }
             let seconds = self.growth().grind_to(s, s.level + 1);
             at = Some((near, zone, at.map_or(0.0, |c| c.2) + seconds));

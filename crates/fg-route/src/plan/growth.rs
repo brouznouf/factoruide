@@ -23,8 +23,9 @@ impl<'g> Growth<'g> {
         &self.model.quests[i as usize]
     }
 
-    /// Common loot `kills` normal mobs of `zone` drop (`Model::loot`), into the bags.
+    /// Count the mobs killed and gather their modeled common loot, if any.
     pub(crate) fn gather(self, s: &mut State, zone: i64, kills: f64) {
+        s.add_kills(kills);
         if let Some(items) = self.model.loot.by_zone.get(&zone) {
             for &(i, each) in items {
                 s.stock[usize::from(i)] += kills as f32 * each;

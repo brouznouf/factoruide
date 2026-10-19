@@ -31,7 +31,7 @@ FG.Import = Import
 Import.PREFIX = "FGG1:"
 
 --- The newest guide format this addon follows (the apps' GUIDE_FORMAT, fg-route job/routes.rs).
-Import.FORMAT = 1
+Import.FORMAT = 2
 
 --- Whether guide `r` was made for a newer addon (its format above this addon's).
 function Import.TooNew(r) return (tonumber(r.format) or 1) > Import.FORMAT end

@@ -19,6 +19,12 @@ pub struct Target {
 pub enum StepKind {
     #[serde(rename = "accept")]
     Accept,
+    #[serde(rename = "vendor")]
+    Vendor,
+    #[serde(rename = "mailbox")]
+    Mailbox,
+    #[serde(rename = "dungeon_exit")]
+    DungeonExit,
     #[serde(rename = "objective")]
     Objective,
     #[serde(rename = "turnin")]
@@ -55,6 +61,9 @@ impl StepKind {
     pub fn as_str(self) -> &'static str {
         match self {
             Self::Accept => "accept",
+            Self::Vendor => "vendor",
+            Self::Mailbox => "mailbox",
+            Self::DungeonExit => "dungeon_exit",
             Self::Objective => "objective",
             Self::TurnIn => "turnin",
             Self::Fly => "fly",

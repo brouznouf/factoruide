@@ -245,7 +245,7 @@ impl Planner<'_> {
     fn work_group(&self, s: &mut State, route: &mut Vec<Stop>, groups: &Groups, g: usize) {
         let group = &groups.list[g];
         loop {
-            if self.ended(s) {
+            if !s.time.is_finite() || self.ended(s) || self.aborted() {
                 return;
             }
             let mut best: Option<(f64, Stop)> = None;
@@ -332,7 +332,7 @@ impl Planner<'_> {
         // Groups where nothing progressed, ignored until the next level.
         let mut stuck: Vec<bool> = vec![false; groups.list.len()];
         let mut stuck_level = s.level;
-        while !self.ended(&s) && !self.aborted() {
+        while s.time.is_finite() && !self.ended(&s) && !self.aborted() {
             if s.level != stuck_level {
                 stuck.fill(false);
                 stuck_level = s.level;
@@ -525,7 +525,7 @@ impl Planner<'_> {
         self.maybe_bind(&mut t, &mut scratch, groups, g);
         let before = scratch.len();
         self.work_group(&mut t, &mut scratch, groups, g);
-        (scratch.len() > before).then_some(t)
+        (t.time.is_finite() && scratch.len() > before).then_some(t)
     }
 
     /// Choose the next group by simulated XP per second, looking one group further ahead.

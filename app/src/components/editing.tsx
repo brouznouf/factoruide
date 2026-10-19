@@ -49,6 +49,9 @@ export const REASONS: Record<string, string> = {
 
 /** Step type of the guide (its color, see .kind-*) and label of each step kind. */
 export const KINDS: Record<RouteStep["kind"], { css: string; label: string }> = {
+  camp_grind: { css: "grind", label: "Grind at camp" },
+  service: { css: "train", label: "Inventory visit" },
+  dungeon_exit: { css: "dungeon", label: "Leave dungeon" },
   accept: { css: "accept", label: "Prendre" },
   objective: { css: "objective", label: "Faire" },
   turn_in: { css: "turnin", label: "Rendre" },
@@ -84,6 +87,12 @@ export function useNames(catalog: EditCatalog | undefined) {
     const node = (id: number) => nodes.get(id)?.name ?? `#${id}`;
     const label = (s: RouteStep, t: (fr: string, vars?: Record<string, string | number>) => string): string => {
       switch (s.kind) {
+        case "camp_grind":
+          return `Kill ${s.mobs} mobs at camp`;
+        case "service":
+          return `${s.service === "vendor" ? "Vendor" : "Mailbox"} #${s.id}`;
+        case "dungeon_exit":
+          return `Leave ${dungeons.get(s.dungeon)?.name ?? `#${s.dungeon}`}`;
         case "accept":
           return quest(s.quest);
         case "objective":

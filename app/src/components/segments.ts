@@ -3,6 +3,9 @@
 
 /** Kinds of the guide's steps (French keys of the catalog). */
 export const KIND_LABELS: Record<string, string> = {
+  vendor: "Vendor",
+  mailbox: "Mailbox",
+  dungeon_exit: "Leave dungeon",
   accept: "Prendre",
   objective: "Faire",
   turnin: "Rendre",

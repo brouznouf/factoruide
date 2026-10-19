@@ -16,6 +16,20 @@ export interface Section {
 
 export const sections: Section[] = [
   {
+    title: "Inventory visits",
+    help: "Uses estimated mob kills since each service's last visit. Counts quest, travel, grinding and dungeon kills. Minimum starts looking for a convenient stop; maximum makes the service the next destination. Visit enabled services before every dungeon. Finish a dungeon before taking any visits that became due inside.",
+    fields: [
+      { key: "vendor_visits", kind: "bool", label: "Plan vendor visits" },
+      { key: "vendor_min_kills", kind: "number", label: "Vendor minimum", unit: "kills", min: 0, step: 1 },
+      { key: "vendor_max_kills", kind: "number", label: "Vendor maximum", unit: "kills", min: 1, step: 1 },
+      { key: "vendor_visit_seconds", kind: "number", label: "Vendor visit duration", help: "Estimated time spent selling and repairing, separate from travel.", unit: "s", min: 0, step: 5 },
+      { key: "mailbox_visits", kind: "bool", label: "Plan mailbox visits" },
+      { key: "mailbox_min_kills", kind: "number", label: "Mailbox minimum", unit: "kills", min: 0, step: 1 },
+      { key: "mailbox_max_kills", kind: "number", label: "Mailbox maximum", unit: "kills", min: 1, step: 1 },
+      { key: "mailbox_visit_seconds", kind: "number", label: "Mailbox visit duration", help: "Estimated time spent mailing items, separate from travel.", unit: "s", min: 0, step: 5 },
+    ],
+  },
+  {
     title: "Contenu",
     fields: [
       { key: "dungeons", kind: "bool", label: "Faire les donjons rentables en groupe", help: "Un donjon est fait, avec ses quêtes, quand il fait gagner du temps." },

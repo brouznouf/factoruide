@@ -293,6 +293,12 @@ impl Planner<'_> {
                     && s.farm_used == old.farm_used
                     && s.reputation == old.reputation
                     && s.forced_left == old.forced_left
+                    && [super::ServiceKind::Vendor, super::ServiceKind::Mailbox]
+                        .iter()
+                        .all(|&kind| {
+                            !self.service_settings(kind).0
+                                || s.service_kills[kind.index()].to_bits() == old.service_kills[kind.index()].to_bits()
+                        })
                     && Self::same_timers(&s, old)
                     && s.together == old.together
                 {

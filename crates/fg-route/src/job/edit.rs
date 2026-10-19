@@ -5,7 +5,7 @@
 use super::{PlanOutcome, PlanRequest, Prepared, prepare};
 use crate::export::{self, MapPointOut, Route, StepKind, TargetKind};
 use crate::model::Names;
-use crate::plan::{Breakdown, Edit, Edited, Event, Farmed, Kind, Outcome, Planner, Stop, fmt_time};
+use crate::plan::{Breakdown, Edit, Edited, Event, Farmed, Kind, Outcome, Planner, ServiceKind, Stop, fmt_time};
 use crate::terrain::Walks;
 use anyhow::{Result, bail};
 use rusqlite::Connection;
@@ -17,6 +17,21 @@ use std::sync::Arc;
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum RouteStep {
+    /// World position in thousandths of a yard; preserves partial final-grind locations.
+    CampGrind {
+        mobs: u32,
+        at: [i64; 3],
+        zone: i64,
+    },
+    /// Stable identity plus world position in tenths of a yard (IDs can have many spawns).
+    Service {
+        service: ServiceKind,
+        id: i64,
+        at: [i64; 3],
+    },
+    DungeonExit {
+        dungeon: i64,
+    },
     Accept {
         quest: i64,
     },
@@ -83,6 +98,87 @@ pub enum RouteStep {
     },
 }
 
+#[cfg(test)]
+mod service_tests {
+    use super::*;
+
+    #[test]
+    fn saved_service_plan_reopens_without_duplicates_and_resolves_the_same_spawn() {
+        let mut p = crate::plan::tests::quests_at_start(1);
+        p.params.vendor_visits = true;
+        p.params.mailbox_visits = true;
+        p.params.dungeons = true;
+        p.params.vendor_visit_seconds = 37.0;
+        p.params.mailbox_visit_seconds = 43.0;
+        let vendor = p.model.start.clone();
+        let mut other_spawn = vendor.clone();
+        other_spawn.pos.x += 100.0;
+        let mut mailbox = vendor.clone();
+        mailbox.kind = crate::model::EntityKind::Object;
+        mailbox.id = 900_999;
+        p.model.services = [vec![vendor, other_spawn], vec![mailbox]];
+        let d = &mut p.model.dungeons[0];
+        d.entrance = p.model.start.clone();
+        d.min_level = 1;
+        d.max_level = 60;
+        d.minutes = 40.0;
+        d.kills = 120.0;
+        let outcome = {
+            let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+            let stops = [Stop {
+                kind: Kind::Dungeon,
+                index: 0,
+            }];
+            PlanOutcome {
+                route: export::build(&planner, &p.profile, &stops),
+                plan: route_steps(&planner, &stops),
+                notes: vec![],
+                walks: None,
+                explicit: true,
+            }
+        };
+        let saved = PlanOutcome::from_json(&serde_json::to_string(&outcome).unwrap()).unwrap();
+        p.model.services[0].swap(0, 1);
+        let editor = Editor { prepared: p };
+        let (steps, rebuilt) = editor.steps(&saved);
+        assert!(!rebuilt);
+        assert_eq!(steps, saved.plan);
+        assert_eq!(
+            steps.iter().filter(|s| matches!(s, RouteStep::Service { .. })).count(),
+            4
+        );
+        let report = editor.simulate(&steps, &Names::default());
+        assert_eq!(report.errors, 0);
+        assert!(
+            (report.total_time - saved.route.total_time).abs() < 1.0,
+            "saved service spawn changed: {} vs {}",
+            report.total_time,
+            saved.route.total_time
+        );
+        // v13's new editor/timeline must preserve explicit service and exit steps.
+        let requests = crate::job::Requests::default();
+        let view = editor.view(&steps, &Names::default(), &requests.next()).unwrap();
+        assert_eq!(view.report.errors, 0);
+        assert_eq!(view.lines.len(), steps.len());
+        assert_eq!(view.timeline.steps.len(), steps.len());
+        assert!((view.report.total_time - report.total_time).abs() < 0.01);
+        for (i, step) in steps.iter().enumerate() {
+            if let RouteStep::Service { service, .. } = step {
+                let (kind, duration) = match service {
+                    ServiceKind::Vendor => (StepKind::Vendor, 37.0),
+                    ServiceKind::Mailbox => (StepKind::Mailbox, 43.0),
+                };
+                assert_eq!(view.lines[i].kind, kind);
+                assert!(view.lines[i].world.is_some());
+                assert!(!view.timeline.steps[i].estimate);
+                assert!((view.timeline.steps[i].interact - duration).abs() < 0.01);
+            } else if matches!(step, RouteStep::DungeonExit { .. }) {
+                assert_eq!(view.lines[i].kind, StepKind::DungeonExit);
+            }
+        }
+    }
+}
+
 /// A transport link one way: its name and the zone it leads to.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct LinkRef {
@@ -115,6 +211,22 @@ impl RouteStep {
             to: world.links[i].to_zone,
         };
         match edit {
+            Edit::CampGrind { mobs, at, zone } => Self::CampGrind { mobs, at, zone },
+            Edit::Service { kind, index } => {
+                let loc = &model.services[kind.index()][index];
+                Self::Service {
+                    service: kind,
+                    id: loc.id,
+                    at: [
+                        loc.pos.continent,
+                        (loc.pos.x * 10.0).round() as i64,
+                        (loc.pos.y * 10.0).round() as i64,
+                    ],
+                }
+            }
+            Edit::DungeonExit { dungeon } => Self::DungeonExit {
+                dungeon: model.dungeons[dungeon].area,
+            },
             Edit::Stop { stop, farm, spot } => {
                 let i = stop.index as usize;
                 match stop.kind {
@@ -186,6 +298,26 @@ impl RouteStep {
                 .ok_or("unknown crossing")
         };
         Ok(match *self {
+            Self::CampGrind { mobs, at, zone } => Edit::CampGrind { mobs, at, zone },
+            Self::Service { service, id, at } => Edit::Service {
+                kind: service,
+                index: model.services[service.index()]
+                    .iter()
+                    .position(|loc| {
+                        loc.id == id
+                            && loc.pos.continent == at[0]
+                            && (loc.pos.x * 10.0 - at[1] as f64).abs() <= 1.0
+                            && (loc.pos.y * 10.0 - at[2] as f64).abs() <= 1.0
+                    })
+                    .ok_or("unknown service location")?,
+            },
+            Self::DungeonExit { dungeon } => Edit::DungeonExit {
+                dungeon: model
+                    .dungeons
+                    .iter()
+                    .position(|d| d.area == dungeon)
+                    .ok_or("unknown dungeon")?,
+            },
             Self::Accept { quest: id } => stop(quest(id)?, Kind::Accept),
             Self::Objective {
                 quest: id,
@@ -393,7 +525,16 @@ impl Editor {
     /// The route of a computed guide as steps to edit, and whether it was rebuilt from the
     /// guide's steps (a guide computed before the editor: its time may differ a little).
     pub fn steps(&self, outcome: &PlanOutcome) -> (Vec<RouteStep>, bool) {
-        if outcome.explicit {
+        // Service-aware plans already contain every action, including the forced
+        // pre-dungeon visits and split final grind. Re-expansion would force visits twice.
+        if outcome.explicit
+            || outcome.plan.iter().any(|s| {
+                matches!(
+                    s,
+                    RouteStep::Service { .. } | RouteStep::DungeonExit { .. } | RouteStep::CampGrind { .. }
+                )
+            })
+        {
             return (outcome.plan.clone(), false);
         }
         let (steps, rebuilt) = if outcome.plan.is_empty() {
@@ -436,6 +577,11 @@ impl Editor {
             let quest = step.quest;
             let target = step.target.as_ref();
             let next = match step.kind {
+                StepKind::Vendor | StepKind::Mailbox => target.zip(step.world).map(|(t, at)| RouteStep::Service {
+                    service: if step.kind == StepKind::Vendor { ServiceKind::Vendor } else { ServiceKind::Mailbox },
+                    id: t.id, at: [at[0] as i64, (at[1] * 10.0).round() as i64, (at[2] * 10.0).round() as i64],
+                }),
+                StepKind::DungeonExit => target.map(|t| RouteStep::DungeonExit { dungeon: t.id }),
                 StepKind::Accept => quest.map(|quest| RouteStep::Accept { quest }),
                 StepKind::TurnIn => quest.map(|quest| RouteStep::TurnIn { quest }),
                 StepKind::Objective => quest.zip(step.objective).map(|(quest, objective)| {

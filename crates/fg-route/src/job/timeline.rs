@@ -892,6 +892,20 @@ impl<'r> Replay<'r> {
                         push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
                     }
                 }
+                Event::Service { kind, index } => {
+                    let p = model.services[kind.index()][*index].pos;
+                    let visit = self.planner.service_settings(*kind).3.min((e.time - t).max(0.0));
+                    let walk = (e.time - t - visit).max(0.0);
+                    if apart(&at, &p) {
+                        let l = leg(walk_mode, &at, &p, std::mem::take(&mut via));
+                        push(out, walk, &mut t, walk_split(walk), Some(l));
+                        at = p;
+                    }
+                    push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
+                }
+                Event::DungeonExit { .. } => {
+                    push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
+                }
                 Event::Train { trainer, .. } => {
                     let p = model.trainers[*trainer].pos;
                     let train = d(|b| b.training).min(e.time - t);
