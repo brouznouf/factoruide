@@ -59,6 +59,7 @@ impl QuestBuilder<'_> {
                             && r.min_level.unwrap_or(1) <= self.profile.to_level
                             && !self.sources.repeatable.contains(&r.id)),
             zone_forced,
+            required: false,
             skill: skill.flatten(),
             power: class_quest
                 .then(|| self.profile.class_powers.iter().position(|(n, _)| n == &r.name))

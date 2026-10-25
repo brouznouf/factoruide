@@ -81,6 +81,8 @@ jobs:
       - run: npm ci
       - name: Type check and build
         run: npm run build
+      - name: Quest input
+        run: npm test
       - name: Lint
         run: npx oxlint --deny-warnings
       - name: Translations (every t("...") text is in the catalog)

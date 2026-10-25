@@ -9,7 +9,7 @@ use super::{GROUP_MAX, GROUP_MIN_LEVEL, RequestError};
 use crate::model::{Mate, Profile};
 use crate::params::Params;
 use anyhow::{Context, Result};
-use rusqlite::Connection;
+use rusqlite::{Connection, OptionalExtension};
 use std::collections::HashMap;
 
 pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> Result<(Profile, Params)> {
@@ -75,6 +75,32 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
     if let Some(start) = start {
         start.anchor_professions(&mut professions);
     }
+    let mut completed_quests: std::collections::HashSet<_> = start
+        .map(|s| s.completed.iter().map(|q| q.0).collect())
+        .unwrap_or_default();
+    if members.len() > 1 {
+        completed_quests.extend(members.iter().flat_map(|m| m.completed.iter()).map(|q| q.0));
+        let mut scopes =
+            conn.prepare("SELECT coalesce(races_mask, 0), coalesce(classes_mask, 0) FROM m_quest WHERE id = ?1")?;
+        for id in completed_quests.clone() {
+            let scope = scopes
+                .query_row([id], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))
+                .optional()?;
+            if members
+                .iter()
+                .zip(std::iter::once(class_id).chain(mates.iter().map(|m| m.class_id)))
+                .any(|(mate, class)| {
+                    let eligible = scope.is_none_or(|(races, classes)| {
+                        (races == 0 || races & crate::model::race_bit(mate.race) != 0)
+                            && (classes == 0 || classes & (1 << (class - 1)) != 0)
+                    });
+                    eligible && !mate.completed.contains(&super::QuestId(id))
+                })
+            {
+                completed_quests.remove(&id);
+            }
+        }
+    }
     let profile = Profile {
         name: req.name.clone().unwrap_or_else(|| format!("{race_key}-{class}")),
         race_id: race.id,
@@ -90,6 +116,8 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
             &class,
             &group,
         ),
+        required_quests: vec![],
+        completed_quests,
         class_powers: overrides.class_powers.get(&class).cloned().unwrap_or_default(),
         spell_weights: overrides
             .spells

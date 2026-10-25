@@ -14,6 +14,7 @@ mod paths;
 mod race;
 mod reputation;
 mod request;
+mod required;
 mod routes;
 mod services;
 mod start;
@@ -34,7 +35,7 @@ pub use overrides::{Overrides, RaceDef};
 pub use paths::{add_walk_paths, route_walks, walk_world};
 pub use race::{optimize, optimize_interruptible};
 pub use reputation::race_base;
-pub use request::{ClassKey, GROUP_MAX, GROUP_MIN_LEVEL, PlanOutcome, PlanRequest, Prepared, RaceKey};
+pub use request::{ClassKey, GROUP_MAX, GROUP_MIN_LEVEL, PlanOutcome, PlanRequest, Prepared, RaceKey, RequiredQuest};
 pub use routes::{
     DATA_ADDON, GUIDE_FORMAT, POLESTAR_SOURCE_FOLDER, add_polestar_source, addon_walks, data_addon_files, guides_lua,
     load_routes, lua_long_string, polestar_source_dir, render_routes, save_route, slug, write_addon_routes,
@@ -139,6 +140,7 @@ pub fn plan_interruptible(
     }
     // Objectives at the same place one after the other, done at once.
     let best = planner.route_together(best);
+    planner.validate_required(&best)?;
     let route = export::build(&planner, &prepared.profile, &best);
     for missing in planner.missing_class_quests(&best) {
         prepared.notes.push(format!("class quest not planned: {missing}"));
@@ -200,7 +202,7 @@ pub fn manual(
 ) -> Result<PlanOutcome, JobError> {
     let editor = Editor::open(conn, overrides, req, walks)?;
     let notes = editor.prepared.notes.clone();
-    Ok(editor.save(&[], notes)?)
+    Ok(editor.blank(notes))
 }
 
 /// Everything a route is planned from: the character, the settings, the world and the quests.
@@ -210,7 +212,8 @@ pub fn prepare(
     req: &PlanRequest,
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<Prepared> {
-    let (profile, mut params) = character::character(conn, overrides, req)?;
+    let (mut profile, mut params) = character::character(conn, overrides, req)?;
+    profile.required_quests = required::resolve(conn, req, &profile)?;
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
     let world = load_world(conn, overrides, &profile, &params, progress)?;
@@ -219,6 +222,22 @@ pub fn prepare(
     let mut model = model::load(conn, &world, &profile, &params)?;
     let mut start_notes = Vec::new();
     let members = req.members(params.edition.rules());
+    // A member who already chose an exclusive alternative cannot meet an exact requirement.
+    for q in model.quests.iter().filter(|q| q.required) {
+        for (k, member) in members.iter().enumerate() {
+            if q.members & (1 << k) != 0
+                && !member.completed.contains(&QuestId(q.id))
+                && q.exclusive.iter().any(|&id| member.completed.contains(&QuestId(id)))
+            {
+                anyhow::bail!(
+                    "required quest {} ({}) conflicts with an exclusive quest already completed by {}",
+                    q.name,
+                    q.id,
+                    member.name
+                );
+            }
+        }
+    }
     // A group is planned for the member with the least XP.
     let start = members.first().copied().or(req.start.as_ref());
     if let Some(start) = start {

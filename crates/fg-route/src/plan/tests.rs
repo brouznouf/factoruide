@@ -41,6 +41,7 @@ pub(crate) fn quests_at_start(n: usize) -> Prepared {
         name: None,
         params: Some(overrides.params.clone()),
         required_class_quests: None,
+        required_quests: vec![],
         professions: vec![],
         locale: None,
         mates: vec![],

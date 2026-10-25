@@ -68,6 +68,9 @@ pub struct PlanRequest {
     /// Class quests that must be done; defaults to `overrides/class_quests.toml`.
     #[serde(default)]
     pub required_class_quests: Option<Vec<String>>,
+    /// Quests selected by ID or exact name; prerequisites are included and completion is required.
+    #[serde(default)]
+    pub required_quests: Vec<RequiredQuest>,
     /// Professions to level along the route.
     #[serde(default)]
     pub professions: Vec<crate::profession::ProfessionGoal>,
@@ -82,6 +85,14 @@ pub struct PlanRequest {
     /// is the same for everyone (see `members`).
     #[serde(default)]
     pub mates: Vec<super::StartState>,
+}
+
+/// A quest ID or an exact name, resolved before planning.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum RequiredQuest {
+    Id(i64),
+    Name(String),
 }
 
 /// Players in a group guide, the character included.

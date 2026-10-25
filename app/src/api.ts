@@ -186,6 +186,8 @@ export interface PlanRequest {
   name?: string | null;
   params?: Params | null;
   required_class_quests?: string[] | null;
+  /** Exact quest IDs or names. Prerequisites are included; omission fails generation. */
+  required_quests?: (number | string)[];
   professions?: ProfessionGoal[];
   /** Language of the guide texts (English where a name is not translated). */
   locale?: string | null;

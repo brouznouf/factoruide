@@ -23,6 +23,7 @@ pub struct RouteOptions {
     /// Planner parameter overrides (key=value).
     pub params: Vec<String>,
     pub professions: Vec<fg_route::profession::ProfessionGoal>,
+    pub required_quests: Vec<String>,
     /// Language of the guide texts.
     pub locale: Option<String>,
     /// Profiles (JSON) of the character and of the other players of a group guide, and where to
@@ -64,6 +65,14 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
         name: opts.out_name.clone(),
         params: Some(params),
         required_class_quests: None,
+        required_quests: opts
+            .required_quests
+            .iter()
+            .map(|q| {
+                q.parse::<i64>()
+                    .map_or_else(|_| job::RequiredQuest::Name(q.clone()), job::RequiredQuest::Id)
+            })
+            .collect(),
         professions: opts.professions.clone(),
         locale: opts.locale.clone(),
         start: opts.start.as_deref().map(read_profile).transpose()?,
@@ -267,6 +276,7 @@ pub fn share(conn: &Connection, overrides_dir: &Path, opts: &ShareOptions, out: 
         name: Some(opts.name.clone()),
         params: Some(params),
         required_class_quests: Some(options.class_quests.get(&class_name).cloned().unwrap_or_default()),
+        required_quests: vec![],
         professions: vec![],
         locale: Some(opts.locale.clone()),
         mates: vec![],

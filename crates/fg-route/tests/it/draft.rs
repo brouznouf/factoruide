@@ -26,6 +26,7 @@ fn request() -> PlanRequest {
                 .unwrap(),
         ),
         required_class_quests: None,
+        required_quests: vec![],
         professions: vec![],
         locale: None,
         mates: vec![],

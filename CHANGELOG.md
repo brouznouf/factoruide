@@ -10,6 +10,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### App
 
+- Choose must-have quests by ID or exact name.
 - Group guides: in the desktop app too, a player who plays on another computer is added by pasting the export of their character (in game: /fg, "Export my character").
 - In the guide editor, a quest already in the guide says at which step ("already in the guide · step 313"); the number shows that step.
 - In the guide editor, a step that only a zone too strong for the character makes possible (the flight path of Gadgetzan from Thousand Needles at level 34) is accepted, with a warning on the step, instead of being impossible. Computed guides still keep out of those zones.
@@ -18,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- Guides complete must-have quests and their prerequisites, even past the target level.
 - WoW Forever: the new dungeons follow the game's level ranges, not their quests' levels: Ruins of Lordaeron 15-20 (was 21-22), Excavation Site 24-29, City of Dalaran 28-33.
 - WoW Forever: Ruins of Lordaeron's quests started by an item found inside (Crest of Lordaeron, Remember That I Love You) are planned, taken during the run.
 - A new character knows its capital's flight path from the start, as in the game (Stormwind for humans, Ironforge for dwarves and gnomes, Orgrimmar for orcs and trolls...): guides no longer stop to learn it, and fly from there right away.

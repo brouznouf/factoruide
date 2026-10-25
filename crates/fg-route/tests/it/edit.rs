@@ -29,6 +29,7 @@ fn request_to(to_level: i64) -> PlanRequest {
                 .unwrap(),
         ),
         required_class_quests: None,
+        required_quests: vec![],
         professions: vec![],
         locale: None,
         mates: vec![],

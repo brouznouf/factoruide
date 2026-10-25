@@ -572,7 +572,7 @@ impl Planner<'_> {
         let depth = self.chain_depths();
         missing.sort_by_key(|&i| (depth[i as usize], self.quest(i).min_level));
         for q in missing {
-            let Some(total) = self.simulate(&route, None) else {
+            let Some((total, end)) = self.simulate_state(&route, None) else {
                 break;
             };
             let mut candidate: Vec<Stop> = route
@@ -590,7 +590,10 @@ impl Planner<'_> {
                 .unwrap_or(candidate.len())
                 .min(candidate.len());
             self.insert_quest_after(&mut candidate, q, after);
-            if self.simulate(&candidate, None).is_some_and(|c| c < total) {
+            if self
+                .simulate_state(&candidate, None)
+                .is_some_and(|(cost, state)| cost < total || quest.required && state.required_left < end.required_left)
+            {
                 route = candidate;
             }
         }

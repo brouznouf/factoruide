@@ -59,6 +59,7 @@ fn request(race: &str, class: &str, to_level: i64, params: &[&str]) -> PlanReque
         name: None,
         params: Some(overrides().params.with_overrides(&params).unwrap()),
         required_class_quests: None,
+        required_quests: vec![],
         professions: vec![],
         locale: None,
         mates: vec![],

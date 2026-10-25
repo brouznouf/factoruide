@@ -17,6 +17,11 @@ Duplicate prerequisite links from different sources count once. Race and class a
 keep eligible branches when any exist. Edition-specific `quests.toml` can replace `pre_all`
 or `pre_any`; these corrections apply whenever a database is loaded, including after a refresh.
 
+Must-have quests (`PlanRequest.required_quests`, CLI `--required-quest`) resolve by ID or exact
+name for the character or group. Their prerequisites stay in the model outside the usual level
+window; unsupported or conflicting choices are reported. Required quests keep a route running
+past its target level until they are complete. Generated guides and saved edits check completion.
+
 `world.rs` gives the geography: zone coordinates converted to world coordinates, the passes
 between zones, boats, zeppelins and tram (`overrides/`), and the flight path network.
 
