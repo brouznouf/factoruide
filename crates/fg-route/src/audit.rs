@@ -242,6 +242,7 @@ pub fn audit(
             name: None,
             params: None,
             required_class_quests: None,
+            required_quests: vec![],
             professions: Vec::new(),
             locale: None,
             mates: Vec::new(),

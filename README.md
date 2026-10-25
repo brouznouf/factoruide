@@ -40,6 +40,10 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   to see again.
 - **Your dungeons**: force or exclude each dungeon, do the worthwhile ones in a group, take their
   quests a few levels ahead.
+- **Your quests**: add a must-have quest by ID or exact name. The guide includes its
+  prerequisites and finishes the chain, even past your target level. It cannot be saved with
+  a required quest missing. For the Sleeping Bag in Forever, add **79976** (**This Must Be The
+  Place**); its XP bonus is not simulated.
 - **Your class quests**: the ones you want to do are kept, even when they are not the fastest.
 - **Your play style**: a relaxed, normal or fast pace (time per fight, per loot, per stop), how far
   above your level you take quests and fight mobs, how much grinding you accept, flights or

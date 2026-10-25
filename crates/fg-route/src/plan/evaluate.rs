@@ -112,7 +112,7 @@ impl Planner<'_> {
     }
 
     /// The score of `route` and the character's state at its end.
-    fn simulate_state(&self, route: &[Stop], mut trace: Option<&mut Vec<Timed>>) -> Option<(f64, State)> {
+    pub(super) fn simulate_state(&self, route: &[Stop], mut trace: Option<&mut Vec<Timed>>) -> Option<(f64, State)> {
         let mut s = self.start_state(self.planned(route));
         for (k, &stop) in route.iter().enumerate() {
             if self.ended(&s) {

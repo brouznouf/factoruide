@@ -629,6 +629,17 @@ impl Editor {
         );
         let (steps, edits): (Vec<RouteStep>, Vec<Edit>) = together.into_iter().unzip();
         let edited = planner.edit(&edits);
+        planner.validate_required_trace(&edited.trace)?;
+        Ok(self.outcome(steps, &edited, notes))
+    }
+
+    /// The empty starting draft of a manual guide; requirements apply when edits are saved.
+    pub(super) fn blank(&self, notes: Vec<String>) -> PlanOutcome {
+        self.outcome(vec![], &self.planner().edit(&[]), notes)
+    }
+
+    fn outcome(&self, steps: Vec<RouteStep>, edited: &Edited, notes: Vec<String>) -> PlanOutcome {
+        let planner = self.planner();
         let total = edited.breakdown.total;
         let route = export::build_traced(
             &planner,
@@ -647,7 +658,7 @@ impl Editor {
             end: None,
         };
         self.set_walks(&mut outcome);
-        Ok(outcome)
+        outcome
     }
 
     /// What can be added to the guide, named in the language of `names`.

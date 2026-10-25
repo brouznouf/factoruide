@@ -5,6 +5,67 @@ use super::state::{Event, Kind, State, Stop};
 use std::collections::HashSet;
 
 impl Planner<'_> {
+    /// Exact requirements checked against what the simulation actually turned in.
+    fn required_missing(&self, route: &[Stop]) -> Vec<String> {
+        let Some(end) = self.end_of(route) else {
+            return vec!["route cannot be simulated".into()];
+        };
+        self.model
+            .quests
+            .iter()
+            .enumerate()
+            .filter(|(i, q)| q.required && !end.turned.contains(i))
+            .map(|(_, q)| format!("{} ({})", q.name, q.id))
+            .collect()
+    }
+
+    pub fn validate_required(&self, route: &[Stop]) -> anyhow::Result<()> {
+        if !self.model.quests.iter().any(|q| q.required) {
+            return Ok(());
+        }
+        let missing = self.required_missing(route);
+        anyhow::ensure!(
+            missing.is_empty(),
+            "no route completing every required quest was found: {}",
+            missing.join(", ")
+        );
+        Ok(())
+    }
+
+    /// Editor replays include explicit actions, so validate their actual trace, not a fresh
+    /// replay that could insert automatic actions or finish at a different time.
+    pub(crate) fn validate_required_trace(&self, trace: &[super::Timed]) -> anyhow::Result<()> {
+        let initial = self.initial_state();
+        let turned: HashSet<_> = trace
+            .iter()
+            .filter_map(|t| match t.event {
+                Event::Stop {
+                    stop:
+                        Stop {
+                            index,
+                            kind: Kind::TurnIn,
+                        },
+                    ..
+                } => Some(index as usize),
+                _ => None,
+            })
+            .collect();
+        let missing: Vec<_> = self
+            .model
+            .quests
+            .iter()
+            .enumerate()
+            .filter(|(i, q)| q.required && !initial.rewarded(*i) && !turned.contains(i))
+            .map(|(_, q)| format!("{} ({})", q.name, q.id))
+            .collect();
+        anyhow::ensure!(
+            missing.is_empty(),
+            "required quests are missing: {}",
+            missing.join(", ")
+        );
+        Ok(())
+    }
+
     /// Class quests the route does not turn in, with why they could not be placed.
     pub fn missing_class_quests(&self, route: &[Stop]) -> Vec<String> {
         self.missing_required(route, false)

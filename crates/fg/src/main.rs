@@ -92,6 +92,9 @@ enum Command {
         /// Professions leveled along the route (their quests are planned, optional), as key[:target] (tailoring:300, fishing, cooking:225)
         #[arg(long, value_delimiter = ',')]
         profession: Vec<String>,
+        /// A must-have quest ID or exact name (repeatable); includes its prerequisites
+        #[arg(long = "required-quest")]
+        required_quests: Vec<String>,
         /// Planner parameters, as key=value (repeatable)
         #[arg(long = "param")]
         params: Vec<String>,
@@ -277,6 +280,7 @@ fn main() -> Result<()> {
             construction,
             name,
             profession,
+            required_quests,
             allow_elite,
             no_dungeons,
             pvp_quests,
@@ -299,6 +303,7 @@ fn main() -> Result<()> {
                 pvp_quests,
                 progression,
                 params,
+                required_quests,
                 locale,
                 start: players.start,
                 mates: players.mates,

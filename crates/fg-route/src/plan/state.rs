@@ -324,6 +324,7 @@ pub(crate) struct State {
     /// Quests of the forced zones not done yet (nor closed by an exclusive one): the guide
     /// goes on past the target level until they are.
     pub(crate) forced_left: u32,
+    pub(crate) required_left: u32,
     pub(crate) spent: Breakdown,
 }
 

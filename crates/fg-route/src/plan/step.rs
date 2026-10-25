@@ -286,6 +286,7 @@ impl Planner<'_> {
         s.turned.set(i as usize, true);
         s.log -= 1;
         s.started.retain(|&(q, _, _)| q != i);
+        s.required_left = s.required_left.saturating_sub(u32::from(q.required));
         s.spent.quest_xp += self.growth().reward(s, i);
         self.growth().gain_power(s, i);
         if s.forced_left > 0 {

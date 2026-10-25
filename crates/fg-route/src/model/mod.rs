@@ -16,6 +16,7 @@ mod objectives;
 mod places;
 mod pvp;
 mod quest;
+mod required;
 mod rewards;
 mod selection;
 mod sources;
@@ -45,13 +46,18 @@ use std::collections::HashMap;
 pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params) -> Result<Model> {
     let mut sources = Sources::read(conn, world, profile, params)?;
     let (mut quests, mut skipped) = build_quests(&sources, world, profile, params);
+    required::apply(&mut quests, &sources.rows, &skipped, profile, params)?;
     chains::drop_unhanded(&mut quests, &mut skipped);
     report_skipped_class_quests(&sources, &skipped);
-    let loot = CommonLoot::load(conn, &mut quests)?;
+
     let places = Places::load(conn, world, &sources.entities, profile, &sources.start, params.edition)?;
     chains::narrow_class_quests_to_spells(&mut quests);
     chains::require_prerequisites(&mut quests);
     chains::release_impossible_class_quests(&mut quests);
+    for q in &mut quests {
+        q.mandatory |= q.required;
+    }
+    let loot = CommonLoot::load(conn, &mut quests)?;
     dungeons::set_dungeon_levels(&mut sources.dungeons, &quests, params.dungeon_below());
     let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     let mut teleports = places.teleports;

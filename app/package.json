@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "node --experimental-strip-types --test scripts/required-quest.test.mjs",
     "check:i18n": "node scripts/check-i18n.mjs",
     "preview": "vite preview",
     "tauri": "tauri"

@@ -55,6 +55,7 @@ impl QuestBuilder<'_> {
             mandatory: zone_forced
                 || group_class_quest && self.profile.required_class_quests.iter().any(|n| n == &r.name),
             zone_forced,
+            required: false,
             skill: skill.flatten(),
             power: class_quest
                 .then(|| self.profile.class_powers.iter().position(|(n, _)| n == &r.name))

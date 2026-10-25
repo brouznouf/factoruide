@@ -18,6 +18,10 @@ pub struct Profile {
     /// Names of class quests that must be done (see overrides/class_quests.toml).
     pub required_class_quests: Vec<String>,
     pub quest_overrides: Vec<QuestOverride>,
+    /// Exact quests selected by the player.
+    pub required_quests: Vec<i64>,
+    /// Confirmed completions from the starting profile, never inferred from character level.
+    pub completed_quests: HashSet<i64>,
     /// Class quests that make the character stronger: name and power gained.
     pub class_powers: Vec<(String, f64)>,
     /// Class trainer spells that count for power (see overrides/spells.toml).
@@ -60,6 +64,10 @@ pub fn race_bit(race_id: i64) -> i64 {
 }
 
 impl Profile {
+    pub(super) fn within_levels(&self, level: i64, min_level: i64, max_above: i64) -> bool {
+        min_level <= self.to_level && level <= self.to_level + max_above && level + 10 >= self.from_level
+    }
+
     /// Reputation gained for each point a quest gives: humans' Diplomacy adds 10%.
     pub fn reputation_rate(&self) -> f64 {
         if self.race_id == 1 { 1.1 } else { 1.0 }
@@ -404,6 +412,8 @@ pub struct Quest {
     /// Required because its zone is forced (`Params::forced_zones`), or as a prerequisite of
     /// such a quest: `mandatory` too, reported apart from the class quests.
     pub zone_forced: bool,
+    /// Explicit player requirement or a prerequisite selected to reach one.
+    pub required: bool,
     /// Profession quest: index in `Model::professions` and skill needed to accept it.
     pub skill: Option<(usize, i64)>,
     /// Class quest making the character stronger: index in `Profile::class_powers` (quests of
