@@ -15,7 +15,8 @@ dungeons, forced dungeons, class quests to keep, professions to level.
 
 Duplicate prerequisite links from different sources count once. Race and class alternatives
 keep eligible branches when any exist. Edition-specific `quests.toml` can replace `pre_all`
-or `pre_any`; these corrections apply whenever a database is loaded, including after a refresh.
+or `pre_any`, and list the `spells` a quest grants. These corrections apply whenever a database
+is loaded, including after a refresh.
 
 `world.rs` gives the geography: zone coordinates converted to world coordinates, the passes
 between zones, boats, zeppelins and tram (`overrides/`), and the flight path network.

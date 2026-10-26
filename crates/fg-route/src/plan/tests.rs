@@ -28,6 +28,7 @@ fn database_of(edition: &str) -> Connection {
     Connection::open(path).unwrap()
 }
 
+/// The Classic database, unpacked next to the packed one when missing or older.
 fn database() -> Connection {
     database_of("classic")
 }
@@ -90,6 +91,8 @@ fn planner(p: &Prepared) -> Planner<'_> {
     Planner::new(&p.model, &p.world, &p.params, &p.profile)
 }
 
+/// Swapping two accepts leaves the same state after them but for a timed quest's deadline: the
+/// rest of the route is replayed (the quest is turned in in time now, it expired before).
 #[test]
 fn timed_quest_deadline_is_part_of_the_state() {
     let mut p = quests_at_start(2);

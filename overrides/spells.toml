@@ -3,6 +3,7 @@
 # the rest between fights, buffs). A spell not learned yet loses its whole share, a rank
 # behind loses part of it (rank strength from the game data: damage per cast time, healing,
 # buff value). `{ weight = w, ranks = false }`: only learning it matters, not its rank.
+# `requires = spell_id`: the form needed to train and use this family's attack ranks.
 #
 # Spells not listed do not count: the guide does not go to a trainer for them, and the
 # training steps only list the spells that count. Talents are not counted.

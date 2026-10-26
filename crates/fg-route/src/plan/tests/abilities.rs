@@ -106,22 +106,21 @@ fn late_form_unlock_does_not_credit_unlearned_attack_ranks() {
         );
         let reward = plan.end_of(&before.route).unwrap();
         let reward = job::StartState::default().after(&p.model, &p.world, Edition::Forever.rules(), &reward);
+        let starter_spells = if quest_id == 98362 {
+            vec![768, 1079, 1082, 5215]
+        } else {
+            vec![5487]
+        };
+        assert_eq!(
+            reward.spells, starter_spells,
+            "{family}: the quest grants only its starter spells, with no ranks from earlier training"
+        );
         if quest_id == 98362 {
-            for starter in [768, 1082, 1079, 5215] {
-                assert!(
-                    reward.spells.contains(&starter),
-                    "Cat quest grants starter spell {starter}"
-                );
-            }
             assert!(
                 !after_guide.spells.contains(&768),
                 "quest-only forms are not trainer purchases"
             );
         }
-        assert!(
-            !reward.spells.contains(&rank),
-            "{family}: the earlier trainer visit did not learn a locked rank"
-        );
         p.params.train_min_gain = 0.000_001;
         p.params.train_trip_gain = 0.000_001;
         let automatic = planner(&p).replaying();
@@ -284,18 +283,18 @@ fn starting_knowledge_uses_recorded_spells_or_earlier_synthetic_unlocks() {
                 "required_class_quests":if selected { serde_json::Value::Null } else { serde_json::json!([]) },
                 "start":if recorded { serde_json::json!({"level":level,"spells":spells,"completed":completed}) } else { serde_json::Value::Null }
             })).unwrap();
-            let mut p = at_start(job::prepare(&conn, &overrides, &req, &|_| {}).unwrap(), 1);
-            p.model.quests[0].level = level;
-            p.model.quests[0].xp = 100_000;
-            let plan = planner(&p).explicit();
-            let end = plan
-                .end_of(&[Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)])
-                .unwrap();
+            let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+            let end = planner(&p).replaying().explicit().end_of(&[]).unwrap();
+            // Observe simulated knowledge without copying the input spellbook into the result.
             let start = job::StartState::default().after(&p.model, &p.world, Edition::Forever.rules(), &end);
             assert_eq!(
                 start.spells.contains(&768),
                 expected,
                 "level {level}, recorded {recorded}, class quests selected {selected}"
+            );
+            assert_eq!(
+                start.completed, completed,
+                "level {level}, recorded {recorded}, class quests selected {selected}: ability assumptions do not complete quests"
             );
         }
     }
