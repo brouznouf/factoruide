@@ -76,7 +76,7 @@ impl<'g> Growth<'g> {
         let mut bonus = s.class_bonus;
         if let Some(p) = &self.model.power {
             let spells = if p.has_spells() {
-                p.spell_bonus(s.trained, s.level)
+                p.spell_bonus(s.trained, s.level, s.abilities)
             } else {
                 0.0
             };
@@ -96,11 +96,17 @@ impl<'g> Growth<'g> {
     /// Levels of power the rewards of quest `i` would add (the best choice, and a class power
     /// not gained yet), quickly.
     pub(crate) fn reward_gain(self, s: &State, i: u32) -> f64 {
-        let class = match self.quest_at(i).power {
+        let mut class = match self.quest_at(i).power {
             Some((k, power)) if s.powers & (1 << k) == 0 => Self::class_power_levels(power),
             _ => 0.0,
         };
         let Some(p) = &self.model.power else { return class };
+        class += self.params.power_scale
+            * p.quest_gain(
+                s.abilities,
+                s.abilities | self.model.abilities.quest(self.quest_at(i).id),
+                s.level.max(self.quest_at(i).min_level),
+            );
         let (fixed, choices) = &self.model.rewards[i as usize];
         if fixed.is_empty() && choices.is_empty() {
             return class;
@@ -113,15 +119,16 @@ impl<'g> Growth<'g> {
         class + self.params.power_scale * (fixed.iter().map(|&c| p.quick_gain(&s.gear, c, level)).sum::<f64>() + best)
     }
 
-    /// The power a class quest gives (once per quest name).
+    /// Abilities and power actually granted by completing a class quest.
     pub(crate) fn gain_power(self, s: &mut State, i: u32) {
+        s.abilities |= self.model.abilities.quest(self.quest_at(i).id);
         if let Some((k, power)) = self.quest_at(i).power
             && s.powers & (1 << k) == 0
         {
             s.powers |= 1 << k;
             s.class_bonus += Self::class_power_levels(power);
-            self.refresh_power(s);
         }
+        self.refresh_power(s);
     }
 
     /// XP of kills: doubled while the character is rested, up to its rested XP. Returns the XP

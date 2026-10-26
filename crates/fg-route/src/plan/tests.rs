@@ -13,13 +13,12 @@ fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-/// The Classic database, unpacked next to the packed one when missing or older.
-fn database() -> Connection {
+fn database_of(edition: &str) -> Connection {
     static UNPACK: Mutex<()> = Mutex::new(());
     let _guard = UNPACK.lock().unwrap();
     let (path, packed) = (
-        repo().join("data/classic.sqlite"),
-        repo().join("data/classic.sqlite.zst"),
+        repo().join(format!("data/{edition}.sqlite")),
+        repo().join(format!("data/{edition}.sqlite.zst")),
     );
     let modified = |p: &PathBuf| std::fs::metadata(p).and_then(|m| m.modified()).ok();
     if !path.exists() || modified(&packed) > modified(&path) {
@@ -27,6 +26,11 @@ fn database() -> Connection {
         std::fs::write(&path, data).unwrap();
     }
     Connection::open(path).unwrap()
+}
+
+/// The Classic database, unpacked next to the packed one when missing or older.
+fn database() -> Connection {
+    database_of("classic")
 }
 
 /// Level 1 human warrior with only `n` quests of its own: taken and turned in at the start NPC,
@@ -47,7 +51,10 @@ pub(crate) fn quests_at_start(n: usize) -> Prepared {
         mates: vec![],
         start: None,
     };
-    let mut p = job::prepare(&database(), &overrides, &request, &|_| {}).unwrap();
+    at_start(job::prepare(&database(), &overrides, &request, &|_| {}).unwrap(), n)
+}
+
+fn at_start(mut p: Prepared, n: usize) -> Prepared {
     let here = p.model.start.clone();
     let template = p.model.quests[0].clone();
     p.model.quests = (0..n)
@@ -66,9 +73,14 @@ pub(crate) fn quests_at_start(n: usize) -> Prepared {
         .collect();
     p.model.index = p.model.quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     (p.model.chain_top, p.model.unlocks, p.model.rewards) = (vec![1; n], vec![0.0; n], vec![(vec![], vec![]); n]);
-    p.model.initial = Initial::default();
+    p.model.initial = Initial {
+        abilities: p.model.initial.abilities,
+        trained: p.model.initial.trained,
+        ..Initial::default()
+    };
     p.model.power = None;
     p.model.trainers.clear();
+    p.model.teleports.clear();
     p.model.vendors.clear();
     p.model.explore.clear();
     p.model.explore_by_zone.clear();
@@ -901,3 +913,5 @@ fn the_player_behind_catches_up() {
         "a quarter of a level apart: within the most"
     );
 }
+
+mod abilities;

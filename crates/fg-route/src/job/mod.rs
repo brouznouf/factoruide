@@ -288,6 +288,7 @@ pub fn prepare(
     } else {
         model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id));
     }
+    model.initial.abilities = model.abilities.initial(start, profile.from_level);
     model.initial.reputation = reputation::starting(conn, &params.reputation_goals, &profile, start, &mut start_notes)?;
     let mut notes = notes::model_notes(&model, &world, progress);
     notes.extend(start_notes);

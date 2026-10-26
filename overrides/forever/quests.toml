@@ -4,3 +4,15 @@
 id = 79192
 pre_all = []
 pre_any = [79007, 79008]
+
+# Forever's Cat Form quests grant the form, Claw, Rip and Prowl:
+# https://wowseer.gg/guides/druid-cat-form
+# https://us.forums.blizzard.com/en/wow/t/druid-cat-form-quest/2384010/56
+# https://www.wowhead.com/forever/quest=98362/to-thunder-bluff
+[[quest]]
+id = 98362
+spells = [768, 1082, 1079, 5215] # Cat Form, Claw 1, Rip 1, Prowl 1
+
+[[quest]]
+id = 98397
+spells = [768, 1082, 1079, 5215]

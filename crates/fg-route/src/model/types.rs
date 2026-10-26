@@ -427,6 +427,7 @@ pub struct Quest {
 }
 
 pub struct Model {
+    pub abilities: crate::abilities::Abilities,
     pub quests: Vec<Quest>,
     pub dungeons: Vec<Dungeon>,
     pub professions: Vec<ProfessionPlan>,
@@ -508,6 +509,7 @@ pub struct QuestOverride {
     pub id: i64,
     pub pre_all: Option<Vec<i64>>,
     pub pre_any: Option<Vec<i64>>,
+    pub spells: Option<Vec<i64>>,
 }
 
 /// An area that gives XP the first time the character enters it.
@@ -542,6 +544,7 @@ pub struct Initial {
     pub gear: Vec<i64>,
     /// Level of the last class training (default: the starting level).
     pub trained: Option<i64>,
+    pub abilities: u64,
     /// Every quest turned in, in the model or not, for a character met in game: prerequisites
     /// the model lacks are then known instead of assumed done past level 1.
     pub completed: Option<HashSet<i64>>,

@@ -65,6 +65,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
     let chain_top = chains::chain_tops(&quests, &index);
     let (explore, explore_by_zone) = explore::load_explore(conn, world)?;
     let farm = FarmMobs::load(conn, world, &quests)?;
+    let abilities = crate::abilities::Abilities::load(conn, profile)?;
     let power = crate::power::PowerModel::load(
         conn,
         profile.class_id,
@@ -72,10 +73,20 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         profile.to_level.max(60),
         &profile.spell_weights,
         params,
+        &abilities,
     )?;
     // A group's other classes: the spells each one learns (the addon of each player trains its own).
     let mut mate_spells = Vec::new();
     for m in &profile.mates {
+        let abilities = crate::abilities::Abilities::load(
+            conn,
+            &Profile {
+                race_id: m.race_id,
+                class_id: m.class_id,
+                spell_weights: m.spell_weights.clone(),
+                ..profile.clone()
+            },
+        )?;
         let mate = crate::power::PowerModel::load(
             conn,
             m.class_id,
@@ -83,8 +94,12 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
             profile.to_level.max(60),
             &m.spell_weights,
             params,
+            &abilities,
         )?;
-        mate_spells.push(mate.map(|p| p.ranks().map(|r| r.id).collect()).unwrap_or_default());
+        mate_spells.push(
+            mate.map(|p| p.ranks().map(|r| r.id).chain(abilities.spells()).collect())
+                .unwrap_or_default(),
+        );
     }
     let patrols = (sources.entities.paths.keys())
         .map(|&id| (id, sources.entities.path(world, id)))
@@ -98,6 +113,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         ),
     };
     Ok(Model {
+        abilities,
         quests,
         dungeons: sources.dungeons,
         professions: profile.professions.iter().filter_map(ProfessionPlan::new).collect(),

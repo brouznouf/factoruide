@@ -44,6 +44,10 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   prerequisites and finishes the chain, even past your target level. It cannot be saved with
   a required quest missing. For the Sleeping Bag in Forever, add **79976** (**This Must Be The
   Place**); its XP bonus is not simulated.
+- **Your class spells**: quest rewards and trainer visits determine which spells are known.
+  Form attacks need both the form and its learned attack rank. Imported characters use their
+  recorded spells and completed quests. Without a character profile, earlier class unlocks
+  are assumed known; selecting class quests does not change that starting assumption.
 - **Your class quests**: the ones you want to do are kept, even when they are not the fastest.
 - **Your play style**: a relaxed, normal or fast pace (time per fight, per loot, per stop), how far
   above your level you take quests and fight mobs, how much grinding you accept, flights or

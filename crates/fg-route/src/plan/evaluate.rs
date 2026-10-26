@@ -12,6 +12,7 @@ pub struct End {
     pub level: i64,
     pub xp: i64,
     pub rested: i64,
+    pub abilities: u64,
     pub pos: Pos,
     pub zone: i64,
     /// Inn the hearthstone is bound to, flight paths known (a bit per taxi node).
@@ -92,6 +93,7 @@ impl Planner<'_> {
             level: s.level,
             xp: s.xp,
             rested: s.rested,
+            abilities: s.abilities,
             pos: s.pos,
             zone: s.zone,
             bind: s.bind,
@@ -322,6 +324,7 @@ impl Planner<'_> {
                     && s.recall_ready <= s.time
                     && old.recall_ready <= old.time
                     && s.trained == old.trained
+                    && s.abilities == old.abilities
                     && s.dungeons == old.dungeons
                     && s.abandon_check == old.abandon_check
                     && s.accepted == old.accepted

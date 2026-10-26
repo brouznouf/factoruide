@@ -3,6 +3,7 @@
 # the rest between fights, buffs). A spell not learned yet loses its whole share, a rank
 # behind loses part of it (rank strength from the game data: damage per cast time, healing,
 # buff value). `{ weight = w, ranks = false }`: only learning it matters, not its rank.
+# `requires = spell_id`: the form needed to train and use this family's attack ranks.
 #
 # Spells not listed do not count: the guide does not go to a trainer for them, and the
 # training steps only list the spells that count. Talents are not counted.
@@ -140,20 +141,20 @@
 
 [druid]
 "Wrath" = 0.10
-"Claw" = 0.10
+"Claw" = { weight = 0.10, requires = 768 }
 "Moonfire" = 0.06
 "Mark of the Wild" = 0.06
-"Maul" = 0.06
-"Rip" = 0.06
-"Ferocious Bite" = 0.06
+"Maul" = { weight = 0.06, requires = 5487 }
+"Rip" = { weight = 0.06, requires = 768 }
+"Ferocious Bite" = { weight = 0.06, requires = 768 }
 "Healing Touch" = 0.05
-"Rake" = 0.05
+"Rake" = { weight = 0.05, requires = 768 }
 "Rejuvenation" = 0.04
 "Thorns" = 0.04
-"Shred" = 0.04
+"Shred" = { weight = 0.04, requires = 768 }
 "Regrowth" = 0.03
-"Swipe" = 0.02
-"Tiger's Fury" = 0.02
+"Swipe" = { weight = 0.02, requires = 5487 }
+"Tiger's Fury" = { weight = 0.02, requires = 768 }
 "Starfire" = 0.02
 "Faerie Fire" = 0.02
 "Cat Form" = { weight = 0.10, ranks = false }

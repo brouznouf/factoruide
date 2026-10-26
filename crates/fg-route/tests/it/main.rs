@@ -2,6 +2,7 @@
 //! `cargo test --profile fast -p fg-route --test it <name>`.
 
 #![expect(clippy::unwrap_used, reason = "fixtures that cannot be read fail the test")]
+mod abilities;
 mod addon;
 mod common;
 mod draft;

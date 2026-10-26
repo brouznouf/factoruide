@@ -23,6 +23,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - WoW Forever: the new dungeons follow the game's level ranges, not their quests' levels: Ruins of Lordaeron 15-20 (was 21-22), Excavation Site 24-29, City of Dalaran 28-33.
 - WoW Forever: Ruins of Lordaeron's quests started by an item found inside (Crest of Lordaeron, Remember That I Love You) are planned, taken during the run.
 - A new character knows its capital's flight path from the start, as in the game (Stormwind for humans, Ironforge for dwarves and gnomes, Orgrimmar for orcs and trolls...): guides no longer stop to learn it, and fly from there right away.
+- Class quests teach their spells; form attacks count only after the form and attack rank are learned. Imported profiles supply known spells and completed quests; starts without a profile assume earlier class unlocks are known.
 - Quest prerequisites keep the eligible race and class branches; Sleeping Bag uses your faction's starter.
 - Walks jump down higher cliffs the bolder the profile: 15 yards for "cautious" (no fall damage), 30 for "normal" (about a third of the health), 50 for "risky" (two thirds); the health lost is paid as time resting.
 - Quests in your log with nothing done are no longer tied to the guide: it takes them like any other, or abandons them first. The ones you can turn in, and those you have begun, are still kept.
