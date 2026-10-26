@@ -1186,7 +1186,12 @@ fn exclusive_prerequisites(conn: &Connection, corrected: &[crate::model::QuestOv
     let mut names: HashMap<i64, String> = HashMap::new();
     let mut stmt = conn.prepare("SELECT id, name, races_mask, classes_mask FROM m_quest")?;
     for row in stmt.query_map([], |r| {
-        Ok((r.get::<_, i64>(0)?, r.get::<_, Option<String>>(1)?, r.get(2)?, r.get(3)?))
+        Ok((
+            r.get::<_, i64>(0)?,
+            r.get::<_, Option<String>>(1)?,
+            r.get(2)?,
+            r.get(3)?,
+        ))
     })? {
         let (id, name, races, classes) = row?;
         masks.insert(id, (races, classes));
@@ -1209,12 +1214,16 @@ fn exclusive_prerequisites(conn: &Connection, corrected: &[crate::model::QuestOv
         let Some(&own) = masks.get(&quest) else { continue };
         let mut wrong: Vec<String> = Vec::new();
         for (i, a) in others.iter().enumerate() {
-            let Some(&(races, classes)) = masks.get(a) else { continue };
+            let Some(&(races, classes)) = masks.get(a) else {
+                continue;
+            };
             if apart(races, own.0) || apart(classes, own.1) {
                 wrong.push(format!("{a} is not for the quest's own races or classes"));
             }
             for b in &others[i + 1..] {
-                let Some(&(other_races, other_classes)) = masks.get(b) else { continue };
+                let Some(&(other_races, other_classes)) = masks.get(b) else {
+                    continue;
+                };
                 if apart(races, other_races) || apart(classes, other_classes) {
                     wrong.push(format!("{a} and {b} have no race or class in common"));
                 }
