@@ -40,6 +40,10 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   to see again.
 - **Your dungeons**: force or exclude each dungeon, do the worthwhile ones in a group, take their
   quests a few levels ahead.
+- **Your class spells**: quest rewards and trainer visits determine which spells are known.
+  Form attacks need both the form and its learned attack rank. Imported characters use their
+  recorded spells and completed quests. Without a character profile, earlier class unlocks
+  are assumed known; selecting class quests does not change that starting assumption.
 - **Your class quests**: the ones you want to do are kept, even when they are not the fastest.
 - **Your play style**: a relaxed, normal or fast pace (time per fight, per loot, per stop), how far
   above your level you take quests and fight mobs, how much grinding you accept, flights or

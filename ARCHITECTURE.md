@@ -127,6 +127,13 @@ quest whose objectives are far out of reach is not picked up.
   healing, buff value). The character trains on the way once the new spells make fights
   `train_min_gain` faster, and makes a trip at `train_trip_gain`; the training steps list the
   spells that count, and the addon buys only those. Spells not listed (and talents) do not count.
+  `abilities.rs` records quest spells and form-dependent ranks separately from the last training
+  level. Quest rewards grant their listed spells; form attacks need both the form and the
+  learned rank. Recorded spells and completed quests initialize this state for imported
+  characters. Without a profile, class unlocks whose quest minimum level is below the starting
+  level are assumed known, independently of quest selection; this does not mark quests completed.
+  Saved characters retain learned ranks. `overrides/forever/quests.toml` lists Cat Form's starter
+  attacks. Choosing which quests a route must complete is separate from this ability state.
 - **Required class quests**: those of `overrides/class_quests.toml` and every class quest the data
   says teaches a spell (`m_quest.reward_spell`), by name; the app lists them, the player can take
   some out. Where quests of a name teach a spell, the spell is what is required: those quests and

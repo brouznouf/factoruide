@@ -228,11 +228,20 @@ impl StartState {
             })
         };
         let inn = &model.inns[end.bind];
+        let mut spells = self.spells.clone();
+        for (i, ability) in model.abilities.entries.iter().enumerate() {
+            if end.abilities & (1 << i) != 0 {
+                spells.extend(&ability.spells);
+            }
+        }
+        spells.sort_unstable();
+        spells.dedup();
         Self {
             level: end.level,
             xp: end.xp,
             xp_max: rules.to_next_level(end.level),
             rested: end.rested,
+            spells,
             resting: false,
             completed,
             log: (end.log.iter())

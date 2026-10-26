@@ -105,6 +105,8 @@ struct Family {
     /// Every spell ID of the family, all ranks (the list keeps only the first when `ranks` is off,
     /// the spell book only shows the best rank learned).
     ids: Vec<i64>,
+    requires: u64,
+    bits: Vec<u64>,
 }
 
 #[derive(Debug, Clone, Default, serde::Deserialize)]
@@ -117,6 +119,7 @@ pub enum SpellWeight {
         weight: f64,
         #[serde(default = "yes")]
         ranks: bool,
+        requires: Option<i64>,
     },
 }
 
@@ -125,6 +128,13 @@ fn yes() -> bool {
 }
 
 impl SpellWeight {
+    pub fn requires(&self) -> Option<i64> {
+        match self {
+            Self::Full { requires, .. } => *requires,
+            _ => None,
+        }
+    }
+
     pub fn weight(&self) -> f64 {
         match self {
             SpellWeight::None => 0.0,
@@ -155,6 +165,8 @@ pub struct PowerModel {
     /// `spells[trained][level]`: power factor of the spells learned at level `trained`
     /// compared with all those the trainer sells at `level`.
     spells: Vec<Vec<f64>>,
+    /// Families whose ranks or prerequisite forms must actually be acquired.
+    gated: Vec<Family>,
     gear_floor: f64,
 }
 
@@ -322,6 +334,7 @@ impl PowerModel {
         max_level: i64,
         spell_weights: &[(String, SpellWeight)],
         params: &crate::Params,
+        abilities: &crate::abilities::Abilities,
     ) -> rusqlite::Result<Option<Self>> {
         let has: i64 = conn.query_row(
             "SELECT count(*) FROM sqlite_master WHERE name IN ('m_item_stats', 'm_class_spell', 'm_player_stats')",
@@ -437,6 +450,7 @@ impl PowerModel {
             dual_wield,
             families: Vec::new(),
             spells: Vec::new(),
+            gated: Vec::new(),
             gear_floor,
         };
 
@@ -491,6 +505,10 @@ impl PowerModel {
                 ranks: w.ranks(),
                 list: Vec::new(),
                 ids: Vec::new(),
+                requires: w
+                    .requires()
+                    .map_or(0, |id| abilities.bit(id).expect("the required form is modeled")),
+                bits: Vec::new(),
             });
             let ids: String = r.get(8)?;
             family
@@ -515,6 +533,18 @@ impl PowerModel {
                 f.list.truncate(1);
             }
         }
+        families.retain_mut(|f| {
+            if abilities.bit(f.list[0].id).is_none() {
+                return true;
+            }
+            f.bits = f
+                .list
+                .iter()
+                .map(|r| abilities.bit(r.id).expect("gated spell ranks are modeled"))
+                .collect();
+            model.gated.push(f.clone());
+            false
+        });
         model.spells = (0..top)
             .map(|trained| {
                 (0..top)
@@ -715,8 +745,29 @@ impl PowerModel {
     }
 
     /// Power the class spells learned at level `trained` lack at `level`, in levels (≤ 0).
-    pub fn spell_bonus(&self, trained: i64, level: i64) -> f64 {
-        self.spell_factor(trained, level).ln() / LEVEL_LN
+    pub fn spell_bonus(&self, trained: i64, level: i64, known: u64) -> f64 {
+        (self.spell_factor(trained, level) * self.gated_factor(known, level)).ln() / LEVEL_LN
+    }
+
+    fn gated_factor(&self, known: u64, level: i64) -> f64 {
+        self.gated
+            .iter()
+            .map(|f| {
+                let trained = f.requires & known == f.requires;
+                let rank = f
+                    .list
+                    .iter()
+                    .zip(&f.bits)
+                    .rev()
+                    .find(|(_, bit)| trained && known & **bit != 0)
+                    .map(|(r, _)| r);
+                family_factor(f, rank, level)
+            })
+            .product()
+    }
+
+    pub fn quest_gain(&self, before: u64, after: u64, level: i64) -> f64 {
+        (self.gated_factor(after, level) / self.gated_factor(before, level)).ln() / LEVEL_LN
     }
 
     fn spell_factor(&self, trained: i64, level: i64) -> f64 {
@@ -726,13 +777,15 @@ impl PowerModel {
     }
 
     /// Fight speed gained by training now (0.1 = 10% faster).
-    pub fn train_gain(&self, trained: i64, level: i64) -> f64 {
-        self.spell_factor(level, level) / self.spell_factor(trained, level) - 1.0
+    pub fn train_gain(&self, trained: i64, level: i64, before: u64, after: u64) -> f64 {
+        self.spell_factor(level, level) * self.gated_factor(after, level)
+            / (self.spell_factor(trained, level) * self.gated_factor(before, level))
+            - 1.0
     }
 
     /// Whether the data has class spells (else training follows `train_every`).
     pub fn has_spells(&self) -> bool {
-        !self.families.is_empty()
+        !self.families.is_empty() || !self.gated.is_empty()
     }
 
     /// Level of the last training of a character of `level` knowing `spells` (IDs): the level
@@ -832,10 +885,13 @@ fn put(gear: &mut Gear, slot: usize, i: usize, chance: f64, value: impl Fn(usize
 }
 
 /// Power factor of the spells learned at level `trained` compared with those sold at `level`.
-fn spell_factor(families: &[Family], trained: i64, level: i64) -> f64 {
+fn family_factor(f: &Family, known: Option<&Rank>, level: i64) -> f64 {
+    let Some(best) = f.list.iter().rev().find(|r| r.level <= level) else {
+        return 1.0;
+    };
     let hit = 3.0 * (1.5 + 0.75 * level as f64);
-    let strength = |r: &Rank, ranks: bool| {
-        if !ranks {
+    let strength = |r: &Rank| {
+        if !f.ranks {
             1.0
         } else if r.value <= 0.0 {
             (r.level as f64 + 5.0).powf(1.5)
@@ -845,19 +901,15 @@ fn spell_factor(families: &[Family], trained: i64, level: i64) -> f64 {
             r.value / r.cast_time.max(1.5)
         }
     };
-    let mut factor = 1.0;
-    for f in families {
-        let Some(best) = f.list.iter().rev().find(|r| r.level <= level) else {
-            continue;
-        };
-        let known = f.list.iter().rev().find(|r| r.level <= trained);
-        let loss = match known {
-            Some(k) => 1.0 - (strength(k, f.ranks) / strength(best, f.ranks)).min(1.0),
-            None => 1.0,
-        };
-        factor *= 1.0 - f.weight * loss;
-    }
-    factor
+    let loss = known.map_or(1.0, |k| 1.0 - (strength(k) / strength(best)).min(1.0));
+    1.0 - f.weight * loss
+}
+
+fn spell_factor(families: &[Family], trained: i64, level: i64) -> f64 {
+    families
+        .iter()
+        .map(|f| family_factor(f, f.list.iter().rev().find(|r| r.level <= trained), level))
+        .product()
 }
 
 #[cfg(test)]
@@ -885,6 +937,8 @@ mod tests {
             ranks: false,
             list: vec![rank(6, 10.0)],
             ids: vec![6, 20, 30],
+            requires: 0,
+            bits: vec![],
         }];
         let known = |ids: &[i64]| ids.iter().copied().collect::<std::collections::HashSet<_>>();
         assert_eq!(trained_level(&families, &known(&[30]), 28), Some(28));
@@ -892,6 +946,8 @@ mod tests {
         // Learned at level 6 only (an id of another family): not trained since 5.
         let other = vec![Family {
             ids: vec![99],
+            requires: 0,
+            bits: vec![],
             ..families[0].clone()
         }];
         assert_eq!(trained_level(&other, &known(&[99]), 28), Some(28));
@@ -904,6 +960,8 @@ mod tests {
             ranks: true,
             list: vec![rank(1, 10.0), rank(10, 40.0)],
             ids: vec![],
+            requires: 0,
+            bits: vec![],
         }];
         assert!((spell_factor(&families, 10, 12) - 1.0).abs() < 1e-9);
         // Rank 1 is a quarter of rank 2: 3/4 of the 40% share lost.

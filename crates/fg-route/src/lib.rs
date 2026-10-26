@@ -1,5 +1,6 @@
 //! Leveling route planner for WoW Forever.
 
+pub mod abilities;
 pub mod audit;
 pub mod export;
 pub mod faction;
