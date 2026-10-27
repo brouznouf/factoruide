@@ -156,6 +156,7 @@ fn quests_at_hand_are_looked_for_where_the_stop_went() {
         vendors: vec![],
         auction: vec![],
         slot: None,
+        lasts: None,
         stock: None,
     };
     let mut other = objective.clone();
@@ -218,6 +219,7 @@ fn objective_started_counts_its_share_at_another_place() {
         vendors: vec![],
         auction: vec![],
         slot: None,
+        lasts: None,
         stock: None,
     };
     let mut other = objective.clone();
@@ -290,6 +292,7 @@ fn camp_of_two_objectives() -> Prepared {
         vendors: vec![],
         auction: vec![],
         slot: None,
+        lasts: None,
         stock: None,
     };
     let mut gather = Objective {
@@ -466,6 +469,7 @@ fn road_of_mobs() -> (Prepared, crate::world::Pos, crate::world::Pos) {
         vendors: vec![],
         auction: vec![],
         slot: None,
+        lasts: None,
         stock: None,
     }];
     p.model.farm = crate::model::FarmMobs::from_spawns(&spawns, &p.model.quests);
@@ -575,6 +579,7 @@ fn greedy_grinds_to_the_mobs_of_a_quest_in_reach() {
         vendors: vec![],
         auction: vec![],
         slot: None,
+        lasts: None,
         stock: None,
     }];
     let route = planner(&p).greedy();
@@ -749,6 +754,7 @@ fn timed_quest_taken_once_strong_enough_for_its_objectives() {
         vendors: vec![],
         auction: vec![],
         slot: Some(1),
+        lasts: None,
         stock: None,
     }];
     // Of the mob's level (not gray once there), offered from level 1.

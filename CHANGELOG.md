@@ -19,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- A quest item that rots is looted right before the objective using it: the Fresh Zhevra Carcass (30 minutes) just before Ishamuhale, instead of hours earlier (WoW Forever and Classic).
 - A must-have quest is planned even when its mobs are elites (Forever's Rare Books, whose books drop from Mother Fang and two other elites).
 - A quest item whose name holds a colon ("Picture Book: Fun with Elementals") is looted once, not six times.
 - Guides complete must-have quests and their prerequisites, even past the target level.

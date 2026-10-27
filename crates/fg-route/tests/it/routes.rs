@@ -810,6 +810,7 @@ fn gathering_next_to_kills_overlaps_them() {
             vendors: vec![],
             auction: vec![],
             slot: None,
+            lasts: None,
             stock: None,
         }];
     }
@@ -2105,6 +2106,7 @@ fn kills_east_of_start(p: &Prepared, dx: f64, kills: f64, mob_level: i64) -> Obj
         vendors: vec![],
         auction: vec![],
         slot: None,
+        lasts: None,
         stock: None,
     }
 }
@@ -3118,4 +3120,42 @@ fn rare_books_asked_for_are_planned_with_one_of_each_book() {
     };
     assert_eq!(counts(91777), [(248003, 1.0), (248004, 1.0)]);
     assert!(counts(91775).contains(&(248002, 1.0)) && counts(91775).contains(&(248001, 6.0)));
+}
+
+/// Ishamuhale comes to a Fresh Zhevra Carcass, which rots in 30 minutes (GitHub #51): the fang
+/// is got after the carcass, and the carcass no earlier than the kill can follow.
+#[test]
+fn a_carcass_that_rots_is_looted_right_before_ishamuhale() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let request = PlanRequest {
+        params: Some(overrides.params.with_overrides(&[]).unwrap()),
+        from_level: 10,
+        ..request("tauren", "warrior", 22, &[])
+    };
+    let mut p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let ishamuhale = quest(&p, 882).expect("Ishamuhale planned");
+    let carcass = &p.model.quests[ishamuhale as usize].objectives[0];
+    assert_eq!((carcass.loc.id, carcass.lasts), (10338, Some(1800.0)));
+    assert_eq!(p.model.quests[ishamuhale as usize].objectives[1].after, 1);
+    let jorn = quest(&p, 3261).unwrap();
+    p.model.initial.turned = vec![p.model.index[&905]];
+    let stop = |s: Stop| Edit::Stop {
+        stop: s,
+        farm: false,
+        spot: None,
+    };
+    let run = |grind: Option<i64>| {
+        let mut edits = vec![
+            Edit::GrindTo { level: 20 },
+            stop(Stop::quest(jorn, Kind::Accept)),
+            stop(Stop::quest(jorn, Kind::TurnIn)),
+            stop(Stop::quest(ishamuhale, Kind::Accept)),
+            stop(Stop::quest(ishamuhale, Kind::Objective(0))),
+        ];
+        edits.extend(grind.map(|level| Edit::GrindTo { level }));
+        edits.push(stop(Stop::quest(ishamuhale, Kind::Objective(1))));
+        planner(&p).explicit().edit(&edits).steps.last().unwrap().outcome
+    };
+    assert_eq!(run(None), Outcome::Done);
+    assert_ne!(run(Some(22)), Outcome::Done, "the carcass rotted while grinding");
 }

@@ -239,12 +239,18 @@ impl Planner<'_> {
                     }
                 } else {
                     let q = self.quest(i);
+                    let can = |o: &crate::model::Objective| self.combat().need(q, o) <= reach;
+                    // An item that does not last (`Objective::lasts`) is got once what uses it
+                    // can follow, and then that comes first.
+                    let item_clock = q.time_limit.is_none() && s.timers.iter().any(|&(t, _)| t == i);
                     for k in 0..q.objectives.len() {
                         let o = &q.objectives[k];
-                        let level_ok = self.combat().need(q, o) <= self.params.reach(s.level, s.might());
-                        if self.availability().objective_open(s, i, k) && level_ok && o.dungeon.is_none() {
+                        let users_ready =
+                            o.lasts.is_none() || (q.objectives.iter()).all(|u| u.after & 1 << k == 0 || can(u));
+                        if self.availability().objective_open(s, i, k) && can(o) && users_ready && o.dungeon.is_none() {
                             let stop = Stop::quest(i, Kind::Objective(k as u8));
-                            add(stop, class, None, bound.at(&self.places().pos(s, stop)));
+                            let weight = if item_clock { 0.2 * class } else { class };
+                            add(stop, weight, None, bound.at(&self.places().pos(s, stop)));
                         }
                     }
                 }

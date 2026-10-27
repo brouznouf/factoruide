@@ -129,6 +129,8 @@ pub(super) struct Sources {
     pub(super) objectives: ObjectiveRows,
     pub(super) item_origins: HashMap<i64, Vec<(SourceKind, i64)>>,
     pub(super) drop_chance: HashMap<(i64, i64), f64>,
+    /// Seconds the items that do not last are kept, by item.
+    pub(super) item_durations: HashMap<i64, f64>,
     /// XP of quests the quest data has no value for: the most common reward column for their level.
     pub(super) default_xp: HashMap<i64, i64>,
     pub(super) pvp: HashSet<i64>,
@@ -179,6 +181,7 @@ impl Sources {
             rows,
             objectives,
             item_origins,
+            item_durations: item_durations(conn)?,
             drop_chance,
             area_parents: if params.forced_zones.is_empty() {
                 HashMap::new()
@@ -454,6 +457,12 @@ fn objective_rows(conn: &Connection) -> Result<ObjectiveRows> {
     clippy::type_complexity,
     reason = "two maps read by one query, destructured by the caller"
 )]
+fn item_durations(conn: &Connection) -> Result<HashMap<i64, f64>> {
+    let mut stmt = conn.prepare("SELECT id, duration FROM m_item WHERE duration > 0")?;
+    let rows = stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, f64>(1)?)))?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
 fn item_origins(
     conn: &Connection,
     params: &Params,

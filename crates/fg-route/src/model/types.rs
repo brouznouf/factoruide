@@ -191,6 +191,9 @@ pub struct Objective {
     /// Which of the quest's own objectives it is, from 1 in the game's order; None for what
     /// the quest only needs (an item it uses, a child quest).
     pub slot: Option<u8>,
+    /// Seconds the item it gets lasts (a Fresh Zhevra Carcass rots in 30 minutes): the
+    /// objectives using it are done before.
+    pub lasts: Option<f64>,
 }
 
 /// A vendor selling an objective's item: where it stands, and its supply when limited (how many

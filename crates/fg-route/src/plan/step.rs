@@ -253,6 +253,32 @@ impl Planner<'_> {
             s.held += 1;
         }
         s.objectives[i] |= 1 << k;
+        self.time_item(s, i);
+    }
+
+    /// An item that does not last (`Objective::lasts`) starts quest `i`'s clock once got, as a
+    /// timed quest's accept does: reached later, the objectives using it fail the quest. The
+    /// clock stops once they are done.
+    fn time_item(&self, s: &mut State, i: usize) {
+        let q = &self.model.quests[i];
+        let lasting = (q.objectives.iter().enumerate())
+            .filter(|(_, o)| o.lasts.is_some())
+            .fold(0u8, |bits, (k, _)| bits | 1 << k);
+        if lasting == 0 || q.time_limit.is_some() {
+            return;
+        }
+        let done = s.objectives[i];
+        let using_left = (q.objectives.iter().enumerate()).any(|(k, o)| o.after & lasting != 0 && done & 1 << k == 0);
+        let quest = i as u32;
+        if !using_left {
+            s.timers.retain(|&(t, _)| t != quest);
+        } else if done & lasting != 0 && !s.timers.iter().any(|&(t, _)| t == quest) {
+            let lasts = (q.objectives.iter().enumerate())
+                .filter(|(k, _)| done & lasting & 1 << k != 0)
+                .filter_map(|(_, o)| o.lasts)
+                .fold(f64::INFINITY, f64::min);
+            s.timers.push((quest, s.time + lasts * TIMED_SHARE));
+        }
     }
 
     /// The bag slots quest `i`'s items took, freed (turned in or given up).

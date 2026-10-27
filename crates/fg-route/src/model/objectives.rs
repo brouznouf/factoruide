@@ -82,6 +82,7 @@ impl Objective {
             vendors: vec![],
             auction: vec![],
             slot: None,
+            lasts: None,
         }
     }
 }
@@ -113,6 +114,9 @@ impl QuestBuilder<'_> {
         }
         let mut objs = self.source_items(&quest, &rows);
         let first = (1u8 << objs.len().min(8)) - 1;
+        // An item that does not last is got for the objectives using it, kills too (the carcass
+        // Ishamuhale comes to): not before.
+        let lasting = objs.iter().any(|o| o.lasts.is_some());
         for (slot, row) in rows.into_iter().enumerate() {
             let kind = row.0;
             // The item the quest is offered for: in the bags from the accept on.
@@ -132,7 +136,7 @@ impl QuestBuilder<'_> {
             }
             if let Some(mut o) = self.objective(&quest, row)? {
                 // Mobs are killed and items got without the item; the rest uses it.
-                if !(kind == ObjectiveKind::Item || kind == ObjectiveKind::Creature && o.kills > 0.0) {
+                if lasting || !(kind == ObjectiveKind::Item || kind == ObjectiveKind::Creature && o.kills > 0.0) {
                     o.after = first;
                 }
                 let slot = u8::try_from(slot + 1).ok();
@@ -317,7 +321,8 @@ impl QuestBuilder<'_> {
             }
             // Not found where it can be got (from elites, a source unknown): left out, as an
             // item probably given along the quest.
-            if let Ok(Some(o)) = self.objective(quest, (ObjectiveKind::Item, Some(item), None, None, Some(1))) {
+            if let Ok(Some(mut o)) = self.objective(quest, (ObjectiveKind::Item, Some(item), None, None, Some(1))) {
+                o.lasts = self.sources.item_durations.get(&item).copied();
                 objs.push(o);
             }
         }
