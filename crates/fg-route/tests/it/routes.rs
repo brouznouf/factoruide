@@ -3207,3 +3207,26 @@ fn a_group_guide_levels_each_players_professions() {
     assert_eq!((own("A-Realm"), own("B-Realm")), (vec!["skinning"], vec![]));
     assert!(route.professions.is_empty(), "the guide's character is B");
 }
+
+/// Two new characters the addon never saw, an orc and a troll, level together from the Valley of
+/// Trials: the guide starts there for both.
+#[test]
+fn new_characters_level_together_from_the_start() {
+    let mut orc = player("Player 1", 2, "warrior", 1);
+    orc.faction = Some(fg_route::faction::Faction::Horde);
+    let mut troll = player("Player 2", 8, "mage", 1);
+    troll.faction = Some(fg_route::faction::Faction::Horde);
+    let request = PlanRequest {
+        start: Some(orc),
+        mates: vec![troll],
+        mate_professions: vec![vec![]],
+        ..request("orc", "warrior", 4, &["effort=0"])
+    };
+    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let names: Vec<&str> = route.players.iter().map(|p| p.name.as_str()).collect();
+    assert_eq!(names, ["Player 1", "Player 2"]);
+    assert!(
+        route.steps.iter().any(|s| s.zone.as_deref() == Some("Durotar")),
+        "starts in the Valley of Trials"
+    );
+}
