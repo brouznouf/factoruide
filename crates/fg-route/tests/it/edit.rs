@@ -240,8 +240,8 @@ fn farm_on_the_way_gives_its_estimate() {
 fn flight_needs_known_flight_paths() {
     let (editor, names) = editor();
     let mut steps = guide().plan.clone();
-    // Orgrimmar to the Crossroads.
-    steps.insert(0, RouteStep::Fly { from: 23, to: 25 });
+    // The Crossroads to Orgrimmar (the orc knows Orgrimmar's from the start).
+    steps.insert(0, RouteStep::Fly { from: 25, to: 23 });
     let report = editor.simulate(&steps, &names);
     assert_eq!(report.steps[0].status, "error");
     assert_eq!(report.steps[0].reason, Some("flight path not known"));
