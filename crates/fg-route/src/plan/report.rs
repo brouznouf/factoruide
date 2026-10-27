@@ -100,25 +100,22 @@ impl Planner<'_> {
         late.into_iter()
             .map(|i| {
                 let q = &self.model.quests[i];
-                match q.time_limit {
-                    Some(limit) => format!(
+                if let Some(limit) = q.time_limit {
+                    format!(
                         "{} ({}): not turned in within its {:.0} minutes",
                         q.name,
                         q.id,
                         limit / 60.0
-                    ),
-                    None => {
-                        let o = q
-                            .objectives
-                            .iter()
-                            .find(|o| o.lasts.is_some())
-                            .expect("an item that does not last");
-                        let minutes = o.lasts.unwrap_or_default() / 60.0;
-                        format!(
-                            "{} ({}): {} gone after its {minutes:.0} minutes",
-                            q.name, q.id, o.loc.name
-                        )
-                    }
+                    )
+                } else {
+                    let o = (q.objectives.iter())
+                        .find(|o| o.lasts.is_some())
+                        .expect("an item that does not last");
+                    let minutes = o.lasts.unwrap_or_default() / 60.0;
+                    format!(
+                        "{} ({}): {} gone after its {minutes:.0} minutes",
+                        q.name, q.id, o.loc.name
+                    )
                 }
             })
             .collect()

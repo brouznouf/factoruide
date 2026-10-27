@@ -450,6 +450,13 @@ fn objective_rows(conn: &Connection) -> Result<ObjectiveRows> {
     Ok(objectives)
 }
 
+/// Seconds each item that does not last is kept (`m_item.duration`).
+fn item_durations(conn: &Connection) -> Result<HashMap<i64, f64>> {
+    let mut stmt = conn.prepare("SELECT id, duration FROM m_item WHERE duration > 0")?;
+    let rows = stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, f64>(1)?)))?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
 /// Where items come from, and their drop chance from each mob. World treasure chests (Battered
 /// Chest: 700 possible items) are not where a quest item is farmed: objects looting more than
 /// `max_object_loot` different items do not count as sources of an item found elsewhere too.
@@ -457,12 +464,6 @@ fn objective_rows(conn: &Connection) -> Result<ObjectiveRows> {
     clippy::type_complexity,
     reason = "two maps read by one query, destructured by the caller"
 )]
-fn item_durations(conn: &Connection) -> Result<HashMap<i64, f64>> {
-    let mut stmt = conn.prepare("SELECT id, duration FROM m_item WHERE duration > 0")?;
-    let rows = stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, f64>(1)?)))?;
-    Ok(rows.collect::<rusqlite::Result<_>>()?)
-}
-
 fn item_origins(
     conn: &Connection,
     params: &Params,
