@@ -6,6 +6,7 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Texts of the group guide player choice, in every language.
 - The hearthstone's inn is found whatever the game's language (the guide no longer sends you back to your starting place).
 - No more error when logging out before the realm name is known.
 
