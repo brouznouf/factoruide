@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { EditCatalog, RouteStep } from "../api";
 import { useT } from "../i18n";
 import { NodeSelect, type useNames } from "./editing";
@@ -32,6 +32,8 @@ interface Props {
   catalog: EditCatalog;
   names: ReturnType<typeof useNames>;
   onAdd: (step: RouteStep) => void;
+  /** Shows step `i` of the list (where a quest is already taken). */
+  onShow: (i: number) => void;
   onClose: () => void;
   /** Where it opens: beside this point of the window (the button that opened it). */
   anchor: { x: number; y: number };
@@ -42,7 +44,7 @@ interface Props {
  * the hearthstone, a flight, a flight path, training, a dungeon, mobs to kill, a quest to give
  * up, a boat.
  */
-export function AddMenu({ at, level, steps, catalog, names, onAdd, onClose, anchor }: Props) {
+export function AddMenu({ at, level, steps, catalog, names, onAdd, onShow, onClose, anchor }: Props) {
   const t = useT();
   const [kind, setKind] = useState<AddKind>("accept");
   const [search, setSearch] = useState("");
@@ -55,11 +57,30 @@ export function AddMenu({ at, level, steps, catalog, names, onAdd, onClose, anch
   const match = (...texts: (string | number)[]) => !q || texts.some((x) => String(x).toLowerCase().includes(q));
 
   // Quests the draft takes, does and turns in.
-  const taken = new Set(steps.flatMap((s) => (s.kind === "accept" ? [s.quest] : [])));
+  const takenAt = new Map<number, number[]>();
+  steps.forEach((s, i) => {
+    if (s.kind === "accept") takenAt.set(s.quest, [...(takenAt.get(s.quest) ?? []), i]);
+  });
+  const taken = new Set(takenAt.keys());
   const turned = new Set(steps.flatMap((s) => (s.kind === "turn_in" ? [s.quest] : [])));
   const done = new Set(steps.flatMap((s) => (s.kind === "objective" ? [`${s.quest}/${s.objective}`] : [])));
 
-  const questRow = (id: number, extra: string | null, add: () => void, disabled = false, note?: string) => {
+  // "already in the guide · step 313, 325": each number shows its step.
+  const takenNote = (id: number) => (
+    <span className="tag">
+      {t("déjà dans le guide")} · {t("étape")}{" "}
+      {(takenAt.get(id) ?? []).map((i, k) => (
+        <span key={i}>
+          {k > 0 && ", "}
+          <button className="link" title={t("Voir l'étape")} onClick={() => onShow(i)}>
+            {i + 1}
+          </button>
+        </span>
+      ))}
+    </span>
+  );
+
+  const questRow = (id: number, extra: string | null, add: () => void, disabled = false, note?: ReactNode) => {
     const quest = names.quests.get(id);
     return (
       <li key={`${id}/${extra ?? ""}`}>
@@ -73,7 +94,7 @@ export function AddMenu({ at, level, steps, catalog, names, onAdd, onClose, anch
             · {t("niveau {level}", { level: quest.level })} · {quest.zone}
           </span>
         )}
-        {note && <span className="tag">{note}</span>}
+        {note}
       </li>
     );
   };
@@ -86,7 +107,7 @@ export function AddMenu({ at, level, steps, catalog, names, onAdd, onClose, anch
         .filter((x) => match(x.name, x.zone, x.id))
         .sort((a, b) => Number(taken.has(a.id)) - Number(taken.has(b.id)) || Math.abs(a.level - level) - Math.abs(b.level - level) || a.level - b.level)
         .slice(0, LIST_MAX);
-      body = <ul className="pick-list">{list.map((x) => questRow(x.id, null, () => onAdd({ kind: "accept", quest: x.id }), taken.has(x.id), taken.has(x.id) ? t("déjà dans le guide") : undefined))}</ul>;
+      body = <ul className="pick-list">{list.map((x) => questRow(x.id, null, () => onAdd({ kind: "accept", quest: x.id }), taken.has(x.id), taken.has(x.id) ? takenNote(x.id) : undefined))}</ul>;
       break;
     }
     case "objective": {

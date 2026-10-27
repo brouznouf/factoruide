@@ -299,6 +299,10 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
             edit.onInsert(adding.at, s);
             setAdding(null);
           }}
+          onShow={(i) => {
+            setAdding(null);
+            show(cardOf(cards, i));
+          }}
           onClose={closeAdding}
         />
       )}
