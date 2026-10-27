@@ -2141,7 +2141,7 @@ button.setting-reset:hover:not(:disabled) {
   flex-wrap: wrap;
   align-items: center;
   gap: 8px 12px;
-  margin-bottom: 10px;
+  margin-bottom: 14px;
 }
 .dungeon-levels > span {
   flex-basis: 100%;
@@ -2149,46 +2149,64 @@ button.setting-reset:hover:not(:disabled) {
   font-size: 12px;
 }
 .dual-range {
+  --thumb: 16px;
   position: relative;
   flex: 1;
   min-width: 160px;
-  height: 22px;
+  height: var(--thumb);
 }
 .dual-range::before,
 .dual-range::after {
   content: "";
   position: absolute;
-  top: 9px;
+  top: calc(var(--thumb) / 2 - 2px);
   height: 4px;
   border-radius: 2px;
+  pointer-events: none;
 }
 .dual-range::before {
-  left: 0;
-  right: 0;
+  left: calc(var(--thumb) / 2);
+  right: calc(var(--thumb) / 2);
   background: var(--border);
 }
-/* The levels chosen, between the two handles. */
+/* The levels chosen, between the handles' centers (a handle stays inside the slider: its center
+   goes from half a handle to the width less half a handle). */
 .dual-range::after {
-  left: var(--from);
-  right: calc(100% - var(--to));
+  left: calc(var(--thumb) / 2 + (100% - var(--thumb)) * var(--from));
+  right: calc(var(--thumb) / 2 + (100% - var(--thumb)) * (1 - var(--to)));
   background: var(--accent);
 }
 .dual-range input[type="range"] {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
+  height: var(--thumb);
   margin: 0;
+  padding: 0;
   background: none;
   pointer-events: none;
   appearance: none;
   -webkit-appearance: none;
   z-index: 1;
 }
+.dual-range input[type="range"]::-webkit-slider-runnable-track {
+  height: var(--thumb);
+  background: transparent;
+  border: none;
+}
+.dual-range input[type="range"]::-moz-range-track {
+  height: var(--thumb);
+  background: transparent;
+  border: none;
+}
 .dual-range input[type="range"]::-webkit-slider-thumb {
   pointer-events: auto;
   -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
+  box-sizing: border-box;
+  width: var(--thumb);
+  height: var(--thumb);
+  margin: 0;
   border-radius: 50%;
   background: var(--accent);
   border: 2px solid var(--surface-0);
@@ -2196,14 +2214,17 @@ button.setting-reset:hover:not(:disabled) {
 }
 .dual-range input[type="range"]::-moz-range-thumb {
   pointer-events: auto;
-  width: 14px;
-  height: 14px;
+  box-sizing: border-box;
+  width: var(--thumb);
+  height: var(--thumb);
   border-radius: 50%;
   background: var(--accent);
   border: 2px solid var(--surface-0);
   cursor: pointer;
 }
 .dual-range-value {
+  min-width: 8.5em;
+  text-align: right;
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }

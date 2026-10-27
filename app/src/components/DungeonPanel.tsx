@@ -70,7 +70,7 @@ export function DungeonPanel({ dungeons, choices, onChange, from, to, maxLevel, 
   const empty = dungeonsWithoutLevels(dungeons, from, to, maxLevel);
   // A slider with two handles: the lowest and the highest level, around the dungeon's.
   const [low, high] = [-10, 10];
-  const at = (n: number) => `${((n - low) / (high - low)) * 100}%`;
+  const at = (n: number) => String((n - low) / (high - low));
 
   return (
     <section className="panel dungeons-layout">
