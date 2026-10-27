@@ -480,7 +480,7 @@ const PART_LABELS = { travel: "Trajet", combat: "Combat", interact: "Interaction
 /** Objective kinds as the line says them (French keys of the catalog). */
 const OBJECTIVE_LABELS: Record<string, string> = { kill: "Tuer", collect: "Récupérer", use: "Utiliser", talk: "Parler", other: "Faire" };
 /** The glyph before each kind of line. */
-const GLYPHS: Record<string, string> = { accept: "!", turnin: "?", kill: "✕", collect: "◆", use: "◆", talk: "…", fly: "➜", link: "➜", hearth: "⌂", teleport: "➜" };
+const GLYPHS: Record<string, string> = { accept: "!", turnin: "?", kill: "✕", collect: "◆", use: "◆", talk: "…", fly: "➜", link: "➜", hearth: "⌂", teleport: "➜", deathskip: "✝" };
 
 /** What a line says: its kind (French key), the kind of its objective, its text. */
 function lineOf(s: Step, quests: Map<number, QuestInfo>) {

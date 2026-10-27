@@ -25,7 +25,7 @@ export interface Card {
 }
 
 /** Step kinds that move the character elsewhere: a card of their own. */
-const TRAVEL_KINDS = new Set(["fly", "link", "hearth", "teleport"]);
+const TRAVEL_KINDS = new Set(["fly", "link", "hearth", "teleport", "deathskip"]);
 
 /** Checkpoints: a level to have before going on, nothing done (zero time). */
 export const isCheckpoint = (s: Step) => s.kind === "grind" && !!s.keep;
@@ -361,6 +361,8 @@ export function activityAt(route: Route, timeline: Timeline, quests: Map<number,
       return { verb: "Auberge", what: target };
     case "hearth":
       return { verb: "Pierre de foyer", what: "" };
+    case "deathskip":
+      return { verb: "Mort volontaire", what: s.zone ?? "" };
     case "abandon":
       return { verb: "Abandonne", what: s.quest_name ?? "" };
     default:

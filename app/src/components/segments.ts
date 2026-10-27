@@ -47,9 +47,9 @@ export interface Segment {
 
 export const steps = (s: Segment) => s.last - s.first + 1;
 
-/** Steps that take the character elsewhere: the hearthstone and teleports land in their step's
- * zone, flights and boats leave from it (the next step is where they land). */
-const ARRIVING = new Set(["hearth", "teleport"]);
+/** Steps that take the character elsewhere: the hearthstone, teleports and death skips land in
+ * their step's zone, flights and boats leave from it (the next step is where they land). */
+const ARRIVING = new Set(["hearth", "teleport", "deathskip"]);
 const LEAVING = new Set(["fly", "link"]);
 
 /** Consecutive steps in the same zone; a dungeon run is a segment of its own. */
