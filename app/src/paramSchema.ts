@@ -86,6 +86,7 @@ export const sections: Section[] = [
       { key: "hearth_cast", kind: "number", label: "Incantation de la pierre", help: "Durée de l'incantation de la pierre de foyer.", unit: "s", min: 0, max: 20, step: 1 },
       { key: "recall_cooldown", kind: "number", label: "Recharge du Rappel astral (chaman)", help: "Deuxième pierre de foyer du chaman, apprise au niveau 30.", unit: "min", scale: 60, min: 0, max: 60, step: 5 },
       { key: "teleport_cast", kind: "number", label: "Incantation des téléportations", help: "Téléportations du mage vers les capitales, et Rappel astral du chaman.", unit: "s", min: 0, max: 20, step: 1 },
+      { key: "death_skip_time", kind: "number", label: "Durée d'une mort volontaire", help: "Mourir, libérer l'esprit et se faire ressusciter par l'ange de la mort (morts volontaires, jusqu'au niveau 10 et demi).", unit: "s", min: 10, max: 300, step: 5 },
       { key: "gold_weight", kind: "number", label: "Économiser l'or des vols", help: "Temps que vaut une pièce d'or dépensée en vols jusqu'au niveau 30, quand l'argent manque (0 = vols gratuits), moins ensuite car les quêtes rapportent plus : 60 min (défaut) jusqu'au niveau 30, 25 min au 40, 8 min au 60.", unit: "min", scale: 60, min: 0, max: 240, step: 10 },
       { key: "zone_change_weight", kind: "number", label: "Coût d'un changement de zone", help: "Temps compté en plus du trajet à chaque changement de zone : regroupe les quêtes par zone au lieu d'aller chercher quelques quêtes loin. 4 min par défaut.", unit: "min", scale: 60, min: 0, max: 15, step: 1 },
       { key: "abandon_weight", kind: "number", label: "Coût d'une quête abandonnée", help: "Temps compté pour chaque quête prise puis abandonnée (devenue grise, donjon fait sans elle) : la route la finit ou ne la prend pas, sauf si elle fait gagner plus. 10 min par défaut.", unit: "min", scale: 60, min: 0, max: 60, step: 1 },
@@ -191,7 +192,7 @@ export const sections: Section[] = [
 ];
 
 /** Settings of the simple view (left out of the advanced sections). */
-export const SIMPLE_KEYS: (keyof Params)[] = ["dungeons", "allow_elite", "crowded", "progression", "dungeon_from", "dungeon_to"];
+export const SIMPLE_KEYS: (keyof Params)[] = ["dungeons", "allow_elite", "crowded", "progression", "dungeon_from", "dungeon_to", "death_skips"];
 
 /** Speed presets applied on top of the defaults. */
 export const presets: { label: string; values: Partial<Params> }[] = [

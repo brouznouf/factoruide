@@ -41,6 +41,8 @@ export const REASONS: Record<string, string> = {
   "no such crossing": "aucune traversée entre ces deux transports",
   "unknown crossing": "transport inconnu",
   "teleport not learned": "téléportation pas encore apprise",
+  "too high for a death skip": "niveau trop haut pour une mort volontaire (10 et demi au plus)",
+  "no spirit healer": "aucun ange de la mort sur ce continent",
   "unknown trainer": "entraîneur inconnu",
   "nothing to learn": "rien de nouveau à apprendre",
   "level reached": "niveau déjà atteint",
@@ -60,6 +62,7 @@ export const KINDS: Record<RouteStep["kind"], { css: string; label: string }> = 
   dungeon: { css: "dungeon", label: "Donjon" },
   link: { css: "link", label: "Transport" },
   teleport: { css: "teleport", label: "Téléportation" },
+  deathskip: { css: "deathskip", label: "Mort volontaire" },
   train: { css: "train", label: "Entraîneur" },
   sell: { css: "train", label: "Vendeur" },
   abandon: { css: "abandon", label: "Abandonner" },
@@ -108,6 +111,8 @@ export function useNames(catalog: EditCatalog | undefined) {
           return s.first.name === s.last.name && s.first.to === s.last.to ? s.first.name : t("{first}, puis {last}", { first: s.first.name, last: s.last.name });
         case "teleport":
           return s.spell;
+        case "deathskip":
+          return t("Mourir et revenir à l'ange de la mort le plus proche");
         case "train": {
           const trainer = trainers.get(s.trainer);
           return t("S'entraîner auprès de {name} ({zone})", { name: trainer?.name ?? `#${s.trainer}`, zone: trainer?.zone ?? "?" });

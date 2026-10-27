@@ -4,7 +4,7 @@ import { useT } from "../i18n";
 import { NodeSelect, type useNames } from "./editing";
 import { NumberInput } from "./NumberInput";
 
-type AddKind = "accept" | "objective" | "turn_in" | "bind" | "hearth" | "fly" | "flight_master" | "train" | "abandon" | "grind" | "dungeon" | "link";
+type AddKind = "accept" | "objective" | "turn_in" | "bind" | "hearth" | "deathskip" | "fly" | "flight_master" | "train" | "abandon" | "grind" | "dungeon" | "link";
 
 const ADD_KINDS: { kind: AddKind; label: string }[] = [
   { kind: "accept", label: "Prendre une quête" },
@@ -12,6 +12,7 @@ const ADD_KINDS: { kind: AddKind; label: string }[] = [
   { kind: "turn_in", label: "Rendre une quête" },
   { kind: "bind", label: "Lier la pierre de foyer" },
   { kind: "hearth", label: "Pierre de foyer" },
+  { kind: "deathskip", label: "Mort volontaire" },
   { kind: "fly", label: "Prendre un vol" },
   { kind: "flight_master", label: "Apprendre un point de vol" },
   { kind: "train", label: "S'entraîner" },
@@ -161,6 +162,14 @@ export function AddMenu({ at, level, steps, catalog, names, onAdd, onShow, onClo
         <div className="actions">
           <button onClick={() => onAdd({ kind: "hearth" })}>{t("Utiliser la pierre de foyer")}</button>
           {catalog.recall && <button onClick={() => onAdd({ kind: "hearth", recall: true })}>{t("Utiliser le Rappel astral")}</button>}
+        </div>
+      );
+      break;
+    case "deathskip":
+      body = (
+        <div className="actions">
+          <p className="muted">{t("Le personnage meurt où il est et réapparaît à l'ange de la mort le plus proche (jusqu'au niveau 10 et demi).")}</p>
+          <button onClick={() => onAdd({ kind: "deathskip" })}>{t("Mourir ici")}</button>
         </div>
       );
       break;

@@ -169,6 +169,7 @@ FG.Locales.koKR = {
     ["levels %.1f apart: make the guide again in the app"] = "레벨 차이 %.1f: 앱에서 가이드를 다시 만드세요",
     ["%s follows another version of the guide"] = "%s 님은 다른 버전의 가이드를 따르는 중",
     ["Train at your class trainer"] = "직업 훈련사에게 훈련받기",
+    ["Death skip"] = "의도적 사망",
     ["Several players of this group guide are of your race and class: choose yours in /fg, Guides"] = "이 그룹 가이드의 여러 플레이어가 같은 종족과 직업입니다: /fg, 가이드에서 본인을 선택하세요",
     ["Several players of this group guide are of your race and class: which one you are"] = "이 그룹 가이드의 여러 플레이어가 같은 종족과 직업입니다: 본인이 누구인지",
     ["Player: %s"] = "플레이어: %s",

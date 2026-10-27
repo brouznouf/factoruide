@@ -234,6 +234,11 @@ pub struct Params {
     /// teleports (a mage's "Teleport: Stormwind").
     pub recall_cooldown: f64,
     pub teleport_cast: f64,
+    /// Die on purpose to respawn at the nearest spirit healer when that is faster ("death
+    /// skips"), up to `DEATH_SKIP_UNTIL` (no resurrection sickness before level 11), and what one
+    /// takes (dying, releasing, the spirit healer).
+    pub death_skips: bool,
+    pub death_skip_time: f64,
     /// New class spells every `train_every` levels; a trainer within `train_radius` is visited on
     /// the way, otherwise a dedicated trip is made once training is `train_max_delay` levels late.
     pub train_every: i64,
@@ -526,6 +531,8 @@ impl Default for Params {
             hearth_min_saving: 180.0,
             recall_cooldown: 900.0,
             teleport_cast: 10.0,
+            death_skips: false,
+            death_skip_time: 45.0,
             train_every: 2,
             train_radius: 300.0,
             bag_weight: 20.0,

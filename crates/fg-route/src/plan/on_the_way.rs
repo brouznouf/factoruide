@@ -51,6 +51,7 @@ impl Planner<'_> {
                 self.trips().walk(&s.pos, target, s.level),
                 super::state::Via {
                     teleport: None,
+                    death: None,
                     leg: Leg::Walk,
                 },
             )
@@ -75,6 +76,19 @@ impl Planner<'_> {
             spend(s, self.params.teleport_cast, false);
             left -= self.params.teleport_cast;
             from = self.model.teleports[to].to.pos;
+        }
+        if let Some(g) = via.death {
+            let gy = &self.model.graveyards[g];
+            record(
+                s,
+                Event::DeathSkip {
+                    pos: gy.pos,
+                    zone: gy.zone,
+                },
+            );
+            spend(s, self.params.death_skip_time, false);
+            left -= self.params.death_skip_time;
+            from = gy.pos;
         }
         // Walked to `at`, at most what is left of the trip.
         let walk_to = |s: &mut State, from: &Pos, at: &Pos, left: &mut f64| {
@@ -139,7 +153,8 @@ impl Planner<'_> {
         }
         spend(s, left, false);
         // Areas discovered: around the arrival, and along a walk inside the zone.
-        let walking = matches!(via.leg, Leg::Walk) && via.teleport.is_none() && landed == Landed::No;
+        let walking =
+            matches!(via.leg, Leg::Walk) && via.teleport.is_none() && via.death.is_none() && landed == Landed::No;
         let from = (walking && s.zone == zone).then_some(s.pos);
         self.explore(s, from, target, zone);
         if walking {

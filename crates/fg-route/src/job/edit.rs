@@ -65,6 +65,9 @@ pub enum RouteStep {
     Teleport {
         spell: String,
     },
+    /// Die on purpose, back at the nearest spirit healer.
+    #[serde(rename = "deathskip")]
+    DeathSkip,
     /// Learn the class spells at a trainer (its NPC ID).
     Train {
         trainer: i64,
@@ -155,6 +158,7 @@ impl RouteStep {
             Edit::Teleport { to } => Self::Teleport {
                 spell: model.teleports[to].name.clone(),
             },
+            Edit::DeathSkip => Self::DeathSkip,
             Edit::Train { trainer } => Self::Train {
                 trainer: model.trainers[trainer].id,
             },
@@ -241,6 +245,7 @@ impl RouteStep {
                 first: link(first)?,
                 last: link(last)?,
             },
+            Self::DeathSkip => Edit::DeathSkip,
             Self::Teleport { ref spell } => Edit::Teleport {
                 to: model
                     .teleports

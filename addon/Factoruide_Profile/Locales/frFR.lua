@@ -270,6 +270,7 @@ FG.Locales.frFR = {
     ["levels %.1f apart: make the guide again in the app"] = "%.1f niveaux d'écart : refaites le guide dans l'application",
     ["%s follows another version of the guide"] = "%s suit une autre version du guide",
     ["Train at your class trainer"] = "Entraînez-vous chez votre maître de classe",
+    ["Death skip"] = "Mort volontaire",
     ["Several players of this group guide are of your race and class: choose yours in /fg, Guides"] = "Plusieurs joueurs de ce guide de groupe sont de votre race et de votre classe : choisissez le vôtre dans /fg, Guides",
     ["Several players of this group guide are of your race and class: which one you are"] = "Plusieurs joueurs de ce guide de groupe sont de votre race et de votre classe : lequel vous êtes",
     ["Player: %s"] = "Joueur : %s",

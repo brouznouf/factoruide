@@ -169,6 +169,7 @@ FG.Locales.zhTW = {
     ["levels %.1f apart: make the guide again in the app"] = "等級相差%.1f：請在應用程式中重新產生指南",
     ["%s follows another version of the guide"] = "%s正在使用另一版本的指南",
     ["Train at your class trainer"] = "前往你的職業訓練師處訓練",
+    ["Death skip"] = "主動死亡",
     ["Several players of this group guide are of your race and class: choose yours in /fg, Guides"] = "此組隊指南中有多名玩家與你種族和職業相同：請在 /fg 的「指南」中選擇你自己",
     ["Several players of this group guide are of your race and class: which one you are"] = "此組隊指南中有多名玩家與你種族和職業相同：你是哪一位",
     ["Player: %s"] = "玩家：%s",

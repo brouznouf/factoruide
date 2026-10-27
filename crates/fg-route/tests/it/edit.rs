@@ -111,6 +111,7 @@ fn every_thing_done_is_a_step_of_its_own() {
             RouteStep::Fly { .. } => StepKind::Fly,
             RouteStep::Link { .. } => StepKind::Link,
             RouteStep::Teleport { .. } => StepKind::Teleport,
+            RouteStep::DeathSkip => StepKind::DeathSkip,
             RouteStep::Train { .. } => StepKind::Train,
             RouteStep::Sell { .. } => StepKind::Sell,
             RouteStep::Dungeon { .. } => StepKind::Dungeon,

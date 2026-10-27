@@ -1034,6 +1034,30 @@ runTimers()
 assert(char.guide.step == 3, "arrived, step " .. char.guide.step)
 print("teleport ok")
 
+-- Death skip: done once back at the spirit healer the step stands at.
+FG.Routes["deathskip-test"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 1,
+    toLevel = 60,
+    time = 1,
+    steps = {
+        { k = "deathskip", t = "Die and respawn at the spirit healer", m = 1426, x = 80, y = 20, lvl = 5 },
+        { k = "deathskip", t = "Die and respawn at the spirit healer", m = 1426, x = 30.1, y = 71.3, lvl = 5 },
+        { k = "grind", t = "Grind", lvl = 60 },
+    },
+}
+useRoute("deathskip-test")
+fire("QUEST_LOG_UPDATE")
+runTimers()
+assert(char.guide.step == 1, "far from the spirit healer: not there yet, step " .. char.guide.step)
+char.guide.step = 2
+fire("QUEST_LOG_UPDATE")
+runTimers()
+assert(char.guide.step == 3, "back at the spirit healer, step " .. char.guide.step)
+print("death skip ok")
+
 -- Group sync: a member's progress shows next to the objective.
 Ambiguate = function(name) return (name:gsub("%-.*", "")) end
 for _, f in ipairs(frames) do

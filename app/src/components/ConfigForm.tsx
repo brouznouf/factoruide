@@ -439,6 +439,12 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                   onChange={(v) => set("farm_on_way", v)}
                 />
                 <Toggle
+                  label={t("Morts volontaires (death skips)")}
+                  help={t("Jusqu'au niveau 10 et demi, le guide fait mourir le personnage pour réapparaître à l'ange de la mort le plus proche quand c'est plus rapide : pas de mal de résurrection avant le niveau 11. À ne pas utiliser en Hardcore.")}
+                  checked={params.death_skips}
+                  onChange={(v) => set("death_skips", v)}
+                />
+                <Toggle
                   label={t("Faire les donjons rentables en groupe")}
                   help={t("Un donjon est fait, avec ses quêtes, quand il fait gagner du temps.")}
                   checked={params.dungeons}

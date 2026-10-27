@@ -125,6 +125,7 @@ fn kind_of(step: &RouteStep) -> StepKind {
         RouteStep::Fly { .. } => StepKind::Fly,
         RouteStep::Link { .. } => StepKind::Link,
         RouteStep::Teleport { .. } => StepKind::Teleport,
+        RouteStep::DeathSkip => StepKind::DeathSkip,
         RouteStep::Train { .. } => StepKind::Train,
         RouteStep::Sell { .. } => StepKind::Sell,
         RouteStep::Dungeon { .. } => StepKind::Dungeon,

@@ -88,6 +88,7 @@ local KINDS = {
         color = "40c0ff",
         label = T("Teleport"),
     },
+    deathskip = { icon = "Interface\\Icons\\Spell_Holy_Resurrection", color = "c0c0ff", label = T("Death skip") },
     bind = { icon = "Interface\\GossipFrame\\BinderGossipIcon", color = "40c0ff", label = T("Inn") },
     sell = { icon = "Interface\\GossipFrame\\VendorGossipIcon", color = "ffffff", label = T("Vendor") },
     dungeon = { icon = "Interface\\Icons\\INV_Misc_Key_10", color = "ff4040", label = T("Dungeon") },
@@ -316,6 +317,10 @@ function IsDone(step, index)
         if inside and inside.di then return mark == "inside" or mark == true end
         return mark == true
     elseif step.k == "hearth" then
+        local d = Distance(step)
+        return d ~= nil and d < 100
+    elseif step.k == "deathskip" then
+        -- Died on purpose: done once back at the spirit healer the step stands at.
         local d = Distance(step)
         return d ~= nil and d < 100
     elseif step.k == "teleport" then

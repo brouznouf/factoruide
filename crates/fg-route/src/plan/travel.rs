@@ -12,6 +12,9 @@ use std::rc::Rc;
 /// Flight times (seconds) and prices (copper) between flight paths.
 pub(crate) type FlightTable = (Vec<Vec<f64>>, Vec<Vec<f64>>);
 
+/// Death skips are planned below this level and a half (`Params::death_skips`): the game gives no
+/// resurrection sickness before level 11, and a player a little ahead of the guide stays below it.
+pub(crate) const DEATH_SKIP_UNTIL: f64 = 10.5;
 /// Flight tables by set of known flight paths, computed once each.
 pub(crate) type FlightTables = RefCell<FxHashMap<u128, Rc<FlightTable>>>;
 
@@ -322,7 +325,14 @@ impl Trips<'_> {
     pub(crate) fn fastest(&self, s: &State, b: &Pos) -> (f64, Via) {
         let open = self.open_links(s);
         let (t, leg) = self.leg(&s.pos, b, s.level, s.known, open);
-        let mut best = (t, Via { teleport: None, leg });
+        let mut best = (
+            t,
+            Via {
+                teleport: None,
+                death: None,
+                leg,
+            },
+        );
         for (i, tp) in self.model.teleports.iter().enumerate() {
             if self.explicit {
                 break;
@@ -338,10 +348,64 @@ impl Trips<'_> {
             let (t, leg) = self.leg(&tp.to.pos, b, s.level, s.known, open);
             let t = t + self.params.teleport_cast;
             if t < best.0 {
-                best = (t, Via { teleport: Some(i), leg });
+                best = (
+                    t,
+                    Via {
+                        teleport: Some(i),
+                        death: None,
+                        leg,
+                    },
+                );
+            }
+        }
+        // Dying here, respawning at the nearest spirit healer.
+        if let Some(g) = self.death_skip(s)
+            && let gy = &self.model.graveyards[g]
+            && gy.pos.continent == b.continent
+            && self.params.death_skip_time + gy.pos.dist(b) * self.params.detour / self.params.speed(s.level) < best.0
+        {
+            let (t, leg) = self.leg(&gy.pos, b, s.level, s.known, open);
+            let t = t + self.params.death_skip_time;
+            if t < best.0 {
+                best = (
+                    t,
+                    Via {
+                        teleport: None,
+                        death: Some(g),
+                        leg,
+                    },
+                );
             }
         }
         best
+    }
+
+    /// The spirit healer a death skip from where the character stands respawns it at (index in
+    /// `Model::graveyards`): the nearest, when death skips are on and every player is below
+    /// `DEATH_SKIP_UNTIL` (none in the guide editor, whose steps say it).
+    pub(crate) fn death_skip(&self, s: &State) -> Option<usize> {
+        if !self.params.death_skips || self.explicit || !self.may_die(s) {
+            return None;
+        }
+        self.graveyard(s)
+    }
+
+    /// Whether every player is below `DEATH_SKIP_UNTIL` (its level with its XP into the level).
+    pub(crate) fn may_die(&self, s: &State) -> bool {
+        let rules = self.params.edition.rules();
+        let progress = |level: i64, xp: i64| level as f64 + xp as f64 / rules.to_next_level(level).max(1) as f64;
+        (s.mates[..self.model.initial.mates.len()].iter())
+            .map(|m| progress(m.level, m.xp))
+            .fold(progress(s.level, s.xp), f64::max)
+            < DEATH_SKIP_UNTIL
+    }
+
+    /// The spirit healer nearest to where the character stands (index in `Model::graveyards`).
+    pub(crate) fn graveyard(&self, s: &State) -> Option<usize> {
+        (self.model.graveyards.iter().enumerate())
+            .filter(|(_, g)| g.pos.continent == s.pos.continent)
+            .min_by(|(_, a), (_, b)| a.pos.dist(&s.pos).total_cmp(&b.pos.dist(&s.pos)))
+            .map(|(g, _)| g)
     }
 
     /// What `fastest` from `s` takes at least to any place (`TripBound::at`), without walking
@@ -357,6 +421,9 @@ impl Trips<'_> {
                     .filter(|tp| s.knows(tp))
                     .map(|tp| (tp.to.pos, self.params.teleport_cast)),
             );
+        }
+        if let Some(g) = self.death_skip(s) {
+            starts.push((self.model.graveyards[g].pos, self.params.death_skip_time));
         }
         // Where a boat, a portal or a flight lands, and the least time to get there: flights
         // first, boats from where the trip starts or a flight lands, then flights from where

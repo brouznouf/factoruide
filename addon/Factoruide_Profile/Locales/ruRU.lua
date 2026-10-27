@@ -169,6 +169,7 @@ FG.Locales.ruRU = {
     ["levels %.1f apart: make the guide again in the app"] = "разница %.1f уровня: создайте гайд заново в приложении",
     ["%s follows another version of the guide"] = "%s следует другой версии гайда",
     ["Train at your class trainer"] = "Обучитесь у учителя своего класса",
+    ["Death skip"] = "Намеренная смерть",
     ["Several players of this group guide are of your race and class: choose yours in /fg, Guides"] = "Несколько игроков этого группового гайда вашей расы и класса: выберите своего в /fg, Гайды",
     ["Several players of this group guide are of your race and class: which one you are"] = "Несколько игроков этого группового гайда вашей расы и класса: кто из них вы",
     ["Player: %s"] = "Игрок: %s",

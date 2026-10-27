@@ -66,6 +66,8 @@ pub enum Leg {
 pub(crate) struct Via {
     /// A class teleport first (index in `Model::teleports`).
     pub(crate) teleport: Option<usize>,
+    /// Or dying first, to respawn at this spirit healer (index in `Model::graveyards`).
+    pub(crate) death: Option<usize>,
     pub(crate) leg: Leg,
 }
 

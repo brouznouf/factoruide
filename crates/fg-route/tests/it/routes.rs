@@ -3314,3 +3314,61 @@ fn a_dungeon_forced_with_its_quests_takes_them_all() {
     // quick guide started at 15: they are reported, not dropped silently.
     assert!(left.len() * 2 < theirs.len(), "left out: {left:?}");
 }
+
+/// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
+/// nearest spirit healer when that is faster, never once a level and a half past 10 (no
+/// resurrection sickness before 11), and the guide editor replays them as they were.
+#[test]
+fn death_skips_below_level_ten_and_a_half() {
+    let plan = |on: bool| {
+        let params = [format!("death_skips={on}"), "effort=0".to_owned()];
+        let request = PlanRequest {
+            params: Some(overrides().params.with_overrides(&params).unwrap()),
+            ..request("orc", "warrior", 13, &[])
+        };
+        (
+            job::plan(&database(), &overrides(), &request, &|_| {}).unwrap(),
+            request,
+        )
+    };
+    let deaths = |o: &job::PlanOutcome| {
+        (o.route.steps.iter())
+            .filter(|s| s.kind == fg_route::export::StepKind::DeathSkip)
+            .count()
+    };
+    assert_eq!(deaths(&plan(false).0), 0);
+    let (outcome, request) = plan(true);
+    assert!(deaths(&outcome) > 0);
+    for (k, s) in outcome.route.steps.iter().enumerate() {
+        if s.kind == fg_route::export::StepKind::DeathSkip {
+            // The step before says where the character was: below 10 and a half.
+            let before = outcome.route.steps[..k]
+                .iter()
+                .rev()
+                .find(|x| x.level > 0)
+                .map_or(1, |x| x.level);
+            assert!(before <= 10, "a death skip at level {before}");
+        }
+    }
+    let skips = outcome
+        .plan
+        .iter()
+        .filter(|s| matches!(s, job::RouteStep::DeathSkip))
+        .count();
+    assert_eq!(skips, deaths(&outcome), "the plan has them as steps");
+    let conn = database();
+    let editor = job::Editor::open(&conn, &overrides(), &request, None).unwrap();
+    let report = editor.simulate(&outcome.plan, &fg_route::model::Names::load(&conn, "enUS").unwrap());
+    assert_eq!(
+        report.errors,
+        0,
+        "{:?}",
+        report.steps.iter().find(|s| s.status == "error").map(|s| s.reason)
+    );
+    assert!(
+        (report.total_time - outcome.route.total_time).abs() < 60.0,
+        "{} / {}",
+        report.total_time,
+        outcome.route.total_time
+    );
+}

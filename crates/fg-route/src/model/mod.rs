@@ -126,6 +126,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
             vec![Vec::new(); sources.dungeons.len()],
         ),
     };
+    let graveyards = graveyards(conn, world, &sources)?;
     Ok(Model {
         abilities,
         quests,
@@ -147,6 +148,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         vendors: places.vendors,
         start_inn: places.start_inn,
         teleports,
+        graveyards,
         recall: places.recall,
         skipped,
         initial: Initial::default(),
@@ -162,6 +164,25 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         dungeon_loot,
         patrols,
     })
+}
+
+/// The spirit healers the character can reach: where one dying respawns.
+fn graveyards(conn: &Connection, world: &World, sources: &Sources) -> Result<Vec<Loc>> {
+    let mut stmt = conn.prepare("SELECT id FROM m_npc WHERE name = 'Spirit Healer'")?;
+    let ids = stmt
+        .query_map([], |r| r.get::<_, i64>(0))?
+        .collect::<rusqlite::Result<Vec<_>>>()?;
+    Ok((ids.iter())
+        .flat_map(|&id| {
+            (sources.entities.points(world, EntityKind::Npc, id).into_iter()).map(move |(pos, zone)| Loc {
+                pos,
+                zone,
+                kind: EntityKind::Npc,
+                id,
+                name: "Spirit Healer".to_owned(),
+            })
+        })
+        .collect())
 }
 
 /// Names of the factions of the reputation goals.

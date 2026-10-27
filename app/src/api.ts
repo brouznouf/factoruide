@@ -107,6 +107,9 @@ export interface Params {
   hearth_cast: number;
   recall_cooldown: number;
   teleport_cast: number;
+  /** Die on purpose to respawn at the nearest spirit healer when faster, below level 10.5, and what one takes (s). */
+  death_skips: boolean;
+  death_skip_time: number;
   train_every: number;
   train_radius: number;
   train_max_delay: number;
@@ -880,6 +883,8 @@ export type RouteStep =
   | { kind: "link"; first: LinkRef; last: LinkRef }
   /** Cast a class teleport (its spell name). */
   | { kind: "teleport"; spell: string }
+  /** Die on purpose, back at the nearest spirit healer. */
+  | { kind: "deathskip" }
   /** Learn the class spells at a trainer (NPC ID). */
   | { kind: "train"; trainer: number }
   /** Sell the bags' loot at a vendor (NPC ID). */

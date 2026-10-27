@@ -468,6 +468,8 @@ pub struct Model {
     pub start_inn: usize,
     /// Class spells taking the character to a capital (mage teleports).
     pub teleports: Vec<Teleport>,
+    /// The spirit healers, where a character dying respawns (the nearest).
+    pub graveyards: Vec<Loc>,
     /// Level at which the character learns a second hearthstone with a cooldown of its own (the
     /// shaman's Astral Recall, `Params::recall_cooldown`).
     pub recall: Option<i64>,

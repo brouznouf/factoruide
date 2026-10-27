@@ -19,6 +19,8 @@ pub enum Edit {
     Link { first: usize, last: usize },
     /// Cast a class teleport (`Model::teleports`).
     Teleport { to: usize },
+    /// Die on purpose: back at the nearest spirit healer (`Model::graveyards`).
+    DeathSkip,
     /// Learn the class spells at a trainer (`Model::trainers`).
     Train { trainer: usize },
     /// Sell the bags' loot at a vendor (`Model::vendors`).
@@ -168,6 +170,7 @@ impl Planner<'_> {
                         Edit::Fly { from, to } => self.edit_fly(&mut s, from, to, &mut trace),
                         Edit::Link { first, last } => self.edit_link(&mut s, first, last, &mut trace),
                         Edit::Teleport { to } => self.edit_teleport(&mut s, to, &mut trace),
+                        Edit::DeathSkip => self.edit_death_skip(&mut s, &mut trace),
                         Edit::Train { trainer } => self.edit_train(&mut s, trainer, &mut trace),
                         Edit::Sell { vendor } => self.edit_sell(&mut s, vendor, &mut trace),
                         Edit::Abandon { quest } => {
@@ -433,6 +436,31 @@ impl Planner<'_> {
         Outcome::Done
     }
 
+    /// A death skip of an edited route: at the spirit healer nearest to where the character
+    /// stands, while no player is past `DEATH_SKIP_UNTIL`.
+    fn edit_death_skip(&self, s: &mut State, trace: &mut Vec<Timed>) -> Outcome {
+        if !self.trips().may_die(s) {
+            return Outcome::Invalid("too high for a death skip");
+        }
+        let Some(g) = self.trips().graveyard(s) else {
+            return Outcome::Invalid("no spirit healer");
+        };
+        let gy = &self.model.graveyards[g];
+        recorder(&mut Some(trace))(
+            s,
+            Event::DeathSkip {
+                pos: gy.pos,
+                zone: gy.zone,
+            },
+        );
+        s.time += self.params.death_skip_time;
+        s.spent.travel += self.params.death_skip_time;
+        s.pos = gy.pos;
+        s.zone = gy.zone;
+        s.landed = Landed::Transport;
+        Outcome::Done
+    }
+
     /// Training of an edited route, at the trainer it says.
     fn edit_train(&self, s: &mut State, trainer: usize, trace: &mut Vec<Timed>) -> Outcome {
         let abilities = self.model.abilities.trained(s.abilities, s.level) & !s.abilities;
@@ -508,16 +536,13 @@ impl Planner<'_> {
                     Event::Fly { from, to } => Edit::Fly { from, to },
                     Event::Link { first, last } => Edit::Link { first, last },
                     Event::Teleport { to } => Edit::Teleport { to },
+                    Event::DeathSkip { .. } => Edit::DeathSkip,
                     Event::Train { trainer, .. } => Edit::Train { trainer },
                     Event::Sell { vendor } => Edit::Sell { vendor },
                     Event::Abandon { quest } => Edit::Abandon { quest: quest as u32 },
                     Event::Grind { to_level, .. } => Edit::GrindTo { level: to_level },
                     Event::GrindMobs { mobs, .. } => Edit::Grind { mobs },
-                    Event::Reward { .. }
-                    | Event::Farm { .. }
-                    | Event::DeathSkip { .. }
-                    | Event::Shortcut { .. }
-                    | Event::CatchUp { .. } => {
+                    Event::Reward { .. } | Event::Farm { .. } | Event::Shortcut { .. } | Event::CatchUp { .. } => {
                         continue;
                     }
                 };
@@ -533,6 +558,7 @@ impl Planner<'_> {
                 Event::Fly { from, to } => out.push(Edit::Fly { from, to }),
                 Event::Link { first, last } => out.push(Edit::Link { first, last }),
                 Event::Teleport { to } => out.push(Edit::Teleport { to }),
+                Event::DeathSkip { .. } => out.push(Edit::DeathSkip),
                 _ => {}
             }
         }
@@ -565,7 +591,9 @@ fn is_own(edit: Edit, event: &Event) -> bool {
         (Edit::Train { trainer }, Event::Train { trainer: done, .. }) => trainer == *done,
         (Edit::Sell { vendor }, Event::Sell { vendor: done }) => vendor == *done,
         (Edit::Abandon { quest }, Event::Abandon { quest: done }) => quest as usize == *done,
-        (Edit::Grind { .. }, Event::GrindMobs { .. }) | (Edit::GrindTo { .. }, Event::Grind { .. }) => true,
+        (Edit::Grind { .. }, Event::GrindMobs { .. })
+        | (Edit::GrindTo { .. }, Event::Grind { .. })
+        | (Edit::DeathSkip, Event::DeathSkip { .. }) => true,
         _ => false,
     }
 }
