@@ -203,6 +203,8 @@ export interface PlanRequest {
   start?: StartState | null;
   /** The other players of a group guide, as their addon recorded them (empty: solo). */
   mates?: StartState[];
+  /** The professions each of `mates` levels, in their order. */
+  mate_professions?: ProfessionGoal[][];
 }
 
 /** A point of a game map (uiMapID, percent coordinates). */
@@ -398,7 +400,7 @@ export interface NamedId {
 
 export interface Options {
   /** `classes`: class keys the race can play. */
-  races: { key: string; id: number; name: string; faction: string; classes: string[] }[];
+  races: { key: string; id: number; name: string; faction: string; classes: string[]; start_npc: number }[];
   classes: NamedId[];
   zones: { id: number; name: string; names?: Record<string, string>; continent: number }[];
   /** The flight paths of the game version (TaxiNodes), and the sides that can use them. */

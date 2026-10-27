@@ -2,7 +2,6 @@ import type { CharacterInfo, Options, StartState } from "../api";
 import { FlightPaths } from "./FlightPaths";
 import { useDate, useGameName, useT } from "../i18n";
 import { Hint } from "./Hint";
-import { IS_WEB } from "../web/mode";
 import { ProfilePaste } from "../web/components/ProfilePaste";
 import { useState } from "react";
 
@@ -17,7 +16,7 @@ interface Props {
   recorded?: number[];
   inferred?: number[];
   onFlights?: (flights: number[]) => void;
-  /** Web build: a character's export was pasted (its "Name-Realm"). */
+  /** A character's export was pasted (its "Name-Realm"). */
   onImported?: (name: string) => void;
 }
 
@@ -29,7 +28,7 @@ export function CharacterPicker({ characters, start, onPick, options, recorded, 
   const gameName = useGameName();
   const latest = start ? characters?.find((c) => c.profile.name === start.name) : undefined;
   const pick = (name: string) => onPick(characters?.find((c) => c.profile.name === name) ?? null);
-  // Web build: the export of a character, pasted here.
+  // The export of a character, pasted here (a friend's, or on the web build).
   const [pasting, setPasting] = useState(false);
   const xpShare = start && start.xp_max > 0 ? Math.floor((100 * start.xp) / start.xp_max) : 0;
 
@@ -56,12 +55,12 @@ export function CharacterPicker({ characters, start, onPick, options, recorded, 
           </option>
         ))}
       </select>
-      {IS_WEB && !pasting && (
+      {!pasting && (
         <button className="link" onClick={() => setPasting(true)}>
           {t("Coller l'export d'un personnage (en jeu : /fg, « Exporter mon personnage »)…")}
         </button>
       )}
-      {IS_WEB && pasting && (
+      {pasting && (
         <ProfilePaste
           compact
           onImported={(name) => {

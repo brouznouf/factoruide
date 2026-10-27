@@ -1,20 +1,16 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api, type CharacterInfo, type Options, type Params, type PlanRequest, type ProfessionGoal, type StartState } from "../api";
+import { api, type CharacterInfo, type Options, type Params, type PlanRequest } from "../api";
 import { MIN_CHOICE_LEVEL, SIMPLE_KEYS, efforts, presets, sections, type Field, type Section } from "../paramSchema";
-import { ClassName } from "./Character";
-import { CharacterPicker } from "./CharacterPicker";
 import { DungeonPanel } from "./DungeonPanel";
 import { Hint } from "./Hint";
 import { ParamField } from "./ParamField";
 import { PowerCurve } from "./PowerCurve";
-import { ProfessionPicker } from "./ProfessionPicker";
+import { GROUP_MAX, PlayerBlock, asStart, fromStart, groupProblems, newPlayer, type PlayerSetup } from "./PlayerBlock";
 import { ReputationPanel } from "./ReputationPanel";
 import { RequiredQuests } from "./RequiredQuests";
 import { WorldMap, type ZoneState } from "./WorldMap";
 import { ZonePanel } from "./ZonePanel";
-import { useGameName, useT } from "../i18n";
-import { IS_WEB } from "../web/mode";
-import { ProfilePaste } from "../web/components/ProfilePaste";
+import { useT } from "../i18n";
 
 interface Props {
   options: Options;
@@ -108,142 +104,36 @@ function Toggle({ label, help, checked, onChange }: { label: string; help: strin
   );
 }
 
-/** Players in a group guide, the character included. */
-const GROUP_MAX = 5;
-/** Level every player of a group guide must have reached, unless they all start in one zone. */
-const GROUP_MIN_LEVEL = 10;
-
-/** "Name" of a "Name-Realm". */
-const shortName = (name: string) => name.split("-")[0];
-
-/** Whether these players can have a group guide: level 10 each, or all in the same zone (new characters). */
-const groupAllows = (players: StartState[]) =>
-  players.every((p) => p.level >= GROUP_MIN_LEVEL) ||
-  (players[0]?.position != null && players.every((p) => p.position?.map === players[0].position?.map));
-
-/**
- * The other players of a group guide, under the character: those the addon recorded on this
- * computer, or each player's export pasted (in game: /fg, "Export my character").
- */
-function GroupRow({
-  start,
-  mates,
-  characters,
-  note,
-  onAdd,
-  onRemove,
-  onPasted,
-}: {
-  start: StartState | null;
-  mates: StartState[];
-  characters: CharacterInfo[] | null;
-  /** Why the character just pasted was not added to the group. */
-  note: string | null;
-  onAdd: (mate: StartState) => void;
-  onRemove: (name: string) => void;
-  onPasted: (name: string) => void;
-}) {
-  const t = useT();
-  const [adding, setAdding] = useState(false);
-  const candidates = (characters ?? []).filter(
-    (c) =>
-      start &&
-      c.profile.name !== start.name &&
-      c.profile.faction === start.faction &&
-      !mates.some((m) => m.name === c.profile.name) &&
-      groupAllows([start, ...mates, c.profile]),
-  );
-  const player = (p: StartState) => (
-    <>
-      <strong>{shortName(p.name)}</strong> <ClassName klass={p.class.toLowerCase()} /> <span className="muted">{t("niveau {n}", { n: p.level })}</span>
-    </>
-  );
-  return (
-    <div className="group-row">
-      <div className="group-players">
-        <span className="group-label">
-          {t("Groupe")}
-          <Hint text={t("Un guide pour tout le groupe : la même route pour chacun, l'XP de chacun suivie, les quêtes déjà faites par certains reprises pour les autres. Chaque joueur doit être niveau 10 au moins (ou tous partir de la même zone), tous de la même faction.")} />
-        </span>
-        {start ? (
-          <>
-            <span className="companion me">
-              <span className="muted">{t("Vous")}</span> {player(start)}
-            </span>
-            {mates.map((m) => (
-              <span className="companion" key={m.name}>
-                {player(m)}
-                <button className="link" aria-label={t("Retirer")} title={t("Retirer")} onClick={() => onRemove(m.name)}>
-                  ✕
-                </button>
-              </span>
-            ))}
-            {mates.length < GROUP_MAX - 1 && (
-              <button className="companion add" aria-expanded={adding} onClick={() => setAdding(!adding)}>
-                + {t("Ajouter un joueur")}
-              </button>
-            )}
-          </>
-        ) : (
-          <span className="muted">{t("Choisissez d'abord votre personnage.")}</span>
-        )}
-      </div>
-      {start && adding && (
-        <div className="group-add">
-          {candidates.length > 0 && (
-            <select
-              aria-label={t("Ajouter un joueur")}
-              value=""
-              onChange={(e) => {
-                const c = candidates.find((x) => x.profile.name === e.target.value);
-                if (c) {
-                  onAdd(c.profile);
-                  setAdding(false);
-                }
-              }}
-            >
-              <option value="">{IS_WEB ? t("Un personnage déjà importé…") : t("Un personnage enregistré par l'addon…")}</option>
-              {candidates.map((c) => (
-                <option key={c.profile.name} value={c.profile.name}>
-                  {shortName(c.profile.name)} · {t("niveau {n}", { n: c.profile.level })}
-                </option>
-              ))}
-            </select>
-          )}
-          <ProfilePaste
-            compact
-            onImported={(name) => {
-              onPasted(name);
-              setAdding(false);
-            }}
-          />
-        </div>
-      )}
-      {note && <p className="error">{note}</p>}
-    </div>
-  );
-}
-
 /**
  * Step 1. The simple view holds the choices that matter (character, pace, dungeons, zones,
  * professions); the advanced view every setting of the planner.
  */
 export function ConfigForm({ options, initial, startCharacter, defaultLocale, onRun, compareStarts, onCompareStarts, onManual, onExport, onChange }: Props) {
   const t = useT();
-  const gameName = useGameName();
   const defaults = options.params;
   const [view, setView] = useState<View>("simple");
-  const [race, setRace] = useState(initial?.race ?? options.races[0]?.key ?? "");
-  const [klass, setKlass] = useState(initial?.class ?? options.races.find((r) => r.key === race)?.classes[0] ?? options.classes[0]?.key ?? "");
-  // Classes the race can play.
+  // The players: the guide's own character first, then the others of a group guide.
+  const [players, setPlayers] = useState<PlayerSetup[]>(() => {
+    const own = initial?.start
+      ? fromStart(0, initial.start, options, initial.professions ?? [])
+      : { ...newPlayer(0, options, initial?.race), ...(initial ? { klass: initial.class, level: initial.from_level, professions: initial.professions ?? [] } : {}) };
+    const mates = (initial?.mates ?? []).map((m, k) => fromStart(k + 1, m, options, initial?.mate_professions?.[k] ?? []));
+    return [own, ...mates];
+  });
+  const nextId = useRef(players.length);
+  const own = players[0];
+  const { race, klass } = own;
+  const fromLevel = own.start?.level ?? own.level;
   const raceInfo = options.races.find((r) => r.key === race);
-  const playable = (keys: string[] | undefined) => options.classes.filter((c) => !keys?.length || keys.includes(c.key));
-  const raceClasses = playable(raceInfo?.classes);
-  // Adjusted while rendering (not in an effect) when the race can't play the class.
-  if (raceClasses.length && !raceClasses.some((c) => c.key === klass)) setKlass(raceClasses[0].key);
+  const group = players.length > 1;
+  const setPlayer = (k: number, p: PlayerSetup) => setPlayers((list) => list.map((x, i) => (i === k ? p : x)));
+  const addPlayer = () => {
+    // Going from solo to a group: elite quests become worth it.
+    if (!group) set("allow_elite", true);
+    setPlayers((list) => [...list, newPlayer(nextId.current++, options, list[0].race)]);
+  };
   const [triedRun, setTriedRun] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
-  const [fromLevel, setFromLevel] = useState(initial?.from_level ?? 1);
   const [toLevel, setToLevel] = useState(initial?.to_level ?? options.max_level);
   const [name, setName] = useState(initial?.name ?? "");
   const nameMissing = triedRun && !name.trim();
@@ -252,39 +142,14 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   const [params, setParams] = useState<Params>({ ...defaults, ...(initial?.params ?? {}) });
   const [classQuests, setClassQuests] = useState<string[] | null>(initial?.required_class_quests ?? null);
   const [requiredQuests, setRequiredQuests] = useState<(number | string)[]>(initial?.required_quests ?? []);
-  const [professions, setProfessions] = useState<ProfessionGoal[]>(initial?.professions ?? []);
-  // The other players of a group guide (up to 4), as their addon recorded them.
-  const [mates, setMates] = useState<StartState[]>(initial?.mates ?? []);
-  const addMate = (mate: StartState) => {
-    // Going from solo to a group: elite quests become worth it.
-    if (mates.length === 0) set("allow_elite", true);
-    setMates([...mates, mate]);
-  };
-  // Why the character just pasted for the group was left out of it.
-  const [groupNote, setGroupNote] = useState<string | null>(null);
   const [newClassQuest, setNewClassQuest] = useState("");
-  // The character met in game the guide starts from, and those the addon recorded.
-  const [start, setStart] = useState<StartState | null>(initial?.start ?? null);
+  // The characters the addon recorded, and those pasted.
   const [characters, setCharacters] = useState<CharacterInfo[] | null>(null);
-  /** A player's export just pasted: in the group when it can be, else why not. */
-  const addPasted = (pasted: string) =>
-    api
-      .listCharacters()
-      .then((list) => {
-        setCharacters(list);
-        const p = list.find((c) => c.profile.name === pasted)?.profile;
-        if (!p || !start) return;
-        const who = shortName(p.name);
-        if (p.name === start.name || mates.some((m) => m.name === p.name)) setGroupNote(t("{name} est déjà dans le groupe.", { name: who }));
-        else if (mates.length >= GROUP_MAX - 1) setGroupNote(t("Le groupe est complet ({n} joueurs).", { n: GROUP_MAX }));
-        else if (p.faction !== start.faction) setGroupNote(t("{name} n'est pas de votre faction : tous les joueurs d'un guide de groupe sont de la même faction.", { name: who }));
-        else if (!groupAllows([start, ...mates, p])) setGroupNote(t("{name} est niveau {n} : sous le niveau 10, tous les joueurs doivent partir de la même zone.", { name: who, n: p.level }));
-        else {
-          setGroupNote(null);
-          addMate(p);
-        }
-      })
-      .catch(() => {});
+  const readCharacters = () =>
+    api.listCharacters().then((list) => {
+      setCharacters(list);
+      return list;
+    });
   useEffect(() => {
     api
       .listCharacters()
@@ -293,77 +158,28 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   }, []);
   // Opened from a character: it is picked once the characters are read (adjusted while rendering).
   const [picked, setPicked] = useState(false);
-  // Flight paths: what the addon recorded, what the quests done deduce; the player's ticks and unticks
-  // are kept for the character (`fg.flights.<name>`).
-  const [flightInfo, setFlightInfo] = useState<{ recorded: number[]; inferred: number[] }>({ recorded: initial?.start?.flights ?? [], inferred: [] });
-  const flightEdits = (character: string): { added: number[]; removed: number[] } => {
-    try {
-      return { added: [], removed: [], ...JSON.parse(localStorage.getItem(`fg.flights.${character}`) ?? "{}") };
-    } catch {
-      return { added: [], removed: [] };
-    }
-  };
-  const mergeFlights = (character: string, recorded: number[], inferred: number[]) => {
-    const edits = flightEdits(character);
-    const removed = new Set(edits.removed);
-    return [...new Set([...recorded, ...inferred, ...edits.added])].filter((id) => !removed.has(id)).sort((a, b) => a - b);
-  };
-  const editFlights = (flights: number[]) => {
-    if (!start) return;
-    const before = new Set(start.flights);
-    const after = new Set(flights);
-    const edits = flightEdits(start.name);
-    const added = new Set(edits.added);
-    const removed = new Set(edits.removed);
-    for (const id of after) {
-      if (before.has(id)) continue;
-      added.add(id);
-      removed.delete(id);
-    }
-    for (const id of before) {
-      if (after.has(id)) continue;
-      removed.add(id);
-      added.delete(id);
-    }
-    localStorage.setItem(`fg.flights.${start.name}`, JSON.stringify({ added: [...added], removed: [...removed] }));
-    setStart({ ...start, flights, flights_final: true });
-  };
-  const pickCharacter = (c: CharacterInfo | null) => {
-    setStart(c ? { ...c.profile, flights: mergeFlights(c.profile.name, c.profile.flights, []) } : null);
-    if (c) {
-      const recorded = c.profile.flights;
-      setFlightInfo({ recorded, inferred: [] });
-      api
-        .inferredFlights(c.profile)
-        .then((inferred) => {
-          setFlightInfo({ recorded, inferred });
-          setStart((s) => (s && s.name === c.profile.name ? { ...s, flights: mergeFlights(c.profile.name, recorded, inferred), flights_final: true } : s));
-        })
-        .catch(() => {});
-    }
-    // A group starts from the characters as the addon saw them, of one faction (level 10, or one zone).
-    setMates((list) => {
-      const kept = c ? list.filter((m) => m.name !== c.profile.name && m.faction === c.profile.faction) : [];
-      return c && groupAllows([c.profile, ...kept]) ? kept : [];
-    });
-    if (!c) {
-      setFromLevel(1);
-      return;
-    }
-    if (c.race) setRace(c.race);
-    setKlass(c.class);
-    setFromLevel(c.profile.level);
+  /** The guide's own character chosen: the guide's levels and name follow it. */
+  const ownPicked = (c: CharacterInfo | null) => {
+    if (!c) return;
     if (toLevel <= c.profile.level) setToLevel(options.max_level);
     if (!name.trim()) setName(`${c.profile.name.split("-")[0]} ${c.profile.level}-${Math.max(toLevel, c.profile.level + 1)}`);
-    // The professions it has are leveled on (their curve goes through its skill).
-    const added = c.professions.filter(([key]) => !professions.some((g) => g.key === key));
-    if (added.length) setProfessions([...professions, ...added.map(([key]) => ({ key, target: 300 }))]);
   };
   if (startCharacter && characters && !picked) {
     setPicked(true);
     const found = characters.find((c) => c.profile.name === startCharacter);
-    if (found) pickCharacter(found);
+    if (found) {
+      ownPicked(found);
+      setPlayer(0, {
+        ...own,
+        start: found.profile,
+        race: found.race ?? own.race,
+        klass: found.class,
+        level: found.profile.level,
+        professions: found.professions.map(([key]) => ({ key, target: 300 })),
+      });
+    }
   }
+  const problems = groupProblems(players, options, t);
 
   const className = options.classes.find((c) => c.key === klass)?.name.toLowerCase() ?? klass;
   // Class quests follow the class unless they come from the configuration being edited (adjusted
@@ -379,7 +195,6 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
     }
   }
   const set = (key: keyof Params, value: Params[keyof Params]) => setParams((p) => ({ ...p, [key]: value }));
-  const factions = useMemo(() => [...new Set(options.races.map((r) => r.faction))], [options.races]);
 
   const zoneStates = useMemo(() => {
     const s: Record<number, ZoneState> = {};
@@ -424,10 +239,11 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
     params,
     required_class_quests: classQuests ?? [],
     required_quests: requiredQuests,
-    professions,
+    professions: own.professions,
     locale,
-    start,
-    mates: start ? mates : [],
+    start: group ? asStart(own, 0, options) : own.start,
+    mates: group ? players.slice(1).map((p, k) => asStart(p, k + 1, options)) : [],
+    mate_professions: group ? players.slice(1).map((p) => p.professions) : [],
   });
 
   /** Generate the guide, or create it by hand: the request, once the guide has a name. */
@@ -443,7 +259,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
     onChange?.(request());
     // The request is made of these.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [race, klass, fromLevel, toLevel, name, params, classQuests, requiredQuests, professions, locale, mates, start, onChange]);
+  }, [players, toLevel, name, params, classQuests, requiredQuests, locale, onChange]);
 
   /** A section of the advanced settings (null when the search leaves none of its fields). */
   const settingsSection = (s: Section) => {
@@ -518,7 +334,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
             value={params.effort}
             onChange={(effort) => set("effort", effort)}
           />
-          {onCompareStarts && (start || fromLevel > 1) && (start?.level ?? fromLevel) >= MIN_CHOICE_LEVEL && (
+          {onCompareStarts && fromLevel >= MIN_CHOICE_LEVEL && (
             <label className="compare-starts" title={t("Avant de calculer le guide, calcule rapidement quelques départs différents (zone, vol, pierre de foyer) et vous les présente pour que vous choisissiez. N'apparaît que s'il y a vraiment plusieurs départs possibles.")}>
               <input type="checkbox" checked={compareStarts ?? true} onChange={(e) => onCompareStarts(e.target.checked)} /> {t("Comparer les départs")}
             </label>
@@ -536,28 +352,9 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
 
       {view === "simple" ? (
         <div className="config-simple">
-          <section className="panel">
-            <h3>{t("Personnage")}</h3>
+          <section className="panel guide-block">
+            <h3>{t("Guide")}</h3>
             <div className="character-grid">
-              <CharacterPicker
-                characters={characters?.filter((c) => !c.shared) ?? null}
-                start={start}
-                onPick={pickCharacter}
-                options={options}
-                recorded={flightInfo.recorded}
-                inferred={flightInfo.inferred}
-                onFlights={editFlights}
-                onImported={(character) =>
-                  api
-                    .listCharacters()
-                    .then((list) => {
-                      setCharacters(list);
-                      const found = list.find((c) => c.profile.name === character);
-                      if (found) pickCharacter(found);
-                    })
-                    .catch(() => {})
-                }
-              />
               <label className={`field guide-name${nameMissing ? " invalid" : ""}`}>
                 <span>
                   {t("Nom du guide")} <em className="required">*</em>
@@ -573,64 +370,32 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                 {nameMissing && <small className="field-error">{t("Donnez un nom au guide pour le retrouver et le partager.")}</small>}
               </label>
               <label className="field">
-                <span>{t("Race")}</span>
-                <select value={race} disabled={!!start} onChange={(e) => setRace(e.target.value)}>
-                  {factions.map((f) => (
-                    <optgroup key={f} label={gameName(f)}>
-                      {options.races
-                        .filter((r) => r.faction === f)
-                        .map((r) => (
-                          <option key={r.key} value={r.key}>
-                            {gameName(r.name)}
-                          </option>
-                        ))}
-                    </optgroup>
-                  ))}
-                </select>
-              </label>
-              <label className="field">
-                <span>{t("Classe")}</span>
-                <select value={klass} disabled={!!start} onChange={(e) => setKlass(e.target.value)}>
-                  {raceClasses.map((c) => (
-                    <option key={c.key} value={c.key}>
-                      {gameName(c.name)}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="field">
-                <span>{t("Du niveau")}</span>
-                <input type="number" min={1} max={options.max_level - 1} value={fromLevel} disabled={!!start} onChange={(e) => setFromLevel(Number(e.target.value))} />
-              </label>
-              <label className="field">
                 <span>{t("Au niveau")}</span>
                 <input type="number" min={2} max={options.max_level} value={toLevel} onChange={(e) => setToLevel(Number(e.target.value))} />
               </label>
             </div>
-
-            <GroupRow
-              start={start}
-              mates={mates}
-              characters={characters}
-              note={groupNote}
-              onAdd={(mate) => {
-                setGroupNote(null);
-                addMate(mate);
-              }}
-              onRemove={(gone) => setMates(mates.filter((m) => m.name !== gone))}
-              onPasted={addPasted}
-            />
-
-            <div className="character-extras">
-              <div>
-                <h3>
-                  {t("Métiers")}
-                  <Hint text={t("Pas de temps ni d'étapes dans le guide : l'addon indique si vous êtes en avance ou en retard sur la courbe, et les quêtes du métier sont proposées (facultatives).")} />
-                </h3>
-                <ProfessionPicker goals={professions} onChange={setProfessions} />
-              </div>
-            </div>
           </section>
+
+          {players.map((p, k) => (
+            <PlayerBlock
+              key={p.id}
+              index={k}
+              player={p}
+              options={options}
+              characters={characters?.filter((c) => players.every((o) => o === p || o.start?.name !== c.profile.name)) ?? null}
+              group={group}
+              problem={problems[k]}
+              onChange={(next) => setPlayer(k, next)}
+              onPicked={k === 0 ? ownPicked : undefined}
+              onImported={readCharacters}
+              onRemove={k > 0 ? () => setPlayers((list) => list.filter((o) => o !== p)) : undefined}
+            />
+          ))}
+          {players.length < GROUP_MAX && (
+            <button className="add-player" onClick={addPlayer} title={t("Un guide pour tout le groupe : la même route pour chacun, l'XP de chacun suivie, les quêtes déjà faites par certains reprises pour les autres. Chaque joueur doit être niveau 10 au moins (ou tous partir de la même zone), tous de la même faction.")}>
+              + {t("Ajouter un joueur")}
+            </button>
+          )}
 
           <div className="config-columns">
             {/* How to play and the group in a column; beside it, the dungeons over the zones. */}
@@ -687,7 +452,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                 factions={options.factions}
                 raceId={raceInfo?.id}
                 side={raceInfo?.faction}
-                start={start}
+                start={own.start}
                 goals={params.reputation_goals}
                 onChange={(reputation_goals) => setParams((p) => ({ ...p, reputation_goals }))}
               />

@@ -51,6 +51,8 @@ pub struct RaceOption {
     pub faction: crate::faction::Faction,
     /// Classes this race can play (class keys), from the game's CharBaseInfo.
     pub classes: Vec<String>,
+    /// The NPC its new characters start next to (races sharing a starting place share it).
+    pub start_npc: i64,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -117,6 +119,7 @@ pub fn options(conn: &Connection, overrides: &Overrides) -> Result<Options> {
                 name: race_names.get(&r.id).cloned().unwrap_or_else(|| key.clone()),
                 faction: r.faction,
                 classes: race_classes(conn, r.id)?,
+                start_npc: r.start_npc,
             })
         })
         .collect::<Result<_>>()?;
@@ -539,6 +542,7 @@ mod tests {
             name: key.into(),
             faction,
             classes: vec![],
+            start_npc: 0,
         };
         let races = [
             race(4, "nightelf", crate::faction::Faction::Alliance),

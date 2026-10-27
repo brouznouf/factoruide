@@ -2685,23 +2685,26 @@ button.dungeon.excluded b {
   max-height: 230px;
 }
 
-/* Group of players, under the character ----------------------------------------- */
-.group-row {
+/* The players of the guide: a block each, and the button adding one ------------- */
+.player-head {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 12px;
-}
-.group-players {
-  display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
 }
-.group-label {
+.add-player {
+  width: 100%;
+  padding: 14px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  background: transparent;
   color: var(--text-secondary);
-  font-size: 12px;
-  margin-right: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.add-player:hover {
+  color: var(--text);
+  border-color: var(--accent-edge);
 }
 .companion {
   display: inline-flex;
@@ -2720,15 +2723,6 @@ button.dungeon.excluded b {
 }
 .companion.add:hover {
   color: var(--text);
-}
-.group-add {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--surface-2);
 }
 .tag {
   margin-left: 8px;

@@ -10,6 +10,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### App
 
+- New guide: a block for the guide (name, target level) and one for each player (a recorded character, a pasted export or a new one, its level, race, class and professions); "+ Add a player" makes a group guide, up to 5 players.
 - Choose must-have quests at the bottom of the new guide page, searched among your race and class's quests by name, zone, level or ID ("barrens 20").
 - Group guides: in the desktop app too, a player who plays on another computer is added by pasting the export of their character (in game: /fg, "Export my character").
 - In the guide editor, a quest already in the guide says at which step ("already in the guide · step 313"); the number shows that step.
