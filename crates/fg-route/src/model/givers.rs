@@ -30,6 +30,8 @@ enum ItemStart {
         /// The mob it drops from (ID, name) and its spawns; none from an object.
         mob: Option<(i64, String)>,
         spots: Option<Spots>,
+        /// Looted during this dungeon's run.
+        dungeon: Option<usize>,
     },
     /// The reward of another quest (a tome handed by the class trainer): got from whoever turns
     /// that quest in, after it (unless it can be asked again).
@@ -55,7 +57,7 @@ impl QuestBuilder<'_> {
         let mut rare_start = false;
         let relations = self.sources.relations.get(&r.id).map(Vec::as_slice).unwrap_or_default();
         if let Some(item) = self.held_item(r.id, relations)
-            && let ItemStart::Looted { at, work, .. } = self.item_start(r.id, item)
+            && let ItemStart::Looted { at, work, .. } = self.item_start(r, item)
         {
             givers.starts.push(at);
             givers.start_work = work;
@@ -78,11 +80,17 @@ impl QuestBuilder<'_> {
             if *role != Role::Start {
                 continue;
             }
-            match self.item_start(r.id, *id) {
-                ItemStart::Looted { at, work, mob, spots } => {
+            match self.item_start(r, *id) {
+                ItemStart::Looted {
+                    at,
+                    work,
+                    mob,
+                    spots,
+                    dungeon,
+                } => {
                     givers.starts.push(at);
                     givers.start_work = work;
-                    givers.start_dungeon = mob.as_ref().and_then(|(n, _)| self.dungeon_of(EntityKind::Npc, *n));
+                    givers.start_dungeon = dungeon;
                     givers.start_mob = mob;
                     givers.start_spots = spots;
                 }
@@ -139,7 +147,8 @@ impl QuestBuilder<'_> {
 
     /// Where the item starting quest `quest` is got: objects first, then the mob dropping it
     /// best (unknown rate: see `assumed_start_chance`; looting it costs 1 / chance kills).
-    fn item_start(&self, quest: i64, item: i64) -> ItemStart {
+    fn item_start(&self, r: &QuestRow, item: i64) -> ItemStart {
+        let quest = r.id;
         let (entities, world, params) = (&self.sources.entities, self.world, self.params);
         let start = &self.sources.start;
         let sources = self.sources.item_origins.get(&item).cloned().unwrap_or_default();
@@ -153,19 +162,20 @@ impl QuestBuilder<'_> {
         let boss = sources.iter().find_map(|(t, n)| {
             (*t == SourceKind::Npc).then(|| self.dungeon_of(EntityKind::Npc, *n).map(|d| (*n, d)))?
         });
+        let in_run = |d: usize, mob: Option<(i64, String)>| ItemStart::Looted {
+            at: Loc {
+                kind: EntityKind::Item,
+                id: item,
+                name: entities.name(EntityKind::Item, item),
+                ..self.sources.dungeons[d].entrance.clone()
+            },
+            work: (0.0, 0, 0.0),
+            mob,
+            spots: None,
+            dungeon: Some(d),
+        };
         if let Some((npc, d)) = boss {
-            let entrance = &self.sources.dungeons[d].entrance;
-            return ItemStart::Looted {
-                at: Loc {
-                    kind: EntityKind::Item,
-                    id: item,
-                    name: entities.name(EntityKind::Item, item),
-                    ..entrance.clone()
-                },
-                work: (0.0, 0, 0.0),
-                mob: Some((npc, entities.name(EntityKind::Npc, npc))),
-                spots: None,
-            };
+            return in_run(d, Some((npc, entities.name(EntityKind::Npc, npc))));
         }
         let rank = |n: &i64| entities.npc.get(n).map_or(0, |e| e.3);
         let droppers: Vec<Dropper> = sources
@@ -208,6 +218,7 @@ impl QuestBuilder<'_> {
                 work: (0.0, 0, 1.0),
                 mob: None,
                 spots: None,
+                dungeon: None,
             };
         }
         if let Some((npc, chance)) = mobs.iter().copied().max_by(|a, b| a.1.total_cmp(&b.1)) {
@@ -218,11 +229,22 @@ impl QuestBuilder<'_> {
                     work: (1.0 / chance, entities.npc_level(npc), 0.0),
                     mob: Some((npc, entities.name(EntityKind::Npc, npc))),
                     spots: Spots::new(&points, &pos),
+                    dungeon: None,
                 },
                 None => ItemStart::Nowhere,
             };
         }
-        self.item_rewarded(quest, item)
+        match self.item_rewarded(quest, item) {
+            // Got nowhere known, for a quest filed under a dungeon: in the run (Forever's Crest
+            // of Lordaeron, from an object of Ruins of Lordaeron no source places).
+            ItemStart::Rewarded(places) if places.is_empty() => {
+                match r.sort.and_then(|s| self.sources.dungeon_by_area.get(&s).copied()) {
+                    Some(d) => in_run(d, None),
+                    None => ItemStart::Rewarded(places),
+                }
+            }
+            start => start,
+        }
     }
 
     /// Where quest `quest` is turned in (its first ender found), None when nowhere known.

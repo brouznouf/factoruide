@@ -3081,3 +3081,20 @@ fn ruins_of_lordaeron_is_run_at_the_games_levels() {
     let listed = options.dungeons.iter().find(|d| d.id == 16611).unwrap();
     assert_eq!((listed.min_level, listed.max_level), (Some(15), Some(20)));
 }
+
+/// A quest filed under a dungeon whose starting item no source places (Forever's Crest of
+/// Lordaeron, from an object of Ruins of Lordaeron, GitHub #61) is started during the run.
+#[test]
+fn a_dungeon_quest_started_by_an_unplaced_item_starts_in_the_run() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let request = PlanRequest {
+        params: Some(overrides.params.with_overrides(&[]).unwrap()),
+        ..request("human", "warrior", 30, &[])
+    };
+    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let ruins = p.model.dungeons.iter().position(|d| d.area == 16611).unwrap();
+    for id in [95189, 92415] {
+        let q = &p.model.quests[quest(&p, id).unwrap_or_else(|| panic!("{id} planned")) as usize];
+        assert_eq!(q.start_dungeon, Some(ruins), "{}", q.name);
+    }
+}
