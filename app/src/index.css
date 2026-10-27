@@ -2119,7 +2119,23 @@ button.setting-reset:hover:not(:disabled) {
   top: 0;
   z-index: 1;
 }
-/* Dungeons: buttons by level, a click cycling automatic → forced → excluded. */
+/* Dungeons: buttons by level, a click cycling automatic → forced → forced with its quests →
+   excluded; beside them, those chosen. */
+.dungeons-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 16px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .dungeons-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.zone-group.dungeon-group.forced .zone-group-head,
+.zone-group.dungeon-group.quests .zone-group-head {
+  color: var(--good);
+}
 .dungeon-levels {
   display: flex;
   flex-wrap: wrap;

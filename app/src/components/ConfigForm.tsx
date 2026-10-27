@@ -459,6 +459,8 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                 />
               </section>
 
+              <RequiredQuests race={race} klass={klass} locale={locale} quests={requiredQuests} onChange={setRequiredQuests} />
+
               <ReputationPanel
                 factions={options.factions}
                 raceId={raceInfo?.id}
@@ -500,7 +502,6 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
               </section>
             </div>
           </div>
-          <RequiredQuests race={race} klass={klass} locale={locale} quests={requiredQuests} onChange={setRequiredQuests} />
         </div>
       ) : (
         <>
