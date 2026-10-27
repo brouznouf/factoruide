@@ -77,8 +77,12 @@ impl Planner<'_> {
             left -= self.params.teleport_cast;
             from = self.model.teleports[to].to.pos;
         }
+        // The death is the step's own time (finding a mob, dying, the spirit healer): recorded
+        // once back up.
         if let Some(g) = via.death {
             let gy = &self.model.graveyards[g];
+            spend(s, self.params.death_skip_time, false);
+            left -= self.params.death_skip_time;
             record(
                 s,
                 Event::DeathSkip {
@@ -86,8 +90,6 @@ impl Planner<'_> {
                     zone: gy.zone,
                 },
             );
-            spend(s, self.params.death_skip_time, false);
-            left -= self.params.death_skip_time;
             from = gy.pos;
         }
         // Walked to `at`, at most what is left of the trip.

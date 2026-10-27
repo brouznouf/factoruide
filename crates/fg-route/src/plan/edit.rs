@@ -446,6 +446,8 @@ impl Planner<'_> {
             return Outcome::Invalid("no spirit healer");
         };
         let gy = &self.model.graveyards[g];
+        s.time += self.params.death_skip_time;
+        s.spent.travel += self.params.death_skip_time;
         recorder(&mut Some(trace))(
             s,
             Event::DeathSkip {
@@ -453,8 +455,6 @@ impl Planner<'_> {
                 zone: gy.zone,
             },
         );
-        s.time += self.params.death_skip_time;
-        s.spent.travel += self.params.death_skip_time;
         s.pos = gy.pos;
         s.zone = gy.zone;
         s.landed = Landed::Transport;
