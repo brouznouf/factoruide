@@ -84,14 +84,26 @@ local function GuideRow(parent)
         T("Start over: undo the steps and quests marked done by hand, then go to the first step not done yet")
     )
     row.restart:SetPoint("RIGHT", row.follow, "LEFT", -4, 0)
+    -- A group guide with several players of our race and class: which one we are (each click
+    -- the next).
+    row.who = Options.Button(row, "", 140, function()
+        local choices, me = FG.Group:Choices()
+        if not choices then return end
+        local next = choices[1]
+        for i, k in ipairs(choices) do
+            if k == me then next = choices[i % #choices + 1] end
+        end
+        FG.Group:Choose(next)
+    end, T("Several players of this group guide are of your race and class: which one you are"))
+    row.who:SetPoint("RIGHT", row.restart, "LEFT", -4, 0)
     row.name = row:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
     row.name:SetPoint("TOPLEFT", 8, -7)
-    row.name:SetPoint("RIGHT", row.restart, "LEFT", -8, 0)
+    row.name:SetPoint("RIGHT", row.who, "LEFT", -8, 0)
     row.name:SetJustifyH("LEFT")
     row.name:SetWordWrap(false)
     row.details = row:CreateFontString(nil, "ARTWORK", "GameFontDisableSmall")
     row.details:SetPoint("TOPLEFT", 8, -25)
-    row.details:SetPoint("RIGHT", row.restart, "LEFT", -8, 0)
+    row.details:SetPoint("RIGHT", row.who, "LEFT", -8, 0)
     row.details:SetJustifyH("LEFT")
     row.details:SetWordWrap(false)
     return row
@@ -148,6 +160,9 @@ Options:AddBlock(function(parent)
             row.follow:SetText(isFollowed and T("Followed") or T("Follow"))
             row.follow:SetEnabled(not isFollowed)
             row.restart:SetShown(isFollowed)
+            local choices, me = FG.Group:Choices()
+            row.who:SetShown(isFollowed and choices ~= nil)
+            row.who:SetText(me and string.format(T("Player: %s"), FG.Group:PlayerName(me)) or T("Choose your player"))
             row.delete:SetShown(guide.source == "import")
             row:Show()
             y = y + ROW + 2

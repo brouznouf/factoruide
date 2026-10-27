@@ -28,6 +28,7 @@ local L = {
     apart = T("levels %.1f apart: make the guide again in the app"),
     otherVersion = T("%s follows another version of the guide"),
     train = T("Train at your class trainer"),
+    choose = T("Several players of this group guide are of your race and class: choose yours in /fg, Guides"),
 }
 
 local Group = { others = {} }
@@ -89,7 +90,13 @@ local function Adapt(r)
     local faction = UnitFactionGroup("player") == "Horde" and "H" or "A"
     -- Our class's spells: the guide's own, or those it lists for the group's other classes.
     local spells = own and r.spells or (r.classSpells and r.classSpells[class]) or {}
-    local copy = setmetatable({ steps = {}, checkpoints = {}, spells = spells }, { __index = r })
+    -- Our own professions (guides made before they were per player: the guide's).
+    local player = r.players[me + 1]
+    local professions = player and player.professions or r.professions
+    local copy = setmetatable(
+        { steps = {}, checkpoints = {}, spells = spells, professions = professions },
+        { __index = r }
+    )
     for i, s in ipairs(r.steps) do
         local c = {}
         for k, v in pairs(s) do
@@ -113,15 +120,40 @@ local function Adapt(r)
     return copy
 end
 
+--- The players of guide `r` this character can be (0-based places in `r.players`): the one of
+--- its name, else those of its race and class (a character the app had no profile of).
+function Group:Candidates(r)
+    local out = {}
+    if not r or not r.players then return out end
+    local key = FG:CharacterKey()
+    for i, p in ipairs(r.players) do
+        if p.n == key then return { i - 1 } end
+    end
+    local _, _, race = UnitRace("player")
+    local _, _, class = UnitClass("player")
+    race, class = FG.Readable(race), FG.Readable(class)
+    for i, p in ipairs(r.players) do
+        if race and class and p.race == race and p.class == class then table.insert(out, i - 1) end
+    end
+    return out
+end
+
 --- Follow guide `r` (nil: none) with guide state `s`: the guide as this player follows it.
+--- Several players to be: the one chosen in the options (`s.player`, kept per guide).
 function Group:Use(r, s)
     route, state, me, version = r, s, nil, nil
+    self.choices = nil
     wipe(self.others)
     sent = {}
     if not r or not r.players then return r end
-    local key = FG:CharacterKey()
-    for i, p in ipairs(r.players) do
-        if p.n == key then me = i - 1 end
+    local candidates = self:Candidates(r)
+    if #candidates == 1 then
+        me = candidates[1]
+    elseif #candidates > 1 then
+        self.choices = candidates
+        for _, k in ipairs(candidates) do
+            if s and s.player == k then me = k end
+        end
     end
     if not me then return r end
     version = string.format("%s:%d", tostring(r.time), #r.steps)
@@ -130,6 +162,24 @@ end
 
 --- Whether a group guide is followed, by one of its players.
 function Group:Active() return me ~= nil end
+
+--- The players this character can be in the guide followed, when several (nil otherwise), and
+--- the one it is (0-based).
+function Group:Choices() return self.choices, me end
+
+--- The name players see of the player at place `k` (0-based) of the guide followed.
+function Group:PlayerName(k)
+    local p = route and route.players and route.players[k + 1]
+    return p and Short(p.n) or "?"
+end
+
+--- This character is the player at place `k` (0-based) of the guide followed.
+function Group:Choose(k)
+    if not state then return end
+    state.player = k
+    FG.Guide:FollowChoice()
+    FG.Options:Refresh()
+end
 
 --- The other players in the party following the same guide: { key, name, bit, step, level,
 --- xp, skips, marks }.
@@ -208,6 +258,7 @@ end
 --- Chips of a step of the current tasks: who it is for, who is still on it, who is elsewhere
 --- (`done`: we did it).
 function Group:Chips(step, index, chip, done)
+    if self.choices and not me and state and index == state.step then chip(L.choose, "orange") end
     if not me then return end
     if done and step.k ~= "objective" and self:ForMe(step) then
         local waiting = self:Waiting(step, index)

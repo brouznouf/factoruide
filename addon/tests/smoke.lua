@@ -1157,6 +1157,53 @@ do
     print("group guide ok")
 end
 
+do
+    -- A group guide made for characters the app had no profile of: we are the player of our
+    -- race and class, with our own professions; with two of them, the one chosen in the options.
+    local skinning = { key = "skinning", name = "Skinning", line = 393, target = 150, start = 10, curve = {} }
+    local function group(players)
+        return {
+            race = 1,
+            class = 1,
+            faction = "Alliance",
+            fromLevel = 1,
+            toLevel = 3,
+            time = 8,
+            professions = {},
+            players = players,
+            syncMax = 1,
+            steps = {
+                { k = "accept", t = "Accept A", q = 901, m = 1429, x = 50, y = 50, lvl = 1, gp = { 1, 0, 1, 0, 1, 0 } },
+            },
+        }
+    end
+    FG.Routes["group-new"] = group({
+        { n = "Player 1", race = 1, class = 1, professions = {} },
+        { n = "Player 2", race = 7, class = 8, professions = { skinning } },
+    })
+    assert(FG.Import.Fits(FG.Routes["group-new"]), "a guide of a group we are in fits us")
+    useRoute("group-new")
+    assert(FG.Group:Active() and not FG.Group:Choices(), "found by race and class")
+    assert(FG.Guide:Route().professions[1].key == "skinning", "our own professions")
+    FG.Routes["group-twins"] = group({
+        { n = "Player 1", race = 1, class = 1, professions = {} },
+        { n = "Player 2", race = 7, class = 8, professions = {} },
+        { n = "Player 3", race = 7, class = 8, professions = { skinning } },
+    })
+    useRoute("group-twins")
+    local choices, me = FG.Group:Choices()
+    assert(choices and #choices == 2 and me == nil and not FG.Group:Active(), "two of us: to choose")
+    FG.Group:Choose(2)
+    assert(FG.Group:Active() and select(2, FG.Group:Choices()) == 2, "the one chosen")
+    assert(FG.Guide:Route().professions[1].key == "skinning", "the chosen player's professions")
+    useRoute("group-new")
+    useRoute("group-twins")
+    assert(select(2, FG.Group:Choices()) == 2, "the choice is kept for the guide")
+    FG.Routes["group-new"], FG.Routes["group-twins"] = nil, nil
+    useRoute(nil)
+    print("group guide for new characters ok")
+end
+
 -- Merchant: grey items are sold.
 local sold = 0
 C_Container = {

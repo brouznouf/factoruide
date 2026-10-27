@@ -1235,7 +1235,7 @@ end
 
 --- Fields of the guide state that belong to the route in use: the step shown, the steps
 --- marked by their index and the quests marked done by hand.
-local PROGRESS = { "step", "marks", "skippedQuests", "handedIn" }
+local PROGRESS = { "step", "marks", "skippedQuests", "handedIn", "player" }
 
 --- Progress is kept per route: another guide starts from its first step with nothing marked,
 --- coming back to a guide finds where it was. A new version of the same guide keeps the

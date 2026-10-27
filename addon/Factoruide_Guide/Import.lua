@@ -324,7 +324,12 @@ function Import.Fits(r)
     race, class = FG.Readable(race), FG.Readable(class)
     local faction = FG.Readable(UnitFactionGroup("player"))
     if type(r) ~= "table" or not race or not class then return false end
-    if r.race ~= race or r.class ~= class then return false end
+    local mine = r.race == race and r.class == class
+    -- A group guide: any of its players.
+    for _, p in ipairs(r.players or {}) do
+        mine = mine or (p.race == race and p.class == class)
+    end
+    if not mine then return false end
     return not (r.faction and faction) or r.faction == faction
 end
 
