@@ -2232,13 +2232,19 @@ fn group_guides_have_rules() {
         let err = job::prepare(&database(), &overrides(), &req, &|_| {}).err();
         err.map(|e| e.to_string()).unwrap_or_default()
     };
-    let low = fails(player("A", 1, "warrior", 12), vec![player("B", 1, "mage", 9)]);
-    assert!(low.contains("level 10"), "{low}");
     // Below level 10 it needs the same zone for everyone.
     let at = |mut p: StartState, map: i64| {
         p.position = Some(MapPos { map, x: 50.0, y: 50.0 });
         p
     };
+    let low = fails(at(player("A", 1, "warrior", 12), 1429), vec![player("B", 1, "mage", 9)]);
+    assert!(low.contains("level 10"), "{low}");
+    // New characters the addon never saw start at their race's starting place: an orc and a
+    // troll together in the Valley of Trials, not a human and a dwarf.
+    let new = fails(player("A", 2, "warrior", 1), vec![player("B", 8, "mage", 1)]);
+    assert!(new.is_empty(), "{new}");
+    let far = fails(player("A", 1, "warrior", 1), vec![player("B", 3, "mage", 1)]);
+    assert!(far.contains("same zone"), "{far}");
     let apart = fails(
         at(player("A", 1, "warrior", 5), 1429),
         vec![at(player("B", 1, "mage", 6), 1426)],
@@ -3184,7 +3190,12 @@ fn a_group_guide_levels_each_players_professions() {
     };
     let p = prepare_request(&request);
     assert!(p.profile.professions.is_empty(), "B's own: none");
-    let plan = p.model.professions.iter().find(|x| x.key == "skinning").expect("A's skinning");
+    let plan = p
+        .model
+        .professions
+        .iter()
+        .find(|x| x.key == "skinning")
+        .expect("A's skinning");
     assert_eq!((plan.members, plan.curve[10]), (0b10, 50));
     let leather = quest(&p, 768).expect("Gathering Leather planned");
     assert_eq!(p.model.quests[leather as usize].members, 0b10, "for A only");

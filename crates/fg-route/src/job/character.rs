@@ -151,7 +151,8 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
 
 /// The members of a group guide must be of the same faction, `GROUP_MAX` at most and each once.
 /// Each is at least level `GROUP_MIN_LEVEL`, unless they all start in the same zone (a group of
-/// new characters leveling together from the start).
+/// new characters leveling together from the start, at their races' starting place when the
+/// addon never saw them).
 fn check_group(overrides: &Overrides, req: &PlanRequest, members: &[&StartState]) -> Result<()> {
     if req.mates.is_empty() {
         return Ok(());
@@ -162,7 +163,13 @@ fn check_group(overrides: &Overrides, req: &PlanRequest, members: &[&StartState]
     if members.len() > GROUP_MAX {
         return Err(RequestError::GroupTooBig.into());
     }
-    let zone = |m: &StartState| m.position.as_ref().map(|p| p.map);
+    // Where each starts: the map the addon saw it on, or a new character's race's starting NPC.
+    let zone = |m: &StartState| match &m.position {
+        Some(p) => Some((true, p.map)),
+        None => (overrides.races.values())
+            .find(|r| r.id == m.race)
+            .map(|r| (false, r.start_npc)),
+    };
     let together = zone(members[0]).is_some() && members.iter().all(|m| zone(m) == zone(members[0]));
     let mut faction = None;
     for (k, m) in members.iter().enumerate() {
