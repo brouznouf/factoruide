@@ -595,7 +595,11 @@ pub(super) fn parse_requirements(json: Option<String>) -> Vec<(String, f64)> {
     list.iter()
         .filter_map(|r| match r.rsplit_once(" x ") {
             Some((name, count)) => Some((name.trim().to_lowercase(), count.trim().parse().ok()?)),
-            None if r.contains(':') || r.trim().is_empty() => None,
+            // Gold ("Money:2") and reputations ("The Defilers:"); a name may hold one
+            // ("Picture Book: Fun with Elementals").
+            None if r.trim().is_empty() || r.trim_end().ends_with(':') || r.to_lowercase().starts_with("money:") => {
+                None
+            }
             None => Some((r.trim().to_lowercase(), 1.0)),
         })
         .collect()
@@ -702,6 +706,20 @@ mod tests {
         assert!(!asks_for_work(Some(r#"["The Defilers:"]"#)));
         assert!(!asks_for_work(Some(r#"["Speak with Lumina Windsinger"]"#)));
         assert!(asks_for_work(Some(r#"["Nord'el"]"#)));
+    }
+
+    /// One of an item whose name holds a colon (Forever's "Picture Book: Fun with Elementals"),
+    /// not gold nor a reputation.
+    #[test]
+    fn requirements_with_a_colon() {
+        let reqs = |json: &str| parse_requirements(Some(json.to_owned()));
+        assert_eq!(
+            reqs(r#"["Picture Book: Fun with Elementals","Lost Book x 6","Money:2","The Defilers:"]"#),
+            [
+                ("picture book: fun with elementals".to_owned(), 1.0),
+                ("lost book".to_owned(), 6.0)
+            ]
+        );
     }
 
     /// Talks the sources give as creature objectives: named in a requirement after a verb.

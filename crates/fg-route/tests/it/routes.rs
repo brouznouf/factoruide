@@ -3099,3 +3099,23 @@ fn a_dungeon_quest_started_by_an_unplaced_item_starts_in_the_run() {
         assert_eq!(q.start_dungeon, Some(ruins), "{}", q.name);
     }
 }
+
+/// Forever's Rare Books (GitHub #59): its books drop from elites, left out of a solo guide, but
+/// a quest the player asks for is planned with its elites; a book whose name holds a colon is
+/// one book, not the default count.
+#[test]
+fn rare_books_asked_for_are_planned_with_one_of_each_book() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let request = PlanRequest {
+        params: Some(overrides.params.with_overrides(&[]).unwrap()),
+        required_quests: vec![job::RequiredQuest::Id(91777)],
+        ..request("human", "warrior", 12, &[])
+    };
+    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let counts = |id: i64| {
+        let q = &p.model.quests[quest(&p, id).unwrap_or_else(|| panic!("{id} planned")) as usize];
+        q.objectives.iter().map(|o| (o.loc.id, o.count)).collect::<Vec<_>>()
+    };
+    assert_eq!(counts(91777), [(248003, 1.0), (248004, 1.0)]);
+    assert!(counts(91775).contains(&(248002, 1.0)) && counts(91775).contains(&(248001, 6.0)));
+}

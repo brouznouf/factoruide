@@ -170,9 +170,20 @@ fn build_quests(
     params: &Params,
 ) -> (Vec<Quest>, Vec<(i64, String, String)>) {
     let builder = QuestBuilder::new(sources, world, profile, params);
+    // The quests the player asked for are done even when their mobs are elites.
+    let with_elites = Params {
+        allow_elite: true,
+        ..params.clone()
+    };
+    let asked = QuestBuilder::new(sources, world, profile, &with_elites);
     let mut quests = Vec::new();
     let mut skipped = Vec::new();
     for row in &sources.rows {
+        let builder = if profile.required_quests.contains(&row.id) {
+            &asked
+        } else {
+            &builder
+        };
         match builder.build(row) {
             // The objectives done are a mask of 8 bits (`State::objectives`).
             Ok(Some(quest)) if quest.objectives.len() > 8 => {
