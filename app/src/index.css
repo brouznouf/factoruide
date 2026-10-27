@@ -2957,6 +2957,11 @@ button.dungeon.excluded b {
 .pick-list button.link:disabled {
   color: var(--text-muted);
 }
+.quest-choices {
+  max-height: 16em;
+  overflow-y: auto;
+  margin-top: 4px;
+}
 .fly-pick {
   display: flex;
   flex-wrap: wrap;

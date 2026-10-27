@@ -10,7 +10,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### App
 
-- Choose must-have quests at the bottom of the new guide page, searched by name or ID among your race and class's quests.
+- Choose must-have quests at the bottom of the new guide page, searched among your race and class's quests by name, zone, level or ID ("barrens 20").
 - Group guides: in the desktop app too, a player who plays on another computer is added by pasting the export of their character (in game: /fg, "Export my character").
 - In the guide editor, a quest already in the guide says at which step ("already in the guide · step 313"); the number shows that step.
 - In the guide editor, a step that only a zone too strong for the character makes possible (the flight path of Gadgetzan from Thousand Needles at level 34) is accepted, with a warning on the step, instead of being impossible. Computed guides still keep out of those zones.

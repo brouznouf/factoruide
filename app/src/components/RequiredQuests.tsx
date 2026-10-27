@@ -11,7 +11,7 @@ interface Props {
   onChange: (quests: (number | string)[]) => void;
 }
 
-/** Must-have quests: searched by ID or name among those of the race and class, kept by ID. */
+/** Must-have quests: searched by name, zone, level or ID among those of the race and class, kept by ID. */
 export function RequiredQuests({ race, klass, locale, quests, onChange }: Props) {
   const t = useT();
   const [query, setQuery] = useState("");
@@ -61,7 +61,7 @@ export function RequiredQuests({ race, klass, locale, quests, onChange }: Props)
   return (
     <section className="panel">
       <h3>{t("Quêtes indispensables")}</h3>
-      <p className="muted">{t("Cherchez une quête par son nom ou son ID. Ses prérequis sont inclus et le guide la termine, même après le niveau cible.")}</p>
+      <p className="muted">{t("Cherchez une quête par son nom, sa zone, son niveau ou son ID (« barrens 20 »). Ses prérequis sont inclus et le guide la termine, même après le niveau cible.")}</p>
       <div className="chips">
         {quests.map((quest) => (
           <button key={`${typeof quest}:${quest}`} className="chip" title={typeof quest === "number" ? `#${quest}` : undefined} onClick={() => onChange(quests.filter((q) => q !== quest))}>
@@ -71,8 +71,8 @@ export function RequiredQuests({ race, klass, locale, quests, onChange }: Props)
       </div>
       <input
         type="search"
-        aria-label={t("Nom ou ID de la quête")}
-        placeholder={t("Nom ou ID de la quête")}
+        aria-label={t("Nom, zone, niveau ou ID")}
+        placeholder={t("Nom, zone, niveau ou ID")}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={(e) => {
@@ -83,7 +83,7 @@ export function RequiredQuests({ race, klass, locale, quests, onChange }: Props)
         }}
       />
       {shown.length > 0 && (
-        <ul className="pick-list">
+        <ul className="pick-list quest-choices">
           {shown.map((q) => (
             <li key={q.id}>
               <button className="link" disabled={quests.includes(q.id)} onClick={() => add(q.id, q)}>

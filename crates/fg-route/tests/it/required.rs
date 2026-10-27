@@ -379,10 +379,10 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
         .unwrap();
 }
 
-/// Must-have quests are found by ID or by part of their name, in English or the guide's
-/// language, among those of the character's race and class.
+/// Must-have quests are found by ID, level, part of their name or of their zone's, in English
+/// or the guide's language, among those of the character's race and class.
 #[test]
-fn quest_choices_by_id_or_name_for_the_character() {
+fn quest_choices_by_id_level_name_or_zone() {
     let conn = database_of("forever");
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let find = |race: &str, query: &str, locale: Option<&str>| {
@@ -394,6 +394,19 @@ fn quest_choices_by_id_or_name_for_the_character() {
     };
     assert_eq!(find("human", "91777", None)[0], (91777, "Rare Books".to_owned()));
     assert_eq!(find("human", "rare book", None)[0].0, 91777);
-    assert!(find("orc", "Rare Books", None).iter().all(|(id, _)| *id != 91777), "Alliance only");
+    assert!(
+        find("orc", "Rare Books", None).iter().all(|(id, _)| *id != 91777),
+        "Alliance only"
+    );
     assert!(find("human", "", None).is_empty());
+    let level = |race: &str, query: &str| job::quest_choices(&conn, &overrides, race, "warrior", query, None).unwrap();
+    assert!(!level("human", "45").is_empty() && level("human", "45").iter().all(|q| q.level == 45 || q.id == 45));
+    let barrens = level("orc", "barrens 20");
+    assert!(!barrens.is_empty());
+    assert!(
+        barrens
+            .iter()
+            .all(|q| q.level == 20 && q.zone.as_deref() == Some("The Barrens")),
+        "{barrens:?}"
+    );
 }
