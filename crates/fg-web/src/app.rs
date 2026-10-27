@@ -443,18 +443,6 @@ fn forget_character(character: &str) -> CmdResult<()> {
     write_settings(settings)
 }
 
-/// What the addon's export holds (`/fg export`, see the addon's Profile.lua).
-#[derive(Deserialize)]
-struct ProfileExport {
-    format: String,
-    version: u32,
-    edition: Option<String>,
-    #[serde(default)]
-    addon: Option<String>,
-    character: String,
-    profile: serde_json::Value,
-}
-
 /// A character's export pasted: what it was read as.
 #[derive(Serialize)]
 struct ProfileImported {
@@ -477,14 +465,7 @@ fn last_export_file(edition: Edition) -> String {
 /// Keep a character's export (its text as the addon gives it): its profile replaces the one
 /// kept.
 fn import_profile(content: &str) -> CmdResult<ProfileImported> {
-    let json = fgstring::decode(fgstring::PROFILE_PREFIX, content).map_err(|e| match e.as_str() {
-        "not_this_kind" => "not_a_profile".to_owned(),
-        _ => "corrupt_profile".to_owned(),
-    })?;
-    let export: ProfileExport = serde_json::from_slice(&json).map_err(|_| "corrupt_profile".to_owned())?;
-    if export.format != "factoruide-profile" || export.version != 1 {
-        return Err("not_a_profile".into());
-    }
+    let export = fgstring::read_profile(content)?;
     let edition = match export.edition.as_deref() {
         Some(key) => Edition::ALL
             .iter()
@@ -493,14 +474,7 @@ fn import_profile(content: &str) -> CmdResult<ProfileImported> {
             .ok_or_else(|| format!("unknown game version {key}"))?,
         None => edition(),
     };
-    let key = export.character.trim().to_owned();
-    if key.is_empty() || key.len() > 100 {
-        return Err("corrupt_profile".into());
-    }
-    let mut profile = export.profile;
-    if profile["name"].as_str().is_none_or(str::is_empty) {
-        profile["name"] = key.clone().into();
-    }
+    let (key, profile) = (export.character, export.profile);
     let parsed: StartState = serde_json::from_value(profile.clone()).map_err(|e| format!("corrupt_profile: {e}"))?;
     store::write(
         &character_file("characters", edition, &key),

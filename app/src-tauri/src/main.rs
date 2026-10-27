@@ -36,7 +36,7 @@ use addon::{
 use job::DATA_ADDON;
 /// Guides, planning and the editor.
 mod guides;
-use characters::{forget_character, list_characters};
+use characters::{forget_character, import_profile, list_characters};
 use guides::{
     cancel_plan, compare_versions, delete_guide, delete_version, edit_close, edit_open, edit_save, edit_simulate,
     edit_suggest, export_version, get_guide, get_version, guide_timeline, import_guide, inferred_flights, list_guides,
@@ -661,6 +661,7 @@ fn main() {
             minimap_index,
             minimap_image,
             list_characters,
+            import_profile,
             guide_timeline,
             edit_open,
             edit_simulate,

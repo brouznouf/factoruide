@@ -23,7 +23,7 @@ pub(crate) struct CharacterInfo {
     class: String,
     /// Professions it has, by key, with their skill.
     professions: Vec<(String, i64)>,
-    /// Another player's, received in a party (`/fg share`): for group guides, not played here.
+    /// Another player's, pasted from their export: for group guides, not played here.
     shared: bool,
     profile: StartState,
 }
@@ -84,6 +84,61 @@ pub(crate) fn is_forgotten(forgotten: &BTreeMap<String, i64>, edition: Edition, 
         .is_some_and(|&time| profile.time <= time)
 }
 
+/// Other players' characters pasted from their export (in game: /fg, "Export my character"), by
+/// game version then "Name-Realm": for group guides, not played here.
+type Imported = BTreeMap<String, BTreeMap<String, serde_json::Value>>;
+
+fn imported_file(state: &AppState) -> PathBuf {
+    state.data_dir.join("imported-characters.json")
+}
+
+fn read_imported(state: &AppState) -> Imported {
+    std::fs::read(imported_file(state))
+        .ok()
+        .and_then(|data| serde_json::from_slice(&data).ok())
+        .unwrap_or_default()
+}
+
+/// A character's export pasted: what it was read as.
+#[derive(Serialize)]
+pub(crate) struct ProfileImported {
+    character: String,
+    edition: &'static str,
+    level: i64,
+}
+
+/// Keep another player's export (its text as the addon gives it), for group guides: pasted
+/// again, its profile replaces the one kept.
+#[tauri::command(async)]
+pub(crate) fn import_profile(state: State<'_, AppState>, content: String) -> CmdResult<ProfileImported> {
+    let export = fg_route::export::fgstring::read_profile(&content)?;
+    let edition = match export.edition.as_deref() {
+        Some(key) => (Edition::ALL.iter().copied())
+            .find(|e| e.key() == key)
+            .ok_or_else(|| format!("unknown game version {key}"))?,
+        None => state.settings().edition,
+    };
+    let parsed: StartState =
+        serde_json::from_value(export.profile.clone()).map_err(|e| format!("corrupt_profile: {e}"))?;
+    let mut imported = read_imported(&state);
+    (imported.entry(edition.key().to_owned()).or_default()).insert(export.character.clone(), export.profile);
+    std::fs::create_dir_all(&state.data_dir).map_err(err)?;
+    std::fs::write(imported_file(&state), serde_json::to_vec(&imported).map_err(err)?).map_err(err)?;
+    // Pasted again after being taken out: back.
+    let mut settings = state.settings();
+    if (settings.forgotten_characters)
+        .remove(&forgotten_key(edition, &export.character))
+        .is_some()
+    {
+        write_settings(&state, settings)?;
+    }
+    Ok(ProfileImported {
+        character: export.character,
+        edition: edition.key(),
+        level: parsed.level,
+    })
+}
+
 /// Take a character out of the Characters page (deleted in game): it no longer follows a guide.
 /// Played again, it is back.
 #[tauri::command(async)]
@@ -113,6 +168,13 @@ pub(crate) fn characters(state: &AppState) -> CmdResult<Vec<CharacterInfo>> {
             let shared = json["shared"].as_bool().unwrap_or(false);
             Some((shared, serde_json::from_value::<StartState>(json).ok()?))
         })
+        .chain(
+            (read_imported(state)
+                .remove(settings.edition.key())
+                .unwrap_or_default()
+                .into_values())
+            .filter_map(|json| Some((true, serde_json::from_value::<StartState>(json).ok()?))),
+        )
         .collect();
     // A character of this computer is not also listed as received from another player.
     let own: std::collections::HashSet<String> = (profiles.iter())

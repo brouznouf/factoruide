@@ -122,7 +122,7 @@ const groupAllows = (players: StartState[]) =>
 
 /**
  * The other players of a group guide, under the character: those the addon recorded on this
- * computer, or each player's export pasted (in game: /fg, "Export my character"), in the browser.
+ * computer, or each player's export pasted (in game: /fg, "Export my character").
  */
 function GroupRow({
   start,
@@ -209,17 +209,13 @@ function GroupRow({
               ))}
             </select>
           )}
-          {IS_WEB ? (
-            <ProfilePaste
-              compact
-              onImported={(name) => {
-                onPasted(name);
-                setAdding(false);
-              }}
-            />
-          ) : (
-            candidates.length === 0 && <p className="muted">{t("Aucun autre personnage de votre faction enregistré par l'addon sur cet ordinateur.")}</p>
-          )}
+          <ProfilePaste
+            compact
+            onImported={(name) => {
+              onPasted(name);
+              setAdding(false);
+            }}
+          />
         </div>
       )}
       {note && <p className="error">{note}</p>}
@@ -541,7 +537,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
             <h3>{t("Personnage")}</h3>
             <div className="character-grid">
               <CharacterPicker
-                characters={characters}
+                characters={characters?.filter((c) => !c.shared) ?? null}
                 start={start}
                 onPick={pickCharacter}
                 options={options}

@@ -30,6 +30,47 @@ pub fn decode(prefix: &str, text: &str) -> Result<Vec<u8>, String> {
     miniz_oxide::inflate::decompress_to_vec_with_limit(&packed, MAX_DECODED).map_err(|_| "corrupt".to_owned())
 }
 
+/// What a character's export holds (`/fg export`, see the addon's Profile.lua).
+#[derive(Debug, serde::Deserialize)]
+pub struct ProfileExport {
+    format: String,
+    version: u32,
+    /// Key of the game version (forever, classic, tbc); none from older addons.
+    pub edition: Option<String>,
+    /// The addon's version.
+    #[serde(default)]
+    pub addon: Option<String>,
+    /// "Name-Realm".
+    pub character: String,
+    /// The profile, named after `character` when it has no name.
+    pub profile: serde_json::Value,
+}
+
+/// A character's export pasted. Errors: `not_a_profile` (another text), `corrupt_profile`
+/// (cut or damaged).
+pub fn read_profile(text: &str) -> Result<ProfileExport, String> {
+    let json = decode(PROFILE_PREFIX, text).map_err(|e| {
+        if e == "not_this_kind" {
+            "not_a_profile"
+        } else {
+            "corrupt_profile"
+        }
+        .to_owned()
+    })?;
+    let mut export: ProfileExport = serde_json::from_slice(&json).map_err(|_| "corrupt_profile".to_owned())?;
+    if export.format != "factoruide-profile" || export.version != 1 {
+        return Err("not_a_profile".into());
+    }
+    export.character = export.character.trim().to_owned();
+    if export.character.is_empty() || export.character.len() > 100 || !export.profile.is_object() {
+        return Err("corrupt_profile".into());
+    }
+    if export.profile["name"].as_str().is_none_or(str::is_empty) {
+        export.profile["name"] = export.character.clone().into();
+    }
+    Ok(export)
+}
+
 /// LibDeflate's `EncodeForPrint`: 3 bytes as 4 characters of 6 bits, little-endian, the low
 /// bits first; the last 1 or 2 bytes as just enough characters.
 fn encode_for_print(data: &[u8], out: &mut String) {
