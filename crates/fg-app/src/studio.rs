@@ -140,8 +140,8 @@ impl Studio {
         Ok(library(host, edition).add_version(request, &outcome, data_version(&conn), Origin::EDITED, now()?)?)
     }
 
-    /// The flight paths a character probably knows from the quests it did in their towns, besides
-    /// those its addon recorded.
+    /// The flight paths a character probably knows, besides those its addon recorded: its race's
+    /// from the start, and those of the towns it did quests in.
     ///
     /// # Errors
     ///
@@ -149,7 +149,11 @@ impl Studio {
     pub fn inferred_flights<H: Host>(&self, host: &H, start: &StartState) -> Result<Vec<i64>> {
         let conn = host.open_db(host.edition())?;
         let side = start.faction.ok_or("unknown faction")?;
-        Ok(job::inferred_flights(&conn, side, &start.completed)?)
+        let mut found = job::inferred_flights(&conn, side, &start.completed)?;
+        found.extend(host.overrides(host.edition())?.start_flights(start.race));
+        found.sort_unstable();
+        found.dedup();
+        Ok(found)
     }
 
     /// Ends the optimization under way now: `plan_route` saves and returns the best guide so far.

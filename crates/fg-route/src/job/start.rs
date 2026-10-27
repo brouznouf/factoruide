@@ -284,10 +284,7 @@ impl StartState {
 
     /// The flight paths known, a bit per taxi node.
     pub(super) fn known_flights(&self, world: &World) -> u128 {
-        let flights: HashSet<i64> = self.flights.iter().copied().collect();
-        (world.taxi_nodes.iter().enumerate().take(128))
-            .filter(|(_, node)| flights.contains(&node.id))
-            .fold(0, |known, (n, _)| known | 1u128 << n)
+        flight_bits(world, &self.flights)
     }
 
     /// The inn the hearthstone is bound to: the closest to where the binding was seen, else
@@ -337,6 +334,14 @@ impl StartState {
                 _ => a.cmp(&b),
             })
     }
+}
+
+/// The flight paths `ids` (TaxiNodes IDs), a bit per taxi node.
+pub(super) fn flight_bits(world: &World, ids: &[i64]) -> u128 {
+    let ids: HashSet<i64> = ids.iter().copied().collect();
+    (world.taxi_nodes.iter().enumerate().take(128))
+        .filter(|(_, node)| ids.contains(&node.id))
+        .fold(0, |known, (n, _)| known | 1u128 << n)
 }
 
 /// World position of a map point.

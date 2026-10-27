@@ -13,6 +13,9 @@ pub struct RaceDef {
     pub id: i64,
     pub faction: crate::faction::Faction,
     pub start_npc: i64,
+    /// Flight paths a new character knows (TaxiNodes IDs): the game gives the capital's.
+    #[serde(default)]
+    pub start_flights: Vec<i64>,
 }
 
 /// Everything configurable on disk in `overrides/`.
@@ -131,6 +134,13 @@ fn merge(common: &mut toml::Table, own: toml::Table) {
 }
 
 impl Overrides {
+    /// The flight paths a character of race `race_id` (ChrRaces ID) knows from its creation.
+    pub fn start_flights(&self, race_id: i64) -> &[i64] {
+        (self.races.values())
+            .find(|r| r.id == race_id)
+            .map_or(&[], |r| &r.start_flights)
+    }
+
     pub fn load(dir: &Path) -> Result<Self> {
         Self::parse(|name| std::fs::read_to_string(dir.join(name)).ok())
     }

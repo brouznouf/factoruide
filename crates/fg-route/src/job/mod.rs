@@ -222,24 +222,32 @@ pub fn prepare(
     // A group is planned for the member with the least XP.
     let start = members.first().copied().or(req.start.as_ref());
     if let Some(start) = start {
-        // The flight paths of the towns it did quests in count as learned, unless the list was settled by hand.
-        let deduced;
-        let start = match start.faction {
-            Some(side) if !start.flights_final => {
-                let mut copy = start.clone();
-                if let Ok(found) = inferred_flights(conn, side, &start.completed) {
+        // Its race's flight paths and those of the towns it did quests in count as learned,
+        // unless the list was settled by hand.
+        let with_deduced = |s: &StartState| {
+            let mut copy = s.clone();
+            if !s.flights_final {
+                copy.flights.extend(overrides.start_flights(s.race));
+                if let Some(Ok(found)) = s.faction.map(|side| inferred_flights(conn, side, &s.completed)) {
                     copy.flights.extend(found);
-                    copy.flights.sort_unstable();
-                    copy.flights.dedup();
                 }
-                deduced = copy;
-                &deduced
+                copy.flights.sort_unstable();
+                copy.flights.dedup();
             }
-            _ => start,
+            copy
         };
+        let deduced = with_deduced(start);
+        let start = &deduced;
         model.initial = start.initial(&model, &world, &mut params, &mut start_notes);
         if members.len() > 1 {
-            group::join(&mut model, &world, start, &members[1..], &mut start_notes);
+            let mates: Vec<StartState> = members[1..].iter().map(|m| with_deduced(m)).collect();
+            group::join(
+                &mut model,
+                &world,
+                start,
+                &mates.iter().collect::<Vec<_>>(),
+                &mut start_notes,
+            );
         }
         // Quests of the log the model does not have: named from the database, for their abandon.
         for (id, name) in model.initial.log.iter_mut().filter(|(_, name)| name.is_empty()) {
@@ -258,6 +266,8 @@ pub fn prepare(
             model.initial.turned.len(),
             model.initial.log.len()
         ));
+    } else {
+        model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id));
     }
     model.initial.reputation = reputation::starting(conn, &params.reputation_goals, &profile, start, &mut start_notes)?;
     let mut notes = notes::model_notes(&model, &world, progress);

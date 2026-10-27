@@ -3018,3 +3018,38 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     assert_eq!(edited.steps[0].outcome, Outcome::Done);
     assert!(edited.steps[0].warning.is_none());
 }
+
+/// A new character knows its capital's flight path, as the game gives it (GitHub #60); a
+/// character met in game keeps it on another continent, unless its list was settled by hand.
+#[test]
+fn a_new_character_knows_its_capitals_flight_path() {
+    let knows = |p: &Prepared, id: i64| {
+        let n = p.world.taxi_nodes.iter().position(|node| node.id == id).unwrap();
+        p.model.initial.known & (1u128 << n) != 0
+    };
+    let (stormwind, auberdine) = (2, 26);
+    let new = prepare("human", "warrior", 4, &[]);
+    assert!(knows(&new, stormwind));
+    assert_eq!(new.model.initial.known.count_ones(), 1);
+    let elf = prepare("nightelf", "warrior", 4, &[]);
+    assert!(knows(&elf, auberdine) && knows(&elf, 27));
+
+    let in_kalimdor = StartState {
+        faction: Some(fg_route::faction::Faction::Alliance),
+        flights: vec![auberdine],
+        ..player("Joe-Realm", 1, "warrior", 20)
+    };
+    let met = prepare_from("human", "warrior", 22, &[], Some(in_kalimdor.clone()));
+    assert!(knows(&met, stormwind) && knows(&met, auberdine));
+    let settled = prepare_from(
+        "human",
+        "warrior",
+        22,
+        &[],
+        Some(StartState {
+            flights_final: true,
+            ..in_kalimdor
+        }),
+    );
+    assert!(!knows(&settled, stormwind) && knows(&settled, auberdine));
+}
