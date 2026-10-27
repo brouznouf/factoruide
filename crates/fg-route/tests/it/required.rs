@@ -398,7 +398,7 @@ fn quest_choices_by_id_level_name_or_zone() {
         find("orc", "Rare Books", None).iter().all(|(id, _)| *id != 91777),
         "Alliance only"
     );
-    assert!(find("human", "", None).is_empty());
+    assert_eq!(find("human", "", None), []);
     let level = |race: &str, query: &str| job::quest_choices(&conn, &overrides, race, "warrior", query, None).unwrap();
     assert!(!level("human", "45").is_empty() && level("human", "45").iter().all(|q| q.level == 45 || q.id == 45));
     let barrens = level("orc", "barrens 20");
