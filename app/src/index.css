@@ -2123,7 +2123,7 @@ button.setting-reset:hover:not(:disabled) {
 .dungeon-levels {
   display: flex;
   flex-wrap: wrap;
-  align-items: end;
+  align-items: center;
   gap: 8px 12px;
   margin-bottom: 10px;
 }
@@ -2132,8 +2132,64 @@ button.setting-reset:hover:not(:disabled) {
   color: var(--text-secondary);
   font-size: 12px;
 }
-.dungeon-offset {
+.dual-range {
+  position: relative;
+  flex: 1;
+  min-width: 160px;
+  height: 22px;
+}
+.dual-range::before,
+.dual-range::after {
+  content: "";
+  position: absolute;
+  top: 9px;
+  height: 4px;
+  border-radius: 2px;
+}
+.dual-range::before {
+  left: 0;
+  right: 0;
+  background: var(--border);
+}
+/* The levels chosen, between the two handles. */
+.dual-range::after {
+  left: var(--from);
+  right: calc(100% - var(--to));
+  background: var(--accent);
+}
+.dual-range input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
   margin: 0;
+  background: none;
+  pointer-events: none;
+  appearance: none;
+  -webkit-appearance: none;
+  z-index: 1;
+}
+.dual-range input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface-0);
+  cursor: pointer;
+}
+.dual-range input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--surface-0);
+  cursor: pointer;
+}
+.dual-range-value {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 .dungeon-grid {
   display: grid;
@@ -2180,8 +2236,15 @@ button.dungeon.excluded span {
 button.dungeon b {
   font-weight: 600;
 }
-button.dungeon.forced b {
+button.dungeon.forced b,
+button.dungeon.quests b {
   color: var(--good);
+}
+button.dungeon.quests,
+button.dungeon.quests:hover:not(:disabled) {
+  border-color: var(--good);
+  border-width: 2px;
+  background: color-mix(in srgb, var(--good) 24%, var(--surface-0));
 }
 button.dungeon.excluded b {
   color: var(--bad);

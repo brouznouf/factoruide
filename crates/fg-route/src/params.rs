@@ -281,6 +281,8 @@ pub struct Params {
     pub dungeons: bool,
     /// Dungeons (instance area IDs) always run, dungeons on or off...
     pub forced_dungeons: Vec<i64>,
+    /// ...run with every quest of theirs the character can take (required as class quests are)...
+    pub forced_dungeon_quests: Vec<i64>,
     /// ...and never run.
     pub excluded_dungeons: Vec<i64>,
     /// Dungeon quests are picked up when passing by, up to this many levels before the dungeon.
@@ -562,6 +564,7 @@ impl Default for Params {
             dungeon_xp_share: 0.35,
             dungeons: true,
             forced_dungeons: vec![],
+            forced_dungeon_quests: vec![],
             excluded_dungeons: vec![],
             dungeon_pickup_ahead: 8,
             dungeon_from: -3,

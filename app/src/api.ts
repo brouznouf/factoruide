@@ -142,6 +142,8 @@ export interface Params {
   profession_quest_weight: number;
   zone_stay: number;
   forced_dungeons: number[];
+  /** Dungeons run with every quest of theirs the character can take. */
+  forced_dungeon_quests: number[];
   excluded_dungeons: number[];
   dungeon_quest_weight: number;
   construction_random: boolean;

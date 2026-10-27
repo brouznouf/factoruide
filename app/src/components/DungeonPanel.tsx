@@ -2,11 +2,17 @@ import { type DungeonOption } from "../api";
 import { useAreaName, useT } from "../i18n";
 import { Hint } from "./Hint";
 
+/** A dungeon's choice: automatic, forced, forced with all its quests, or excluded. */
+export interface DungeonChoices {
+  forced: number[];
+  forcedQuests: number[];
+  excluded: number[];
+}
+
 interface Props {
   dungeons: DungeonOption[];
-  forced: number[];
-  excluded: number[];
-  onChange: (forced: number[], excluded: number[]) => void;
+  choices: DungeonChoices;
+  onChange: (choices: DungeonChoices) => void;
   /** Levels dungeons are run at, around their level, and the game's highest level. */
   from: number;
   to: number;
@@ -28,64 +34,64 @@ export function dungeonsWithoutLevels(dungeons: DungeonOption[], from: number, t
 
 const signed = (n: number) => (n > 0 ? `+${n}` : String(n));
 
-/** The dungeons by level, a click cycling one: automatic → forced → excluded. Above them, the
- * levels they are run at, which the guide keeps to. */
-export function DungeonPanel({ dungeons, forced, excluded, onChange, from, to, maxLevel, onLevels }: Props) {
+type DungeonState = "" | "forced" | "quests" | "excluded";
+
+/** The dungeons by level, a click cycling one: automatic → forced → forced with its quests →
+ * excluded. Above them, the levels they are run at, which the guide keeps to. */
+export function DungeonPanel({ dungeons, choices, onChange, from, to, maxLevel, onLevels }: Props) {
   const t = useT();
   const areaName = useAreaName();
-  const without = (ids: number[], id: number) => ids.filter((x) => x !== id);
-  const force = (id: number) => onChange([...without(forced, id), id], without(excluded, id));
-  const exclude = (id: number) => onChange(without(forced, id), [...without(excluded, id), id]);
-  const remove = (id: number) => onChange(without(forced, id), without(excluded, id));
-  const cycle = (id: number) => (forced.includes(id) ? exclude(id) : excluded.includes(id) ? remove(id) : force(id));
+  const { forced, forcedQuests, excluded } = choices;
+  const stateOf = (id: number): DungeonState =>
+    forcedQuests.includes(id) ? "quests" : forced.includes(id) ? "forced" : excluded.includes(id) ? "excluded" : "";
+  const NEXT: Record<DungeonState, DungeonState> = { "": "forced", forced: "quests", quests: "excluded", excluded: "" };
+  const cycle = (id: number) => {
+    const next = NEXT[stateOf(id)];
+    const without = (ids: number[]) => ids.filter((x) => x !== id);
+    onChange({
+      forced: next === "forced" ? [...without(forced), id] : without(forced),
+      forcedQuests: next === "quests" ? [...without(forcedQuests), id] : without(forcedQuests),
+      excluded: next === "excluded" ? [...without(excluded), id] : without(excluded),
+    });
+  };
+  const LABELS: Record<DungeonState, string> = { "": t("Automatique"), forced: t("Forcé"), quests: t("Forcé avec ses quêtes"), excluded: t("Exclu") };
   const levels = (d: DungeonOption) => {
     const range = d.level == null ? null : dungeonLevels(d.level, from, to, maxLevel);
     return range ? (range[0] === range[1] ? String(range[0]) : `${range[0]}–${range[1]}`) : "";
   };
   const empty = dungeonsWithoutLevels(dungeons, from, to, maxLevel);
-  const offset = (value: number, onValue: (n: number) => void, label: string) => (
-    <label className="field dungeon-offset">
-      <span>{label}</span>
-      <select aria-label={label} value={value} onChange={(e) => onValue(Number(e.target.value))}>
-        {Array.from({ length: 21 }, (_, k) => k - 10).map((n) => (
-          <option key={n} value={n}>
-            {signed(n)}
-          </option>
-        ))}
-      </select>
-    </label>
-  );
+  // A slider with two handles: the lowest and the highest level, around the dungeon's.
+  const [low, high] = [-10, 10];
+  const at = (n: number) => `${((n - low) / (high - low)) * 100}%`;
 
   return (
     <section className="panel">
       <h3>
         {t("Donjons")}
-        <Hint text={`${t("Cliquez un donjon : forcé → exclu → automatique.")} ${t("Forcé : fait même s'il n'est pas rentable.")}`} />
+        <Hint text={`${t("Cliquez un donjon : forcé → forcé avec ses quêtes → exclu → automatique.")} ${t("Forcé : fait même s'il n'est pas rentable.")} ${t("Avec ses quêtes : toutes celles que le personnage peut prendre, même peu rentables.")}`} />
       </h3>
       <div className="dungeon-levels">
         <span>
           {t("Niveau des donjons, par rapport à leurs monstres")}
           <Hint text={t("Le guide fait chaque donjon entre ces niveaux, jamais en dehors : les niveaux affichés sous chaque donjon. Le profil de progression les remet à sa valeur.")} />
         </span>
-        {offset(from, (n) => onLevels(n, to), t("Minimum"))}
-        {offset(to, (n) => onLevels(from, n), t("Maximum"))}
+        <div className="dual-range" style={{ ["--from" as string]: at(from), ["--to" as string]: at(to) }}>
+          <input type="range" aria-label={t("Minimum")} min={low} max={high} value={from} onChange={(e) => onLevels(Math.min(Number(e.target.value), to), to)} />
+          <input type="range" aria-label={t("Maximum")} min={low} max={high} value={to} onChange={(e) => onLevels(from, Math.max(Number(e.target.value), from))} />
+        </div>
+        <strong className="dual-range-value">{t("de {from} à {to}", { from: signed(from), to: signed(to) })}</strong>
       </div>
       {empty.length > 0 && (
         <p className="error">{t("Aucun niveau possible pour : {names}. Changez le minimum ou le maximum.", { names: empty.map(areaName).join(", ") })}</p>
       )}
       <div className="dungeon-grid">
         {dungeons.map((d) => {
-          const state = forced.includes(d.id) ? "forced" : excluded.includes(d.id) ? "excluded" : "";
+          const state = stateOf(d.id);
           return (
-            <button
-              key={d.id}
-              className={`dungeon ${state}`}
-              onClick={() => cycle(d.id)}
-              title={state === "forced" ? t("Forcé") : state === "excluded" ? t("Exclu") : t("Automatique")}
-              aria-label={`${areaName(d)} ${levels(d)} : ${state === "forced" ? t("Forcé") : state === "excluded" ? t("Exclu") : t("Automatique")}`}
-            >
+            <button key={d.id} className={`dungeon ${state}`} onClick={() => cycle(d.id)} title={LABELS[state]} aria-label={`${areaName(d)} ${levels(d)} : ${LABELS[state]}`}>
               <span>
                 {state === "forced" && <b aria-hidden>★ </b>}
+                {state === "quests" && <b aria-hidden>★★ </b>}
                 {state === "excluded" && <b aria-hidden>✕ </b>}
                 {areaName(d)}
               </span>

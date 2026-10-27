@@ -52,6 +52,11 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
     report_skipped_class_quests(&sources, &skipped);
     let places = Places::load(conn, world, &sources.entities, profile, &sources.start, params.edition)?;
     chains::narrow_class_quests_to_spells(&mut quests, params.all_class_quests);
+    // The quests of the dungeons run with all their quests.
+    for q in &mut quests {
+        let forced = |d: usize| params.forced_dungeon_quests.contains(&sources.dungeons[d].area);
+        q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
+    }
     chains::require_prerequisites(&mut quests);
     chains::release_impossible_class_quests(&mut quests);
     for q in &mut quests {

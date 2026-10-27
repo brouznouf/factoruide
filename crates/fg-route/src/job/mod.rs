@@ -144,7 +144,7 @@ pub fn plan_interruptible(
     planner.validate_required(&best)?;
     let route = export::build(&planner, &prepared.profile, &best);
     for missing in planner.missing_class_quests(&best) {
-        prepared.notes.push(format!("class quest not planned: {missing}"));
+        prepared.notes.push(format!("required quest not planned: {missing}"));
     }
     for missing in planner.missing_zone_quests(&best) {
         prepared.notes.push(format!("zone quest not planned: {missing}"));

@@ -473,9 +473,10 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
             <div className="config-col config-side">
               <DungeonPanel
                 dungeons={options.dungeons}
-                forced={params.forced_dungeons}
-                excluded={params.excluded_dungeons}
-                onChange={(forced_dungeons, excluded_dungeons) => setParams((p) => ({ ...p, forced_dungeons, excluded_dungeons }))}
+                choices={{ forced: params.forced_dungeons, forcedQuests: params.forced_dungeon_quests ?? [], excluded: params.excluded_dungeons }}
+                onChange={({ forced, forcedQuests, excluded }) =>
+                  setParams((p) => ({ ...p, forced_dungeons: forced, forced_dungeon_quests: forcedQuests, excluded_dungeons: excluded }))
+                }
                 from={params.dungeon_from}
                 to={params.dungeon_to}
                 maxLevel={options.max_level}

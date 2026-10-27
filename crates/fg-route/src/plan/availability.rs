@@ -236,14 +236,14 @@ impl Availability<'_> {
     /// Dungeon `d` may be run: dungeons on (or this one forced), and not excluded.
     pub(crate) fn dungeon_allowed(&self, d: usize) -> bool {
         let area = self.model.dungeons[d].area;
-        !self.params.excluded_dungeons.contains(&area)
-            && (self.params.dungeons || self.params.forced_dungeons.contains(&area))
+        !self.params.excluded_dungeons.contains(&area) && (self.params.dungeons || self.dungeon_forced(d))
     }
 
-    /// Dungeon `d` must be run (when the route reaches its levels).
+    /// Dungeon `d` must be run (when the route reaches its levels), with its quests or not.
     pub(crate) fn dungeon_forced(&self, d: usize) -> bool {
         let area = self.model.dungeons[d].area;
-        self.params.forced_dungeons.contains(&area) && !self.params.excluded_dungeons.contains(&area)
+        (self.params.forced_dungeons.contains(&area) || self.params.forced_dungeon_quests.contains(&area))
+            && !self.params.excluded_dungeons.contains(&area)
     }
 
     fn quest_at(&self, i: u32) -> &Quest {

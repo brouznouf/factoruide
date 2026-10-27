@@ -3269,3 +3269,48 @@ fn new_characters_level_together_from_the_start() {
         "starts in the Valley of Trials"
     );
 }
+
+/// A dungeon forced with its quests (`forced_dungeon_quests`, GitHub #46) is run with every quest
+/// of it the character can take, which are required as class quests are.
+#[test]
+fn a_dungeon_forced_with_its_quests_takes_them_all() {
+    let request = PlanRequest {
+        params: Some(
+            overrides()
+                .params
+                .with_overrides(&["forced_dungeon_quests=[1581]".to_owned(), "effort=0".to_owned()])
+                .unwrap(),
+        ),
+        from_level: 15,
+        ..request("human", "warrior", 24, &[])
+    };
+    let p = prepare_request(&request);
+    let deadmines = p.model.dungeons.iter().position(|d| d.area == 1581).unwrap();
+    let theirs: Vec<&fg_route::model::Quest> = (p.model.quests.iter())
+        .filter(|q| q.objectives.iter().any(|o| o.dungeon == Some(deadmines)))
+        .collect();
+    assert!(
+        theirs.len() >= 3 && theirs.iter().all(|q| q.mandatory),
+        "{}",
+        theirs.len()
+    );
+    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    assert!(
+        route
+            .steps
+            .iter()
+            .any(|s| s.kind == fg_route::export::StepKind::Dungeon && s.text.contains("Deadmines"))
+    );
+    let turned: Vec<i64> = (route.steps.iter())
+        .filter(|s| s.kind == fg_route::export::StepKind::TurnIn)
+        .filter_map(|s| s.quest)
+        .collect();
+    let left: Vec<&str> = theirs
+        .iter()
+        .filter(|q| !turned.contains(&q.id))
+        .map(|q| q.name.as_str())
+        .collect();
+    // Those whose chain starts well before (The Defias Brotherhood in Westfall) may not fit a
+    // quick guide started at 15: they are reported, not dropped silently.
+    assert!(left.len() * 2 < theirs.len(), "left out: {left:?}");
+}
