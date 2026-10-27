@@ -85,6 +85,10 @@ pub struct PlanRequest {
     /// is the same for everyone (see `members`).
     #[serde(default)]
     pub mates: Vec<super::StartState>,
+    /// The professions each of `mates` levels, in their order (as `professions` for the
+    /// character).
+    #[serde(default)]
+    pub mate_professions: Vec<Vec<crate::profession::ProfessionGoal>>,
 }
 
 /// A quest ID or an exact name, resolved before planning.
@@ -103,6 +107,14 @@ pub const GROUP_MIN_LEVEL: i64 = 10;
 impl PlanRequest {
     /// The members of a group guide (empty alone), the one with the least XP first: the route
     /// is planned for it, the others' XP followed beside (`Profile::mates`).
+    /// The professions the player named `name` levels (the character's own, or a mate's).
+    pub fn professions_of(&self, name: &str) -> &[crate::profession::ProfessionGoal] {
+        match self.mates.iter().position(|m| m.name == name) {
+            Some(k) => self.mate_professions.get(k).map_or(&[], Vec::as_slice),
+            None => &self.professions,
+        }
+    }
+
     pub fn members(&self, rules: &crate::xp::Rules) -> Vec<&super::StartState> {
         if self.mates.is_empty() {
             return Vec::new();

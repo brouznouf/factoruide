@@ -52,6 +52,8 @@ pub struct Mate {
     pub class_id: i64,
     /// Its class trainer spells that count for power (see overrides/spells.toml).
     pub spell_weights: Vec<(String, crate::power::SpellWeight)>,
+    /// The professions it levels.
+    pub professions: Vec<crate::profession::ProfessionGoal>,
 }
 
 /// Quest race bit of a race in the quest data's Forever encoding (Skyborne uses bits 32/33).
@@ -90,6 +92,22 @@ impl Profile {
 
     /// The members (a bit each, the character's 1) a quest of races `races` and classes
     /// `classes` is for.
+    /// The professions of the whole group the planner knows, each once (the first player's
+    /// goal), with the members leveling it (a bit each, the character's 1).
+    pub(crate) fn profession_goals(&self) -> Vec<(&crate::profession::ProfessionGoal, u8)> {
+        let mut goals: Vec<(&crate::profession::ProfessionGoal, u8)> = Vec::new();
+        let players = std::iter::once(&self.professions).chain(self.mates.iter().map(|m| &m.professions));
+        for (k, own) in players.enumerate() {
+            for goal in own.iter().filter(|g| crate::profession::find(&g.key).is_some()) {
+                match goals.iter_mut().find(|(g, _)| g.key == goal.key) {
+                    Some((_, members)) => *members |= 1 << k,
+                    None => goals.push((goal, 1 << k)),
+                }
+            }
+        }
+        goals
+    }
+
     pub(crate) fn members_of(&self, races: Option<i64>, classes: Option<i64>) -> u8 {
         let (races, classes) = (races.unwrap_or(0), classes.unwrap_or(0));
         (self.members().enumerate())
@@ -650,6 +668,8 @@ pub struct ProfessionPlan {
     pub start: i64,
     /// Skill to have by character level (index 0..=60).
     pub curve: Vec<i64>,
+    /// The members of a group leveling it (a bit each, the character's 1).
+    pub members: u8,
 }
 
 impl ProfessionPlan {
@@ -671,6 +691,7 @@ impl ProfessionPlan {
             curve: (0..=60)
                 .map(|l| crate::profession::target_at(target, &milestones, start, l))
                 .collect(),
+            members: 1,
         })
     }
 

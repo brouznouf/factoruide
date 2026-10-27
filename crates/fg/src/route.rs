@@ -77,6 +77,7 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
         locale: opts.locale.clone(),
         start: opts.start.as_deref().map(read_profile).transpose()?,
         mates: opts.mates.iter().map(|p| read_profile(p)).collect::<Result<_>>()?,
+        mate_professions: vec![],
     };
     // FG_PREVIEW_STARTS: the starts the app offers to choose from, as JSON (not a guide).
     if std::env::var_os("FG_PREVIEW_STARTS").is_some() {
@@ -280,6 +281,7 @@ pub fn share(conn: &Connection, overrides_dir: &Path, opts: &ShareOptions, out: 
         professions: vec![],
         locale: Some(opts.locale.clone()),
         mates: vec![],
+        mate_professions: vec![],
         start: None,
     };
     let walks = std::sync::Arc::new(fg_route::terrain::Walks::default());

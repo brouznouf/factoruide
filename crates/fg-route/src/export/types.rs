@@ -411,6 +411,9 @@ pub struct Player {
     pub name: String,
     pub race_id: i64,
     pub class_id: i64,
+    /// The professions it levels, as the guide's `professions` for the character.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub professions: Vec<RouteProfession>,
 }
 
 /// A reputation goal and how far the guide gets: points counted from the bottom of Neutral.

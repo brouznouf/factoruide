@@ -49,6 +49,7 @@ pub(crate) fn quests_at_start(n: usize) -> Prepared {
         professions: vec![],
         locale: None,
         mates: vec![],
+        mate_professions: vec![],
         start: None,
     };
     at_start(job::prepare(&database(), &overrides, &request, &|_| {}).unwrap(), n)
@@ -717,6 +718,16 @@ fn the_class_and_gathering_keep_bag_room() {
         (warrior - herbalist - p.params.gather_share * crate::params::bag_slots(30)).abs() < 1e-9,
         "{herbalist}"
     );
+    // A group goes to the vendor when the fullest bags are: a hunter's, with a quiver.
+    p.profile.professions.clear();
+    p.profile.mates = vec![crate::model::Mate {
+        name: "Hunter".into(),
+        race_id: 2,
+        class_id: 3,
+        spell_weights: vec![],
+        professions: vec![],
+    }];
+    assert!((planner(&p).growth().bag_room(30) - hunter).abs() < 1e-9);
 }
 
 /// A timed quest whose mob is too strong for the character is taken once it is strong enough

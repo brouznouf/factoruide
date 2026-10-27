@@ -33,6 +33,7 @@ fn request_to(to_level: i64) -> PlanRequest {
         professions: vec![],
         locale: None,
         mates: vec![],
+        mate_professions: vec![],
         start: None,
     }
 }

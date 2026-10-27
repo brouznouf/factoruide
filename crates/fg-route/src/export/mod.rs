@@ -22,7 +22,7 @@ pub use types::{
     Checkpoint, MapPointOut, Player, ReputationReached, Route, RouteProfession, Step, StepKind, Target, TargetKind,
 };
 
-use crate::model::{Names, Profile};
+use crate::model::{Names, ProfessionPlan, Profile};
 use crate::plan::{Breakdown, Event, Kind, Planner, Stop, Timed, fmt_time};
 use std::collections::HashSet;
 use writer::StepWriter;
@@ -272,32 +272,33 @@ fn route_of(
             spells.dedup();
             spells
         },
-        professions: model
-            .professions
-            .iter()
-            .map(|p| RouteProfession {
-                key: p.key.clone(),
-                name: p.name.clone(),
-                skill_line: crate::profession::skill_line(&p.key),
-                target: p.target,
-                start: p.start,
-                curve: p.curve.clone(),
-            })
+        // The character's own (the group's others are its players').
+        professions: (model.professions.iter())
+            .filter(|p| p.members & 1 != 0)
+            .map(route_profession)
             .collect(),
         checkpoints,
         reputation: reputation_reached(planner, route),
         players: if profile.mates.is_empty() {
             Vec::new()
         } else {
+            let own = |goals: &[crate::profession::ProfessionGoal]| {
+                (goals.iter())
+                    .filter_map(ProfessionPlan::new)
+                    .map(|p| route_profession(&p))
+                    .collect()
+            };
             std::iter::once(Player {
                 name: profile.player.clone(),
                 race_id: profile.race_id,
                 class_id: profile.class_id,
+                professions: own(&profile.professions),
             })
             .chain(profile.mates.iter().map(|m| Player {
                 name: m.name.clone(),
                 race_id: m.race_id,
                 class_id: m.class_id,
+                professions: own(&m.professions),
             }))
             .collect()
         },
@@ -336,4 +337,15 @@ fn reputation_reached(planner: &Planner<'_>, route: &[Stop]) -> Vec<ReputationRe
             }
         })
         .collect()
+}
+
+fn route_profession(p: &ProfessionPlan) -> RouteProfession {
+    RouteProfession {
+        key: p.key.clone(),
+        name: p.name.clone(),
+        skill_line: crate::profession::skill_line(&p.key),
+        target: p.target,
+        start: p.start,
+        curve: p.curve.clone(),
+    }
 }

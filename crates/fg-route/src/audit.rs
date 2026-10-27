@@ -260,6 +260,7 @@ pub fn audit(
             professions: Vec::new(),
             locale: None,
             mates: Vec::new(),
+            mate_professions: vec![],
             start: None,
         };
         let prepared = match job::prepare(conn, overrides, &request, &|_| {}) {

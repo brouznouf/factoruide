@@ -1,11 +1,29 @@
 //! The addon's data file: every route as Lua tables.
 
 use super::phrase::Arg;
-use super::types::{Route, Step, TargetKind};
+use super::types::{Route, RouteProfession, Step, TargetKind};
 use std::fmt::Write as _;
 
 pub fn lua_str(s: &str) -> String {
     format!("{s:?}")
+}
+
+/// Professions as the addon reads them: key, name, skill line, target, start and curve.
+fn lua_professions(professions: &[RouteProfession]) -> String {
+    (professions.iter())
+        .map(|p| {
+            format!(
+                "{{ key = {}, name = {}, line = {}, target = {}, start = {}, curve = {{ {} }} }}",
+                lua_str(&p.key),
+                lua_str(&p.name),
+                p.skill_line,
+                p.target,
+                p.start,
+                p.curve.iter().map(ToString::to_string).collect::<Vec<_>>().join(", ")
+            )
+        })
+        .collect::<Vec<_>>()
+        .join(", ")
 }
 
 /// How many of its item an item objective asks for (the number of its sentence).
@@ -33,10 +51,11 @@ pub fn to_lua(routes: &[Route]) -> String {
                 r.players
                     .iter()
                     .map(|p| format!(
-                        "{{ n = {}, race = {}, class = {} }}",
+                        "{{ n = {}, race = {}, class = {}, professions = {{ {} }} }}",
                         lua_str(&p.name),
                         p.race_id,
-                        p.class_id
+                        p.class_id,
+                        lua_professions(&p.professions)
                     ))
                     .collect::<Vec<_>>()
                     .join(", "),
@@ -73,19 +92,7 @@ pub fn to_lua(routes: &[Route]) -> String {
                     .map(|s| format!("[{l}] = {}", s.time.round())))
                 .collect::<Vec<_>>()
                 .join(", "),
-            r.professions
-                .iter()
-                .map(|p| format!(
-                    "{{ key = {}, name = {}, line = {}, target = {}, start = {}, curve = {{ {} }} }}",
-                    lua_str(&p.key),
-                    lua_str(&p.name),
-                    p.skill_line,
-                    p.target,
-                    p.start,
-                    p.curve.iter().map(ToString::to_string).collect::<Vec<_>>().join(", ")
-                ))
-                .collect::<Vec<_>>()
-                .join(", "),
+            lua_professions(&r.professions),
             // Reputation goals: points from the bottom of Neutral, where the guide gets to.
             r.reputation
                 .iter()

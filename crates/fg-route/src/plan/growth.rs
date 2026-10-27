@@ -39,25 +39,31 @@ impl<'g> Growth<'g> {
     /// Bag slots left for loot and quest items at `level` (`Params::bag_weight`): the bags less
     /// what is always carried (hearthstone, food, drink, potions), the class's own (a hunter's
     /// quiver and a warlock's soul pouch take a bag, a shaman's totems a slot each, a rogue's
-    /// poisons two) and the gathering professions' materials (`Params::gather_share` each).
+    /// poisons two) and the gathering professions' materials (`Params::gather_share` each). In a
+    /// group, the fullest bags of its players: they go to the vendor together.
     pub(crate) fn bag_room(self, level: i64) -> f64 {
         const CARRIED: f64 = 4.0;
         let slots = crate::params::bag_slots(level);
         let bag = (slots - crate::params::bag_slots(1)) / 4.0;
-        let class = match self.profile.class_id {
-            3 => bag,
-            9 if level >= 10 => bag,
-            7 => [4, 10, 20, 30].iter().filter(|&&l| level >= l).count() as f64,
-            4 if level >= 20 => 2.0,
-            _ => 0.0,
+        let room = |class_id: i64, professions: &[crate::profession::ProfessionGoal]| {
+            let class = match class_id {
+                3 => bag,
+                9 if level >= 10 => bag,
+                7 => [4, 10, 20, 30].iter().filter(|&&l| level >= l).count() as f64,
+                4 if level >= 20 => 2.0,
+                _ => 0.0,
+            };
+            let gathering = (professions.iter())
+                .filter(|g| {
+                    crate::profession::find(&g.key).is_some_and(|d| d.kind == crate::profession::Kind::Gathering)
+                        && level >= g.start_level.unwrap_or(crate::profession::START_LEVEL)
+                })
+                .count() as f64;
+            slots - CARRIED - class - gathering * self.params.gather_share * slots
         };
-        let gathering = (self.profile.professions.iter())
-            .filter(|g| {
-                crate::profession::find(&g.key).is_some_and(|d| d.kind == crate::profession::Kind::Gathering)
-                    && level >= g.start_level.unwrap_or(crate::profession::START_LEVEL)
-            })
-            .count() as f64;
-        slots - CARRIED - class - gathering * self.params.gather_share * slots
+        (self.profile.mates.iter())
+            .map(|m| room(m.class_id, &m.professions))
+            .fold(room(self.profile.class_id, &self.profile.professions), f64::min)
     }
 
     /// Common loot `kills` normal mobs of `zone` drop (`Model::loot`), into the bags.

@@ -116,7 +116,14 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         abilities,
         quests,
         dungeons: sources.dungeons,
-        professions: profile.professions.iter().filter_map(ProfessionPlan::new).collect(),
+        professions: (profile.profession_goals().into_iter())
+            .filter_map(|(goal, members)| {
+                Some(ProfessionPlan {
+                    members,
+                    ..ProfessionPlan::new(goal)?
+                })
+            })
+            .collect(),
         index,
         start: sources.start,
         unlocks,

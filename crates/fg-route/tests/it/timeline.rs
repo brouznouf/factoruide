@@ -32,6 +32,7 @@ fn request() -> PlanRequest {
         professions: vec![],
         locale: None,
         mates: vec![],
+        mate_professions: vec![],
         start: None,
     }
 }

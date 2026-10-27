@@ -19,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- Group guides: each player levels its own professions, from its own skill: their profession quests are planned for them, the group goes to the vendor when the fullest bags are, and each player's addon follows its own profession curve.
 - A quest item that rots is looted right before the objective using it: the Fresh Zhevra Carcass (30 minutes) just before Ishamuhale, instead of hours earlier (WoW Forever and Classic).
 - A must-have quest is planned even when its mobs are elites (Forever's Rare Books, whose books drop from Mother Fang and two other elites).
 - A quest item whose name holds a colon ("Picture Book: Fun with Elementals") is looted once, not six times.

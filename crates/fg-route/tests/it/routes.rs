@@ -63,6 +63,7 @@ fn request(race: &str, class: &str, to_level: i64, params: &[&str]) -> PlanReque
         professions: vec![],
         locale: None,
         mates: vec![],
+        mate_professions: vec![],
         start: None,
     }
 }
@@ -2940,7 +2941,7 @@ fn a_group_guide_tells_the_addon_its_players() {
     );
     let lua = fg_route::export::to_lua(std::slice::from_ref(route));
     assert!(
-        lua.contains(r#"players = { { n = "A-Realm", race = 1, class = 1 }, { n = "B-Realm", race = 1, class = 8 } }"#)
+        lua.contains(r#"players = { { n = "A-Realm", race = 1, class = 1, professions = {  } }, { n = "B-Realm", race = 1, class = 8, professions = {  } } }"#)
     );
     assert!(lua.contains("gp = { "));
     // The mage's spells, for its own addon (the guide's are the warrior's).
@@ -3158,4 +3159,40 @@ fn a_carcass_that_rots_is_looted_right_before_ishamuhale() {
     };
     assert_eq!(run(None), Outcome::Done);
     assert_ne!(run(Some(22)), Outcome::Done, "the carcass rotted while grinding");
+}
+
+/// Each player of a group guide levels its own professions, from its own profile: here A, with
+/// skinning at 50, is not the one the guide is planned for (B has less XP). A profession quest
+/// is for those leveling it, and each player's addon gets its own curve.
+#[test]
+fn a_group_guide_levels_each_players_professions() {
+    let skinning = || fg_route::profession::ProfessionGoal {
+        key: "skinning".into(),
+        target: 150,
+        start_level: None,
+        milestones: vec![],
+    };
+    let mut a = player("A-Realm", 2, "warrior", 10);
+    a.xp = 500;
+    a.professions = vec![job::Skill { line: 393, rank: 50 }];
+    let request = PlanRequest {
+        start: Some(a),
+        professions: vec![skinning()],
+        mates: vec![player("B-Realm", 2, "warrior", 10)],
+        mate_professions: vec![vec![]],
+        ..request("orc", "warrior", 13, &["effort=0"])
+    };
+    let p = prepare_request(&request);
+    assert!(p.profile.professions.is_empty(), "B's own: none");
+    let plan = p.model.professions.iter().find(|x| x.key == "skinning").expect("A's skinning");
+    assert_eq!((plan.members, plan.curve[10]), (0b10, 50));
+    let leather = quest(&p, 768).expect("Gathering Leather planned");
+    assert_eq!(p.model.quests[leather as usize].members, 0b10, "for A only");
+    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let own = |name: &str| {
+        let player = route.players.iter().find(|x| x.name == name).unwrap();
+        player.professions.iter().map(|x| x.key.as_str()).collect::<Vec<_>>()
+    };
+    assert_eq!((own("A-Realm"), own("B-Realm")), (vec!["skinning"], vec![]));
+    assert!(route.professions.is_empty(), "the guide's character is B");
 }

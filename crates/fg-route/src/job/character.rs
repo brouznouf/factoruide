@@ -26,6 +26,12 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
     };
     let (class_id, class_name) = class_of(conn, &class_key)?;
     check_playable(conn, race, &race_key, class_id, &class_name)?;
+    // Each player's professions, from where its profile has them.
+    let professions_of = |m: &StartState| {
+        let mut goals = req.professions_of(&m.name).to_vec();
+        m.anchor_professions(&mut goals);
+        goals
+    };
     let mates: Vec<Mate> = (members.iter().skip(1))
         .map(|m| {
             let (class_id, class_name) = class_of(conn, &m.class)?;
@@ -33,6 +39,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
                 name: m.name.clone(),
                 race_id: m.race,
                 class_id,
+                professions: professions_of(m),
                 spell_weights: (overrides.spells.get(&class_name.to_lowercase()))
                     .map(|w| w.iter().map(|(k, v)| (k.clone(), v.clone())).collect())
                     .unwrap_or_default(),
@@ -71,10 +78,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
         }
         .into());
     }
-    let mut professions = req.professions.clone();
-    if let Some(start) = start {
-        start.anchor_professions(&mut professions);
-    }
+    let professions = start.map_or_else(|| req.professions.clone(), professions_of);
     let mut completed_quests: std::collections::HashSet<_> = start
         .map(|s| s.completed.iter().map(|q| q.0).collect())
         .unwrap_or_default();

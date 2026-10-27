@@ -24,10 +24,8 @@ impl QuestBuilder<'_> {
     /// is reached.
     pub(super) fn skill(&self, r: &QuestRow) -> QuestSkill {
         r.skill.filter(|s| *s != 0).map(|id| {
-            self.profile
-                .professions
-                .iter()
-                .filter_map(|g| crate::profession::find(&g.key))
+            (self.profile.profession_goals().into_iter())
+                .filter_map(|(g, _)| crate::profession::find(&g.key))
                 .position(|d| d.skill_id == id)
                 .map(|p| (p, r.skill_value.unwrap_or(0)))
         })
