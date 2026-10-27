@@ -1,12 +1,13 @@
 # Dungeons: entrances missing from the quest data and per-dungeon tuning, for every game version
 # (a version's own in <edition>/dungeons.toml: Forever's new dungeons in forever/).
-# Defaults: levels from the dungeon's quests, minutes = 40 + level (50-120),
+# Defaults: levels from the dungeon's quests (or `levels`), minutes = 40 + level (50-120),
 # kills = 60 + 2 x level, XP shared by a 5-man group (see dungeon_xp_share).
 #
 # [[dungeon]]
 # area = 1581                  # AreaTable ID of the instance
 # name = "The Deadmines"
 # entrance = { zone = 40, x = 42.5, y = 71.7 }
+# levels = [17, 26]            # the game's range, when the quests' levels say otherwise
 # min_level = 17
 # max_level = 26
 # minutes = 60

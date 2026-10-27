@@ -3053,3 +3053,31 @@ fn a_new_character_knows_its_capitals_flight_path() {
     );
     assert!(!knows(&settled, stormwind) && knows(&settled, auberdine));
 }
+
+/// WoW Forever's Ruins of Lordaeron is a level 15-20 dungeon though its quests say 21-22
+/// (GitHub #48): the game's range sets its monsters' level, hence when a group may run it (3
+/// levels below them in the normal profile).
+#[test]
+fn ruins_of_lordaeron_is_run_at_the_games_levels() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let request = PlanRequest {
+        params: Some(
+            overrides
+                .params
+                .with_overrides(&["progression=normal".to_owned()])
+                .unwrap(),
+        ),
+        ..request("undead", "warrior", 30, &[])
+    };
+    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let ruins = p
+        .model
+        .dungeons
+        .iter()
+        .find(|d| d.area == 16611)
+        .expect("Ruins of Lordaeron");
+    assert_eq!((ruins.mob_level, ruins.min_level, ruins.max_level), (18, 15, 23));
+    let options = job::options(&database_of("forever"), &overrides).unwrap();
+    let listed = options.dungeons.iter().find(|d| d.id == 16611).unwrap();
+    assert_eq!((listed.min_level, listed.max_level), (Some(15), Some(20)));
+}

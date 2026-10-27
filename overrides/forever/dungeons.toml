@@ -1,6 +1,21 @@
 # WoW Forever's dungeons (format: ../dungeons.toml).
+# `levels`: the game's range (Wowhead's dungeons overview for Forever), its quests' levels are
+# above it.
 
 [[dungeon]]
 area = 16919
 name = "The Hall of Thanes"
 entrance = { zone = 1537, x = 33.0, y = 47.5 } # approx: near its quest givers in Ironforge
+levels = [13, 18]
+
+[[dungeon]]
+area = 16611 # Ruins of Lordaeron, quests of level 21-22
+levels = [15, 20]
+
+[[dungeon]]
+area = 16732 # Excavation Site: Wetlands, quests of level 28-31
+levels = [24, 29]
+
+[[dungeon]]
+area = 16544 # City of Dalaran, quests of level 33
+levels = [28, 33]

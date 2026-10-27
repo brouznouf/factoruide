@@ -105,10 +105,10 @@ pub(super) fn load_dungeons(
             },
             name,
             min_level: def.min_level.unwrap_or(0),
-            max_level: def.max_level.unwrap_or(0),
+            max_level: (def.max_level).or(def.levels.map(|[_, high]| high + 3)).unwrap_or(0),
             minutes: def.minutes.unwrap_or(0.0),
             kills: def.kills.unwrap_or(0.0),
-            mob_level: 0,
+            mob_level: def.levels.map_or(0, |[low, high]| (low + high + 1) / 2),
             content: expansion.map_or_else(|| xp::content_at(pos.continent, ez), |e| e.max(0) as usize),
         });
     }
@@ -174,7 +174,11 @@ pub(super) fn set_dungeon_levels(dungeons: &mut [Dungeon], quests: &[Quest], bel
         }
         let mut levels: Vec<i64> = qs.iter().map(|q| q.level).collect();
         levels.sort_unstable();
-        dungeon.mob_level = levels[levels.len() / 2];
+        // The game's range when set (`DungeonDef::levels`), else its quests' levels.
+        let known = dungeon.mob_level > 0;
+        if !known {
+            dungeon.mob_level = levels[levels.len() / 2];
+        }
         // Not before the group can face the dungeon's mobs, `below` levels under them at most:
         // the quests may start well below them (the Deadmines' first quest, level 14, for mobs
         // of level 20).
@@ -184,7 +188,7 @@ pub(super) fn set_dungeon_levels(dungeons: &mut [Dungeon], quests: &[Quest], bel
                 .map(|q| q.min_level)
                 .min()
                 .expect("a dungeon with quests")
-                .max(levels[0] - 2)
+                .max(if known { 0 } else { levels[0] - 2 })
                 .max(dungeon.mob_level - below);
         }
         if dungeon.max_level == 0 {

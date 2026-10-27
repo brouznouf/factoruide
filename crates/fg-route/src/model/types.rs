@@ -599,6 +599,9 @@ pub struct DungeonDef {
     pub area: i64,
     pub name: Option<String>,
     pub entrance: Option<crate::world::ZonePoint>,
+    /// The game's level range for the dungeon, when its quests' levels say otherwise: its
+    /// monsters are at the middle of it.
+    pub levels: Option<[i64; 2]>,
     pub min_level: Option<i64>,
     pub max_level: Option<i64>,
     pub minutes: Option<f64>,

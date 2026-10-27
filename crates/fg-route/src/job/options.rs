@@ -72,7 +72,8 @@ pub struct DungeonOption {
     /// Translated names by game locale (frFR...), when known.
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     pub names: BTreeMap<String, String>,
-    /// Levels of most of its quests (the lowest and highest few left out), when it has some.
+    /// The game's range when set (`dungeons.toml`), else the levels of most of its quests (the
+    /// lowest and highest few left out), when it has some.
     pub min_level: Option<i64>,
     pub max_level: Option<i64>,
 }
@@ -218,10 +219,10 @@ pub fn options(conn: &Connection, overrides: &Overrides) -> Result<Options> {
                 name,
                 names: names_of(area),
                 min_level: def
-                    .and_then(|d| d.min_level)
+                    .and_then(|d| d.min_level.or(d.levels.map(|[low, _]| low)))
                     .or_else(|| (n > 0).then(|| levels[n * 15 / 100])),
                 max_level: def
-                    .and_then(|d| d.max_level)
+                    .and_then(|d| d.max_level.or(d.levels.map(|[_, high]| high)))
                     .or_else(|| (n > 0).then(|| levels[(n * 85).div_ceil(100).max(1) - 1])),
             }
         };
