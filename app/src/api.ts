@@ -165,6 +165,9 @@ export interface Params {
   common_item_time: number;
   dungeons: boolean;
   dungeon_pickup_ahead: number;
+  /** Levels dungeons are run at, around their level (-3 and +3: from 15 to 21 for a level 18 dungeon). */
+  dungeon_from: number;
+  dungeon_to: number;
   dungeon_xp_share: number;
   construction: string;
   threads: number;
@@ -386,8 +389,8 @@ export interface ReputationReached {
 }
 
 export interface DungeonOption extends NamedId {
-  min_level: number | null;
-  max_level: number | null;
+  /** Its level (its monsters'): run from `dungeon_from` to `dungeon_to` around it. */
+  level: number | null;
 }
 
 export interface NamedId {

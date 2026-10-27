@@ -25,6 +25,8 @@ pub enum RequestError {
     GroupDuplicate(String),
     #[error("the players of a group guide are all of the same faction")]
     GroupMixedFactions,
+    #[error("the dungeons' levels (from {from:+} to {to:+} around each) leave none for {dungeon}")]
+    NoDungeonLevels { dungeon: String, from: i64, to: i64 },
 }
 
 /// Why a planning job gave no guide.

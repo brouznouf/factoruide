@@ -184,10 +184,12 @@ impl Availability<'_> {
                 (i == 0 && !self.params.excluded_zones.contains(&self.model.inns[s.bind].zone))
                     || (i == 1 && self.model.recall.is_some())
             }
+            // Never past its levels (`Params::dungeon_to`); below them, the guide grinds to them.
             Kind::Dungeon => {
                 self.dungeon_allowed(i)
                     && s.dungeons & (1u128 << i) == 0
                     && self.model.dungeons[i].min_level <= self.profile.to_level
+                    && s.level <= self.model.dungeons[i].max_level
             }
         }
     }

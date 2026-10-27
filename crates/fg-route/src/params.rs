@@ -285,6 +285,11 @@ pub struct Params {
     pub excluded_dungeons: Vec<i64>,
     /// Dungeon quests are picked up when passing by, up to this many levels before the dungeon.
     pub dungeon_pickup_ahead: i64,
+    /// Levels a dungeon is run at, from its monsters' level (`model::dungeon_levels`): from
+    /// `dungeon_from` to `dungeon_to` (-3 and +3: Ruins of Lordaeron's monsters at 18, run from 15
+    /// to 21), never out of them. The progression profile sets them (`Progression::dungeon_window`).
+    pub dungeon_from: i64,
+    pub dungeon_to: i64,
     /// Share of the solo XP of a dungeon's kills earned in a 5-man group (elites included).
     pub dungeon_xp_share: f64,
     /// How much a minute of grinding weighs against a minute of questing for the optimizer
@@ -559,6 +564,8 @@ impl Default for Params {
             forced_dungeons: vec![],
             excluded_dungeons: vec![],
             dungeon_pickup_ahead: 8,
+            dungeon_from: -3,
+            dungeon_to: 3,
             construction: Construction::Greedy,
             threads: 8,
             seed: 42,
@@ -646,17 +653,6 @@ impl Params {
             Progression::Cautious => 0,
             Progression::Normal => 1,
             Progression::Risky => 2,
-        }
-    }
-
-    /// Levels below its mobs (the median of its quests) the weakest of a group may be at the
-    /// earliest for a dungeon: their elites and packs are not the solo content of the profile's
-    /// margin.
-    pub(crate) fn dungeon_below(&self) -> i64 {
-        match self.progression {
-            Progression::Cautious => 0,
-            Progression::Normal => 3,
-            Progression::Risky => 5,
         }
     }
 
@@ -777,8 +773,11 @@ impl Params {
 
 impl Params {
     /// Apply `key=value` overrides (any field, value parsed as JSON or taken as a string).
+    /// A progression profile given without the dungeons' levels brings its own
+    /// (`Progression::dungeon_window`), as the app's choice of a profile does.
     pub fn with_overrides(&self, pairs: &[String]) -> anyhow::Result<Params> {
         let mut json = serde_json::to_value(self)?;
+        let mut keys = Vec::new();
         for pair in pairs {
             let (key, value) = pair
                 .split_once('=')
@@ -788,8 +787,17 @@ impl Params {
                 .ok_or_else(|| anyhow::anyhow!("unknown parameter {key}"))?;
             *field = serde_json::from_str(value.trim())
                 .unwrap_or_else(|_| serde_json::Value::String(value.trim().to_owned()));
+            keys.push(key.trim());
         }
-        Ok(serde_json::from_value(json)?)
+        let mut params: Params = serde_json::from_value(json)?;
+        if keys.contains(&"progression")
+            && !keys
+                .iter()
+                .any(|k| k.starts_with("dungeon_from") || k.starts_with("dungeon_to"))
+        {
+            (params.dungeon_from, params.dungeon_to) = params.progression.dungeon_window();
+        }
+        Ok(params)
     }
 }
 
@@ -827,6 +835,19 @@ pub enum Progression {
     Normal,
     /// Orange quests and borderline elites.
     Risky,
+}
+
+impl Progression {
+    /// The levels a dungeon is run at by default, from its monsters' level (`Params::dungeon_from`,
+    /// `Params::dungeon_to`): at their level or above when cautious, from 3 below when normal, 5
+    /// below when risky.
+    pub fn dungeon_window(self) -> (i64, i64) {
+        match self {
+            Self::Cautious => (0, 5),
+            Self::Normal => (-3, 3),
+            Self::Risky => (-5, 2),
+        }
+    }
 }
 
 /// How the first route is built.

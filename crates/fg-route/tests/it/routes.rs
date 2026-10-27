@@ -1575,6 +1575,8 @@ fn outleveled_dungeon_gives_no_mob_xp() {
     let mut p = prepare("human", "warrior", 30, &["progression=cautious"]);
     (p.profile.from_level, p.profile.to_level) = (32, 40);
     let deadmines = p.model.dungeons.iter().position(|d| d.name == "The Deadmines").unwrap();
+    // Run that late only with levels chosen up to it.
+    p.model.dungeons[deadmines].max_level = 40;
     let run = Stop {
         index: deadmines as u32,
         kind: Kind::Dungeon,
@@ -1584,10 +1586,9 @@ fn outleveled_dungeon_gives_no_mob_xp() {
     assert_eq!(spent.mob_xp, 0);
 }
 
-/// A run for none of the guide's quests past the dungeon's levels is not asked for (Ragefire
-/// Chasm at level 27, its quests gone), unless the player asked for that dungeon.
+/// A dungeon is never run past the levels chosen for it, even when the player asked for it.
 #[test]
-fn outleveled_dungeon_run_without_quests_is_dropped() {
+fn a_dungeon_is_not_run_past_its_levels() {
     let mut p = prepare("human", "warrior", 30, &["progression=cautious"]);
     (p.profile.from_level, p.profile.to_level) = (32, 40);
     let deadmines = p.model.dungeons.iter().position(|d| d.name == "The Deadmines").unwrap();
@@ -1595,9 +1596,9 @@ fn outleveled_dungeon_run_without_quests_is_dropped() {
         index: deadmines as u32,
         kind: Kind::Dungeon,
     };
-    assert_eq!(planner(&p).drop_idle_runs(&[run]), Some(vec![]));
+    assert!(planner(&p).simulate(&[run], None).is_none());
     p.params.forced_dungeons = vec![p.model.dungeons[deadmines].area];
-    assert_eq!(planner(&p).drop_idle_runs(&[run]), None);
+    assert!(planner(&p).simulate(&[run], None).is_none());
 }
 
 /// Where an entity of the model stands, as the addon records it.
@@ -3086,10 +3087,48 @@ fn ruins_of_lordaeron_is_run_at_the_games_levels() {
         .iter()
         .find(|d| d.area == 16611)
         .expect("Ruins of Lordaeron");
-    assert_eq!((ruins.mob_level, ruins.min_level, ruins.max_level), (18, 15, 23));
+    assert_eq!((ruins.mob_level, ruins.min_level, ruins.max_level), (18, 15, 21));
+    // The app shows the same level.
     let options = job::options(&database_of("forever"), &overrides).unwrap();
     let listed = options.dungeons.iter().find(|d| d.id == 16611).unwrap();
-    assert_eq!((listed.min_level, listed.max_level), (Some(15), Some(20)));
+    assert_eq!(listed.level, Some(18));
+}
+
+/// The levels chosen for the dungeons (`dungeon_from`, `dungeon_to`) are where the guide runs them,
+/// never past them; a choice leaving no levels for a dungeon it could run is refused.
+#[test]
+fn dungeons_are_run_within_the_levels_chosen() {
+    let window = |from: i64, to: i64| {
+        let params = [
+            format!("dungeon_from={from}"),
+            format!("dungeon_to={to}"),
+            "effort=0".to_owned(),
+        ];
+        PlanRequest {
+            params: Some(overrides().params.with_overrides(&params).unwrap()),
+            ..request("human", "warrior", 30, &[])
+        }
+    };
+    let request = window(0, 1);
+    let p = prepare_request(&request);
+    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    for s in route
+        .steps
+        .iter()
+        .filter(|s| s.kind == fg_route::export::StepKind::Dungeon)
+    {
+        let d = p.model.dungeons.iter().find(|d| s.text.contains(&d.name)).unwrap();
+        assert!(
+            d.min_level <= s.level && s.level <= d.max_level + 1,
+            "{} at {}",
+            d.name,
+            s.level
+        );
+    }
+    let err = job::prepare(&database(), &overrides(), &window(3, 1), &|_| {})
+        .err()
+        .map(|e| e.to_string());
+    assert!(err.is_some_and(|e| e.contains("leave none")));
 }
 
 /// A quest filed under a dungeon whose starting item no source places (Forever's Crest of

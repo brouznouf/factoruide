@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api, type CharacterInfo, type Options, type Params, type PlanRequest } from "../api";
 import { MIN_CHOICE_LEVEL, SIMPLE_KEYS, efforts, presets, sections, type Field, type Section } from "../paramSchema";
-import { DungeonPanel } from "./DungeonPanel";
+import { DungeonPanel, dungeonsWithoutLevels } from "./DungeonPanel";
 import { Hint } from "./Hint";
 import { ParamField } from "./ParamField";
 import { PowerCurve } from "./PowerCurve";
@@ -34,10 +34,11 @@ interface Props {
 type View = "simple" | "advanced";
 
 /** Progression profiles: how far above its power the character goes. */
+/** Progression profiles, with the levels dungeons are run at around theirs (`Progression::dungeon_window`). */
 const PROGRESSION = [
-  { value: "cautious", label: "Prudent", help: "Prudent (survie) : groupes de mobs jamais à plus d'un niveau au-dessus de vous" },
-  { value: "normal", label: "Normal", help: "Normal : quêtes jaunes, jamais d'orange (recommandé)" },
-  { value: "risky", label: "Risqué", help: "Risqué : quêtes orange, élites limites" },
+  { value: "cautious", label: "Prudent", help: "Prudent (survie) : groupes de mobs jamais à plus d'un niveau au-dessus de vous", dungeons: [0, 5] },
+  { value: "normal", label: "Normal", help: "Normal : quêtes jaunes, jamais d'orange (recommandé)", dungeons: [-3, 3] },
+  { value: "risky", label: "Risqué", help: "Risqué : quêtes orange, élites limites", dungeons: [-5, 2] },
 ];
 
 /** One choice among a few, as a row of buttons. */
@@ -247,7 +248,13 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   });
 
   /** Generate the guide, or create it by hand: the request, once the guide has a name. */
+  // Dungeon levels that leave none for a dungeon: refused by the planner, not launched.
+  const noDungeonLevels = dungeonsWithoutLevels(options.dungeons, params.dungeon_from, params.dungeon_to, options.max_level).length > 0;
   const launch = (action: (request: PlanRequest) => void) => {
+    if (noDungeonLevels) {
+      setView("simple");
+      return;
+    }
     if (name.trim()) return action(request());
     // The guide needs a name: show where to type it.
     setTriedRun(true);
@@ -340,11 +347,11 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
             </label>
           )}
           {onManual && (
-            <button onClick={() => launch(onManual)} title={t("Un guide sans étape, qui part du même personnage avec les mêmes réglages : vous ajoutez ses étapes une à une dans l'éditeur.")}>
+            <button disabled={noDungeonLevels} onClick={() => launch(onManual)} title={t("Un guide sans étape, qui part du même personnage avec les mêmes réglages : vous ajoutez ses étapes une à une dans l'éditeur.")}>
               {t("Création manuelle")}
             </button>
           )}
-          <button className="primary big" onClick={() => launch(onRun)}>
+          <button className="primary big" disabled={noDungeonLevels} title={noDungeonLevels ? t("Aucun niveau possible pour un des donjons : changez le niveau des donjons.") : undefined} onClick={() => launch(onRun)}>
             {t("Lancer la génération →")}
           </button>
         </div>
@@ -412,7 +419,11 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                   label={t("Profil de progression")}
                   choices={PROGRESSION.map((p) => ({ label: t(p.label), value: p.value }))}
                   value={params.progression}
-                  onChange={(v) => set("progression", v)}
+                  onChange={(v) => {
+                    // The profile's own dungeon levels too.
+                    const [dungeon_from, dungeon_to] = PROGRESSION.find((p) => p.value === v)?.dungeons ?? [params.dungeon_from, params.dungeon_to];
+                    setParams((p) => ({ ...p, progression: v, dungeon_from, dungeon_to }));
+                  }}
                   help={PROGRESSION.filter((p) => p.value === params.progression).map((p) => t(p.help))[0]}
                 />
                 <Toggle
@@ -465,6 +476,10 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                 forced={params.forced_dungeons}
                 excluded={params.excluded_dungeons}
                 onChange={(forced_dungeons, excluded_dungeons) => setParams((p) => ({ ...p, forced_dungeons, excluded_dungeons }))}
+                from={params.dungeon_from}
+                to={params.dungeon_to}
+                maxLevel={options.max_level}
+                onLevels={(dungeon_from, dungeon_to) => setParams((p) => ({ ...p, dungeon_from, dungeon_to }))}
               />
               <section className="panel zones-layout">
                 <WorldMap zoneStates={zoneStates} onZoneClick={cycleZone} height={420} />

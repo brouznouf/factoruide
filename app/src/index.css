@@ -2120,6 +2120,21 @@ button.setting-reset:hover:not(:disabled) {
   z-index: 1;
 }
 /* Dungeons: buttons by level, a click cycling automatic → forced → excluded. */
+.dungeon-levels {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 8px 12px;
+  margin-bottom: 10px;
+}
+.dungeon-levels > span {
+  flex-basis: 100%;
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+.dungeon-offset {
+  margin: 0;
+}
 .dungeon-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));

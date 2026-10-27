@@ -4,6 +4,7 @@ mod builder;
 mod chains;
 mod crowd;
 mod dungeons;
+pub use dungeons::dungeon_levels;
 mod entities;
 mod explore;
 mod farm;
@@ -57,7 +58,15 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         q.mandatory |= q.required;
     }
     let loot = CommonLoot::load(conn, &mut quests)?;
-    dungeons::set_dungeon_levels(&mut sources.dungeons, &quests, params.dungeon_below());
+    let levels = dungeon_levels(conn, &profile.dungeons)?;
+    let window = (params.dungeon_from, params.dungeon_to);
+    dungeons::set_dungeon_levels(
+        &mut sources.dungeons,
+        &quests,
+        &levels,
+        window,
+        params.edition.rules().max_level,
+    );
     let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     let mut teleports = places.teleports;
     teleports.extend(places::quest_teleports(world, profile, &quests));

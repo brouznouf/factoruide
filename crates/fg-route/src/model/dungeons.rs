@@ -104,11 +104,11 @@ pub(super) fn load_dungeons(
                 name: name.clone(),
             },
             name,
-            min_level: def.min_level.unwrap_or(0),
-            max_level: (def.max_level).or(def.levels.map(|[_, high]| high + 3)).unwrap_or(0),
+            min_level: 0,
+            max_level: 0,
             minutes: def.minutes.unwrap_or(0.0),
             kills: def.kills.unwrap_or(0.0),
-            mob_level: def.levels.map_or(0, |[low, high]| (low + high + 1) / 2),
+            mob_level: 0,
             content: expansion.map_or_else(|| xp::content_at(pos.continent, ez), |e| e.max(0) as usize),
         });
     }
@@ -160,40 +160,75 @@ pub(super) fn faction_entrances(conn: &Connection, faction: Faction) -> Result<H
     Ok(entrances)
 }
 
-/// Dungeon levels from their quests, and default run time and kills. A dungeon without quests
-/// is not planned.
-pub(super) fn set_dungeon_levels(dungeons: &mut [Dungeon], quests: &[Quest], below: i64) {
+/// The level of each dungeon (AreaTable ID): the middle of the game's range when set
+/// (`DungeonDef::levels`), else the median level of its quests: those filed under it, else those
+/// with an objective that lives only inside it. The app shows it and the planner runs the dungeon from it
+/// (`Params::dungeon_from`, `Params::dungeon_to`).
+pub fn dungeon_levels(conn: &Connection, defs: &[DungeonDef]) -> Result<HashMap<i64, i64>> {
+    let mut stmt = conn.prepare(
+        "WITH inside(dungeon, zone) AS (
+           SELECT area, area FROM dungeon
+           UNION SELECT d.area, j.value FROM dungeon d, json_each(coalesce(d.alt_areas, '[]')) j),
+         -- What lives only in one dungeon (nowhere outside it).
+         within(dungeon, entity_type, entity_id) AS (
+           SELECT min(i.dungeon), s.entity_type, s.entity_id FROM m_spawn s LEFT JOIN inside i ON i.zone = s.zone_id
+           GROUP BY s.entity_type, s.entity_id HAVING count(i.dungeon) = count(*) AND min(i.dungeon) = max(i.dungeon)),
+         filed(dungeon, id, level) AS (
+           SELECT i.dungeon, q.id, q.level FROM inside i JOIN m_quest q ON q.zone_or_sort = i.zone
+           WHERE q.status = 'available' AND q.level > 0),
+         done_inside(dungeon, id, level) AS (
+           SELECT w.dungeon, q.id, q.level FROM m_quest_objective o JOIN m_quest q ON q.id = o.quest_id
+           JOIN within w ON w.entity_type = CASE o.type WHEN 'object' THEN 'object' ELSE 'npc' END AND w.entity_id = o.target_id
+           WHERE q.status = 'available' AND q.level > 0 AND o.type != 'item'
+           UNION SELECT w.dungeon, q.id, q.level FROM m_quest_objective o JOIN m_quest q ON q.id = o.quest_id
+           JOIN m_item_source i ON i.item_id = o.target_id AND i.from_type IN ('npc', 'object')
+           JOIN within w ON w.entity_type = i.from_type AND w.entity_id = i.from_id
+           WHERE q.status = 'available' AND q.level > 0 AND o.type = 'item')
+         SELECT dungeon, level FROM filed
+         UNION ALL SELECT dungeon, level FROM done_inside WHERE dungeon NOT IN (SELECT dungeon FROM filed)",
+    )?;
+    let mut levels: HashMap<i64, Vec<i64>> = HashMap::new();
+    for row in stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))? {
+        let (dungeon, level) = row?;
+        levels.entry(dungeon).or_default().push(level);
+    }
+    let mut out: HashMap<i64, i64> = (levels.into_iter())
+        .map(|(dungeon, mut l)| {
+            l.sort_unstable();
+            (dungeon, l[l.len() / 2])
+        })
+        .collect();
+    for def in defs {
+        if let Some([low, high]) = def.levels {
+            out.insert(def.area, (low + high + 1) / 2);
+        }
+    }
+    Ok(out)
+}
+
+/// Each dungeon's level (`dungeon_levels`, else its planned quests' median) and the window it is
+/// run in (`window` around it, within the game's levels up to `max_level`; empty when the window
+/// leaves none), with the default run time and kills. A dungeon without quests is not planned.
+pub(super) fn set_dungeon_levels(
+    dungeons: &mut [Dungeon],
+    quests: &[Quest],
+    levels: &HashMap<i64, i64>,
+    window: (i64, i64),
+    max_level: i64,
+) {
     for (d, dungeon) in dungeons.iter_mut().enumerate() {
-        let qs: Vec<&Quest> = quests
-            .iter()
+        let mut own: Vec<i64> = (quests.iter())
             .filter(|q| q.objectives.iter().any(|o| o.dungeon == Some(d)))
+            .map(|q| q.level)
             .collect();
-        if qs.is_empty() {
+        if own.is_empty() {
             dungeon.min_level = i64::MAX;
             continue;
         }
-        let mut levels: Vec<i64> = qs.iter().map(|q| q.level).collect();
-        levels.sort_unstable();
-        // The game's range when set (`DungeonDef::levels`), else its quests' levels.
-        let known = dungeon.mob_level > 0;
-        if !known {
-            dungeon.mob_level = levels[levels.len() / 2];
-        }
-        // Not before the group can face the dungeon's mobs, `below` levels under them at most:
-        // the quests may start well below them (the Deadmines' first quest, level 14, for mobs
-        // of level 20).
-        if dungeon.min_level == 0 {
-            dungeon.min_level = qs
-                .iter()
-                .map(|q| q.min_level)
-                .min()
-                .expect("a dungeon with quests")
-                .max(if known { 0 } else { levels[0] - 2 })
-                .max(dungeon.mob_level - below);
-        }
-        if dungeon.max_level == 0 {
-            dungeon.max_level = levels[levels.len() - 1] + 3;
-        }
+        own.sort_unstable();
+        dungeon.mob_level = levels.get(&dungeon.area).copied().unwrap_or(own[own.len() / 2]);
+        dungeon.min_level = (dungeon.mob_level + window.0).max(1);
+        dungeon.max_level = (dungeon.mob_level + window.1).min(max_level);
         if dungeon.minutes == 0.0 {
             dungeon.minutes = (40.0 + dungeon.mob_level as f64).clamp(50.0, 120.0);
         }

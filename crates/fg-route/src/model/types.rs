@@ -636,8 +636,6 @@ pub struct DungeonDef {
     /// The game's level range for the dungeon, when its quests' levels say otherwise: its
     /// monsters are at the middle of it.
     pub levels: Option<[i64; 2]>,
-    pub min_level: Option<i64>,
-    pub max_level: Option<i64>,
     pub minutes: Option<f64>,
     pub kills: Option<f64>,
 }

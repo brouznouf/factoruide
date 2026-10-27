@@ -74,10 +74,9 @@ pub struct DungeonOption {
     /// Translated names by game locale (frFR...), when known.
     #[serde(skip_serializing_if = "BTreeMap::is_empty")]
     pub names: BTreeMap<String, String>,
-    /// The game's range when set (`dungeons.toml`), else the levels of most of its quests (the
-    /// lowest and highest few left out), when it has some.
-    pub min_level: Option<i64>,
-    pub max_level: Option<i64>,
+    /// Its level (`model::dungeon_levels`): it is run from `Params::dungeon_from` to
+    /// `Params::dungeon_to` around it.
+    pub level: Option<i64>,
 }
 
 /// A faction quests give reputation with.
@@ -189,71 +188,33 @@ pub fn options(conn: &Connection, overrides: &Overrides) -> Result<Options> {
              found(dungeon) AS (
                SELECT DISTINCT i.dungeon FROM m_spawn s JOIN inside i ON i.zone = s.zone_id
                WHERE (s.entity_type, s.entity_id) IN needed)
-             SELECT d.area, d.name, coalesce(d.alt_areas, '[]') FROM dungeon d JOIN client_areatable a ON a.ID = d.area
+             SELECT d.area, d.name FROM dungeon d JOIN client_areatable a ON a.ID = d.area
              JOIN client_map m ON m.InstanceType = 1 AND (m.ID = a.ContinentID OR m.AreaTableID = d.area)
              WHERE d.area IN found OR d.area IN (SELECT i.dungeon FROM inside i JOIN m_quest q ON q.zone_or_sort = i.zone
                                                  WHERE q.status = 'available' AND q.level <= ?1)
              GROUP BY d.area",
         )?;
         let max_level = overrides.params.edition.rules().max_level + 2;
-        // Quest levels by quest log category (a dungeon's quests are filed under it).
-        let mut quest_levels: HashMap<i64, Vec<i64>> = HashMap::new();
-        {
-            let mut stmt = conn.prepare(
-                "SELECT zone_or_sort, level FROM m_quest WHERE status = 'available' AND zone_or_sort > 0 AND level > 0",
-            )?;
-            for row in stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))? {
-                let (area, level) = row?;
-                quest_levels.entry(area).or_default().push(level);
-            }
-        }
-        // Its quests may be filed under one of its other areas (Gnomeregan's under the zone's).
-        let dungeon = |area: i64, name: String, alt_areas: &[i64]| {
-            let mut levels: Vec<i64> = std::iter::once(&area)
-                .chain(alt_areas)
-                .flat_map(|a| quest_levels.get(a).into_iter().flatten().copied())
-                .collect();
-            levels.sort_unstable();
-            let n = levels.len();
-            let def = overrides.dungeons.iter().find(|d| d.area == area);
-            DungeonOption {
-                id: area,
-                key: area.to_string(),
-                name,
-                names: names_of(area),
-                min_level: def
-                    .and_then(|d| d.min_level.or(d.levels.map(|[low, _]| low)))
-                    .or_else(|| (n > 0).then(|| levels[n * 15 / 100])),
-                max_level: def
-                    .and_then(|d| d.max_level.or(d.levels.map(|[_, high]| high)))
-                    .or_else(|| (n > 0).then(|| levels[(n * 85).div_ceil(100).max(1) - 1])),
-            }
+        let levels = crate::model::dungeon_levels(conn, &overrides.dungeons)?;
+        let dungeon = |area: i64, name: String| DungeonOption {
+            id: area,
+            key: area.to_string(),
+            name,
+            names: names_of(area),
+            level: levels.get(&area).copied(),
         };
         let mut list: Vec<DungeonOption> = stmt
-            .query_map([max_level], |r| {
-                Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?))
-            })?
-            .map(|r| {
-                r.map(|(area, name, alt)| {
-                    dungeon(area, name, &serde_json::from_str::<Vec<i64>>(&alt).unwrap_or_default())
-                })
-            })
+            .query_map([max_level], |r| Ok(dungeon(r.get(0)?, r.get(1)?)))?
             .collect::<rusqlite::Result<_>>()?;
         for def in &overrides.dungeons {
             if let Some(name) = &def.name
                 && !list.iter().any(|d| d.id == def.area)
             {
-                list.push(dungeon(def.area, name.clone(), &[]));
+                list.push(dungeon(def.area, name.clone()));
             }
         }
         // By level (those without, last), then name.
-        list.sort_by(|a, b| {
-            (a.min_level.unwrap_or(i64::MAX), a.max_level, &a.name).cmp(&(
-                b.min_level.unwrap_or(i64::MAX),
-                b.max_level,
-                &b.name,
-            ))
-        });
+        list.sort_by(|a, b| (a.level.unwrap_or(i64::MAX), &a.name).cmp(&(b.level.unwrap_or(i64::MAX), &b.name)));
         list
     };
     let factions = factions(conn, &races)?;
