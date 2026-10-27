@@ -40,7 +40,7 @@ use characters::{forget_character, import_profile, list_characters};
 use guides::{
     cancel_plan, compare_versions, delete_guide, delete_version, edit_close, edit_open, edit_save, edit_simulate,
     edit_suggest, export_version, get_guide, get_version, guide_timeline, import_guide, inferred_flights, list_guides,
-    manual_route, migrate_results, plan_route, preview_starts, set_installed, stop_plan,
+    manual_route, migrate_results, plan_route, preview_starts, quest_choices, set_installed, stop_plan,
 };
 /// The game's maps.
 mod maps;
@@ -622,6 +622,7 @@ fn main() {
             get_options,
             plan_route,
             inferred_flights,
+            quest_choices,
             preview_starts,
             manual_route,
             stop_plan,

@@ -378,3 +378,22 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
         .save(&[], vec![])
         .unwrap();
 }
+
+/// Must-have quests are found by ID or by part of their name, in English or the guide's
+/// language, among those of the character's race and class.
+#[test]
+fn quest_choices_by_id_or_name_for_the_character() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let find = |race: &str, query: &str, locale: Option<&str>| {
+        job::quest_choices(&conn, &overrides, race, "warrior", query, locale)
+            .unwrap()
+            .into_iter()
+            .map(|q| (q.id, q.name))
+            .collect::<Vec<_>>()
+    };
+    assert_eq!(find("human", "91777", None)[0], (91777, "Rare Books".to_owned()));
+    assert_eq!(find("human", "rare book", None)[0].0, 91777);
+    assert!(find("orc", "Rare Books", None).iter().all(|(id, _)| *id != 91777), "Alliance only");
+    assert!(find("human", "", None).is_empty());
+}

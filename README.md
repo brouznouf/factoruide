@@ -40,7 +40,7 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   to see again.
 - **Your dungeons**: force or exclude each dungeon, do the worthwhile ones in a group, take their
   quests a few levels ahead.
-- **Your quests**: add a must-have quest by ID or exact name. The guide includes its
+- **Your quests**: search a must-have quest by name or ID (bottom of the new guide page). The guide includes its
   prerequisites and finishes the chain, even past your target level. It cannot be saved with
   a required quest missing. For the Sleeping Bag in Forever, add **79976** (**This Must Be The
   Place**); its XP bonus is not simulated.

@@ -98,6 +98,23 @@ pub(crate) async fn inferred_flights(app: AppHandle, start: StartState) -> CmdRe
     blocking(app, move |state| state.studio.inferred_flights(state, &start)).await
 }
 
+/// Quests to choose as must-have ones (`job::quest_choices`).
+#[tauri::command]
+pub(crate) async fn quest_choices(
+    app: AppHandle,
+    race: String,
+    class: String,
+    query: String,
+    locale: Option<String>,
+) -> CmdResult<Vec<job::QuestChoice>> {
+    blocking(app, move |state| {
+        state
+            .studio
+            .quest_choices(state, &race, &class, &query, locale.as_deref())
+    })
+    .await
+}
+
 /// The starts the character can choose from before the guide is computed (`job::preview_starts`),
 /// streaming `plan-progress` events (`@preview <done> <total>`). Fewer than two: nothing to choose.
 /// `cancel_plan` ends it with "cancelled".

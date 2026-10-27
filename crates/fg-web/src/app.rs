@@ -672,6 +672,17 @@ fn run(cmd: &str, a: serde_json::Value) -> CmdResult<serde_json::Value> {
             let start = args::<A>(a)?.start;
             to_json(STUDIO.inferred_flights(&WebHost, &start))
         }
+        "quest_choices" => {
+            #[derive(Deserialize)]
+            struct A {
+                race: String,
+                class: String,
+                query: String,
+                locale: Option<String>,
+            }
+            let a = args::<A>(a)?;
+            to_json(STUDIO.quest_choices(&WebHost, &a.race, &a.class, &a.query, a.locale.as_deref()))
+        }
         "preview_starts" => {
             #[derive(Deserialize)]
             struct A {

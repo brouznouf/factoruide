@@ -29,6 +29,14 @@ export interface PolestarString {
 }
 
 /** A character's export (Export my character) pasted in the web app. */
+/** A quest to choose as a must-have one: its name in the guide's language when known. */
+export interface QuestChoice {
+  id: number;
+  name: string;
+  level: number;
+  zone: string | null;
+}
+
 export interface ProfileImported {
   character: string;
   edition: Edition;
@@ -514,6 +522,9 @@ export const api = {
   planRoute: (request: PlanRequest) => invoke<VersionMeta>("plan_route", { request }),
   /** The flight paths a character probably knows from its quests done in their towns. */
   inferredFlights: (start: StartState) => invoke<number[]>("inferred_flights", { start }),
+  /** Quests of the race and class whose ID is `query` or whose name holds it, the closest first. */
+  questChoices: (race: string, klass: string, query: string, locale: string | null) =>
+    invoke<QuestChoice[]>("quest_choices", { race, class: klass, query, locale }),
   /** The starts the character can choose from (fewer than two: nothing to choose), the best score first. */
   previewStarts: (request: PlanRequest) => invoke<StartPreview>("preview_starts", { request }),
   /** Saves a guide of no steps from the request's character and settings (edited by hand), to fill in the editor. */

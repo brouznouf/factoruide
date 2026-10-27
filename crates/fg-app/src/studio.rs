@@ -156,6 +156,30 @@ impl Studio {
         Ok(found)
     }
 
+    /// Quests to choose as must-have ones for a race and class, by ID or name (`job::quest_choices`).
+    ///
+    /// # Errors
+    ///
+    /// [`CmdError`]: the game data or the configuration could not be read.
+    pub fn quest_choices<H: Host>(
+        &self,
+        host: &H,
+        race: &str,
+        class: &str,
+        query: &str,
+        locale: Option<&str>,
+    ) -> Result<Vec<job::QuestChoice>> {
+        let conn = host.open_db(host.edition())?;
+        Ok(job::quest_choices(
+            &conn,
+            &host.overrides(host.edition())?,
+            race,
+            class,
+            query,
+            locale,
+        )?)
+    }
+
     /// Ends the optimization under way now: `plan_route` saves and returns the best guide so far.
     pub fn stop_plan(&self) {
         self.interrupt.stop();

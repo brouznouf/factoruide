@@ -9,10 +9,10 @@ import { ParamField } from "./ParamField";
 import { PowerCurve } from "./PowerCurve";
 import { ProfessionPicker } from "./ProfessionPicker";
 import { ReputationPanel } from "./ReputationPanel";
+import { RequiredQuests } from "./RequiredQuests";
 import { WorldMap, type ZoneState } from "./WorldMap";
 import { ZonePanel } from "./ZonePanel";
 import { useGameName, useT } from "../i18n";
-import { requiredQuest } from "../requiredQuest";
 import { IS_WEB } from "../web/mode";
 import { ProfilePaste } from "../web/components/ProfilePaste";
 
@@ -252,7 +252,6 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   const [params, setParams] = useState<Params>({ ...defaults, ...(initial?.params ?? {}) });
   const [classQuests, setClassQuests] = useState<string[] | null>(initial?.required_class_quests ?? null);
   const [requiredQuests, setRequiredQuests] = useState<(number | string)[]>(initial?.required_quests ?? []);
-  const [newRequiredQuest, setNewRequiredQuest] = useState("");
   const [professions, setProfessions] = useState<ProfessionGoal[]>(initial?.professions ?? []);
   // The other players of a group guide (up to 4), as their addon recorded them.
   const [mates, setMates] = useState<StartState[]>(initial?.mates ?? []);
@@ -535,26 +534,6 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
         </div>
       </div>
 
-      <section className="panel">
-        <h3>{t("Quêtes indispensables")}</h3>
-        <p className="muted">{t("Ajoutez un ID ou un nom exact. Les prérequis sont inclus et le guide doit terminer ces quêtes, même après le niveau cible.")}</p>
-        <div className="chips">
-          {requiredQuests.map((quest) => (
-            <button key={`${typeof quest}:${quest}`} className="chip" onClick={() => setRequiredQuests(requiredQuests.filter((q) => q !== quest))}>
-              {quest} ×
-            </button>
-          ))}
-        </div>
-        <div className="row">
-          <input aria-label={t("ID ou nom exact de la quête")} placeholder={t("ID ou nom exact de la quête")} value={newRequiredQuest} onChange={(e) => setNewRequiredQuest(e.target.value)} />
-          <button disabled={!newRequiredQuest.trim()} onClick={() => {
-            const quest = requiredQuest(newRequiredQuest);
-            if (!requiredQuests.includes(quest)) setRequiredQuests([...requiredQuests, quest]);
-            setNewRequiredQuest("");
-          }}>{t("Ajouter")}</button>
-        </div>
-      </section>
-
       {view === "simple" ? (
         <div className="config-simple">
           <section className="panel">
@@ -740,6 +719,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
               </section>
             </div>
           </div>
+          <RequiredQuests race={race} klass={klass} locale={locale} quests={requiredQuests} onChange={setRequiredQuests} />
         </div>
       ) : (
         <>
