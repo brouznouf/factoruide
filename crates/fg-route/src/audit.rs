@@ -127,6 +127,23 @@ pub const CHECKS: &[Check] = &[
         error: true,
     },
     Check {
+        name: "hostile-in-cities",
+        what: "creatures hostile to both sides (no side known to like them) with several spawns in a \
+               capital city: event creatures (invasions, a festival's guests), guests of a quest \
+               or a side the data did not read. The planner counts them as guards around the \
+               quest givers there and keeps the quests from being picked up. Give the creature's \
+               side (`[[npc]] friendly_to` in the data overrides), or accept it",
+        error: false,
+    },
+    Check {
+        name: "guarded-givers",
+        what: "quests whose giver or turn-in has several hostile creatures around, ten levels or \
+               more above the quest (the planner needs the character that strong to go there). Most \
+               are camps in hostile land; one inside a town is a creature the data got wrong \
+               (see hostile-in-cities). Give the creature's side in the data overrides, or accept it",
+        error: false,
+    },
+    Check {
         name: "timed-quests",
         what: "quests of the guide whose objectives give a time (\"in ten minutes\") while the \
                data has no time limit: the planner may do other things between taking and \
@@ -232,6 +249,12 @@ pub fn audit(
     } else {
         HashSet::new()
     };
+    if on("hostile-in-cities") {
+        for f in hostile_in_cities(conn)? {
+            found.insert((f.check, f.key.clone()), f);
+        }
+    }
+    let mut hostile: Option<Vec<Hostile>> = None;
     if on("exclusive-prerequisites") {
         for f in exclusive_prerequisites(conn, &overrides.quest_overrides)? {
             found.insert((f.check, f.key.clone()), f);
@@ -319,6 +342,14 @@ pub fn audit(
                 .into_iter()
                 .for_each(&mut add);
         }
+        if on("guarded-givers") {
+            if hostile.is_none() {
+                hostile = Some(hostile_spawns(conn, &prepared.world)?);
+            }
+            guarded_givers(&prepared.world, &prepared.model, hostile.as_deref().unwrap_or_default())
+                .into_iter()
+                .for_each(&mut add);
+        }
         if on("timed-quests") {
             timed_quests(&prepared.model, &timed_text)
                 .into_iter()
@@ -361,6 +392,146 @@ pub fn audit(
         }
     }
     Ok(found.into_values().collect())
+}
+
+/// The capital cities (AreaTable): Stormwind, Orgrimmar, Ironforge, Thunder Bluff, Darnassus,
+/// Undercity, Silvermoon, the Exodar, Shattrath.
+const CITIES: [i64; 9] = [1519, 1637, 1537, 1638, 1657, 1497, 3487, 3557, 3703];
+
+/// Spawns of a creature in a capital city to be a finding (a lone one is a stray).
+const CITY_SPAWNS: i64 = 3;
+
+/// Creatures hostile to both sides standing in the capital cities: not critters (no level), and
+/// not those with a side known.
+fn hostile_in_cities(conn: &Connection) -> Result<Vec<Finding>> {
+    let cities = CITIES.map(|c| c.to_string()).join(",");
+    let mut stmt = conn.prepare(&format!(
+        "SELECT s.zone_id, coalesce(a.AreaName_lang, '?'), s.entity_id, coalesce(n.name, '?'),
+                coalesce(n.min_level, 0), coalesce(n.max_level, n.min_level, 0), coalesce(n.rank, 0), count(*)
+         FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
+              LEFT JOIN client_areatable a ON a.ID = s.zone_id
+         WHERE s.entity_type = 'npc' AND s.zone_id IN ({cities}) AND coalesce(n.friendly_to, '') = ''
+               AND coalesce(n.min_level, 0) > 1
+         GROUP BY s.zone_id, s.entity_id HAVING count(*) >= {CITY_SPAWNS}
+         ORDER BY count(*) DESC"
+    ))?;
+    let rows = stmt.query_map([], |r| {
+        Ok((
+            r.get::<_, String>(1)?,
+            r.get::<_, i64>(2)?,
+            r.get::<_, String>(3)?,
+            r.get::<_, i64>(4)?,
+            r.get::<_, i64>(5)?,
+            r.get::<_, i64>(6)?,
+            r.get::<_, i64>(7)?,
+        ))
+    })?;
+    let mut findings = Vec::new();
+    for row in rows {
+        let (city, id, name, lo, hi, rank, n) = row?;
+        let levels = if lo == hi { lo.to_string() } else { format!("{lo}-{hi}") };
+        let elite = if rank == 1 || rank == 2 { " elite" } else { "" };
+        findings.push(Finding {
+            check: "hostile-in-cities",
+            key: format!("{name} ({id}) in {city}"),
+            detail: format!("{n} spawns of a level {levels}{elite} creature hostile to both sides"),
+            races: Vec::new(),
+        });
+    }
+    Ok(findings)
+}
+
+/// A spawn of a creature hostile to both sides.
+struct Hostile {
+    name: String,
+    level: u8,
+    elite: bool,
+    pos: Pos,
+}
+
+fn hostile_spawns(conn: &Connection, world: &World) -> Result<Vec<Hostile>> {
+    let mut stmt = conn.prepare(
+        "SELECT s.zone_id, s.x, s.y, coalesce(n.name, '?'), coalesce(n.min_level, 1), coalesce(n.max_level, n.min_level, 1),
+                coalesce(n.rank, 0)
+         FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
+         WHERE s.entity_type = 'npc' AND s.x >= 0 AND coalesce(n.friendly_to, '') = ''",
+    )?;
+    let rows = stmt.query_map([], |r| {
+        Ok((
+            r.get::<_, i64>(0)?,
+            r.get::<_, f64>(1)?,
+            r.get::<_, f64>(2)?,
+            r.get::<_, String>(3)?,
+            r.get::<_, i64>(4)?,
+            r.get::<_, i64>(5)?,
+            r.get::<_, i64>(6)?,
+        ))
+    })?;
+    let mut spawns = Vec::new();
+    for row in rows {
+        let (zone, x, y, name, lo, hi, rank) = row?;
+        if let Some(pos) = world.to_world(zone, x, y) {
+            spawns.push(Hostile {
+                name,
+                level: lo.max(hi).clamp(1, 255) as u8,
+                elite: rank == 1 || rank == 2,
+                pos,
+            });
+        }
+    }
+    Ok(spawns)
+}
+
+/// How many levels above a quest the creatures around its giver make it a finding.
+const GUARD_GAP: i64 = 10;
+
+/// Quests whose giver or turn-in has several hostile creatures around, `GUARD_GAP` levels above
+/// the quest. One finding per place, with the creatures that guard it.
+fn guarded_givers(world: &World, model: &Model, hostile: &[Hostile]) -> Vec<Finding> {
+    let mut findings = Vec::new();
+    for q in &model.quests {
+        let places = [("gives", &q.start_guard, &q.starts), ("takes back", &q.end_guard, &q.ends)];
+        for (role, guard, locs) in places {
+            if guard.level < q.level.max(q.min_level) + GUARD_GAP {
+                continue;
+            }
+            for loc in locs.iter().filter(|l| l.kind != EntityKind::Dungeon) {
+                let near: Vec<&Hostile> = hostile
+                    .iter()
+                    .filter(|h| {
+                        h.pos.continent == loc.pos.continent
+                            && h.pos.dist(&loc.pos) <= crate::model::Guards::RADIUS
+                            && i64::from(h.level) + 2 >= guard.level
+                    })
+                    .collect();
+                if near.len() < 2 {
+                    continue;
+                }
+                let mut names: BTreeMap<&str, usize> = BTreeMap::new();
+                for h in &near {
+                    *names.entry(h.name.as_str()).or_default() += 1;
+                }
+                let mut names: Vec<(&str, usize)> = names.into_iter().collect();
+                names.sort_by_key(|(name, n)| (std::cmp::Reverse(*n), *name));
+                let around: Vec<String> = names.iter().take(3).map(|(name, n)| format!("{name} x{n}")).collect();
+                let zone = world.zone_at(&loc.pos).map_or("?", |z| world.zone_name(z));
+                let elite = if near.iter().any(|h| h.elite) { " elite" } else { "" };
+                findings.push(Finding {
+                    check: "guarded-givers",
+                    key: format!("{} ({zone})", loc.name),
+                    detail: format!(
+                        "{} (level {}) {role} here: level {}{elite} around, {}",
+                        q.name,
+                        q.level,
+                        guard.level,
+                        around.join(", ")
+                    ),
+                    races: Vec::new(),
+                });
+            }
+        }
+    }
+    findings
 }
 
 /// The quests of a class: filed under it or given to it only (a quest of another kind may have a
@@ -1256,6 +1427,28 @@ mod tests {
             let found = accepted(&dir, edition).unwrap();
             assert!(!found.is_empty(), "{edition:?}");
         }
+    }
+
+    /// Light's Justice's case: a giver with creatures ten levels above the quest around it is
+    /// found with their names; weaker ones, or too few, are not.
+    #[test]
+    fn a_giver_guarded_far_above_its_quest_is_found_with_its_guards() {
+        use crate::model::Guard;
+        let mut p = quests_at_start(1);
+        let at = p.model.quests[0].starts[0].pos;
+        let level = p.model.quests[0].level.max(p.model.quests[0].min_level);
+        let guard = |level| Guard { level, count: 2, elite: true };
+        let mobs = |n: usize, level: u8| -> Vec<Hostile> {
+            (0..n)
+                .map(|_| Hostile { name: "Flameshocker".into(), level, elite: true, pos: at })
+                .collect()
+        };
+        let found = |p: &crate::job::Prepared, mobs: &[Hostile]| guarded_givers(&p.world, &p.model, mobs).len();
+        p.model.quests[0].start_guard = guard(level + GUARD_GAP);
+        assert_eq!(found(&p, &mobs(2, (level + GUARD_GAP) as u8)), 1);
+        assert_eq!(found(&p, &mobs(1, (level + GUARD_GAP) as u8)), 0, "one creature is walked around");
+        p.model.quests[0].start_guard = guard(level + GUARD_GAP - 1);
+        assert_eq!(found(&p, &mobs(2, (level + GUARD_GAP - 1) as u8)), 0, "not far enough above");
     }
 
     /// Secure the Mountain's case: a quest left out because an objective has no place, needed
