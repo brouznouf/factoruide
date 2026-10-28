@@ -222,6 +222,10 @@ enum Command {
         /// Also list the accepted findings
         #[arg(long)]
         all: bool,
+        /// Write the creatures the findings point at as facts to review (tab-separated:
+        /// npc:ID, side, check, finding), for `fgd review propose`
+        #[arg(long)]
+        proposals: Option<PathBuf>,
     },
     /// Write the leveling talent plans of the addon (TalentBuilds_<edition>.lua) from the game's talent trees
     Talents {
@@ -377,7 +381,9 @@ fn main() -> Result<()> {
         }
         Command::TerrainOverrides { faction } => travel::overrides(&open()?, &overrides, &faction)?,
         Command::Walks { route, out, cells } => walks::run(&open()?, &overrides, &route, &out, cells)?,
-        Command::Audit { checks, all } => audit::run(&open()?, &overrides, &checks, all)?,
+        Command::Audit { checks, all, proposals } => {
+            audit::run(&open()?, &overrides, &checks, all, proposals.as_deref())?;
+        }
         Command::Talents { out } => talents::run(
             &open()?,
             &out.unwrap_or_else(|| PathBuf::from(format!("addon/Factoruide_Guide/TalentBuilds_{}.lua", edition.key()))),

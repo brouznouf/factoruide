@@ -168,6 +168,9 @@ pub struct Finding {
     pub detail: String,
     /// The races whose guides have it.
     pub races: Vec<String>,
+    /// Creatures the problem may come from, with the side that probably likes each (A, H or AH):
+    /// facts for the review (`fg audit --proposals`).
+    pub npcs: Vec<(i64, &'static str)>,
 }
 
 /// A finding known to be right, in `overrides/audit.toml`.
@@ -398,6 +401,16 @@ pub fn audit(
 /// Undercity, Silvermoon, the Exodar, Shattrath.
 const CITIES: [i64; 9] = [1519, 1637, 1537, 1638, 1657, 1497, 3487, 3557, 3703];
 
+/// The side whose city it is: the creatures standing in it are probably friendly to it (both for
+/// Shattrath).
+fn city_side(zone: i64) -> &'static str {
+    match zone {
+        1519 | 1537 | 1657 | 3557 => "A",
+        1637 | 1638 | 1497 | 3487 => "H",
+        _ => "AH",
+    }
+}
+
 /// Spawns of a creature in a capital city to be a finding (a lone one is a stray).
 const CITY_SPAWNS: i64 = 3;
 
@@ -424,11 +437,12 @@ fn hostile_in_cities(conn: &Connection) -> Result<Vec<Finding>> {
             r.get::<_, i64>(5)?,
             r.get::<_, i64>(6)?,
             r.get::<_, i64>(7)?,
+            r.get::<_, i64>(0)?,
         ))
     })?;
     let mut findings = Vec::new();
     for row in rows {
-        let (city, id, name, lo, hi, rank, n) = row?;
+        let (city, id, name, lo, hi, rank, n, zone) = row?;
         let levels = if lo == hi { lo.to_string() } else { format!("{lo}-{hi}") };
         let elite = if rank == 1 || rank == 2 { " elite" } else { "" };
         findings.push(Finding {
@@ -436,6 +450,7 @@ fn hostile_in_cities(conn: &Connection) -> Result<Vec<Finding>> {
             key: format!("{name} ({id}) in {city}"),
             detail: format!("{n} spawns of a level {levels}{elite} creature hostile to both sides"),
             races: Vec::new(),
+            npcs: vec![(id, city_side(zone))],
         });
     }
     Ok(findings)
@@ -443,6 +458,7 @@ fn hostile_in_cities(conn: &Connection) -> Result<Vec<Finding>> {
 
 /// A spawn of a creature hostile to both sides.
 struct Hostile {
+    id: i64,
     name: String,
     level: u8,
     elite: bool,
@@ -451,7 +467,7 @@ struct Hostile {
 
 fn hostile_spawns(conn: &Connection, world: &World) -> Result<Vec<Hostile>> {
     let mut stmt = conn.prepare(
-        "SELECT s.zone_id, s.x, s.y, coalesce(n.name, '?'), coalesce(n.min_level, 1), coalesce(n.max_level, n.min_level, 1),
+        "SELECT s.zone_id, s.x, s.y, s.entity_id, coalesce(n.name, '?'), coalesce(n.min_level, 1), coalesce(n.max_level, n.min_level, 1),
                 coalesce(n.rank, 0)
          FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
          WHERE s.entity_type = 'npc' AND s.x >= 0 AND coalesce(n.friendly_to, '') = ''",
@@ -461,17 +477,19 @@ fn hostile_spawns(conn: &Connection, world: &World) -> Result<Vec<Hostile>> {
             r.get::<_, i64>(0)?,
             r.get::<_, f64>(1)?,
             r.get::<_, f64>(2)?,
-            r.get::<_, String>(3)?,
-            r.get::<_, i64>(4)?,
+            r.get::<_, i64>(3)?,
+            r.get::<_, String>(4)?,
             r.get::<_, i64>(5)?,
             r.get::<_, i64>(6)?,
+            r.get::<_, i64>(7)?,
         ))
     })?;
     let mut spawns = Vec::new();
     for row in rows {
-        let (zone, x, y, name, lo, hi, rank) = row?;
+        let (zone, x, y, id, name, lo, hi, rank) = row?;
         if let Some(pos) = world.to_world(zone, x, y) {
             spawns.push(Hostile {
+                id,
                 name,
                 level: lo.max(hi).clamp(1, 255) as u8,
                 elite: rank == 1 || rank == 2,
@@ -507,13 +525,14 @@ fn guarded_givers(world: &World, model: &Model, hostile: &[Hostile]) -> Vec<Find
                 if near.len() < 2 {
                     continue;
                 }
-                let mut names: BTreeMap<&str, usize> = BTreeMap::new();
+                let mut names: BTreeMap<(i64, &str), usize> = BTreeMap::new();
                 for h in &near {
-                    *names.entry(h.name.as_str()).or_default() += 1;
+                    *names.entry((h.id, h.name.as_str())).or_default() += 1;
                 }
-                let mut names: Vec<(&str, usize)> = names.into_iter().collect();
-                names.sort_by_key(|(name, n)| (std::cmp::Reverse(*n), *name));
-                let around: Vec<String> = names.iter().take(3).map(|(name, n)| format!("{name} x{n}")).collect();
+                let mut names: Vec<((i64, &str), usize)> = names.into_iter().collect();
+                names.sort_by_key(|((id, name), n)| (std::cmp::Reverse(*n), *name, *id));
+                names.truncate(3);
+                let around: Vec<String> = names.iter().map(|((_, name), n)| format!("{name} x{n}")).collect();
                 let zone = world.zone_at(&loc.pos).map_or("?", |z| world.zone_name(z));
                 let elite = if near.iter().any(|h| h.elite) { " elite" } else { "" };
                 findings.push(Finding {
@@ -527,6 +546,7 @@ fn guarded_givers(world: &World, model: &Model, hostile: &[Hostile]) -> Vec<Find
                         around.join(", ")
                     ),
                     races: Vec::new(),
+                    npcs: names.iter().map(|((id, _), _)| (*id, "AH")).collect(),
                 });
             }
         }
@@ -566,6 +586,7 @@ fn class_quests_left_out(class: &str, required: &[String], own: &HashSet<i64>, m
             key: format!("{class} quest {id}"),
             detail: format!("{name} ({id}): {why}"),
             races: Vec::new(),
+            npcs: Vec::new(),
         })
         .collect()
 }
@@ -603,6 +624,7 @@ fn other_class_quests(class: &str, model: &Model, trainer_quests: &HashMap<i64, 
                     classes.join("/")
                 ),
                 races: Vec::new(),
+                npcs: Vec::new(),
             })
         })
         .collect()
@@ -719,6 +741,7 @@ fn out_of_reach(
                     s.what
                 ),
                 races: Vec::new(),
+                npcs: Vec::new(),
             }
         })
         .collect()
@@ -782,6 +805,7 @@ fn ambiguous_floors(world: &World, model: &Model) -> Vec<Finding> {
                     on.map_or("none".to_owned(), |h| h.to_string())
                 ),
                 races: Vec::new(),
+                npcs: Vec::new(),
             });
         }
     }
@@ -950,6 +974,7 @@ fn uncovered_source_items(model: &Model, source_items: &HashMap<i64, SourceItems
                 key: format!("quest {} item {item}", q.id),
                 detail: format!("{} ({}) needs {name} ({item}): no step gets it", q.name, q.id),
                 races: Vec::new(),
+                npcs: Vec::new(),
             });
         }
     }
@@ -1055,6 +1080,7 @@ fn unknown_starter_drops(model: &Model, starters: &[StarterDrop]) -> Vec<Finding
                 names.join(", ")
             ),
             races: Vec::new(),
+            npcs: Vec::new(),
         });
     }
     out
@@ -1101,6 +1127,7 @@ fn dungeon_entrances(model: &Model, doors: &[Door], known: &HashSet<i64>) -> Vec
                 key: format!("area {area}"),
                 detail: format!("a door is given for area {area}, which is no dungeon of the data"),
                 races: Vec::new(),
+                npcs: Vec::new(),
             });
             continue;
         }
@@ -1116,6 +1143,7 @@ fn dungeon_entrances(model: &Model, doors: &[Door], known: &HashSet<i64>) -> Vec
                          which may be the {faction}'s"
                     ),
                     races: Vec::new(),
+                    npcs: Vec::new(),
                 });
             }
         }
@@ -1180,6 +1208,7 @@ fn chain_order(model: &Model, old_quests: &HashSet<i64>) -> Vec<Finding> {
                     taken_back.join(", ")
                 ),
                 races: Vec::new(),
+                npcs: Vec::new(),
             });
         }
     }
@@ -1233,6 +1262,7 @@ fn timed_quests(model: &Model, untimed: &HashMap<i64, String>) -> Vec<Finding> {
                     q.name, q.id
                 ),
                 races: Vec::new(),
+                npcs: Vec::new(),
             })
         })
         .collect()
@@ -1267,6 +1297,7 @@ fn children_left_out(model: &Model, children: &[(i64, String, i64, String)]) -> 
                 "{parent_name} ({parent}) is planned without {child_name} ({child}): where it is handed in is unknown"
             ),
             races: Vec::new(),
+            npcs: Vec::new(),
         });
     }
     out
@@ -1303,6 +1334,7 @@ fn broken_chains(model: &Model) -> Vec<Finding> {
                 key: format!("quest {id}"),
                 detail: format!("{name} ({id}) left out: {why}; needed first by {}", by.join(", ")),
                 races: Vec::new(),
+                npcs: Vec::new(),
             }
         })
         .collect()
@@ -1344,6 +1376,7 @@ fn contradictory_prerequisites(model: &Model) -> Vec<Finding> {
             key: format!("quest {}", q.id),
             detail: format!("{} ({}) needs first {}", q.name, q.id, what.join(", ")),
             races: Vec::new(),
+            npcs: Vec::new(),
         });
     }
     out
@@ -1408,6 +1441,7 @@ fn exclusive_prerequisites(conn: &Connection, corrected: &[crate::model::QuestOv
                 key: format!("quest {quest}"),
                 detail: format!("{} ({quest}) needs first all of: {}", names[&quest], wrong.join("; ")),
                 races: Vec::new(),
+                npcs: Vec::new(),
             });
         }
     }
@@ -1440,7 +1474,7 @@ mod tests {
         let guard = |level| Guard { level, count: 2, elite: true };
         let mobs = |n: usize, level: u8| -> Vec<Hostile> {
             (0..n)
-                .map(|_| Hostile { name: "Flameshocker".into(), level, elite: true, pos: at })
+                .map(|_| Hostile { id: 16383, name: "Flameshocker".into(), level, elite: true, pos: at })
                 .collect()
         };
         let found = |p: &crate::job::Prepared, mobs: &[Hostile]| guarded_givers(&p.world, &p.model, mobs).len();

@@ -7,7 +7,13 @@ use rusqlite::Connection;
 use std::path::Path;
 
 /// Print the findings, the accepted ones apart; fails when errors are left (not accepted).
-pub fn run(conn: &Connection, overrides_dir: &Path, checks: &[String], all: bool) -> Result<()> {
+pub fn run(
+    conn: &Connection,
+    overrides_dir: &Path,
+    checks: &[String],
+    all: bool,
+    proposals: Option<&Path>,
+) -> Result<()> {
     let edition = crate::edition();
     for c in checks {
         anyhow::ensure!(
@@ -23,6 +29,9 @@ pub fn run(conn: &Connection, overrides_dir: &Path, checks: &[String], all: bool
     let overrides = Overrides::load_edition(overrides_dir, edition)?;
     let accepted = audit::accepted(overrides_dir, edition)?;
     let findings = audit::audit(conn, &overrides, checks, &|m| eprintln!("{m}"))?;
+    if let Some(path) = proposals {
+        write_proposals(path, &findings, &accepted)?;
+    }
     let mut open = 0;
     for check in audit::CHECKS {
         let name = &check.name;
@@ -63,5 +72,29 @@ pub fn run(conn: &Connection, overrides_dir: &Path, checks: &[String], all: bool
         }
     }
     anyhow::ensure!(open == 0, "{open} findings to fix ({})", edition.key());
+    Ok(())
+}
+
+/// The creatures the findings point at, as facts for the review (`fgd review propose`): one
+/// line a creature, `npc:ID`, the side that probably likes it, the check and what it found. A
+/// creature several findings name is proposed once, with the side of the first.
+fn write_proposals(path: &Path, findings: &[audit::Finding], accepted: &[audit::Accepted]) -> Result<()> {
+    let mut seen = std::collections::HashSet::new();
+    let mut lines = String::new();
+    // The cities' first: they know a side.
+    let mut ordered: Vec<&audit::Finding> = findings.iter().collect();
+    ordered.sort_by_key(|f| f.check != "hostile-in-cities");
+    for f in ordered {
+        if accepted.iter().any(|a| a.check == f.check && a.key == f.key) {
+            continue;
+        }
+        for &(id, side) in &f.npcs {
+            if seen.insert(id) {
+                lines.push_str(&format!("npc:{id}\t{side}\t{}\t{}: {}\n", f.check, f.key, f.detail));
+            }
+        }
+    }
+    std::fs::write(path, lines)?;
+    eprintln!("{} creatures proposed in {}", seen.len(), path.display());
     Ok(())
 }
