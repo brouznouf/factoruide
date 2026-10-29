@@ -457,7 +457,9 @@ impl Quest {
 
     /// Whether enough of `pre_any` is `done` (a quest with none needs none).
     pub fn pre_any_met(&self, done: impl Fn(&i64) -> bool) -> bool {
-        self.pre_any.is_empty() || self.pre_any.iter().filter(|p| done(p)).take(self.pre_need).count() >= self.pre_need.min(self.pre_any.len())
+        self.pre_any.is_empty()
+            || self.pre_any.iter().filter(|p| done(p)).take(self.pre_need).count()
+                >= self.pre_need.min(self.pre_any.len())
     }
 }
 

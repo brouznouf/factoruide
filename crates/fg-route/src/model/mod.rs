@@ -72,6 +72,13 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         window,
         params.edition.rules().max_level,
     );
+    // A forced dungeon is run whenever the route can fit it, past its levels too: they only
+    // tell when it is best to go.
+    for d in &mut sources.dungeons {
+        if params.forced_dungeons.contains(&d.area) || params.forced_dungeon_quests.contains(&d.area) {
+            d.max_level = d.max_level.max(profile.to_level);
+        }
+    }
     let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     let mut teleports = places.teleports;
     teleports.extend(places::quest_teleports(world, profile, &quests));

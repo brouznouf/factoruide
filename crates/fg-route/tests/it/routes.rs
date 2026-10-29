@@ -3315,6 +3315,28 @@ fn a_dungeon_forced_with_its_quests_takes_them_all() {
     assert!(left.len() * 2 < theirs.len(), "left out: {left:?}");
 }
 
+/// A forced dungeon can be run up to the target level, past the levels its window gives it
+/// (GitHub #66): with nine dungeons forced, each window is too short for them all, and the
+/// Alliance's far away Wailing Caverns was left out for the penalty of a missing dungeon.
+#[test]
+fn a_forced_dungeon_is_not_held_to_its_levels() {
+    let levels = |params: &[&str]| {
+        let p = prepare_request(&request("human", "warlock", 30, params));
+        let d = p.model.dungeons.iter().find(|d| d.area == 718).unwrap();
+        (d.min_level, d.max_level)
+    };
+    let (min, window_end) = levels(&["dungeon_from=-1", "dungeon_to=3"]);
+    assert!(window_end < 30, "{window_end}");
+    assert_eq!(
+        levels(&["forced_dungeons=[718]", "dungeon_from=-1", "dungeon_to=3"]),
+        (min, 30)
+    );
+    assert_eq!(
+        levels(&["forced_dungeon_quests=[718]", "dungeon_from=-1", "dungeon_to=3"]),
+        (min, 30)
+    );
+}
+
 /// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
 /// nearest spirit healer when that is faster, never once a level and a half past 10 (no
 /// resurrection sickness before 11), and the guide editor replays them as they were.

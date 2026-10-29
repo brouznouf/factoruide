@@ -65,9 +65,7 @@ impl Availability<'_> {
                 // game, else assumed done only when starting mid-way.
                 None => init.done_outside(*id, self.profile.from_level),
             };
-            return q.pre_all.iter().all(done)
-                && q.pre_any_met(done)
-                && q.pre_held.iter().all(held);
+            return q.pre_all.iter().all(done) && q.pre_any_met(done) && q.pre_held.iter().all(held);
         }
         let need = init.need(i as usize);
         (0..=init.mates.len()).filter(|m| need & (1 << m) != 0).all(|m| {
