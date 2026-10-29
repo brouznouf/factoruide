@@ -20,6 +20,10 @@ const AUCTION_SCARCE: f64 = 1800.0;
 /// them).
 const AUCTION_HOUSE: f64 = 300.0;
 
+/// The Soul Shard item, and the warlock's class ID.
+const SOUL_SHARD: i64 = 6265;
+const WARLOCK: i64 = 9;
+
 /// An auction house: where it is (middle of its auctioneers, zone), its auctioneers (ID, name).
 type AuctionHouse = (Pos, i64, Vec<(i64, String)>);
 
@@ -43,6 +47,11 @@ impl QuestBuilder<'_> {
             |bag: i64| (self.sources.item_origins.get(&target)).is_some_and(|o| o.contains(&(SourceKind::Item, bag)));
         if quest.row.source_item.is_some_and(|s| s == target || in_given_bag(s)) {
             return Ok(None); // given when accepting, or in the bag given then (Call of Fire's satchel)
+        }
+        // A warlock makes its Soul Shards by draining the creatures it kills (the sources only
+        // know a vendor of Outland).
+        if target == SOUL_SHARD && self.profile.class_ids().contains(&WARLOCK) {
+            return Ok(None);
         }
         if self.bag_quest(quest.row.id, target).is_some() {
             return Ok(None); // in the bag another quest gives, held in the log (`Quest::pre_held`)
@@ -135,6 +144,20 @@ impl QuestBuilder<'_> {
             }
         } else if let Some(handed) = self.handed_by(quest.row.id, target, &places) {
             handed
+        } else if self.params.auction_items.contains(&target) && !self.auction_houses().is_empty() {
+            // Made by a profession: bought, from the auction house nearest the quest giver.
+            let (pos, zone, auctioneers) = (self.auction_houses().into_iter())
+                .min_by(|a, b| a.0.dist(&quest.anchor).total_cmp(&b.0.dist(&quest.anchor)))
+                .expect("an auction house");
+            Objective {
+                count,
+                auction: auctioneers,
+                ..Objective::plain(
+                    at(pos, zone),
+                    format!("Buy {text}"),
+                    AUCTION_TIME + (1.0 - self.params.crowd_at(quest.level)) * AUCTION_SCARCE,
+                )
+            }
         } else if !self.params.allow_elite
             && places
                 .sources
@@ -159,7 +182,9 @@ impl QuestBuilder<'_> {
     /// An item nothing gives but the turn-in of other quests (not repeatable ones): got there,
     /// for no work, once one of them is turned in (`Objective::handed_by`).
     fn handed_by(&self, quest: i64, item: i64, places: &ItemPlaces) -> Option<Objective> {
-        if !places.sources.is_empty() {
+        // Questie lists the NPC who hands the quest reward as its source: not one to kill.
+        let entities = &self.sources.entities;
+        if !(places.sources.iter()).all(|(t, id)| *t == SourceKind::Npc && entities.friendly.contains(id)) {
             return None;
         }
         let givers: Vec<i64> = self
@@ -170,8 +195,22 @@ impl QuestBuilder<'_> {
             .copied()
             .filter(|g| *g != quest && !self.sources.repeatable.contains(g))
             .collect();
-        let at = givers.iter().find_map(|g| self.ender(*g))?;
         let name = self.sources.entities.name(EntityKind::Item, item);
+        let Some(at) = givers.iter().find_map(|g| self.ender(*g)) else {
+            // Handed by a repeatable quest with nothing to do (Xizk's Fine Gold Thread): asked for
+            // at the NPC who takes it back, which is no quest of the guide.
+            let talk = |g: &i64| self.sources.objectives.get(g).is_none_or(Vec::is_empty);
+            let at = (self.sources.reward_of.get(&item)?.iter())
+                .filter(|g| **g != quest && self.sources.repeatable.contains(g) && talk(g))
+                .find_map(|g| self.ender(*g))?;
+            let loc = Loc {
+                kind: EntityKind::Item,
+                id: item,
+                name: name.clone(),
+                ..at
+            };
+            return Some(Objective::plain(loc, format!("Get {name}"), 30.0));
+        };
         Some(Objective {
             handed_by: givers,
             ..Objective::plain(
@@ -300,7 +339,9 @@ impl QuestBuilder<'_> {
         let entities = &self.sources.entities;
         let ids: Vec<i64> = sources
             .iter()
-            .filter(|(t, id)| *t == SourceKind::Npc && (elite || !entities.is_elite(*id)))
+            .filter(|(t, id)| {
+                *t == SourceKind::Npc && (elite || !entities.is_elite(*id)) && !entities.friendly.contains(id)
+            })
             .map(|(_, id)| *id)
             .filter(|id| !entities.points(self.world, EntityKind::Npc, *id).is_empty())
             .collect();
@@ -337,7 +378,8 @@ impl QuestBuilder<'_> {
             b if b > 0.0 => b,
             _ => best_where(false),
         };
-        let min = (best / 2.0).max(0.03);
+        // The best dropper always stays, even under the floor (Bloodvenom Essence, 2.9%).
+        let min = (best / 2.0).max(0.03).min(best);
         mob_ids.retain(|id| chance(id).is_some_and(|c| c >= min));
     }
 

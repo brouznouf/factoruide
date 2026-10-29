@@ -185,6 +185,9 @@ pub struct Params {
     /// Keep quests whose objective location is unknown, placing it near the quest giver
     /// (for comparisons on databases with gaps).
     pub approx_sources: bool,
+    /// Items no creature, object or vendor gives (made by a profession) that quests ask for:
+    /// bought at the auction house (`overrides/routing.toml`).
+    pub auction_items: Vec<i64>,
     /// Greedy construction: levels below the character a quest can be without penalty, and
     /// the penalty per level beyond (quests turned in late give less XP).
     pub fit_free_levels: i64,
@@ -507,6 +510,7 @@ impl Default for Params {
             link_wait: 120.0,
             elite_kill_factor: 3.0,
             approx_sources: false,
+            auction_items: vec![],
             fit_free_levels: 2,
             fit_penalty: 0.0,
             fit_above_penalty: 0.4,

@@ -410,3 +410,17 @@ fn quest_choices_by_id_level_name_or_zone() {
         "{barrens:?}"
     );
 }
+
+/// The warlock's Components for the Enchanted Gold Bloodrobe can be required (GitHub #72): the
+/// Soul Shard is made by the warlock, the Robes of Arcana bought, the Fine Gold Thread asked for
+/// at Xizk, whose repeatable quest has nothing to do.
+#[test]
+fn the_warlocks_gold_bloodrobe_chain_can_be_required() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let mut req = request("human", "warlock", &[RequiredQuest::Id(4784)]);
+    req.to_level = 60;
+    let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+    let quest = p.model.quests.iter().find(|q| q.id == 4784).expect("planned");
+    assert!(quest.mandatory);
+}
