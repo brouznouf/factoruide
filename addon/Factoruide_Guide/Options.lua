@@ -57,7 +57,7 @@ local function GuideDetails(guide)
     end
     if guide.version then parts[#parts + 1] = "v" .. tostring(guide.version) end
     parts[#parts + 1] = guide.source == "import" and T("imported") or T("from the app (managed by the app)")
-    return table.concat(parts, "  ·  ")
+    return table.concat(parts, "  •  ")
 end
 
 --- A guide's row: its name and details; Follow, Start over (the guide followed), Delete (imported).

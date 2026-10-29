@@ -74,7 +74,7 @@ function Timing:Compare()
     return real, planned
 end
 
---- " · −12 min" (ahead of the plan, green) or " · +15 min" (behind, red) for the guide header.
+--- " • −12 min" (ahead of the plan, green) or " • +15 min" (behind, red) for the guide header.
 function Timing:Short()
     if not FG:Get("levelTiming") then return "" end
     local real, planned = self:Compare()

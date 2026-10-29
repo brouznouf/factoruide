@@ -55,6 +55,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Addon
 
+- The addon's separators are a bullet (•), which every client font has: the dot they used was a missing glyph in Russian (GitHub #78).
 - Death skip steps: done once back at the spirit healer.
 - Group guides: each player follows its own profession curve.
 - Group guides made for characters the app had no profile of: the addon finds yours by race and class; when several match, choose yours in /fg, Guides ("Player: …").

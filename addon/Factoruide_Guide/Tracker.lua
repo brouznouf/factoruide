@@ -180,7 +180,7 @@ local T = {
     take = T("take"),
     leave = T("leave"),
     markHint = T("Click: mark as in the bank (or not)"),
-    questHint = T("Click: quest log · Shift-click: the compass goes there"),
+    questHint = T("Click: quest log • Shift-click: the compass goes there"),
     neededBy = T("For:"),
     noItems = T("No item to keep"),
     later = T("%d more for later"),
@@ -512,7 +512,7 @@ function Tracker:Refresh()
                     table.insert(tip, text)
                 end
             end
-            if q.complete then table.insert(tip, L.turnIn .. (who and (" · " .. who) or "")) end
+            if q.complete then table.insert(tip, L.turnIn .. (who and (" • " .. who) or "")) end
             table.insert(tip, T.questHint)
             line.tooltip = tip
             -- Usable quest item, re-assigned only out of combat (secure button).

@@ -676,7 +676,7 @@ local function TaskView(step, index, withProgress)
     local v = { index = index, step = step, kind = step.k, icon = kind.icon, color = kind.color, chips = {} }
     if step.k == "accept" or step.k == "turnin" then
         v.name = title or step.t
-        if title then v.sub = kind.label .. (step.n and (" · " .. step.n) or "") end
+        if title then v.sub = kind.label .. (step.n and (" • " .. step.n) or "") end
         -- A turn-in whose quest is not complete yet (objectives passed by hand): how far it is.
         if step.k == "turnin" and withProgress and QuestLog.IsOnQuest(step.q) and not QuestLog.IsComplete(step.q) then
             local have, need = 0, 0
@@ -703,7 +703,7 @@ local function TaskView(step, index, withProgress)
             names[#names + 1] = (rank and rank ~= "") and (name .. " (" .. rank .. ")") or name
         end
         v.name = #names == #step.sp and table.concat(names, ", ") or step.t
-        v.sub = kind.label .. (step.n and (" · " .. step.n) or "")
+        v.sub = kind.label .. (step.n and (" • " .. step.n) or "")
     elseif step.k == "objective" then
         v.name = step.n or step.t
         if withProgress then

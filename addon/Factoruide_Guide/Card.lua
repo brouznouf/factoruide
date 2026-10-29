@@ -13,7 +13,7 @@ local L = {
     now = T("NOW"),
     next = T("NEXT"),
     steps = T("Steps"),
-    pickup = T("To pick up · %d"),
+    pickup = T("To pick up • %d"),
     stepOf = T("Step %d / %d"),
     level = T("Lvl %d"),
     planned = T("planned %d"),
@@ -52,7 +52,7 @@ local function TextColor(fs, name)
     fs:SetTextColor(c[1], c[2], c[3])
 end
 
---- " · 84 m" style chips, colored, after a task's line.
+--- " • 84 m" style chips, colored, after a task's line.
 local function Chips(v, distance)
     local out = {}
     for _, chip in ipairs(v.chips or {}) do
@@ -542,7 +542,7 @@ function Card:Render(view)
     local levelColor = view.level >= view.planned and "green" or (view.level + 1 >= view.planned and "gold" or "red")
     frame.level:SetText(Skin.Hex(levelColor) .. string.format(L.level, view.level) .. "|r")
     frame.planned:SetText(
-        string.format(L.planned, view.planned) .. (view.timing ~= "" and (" · " .. view.timing) or "")
+        string.format(L.planned, view.planned) .. (view.timing ~= "" and (" • " .. view.timing) or "")
     )
     frame.level:SetShown(not frame.over)
     frame.planned:SetShown(not frame.over)
@@ -655,7 +655,7 @@ function Card:Render(view)
     frame.footLine:SetPoint("TOPRIGHT", -1, y)
     frame.coords:ClearAllPoints()
     frame.coords:SetPoint("TOPLEFT", PAD, y - 5)
-    frame.coords:SetText((view.coords or "") .. (view.spot and ("  ·  " .. view.spot) or ""))
+    frame.coords:SetText((view.coords or "") .. (view.spot and ("  •  " .. view.spot) or ""))
     frame.quests:SetShown(FG:Get("trackerShown") and true or false)
     frame.quests:SetLabel(FG:Get("questPanel") and L.hideQuests or L.showQuests)
     frame.quests:ClearAllPoints()
