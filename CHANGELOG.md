@@ -51,6 +51,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Walks up Mount Hyjal and out of Timbermaw Hold follow Darkwhisper Gorge and the tunnel all the way instead of cutting their last corners.
 - The Affray: the grate is stepped on before Big Will is fought, and timed quests are only taken once the character is strong enough to finish them in time.
 - Mobs, NPCs and objects stand on their real floor: the kobolds inside Fargodeep Mine rather than on the hill above it, Undercity's NPCs down in the city, the watchtower's NPCs on Zephras Isle at its top.
+- WoW Forever: the library's rewards ask for ten, twenty and twenty-five different books, not every book, and the guide can take books on its way to earn them (GitHub #56).
 
 ### Addon
 

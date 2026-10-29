@@ -7,6 +7,7 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 ## Unreleased
 
 - Death skip steps: done once back at the spirit healer.
+- A quest that needs a number of other quests done (ten library books) is offered once enough of them are.
 - Group guides: each player follows its own profession curve.
 - Group guides made for characters the app had no profile of: the addon finds yours by race and class; when several match, choose yours in /fg, Guides ("Player: …").
 - The wind guide (a gust of wind towards the step instead of the compass) is gone, with its settings and key binding; the compass stays.

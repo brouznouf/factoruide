@@ -354,8 +354,12 @@ local function CanTake(step)
         if not QuestLog.IsQuestFlaggedCompleted(q) then return false end
     end
     if step.pa then
+        local need, done = math.min(step.pn or 1, #step.pa), 0
         for _, q in ipairs(step.pa) do
-            if QuestLog.IsQuestFlaggedCompleted(q) then return true end
+            if QuestLog.IsQuestFlaggedCompleted(q) then
+                done = done + 1
+                if done >= need then return true end
+            end
         end
         return false
     end

@@ -41,6 +41,7 @@ impl QuestBuilder<'_> {
             objectives,
             pre_all,
             pre_any,
+            pre_need: self.pre_need(r.id),
             exclusive: self.links(r.id, LinkKind::Exclusive),
             pre_held: self.pre_held(r),
             breadcrumb_for: r.breadcrumb_for.filter(|b| *b > 0),
@@ -119,6 +120,15 @@ impl QuestBuilder<'_> {
         } else {
             self.sources.default_xp.get(&level).copied().unwrap_or(0)
         }
+    }
+
+    /// How many of the quest's `pre_any` it needs done: one unless an override says more.
+    fn pre_need(&self, id: i64) -> usize {
+        (self.profile.quest_overrides.iter())
+            .find(|o| o.id == id)
+            .and_then(|o| o.pre_count)
+            .unwrap_or(1)
+            .max(1)
     }
 
     /// All of `pre_all` and one of `pre_any`. The quest handing the item that starts this one is

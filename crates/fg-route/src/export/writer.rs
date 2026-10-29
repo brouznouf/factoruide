@@ -150,6 +150,7 @@ impl StepWriter<'_> {
             alt: Vec::new(),
             pre: Vec::new(),
             pre_any: Vec::new(),
+            pre_need: None,
             min_level: None,
             bg: false,
             try_buy: false,
@@ -259,6 +260,7 @@ impl StepWriter<'_> {
             alt: Vec::new(),
             pre: Vec::new(),
             pre_any: Vec::new(),
+            pre_need: None,
             min_level: None,
             bg: false,
             try_buy: false,
@@ -806,6 +808,7 @@ impl StepWriter<'_> {
                 step.kind = StepKind::Accept;
                 step.pre.clone_from(&q.pre_all);
                 step.pre_any.clone_from(&q.pre_any);
+                step.pre_need = (q.pre_need > 1).then_some(q.pre_need);
                 step.min_level = Some(q.min_level);
                 // An item dropped by a mob: named, targeted by the addon's macro, and its other
                 // places.

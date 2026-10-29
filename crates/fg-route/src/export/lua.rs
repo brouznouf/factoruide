@@ -161,6 +161,9 @@ pub fn to_lua(routes: &[Route]) -> String {
                     ));
                 }
             }
+            if let Some(n) = s.pre_need {
+                fields.push(format!("pn = {n}"));
+            }
             if let Some(l) = s.min_level {
                 fields.push(format!("min = {l}"));
             }

@@ -402,6 +402,8 @@ pub struct Quest {
     pub objectives: Vec<Objective>,
     pub pre_all: Vec<i64>,
     pub pre_any: Vec<i64>,
+    /// How many of `pre_any` must be done (1: one of them; the library's ten books of thirty-odd).
+    pub pre_need: usize,
     pub exclusive: Vec<i64>,
     /// Quests to hold in the log when taking it: those whose starting item is a bag holding an
     /// item it asks for (The Warsong Reports' Bundle of Reports, opened for the Warsong Report
@@ -445,6 +447,18 @@ pub struct Quest {
     pub reputation: Vec<(i64, f64)>,
     /// The members of the group it is for (race and class), a bit each: the character's 1.
     pub members: u8,
+}
+
+impl Quest {
+    /// The `pre_any` quests that must be done: `pre_need` of them, at most the ones that exist.
+    pub fn pre_any_needed(&self, plannable: usize) -> usize {
+        self.pre_need.min(plannable.max(1))
+    }
+
+    /// Whether enough of `pre_any` is `done` (a quest with none needs none).
+    pub fn pre_any_met(&self, done: impl Fn(&i64) -> bool) -> bool {
+        self.pre_any.is_empty() || self.pre_any.iter().filter(|p| done(p)).take(self.pre_need).count() >= self.pre_need.min(self.pre_any.len())
+    }
 }
 
 pub struct Model {
@@ -496,6 +510,9 @@ pub struct Model {
     pub mate_spells: Vec<Vec<i64>>,
     /// Items each quest gives (indexes in `power.items`): always, and one of the choices.
     pub rewards: Vec<(Vec<u16>, Vec<u16>)>,
+    /// For each quest, the quests asking for a number of several (`Quest::pre_need` above one)
+    /// of which it is one: the library's rewards, earned book by book.
+    pub bundles: Vec<Vec<u32>>,
     /// Items each dungeon's bosses drop, with the chance the character gets each.
     pub dungeon_loot: Vec<Vec<(u16, f64)>>,
     /// The paths NPCs who patrol walk (NPC ID -> its points in order): the guide shows places
@@ -532,6 +549,8 @@ pub struct QuestOverride {
     pub id: i64,
     pub pre_all: Option<Vec<i64>>,
     pub pre_any: Option<Vec<i64>>,
+    /// How many of `pre_any` the quest needs done (default one).
+    pub pre_count: Option<usize>,
     pub spells: Option<Vec<i64>>,
 }
 

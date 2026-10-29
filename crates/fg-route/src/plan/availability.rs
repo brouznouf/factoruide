@@ -66,13 +66,13 @@ impl Availability<'_> {
                 None => init.done_outside(*id, self.profile.from_level),
             };
             return q.pre_all.iter().all(done)
-                && (q.pre_any.is_empty() || q.pre_any.iter().any(done))
+                && q.pre_any_met(done)
                 && q.pre_held.iter().all(held);
         }
         let need = init.need(i as usize);
         (0..=init.mates.len()).filter(|m| need & (1 << m) != 0).all(|m| {
             let done = |id: &i64| init.done_by(m, *id) || self.model.index.get(id).is_some_and(|&j| s.rewarded(j));
-            q.pre_all.iter().all(done) && (q.pre_any.is_empty() || q.pre_any.iter().any(done))
+            q.pre_all.iter().all(done) && q.pre_any_met(done)
         }) && q.pre_held.iter().all(held)
     }
 
@@ -213,11 +213,15 @@ impl Availability<'_> {
                 let fq = self.quest_at(f);
                 let needs_it = (fq.pre_all.iter().chain(&fq.pre_held))
                     .any(|id| self.model.index.get(id) == Some(&(i as usize)))
-                    || fq
-                        .pre_any
-                        .iter()
-                        .filter_map(|id| self.model.index.get(id))
-                        .all(|&j| chain.contains(&(j as u32)) || !in_route(j as u32));
+                    || {
+                        // Still enough of the others in the route without the chain's quests.
+                        let others = (fq.pre_any.iter())
+                            .filter_map(|id| self.model.index.get(id))
+                            .filter(|&&j| !chain.contains(&(j as u32)) && in_route(j as u32))
+                            .count();
+                        let listed = fq.pre_any.iter().filter_map(|id| self.model.index.get(id)).count();
+                        listed == 0 || others < fq.pre_any_needed(listed)
+                    };
                 if needs_it {
                     chain.push(f);
                 }

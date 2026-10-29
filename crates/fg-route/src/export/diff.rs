@@ -808,6 +808,7 @@ mod tests {
             alt: Vec::new(),
             pre: Vec::new(),
             pre_any: Vec::new(),
+            pre_need: None,
             min_level: None,
             bg: false,
             try_buy: false,

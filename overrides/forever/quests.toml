@@ -16,3 +16,29 @@ spells = [768, 1082, 1079, 5215] # Cat Form, Claw 1, Rip 1, Prowl 1
 [[quest]]
 id = 98397
 spells = [768, 1082, 1079, 5215]
+
+# The library's rewards ask for a number of different books, not all of them: ten for the
+# necklace, then twenty and twenty-five (Greater Friend of the Library, taken one after the other).
+# The sources list every book as needed, which the game does not ask (and some never could be
+# done: removed in Forever).
+
+[[quest]]
+# Friend of the Library: ten different books
+id = 78150
+pre_all = []
+pre_any = [78124, 78127, 78142, 78143, 78145, 78146, 78147, 78148, 78149, 79091, 79092, 79093, 79094, 79095, 79096, 79097, 79535, 79947, 79948, 79949, 79950, 79951, 79952, 81947, 81949, 81952, 81953, 81954, 81955, 81956, 84395, 84396, 84397, 84398, 84399, 84400, 84401, 84402]
+pre_count = 10
+
+[[quest]]
+# Greater Friend of the Library: twenty books, after the first
+id = 79536
+pre_all = [78150]
+pre_any = [78124, 78127, 78142, 78143, 78145, 78146, 78147, 78148, 78149, 79091, 79092, 79093, 79094, 79095, 79096, 79097, 79535, 79947, 79948, 79949, 79950, 79951, 79952, 81947, 81949, 81952, 81953, 81954, 81955, 81956, 84395, 84396, 84397, 84398, 84399, 84400, 84401, 84402]
+pre_count = 20
+
+[[quest]]
+# Greater Friend of the Library: twenty-five books, after the second
+id = 82208
+pre_all = [79536]
+pre_any = [78124, 78127, 78142, 78143, 78145, 78146, 78147, 78148, 78149, 79091, 79092, 79093, 79094, 79095, 79096, 79097, 79535, 79947, 79948, 79949, 79950, 79951, 79952, 81947, 81949, 81952, 81953, 81954, 81955, 81956, 84395, 84396, 84397, 84398, 84399, 84400, 84401, 84402]
+pre_count = 25

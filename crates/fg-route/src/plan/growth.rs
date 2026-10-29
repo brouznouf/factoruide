@@ -270,7 +270,13 @@ impl<'g> Growth<'g> {
         if self.params.gear_value <= 0.0 {
             return 0.0;
         }
-        let gain = self.reward_gain(s, i);
+        // A quest asking for several (ten books for the library's necklace) shares its reward
+        // among them: each is worth its part, as long as the reward is not earned.
+        let share: f64 = (self.model.bundles[i as usize].iter())
+            .filter(|&&f| !s.rewarded(f as usize))
+            .map(|&f| self.reward_gain(s, f) / self.quest_at(f).pre_need as f64)
+            .sum();
+        let gain = self.reward_gain(s, i) + share;
         if gain <= 0.0 {
             return 0.0;
         }

@@ -51,9 +51,9 @@ impl Requirements<'_> {
             self.add(pre, selected, visiting)
                 .with_context(|| format!("{} ({id}) needs {pre}", q.name))?;
         }
-        self.one_of(&q.pre_any, selected, visiting)?;
+        self.some_of(&q.pre_any, q.pre_need, selected, visiting)?;
         for objective in &q.objectives {
-            self.one_of(&objective.handed_by, selected, visiting)?;
+            self.some_of(&objective.handed_by, 1, selected, visiting)?;
             if let Some(child) = objective.child {
                 self.add(child, selected, visiting)?;
             }
@@ -63,15 +63,27 @@ impl Requirements<'_> {
         Ok(())
     }
 
-    fn one_of(&self, alternatives: &[i64], selected: &mut HashSet<i64>, visiting: &HashSet<i64>) -> Result<()> {
-        if alternatives.is_empty()
-            || alternatives
-                .iter()
-                .any(|id| self.completed.contains(id) || selected.contains(id))
-        {
+    /// Adds `count` of `alternatives` to the selection (the cheapest first), the ones already
+    /// done or selected counting.
+    fn some_of(
+        &self,
+        alternatives: &[i64],
+        count: usize,
+        selected: &mut HashSet<i64>,
+        visiting: &HashSet<i64>,
+    ) -> Result<()> {
+        let have = alternatives
+            .iter()
+            .filter(|id| self.completed.contains(id) || selected.contains(id))
+            .count();
+        if alternatives.is_empty() || have >= count.min(alternatives.len()) {
             return Ok(());
         }
-        let mut candidates: Vec<_> = alternatives.to_vec();
+        let mut missing = count.min(alternatives.len()) - have;
+        let mut candidates: Vec<_> = (alternatives.iter())
+            .filter(|id| !self.completed.contains(id) && !selected.contains(id))
+            .copied()
+            .collect();
         candidates.sort_by_key(|id| {
             self.index
                 .get(id)
@@ -83,7 +95,10 @@ impl Requirements<'_> {
             match self.add(id, &mut branch, &mut visiting.clone()) {
                 Ok(()) => {
                     *selected = branch;
-                    return Ok(());
+                    missing -= 1;
+                    if missing == 0 {
+                        return Ok(());
+                    }
                 }
                 Err(error) => reasons.push(format!("{error:#}")),
             }

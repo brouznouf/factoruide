@@ -127,6 +127,12 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         ),
     };
     let graveyards = graveyards(conn, world, &sources)?;
+    let mut bundles = vec![Vec::new(); quests.len()];
+    for (f, q) in quests.iter().enumerate().filter(|(_, q)| q.pre_need > 1) {
+        for &i in q.pre_any.iter().filter_map(|id| index.get(id)) {
+            bundles[i].push(f as u32);
+        }
+    }
     Ok(Model {
         abilities,
         quests,
@@ -161,6 +167,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         power,
         mate_spells,
         rewards,
+        bundles,
         dungeon_loot,
         patrols,
     })

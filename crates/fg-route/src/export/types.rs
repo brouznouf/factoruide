@@ -137,6 +137,9 @@ pub struct Step {
     pub pre: Vec<i64>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub pre_any: Vec<i64>,
+    /// How many of `pre_any` must be done, when more than one (the library's books).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub pre_need: Option<usize>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub min_level: Option<i64>,
     /// Objective done along the way while doing other quests (does not block the guide).
@@ -289,6 +292,7 @@ impl Step {
             alt: Vec::new(),
             pre: Vec::new(),
             pre_any: Vec::new(),
+            pre_need: None,
             min_level: None,
             bg: false,
             try_buy: false,

@@ -408,7 +408,9 @@ impl Planner<'_> {
                 .map(|o| self.combat().need(q, o))
                 .fold(0.0, f64::max);
             let impossible = q.pre_all.iter().any(|p| !self.model.index.contains_key(p))
-                || (!q.pre_any.is_empty() && q.pre_any.iter().all(|p| !self.model.index.contains_key(p)));
+                || (!q.pre_any.is_empty()
+                    && q.pre_any.iter().filter(|p| self.model.index.contains_key(p)).count()
+                        < q.pre_need.min(q.pre_any.len()));
             let reason = if impossible {
                 "prerequisite not plannable"
             } else if !self.availability().prereqs_met(s, i as u32) {

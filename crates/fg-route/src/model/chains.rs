@@ -174,7 +174,7 @@ pub(super) fn require_prerequisites(quests: &mut [Quest]) {
     let mut stack: Vec<usize> = (0..quests.len()).filter(|&i| quests[i].mandatory).collect();
     while let Some(i) = stack.pop() {
         let any: Vec<usize> = quests[i].pre_any.iter().filter_map(|p| pos.get(p).copied()).collect();
-        let only = (any.len() == 1).then(|| quests[any[0]].id);
+        let only = (any.len() == 1 && quests[i].pre_need <= 1).then(|| quests[any[0]].id);
         let held = quests[i].pre_held.clone();
         for p in quests[i].pre_all.clone().into_iter().chain(held).chain(only) {
             if let Some(&j) = pos.get(&p)
@@ -225,7 +225,8 @@ pub(super) fn release_impossible_class_quests(quests: &mut [Quest]) {
                 continue;
             }
             let blocked = q.pre_all.iter().chain(&q.pre_held).any(|p| !doable.contains(p))
-                || (!q.pre_any.is_empty() && q.pre_any.iter().all(|p| !doable.contains(p)));
+                || (!q.pre_any.is_empty()
+                    && q.pre_any.iter().filter(|p| doable.contains(p)).count() < q.pre_need.min(q.pre_any.len()));
             if blocked {
                 doable.remove(&q.id);
                 changed = true;
