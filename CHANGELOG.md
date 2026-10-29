@@ -51,6 +51,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Walks up Mount Hyjal and out of Timbermaw Hold follow Darkwhisper Gorge and the tunnel all the way instead of cutting their last corners.
 - The Affray: the grate is stepped on before Big Will is fought, and timed quests are only taken once the character is strong enough to finish them in time.
 - Mobs, NPCs and objects stand on their real floor: the kobolds inside Fargodeep Mine rather than on the hill above it, Undercity's NPCs down in the city, the watchtower's NPCs on Zephras Isle at its top.
+- Dungeons forced together are all run: the guide goes past a dungeon's levels to fit them in (the Wailing Caverns for the Alliance, with eight others forced) (GitHub #66, #71).
+- Warlock quests asking for Soul Shards, Robes of Arcana or Fine Gold Thread (Components for the Enchanted Gold Bloodrobe) can be planned, and items dropped under 3% no longer keep a quest from being planned (GitHub #72, #73).
+- Mages learn each city's teleport from its trainer: the guide teleports only to the cities where it has trained (GitHub #75).
+- WoW Forever: the Alliance warlock's The Binding looks for the voidwalker in Stormwind, not Undercity; A Pain in the Neck (Enchanting, Echo Isles) is planned with the trolls' Hexed Pendants (GitHub #69, #76).
 - WoW Forever: the library's rewards ask for ten, twenty and twenty-five different books, not every book, and the guide can take books on its way to earn them (GitHub #56).
 
 ### Addon
