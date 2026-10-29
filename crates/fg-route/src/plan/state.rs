@@ -268,6 +268,8 @@ pub(crate) struct State {
     pub(crate) hearth_ready: f64,
     pub(crate) recall_ready: f64,
     pub(crate) trained: i64,
+    /// The class teleports learned (bit per `Model::teleports`): each at the trainer of its city.
+    pub(crate) taught: u16,
     pub(crate) abilities: u64,
     pub(crate) dungeons: u128,
     pub(crate) accepted: Flags,
@@ -360,10 +362,15 @@ impl State {
         self.turned[i] && !self.dropped.contains(&(i as u32))
     }
 
-    /// The class teleport is learned: trained, or one of the quests teaching it taken.
-    pub(crate) fn knows(&self, tp: &crate::model::Teleport) -> bool {
+    /// The class teleport `i` is learned: at its city's trainer (a mage learns Teleport: Ironforge
+    /// in Ironforge), or on taking one of the quests teaching it.
+    pub(crate) fn knows(&self, i: usize, tp: &crate::model::Teleport) -> bool {
         tp.level <= self.trained
-            && (tp.quests.is_empty() || tp.quests.iter().any(|&q| self.accepted[q] || self.turned[q]))
+            && if tp.quests.is_empty() {
+                self.taught & (1 << i) != 0
+            } else {
+                tp.quests.iter().any(|&q| self.accepted[q] || self.turned[q])
+            }
     }
 }
 

@@ -339,7 +339,7 @@ impl Trips<'_> {
             }
             // Not before it is learned, nor when it cannot be faster: landing on another
             // continent, or farther than the trip as the crow flies at flight speed.
-            if !s.knows(tp)
+            if !s.knows(i, tp)
                 || tp.to.pos.continent != b.continent
                 || self.params.teleport_cast + tp.to.pos.dist(b) / self.params.flight_speed >= best.0
             {
@@ -417,9 +417,9 @@ impl Trips<'_> {
         let mut starts = vec![(s.pos, 0.0)];
         if !self.explicit {
             starts.extend(
-                (self.model.teleports.iter())
-                    .filter(|tp| s.knows(tp))
-                    .map(|tp| (tp.to.pos, self.params.teleport_cast)),
+                (self.model.teleports.iter().enumerate())
+                    .filter(|(i, tp)| s.knows(*i, tp))
+                    .map(|(_, tp)| (tp.to.pos, self.params.teleport_cast)),
             );
         }
         if let Some(g) = self.death_skip(s) {

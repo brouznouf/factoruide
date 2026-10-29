@@ -191,6 +191,11 @@ impl Planner<'_> {
         let since = s.trained;
         let abilities_before = s.abilities;
         s.trained = s.level;
+        for (k, tp) in self.model.teleports.iter().enumerate() {
+            if tp.quests.is_empty() && tp.level <= s.level && tp.to.zone == trainer.zone {
+                s.taught |= 1 << k;
+            }
+        }
         s.abilities |= self.model.abilities.trained(s.abilities, s.level);
         self.growth().refresh_power(s);
         record(

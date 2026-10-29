@@ -295,6 +295,14 @@ impl<'a> Planner<'a> {
             hearth_ready: if init.unbound { f64::INFINITY } else { 0.0 },
             recall_ready: if init.unbound { f64::INFINITY } else { 0.0 },
             trained: init.trained.unwrap_or(level).min(level),
+            // A character met in game knows the teleports its training gives (taught anywhere).
+            taught: if init.trained.is_some() {
+                (self.model.teleports.iter().enumerate())
+                    .filter(|(_, tp)| tp.level <= level)
+                    .fold(0, |mask, (i, _)| mask | 1 << i)
+            } else {
+                0
+            },
             abilities: init.abilities,
             dungeons: 0,
             accepted: Flags::new(n),

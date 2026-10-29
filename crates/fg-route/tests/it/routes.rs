@@ -3337,6 +3337,33 @@ fn a_forced_dungeon_is_not_held_to_its_levels() {
     );
 }
 
+/// A mage learns each city's teleport from that city's trainer (GitHub #75): the guide teleports
+/// to a city only after training there.
+#[test]
+fn a_mage_teleports_only_to_cities_it_trained_in() {
+    let request = PlanRequest {
+        params: Some(overrides().params.with_overrides(&["effort=0".to_owned()]).unwrap()),
+        ..request("human", "mage", 26, &[])
+    };
+    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let near = |a: &[f64; 3], b: &[f64; 3]| (a[0] - b[0]).abs() < 0.5 && (a[1] - b[1]).hypot(a[2] - b[2]) <= 200.0;
+    let mut teleports = 0;
+    for (k, step) in route.steps.iter().enumerate() {
+        if step.kind != fg_route::export::StepKind::Teleport {
+            continue;
+        }
+        teleports += 1;
+        let at = step.world.expect("a teleport lands somewhere");
+        assert!(
+            route.steps[..k].iter().any(|t| {
+                t.kind == fg_route::export::StepKind::Train && t.level >= 20 && t.world.is_some_and(|w| near(&w, &at))
+            }),
+            "teleport at step {k} before training in its city"
+        );
+    }
+    assert!(teleports > 0, "the mage teleports");
+}
+
 /// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
 /// nearest spirit healer when that is faster, never once a level and a half past 10 (no
 /// resurrection sickness before 11), and the guide editor replays them as they were.

@@ -324,6 +324,7 @@ impl Planner<'_> {
                     && s.recall_ready <= s.time
                     && old.recall_ready <= old.time
                     && s.trained == old.trained
+                    && s.taught == old.taught
                     && s.abilities == old.abilities
                     && s.dungeons == old.dungeons
                     && s.abandon_check == old.abandon_check
