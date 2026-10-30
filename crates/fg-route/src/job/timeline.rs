@@ -183,6 +183,8 @@ struct Snapshot {
     /// Quests in the log (indexes) and the objectives done of each.
     log: Vec<(u32, u8)>,
     known: u128,
+    /// The boats, zeppelins and trams open to the character (`Trips::open_links`).
+    links: u8,
     bind: usize,
     hearth_ready: f64,
     recall_ready: f64,
@@ -396,6 +398,7 @@ impl<'r> Replay<'r> {
                 spent: s.spent,
                 log,
                 known: s.known,
+                links: planner.trips().open_links(s),
                 bind: s.bind,
                 hearth_ready: s.hearth_ready,
                 recall_ready: s.recall_ready,
@@ -632,8 +635,12 @@ impl<'r> Replay<'r> {
                     removed: delta.removed.clone(),
                     flights: delta.flights.clone(),
                     bind: delta.bind,
-                    hearth: delta.hearth.then(|| round1(end + params.hearth_cooldown)),
-                    recall: delta.recall.then(|| round1(end + params.recall_cooldown)),
+                    hearth: delta
+                        .hearth
+                        .then(|| round1(end - params.hearth_cast + params.hearth_cooldown)),
+                    recall: delta
+                        .recall
+                        .then(|| round1(end - params.teleport_cast + params.recall_cooldown)),
                     cost: delta.cost,
                 }
             })
@@ -743,9 +750,7 @@ impl<'r> Replay<'r> {
             heights: [from.z, to.z],
         };
         let walk_split = |length: f64| [(length - farming).max(0.0), farming.min(length), 0.0, 0.0];
-        for (n, e) in events.iter().enumerate() {
-            // When the next event of the step happens (or the step ends).
-            let until = events[n + 1..].iter().map(|x| x.time).next().unwrap_or(end).max(e.time);
+        for e in events {
             match &e.event {
                 Event::Shortcut { pass } => {
                     let p = world.passes[*pass].pos;
@@ -770,9 +775,12 @@ impl<'r> Replay<'r> {
                 }
                 Event::Fly { from, to } => {
                     let (a, b) = (world.taxi_nodes[*from].pos, world.taxi_nodes[*to].pos);
+                    // The step ends on landing: the walk to the flight master, then the flight.
+                    let table = self.planner.trips().flight_table(before.known).0[*from][*to];
+                    let flight = (table + params.flight_overhead).min(e.time - t).max(0.0);
                     if apart(&at, &a) {
                         let l = leg(walk_mode, &at, &a, std::mem::take(&mut via));
-                        push(out, e.time - t, &mut t, [1.0, 0.0, 0.0, 0.0], Some(l));
+                        push(out, e.time - flight - t, &mut t, [1.0, 0.0, 0.0, 0.0], Some(l));
                     }
                     let path = world.flight_path(*from, *to, before.known | after.known);
                     let inner = path[1..path.len() - 1]
@@ -781,7 +789,7 @@ impl<'r> Replay<'r> {
                         .collect();
                     push(
                         out,
-                        until - t,
+                        e.time - t,
                         &mut t,
                         [1.0, 0.0, 0.0, 0.0],
                         Some(leg(LegMode::Flight, &a, &b, inner)),
@@ -790,11 +798,17 @@ impl<'r> Replay<'r> {
                 }
                 Event::Link { first, last } => {
                     let (a, b) = (world.links[*first].from, world.links[*last].to);
+                    // The step ends on landing: the walk to the boarding, the wait, the ride.
+                    let boats = world.link_chain(before.links)[*first][*last];
+                    let ride = if boats.is_finite() {
+                        boats.min(e.time - t)
+                    } else {
+                        e.time - t
+                    };
                     if apart(&at, &a) {
                         let l = leg(walk_mode, &at, &a, std::mem::take(&mut via));
-                        push(out, e.time - t, &mut t, [1.0, 0.0, 0.0, 0.0], Some(l));
+                        push(out, e.time - ride - t, &mut t, [1.0, 0.0, 0.0, 0.0], Some(l));
                     }
-                    let ride = until - t;
                     // Waiting for the departure, unless it leaves at once (a portal, a lift).
                     let wait = if ride > 1.5 * params.link_wait {
                         params.link_wait
@@ -821,9 +835,15 @@ impl<'r> Replay<'r> {
                     );
                     at = b;
                 }
-                Event::Hearth { inn, .. } => {
-                    push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
-                    push(out, until - t, &mut t, [1.0, 0.0, 0.0, 0.0], None);
+                Event::Hearth { inn, recall } => {
+                    // The step ends once the cast is over.
+                    let cast = if *recall {
+                        params.teleport_cast
+                    } else {
+                        params.hearth_cast
+                    };
+                    push(out, e.time - cast - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
+                    push(out, e.time - t, &mut t, [1.0, 0.0, 0.0, 0.0], None);
                     let to = model.inns[*inn].pos;
                     push(
                         out,
@@ -835,8 +855,14 @@ impl<'r> Replay<'r> {
                     at = to;
                 }
                 Event::Teleport { to } => {
-                    push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
-                    push(out, until - t, &mut t, [1.0, 0.0, 0.0, 0.0], None);
+                    push(
+                        out,
+                        e.time - params.teleport_cast - t,
+                        &mut t,
+                        [0.0, 0.0, 1.0, 0.0],
+                        None,
+                    );
+                    push(out, e.time - t, &mut t, [1.0, 0.0, 0.0, 0.0], None);
                     let to = model.teleports[*to].to.pos;
                     push(
                         out,

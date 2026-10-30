@@ -59,8 +59,9 @@ impl Planner<'_> {
         // A trip by flight alone counts as flying, walks included; one with boats as travel,
         // its flight apart.
         let flying = landed == Landed::Flight || matches!(via.leg, Leg::Fly(..));
-        // Events are recorded when they happen (casting the hearthstone, boarding), so that
-        // each step of the guide holds the time up to the next one.
+        // A trip step (flight, boat, hearthstone, teleport) is recorded once its trip is over, so
+        // that it holds its own time; the others when they happen, each holding the time up to
+        // the next one.
         let spend = |s: &mut State, seconds: f64, flight: bool| {
             s.time += seconds;
             if flying || flight {
@@ -72,9 +73,9 @@ impl Planner<'_> {
         let mut left = t;
         let mut from = start;
         if let Some(to) = via.teleport {
-            record(s, Event::Teleport { to });
             spend(s, self.params.teleport_cast, false);
             left -= self.params.teleport_cast;
+            record(s, Event::Teleport { to });
             from = self.model.teleports[to].to.pos;
         }
         // The death is the step's own time (finding a mob, dying, the spirit healer): recorded
@@ -118,32 +119,37 @@ impl Planner<'_> {
             Leg::Fly(a, b) => {
                 walk_to(s, &from, &nodes[a].pos, &mut left);
                 pay(s, a, b);
+                let flight = self.trips().flight_table(s.known).0[a][b] + self.params.flight_overhead;
+                ride(s, flight, true, &mut left);
                 record(s, Event::Fly { from: a, to: b });
             }
             Leg::Link(first, last) => {
                 walk_to(s, &from, &links[first].from, &mut left);
+                let boats = self.world.link_chain(self.trips().open_links(s))[first][last];
+                ride(s, boats, false, &mut left);
                 record(s, Event::Link { first, last });
             }
             Leg::FlyLink(a, b, first, last) => {
                 walk_to(s, &from, &nodes[a].pos, &mut left);
                 pay(s, a, b);
-                record(s, Event::Fly { from: a, to: b });
                 let flight = self.trips().flight_table(s.known).0[a][b] + self.params.flight_overhead;
                 ride(s, flight, true, &mut left);
+                record(s, Event::Fly { from: a, to: b });
                 walk_to(s, &nodes[b].pos, &links[first].from, &mut left);
+                let boats = self.world.link_chain(self.trips().open_links(s))[first][last];
+                ride(s, boats, false, &mut left);
                 record(s, Event::Link { first, last });
             }
             Leg::LinkFly(first, last, a, b) => {
                 walk_to(s, &from, &links[first].from, &mut left);
-                record(s, Event::Link { first, last });
                 let boats = self.world.link_chain(self.trips().open_links(s))[first][last];
                 ride(s, boats, false, &mut left);
+                record(s, Event::Link { first, last });
                 walk_to(s, &links[last].to, &nodes[a].pos, &mut left);
                 pay(s, a, b);
-                record(s, Event::Fly { from: a, to: b });
-                // What is left: the flight and the walk from its landing.
                 let flight = self.trips().flight_table(s.known).0[a][b] + self.params.flight_overhead;
                 ride(s, flight, true, &mut left);
+                record(s, Event::Fly { from: a, to: b });
             }
             Leg::Walk => {
                 // A climb or a jump is a step of the guide, recorded on reaching it.

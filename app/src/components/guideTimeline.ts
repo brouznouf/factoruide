@@ -85,30 +85,6 @@ export function stepAt(steps: Step[], time: number): number {
 }
 
 /**
- * When the travel of each travel step ends (its index -> time): a flight, a boat, the
- * hearthstone or a teleport starts when its step ends (the step is done once taken) and goes on
- * into the next step's time, which the viewer still shows as the travel step's.
- */
-export function travelEnds(steps: Step[], legs: Leg[]): Map<number, number> {
-  const out = new Map<number, number>();
-  steps.forEach((s, i) => {
-    if (!TRAVEL_KINDS.has(s.kind)) return;
-    // The first jump or ride from the step's end (after the cast or the wait for the boat).
-    for (let k = Math.max(0, legAt(legs, s.time - 1)); k < legs.length && legs[k].start <= s.time + TRAVEL_START; k++) {
-      const l = legs[k];
-      if (l.start >= s.time - 1 && l.mode !== "walk" && l.mode !== "mount") {
-        out.set(i, l.end);
-        break;
-      }
-    }
-  });
-  return out;
-}
-
-/** A travel starts at most this long after its step ends (seconds: the cast, the wait for a boat). */
-const TRAVEL_START = 600;
-
-/**
  * A card's title: the NPC of all its steps; for objectives only, what they target (mobs,
  * items, objects); else the named place, else its zone.
  */

@@ -388,7 +388,6 @@ impl Planner<'_> {
         let walk = self.trips().walk(&s.pos, &start, s.level);
         s.time += walk;
         s.spent.flights += walk;
-        record(s, Event::Fly { from, to });
         let seconds = time + self.params.flight_overhead;
         s.time += seconds;
         s.spent.flights += seconds;
@@ -396,6 +395,7 @@ impl Planner<'_> {
             s.spent.flight_cost += price as i64;
             s.spent.flight_gold += self.params.gold_weight_at(s.level) * price / 10_000.0;
         }
+        record(s, Event::Fly { from, to });
         s.pos = end;
         s.landed = Landed::Flight;
         Outcome::Done
@@ -414,9 +414,9 @@ impl Planner<'_> {
         }
         s.time += walk;
         s.spent.travel += walk;
-        recorder(&mut Some(trace))(s, Event::Link { first, last });
         s.time += ride;
         s.spent.travel += ride;
+        recorder(&mut Some(trace))(s, Event::Link { first, last });
         s.pos = links[last].to;
         s.landed = Landed::Transport;
         Outcome::Done
@@ -428,9 +428,9 @@ impl Planner<'_> {
         if !s.knows(to, teleport) {
             return Outcome::Invalid("teleport not learned");
         }
-        recorder(&mut Some(trace))(s, Event::Teleport { to });
         s.time += self.params.teleport_cast;
         s.spent.travel += self.params.teleport_cast;
+        recorder(&mut Some(trace))(s, Event::Teleport { to });
         s.pos = teleport.to.pos;
         s.landed = Landed::Transport;
         Outcome::Done

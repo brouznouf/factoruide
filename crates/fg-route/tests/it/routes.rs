@@ -3364,6 +3364,35 @@ fn a_mage_teleports_only_to_cities_it_trained_in() {
     assert!(teleports > 0, "the mage teleports");
 }
 
+/// A step that travels (hearthstone, flight, boat, teleport) holds the time of its trip, which is
+/// not counted in the step after it (GitHub #68: the hearthstone showed no time at all).
+#[test]
+fn travel_steps_hold_their_own_time() {
+    use fg_route::export::StepKind;
+    let request = PlanRequest {
+        params: Some(overrides().params.with_overrides(&["effort=0".to_owned()]).unwrap()),
+        ..request("human", "mage", 24, &[])
+    };
+    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let cast = overrides().params.hearth_cast;
+    let (mut hearths, mut flights) = (0, 0);
+    for (k, step) in route.steps.iter().enumerate().skip(1) {
+        let took = step.time - route.steps[k - 1].time;
+        match step.kind {
+            StepKind::Hearth => {
+                hearths += 1;
+                assert!(took >= cast - 0.5, "the hearthstone at step {k} took {took} s");
+            }
+            StepKind::Fly => {
+                flights += 1;
+                assert!(took >= 20.0, "the flight at step {k} took {took} s");
+            }
+            _ => {}
+        }
+    }
+    assert!(hearths > 0 && flights > 0, "{hearths} hearthstones, {flights} flights");
+}
+
 /// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
 /// nearest spirit healer when that is faster, never once a level and a half past 10 (no
 /// resurrection sickness before 11), and the guide editor replays them as they were.

@@ -5,7 +5,7 @@ import { AddMenu } from "./AddMenu";
 import { CharacterPanel } from "./CharacterPanel";
 import type { useNames } from "./editing";
 import { DEFAULT_LAYERS, GuideMap, type MapLayers } from "./GuideMap";
-import { activityAt, buildCards, cardOf, cardTitle, positionAt, stateTracker, stepAt, stepStart, straightMoves, travelEnds } from "./guideTimeline";
+import { activityAt, buildCards, cardOf, cardTitle, positionAt, stateTracker, stepAt, stepStart, straightMoves } from "./guideTimeline";
 import { PlaybackBar } from "./PlaybackBar";
 import { Clock, useClock } from "./playback";
 import { segments } from "./segments";
@@ -93,19 +93,18 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
   }, [clock, play.total_time]);
   useEffect(() => () => clock.dispose(), [clock]);
 
-  // The step played: the one of the time (a flight or a boat still the step that takes it),
-  // within the steps of the card chosen while the time is in it (steps of no time at its start
-  // belong to it, not to the card before).
+  // The step played: the one of the time (a flight or a boat is the step that takes it, up to
+  // landing), within the steps of the card chosen while the time is in it (steps of no time at
+  // its start belong to it, not to the card before).
   const pinned = useRef<{ first: number; last: number; start: number; end: number } | null>(null);
-  const travels = useMemo(() => travelEnds(play.steps, moves.legs), [play, moves]);
   const stepOf = useCallback(
     (time: number) => {
       const i = stepAt(play.steps, time);
       const p = pinned.current;
       if (p && time >= p.start && time <= p.end) return Math.min(Math.max(i, p.first), p.last);
-      return i > 0 && (travels.get(i - 1) ?? -1) > time ? i - 1 : i;
+      return i;
     },
-    [play, travels],
+    [play],
   );
   const step = useClock(
     clock,
@@ -261,7 +260,7 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
         cards={cards}
         titles={titles}
         current={card}
-        currentEnd={Math.max(cards[card]?.end ?? 0, travels.get(step) ?? 0)}
+        currentEnd={cards[card]?.end ?? 0}
         zone={zone}
         clock={clock}
         follow={follow}

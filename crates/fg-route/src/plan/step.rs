@@ -590,10 +590,11 @@ impl Planner<'_> {
         if s.time < ready {
             return false;
         }
-        record(s, Event::Hearth { inn: s.bind, recall });
+        // The cast is the step's own time, recorded once it is done.
         s.time += cast;
         s.spent.travel += cast;
         s.spent.hearths += 1;
+        record(s, Event::Hearth { inn: s.bind, recall });
         let ready = s.time - cast + cooldown;
         if recall {
             s.recall_ready = ready;
