@@ -479,3 +479,32 @@ fn passage_walks_keep_the_normal_speed_even_with_dry_ground_under_them() {
         "passage segments are not known walked ground"
     );
 }
+
+#[test]
+fn a_trainer_detour_returns_with_the_new_movement_spell() {
+    let conn = database_of("classic");
+    let o = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+    let req = serde_json::from_value(serde_json::json!({"race":"orc","class":"hunter","from_level":20,"to_level":21,"required_class_quests":[],"start":{"level":20,"spells":[]}})).unwrap();
+    let mut p = at_start(job::prepare(&conn, &o, &req, &|_| {}).unwrap(), 1);
+    let a = crate::world::Pos {
+        continent: 1,
+        x: -100.0,
+        y: -100.0,
+        zone: 0,
+        z: None,
+    };
+    p.model.initial.pos = Some((a, 0));
+    p.model.trainers = vec![p.model.start.clone()];
+    p.model.trainers[0].pos = crate::world::Pos { x: -200.0, ..a };
+    p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Dry);
+    (p.params.run_speed, p.params.detour, p.params.train_radius) = (7.0, 1.0, 200.0);
+    let plan = planner(&p);
+    let mut state = plan.initial_state();
+    plan.train_at(&mut state, 0, &mut |_, _| {});
+    assert_eq!(state.pos, a, "a detour returns to where it started");
+    assert!(
+        (state.spent.travel - (100.0 / 7.0 + 100.0 / 9.1)).abs() < 1e-6,
+        "travel {}",
+        state.spent.travel
+    );
+}

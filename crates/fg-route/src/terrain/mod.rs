@@ -1532,36 +1532,25 @@ impl Terrain {
         if a.continent != b.continent {
             return false;
         }
-        let samples = (a.dist(b) / (CELL / 2.0)).ceil() as usize;
-        for i in 0..=samples.max(1) {
-            let t = i as f64 / samples.max(1) as f64;
-            let p = Pos {
-                x: a.x + (b.x - a.x) * t,
-                y: a.y + (b.y - a.y) * t,
-                z: match (a.z, b.z) {
-                    (Some(a), Some(b)) => Some((f64::from(a) + (f64::from(b) - f64::from(a)) * t) as i16),
-                    _ => None,
-                },
-                ..*a
-            };
-            let Some(n) = self.snapped(grid, a.continent, Self::spot(&p)) else {
-                return false;
-            };
-            if n.cell() != Self::cell(&p) {
-                return false;
-            }
+        let (Some(from), Some(to)) = (
+            self.snapped(grid, a.continent, Self::spot(a)),
+            self.snapped(grid, b.continent, Self::spot(b)),
+        ) else {
+            return false;
+        };
+        if from.cell() != Self::cell(a) || to.cell() != Self::cell(b) {
+            return false;
+        }
+        Self::line_with(grid, from, to, |n| {
             let Some((tile, local)) = grid.locate(n) else {
                 return false;
             };
             let Some(nodes) = grid.nodes(tile) else { return false };
-            if nodes.flags[local] & (NO_GO | SWIM) != 0
-                || nodes.kind[local] & (SURFACE | layers::UNDER | layers::MODEL) != SURFACE
-                || n.f() + 1 != grid.floors(n.r(), n.c())
-            {
-                return false;
-            }
-        }
-        true
+            nodes.flags[local] & (NO_GO | SWIM) == 0
+                && nodes.kind[local] & (SURFACE | layers::UNDER | layers::MODEL) == SURFACE
+                && n.f() + 1 == grid.floors(n.r(), n.c())
+        })
+        .is_some()
     }
 
     /// `Grid::snap_at` of a place of continent `map`, remembered in the thread.
@@ -1594,10 +1583,14 @@ impl Terrain {
     /// -1 when all are walked, else what its swum steps make it cost (yards). None when it
     /// cannot be followed.
     fn line(grid: &Grid, a: Node, b: Node) -> Option<f64> {
+        Self::line_with(grid, a, b, |_| true)
+    }
+
+    fn line_with(grid: &Grid, a: Node, b: Node, allowed: impl Fn(Node) -> bool) -> Option<f64> {
         let (ca, cb) = (a.cell(), b.cell());
         let (dr, dc) = (cb.0 - ca.0, cb.1 - ca.1);
         let n = dr.abs().max(dc.abs()) * 2;
-        if grid.blocked(a) {
+        if grid.blocked(a) || !allowed(a) {
             return None;
         }
         let height = |x: Node| {
@@ -1634,6 +1627,9 @@ impl Terrain {
                 let (m, step, _) = next?;
                 (m, step)
             };
+            if !allowed(m) {
+                return None;
+            }
             swum |= step != WALKED[diagonal];
             cost += step;
             at = m;

@@ -695,9 +695,17 @@ pub(super) fn movement_ground(kind: TestGround) -> Terrain {
         TestGround::Dry => return flat(|_, _| false),
         TestGround::Shallow => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, WET | 1 << 3)]),
         TestGround::Covered => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, 0), (20, 0)]),
-        TestGround::Indoor => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, UNDER)]),
+        TestGround::Indoor => {
+            let mut terrain = flat(|_, _| false);
+            for grid in terrain.grids.values_mut() {
+                for nodes in grid.tiles.iter_mut().flatten() {
+                    nodes.kind.fill(UNDER);
+                }
+            }
+            return terrain;
+        }
         TestGround::Passage => {
-            return floors_terrain(&[(1, 32, 32), (1, 33, 32), (1, 34, 32), (1, 35, 32)], |_, _, _| {
+            return floors_terrain(&[(1, 32, 32), (1, 32, 33), (1, 32, 34), (1, 32, 35)], |_, _, _| {
                 vec![(0, 0)]
             });
         }
@@ -712,4 +720,33 @@ pub(super) fn movement_ground(kind: TestGround) -> Terrain {
             vec![(0, if (32..36).contains(&r) { WET | 3 << 3 } else { 0 })]
         }
     })
+}
+
+#[test]
+fn exposed_lines_check_the_walked_cells_between_off_center_diagonal_ends() {
+    let a = Pos {
+        continent: 1,
+        x: -10.51 * CELL,
+        y: -10.1 * CELL,
+        zone: 0,
+        z: None,
+    };
+    let b = Pos {
+        x: -11.51 * CELL,
+        y: -12.1 * CELL,
+        ..a
+    };
+    let dry = flat(|_, _| false);
+    assert!(dry.exposed_ground_line(&a, &b));
+    let wet = floors_terrain(&[(1, 32, 32)], |_, r, c| {
+        vec![(
+            0,
+            if (r - 32 * 64, c - 32 * 64) == (10, 11) {
+                WET | 3 << 3
+            } else {
+                0
+            },
+        )]
+    });
+    assert!(!wet.exposed_ground_line(&a, &b), "the walk crosses the swimming cell");
 }

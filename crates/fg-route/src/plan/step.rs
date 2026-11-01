@@ -185,7 +185,12 @@ impl Planner<'_> {
         let trainer = &self.model.trainers[i];
         // Close as the crow flies, but maybe not on foot (another side of the mountains).
         let detour = (s.landed == Landed::No && s.pos.dist(&trainer.pos) <= self.params.train_radius)
-            .then(|| 2.0 * self.trips().at(s).walk(&s.pos, &trainer.pos, s.level))
+            .then(|| {
+                let trips = self.trips().at(s);
+                let learned = s.abilities | self.model.abilities.trained(s.abilities, s.level);
+                trips.walk(&s.pos, &trainer.pos, s.level)
+                    + trips.with_movement(learned).walk(&trainer.pos, &s.pos, s.level)
+            })
             .filter(|d| d.is_finite());
         if let Some(detour) = detour {
             s.time += detour;
