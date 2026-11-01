@@ -135,6 +135,18 @@ fn merge(common: &mut toml::Table, own: toml::Table) {
 
 impl Overrides {
     /// The flight paths a character of race `race_id` (ChrRaces ID) knows from its creation.
+    /// The boats, portals and the like a character of a race can take: links kept to some races
+    /// (the Skyborne's portals) are those of its race.
+    pub fn links_of_race(&self, race_id: i64) -> Vec<crate::world::LinkDef> {
+        (self.links.iter())
+            .filter(|l| {
+                l.races.is_empty()
+                    || (l.races.iter()).any(|r| self.races.get(r).is_some_and(|d| d.id == race_id))
+            })
+            .cloned()
+            .collect()
+    }
+
     /// A group takes on what its weakest class does at each level: `curve` lowered to the curve
     /// of each of the `classes` (lowercase) of the other players, by level up to `top`.
     pub fn weakest_curve(&self, curve: &mut [f64], classes: &[String], top: i64) -> Result<()> {

@@ -718,9 +718,7 @@ fn job_saves_its_walks() {
         job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
     assert_eq!(walks.len(), known, "paths searched again");
     assert_eq!(again.walks.map(|m| m.len()), Some(memory.len()));
-}
-
-/// A search that panics ends the job with its panic instead of hanging it: the thread reporting
+}/// A search that panics ends the job with its panic instead of hanging it: the thread reporting
 /// the progress stops with the searches (the app then shows the error).
 #[test]
 fn panicking_search_ends_the_job() {
@@ -796,12 +794,10 @@ fn panicking_search_does_not_hold_the_meetings() {
 fn cancelled_job_returns_no_route() {
     let interrupt = job::Interrupt::default();
     interrupt.cancel();
-    let request = request("orc", "warlock", 12, &["effort=100"]);
-    let outcome = job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, None);
+    let outcome = leveling(12).params(|p| p.effort = 100.0).job(&|_| {}, &interrupt, None);
     let error = outcome.expect_err("a cancelled job has no route");
     assert!(matches!(error, job::JobError::Cancelled), "{error:#}");
 }
-
 /// The local search hands back a valid route (cutting the stops after the target level once
 /// made the start of a route invalid: a quest it plans later decides what is taken early), and
 /// its incremental evaluations match a full replay (quests taken at hand look ahead in the
@@ -1311,15 +1307,10 @@ fn link_kept_to_a_race() {
         .clone();
     (tram.name, tram.races) = ("Gnomes only".into(), vec!["gnome".into()]);
     o.links.push(tram);
-    let has = |race: &str| {
-        let id = o.races[race].id;
-        let world = job::game_world(&database(), &o, fg_route::faction::Faction::Alliance, id).unwrap();
-        world.links.iter().any(|l| l.name == "Gnomes only")
-    };
+    let has = |race: &str| o.links_of_race(o.races[race].id).iter().any(|l| l.name == "Gnomes only");
     assert!(has("gnome"));
     assert!(!has("human"));
 }
-
 /// A link a quest opens (Forever's Skyborne leave their island by the teleport the giver of its
 /// last quest offers) is not taken before that quest is.
 #[test]
