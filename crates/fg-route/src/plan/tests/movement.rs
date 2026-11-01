@@ -430,6 +430,14 @@ fn passage_walks_keep_the_normal_speed_even_with_dry_ground_under_them() {
     use crate::world::{PassDef, Pos, ZonePoint};
     let conn = database_of("classic");
     let mut p = quests_at_start(1);
+    p.world = crate::world::World::flat(
+        &[
+            (14, "Durotar", 1, -1000.0, -1000.0),
+            (17, "The Barrens", 1, -2000.0, -1000.0),
+        ],
+        &[],
+        p.params.flight_speed,
+    );
     p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Passage);
     p.world.passes.clear();
     let a = Pos {
