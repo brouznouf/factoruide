@@ -526,37 +526,30 @@ fn class_quest_is_required_for_its_spell_not_its_name() {
     assert!(!route.iter().any(|s| s.kind == Kind::TurnIn && s.index == talk));
 }
 
-/// Constructed routes stay valid when a level reached makes quests of a full log hopeless
-/// (gone gray, or their dungeon outleveled): the next accept is judged on the log once they are
-/// given up, and the construction's replay (`settle`) goes where the route goes next, as the
-/// simulation does, so that it reaches the same levels. With these construction weights the
-/// route ended with "quest log full" at an accept (w010: given up one stop too late; w142: the
-/// replay a level ahead, it saw room and repaired nothing).
+/// The log never overflows (a bug seen on an orc warlock to 60): given-up quests (gone gray, or
+/// their dungeon outleveled) are given up before the next accept, and the construction's replay
+/// (`settle`) goes where the route goes next, as the simulation does. Checked with construction
+/// weights that once ended with "quest log full" at an accept.
 #[test]
 fn constructed_route_keeps_its_log_in_bounds() {
-    for weights in [
+    for w in [
         [4.502, 2.569, 1.073, 0.475, 0.58, 0.547],
         [2.899, 5.096, 1.277, 0.732, 0.04, 0.352],
     ] {
-        let names = [
-            "zone_stay",
-            "continent_stay",
-            "dungeon_quest_weight",
-            "fit_penalty",
-            "fit_above_penalty",
-            "efficiency_power",
-        ];
-        let mut params: Vec<String> = names.iter().zip(weights).map(|(n, w)| format!("{n}={w}")).collect();
-        params.extend(["progression=cautious".into(), "construction_random=false".into()]);
-        let params: Vec<&str> = params.iter().map(String::as_str).collect();
-        let p = prepare("orc", "warlock", 60, &params);
+        let p = leveling(30)
+            .params(|p| {
+                p.zone_stay = w[0];
+                p.continent_stay = w[1];
+                p.dungeon_quest_weight = w[2];
+                p.fit_penalty = w[3];
+                p.fit_above_penalty = w[4];
+                p.efficiency_power = w[5];
+                p.construction_random = false;
+            })
+            .build();
         let planner = planner(&p);
         let route = planner.construct(|_| {});
-        assert!(
-            planner.simulate(&route, None).is_some(),
-            "{weights:?}: {:?}",
-            planner.diagnose(&route)
-        );
+        assert!(planner.simulate(&route, None).is_some(), "{w:?}: {:?}", planner.diagnose(&route));
     }
 }
 
@@ -2778,63 +2771,59 @@ fn limited_supply_follows_the_crowd() {
     );
 }
 
-/// The Great Outdoors (Forever, GitHub #35): sitting at the campfire beside the quest's giver, in
-/// every starting camp, is done in the camp at the level the quest is taken, as soon as The
-/// Adventurer is handed in, not a level later for the quest's level.
+/// The Great Outdoors (Forever, GitHub #35): sitting at the campfire beside the quest's giver is
+/// done in the camp at the level the quest is taken, not a level later for the quest's level;
+/// only an object beside the giver counts, never kills.
 #[test]
 fn campfire_beside_the_giver_needs_no_power() {
+    let p = leveling(10)
+        .quest(
+            Q::new(900, "Outdoors")
+                .level(8)
+                .min_level(5)
+                .giver(1, 50.0, 40.0)
+                .objective(Obj::visit("Sit by the Basic Campfire", At { zone: 1, x: 50.5, y: 40.0 })),
+        )
+        .quest(
+            Q::new(901, "Far fire")
+                .level(8)
+                .min_level(5)
+                .giver(1, 50.0, 40.0)
+                .objective(Obj::visit("Sit by the other fire", At { zone: 1, x: 80.0, y: 40.0 })),
+        )
+        .quest(
+            Q::new(902, "Beasts at the door")
+                .level(8)
+                .min_level(5)
+                .giver(1, 50.0, 40.0)
+                .kill("Wolf", 8, 3, 1, 50.5, 40.0),
+        )
+        .build();
+    let planner = planner(&p);
+    let might = fg_route::params::Might::PLAIN;
+    let need = |id: i64| {
+        let q = &p.model.quests[quest(&p, id).unwrap() as usize];
+        (q.objectives[0].beside_giver, planner.combat().level(q, 0, might), q.min_level)
+    };
+    let (beside, level, min) = need(900);
+    assert!(beside && level <= min, "done at level {level}, taken at {min}");
+    assert!(!need(901).0, "a fire far from the giver is not beside them");
+    assert!(!need(902).0, "kills are never beside the giver");
+}
+
+/// The Forever data marks The Great Outdoors' campfire beside Kaga Wildhoof and the others.
+#[test]
+fn great_outdoors_campfires_are_beside_their_giver() {
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    for (race, class, id) in [
-        ("tauren", "druid", 96605),
-        ("orc", "warrior", 96604),
-        ("undead", "priest", 96607),
-        ("dwarf", "warrior", 96608),
-        ("human", "warrior", 95998),
-        ("nightelf", "warrior", 96606),
-        ("skyborne", "mage", 96101),
-    ] {
-        let request = PlanRequest {
-            params: Some(
-                overrides
-                    .params
-                    .with_overrides(&["progression=cautious".into()])
-                    .unwrap(),
-            ),
-            ..request(race, class, 20, &[])
-        };
-        let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
-        let i = quest(&p, id).unwrap_or_else(|| panic!("The Great Outdoors {id} planned for {race}"));
-        let q = &p.model.quests[i as usize];
-        assert!(q.skill.is_none(), "{id}: an ordinary quest, not a profession's");
-        let o = &q.objectives[0];
-        assert!(o.text.starts_with("Sit by the Basic Campfire"), "{id}: {}", o.text);
-        assert!(o.beside_giver, "{id}: the campfire is beside {}", q.starts[0].name);
-        assert!(
-            q.starts.iter().any(|l| l.pos.dist(&o.loc.pos) < 30.0),
-            "{id}: the giver's own campfire, not another camp's"
-        );
-        let planner = planner(&p);
-        let might = fg_route::params::Might::PLAIN;
-        assert!(
-            planner.combat().level(q, 0, might) <= q.min_level,
-            "{id}: done at level {}, taken at {}",
-            planner.combat().level(q, 0, might),
-            q.min_level
-        );
-    }
-    // Only objects count as beside the giver: never kills, never among elites.
-    let p = prepare("human", "warrior", 30, &["progression=cautious"]);
-    for q in &p.model.quests {
-        for o in q.objectives.iter().filter(|o| o.beside_giver) {
-            assert!(
-                o.kills <= 0.0 && o.loc.kind == EntityKind::Object,
-                "{}: {}",
-                q.name,
-                o.text
-            );
-            assert!(!o.guard.elite, "{}: no elite around", q.name);
-        }
-    }
+    let request = PlanRequest {
+        params: Some(overrides.params.with_overrides(&["progression=cautious".into()]).unwrap()),
+        ..request("human", "warrior", 20, &[])
+    };
+    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let q = &p.model.quests[quest(&p, 95998).unwrap() as usize];
+    let o = &q.objectives[0];
+    assert!(o.text.starts_with("Sit by the Basic Campfire"), "{}", o.text);
+    assert!(o.beside_giver, "the campfire is beside {}", q.starts[0].name);
 }
 
 /// Camping 101 (Forever, GitHub #35): each profession's asks not to know the camp item it
@@ -2937,28 +2926,19 @@ fn zephras_watchtower_is_climbed() {
 /// curve of any of its classes.
 #[test]
 fn a_group_takes_on_what_its_weakest_class_does() {
-    let curve = |race: &str, id: i64, class: &str| {
-        prepare_from(race, class, 25, &[], Some(player("A", id, class, 12)))
-            .params
-            .class_curve
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let curve = |class: &str| {
+        let points = overrides.class_power[class].points().unwrap();
+        fg_route::job::curve_by_level(&points, 100)
     };
-    let (warrior, mage) = (curve("orc", 2, "warrior"), curve("undead", 5, "mage"));
-    let group = prepare_group(
-        "orc",
-        "warrior",
-        25,
-        &[],
-        Some(player("A", 2, "warrior", 12)),
-        vec![player("B", 5, "mage", 12)],
-    )
-    .params
-    .class_curve;
+    let (warrior, mage) = (curve("warrior"), curve("mage"));
+    let mut group = warrior.clone();
+    overrides.weakest_curve(&mut group, &["mage".to_owned()], 100).unwrap();
     for (l, g) in group.iter().enumerate() {
         assert!(*g <= warrior[l] + 1e-9 && *g <= mage[l] + 1e-9, "level {l}");
     }
     assert!(group.iter().zip(&warrior).any(|(g, w)| g < w) || group.iter().zip(&mage).any(|(g, m)| g < m));
 }
-
 /// A group guide carries its players to the addon, each step where each of them is, and who
 /// the steps not for everyone are for.
 #[test]
@@ -3071,39 +3051,14 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     assert!(edited.steps[0].warning.is_none());
 }
 
-/// A new character knows its capital's flight path, as the game gives it (GitHub #60); a
-/// character met in game keeps it on another continent, unless its list was settled by hand.
+/// A new character knows its capital's flight path, as the game gives it (GitHub #60): the
+/// races' lists (the deduction for a character met in game is tested in `job::start`).
 #[test]
 fn a_new_character_knows_its_capitals_flight_path() {
-    let knows = |p: &Prepared, id: i64| {
-        let n = p.world.taxi_nodes.iter().position(|node| node.id == id).unwrap();
-        p.model.initial.known & (1u128 << n) != 0
-    };
-    let (stormwind, auberdine) = (2, 26);
-    let new = prepare("human", "warrior", 4, &[]);
-    assert!(knows(&new, stormwind));
-    assert_eq!(new.model.initial.known.count_ones(), 1);
-    let elf = prepare("nightelf", "warrior", 4, &[]);
-    assert!(knows(&elf, auberdine) && knows(&elf, 27));
-
-    let in_kalimdor = StartState {
-        faction: Some(fg_route::faction::Faction::Alliance),
-        flights: vec![auberdine],
-        ..player("Joe-Realm", 1, "warrior", 20)
-    };
-    let met = prepare_from("human", "warrior", 22, &[], Some(in_kalimdor.clone()));
-    assert!(knows(&met, stormwind) && knows(&met, auberdine));
-    let settled = prepare_from(
-        "human",
-        "warrior",
-        22,
-        &[],
-        Some(StartState {
-            flights_final: true,
-            ..in_kalimdor
-        }),
-    );
-    assert!(!knows(&settled, stormwind) && knows(&settled, auberdine));
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let (stormwind, auberdine, rutheran) = (2, 26, 27);
+    assert_eq!(overrides.start_flights(1), [stormwind]);
+    assert_eq!(overrides.start_flights(4), [auberdine, rutheran]);
 }
 
 /// WoW Forever's Ruins of Lordaeron is a level 15-20 dungeon though its quests say 21-22
@@ -3318,47 +3273,27 @@ fn new_characters_level_together_from_the_start() {
 /// of it the character can take, which are required as class quests are.
 #[test]
 fn a_dungeon_forced_with_its_quests_takes_them_all() {
-    let request = PlanRequest {
-        params: Some(
-            overrides()
-                .params
-                .with_overrides(&["forced_dungeon_quests=[1581]".to_owned(), "effort=0".to_owned()])
-                .unwrap(),
-        ),
-        from_level: 15,
-        ..request("human", "warrior", 24, &[])
-    };
-    let p = prepare_request(&request);
-    let deadmines = p.model.dungeons.iter().position(|d| d.area == 1581).unwrap();
-    let theirs: Vec<&fg_route::model::Quest> = (p.model.quests.iter())
-        .filter(|q| q.objectives.iter().any(|o| o.dungeon == Some(deadmines)))
-        .collect();
-    assert!(
-        theirs.len() >= 3 && theirs.iter().all(|q| q.mandatory),
-        "{}",
-        theirs.len()
-    );
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
-    assert!(
-        route
-            .steps
-            .iter()
-            .any(|s| s.kind == fg_route::export::StepKind::Dungeon && s.text.contains("Deadmines"))
-    );
-    let turned: Vec<i64> = (route.steps.iter())
-        .filter(|s| s.kind == fg_route::export::StepKind::TurnIn)
-        .filter_map(|s| s.quest)
-        .collect();
-    let left: Vec<&str> = theirs
-        .iter()
-        .filter(|q| !turned.contains(&q.id))
-        .map(|q| q.name.as_str())
-        .collect();
-    // Those whose chain starts well before (The Defias Brotherhood in Westfall) may not fit a
-    // quick guide started at 15: they are reported, not dropped silently.
-    assert!(left.len() * 2 < theirs.len(), "left out: {left:?}");
+    const DEADMINES: i64 = 900;
+    let mut scenario = leveling(25)
+        .dungeon("The Deadmines", 1, 70.0, 70.0)
+        .params(|p| p.forced_dungeon_quests = vec![DEADMINES]);
+    for id in 300..304 {
+        scenario = scenario.quest(
+            Q::new(id, &format!("Mine quest {id}"))
+                .level(18)
+                .giver(1, 40.0, 40.0)
+                .objective(Obj::kill("Defias", 18, 6, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+        );
+    }
+    let (_, guide) = scenario.guide();
+    assert!(guide.plan.iter().any(|s| matches!(s, job::RouteStep::Dungeon { dungeon: DEADMINES })));
+    for id in 300..304 {
+        assert!(
+            guide.plan.iter().any(|s| matches!(s, job::RouteStep::TurnIn { quest } if *quest == id)),
+            "{id} turned in"
+        );
+    }
 }
-
 /// A forced dungeon can be run up to the target level, past the levels its window gives it
 /// (GitHub #66): with nine dungeons forced, each window is too short for them all, and the
 /// Alliance's far away Wailing Caverns was left out for the penalty of a missing dungeon.

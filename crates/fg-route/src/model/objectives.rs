@@ -21,13 +21,13 @@ const OUTSIDE_NEAR: f64 = 600.0;
 /// campfire to sit at next to Kaga Wildhoof, The Great Outdoors): the character stands there to
 /// talk to the NPC anyway, so they require no power (`Objective::beside_giver`). The quest's level asked of them
 /// otherwise made the character come back a level later, which the route never did.
-fn mark_beside_givers(givers: &Givers, objs: &mut [Objective]) {
+pub(super) fn mark_beside_givers(starts: &[Loc], ends: &[Loc], objs: &mut [Objective]) {
     let beside = |o: &Objective| {
         o.dungeon.is_none()
             && o.kills <= 0.0
             && o.loc.kind == EntityKind::Object
             && !o.guard.elite
-            && (givers.starts.iter().chain(&givers.ends))
+            && (starts.iter().chain(ends))
                 .any(|l| l.kind == EntityKind::Npc && l.pos.dist(&o.loc.pos) <= BESIDE_GIVER)
     };
     for o in objs {
@@ -143,7 +143,7 @@ impl QuestBuilder<'_> {
             o.alts.retain(|a| elite || !a.elite);
             self.measure(r, &mut o.alts);
         }
-        mark_beside_givers(givers, &mut objs);
+        mark_beside_givers(&givers.starts, &givers.ends, &mut objs);
         self.add_dungeon_givers(r, &mut objs);
         Ok(objs)
     }

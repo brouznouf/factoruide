@@ -31,7 +31,7 @@ pub use flights::inferred_flights;
 pub use options::{
     FactionOption, FlightOption, NamedId, Options, RaceOption, ZoneOption, class_quests, options, race_classes,
 };
-pub use overrides::{Overrides, RaceDef};
+pub use overrides::{Overrides, RaceDef, curve_by_level};
 pub use paths::{add_walk_paths, route_walks, walk_world};
 pub use race::{optimize, optimize_interruptible};
 pub use reputation::race_base;
@@ -245,16 +245,12 @@ pub fn prepare(
         // Its race's flight paths and those of the towns it did quests in count as learned,
         // unless the list was settled by hand.
         let with_deduced = |s: &StartState| {
-            let mut copy = s.clone();
-            if !s.flights_final {
-                copy.flights.extend(overrides.start_flights(s.race));
-                if let Some(Ok(found)) = s.faction.map(|side| inferred_flights(conn, side, &s.completed)) {
-                    copy.flights.extend(found);
-                }
-                copy.flights.sort_unstable();
-                copy.flights.dedup();
-            }
-            copy
+            let found = if s.flights_final {
+                None
+            } else {
+                s.faction.and_then(|side| inferred_flights(conn, side, &s.completed).ok())
+            };
+            s.with_deduced_flights(overrides.start_flights(s.race), found)
         };
         let deduced = with_deduced(start);
         let start = &deduced;

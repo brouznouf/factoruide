@@ -61,13 +61,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
     // A group takes on what its weakest class does at each level: the higher mobs, the more
     // that one misses.
     if params.power_curve.is_empty() {
-        for other in &group {
-            let points = overrides.class_power.get(other).cloned().unwrap_or_default().points()?;
-            let curve = super::overrides::curve_by_level(&points, req.to_level.max(100));
-            for (mine, theirs) in params.class_curve.iter_mut().zip(curve) {
-                *mine = mine.min(theirs);
-            }
-        }
+        overrides.weakest_curve(&mut params.class_curve, &group, req.to_level.max(100))?;
     }
     let start = members.first().copied().or(req.start.as_ref());
     let from_level = start.map_or(req.from_level, |s| s.level);

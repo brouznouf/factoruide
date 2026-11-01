@@ -302,6 +302,7 @@ impl Q {
                 }
             })
             .collect();
+        super::objectives::mark_beside_givers(&self.quest.starts, &self.quest.ends, &mut self.quest.objectives);
         self.quest
     }
 }
