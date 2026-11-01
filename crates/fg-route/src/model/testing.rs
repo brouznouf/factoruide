@@ -617,6 +617,21 @@ impl Scenario {
 }
 
 impl Scenario {
+    /// The scenario planned as a job is: with `interrupt`, `walks` and a `progress` to listen to.
+    pub fn job(
+        self,
+        progress: &(dyn Fn(&str) + Sync),
+        interrupt: &crate::job::Interrupt,
+        walks: Option<&std::sync::Arc<crate::terrain::Walks>>,
+    ) -> Result<crate::job::PlanOutcome, crate::job::JobError> {
+        let (from, to) = (self.profile.from_level, self.profile.to_level);
+        let request: PlanRequest = serde_json::from_value(serde_json::json!({
+            "race": "orc", "class": "warrior", "from_level": from, "to_level": to,
+        }))
+        .unwrap_or_else(|e| panic!("{e}"));
+        crate::job::plan_prepared(self.build(), &request, progress, interrupt, walks).map(|(outcome, _)| outcome)
+    }
+
     /// The starts a new guide would offer for the scenario (see `job::preview_starts`).
     pub fn starts(self) -> crate::job::StartPreview {
         crate::job::preview_starts_of(self.build(), &|_| {}, &crate::job::Interrupt::default(), None)

@@ -1,6 +1,6 @@
 //! Planner behavior on the Classic database: reproductions of the problems met on real guides.
 
-use crate::common::{database, database_of, repo};
+use crate::common::{database, database_of, leveling, repo};
 use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, StartState};
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
@@ -533,8 +533,8 @@ fn constructed_route_keeps_its_log_in_bounds() {
 /// and hands back a valid route.
 #[test]
 fn stopped_search_ends_at_once() {
-    let p = orc_warlock();
-    let planner = planner(p);
+    let p = leveling(30).build();
+    let planner = planner(&p);
     let route = planner.construct(|_| {});
     let begun = std::time::Instant::now();
     let improved = planner.improve_while(
@@ -560,10 +560,10 @@ fn stopped_search_ends_at_once() {
 /// unfinished route; without abort it reaches the target level.
 #[test]
 fn aborted_construction_gives_up() {
-    let p = orc_warlock();
+    let p = leveling(30).build();
     let abort = || true;
-    let given_up = planner(p).abortable(&abort).construct(|_| {});
-    let built = planner(p).construct(|_| {});
+    let given_up = planner(&p).abortable(&abort).construct(|_| {});
+    let built = planner(&p).construct(|_| {});
     assert!(
         given_up.len() < built.len() / 10,
         "{} stops of {}",
@@ -578,9 +578,8 @@ fn aborted_construction_gives_up() {
 fn stopped_job_keeps_a_guide() {
     let interrupt = job::Interrupt::default();
     interrupt.stop();
-    let request = request("orc", "warlock", 12, &["effort=100"]);
     let begun = std::time::Instant::now();
-    let outcome = job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, None).unwrap();
+    let outcome = leveling(12).params(|p| p.effort = 100.0).job(&|_| {}, &interrupt, None).unwrap();
     assert!(
         begun.elapsed() < std::time::Duration::from_secs(300),
         "took {:?}",
@@ -617,12 +616,12 @@ fn job_saves_its_walks() {
 fn panicking_search_ends_the_job() {
     let (sent, received) = std::sync::mpsc::channel();
     std::thread::spawn(move || {
-        let request = request("orc", "warlock", 12, &["threads=1", "effort=0.05"]);
+        let scenario = leveling(12).params(|p| (p.threads, p.effort) = (1, 0.05));
         // The search's first message, from its own thread.
         let progress = |m: &str| assert!(!m.starts_with("start:"), "search failed");
         let interrupt = job::Interrupt::default();
         let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            job::plan_interruptible(&database(), &overrides(), &request, &progress, &interrupt, None)
+            scenario.job(&progress, &interrupt, None)
         }));
         let _ = sent.send(outcome.is_err());
     });
@@ -636,23 +635,17 @@ fn panicking_search_ends_the_job() {
 /// first: the race, the rounds and the final count tries, not time.
 #[test]
 fn the_tournament_repeats_its_guide() {
-    let request = request(
-        "orc",
-        "warlock",
-        12,
-        &[
-            "threads=4",
-            "candidates=8",
-            "final_routes=2",
-            "qualify_tries=0.5",
-            "round_tries=1",
-            "final_tries=3",
-            "share_every=50",
-        ],
-    );
+    let scenario = || {
+        leveling(12).params(|p| {
+            (p.threads, p.candidates, p.final_routes) = (4, 8, 2);
+            (p.qualify_tries, p.round_tries, p.final_tries, p.share_every) = (0.5, 1.0, 3.0, 50);
+        })
+    };
     let interrupt = job::Interrupt::default();
-    let plan = || job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, None).unwrap();
-    let (first, again) = (plan(), plan());
+    let (first, again) = (
+        scenario().job(&|_| {}, &interrupt, None).unwrap(),
+        scenario().job(&|_| {}, &interrupt, None).unwrap(),
+    );
     assert_eq!(
         serde_json::to_value(&first.plan).unwrap(),
         serde_json::to_value(&again.plan).unwrap()
@@ -666,19 +659,10 @@ fn panicking_search_does_not_hold_the_meetings() {
     let (sent, received) = std::sync::mpsc::channel();
     std::thread::spawn(move || {
         // A round of two routes, then a final of one route improved by both searches.
-        let request = request(
-            "orc",
-            "warlock",
-            12,
-            &[
-                "threads=2",
-                "candidates=2",
-                "final_routes=1",
-                "round_tries=1",
-                "final_tries=20",
-                "share_every=1",
-            ],
-        );
+        let scenario = leveling(12).params(|p| {
+            (p.threads, p.candidates, p.final_routes) = (2, 2, 1);
+            (p.round_tries, p.final_tries, p.share_every) = (1.0, 20.0, 1);
+        });
         // The first search of the final, at its first message (the other one waits at a meeting).
         let starts = std::sync::atomic::AtomicUsize::new(0);
         let progress = |m: &str| {
@@ -687,7 +671,7 @@ fn panicking_search_does_not_hold_the_meetings() {
         };
         let interrupt = job::Interrupt::default();
         let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
-            job::plan_interruptible(&database(), &overrides(), &request, &progress, &interrupt, None)
+            scenario.job(&progress, &interrupt, None)
         }));
         let _ = sent.send(outcome.is_err());
     });
