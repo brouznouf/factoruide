@@ -1424,7 +1424,7 @@ mod tests {
                 .map(|_| Hostile { id: 16383, name: "Flameshocker".into(), level, elite: true, pos: at })
                 .collect()
         };
-        let found = |p: &crate::job::Prepared, mobs: &[Hostile]| guarded_givers(&p.world, &p.model, mobs).len();
+        let found = |p: &job::Prepared, mobs: &[Hostile]| guarded_givers(&p.world, &p.model, mobs).len();
         p.model.quests[0].start_guard = guard(level + GUARD_GAP);
         assert_eq!(found(&p, &mobs(2, (level + GUARD_GAP) as u8)), 1);
         assert_eq!(found(&p, &mobs(1, (level + GUARD_GAP) as u8)), 0, "one creature is walked around");

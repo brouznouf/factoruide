@@ -433,7 +433,7 @@ impl Editor {
     /// objectives take the numbers they have now.
     fn migrate_children(&self, steps: Vec<RouteStep>) -> Vec<RouteStep> {
         let model = &self.prepared.model;
-        let in_plan: std::collections::HashSet<i64> = steps
+        let in_plan: HashSet<i64> = steps
             .iter()
             .filter_map(|s| match s {
                 RouteStep::Accept { quest } | RouteStep::TurnIn { quest } | RouteStep::Objective { quest, .. } => {
@@ -487,9 +487,9 @@ impl Editor {
             let mut out = Vec::with_capacity(steps.len() + block.len());
             for (i, s) in steps.into_iter().enumerate() {
                 if i == last {
-                    out.extend(block.drain(..));
+                    out.append(&mut block);
                 } else if past(&s) {
-                    continue;
+                    // Handed in with the child now.
                 } else if let RouteStep::Objective { quest, objective, farm, spot } = s {
                     let objective = if quest == parent.id {
                         own.get(usize::from(objective)).copied().unwrap_or(objective)
@@ -511,7 +511,7 @@ impl Editor {
     /// Divinity needs its first, repeatable, quest). That quest is done right before.
     fn add_repeatable_prerequisites(&self, steps: Vec<RouteStep>) -> Vec<RouteStep> {
         let model = &self.prepared.model;
-        let mut in_plan: std::collections::HashSet<i64> = steps
+        let mut in_plan: HashSet<i64> = steps
             .iter()
             .filter_map(|s| match s {
                 RouteStep::Accept { quest } | RouteStep::TurnIn { quest } | RouteStep::Objective { quest, .. } => {

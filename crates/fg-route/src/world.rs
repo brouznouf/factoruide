@@ -134,6 +134,17 @@ const ZONE_MOB_LEVEL_MAX: i64 = 70;
 /// A lift of `World::area_lifts`: passage and the indices of its two sides.
 type LiftSides = (usize, usize, usize);
 
+/// Which database file a world is loaded from: its path, modification time and size, with the
+/// faction and drop tier. None for a database in memory (nothing tells it from another).
+fn database_stamp(conn: &Connection, faction: Faction, drop_tier: usize) -> Option<u64> {
+    use std::hash::{Hash, Hasher};
+    let path = conn.path().filter(|p| !p.is_empty())?;
+    let meta = std::fs::metadata(path).ok()?;
+    let mut h = std::collections::hash_map::DefaultHasher::new();
+    (path, meta.modified().ok()?, meta.len(), faction.name(), drop_tier).hash(&mut h);
+    Some(h.finish())
+}
+
 pub struct World {
     zones: HashMap<i64, ZoneRect>,
     pub zone_names: HashMap<i64, String>,
@@ -192,7 +203,35 @@ pub struct World {
     /// Named places of the zone maps (their exploration overlays): to tell which zone a point
     /// belongs to where zone maps overlap, and to name towns.
     landmarks: Vec<Landmark>,
+    /// What the terrain and the passages depend on, once the caller has said all of it
+    /// (`World::stamp`): the walks between passages are then kept for the next world with the same.
+    stamp: Option<u64>,
+    /// The database file the world was loaded from (path, modification time, size), faction and
+    /// drop tier: the start of the stamp.
+    source: Option<u64>,
 }
+
+/// Walks between the passages already computed (`World::add_passes`): they take about a second
+/// and the same ones are asked for again at each plan with the same game data and settings.
+/// Few entries (an edition and a faction each), cleared with the process.
+static PASS_WALKS: std::sync::Mutex<Vec<(u64, PassWalks)>> = std::sync::Mutex::new(Vec::new());
+const PASS_WALKS_MAX: usize = 8;
+/// Held while the walks (or the chain tables) are computed, so that worlds asking at once for
+/// the same compute them once.
+static PASS_COMPUTE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+static LINK_COMPUTE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+/// The boats' and zeppelins' chain tables already computed (`World::add_links`), as `PASS_WALKS`.
+static LINK_CHAINS: std::sync::Mutex<Vec<(u64, LinkChains)>> = std::sync::Mutex::new(Vec::new());
+
+type LinkChains = std::sync::Arc<Vec<Vec<Vec<f64>>>>;
+
+type PassWalks = std::sync::Arc<(
+    Vec<Vec<f64>>,
+    Vec<Vec<usize>>,
+    Vec<Vec<bool>>,
+    FxHashMap<u8, PassGraph>,
+)>;
 
 /// A named place of a zone map (Ratchet, Valley of Trials...), at the center of its overlay.
 struct Landmark {
@@ -394,6 +433,8 @@ impl World {
             area_passes: FxHashMap::default(),
             area_lifts: FxHashMap::default(),
             walk_id: NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed),
+            stamp: None,
+            source: database_stamp(conn, faction, drop_tier),
         };
         world.landmarks = world.load_landmarks(conn)?;
         for i in 0..world.taxi_nodes.len() {
@@ -806,9 +847,33 @@ impl World {
         }
         // Beyond the cache key's room, the links of the last quests are always open.
         self.link_quests.truncate(LINK_QUESTS_MAX);
+        // The same tables as an earlier world's (see `PASS_WALKS`).
+        let key = self.stamp.map(|stamp| {
+            use std::hash::{Hash, Hasher};
+            let mut h = std::collections::hash_map::DefaultHasher::new();
+            (stamp, format!("{:?}", self.links), walk_speed.to_bits(), &self.link_quests).hash(&mut h);
+            h.finish()
+        });
+        // One world computes them while the others wait for the same.
+        let _computing = key.map(|_| LINK_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
+        let kept = key.and_then(|key| {
+            let cache = LINK_CHAINS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+            cache.iter().find(|(k, _)| *k == key).map(|(_, c)| std::sync::Arc::clone(c))
+        });
+        if let Some(chains) = kept {
+            self.link_chains.clone_from(chains.as_ref());
+            return;
+        }
         self.link_chains = (0..1usize << self.link_quests.len())
             .map(|open| self.chain_links(open, walk_speed))
             .collect();
+        if let Some(key) = key {
+            let mut cache = LINK_CHAINS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+            if cache.len() >= PASS_WALKS_MAX {
+                cache.remove(0);
+            }
+            cache.push((key, std::sync::Arc::new(self.link_chains.clone())));
+        }
     }
 
     /// The links' chain table (see `link_chains`) with the links of the quests not in `open`
@@ -1095,6 +1160,19 @@ impl World {
         warnings
     }
 
+    /// Says what else the terrain and the passages depend on (the corrections applied to the
+    /// terrain, the passages' definitions, the settings of the walks): `what`, described as text.
+    /// With it, the walks between passages are kept to be taken again by the next world with the
+    /// same source and the same `what`. A world never stamped computes them each time.
+    pub fn stamp(&mut self, what: &str) {
+        use std::hash::{Hash, Hasher};
+        self.stamp = self.source.map(|s| {
+            let mut h = std::collections::hash_map::DefaultHasher::new();
+            (s, what).hash(&mut h);
+            h.finish()
+        });
+    }
+
     /// Register passages; subzone positions come from the map exploration overlays.
     pub fn add_passes(&mut self, conn: &Connection, defs: &[PassDef]) -> Result<Vec<String>> {
         // Center of each explorable map area, per zone.
@@ -1179,6 +1257,27 @@ impl World {
             }
         }
         self.walk_id = NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed);
+        // The same walks as an earlier world's: the same data, the same terrain, the same passages.
+        let key = self.stamp.map(|stamp| {
+            use std::hash::{Hash, Hasher};
+            let mut h = std::collections::hash_map::DefaultHasher::new();
+            stamp.hash(&mut h);
+            format!("{:?}", self.passes).hash(&mut h);
+            let mut levels: Vec<_> = self.zone_levels.iter().collect();
+            levels.sort_unstable();
+            (levels, &self.band_levels, self.zone_gap).hash(&mut h);
+            h.finish()
+        });
+        let _computing = key.map(|_| PASS_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
+        if let Some(key) = key
+            && let Some(walks) = (PASS_WALKS.lock().unwrap_or_else(std::sync::PoisonError::into_inner).iter())
+                .find(|(k, _)| *k == key)
+                .map(|(_, w)| std::sync::Arc::clone(w))
+        {
+            (self.pass_dist, self.pass_next, self.pass_shortcut, self.pass_closed) =
+                (walks.0.clone(), walks.1.clone(), walks.2.clone(), walks.3.clone());
+            return Ok(warnings);
+        }
         // Walking from a passage to another taken from the zone it leads into, then all-pairs
         // shortest walks (one-way passages: not the same both ways). Between two passages of
         // the same terrain area, over the terrain from their points in it (a passage may stand
@@ -1212,6 +1311,21 @@ impl World {
                     .collect()
             })
             .collect();
+        if let Some(key) = key {
+            let mut kept = PASS_WALKS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+            if kept.len() >= PASS_WALKS_MAX {
+                kept.remove(0);
+            }
+            kept.push((
+                key,
+                std::sync::Arc::new((
+                    self.pass_dist.clone(),
+                    self.pass_next.clone(),
+                    self.pass_shortcut.clone(),
+                    self.pass_closed.clone(),
+                )),
+            ));
+        }
         Ok(warnings)
     }
 

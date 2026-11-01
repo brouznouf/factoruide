@@ -337,6 +337,11 @@ fn load_world(
     for warning in world.add_caves(&overrides.caves) {
         progress(&warning);
     }
+    // What the walks between the passages depend on, besides the database.
+    world.stamp(&format!(
+        "{:?}{:?}{:?}{:?}{:?}{:?}{:?}",
+        overrides.closed, overrides.enclosed, overrides.caves, passes, params.zone_gap, params.detour, params.run_speed
+    ));
     for warning in world.add_passes(conn, &passes)? {
         progress(&warning);
     }
