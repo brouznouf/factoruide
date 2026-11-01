@@ -80,7 +80,12 @@ fn quest_windows_plan_the_chain_with_prerequisites_before_the_lower_bound() {
 // A nearby optional reward would level the player before the required two-quest chain.
 #[test]
 fn generation_prioritizes_the_deadline_chain_and_reports_a_missed_window() {
-    let conn = database_of("classic");
+    let path = std::env::temp_dir().join(format!("fg-completion-window-{}.sqlite", std::process::id()));
+    let _ = std::fs::remove_file(&path);
+    database_of("classic")
+        .execute("VACUUM INTO ?1", [path.to_str().unwrap()])
+        .unwrap();
+    let conn = rusqlite::Connection::open(&path).unwrap();
     conn.execute_batch(
         "CREATE TEMP TABLE m_quest AS SELECT * FROM main.m_quest WHERE id IN (783,7,33);
          UPDATE m_quest SET xp=0, xp_observed=1;
@@ -126,6 +131,8 @@ fn generation_prioritizes_the_deadline_chain_and_reports_a_missed_window() {
         error.contains("Kobold Camp Cleanup (7)") && error.contains("level 1"),
         "{error}"
     );
+    drop(conn);
+    std::fs::remove_file(&path).ok();
 }
 
 #[test]
