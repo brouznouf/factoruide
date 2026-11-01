@@ -673,10 +673,10 @@ impl<'r> Replay<'r> {
             let abilities = (0..i)
                 .rev()
                 .filter_map(|k| of_saved[k])
-                .filter_map(|line| self.lines[line].event)
-                .next()
-                .map(|event| self.snaps[step_of[event] + 1].abilities)
-                .unwrap_or(self.planner.model.initial.abilities);
+                .find_map(|line| self.lines[line].event)
+                .map_or(self.planner.model.initial.abilities, |event| {
+                    self.snaps[step_of[event] + 1].abilities
+                });
             let trips = self.planner.trips().with_movement(abilities);
             let distance = a.dist(&b) * self.planner.params.detour;
             let length = trips.walk_time(&a, &b, distance, saved[i].level, 0).min(end - start);
