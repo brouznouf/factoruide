@@ -43,7 +43,7 @@ pub fn leveling(to_level: i64) -> Scenario {
         .flight_master(23, "Orgrimmar", 2, 50.0, 50.0)
         .flight_master(25, "Crossroads", 3, 50.0, 50.0)
         .knows_flight(23);
-    for i in 0..24_i64 {
+    for i in 0..30_i64 {
         let (zone, x) = match i {
             0..=5 => (1, 20.0 + 10.0 * i as f64),
             6..=11 => (2, 20.0 + 10.0 * (i - 6) as f64),
@@ -62,4 +62,20 @@ pub fn leveling(to_level: i64) -> Scenario {
         );
     }
     s
+}
+
+/// The walking world of an edition for a faction, loaded once for the tests that only read it.
+pub fn world(edition: fg_route::xp::Edition, faction: fg_route::faction::Faction) -> &'static fg_route::world::World {
+    static WORLDS: Mutex<Vec<(String, &'static fg_route::world::World)>> = Mutex::new(Vec::new());
+    let key = format!("{}-{}", edition.key(), faction);
+    let mut worlds = WORLDS.lock().unwrap();
+    if let Some((_, world)) = worlds.iter().find(|(k, _)| *k == key) {
+        return world;
+    }
+    let overrides = fg_route::job::Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+    let world: &'static fg_route::world::World = Box::leak(Box::new(
+        fg_route::job::game_world(&database_of(edition.key()), &overrides, faction, 0).unwrap(),
+    ));
+    worlds.push((key, world));
+    world
 }

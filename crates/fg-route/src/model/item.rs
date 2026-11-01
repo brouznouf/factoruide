@@ -217,7 +217,7 @@ impl QuestBuilder<'_> {
     fn auction_houses(&self) -> Vec<AuctionHouse> {
         let entities = &self.sources.entities;
         let mut houses: Vec<AuctionHouse> = Vec::new();
-        for &id in &entities.auctioneers {
+        for &id in entities.auctioneers.iter() {
             for (pos, zone) in entities.points(self.world, EntityKind::Npc, id) {
                 let name = entities.name(EntityKind::Npc, id);
                 match houses.iter_mut().find(|h| h.0.dist(&pos) <= AUCTION_HOUSE) {
