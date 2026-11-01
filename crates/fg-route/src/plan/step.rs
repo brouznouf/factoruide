@@ -425,8 +425,16 @@ impl Planner<'_> {
         self.grind_to_gate(s, stop, spot, record);
         let loc = self.arrive(s, stop, spot, record);
         if !(Self::timed(stop.kind) && self.failed_in_time(s, stop.index, record)) {
+            let before = s.spent.quest_xp;
             let picked = self.do_stop(s, stop, spot);
-            record(s, Event::Stop { stop, loc });
+            record(
+                s,
+                Event::Stop {
+                    stop,
+                    loc,
+                    reward_xp: s.spent.quest_xp - before,
+                },
+            );
             if let Some(item) = picked {
                 record(
                     s,

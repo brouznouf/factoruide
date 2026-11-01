@@ -69,6 +69,26 @@ fn sleeping_bag_starts_after_its_reward_and_survives_profile_import() {
         assert_eq!(report.steps[2].xp, 100, "the reward does not boost itself");
         assert_eq!(report.steps[3].xp, after);
         assert_eq!(report.steps[5].xp, 103);
+        let plan = planner(&p);
+        let guide = crate::export::build_traced(
+            &plan,
+            &p.profile,
+            &report.route,
+            &report.trace,
+            report.breakdown.total,
+            report.breakdown,
+        );
+        let rewards: Vec<_> = guide
+            .steps
+            .iter()
+            .filter(|s| s.kind == crate::export::StepKind::TurnIn)
+            .map(|s| s.reward_xp)
+            .collect();
+        assert_eq!(
+            rewards,
+            [Some(100), Some(103)],
+            "the addon receives the XP actually awarded"
+        );
         assert_eq!(
             report.steps[3].end - report.steps[3].start,
             report.steps[0].end - report.steps[0].start
@@ -128,7 +148,7 @@ fn rested_xp_can_make_a_nearby_guarded_object_cheaper_than_a_distant_safe_one() 
         let report = planner(&p).edit(&[stop(0, Kind::Objective(0))]);
         assert_eq!(report.errors(), 0);
         let visited = report.trace.iter().find_map(|t| match &t.event {
-            crate::plan::Event::Stop { stop, loc } if stop.kind == Kind::Objective(0) => Some(loc.pos),
+            crate::plan::Event::Stop { stop, loc, .. } if stop.kind == Kind::Objective(0) => Some(loc.pos),
             _ => None,
         });
         assert_eq!(visited, Some(chosen));
@@ -234,4 +254,31 @@ fn buffs_reduce_catch_up_time_for_the_member_who_has_them_and_spend_rested_xp() 
             .collect();
         assert_eq!(gains, gained, "catch-up exhausted each rested pool before this kill");
     }
+}
+
+#[test]
+fn fractional_kill_work_takes_every_buffed_member_to_the_level_cap() {
+    let mut p = prepared();
+    p.profile.from_level = 59;
+    p.profile.to_level = 60;
+    p.params.food_xp = true;
+    p.params.sleeping_bag = true;
+    p.params.group_size = 2;
+    let xp = Edition::Forever.rules().to_next_level(59) - 7;
+    p.model.initial.xp = xp;
+    p.model.initial.completed = Some([SLEEPING_BAG_QUEST].into());
+    p.model.initial.mates = vec![MateStart {
+        level: 59,
+        xp,
+        rested: 0,
+        completed: [SLEEPING_BAG_QUEST].into(),
+    }];
+    let plan = planner(&p);
+    let mut trace = vec![];
+    assert!(plan.simulate_full(&[], Some(&mut trace)).is_some());
+    assert_eq!(
+        trace.last().unwrap().party,
+        [(60, 0), (60, 0)],
+        "both players earn the last seven XP"
+    );
 }

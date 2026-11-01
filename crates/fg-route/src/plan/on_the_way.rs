@@ -384,13 +384,21 @@ impl Planner<'_> {
             if Self::timed(stop.kind) && self.failed_in_time(s, stop.index, record) {
                 continue;
             }
+            let before = s.spent.quest_xp;
             let picked = if stop.kind == Kind::Accept {
                 self.accept(s, stop.index);
                 None
             } else {
                 self.turn_in(s, stop.index)
             };
-            record(s, Event::Stop { stop, loc: loc.clone() });
+            record(
+                s,
+                Event::Stop {
+                    stop,
+                    loc: loc.clone(),
+                    reward_xp: s.spent.quest_xp - before,
+                },
+            );
             if let Some(item) = picked {
                 record(
                     s,

@@ -60,6 +60,9 @@ level:
   quest 79976 and activates after its turn-in; imported completion also counts, per group member.
   Food adds 5% to kill XP and the bag adds 3% to kill and quest XP. The estimate adds the kill
   bonuses before applying the finite rested pool, including grinding and group catch-up.
+  Pre-grinding estimates and group catch-up consume rested XP in every edition. Group kill
+  work stays fractional until the final member reward is rounded. Guide turn-ins carry the
+  reward XP actually awarded by the simulation.
   Exploration, food costs and buff refresh time are outside this estimate. Effect scopes:
   [Well Fed](https://www.wowhead.com/forever/spell=1243969/well-fed-xp-boost),
   [Well-Rested](https://www.wowhead.com/forever/spell=429959/well-rested).

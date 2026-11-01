@@ -757,7 +757,7 @@ impl<'r> Replay<'r> {
                     via.push([p.x as f32, p.y as f32]);
                 }
                 Event::Farm { .. } | Event::Reward { .. } => {}
-                Event::Stop { stop, loc } => {
+                Event::Stop { stop, loc, .. } => {
                     let walk = walking.min(e.time - t).max(0.0);
                     if apart(&at, &loc.pos) {
                         let l = leg(walk_mode, &at, &loc.pos, std::mem::take(&mut via));

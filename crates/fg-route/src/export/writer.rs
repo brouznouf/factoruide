@@ -96,8 +96,14 @@ impl StepWriter<'_> {
                 abilities,
             } => self.train(&mut step, *trainer, *since, t.level, *abilities),
             Event::Sell { vendor } => self.sell(&mut step, *vendor),
-            Event::Stop { stop, loc } if !stop.is_quest() => self.visit(&mut step, *stop, loc),
-            Event::Stop { stop, loc } => self.quest_stop(&mut step, *stop, loc),
+            Event::Stop { stop, loc, .. } if !stop.is_quest() => self.visit(&mut step, *stop, loc),
+            Event::Stop { stop, loc, reward_xp } => {
+                let place = self.quest_stop(&mut step, *stop, loc);
+                if stop.kind == Kind::TurnIn {
+                    step.reward_xp = Some(*reward_xp);
+                }
+                place
+            }
         };
         Self::set_place(&mut step, place, self.planner.world);
         step
@@ -865,7 +871,6 @@ impl StepWriter<'_> {
             }
             Kind::TurnIn => {
                 step.kind = StepKind::TurnIn;
-                step.reward_xp = Some(self.planner.growth().quest_reward(q, step.level));
                 let key = if q.held.is_some() { "turnin.held" } else { "turnin" };
                 step.say.push(Phrase::new(key).arg("quest", quest).arg("who", who));
                 self.patrol(step, loc);

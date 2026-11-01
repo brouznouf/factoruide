@@ -174,7 +174,7 @@ impl<'g> Growth<'g> {
     /// XP of kills: doubled while the character is rested, up to its rested XP. Returns the XP
     /// gained.
     pub(crate) fn gain_kills(self, s: &mut State, amount: i64) -> i64 {
-        self.mates_kill(s, amount);
+        self.mates_kill(s, amount as f64);
         let amount = (amount as f64 * self.kill_factor(s, s.order[0])).round() as i64;
         let bonus = amount.min(s.rested).max(0);
         s.rested -= bonus;
@@ -203,9 +203,9 @@ impl<'g> Growth<'g> {
 
     /// The other players' XP of kills worth `amount` to the character: the same mobs, at their
     /// own level (fewer when above it, none once gray), doubled while they are rested.
-    pub(crate) fn mates_kill(self, s: &mut State, amount: i64) {
+    pub(crate) fn mates_kill(self, s: &mut State, amount: f64) {
         let n = self.mates();
-        if n == 0 || amount <= 0 {
+        if n == 0 || amount <= 0.0 {
             return;
         }
         let rules = self.rules();
@@ -219,8 +219,8 @@ impl<'g> Growth<'g> {
             } else {
                 1.0
             };
-            let base = (amount as f64 * each) as i64;
-            let gained = (base as f64 * factor).round() as i64;
+            let base = amount * each;
+            let gained = (base * factor).round() as i64;
             let bonus = gained.min(m.rested).max(0);
             m.rested -= bonus;
             Self::mate_gain(rules, m, gained + bonus);
@@ -387,7 +387,7 @@ impl<'g> Growth<'g> {
             s.spent.grind_xp += need;
             s.grind_used += need;
             s.rested -= consumed;
-            self.mates_kill(s, killed.round() as i64);
+            self.mates_kill(s, killed);
             self.gain(s, need);
         }
         s.time += t;
