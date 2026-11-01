@@ -9,6 +9,8 @@ use rusqlite::Connection;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+mod xp_buffs;
+
 fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
@@ -683,7 +685,8 @@ fn quest_items_take_a_slot_until_the_turn_in() {
     let mut s = planner.initial_state();
     planner.accept(&mut s, 0);
     assert_eq!(s.held, 1);
-    planner.turn_in(&mut s, 0);
+    let rewards = planner.growth().quest_rewards(&s, 0);
+    planner.turn_in(&mut s, 0, &rewards);
     assert_eq!(s.held, 0);
 }
 

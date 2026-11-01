@@ -3,6 +3,9 @@
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 
+/// This Must Be The Place, rewarding the Cozy Sleeping Bag (Forever).
+pub const SLEEPING_BAG_QUEST: i64 = 79976;
+
 /// Game version a guide is made for.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]

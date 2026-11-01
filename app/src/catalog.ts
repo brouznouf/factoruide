@@ -5,6 +5,12 @@
 type Entry = Partial<Record<"en" | "de" | "es" | "esMX" | "pt" | "ru" | "ko" | "zhCN" | "zhTW", string>>;
 
 export const CATALOG: Record<string, Entry> = {
+  "Bonus d'XP": { en: "XP bonuses" },
+  "Estimation : les bonus s'additionnent avant l'XP de repos, qui reste limitée au stock du personnage.": { en: "Estimate: the bonuses add before rested XP, which remains limited to the character's stored amount." },
+  "Bonus d'XP de nourriture (+5 %)": { en: "Food XP bonus (+5%)" },
+  "XP des kills uniquement. Le bonus est supposé actif en permanence, sans temps ni coût de nourriture.": { en: "Kill XP only. Assumes the bonus stays active, with no food time or cost." },
+  "Sac de couchage (+3 %)": { en: "Sleeping Bag (+3%)" },
+  "Inclut la suite de quêtes. Après la récompense, trois charges sont supposées actives en permanence sur les kills et les quêtes, sans temps de repos. Une quête déjà terminée dans le profil active le bonus dès le départ.": { en: "Includes the quest chain. After the reward, assumes three stacks stay active for kills and quests, with no resting time. Completion recorded in the profile enables the bonus from the start." },
   "Chercher une quête": { en: "Find a quest", de: "Quest suchen", es: "Buscar una misión", pt: "Procurar uma missão", ru: "Найти задание", ko: "퀘스트 찾기", zhCN: "查找任务", zhTW: "尋找任務" },
   "aucune": { en: "none", de: "keine", es: "ninguna", pt: "nenhuma", ru: "нет", ko: "없음", zhCN: "无", zhTW: "無" },
   "Étape précédente de la quête": { en: "Previous step of the quest", de: "Vorheriger Schritt der Quest", es: "Paso anterior de la misión", pt: "Passo anterior da missão", ru: "Предыдущий шаг задания", ko: "퀘스트의 이전 단계", zhCN: "该任务的上一步", zhTW: "該任務的上一步" },
