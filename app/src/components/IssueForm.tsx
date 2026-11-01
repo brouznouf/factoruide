@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { api, type SetupReport, type Step } from "../api";
 import { gameLocale, useLang, useT } from "../i18n";
+import { IS_WEB } from "../web/mode";
 
 const NAME_KEY = "factoruide.issueName";
 const MAX_MESSAGE = 4000;
 const MAX_NAME = 40;
 const NONE: number[] = [];
+const GITHUB_ISSUES = "https://github.com/brouznouf/factoruide/issues/new";
 
 interface Props {
   /** The guide version the report is about (none: another problem). */
@@ -61,6 +63,17 @@ export function IssueForm({ guide, selected = NONE, onUnselect, onClose, onSent 
     }
   };
 
+  // A browser sends nothing to the server: the report goes to GitHub, written beforehand.
+  const githubUrl = () => {
+    const lines = [message.trim()];
+    if (guide) {
+      lines.push("", `Guide: ${guide.guide} (version ${guide.version})`);
+      for (const i of [...selected].sort((a, b) => a - b)) lines.push(`- step ${i + 1}: ${guide.steps[i]?.text ?? ""}`);
+    }
+    const title = message.trim().split("\n")[0].slice(0, 80);
+    return `${GITHUB_ISSUES}?${new URLSearchParams({ title, body: lines.join("\n") })}`;
+  };
+
   if (done)
     return (
       <section className="panel issue-form">
@@ -107,10 +120,12 @@ export function IssueForm({ guide, selected = NONE, onUnselect, onClose, onSent 
           placeholder={guide ? t("Ce qui ne va pas : PNJ absent, quête impossible, trajet étrange…") : t("Décrivez le problème : ce que vous faisiez, ce qui s'est passé.")}
         />
       </label>
-      <label className="field">
-        <span>{t("Pseudo (facultatif)")}</span>
-        <input maxLength={MAX_NAME} value={name} onChange={(e) => setName(e.target.value)} placeholder={t("Pour vous remercier dans les notes de version")} />
-      </label>
+      {!IS_WEB && (
+        <label className="field">
+          <span>{t("Pseudo (facultatif)")}</span>
+          <input maxLength={MAX_NAME} value={name} onChange={(e) => setName(e.target.value)} placeholder={t("Pour vous remercier dans les notes de version")} />
+        </label>
+      )}
       {setup && (
         <div className="issue-setup">
           <label className="field-bool">
@@ -150,15 +165,23 @@ export function IssueForm({ guide, selected = NONE, onUnselect, onClose, onSent 
         </div>
       )}
       <p className="muted">
-        {guide
+        {IS_WEB
+          ? t("Dans le navigateur, le signalement s'ouvre sur GitHub, prérempli : un compte GitHub est nécessaire.")
+          : guide
           ? t("Sont joints : votre message, votre pseudo s'il est rempli, la configuration complète du guide et ses étapes (sans le nom du personnage), les versions de l'app et des données. N'écrivez rien de personnel dans le message.")
           : t("Sont joints : votre message, votre pseudo s'il est rempli, les versions de l'app et du jeu, votre langue et votre système. N'écrivez rien de personnel dans le message.")}
       </p>
       {error && <div className="error">{error}</div>}
       <div className="actions">
-        <button className="primary" disabled={sending || !message.trim()} onClick={send}>
-          {sending ? t("Envoi…") : t("Envoyer")}
-        </button>
+        {IS_WEB ? (
+          <button className="primary" disabled={!message.trim()} onClick={() => window.open(githubUrl(), "_blank", "noopener")}>
+            {t("Ouvrir sur GitHub")}
+          </button>
+        ) : (
+          <button className="primary" disabled={sending || !message.trim()} onClick={send}>
+            {sending ? t("Envoi…") : t("Envoyer")}
+          </button>
+        )}
         {onClose && (
           <button onClick={onClose} disabled={sending}>
             {t("Annuler")}
