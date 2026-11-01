@@ -742,6 +742,18 @@ fn run(cmd: &str, a: serde_json::Value) -> CmdResult<serde_json::Value> {
             let x = args::<Versions>(a)?;
             to_json(STUDIO.compare_versions(&WebHost, &x.guide, x.a, x.b, x.locale.as_deref()))
         }
+        // The report document the page posts to /v1/issues (the browser has no id of its own: the
+        // page keeps one).
+        "issue_document" => {
+            #[derive(Deserialize)]
+            struct Report {
+                draft: fg_app::IssueDraft,
+                contributor: String,
+                os: String,
+            }
+            let r = args::<Report>(a)?;
+            to_json(STUDIO.issue(&WebHost, r.draft, (APP_VERSION, &r.os, r.contributor), None))
+        }
         "set_installed" => {
             let g = args::<GuideArgs>(a)?;
             to_json(guides(edition()).set_installed(&g.guide, g.version).map_err(Into::into))

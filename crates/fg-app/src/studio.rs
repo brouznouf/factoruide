@@ -7,11 +7,40 @@ use fg_route::sync::LockExt;
 use fg_route::terrain::Walks;
 use fg_route::xp::Edition;
 use rusqlite::Connection;
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 type Result<T> = std::result::Result<T, CmdError>;
+
+/// A problem the player reports, as the report form gives it.
+#[derive(Deserialize)]
+pub struct IssueDraft {
+    /// `guide` or `other`.
+    pub kind: String,
+    pub message: String,
+    #[serde(default)]
+    pub name: Option<String>,
+    /// The app's language.
+    pub language: String,
+    #[serde(default)]
+    pub guide: Option<IssueGuide>,
+    /// Join how the game and the addon are set up (the desktop app's `setup_report`).
+    #[serde(default)]
+    pub setup: bool,
+}
+
+/// The guide a report is about.
+#[derive(Deserialize)]
+pub struct IssueGuide {
+    pub guide: GuideId,
+    pub version: u32,
+    /// Indices of the steps pointed at.
+    #[serde(default)]
+    pub steps: Vec<usize>,
+    /// Language the steps were shown in.
+    pub locale: String,
+}
 
 /// The guide open in the editor.
 struct EditSession {
@@ -84,6 +113,100 @@ pub fn request_edition<H: Host>(host: &H, request: &PlanRequest) -> Edition {
 }
 
 impl Studio {
+    // Reports -------------------------------------------------------------------------
+
+    /// What a report says of a guide: everything it was computed from, so that it is computed
+    /// again exactly (all its settings, seed included), without the character's name.
+    ///
+    /// # Errors
+    ///
+    /// [`CmdError`] when the guide cannot be read or a step does not exist.
+    pub fn guide_report<H: Host>(&self, host: &H, g: &IssueGuide) -> Result<(Edition, fg_contrib::issue::GuideReport)> {
+        let v = library(host, host.edition()).version(&g.guide, g.version)?;
+        let mut request = v.request;
+        let edition = request.params.as_ref().map_or_else(|| host.edition(), |p| p.edition);
+        if request.params.is_none() {
+            request.params = Some(host.overrides(edition)?.params);
+        }
+        request.name = None;
+        if let Some(start) = &mut request.start {
+            start.name.clear();
+        }
+        let route = self.render(host, host.edition(), &v.outcome.route, Some(&g.locale))?;
+        let mut steps = Vec::new();
+        for &i in &g.steps {
+            let step = serde_json::to_value(route.steps.get(i).ok_or("no such step")?).map_err(|e| e.to_string())?;
+            let map = &step["map"];
+            steps.push(fg_contrib::issue::ReportedStep {
+                index: i as u32,
+                kind: step["kind"].as_str().unwrap_or_default().to_owned(),
+                quest: step["quest"].as_u64().map(|q| q as u32),
+                objective: step["objective"].as_u64().map(|o| o as u32),
+                text: step["text"].as_str().unwrap_or_default().chars().take(500).collect(),
+                zone: step["zone"].as_str().map(str::to_owned),
+                level: step["level"].as_u64().unwrap_or_default() as u32,
+                map: map["ui_map"]
+                    .as_u64()
+                    .zip(map["x"].as_f64().zip(map["y"].as_f64()))
+                    .map(|(m, (x, y))| (m as u32, x, y)),
+            });
+        }
+        Ok((
+            edition,
+            fg_contrib::issue::GuideReport {
+                request: serde_json::to_value(&request).map_err(|e| e.to_string())?,
+                plan: serde_json::to_value(&v.outcome.plan).map_err(|e| e.to_string())?,
+                data: v.meta.data,
+                version: g.version,
+                edited: v.meta.edited,
+                imported: v.meta.imported,
+                total_time: v.meta.total_time,
+                steps,
+            },
+        ))
+    }
+
+    /// The report document of a draft, checked as the server will: `contributor`, `os` and
+    /// `app_version` are the app's, `setup` the install state the player agreed to join.
+    ///
+    /// # Errors
+    ///
+    /// [`CmdError`] when the guide cannot be read or the report is not valid.
+    pub fn issue<H: Host>(
+        &self,
+        host: &H,
+        draft: IssueDraft,
+        app: (&str, &str, String),
+        setup: Option<fg_contrib::issue::Setup>,
+    ) -> Result<fg_contrib::issue::Issue> {
+        let (app_version, os, contributor) = app;
+        let (edition, guide) = match &draft.guide {
+            Some(g) => {
+                let (e, report) = self.guide_report(host, g)?;
+                (e, Some(report))
+            }
+            None => (host.edition(), None),
+        };
+        let now = now()?;
+        let issue = fg_contrib::issue::Issue {
+            format: fg_contrib::issue::FORMAT.into(),
+            version: fg_contrib::issue::VERSION,
+            edition: edition.key().into(),
+            app_version: app_version.into(),
+            contributor,
+            day: (now / 86_400) as u32,
+            os: os.into(),
+            language: draft.language,
+            kind: draft.kind,
+            message: draft.message.trim().to_owned(),
+            name: draft.name.map(|n| n.trim().to_owned()).filter(|n| !n.is_empty()),
+            guide,
+            setup,
+        };
+        fg_contrib::issue::validate(&issue, now).map_err(|e| e.to_string())?;
+        Ok(issue)
+    }
+
     // Planning ------------------------------------------------------------------------
 
     /// Plans a guide, streaming progress through the host, and saves it as a new version of the
