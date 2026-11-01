@@ -225,19 +225,33 @@ fn elite_camp_needs_a_few_levels_more() {
 /// chapter cannot be counted before.
 #[test]
 fn item_handed_by_another_quest_waits_for_its_turn_in() {
-    let p = prepare("orc", "warrior", 45, &[]);
+    let p = leveling(30)
+        .quest(Q::new(583, "Jungle").level(5).giver(1, 30.0, 40.0).kill("Beast", 5, 3, 1, 32.0, 70.0))
+        .quest(
+            Q::new(338, "The Green Hills")
+                .level(6)
+                .after(&[583])
+                .giver(1, 31.0, 40.0)
+                .objective(Obj::visit("Chapter IV", At { zone: 1, x: 31.0, y: 40.0 }).handed_by(&[342])),
+        )
+        .quest(
+            Q::new(342, "Chapter IV")
+                .level(6)
+                .after(&[583])
+                .giver(1, 31.0, 41.0)
+                .kill("Page", 6, 2, 1, 35.0, 70.0),
+        )
+        .build();
     let planner = planner(&p);
-    let book = quest(&p, 338).expect("The Green Hills of Stranglethorn is planned");
-    let chapter = quest(&p, 342).unwrap();
+    let (book, chapter, jungle) = (quest(&p, 338).unwrap(), quest(&p, 342).unwrap(), quest(&p, 583).unwrap());
     let k = p.model.quests[book as usize]
         .objectives
         .iter()
         .position(|o| o.handed_by == [342])
         .expect("an objective handed by Chapter IV") as u8;
-    // Welcome to the Jungle comes first.
-    let jungle = quest(&p, 583).unwrap();
     let take = [
         Stop::quest(jungle, Kind::Accept),
+        Stop::quest(jungle, Kind::Objective(0)),
         Stop::quest(jungle, Kind::TurnIn),
         Stop::quest(book, Kind::Accept),
         Stop::quest(chapter, Kind::Accept),
@@ -247,23 +261,15 @@ fn item_handed_by_another_quest_waits_for_its_turn_in() {
         .collect();
     let bound = Stop::quest(book, Kind::Objective(k));
     let early: Vec<Stop> = take.iter().copied().chain([bound]).collect();
-    assert!(
-        planner.simulate_full(&early, None).is_none(),
-        "chapter counted before it is bound"
-    );
+    assert!(planner.simulate_full(&early, None).is_none(), "chapter counted before it is bound");
     let route: Vec<Stop> = take
         .iter()
         .copied()
         .chain(pages)
         .chain([Stop::quest(chapter, Kind::TurnIn), bound])
         .collect();
-    assert!(
-        planner.simulate_full(&route, None).is_some(),
-        "{:?}",
-        planner.diagnose(&route)
-    );
+    assert!(planner.simulate_full(&route, None).is_some(), "{:?}", planner.diagnose(&route));
 }
-
 /// The item starting a quest drops from a mob the character must be able to take on (a
 /// warlock, stronger than most classes in its twenties, a level earlier).
 #[test]
@@ -317,36 +323,35 @@ fn rare_drop_start_is_left_out() {
 }
 
 /// A reputation goal brings in the quests giving that reputation, even worth nothing else (no
-/// XP); a quest of another faction stays out, as every one does without goals. The character
-/// starts with its race's points (Stormwind: a human's 4000).
+/// XP); a quest of another faction stays out, as every one does without goals.
 #[test]
 fn reputation_goal_takes_its_factions_quests() {
-    let goal = r#"reputation_goals=[{"faction":72,"target":9000}]"#;
-    assert_eq!(
-        prepare("human", "warrior", 2, &[goal]).model.initial.reputation,
-        vec![4000.0]
-    );
     let taken = |goals: Vec<ReputationGoal>| {
-        let mut p = quests_at_start(2);
-        p.model.quests[0].reputation = vec![(72, 250.0)];
-        p.model.quests[1].reputation = vec![(69, 250.0)];
+        let mut p = leveling(2)
+            .quest(Q::new(800, "For Stormwind").level(1).xp(0).reputation(72, 250.0).giver(1, 30.0, 40.0))
+            .quest(Q::new(801, "For Ironforge").level(1).xp(0).reputation(69, 250.0).giver(1, 31.0, 40.0))
+            .build();
         p.model.initial.reputation = vec![4000.0; goals.len()];
         p.params.reputation_goals = goals;
+        let (a, b) = (quest(&p, 800).unwrap(), quest(&p, 801).unwrap());
         let planner = planner(&p);
         let route = planner.construct(|_| {});
         let turned = |i| route.iter().any(|s| s.index == i && s.kind == Kind::TurnIn);
-        ((turned(0), turned(1)), planner.reputation_reached(&route))
+        ((turned(a), turned(b)), planner.reputation_reached(&route))
     };
     assert_eq!(
-        taken(vec![ReputationGoal {
-            faction: 72,
-            target: 9000
-        }]),
+        taken(vec![ReputationGoal { faction: 72, target: 9000 }]),
         ((true, false), vec![4250.0])
     );
     assert_eq!(taken(vec![]), ((false, false), vec![]));
 }
 
+/// A character starts with its race's reputation (Stormwind: a human's 4000).
+#[test]
+fn a_human_starts_with_stormwinds_reputation() {
+    let goal = r#"reputation_goals=[{"faction":72,"target":9000}]"#;
+    assert_eq!(prepare("human", "warrior", 2, &[goal]).model.initial.reputation, vec![4000.0]);
+}
 /// A forced zone's quests are all required: those filed under it or a subzone (Shadowglen's in
 /// Teldrassil), class quests given there (the night elf warrior's Simple Sigil), not those
 /// taken after the target level nor another zone's.
@@ -945,33 +950,23 @@ fn flight_paths_are_in_their_zone() {
 /// grave. The guide gets them first; burying them before is not a valid route.
 #[test]
 fn item_used_by_an_objective_is_got_first() {
-    let mut p = prepare("undead", "warrior", 10, &[]);
-    let marla = quest(&p, 6395).unwrap();
-    let objectives = &p.model.quests[marla as usize].objectives;
-    let get = objectives
-        .iter()
-        .position(|o| o.mobs.iter().any(|(id, _)| *id == 1919))
-        .expect("Samuel Fipps killed for his remains");
-    let bury = objectives
-        .iter()
-        .position(|o| o.after & (1 << get) != 0)
-        .expect("burying them comes after");
+    let mut p = leveling(10)
+        .quest(
+            Q::new(800, "Last Wish")
+                .level(5)
+                .giver(1, 30.0, 40.0)
+                .objective(Obj::kill("Fipps", 5, 1, At { zone: 1, x: 40.0, y: 70.0 }))
+                .objective(Obj::visit("Bury the remains", At { zone: 1, x: 60.0, y: 70.0 }).after(&[0])),
+        )
+        .build();
+    let marla = quest(&p, 800).unwrap();
     p.model.initial.accepted = vec![marla as usize];
     let planner = planner(&p);
-    let objective = |k: usize| Stop::quest(marla, Kind::Objective(k as u8));
+    let objective = |k: u8| Stop::quest(marla, Kind::Objective(k));
     let turn_in = Stop::quest(marla, Kind::TurnIn);
-    assert!(
-        planner
-            .simulate(&[objective(get), objective(bury), turn_in], None)
-            .is_some()
-    );
-    assert!(
-        planner
-            .simulate(&[objective(bury), objective(get), turn_in], None)
-            .is_none()
-    );
+    assert!(planner.simulate(&[objective(0), objective(1), turn_in], None).is_some());
+    assert!(planner.simulate(&[objective(1), objective(0), turn_in], None).is_none());
 }
-
 /// Rut'theran Village lies at the foot of Teldrassil: no walk goes up to Dolanaar nor across the
 /// sea to Auberdine, the portal and the boat do. Darnassus is walked to from Dolanaar.
 #[test]

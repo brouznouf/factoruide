@@ -48,6 +48,8 @@ pub struct Obj {
     pub elite: bool,
     pub dungeon: Option<usize>,
     pub handed_by: Vec<i64>,
+    /// Objectives (numbered from 0) to do first.
+    pub after: Vec<usize>,
 }
 
 impl Obj {
@@ -62,6 +64,7 @@ impl Obj {
             elite: false,
             dungeon: None,
             handed_by: Vec::new(),
+            after: Vec::new(),
         }
     }
 
@@ -76,6 +79,7 @@ impl Obj {
             elite: false,
             dungeon: None,
             handed_by: Vec::new(),
+            after: Vec::new(),
         }
     }
 
@@ -88,6 +92,12 @@ impl Obj {
     /// Done inside dungeon `d` (index in the scenario's dungeons).
     pub fn inside(mut self, d: usize) -> Self {
         self.dungeon = Some(d);
+        self
+    }
+
+    /// Done once objectives `k` (numbered from 0) are.
+    pub fn after(mut self, k: &[usize]) -> Self {
+        self.after = k.to_vec();
         self
     }
 
@@ -231,6 +241,12 @@ impl Q {
     }
 
     /// Timed: seconds from taking it to turning it in.
+    /// Reputation with a faction (Faction ID) the turn-in gives.
+    pub fn reputation(mut self, faction: i64, amount: f64) -> Self {
+        self.quest.reputation.push((faction, amount));
+        self
+    }
+
     pub fn timed(mut self, seconds: f64) -> Self {
         self.quest.time_limit = Some(seconds);
         self
@@ -294,6 +310,7 @@ impl Q {
                     elite: o.elite,
                     dungeon: o.dungeon,
                     handed_by: o.handed_by.clone(),
+                    after: o.after.iter().fold(0u8, |mask, k| mask | 1u8 << k),
                     count: o.kills.max(o.uses),
                     slot: u8::try_from(k + 1).ok(),
                     // The creatures to target: one of the objective's name.
