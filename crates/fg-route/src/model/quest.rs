@@ -64,8 +64,7 @@ impl QuestBuilder<'_> {
             mandatory: zone_forced
                 || group_class_quest
                     && (self.profile.required_class_quests.iter().any(|n| n == &r.name)
-                        || self.params.all_class_quests
-                            && r.min_level.unwrap_or(1) <= self.profile.to_level),
+                        || self.params.all_class_quests && r.min_level.unwrap_or(1) <= self.profile.to_level),
             zone_forced,
             required: false,
             skill: skill.flatten(),

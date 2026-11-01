@@ -10,6 +10,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### App
 
+- Optional Forever food and Sleeping Bag XP bonuses, with the bag's quest chain included.
 - The dungeons' levels are chosen with a slider above their list: from how many levels below their monsters to how many above (the progression profile sets them back to its own). Each dungeon shows the levels it will be run at, and the guide never runs it outside them.
 - A dungeon can be forced with its quests (a click more): the guide takes every quest of it the character can take, even those worth little (GitHub #46).
 - New guide: a block for the guide (name, target level) and one for each player (a recorded character, a pasted export or a new one, its level, race, class and professions); "+ Add a player" makes a group guide, up to 5 players.
@@ -24,6 +25,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- Rested XP reduces pre-grinding and group catch-up work in every edition and is consumed from the character's finite pool. Group kill work is rounded only at the final player reward in every edition. Group guides export each player's quest XP, including its own Sleeping Bag bonus.
 - Death skips (option, off by default, in the play style): up to level 10 and a half, the guide has the character die to respawn at the nearest spirit healer when that is faster (no resurrection sickness before level 11). The guide editor has them as steps ("Die here").
 - Group guides: each player levels its own professions, from its own skill: their profession quests are planned for them, the group goes to the vendor when the fullest bags are, and each player's addon follows its own profession curve.
 - A quest item that rots is looted right before the objective using it: the Fresh Zhevra Carcass (30 minutes) just before Ishamuhale, instead of hours earlier (WoW Forever and Classic).
@@ -65,6 +67,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - WoW Forever: the library's rewards ask for ten, twenty and twenty-five different books, not every book, and the guide can take books on its way to earn them (GitHub #56).
 
 ### Addon
+
+- Group guides: quest XP counts each player's own reward, including its Sleeping Bag bonus.
 
 - The addon's separators are a bullet (•), which every client font has: the dot they used was a missing glyph in Russian (GitHub #78).
 - Death skip steps: done once back at the spirit healer.

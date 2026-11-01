@@ -1186,6 +1186,7 @@ do
     -- race and class, with our own professions; with two of them, the one chosen in the options.
     local skinning = { key = "skinning", name = "Skinning", line = 393, target = 150, start = 10, curve = {} }
     local function group(players)
+        local rewards = #players == 2 and { 0, 100 } or { 0, 100, 103 }
         return {
             race = 1,
             class = 1,
@@ -1198,6 +1199,7 @@ do
             syncMax = 1,
             steps = {
                 { k = "accept", t = "Accept A", q = 901, m = 1429, x = 50, y = 50, lvl = 1, gp = { 1, 0, 1, 0, 1, 0 } },
+                { k = "turnin", t = "Turn in A", q = 901, lvl = 1, rx = 100, rxp = rewards },
             },
         }
     end
@@ -1209,6 +1211,7 @@ do
     useRoute("group-new")
     assert(FG.Group:Active() and not FG.Group:Choices(), "found by race and class")
     assert(FG.Guide:Route().professions[1].key == "skinning", "our own professions")
+    assert(FG.Guide:Route().steps[2].rx == 100, "our own quest reward")
     FG.Routes["group-twins"] = group({
         { n = "Player 1", race = 1, class = 1, professions = {} },
         { n = "Player 2", race = 7, class = 8, professions = {} },
@@ -1220,6 +1223,10 @@ do
     FG.Group:Choose(2)
     assert(FG.Group:Active() and select(2, FG.Group:Choices()) == 2, "the one chosen")
     assert(FG.Guide:Route().professions[1].key == "skinning", "the chosen player's professions")
+    assert(FG.Guide:Route().steps[2].rx == 103, "the chosen player's buffed quest reward")
+    FG.Group:Choose(1)
+    assert(FG.Guide:Route().steps[2].rx == 100, "changing player changes its reward")
+    FG.Group:Choose(2)
     useRoute("group-new")
     useRoute("group-twins")
     assert(select(2, FG.Group:Choices()) == 2, "the choice is kept for the guide")

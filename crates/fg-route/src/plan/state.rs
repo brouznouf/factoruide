@@ -144,6 +144,8 @@ pub enum Event {
     Stop {
         stop: Stop,
         loc: Loc,
+        /// Quest XP actually awarded before a turn-in changed the character's level.
+        reward_xp: [i64; crate::job::GROUP_MAX],
     },
     /// Quest given up: it can no longer be finished (its dungeon is done or outleveled).
     Abandon {

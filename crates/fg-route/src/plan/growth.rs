@@ -23,6 +23,40 @@ impl<'g> Growth<'g> {
         &self.model.quests[i as usize]
     }
 
+    /// Three maintained stacks, after this member has earned the bag. Imported completion
+    /// remains evidence even when the quest is outside the guide's level range.
+    fn bag_bonus(self, s: &State, member: u8) -> f64 {
+        if self.params.edition != xp::Edition::Forever || !self.params.sleeping_bag {
+            return 0.0;
+        }
+        let earned = self.model.initial.done_by(usize::from(member), xp::SLEEPING_BAG_QUEST)
+            || self
+                .model
+                .index
+                .get(&xp::SLEEPING_BAG_QUEST)
+                .is_some_and(|&i| s.rewarded(i));
+        if earned { 0.03 } else { 0.0 }
+    }
+
+    /// Well Fed (1243969): kills only. Well-Rested (429959): kills and quests.
+    /// https://www.wowhead.com/forever/spell=1243969
+    /// https://www.wowhead.com/forever/spell=429959
+    pub(crate) fn kill_factor(self, s: &State, member: u8) -> f64 {
+        let food = self.params.edition == xp::Edition::Forever && self.params.food_xp;
+        1.0 + if food { 0.05 } else { 0.0 } + self.bag_bonus(s, member)
+    }
+
+    pub(crate) fn quest_factor(self, s: &State, member: u8) -> f64 {
+        1.0 + self.bag_bonus(s, member)
+    }
+
+    /// Unmodified kill XP needed for a target gain, and rested XP consumed. Buff bonuses are
+    /// applied before rested XP; the rested pool is still a finite amount of bonus XP.
+    pub(crate) fn kill_work(self, s: &State, member: u8, need: i64, rested: i64) -> (f64, i64) {
+        let bonus = (need / 2).min(rested.max(0));
+        ((need - bonus) as f64 / self.kill_factor(s, member), bonus)
+    }
+
     /// The loot of `kills` mobs into the bags (`Params::bag_weight`): what no longer fits is
     /// left behind, at a cost.
     pub(crate) fn fill_bags(self, s: &mut State, kills: f64) {
@@ -140,7 +174,8 @@ impl<'g> Growth<'g> {
     /// XP of kills: doubled while the character is rested, up to its rested XP. Returns the XP
     /// gained.
     pub(crate) fn gain_kills(self, s: &mut State, amount: i64) -> i64 {
-        self.mates_kill(s, amount);
+        self.mates_kill(s, amount as f64);
+        let amount = (amount as f64 * self.kill_factor(s, s.order[0])).round() as i64;
         let bonus = amount.min(s.rested).max(0);
         s.rested -= bonus;
         self.gain(s, amount + bonus);
@@ -168,22 +203,24 @@ impl<'g> Growth<'g> {
 
     /// The other players' XP of kills worth `amount` to the character: the same mobs, at their
     /// own level (fewer when above it, none once gray), doubled while they are rested.
-    pub(crate) fn mates_kill(self, s: &mut State, amount: i64) {
+    pub(crate) fn mates_kill(self, s: &mut State, amount: f64) {
         let n = self.mates();
-        if n == 0 || amount <= 0 {
+        if n == 0 || amount <= 0.0 {
             return;
         }
         let rules = self.rules();
         let content = xp::content_at(s.pos.continent, s.pos.zone);
         let own = rules.mob_xp(s.level, s.level, content);
         for k in 0..n {
+            let factor = self.kill_factor(s, s.order[k + 1]);
             let m = &mut s.mates[k];
             let each = if own > 0.0 {
                 rules.mob_xp(m.level, s.level, content) / own
             } else {
                 1.0
             };
-            let gained = (amount as f64 * each) as i64;
+            let base = amount * each;
+            let gained = (base * factor).round() as i64;
             let bonus = gained.min(m.rested).max(0);
             m.rested -= bonus;
             Self::mate_gain(rules, m, gained + bonus);
@@ -200,19 +237,27 @@ impl<'g> Growth<'g> {
 
     /// The XP of turning in quest `i` to each member it is still for (`Initial::need`); returns
     /// the character's.
-    pub(crate) fn reward(self, s: &mut State, i: u32) -> i64 {
+    pub(crate) fn quest_rewards(self, s: &State, i: u32) -> [i64; crate::job::GROUP_MAX] {
         let q = self.quest_at(i);
         let need = self.model.initial.need(i as usize);
-        for k in 0..self.mates() {
-            if need & (1 << s.order[k + 1]) != 0 {
-                let m = &mut s.mates[k];
-                Self::mate_gain(self.rules(), m, self.quest_reward(q, m.level));
+        let mut rewards = [0; crate::job::GROUP_MAX];
+        for k in 0..=self.mates() {
+            let member = s.order[k];
+            if need & (1 << member) != 0 {
+                let level = if k == 0 { s.level } else { s.mates[k - 1].level };
+                rewards[usize::from(member)] =
+                    (self.quest_reward(q, level) as f64 * self.quest_factor(s, member)).round() as i64;
             }
         }
-        if need & (1 << s.order[0]) == 0 {
-            return 0;
+        rewards
+    }
+
+    /// Award the snapshot taken before the turn-in changed any player's level or buff.
+    pub(crate) fn reward(self, s: &mut State, rewards: &[i64; crate::job::GROUP_MAX]) -> i64 {
+        for k in 0..self.mates() {
+            Self::mate_gain(self.rules(), &mut s.mates[k], rewards[usize::from(s.order[k + 1])]);
         }
-        let reward = self.quest_reward(q, s.level);
+        let reward = rewards[usize::from(s.order[0])];
         self.gain(s, reward);
         reward
     }
@@ -306,11 +351,14 @@ impl<'g> Growth<'g> {
             dungeons: &self.model.dungeons,
         };
         let mut xp = s.xp;
+        let mut rested = s.rested;
         (s.level..level.min(self.rules().max_level))
             .map(|l| {
                 let need = self.rules().to_next_level(l) - xp;
                 xp = 0;
-                need as f64 / combat.grind_rate(l, s.bonus, &s.pos)
+                let (work, consumed) = self.kill_work(s, s.order[0], need, rested);
+                rested -= consumed;
+                work / combat.grind_rate(l, s.bonus, &s.pos)
             })
             .sum()
     }
@@ -327,22 +375,21 @@ impl<'g> Growth<'g> {
                 dungeons: &self.model.dungeons,
             };
             let rate = combat.grind_rate(s.level, s.bonus, &s.pos);
-            // Rested XP doubles the kills' XP: only half of what it covers is killed.
-            let killed = need - (need / 2).min(s.rested.max(0));
+            let (killed, consumed) = self.kill_work(s, s.order[0], need, s.rested);
             let over = (need - self.grind_budget(s).max(0)).max(0);
-            let time = killed as f64 / rate;
+            let time = killed / rate;
             let each = self
                 .rules()
                 .mob_xp(s.level, s.level, xp::content_at(s.pos.continent, s.pos.zone))
                 * self.params.group_xp_share();
             if each > 0.0 {
-                self.gather(s, s.pos.zone, killed as f64 / each);
+                self.gather(s, s.pos.zone, killed / each);
             }
             t += time;
             s.spent.grind_over += over as f64 / need as f64 * time;
             s.spent.grind_xp += need;
             s.grind_used += need;
-            s.rested -= need - killed;
+            s.rested -= consumed;
             self.mates_kill(s, killed);
             self.gain(s, need);
         }

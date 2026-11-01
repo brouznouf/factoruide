@@ -503,7 +503,7 @@ impl Planner<'_> {
             let mut learned = Vec::new();
             for t in &edited.trace[step.events.clone()] {
                 let next = match t.event {
-                    Event::Stop { stop, ref loc } => {
+                    Event::Stop { stop, ref loc, .. } => {
                         let farm = matches!(edit, Edit::Stop { stop: own, farm: true, .. } if *own == stop);
                         // Where it was done: replayed there.
                         let spot = match stop.kind {
