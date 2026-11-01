@@ -6,6 +6,7 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- WoW Forever: the Sleeping Bag XP reminder starts after its reward quest is completed.
 - Group guides: quest XP counts each player's own reward, including its Sleeping Bag bonus.
 - WoW Forever: a guide made with the food or Sleeping Bag XP bonus warns when that buff is missing (out of combat, at most every ten minutes).
 - Logging in (or reloading) puts the guide back on the step you were on, instead of the first step the game cannot tell is done (GitHub #81).

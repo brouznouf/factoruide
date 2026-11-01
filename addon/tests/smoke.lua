@@ -3214,8 +3214,15 @@ do
     local savedTime = GetTime
     local clock = 5000
     GetTime = function() return clock end
+    local savedBagQuest = completed[79976]
+    completed[79976] = nil
     fire("PLAYER_REGEN_ENABLED")
-    assert(#told == 2, "both buffs missing: " .. #told)
+    assert(#told == 1 and told[1]:find("food XP"), "only food warns before the bag is earned")
+    fire("UNIT_AURA", "player")
+    assert(#told == 1, "an unearned bag never warns")
+    completed[79976] = true
+    fire("PLAYER_REGEN_ENABLED")
+    assert(#told == 2 and told[2]:find("Sleeping Bag"), "the earned bag warns immediately")
     fire("UNIT_AURA", "player")
     assert(#told == 2, "not told twice in a row")
     clock = clock + 601
@@ -3240,6 +3247,7 @@ do
     route.buffs = nil
     fire("UNIT_AURA", "player")
     assert(#told == 3, "a guide without buffs never warns")
+    completed[79976] = savedBagQuest
     GetTime, C_UnitAuras, UIErrorsFrame, UnitIsDeadOrGhost = savedTime, nil, nil, nil
     InCombatLockdown = function() return false end
     print("buff warnings ok")
