@@ -30,6 +30,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - A must-have quest is planned even when its mobs are elites (Forever's Rare Books, whose books drop from Mother Fang and two other elites).
 - A quest item whose name holds a colon ("Picture Book: Fun with Elementals") is looted once, not six times.
 - Guides complete must-have quests and their prerequisites, even past the target level.
+- A quest started by an item lying in a camp of the other side (the Aged Envelope among the Kul Tiras marines, for the Horde) waits for a level that can face them, instead of being fetched at level 1 (GitHub #83).
 - Repeatable quests are planned like any other, once. A child quest (Finding the Antidote, for Need for a Cure) is taken while its parent is in the log and turned in before it, with its own accept and turn-in steps; a timed parent and its children are done one after the other (GitHub #74).
 - A must-have quest whose objectives are inside a dungeon (Trolls of a Feather, Sunken Temple) runs that dungeon, without having to force it too.
 - WoW Forever: the new dungeons follow the game's level ranges, not their quests' levels: Ruins of Lordaeron 15-20 (was 21-22), Excavation Site 24-29, City of Dalaran 28-33.

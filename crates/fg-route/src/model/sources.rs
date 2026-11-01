@@ -158,7 +158,7 @@ impl Sources {
         let links = links(conn, profile)?;
         Ok(Self {
             elites: EliteSpawns::new(&entities, world),
-            guards: super::Guards::load(conn, world)?,
+            guards: super::Guards::load(conn, world, profile.faction)?,
             class_quest_ids: class_quest_ids(&rows, profile, &links),
             relations: relations(conn)?,
             links,

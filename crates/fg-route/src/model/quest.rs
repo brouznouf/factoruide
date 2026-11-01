@@ -5,7 +5,7 @@ use super::builder::QuestBuilder;
 use super::givers::Givers;
 use super::selection::QuestSkill;
 use super::sources::{LinkKind, ObjectiveKind, QuestRow, SourceKind};
-use super::types::{Objective, Quest};
+use super::types::{EntityKind, Objective, Quest};
 
 impl QuestBuilder<'_> {
     pub(super) fn assemble(
@@ -23,7 +23,15 @@ impl QuestBuilder<'_> {
         let (pre_all, pre_any) = self.prerequisites(r.id, &givers.item_pre);
         let guard = |locs: &[super::types::Loc]| {
             locs.iter()
-                .map(|l| self.sources.guards.around(&l.pos))
+                // A creature gives the quest in a town its own side's guards watch; an item is
+                // found where it lies, among the camps of the other side too.
+                .map(|l| {
+                    if l.kind == EntityKind::Item {
+                        self.sources.guards.around_hostile(&l.pos)
+                    } else {
+                        self.sources.guards.around(&l.pos)
+                    }
+                })
                 .fold(super::types::Guard::default(), super::types::Guard::max)
         };
         let (start_guard, end_guard) = (guard(&givers.starts), guard(&givers.ends));

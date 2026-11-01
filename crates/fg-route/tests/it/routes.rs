@@ -418,18 +418,27 @@ fn own_side_npcs_are_acted_on_not_killed() {
     );
 }
 
+/// The Aged Envelope lies in a camp of Kul Tiras marines, who like only the Alliance (GitHub #83):
+/// for a Horde character the item is guarded, so the quest it starts waits for a level that can
+/// face them, not for the first one.
+#[test]
+fn an_item_lying_in_a_camp_of_the_other_side_is_guarded() {
+    let p = prepare("orc", "hunter", 12, &["progression=cautious"]);
+    let guard = p.model.quests[quest(&p, 830).unwrap() as usize].start_guard;
+    assert!(guard.level >= 6 && guard.count >= 3, "{guard:?}");
+}
+
 /// The warlock's imp is taken first: it makes every fight that follows easier.
 #[test]
 fn pet_quest_comes_early() {
-    let p = orc_warlock();
-    let planner = planner(p);
-    let route = planner.construct(|_| {});
-    let imp = quest(p, 1485).unwrap();
+    let request = request("orc", "warlock", 30, &["progression=cautious", "effort=0"]);
+    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
     let at = route
+        .steps
         .iter()
-        .position(|s| s.index == imp && s.kind == Kind::TurnIn)
+        .position(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(1485))
         .unwrap();
-    assert!(at < 25, "imp turned in at stop {at}");
+    assert!(at < 60, "imp turned in at step {at}");
 }
 
 /// A class quest is required for the spell it teaches, not for its name: the undead warlock gets
