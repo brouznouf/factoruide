@@ -1075,8 +1075,7 @@ fn coldridge_valley_is_left_by_its_tunnel() {
 /// Darkwhisper Gorge, even from Felwood just below its western rim.
 #[test]
 fn mount_hyjal_is_reached_by_darkwhisper_gorge() {
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    let w = job::walk_world(&database_of("forever"), &overrides, fg_route::faction::Faction::Horde).unwrap();
+    let w = crate::common::world(Edition::Forever, fg_route::faction::Faction::Horde);
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let gorge = at(618, 56.5, 71.6);
     let (west, foothills) = (at(616, 12.8, 52.4), at(616, 55.1, 82.6));
@@ -1099,8 +1098,7 @@ fn mount_hyjal_is_reached_by_darkwhisper_gorge() {
 /// a walk in a straight line over the mountains.
 #[test]
 fn no_walk_between_the_south_and_north_of_the_eastern_kingdoms() {
-    let p = prepare("gnome", "rogue", 22, &[]);
-    let w = &p.world;
+    let w = crate::common::world(Edition::Classic, fg_route::faction::Faction::Alliance);
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let stormwind = at(1519, 77.0, 30.3);
     assert!(w.walk_distance(&stormwind, &at(130, 58.2, 69.9)).is_infinite());
@@ -1114,8 +1112,7 @@ fn no_walk_between_the_south_and_north_of_the_eastern_kingdoms() {
 /// to Ashenvale and the Barrens; a level 50 walks to all of them.
 #[test]
 fn walks_do_not_go_into_zones_far_above_the_character() {
-    let p = prepare("human", "priest", 17, &[]);
-    let w = &p.world;
+    let w = crate::common::world(Edition::Classic, fg_route::faction::Faction::Alliance);
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let westfall = at(40, 40.0, 70.0);
     let booty_bay = at(33, 26.1, 73.4);
@@ -1133,20 +1130,27 @@ fn walks_do_not_go_into_zones_far_above_the_character() {
 /// of the guide (it is not on any road).
 #[test]
 fn mountain_skip_is_one_way_and_a_step_of_the_guide() {
-    let mut p = quests_at_start_on_the_data_as("dwarf", "warrior", 1);
-    let w = &p.world;
+    // Every zone may be walked in, whatever the character's level.
+    let mut o = overrides();
+    o.params.zone_gap = 0.0;
+    let world = job::game_world(&database(), &o, fg_route::faction::Faction::Alliance, 3).unwrap();
+    let w = &world;
+    let mut p = quests_at_start_as("dwarf", "warrior", 1);
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let (kharanos, menethil) = (at(1, 47.0, 52.0), at(11, 10.5, 56.0));
     let skip = w.passes.iter().position(|q| q.name.contains("mountain skip")).unwrap();
     assert_eq!(w.walk_shortcuts(&kharanos, &menethil), [skip]);
     assert_eq!(w.walk_shortcuts(&menethil, &kharanos), Vec::<usize>::new());
     assert!(w.walk_distance(&menethil, &kharanos) > w.walk_distance(&kharanos, &menethil));
+    // The character starts in Kharanos, with a quest to do in the Wetlands.
     let mut o = one_kill_east_of_start(&p, 0.0);
     (o.loc.pos, o.loc.zone) = (menethil, 11);
     p.model.quests[0].objectives = vec![o];
     p.model.initial.accepted = vec![0];
+    p.model.initial.pos = Some((kharanos, 1));
+    let planner = || Planner::new(&p.model, w, &p.params, &p.profile);
     let mut trace = Vec::new();
-    planner(&p)
+    planner()
         .simulate_full(&[Stop::quest(0, Kind::Objective(0))], Some(&mut trace))
         .unwrap();
     assert!(
@@ -1155,7 +1159,7 @@ fn mountain_skip_is_one_way_and_a_step_of_the_guide() {
             .any(|t| matches!(t.event, Event::Shortcut { pass } if pass == skip))
     );
     // In the guide editor, the shortcut is part of the walk to the step, not a step of its own.
-    let edited = planner(&p).explicit().edit(&[Edit::Stop {
+    let edited = planner().explicit().edit(&[Edit::Stop {
         stop: Stop::quest(0, Kind::Objective(0)),
         farm: false,
         spot: None,
@@ -1167,8 +1171,8 @@ fn mountain_skip_is_one_way_and_a_step_of_the_guide() {
 /// camp (each level at the camp of its mobs).
 #[test]
 fn editor_grind_over_several_camps_is_one_step() {
-    let p = human_warrior();
-    let edited = planner(p).explicit().edit(&[Edit::GrindTo { level: 12 }]);
+    let p = leveling(30).build();
+    let edited = planner(&p).explicit().edit(&[Edit::GrindTo { level: 12 }]);
     let grinds = edited
         .trace
         .iter()
@@ -1189,8 +1193,9 @@ fn link_kept_to_a_race() {
     (tram.name, tram.races) = ("Gnomes only".into(), vec!["gnome".into()]);
     o.links.push(tram);
     let has = |race: &str| {
-        let p = job::prepare(&database(), &o, &request(race, "warrior", 2, &[]), &|_| {}).unwrap();
-        p.world.links.iter().any(|l| l.name == "Gnomes only")
+        let id = o.races[race].id;
+        let world = job::game_world(&database(), &o, fg_route::faction::Faction::Alliance, id).unwrap();
+        world.links.iter().any(|l| l.name == "Gnomes only")
     };
     assert!(has("gnome"));
     assert!(!has("human"));
