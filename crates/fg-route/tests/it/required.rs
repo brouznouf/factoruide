@@ -456,6 +456,32 @@ fn the_warlocks_gold_bloodrobe_chain_can_be_required() {
     assert!(quest.mandatory);
 }
 
+/// A guide from level 40 to 60 with Ragefire Chasm forced (levels 13-19) is refused at once, saying
+/// which dungeon (GitHub #84): it could not be run.
+#[test]
+fn a_forced_dungeon_below_the_guides_levels_is_refused() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let mut req = request("orc", "warrior", &[]);
+    (req.from_level, req.to_level) = (40, 60);
+    let ragefire_chasm = 2437;
+    let mut params = overrides.params.clone();
+    let plan = |params: &fg_route::Params| {
+        let req = PlanRequest {
+            params: Some(params.clone()),
+            ..req.clone()
+        };
+        job::prepare(&conn, &overrides, &req, &|_| {})
+    };
+    assert!(plan(&params).is_ok());
+    params.forced_dungeons = vec![ragefire_chasm];
+    let error = plan(&params).err().expect("refused").to_string();
+    assert!(
+        error.contains("Ragefire Chasm") && error.contains("level 40"),
+        "{error}"
+    );
+}
+
 /// A must-have quest whose items drop inside a dungeon (Trolls of a Feather, GitHub #73) runs the
 /// dungeon, which was not planned unless the player forced it too.
 #[test]

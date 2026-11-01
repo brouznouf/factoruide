@@ -242,7 +242,7 @@ pub fn prepare(
     progress("Loading quests");
     progress(r#"@progress {"phase":"prepare","step":"quests"}"#);
     let mut model = model::load(conn, &world, &profile, &params)?;
-    check_dungeon_levels(&model, &params)?;
+    check_dungeon_levels(&model, &params, &profile)?;
     let mut start_notes = Vec::new();
     let members = req.members(params.edition.rules());
     check_exclusive_choices(&model, &members)?;
@@ -297,13 +297,28 @@ pub fn prepare(
     })
 }
 
-/// Every dungeon the character could run has levels to run it at.
-pub(crate) fn check_dungeon_levels(model: &Model, params: &Params) -> Result<(), RequestError> {
-    match (model.dungeons.iter()).find(|d| d.min_level != i64::MAX && d.min_level > d.max_level) {
-        Some(d) => Err(RequestError::NoDungeonLevels {
+/// Every dungeon the character could run has levels to run it at, and a dungeon the player
+/// forced has some left at the level the guide starts from.
+pub(crate) fn check_dungeon_levels(model: &Model, params: &Params, profile: &Profile) -> Result<(), RequestError> {
+    if let Some(d) = (model.dungeons.iter()).find(|d| d.min_level != i64::MAX && d.min_level > d.max_level) {
+        return Err(RequestError::NoDungeonLevels {
             dungeon: d.name.clone(),
             from: params.dungeon_from,
             to: params.dungeon_to,
+        });
+    }
+    let forced = |area: &i64| params.forced_dungeons.contains(area) || params.forced_dungeon_quests.contains(area);
+    match (model.dungeons.iter()).find(|d| {
+        (d.min_level != i64::MAX || d.mob_level > 0)
+            && forced(&d.area)
+            && !params.excluded_dungeons.contains(&d.area)
+            && !d.needed
+            && d.max_level < profile.from_level
+    }) {
+        Some(d) => Err(RequestError::ForcedDungeonTooLow {
+            dungeon: d.name.clone(),
+            ends: d.max_level,
+            from: profile.from_level,
         }),
         None => Ok(()),
     }
