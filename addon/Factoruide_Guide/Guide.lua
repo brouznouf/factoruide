@@ -291,7 +291,9 @@ function IsDone(step, index)
         end
         return level > step.lvl or (level == step.lvl and (not step.xp or xp >= step.xp))
     elseif step.k == "fly" then
-        return UnitOnTaxi("player")
+        -- Done by its own take-off (see `Guide:Advance`): while in the air, the flights that follow
+        -- in the group are not done.
+        return state.marks[index or state.step] or false
     elseif step.k == "practice" then
         local rank = FG.ProfessionSkill(step.id)
         return rank ~= nil and rank >= step.sk
@@ -517,6 +519,7 @@ end
 -- Whether each step of the groups looked at was done at the last check (steps done while playing
 -- are recorded once, when they become done).
 local wasDone = {}
+local wasOnTaxi = false
 
 --- The first and last steps of step `index`'s group.
 local function GroupOf(index)
@@ -1067,6 +1070,17 @@ end
 --- already); until then the current step is the group's first one not done.
 function Guide:Advance()
     if route and route.steps[state.step] then
+        -- A take-off is the flight of the first fly step of the group not taken yet.
+        local onTaxi = UnitOnTaxi("player") and true or false
+        if onTaxi and not wasOnTaxi then
+            for _, index in ipairs(CurrentGroup()) do
+                if route.steps[index].k == "fly" and not state.marks[index] then
+                    state.marks[index] = true
+                    break
+                end
+            end
+        end
+        wasOnTaxi = onTaxi
         local first, last = GroupOf(state.step)
         local pending
         for i = first, math.min(last, #route.steps) do
