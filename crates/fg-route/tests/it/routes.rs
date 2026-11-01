@@ -433,7 +433,7 @@ fn an_item_lying_in_a_camp_of_the_other_side_is_guarded() {
 /// group, at that place; Red Silk Bandanas also drops inside and stays a dungeon objective.
 #[test]
 fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
-    let conn = crate::common::database_of("forever");
+    let conn = database_of("forever");
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let p = job::prepare(&conn, &overrides, &request("human", "warrior", 24, &[]), &|_| {}).unwrap();
     let objective = |id| &p.model.quests[quest(&p, id).unwrap() as usize].objectives[0];
