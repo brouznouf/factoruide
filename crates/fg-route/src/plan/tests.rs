@@ -9,6 +9,39 @@ use rusqlite::Connection;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+#[test]
+fn completion_window_is_checked_after_exploration_on_the_trip() {
+    let mut p = quests_at_start(1);
+    p.world.terrain = crate::terrain::Terrain::default();
+    p.params.explore_radius = 50.0;
+    p.model.initial.xp = 399;
+    p.model.initial.accepted = vec![0];
+    let q = &mut p.model.quests[0];
+    q.required = true;
+    q.completion_window.max_level = Some(1);
+    q.ends[0].pos.x += 1000.0;
+    let area = crate::model::ExploreArea {
+        zone: q.ends[0].zone,
+        level: 1,
+        pos: q.ends[0].pos,
+    };
+    p.model.explore_by_zone.insert(q.ends[0].zone, vec![0]);
+    p.model.explore.push(area);
+    let edit = super::Edit::Stop {
+        stop: Stop::quest(0, Kind::TurnIn),
+        farm: false,
+        spot: None,
+    };
+    let report = planner(&p).edit(&[edit]);
+    assert_eq!(
+        report.steps[0].outcome,
+        super::Outcome::Invalid("quest completion outside requested level range")
+    );
+    p.model.explore.clear();
+    p.model.explore_by_zone.clear();
+    assert_eq!(planner(&p).edit(&[edit]).errors(), 0);
+}
+
 fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }

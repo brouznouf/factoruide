@@ -63,7 +63,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       # The only code with `unsafe` that runs natively: the browser build's allocator.
       - name: Miri
-        run: cargo +nightly miri test -p fg-web --lib alloc::
+        run: "cargo +nightly miri test -p fg-web --lib alloc::"
 
   frontend:
     name: Frontend (tsc, oxlint)

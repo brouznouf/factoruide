@@ -92,7 +92,7 @@ enum Command {
         /// Professions leveled along the route (their quests are planned, optional), as key[:target] (tailoring:300, fishing, cooking:225)
         #[arg(long, value_delimiter = ',')]
         profession: Vec<String>,
-        /// A must-have quest ID or exact name (repeatable); includes its prerequisites
+        /// A must-have quest ID, exact name, or JSON {"quest":21,"min_level":3,"max_level":4} (repeatable); includes prerequisites
         #[arg(long = "required-quest")]
         required_quests: Vec<String>,
         /// Planner parameters, as key=value (repeatable)

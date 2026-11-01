@@ -68,6 +68,15 @@ impl Planner<'_> {
                     let iu = i as usize;
                     let q = self.quest(i);
                     if s.accepted[iu] && !s.turned[iu] {
+                        if self.quest(i).completion_window.min_level.is_some()
+                            && self.availability().objectives_done(&s, i)
+                        {
+                            let turn = Stop::quest(i, Kind::TurnIn);
+                            let gate = self.gate_level(&s, turn);
+                            if gate > s.level {
+                                options.push((gate, turn));
+                            }
+                        }
                         for (k, o) in q.objectives.iter().enumerate() {
                             if self.availability().objective_open(&s, i, k) && o.kills > 0.0 && o.dungeon.is_none() {
                                 options.push((
@@ -115,6 +124,9 @@ impl Planner<'_> {
             }
             self.apply(&mut s, next, None);
             route.push(next);
+            if s.completion_error.is_some() {
+                break;
+            }
         }
         *self.zone_changes.borrow_mut() = changes;
 
@@ -233,7 +245,8 @@ impl Planner<'_> {
             let guarded = |g| self.combat().guard_need(g) > reach;
             if s.accepted[iu] {
                 if self.availability().objectives_done(s, i) {
-                    if !guarded(&self.quest(i).end_guard) {
+                    if !guarded(&self.quest(i).end_guard) && self.gate_level(s, Stop::quest(i, Kind::TurnIn)) <= s.level
+                    {
                         let stop = Stop::quest(i, Kind::TurnIn);
                         add(stop, 0.7 * class, None, bound.at(&self.places().pos(s, stop)));
                     }
@@ -305,6 +318,14 @@ impl Planner<'_> {
                 };
                 add(stop, weight, None, bound.at(&self.places().pos(s, stop)));
             }
+        }
+        let deadline = candidates
+            .iter()
+            .filter(|c| c.stop.is_quest())
+            .filter_map(|c| self.quest(c.stop.index).priority_deadline)
+            .min();
+        if let Some(deadline) = deadline {
+            candidates.retain(|c| c.stop.is_quest() && self.quest(c.stop.index).priority_deadline == Some(deadline));
         }
         // Staying in a zone only matters while it has something left to do: with few stops left
         // there, the weight of leaving it fades to nothing (`Params::zone_stay_quests`).

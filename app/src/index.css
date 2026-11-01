@@ -652,6 +652,10 @@ h3 {
   display: flex;
   gap: 8px;
 }
+.quest-entry { align-items: end; flex-wrap: wrap; }
+.quest-entry > input { flex: 1 1 15rem; min-width: 0; }
+.quest-level { flex: 0 1 10rem; max-width: 10rem; }
+.quest-level input { width: 100%; }
 .presets {
   display: flex;
   gap: 6px;

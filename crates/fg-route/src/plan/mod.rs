@@ -309,6 +309,7 @@ impl<'a> Planner<'a> {
             turned: Flags::new(n),
             dropped: Vec::new(),
             objectives: vec![0; n],
+            completion_error: None,
             timers: Vec::new(),
             started: Vec::new(),
             together: state::Together::default(),

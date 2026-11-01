@@ -35,7 +35,9 @@ pub use overrides::{Overrides, RaceDef};
 pub use paths::{add_walk_paths, route_walks, walk_world};
 pub use race::{optimize, optimize_interruptible};
 pub use reputation::race_base;
-pub use request::{ClassKey, GROUP_MAX, GROUP_MIN_LEVEL, PlanOutcome, PlanRequest, Prepared, RaceKey, RequiredQuest};
+pub use request::{
+    ClassKey, GROUP_MAX, GROUP_MIN_LEVEL, PlanOutcome, PlanRequest, Prepared, QuestKey, RaceKey, RequiredQuest,
+};
 pub use required::{QuestChoice, quest_choices};
 pub use routes::{
     DATA_ADDON, GUIDE_FORMAT, POLESTAR_SOURCE_FOLDER, add_polestar_source, addon_walks, data_addon_files, guides_lua,
@@ -214,7 +216,7 @@ pub fn prepare(
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<Prepared> {
     let (mut profile, mut params) = character::character(conn, overrides, req)?;
-    profile.required_quests = required::resolve(conn, req, &profile)?;
+    profile.required_quests = required::resolve(conn, req, &profile, &params)?;
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
     let world = load_world(conn, overrides, &profile, &params, progress)?;

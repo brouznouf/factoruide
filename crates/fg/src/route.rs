@@ -69,10 +69,14 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
             .required_quests
             .iter()
             .map(|q| {
-                q.parse::<i64>()
-                    .map_or_else(|_| job::RequiredQuest::Name(q.clone()), job::RequiredQuest::Id)
+                if q.trim_start().starts_with('{') {
+                    serde_json::from_str(q).context("required quest with completion levels")
+                } else {
+                    Ok(q.parse::<i64>()
+                        .map_or_else(|_| job::RequiredQuest::Name(q.clone()), job::RequiredQuest::Id))
+                }
             })
-            .collect(),
+            .collect::<Result<_>>()?,
         professions: opts.professions.clone(),
         locale: opts.locale.clone(),
         start: opts.start.as_deref().map(read_profile).transpose()?,
