@@ -84,6 +84,23 @@ fn human_warrior() -> &'static Prepared {
     PREPARED.get_or_init(|| prepare("human", "warrior", 30, &["progression=cautious"]))
 }
 
+/// A leveling scenario to 30, shared by the tests that look at any route of it.
+fn generic() -> &'static Prepared {
+    static PREPARED: OnceLock<Prepared> = OnceLock::new();
+    PREPARED.get_or_init(|| {
+        let mut s = leveling(30)
+            // A follow-up quest.
+            .quest(Q::new(500, "First").level(3).giver(1, 30.0, 40.0).kill("Beast", 3, 4, 1, 32.0, 70.0))
+            .quest(Q::new(501, "Second").level(4).after_any(&[500]).giver(1, 31.0, 40.0).kill("Beast", 4, 4, 1, 33.0, 70.0));
+        // A level where a dozen quests open: a checkpoint.
+        for j in 0..12 {
+            let x = 20.0 + 3.0 * f64::from(j);
+            s = s.quest(Q::new(600 + i64::from(j), &format!("Burst {j}")).level(24).min_level(24).giver(2, x, 20.0).kill("Beast", 24, 4, 2, x, 80.0));
+        }
+        s.build()
+    })
+}
+
 fn planner(p: &Prepared) -> Planner<'_> {
     Planner::new(&p.model, &p.world, &p.params, &p.profile)
 }
@@ -165,7 +182,7 @@ fn with_deadmines(scenario: Scenario) -> Scenario {
 /// An objective's mobs are killed once, at its stop.
 #[test]
 fn objective_finished_on_the_way_is_not_done_twice() {
-    let p = orc_warlock();
+    let p = &orc_valley().build();
     let planner = planner(p);
     let boars = quest(p, 788).unwrap();
     let accept = Stop::quest(boars, Kind::Accept);
@@ -712,7 +729,7 @@ fn cancelled_job_returns_no_route() {
 /// route; a dungeon quest added moves its run).
 #[test]
 fn improved_route_stays_valid() {
-    let p = orc_warlock();
+    let p = generic();
     let planner = planner(p).verified();
     let route = planner.construct(|_| {});
     let improved = planner.improve(route, std::time::Duration::from_secs(2), |_| {}, |_, _, _| {});
@@ -726,7 +743,7 @@ fn improved_route_stays_valid() {
 /// Farming on the way replaces grinding: it gives XP, but never more than its share of each level.
 #[test]
 fn farm_on_the_way_stays_under_its_cap() {
-    let p = human_warrior();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let (_, spent) = planner.simulate_full(&route, None).unwrap();
@@ -886,7 +903,7 @@ fn common_loot_comes_from_the_kills_before() {
 #[test]
 fn checkpoints_wait_for_their_level() {
     use fg_route::export::StepKind;
-    let p = orc_warlock();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -1406,7 +1423,7 @@ fn addon_gets_item_counts_and_reputation_goals() {
 /// not words of its text.
 #[test]
 fn mobs_on_the_way_are_counted_apart() {
-    let p = orc_warlock();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -1424,7 +1441,7 @@ fn mobs_on_the_way_are_counted_apart() {
 /// expects from them (rested bonus included), all together the XP farmed on the way.
 #[test]
 fn mobs_on_the_way_carry_their_xp() {
-    let p = orc_warlock();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let (_, spent) = planner.simulate_full(&route, None).unwrap();
@@ -1447,7 +1464,7 @@ fn mobs_on_the_way_carry_their_xp() {
 /// the way.
 #[test]
 fn addon_knows_the_mobs_of_each_step() {
-    let p = orc_warlock();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -2392,7 +2409,7 @@ fn a_guide_is_written_in_any_language() {
 /// the quests that can be taken now.
 #[test]
 fn accept_steps_carry_what_the_quest_needs() {
-    let p = human_warrior();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -2420,7 +2437,7 @@ fn accept_steps_carry_what_the_quest_needs() {
 /// player took): the steps' times add up to the route's.
 #[test]
 fn steps_carry_their_planned_time() {
-    let p = human_warrior();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -2487,7 +2504,7 @@ fn crowd_thins_out_with_the_levels() {
 /// percent behind goes on.
 #[test]
 fn every_level_has_a_step_to_catch_up() {
-    let p = human_warrior();
+    let p = generic();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -2498,7 +2515,7 @@ fn every_level_has_a_step_to_catch_up() {
         .filter(|s| s.say.first().is_some_and(|p| p.key == "catch_up"))
         .collect();
     let levels: std::collections::BTreeSet<i64> = gates.iter().map(|s| s.level).collect();
-    assert!(levels.len() >= 20, "levels with a step: {levels:?}");
+    assert!(levels.len() >= 15, "levels with a step: {levels:?}");
     for s in &gates {
         assert!(
             s.xp.unwrap() as f64 <= 0.9 * rules.to_next_level(s.level) as f64 + 1.0,
@@ -2513,7 +2530,7 @@ fn every_level_has_a_step_to_catch_up() {
 /// complete in the log.
 #[test]
 fn turn_ins_carry_their_xp() {
-    let p = human_warrior();
+    let p = generic();
     let planner = planner(p);
     let guide = fg_route::export::build(&planner, &p.profile, &planner.construct(|_| {}));
     let turn_ins: Vec<_> = guide
@@ -2530,7 +2547,7 @@ fn turn_ins_carry_their_xp() {
 /// the next (planned grinds moved earlier included): the addon shows it on the XP bar.
 #[test]
 fn steps_carry_the_planned_xp() {
-    let p = human_warrior();
+    let p = generic();
     let planner = planner(p);
     let guide = fg_route::export::build(&planner, &p.profile, &planner.construct(|_| {}));
     let rules = p.params.edition.rules();

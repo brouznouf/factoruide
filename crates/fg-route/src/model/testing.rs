@@ -281,9 +281,10 @@ impl Q {
             .iter()
             .enumerate()
             .map(|(k, o)| {
+                let loc_id = 200_000 + id * 10 + k as i64;
                 let loc = Loc {
                     kind: if o.kills > 0.0 { EntityKind::Npc } else { EntityKind::Object },
-                    id: 200_000 + id * 10 + k as i64,
+                    id: loc_id,
                     ..Self::at(o.at, 0, &o.text, world)
                 };
                 Objective {
@@ -295,6 +296,8 @@ impl Q {
                     handed_by: o.handed_by.clone(),
                     count: o.kills.max(o.uses),
                     slot: u8::try_from(k + 1).ok(),
+                    // The creatures to target: one of the objective's name.
+                    mobs: if o.kills > 0.0 { vec![(loc_id, o.text.clone())] } else { Vec::new() },
                     ..Objective::plain(loc, o.text.clone(), 0.0)
                 }
             })
