@@ -744,7 +744,7 @@ impl Scenario {
             .map(|(i, &(name, level, at))| super::Teleport {
                 name: name.to_owned(),
                 level,
-                ability: None,
+                ability: 0,
                 to: Q::at(at, 800_000 + i as i64, name, &world),
             })
             .collect();
