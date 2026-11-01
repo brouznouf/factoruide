@@ -1810,8 +1810,11 @@ fn quest_complete_in_the_log_is_turned_in_on_the_way() {
 /// the quests of its log leave the whole log to the guide (it abandons those it does not take).
 #[test]
 fn hearthstone_flight_paths_and_log_of_a_character_met_in_game() {
-    let mut p = prepare("orc", "warlock", 30, &["progression=cautious"]);
-    let (inn, node) = (3, 5);
+    let mut p = leveling(30)
+        .inn("Barrens Inn", 3, 54.0, 54.0)
+        .inn("Durotar Inn", 2, 54.0, 54.0)
+        .build();
+    let (inn, node) = (1, 1);
     let start = StartState {
         level: 12,
         log: vec![LogQuest {
@@ -1839,7 +1842,6 @@ fn hearthstone_flight_paths_and_log_of_a_character_met_in_game() {
         "no position: at the hearthstone"
     );
 }
-
 /// The hearthstone is bound anew as the route moves on from the starting inn, each
 /// bind worth it: the route without them takes longer. Built with fixed construction weights.
 #[test]
@@ -3197,40 +3199,36 @@ fn a_forced_dungeon_is_not_held_to_its_levels() {
 /// to a city only after training there.
 #[test]
 fn a_mage_teleports_only_to_cities_it_trained_in() {
-    let request = PlanRequest {
-        params: Some(overrides().params.with_overrides(&["effort=0".to_owned()]).unwrap()),
-        ..request("human", "mage", 26, &[])
-    };
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
-    let near = |a: &[f64; 3], b: &[f64; 3]| (a[0] - b[0]).abs() < 0.5 && (a[1] - b[1]).hypot(a[2] - b[2]) <= 200.0;
-    let mut teleports = 0;
-    for (k, step) in route.steps.iter().enumerate() {
-        if step.kind != fg_route::export::StepKind::Teleport {
-            continue;
-        }
-        teleports += 1;
-        let at = step.world.expect("a teleport lands somewhere");
-        assert!(
-            route.steps[..k].iter().any(|t| {
-                t.kind == fg_route::export::StepKind::Train && t.level >= 20 && t.world.is_some_and(|w| near(&w, &at))
-            }),
-            "teleport at step {k} before training in its city"
-        );
-    }
-    assert!(teleports > 0, "the mage teleports");
-}
-
+    let p = leveling(26)
+        .levels(20, 26)
+        .trainer(3, 50.0, 50.0)
+        .teleport("Teleport: Crossroads", 20, 3, 50.0, 50.0)
+        .build();
+    let edit = |edits: &[Edit]| planner(&p).explicit().edit(edits).steps.last().unwrap().outcome;
+    let train = Edit::Train { trainer: 1 };
+    let cast = Edit::Teleport { to: 0 };
+    let up = Edit::GrindTo { level: 21 };
+    assert_ne!(edit(&[up, cast]), Outcome::Done, "teleport before training in its city");
+    assert_ne!(edit(&[up, Edit::Train { trainer: 0 }, cast]), Outcome::Done, "trained in another city");
+    assert_eq!(edit(&[up, train, cast]), Outcome::Done, "trained there");
+}/// A step that travels (hearthstone, flight, boat, teleport) holds the time of its trip, which is
 /// A step that travels (hearthstone, flight, boat, teleport) holds the time of its trip, which is
 /// not counted in the step after it (GitHub #68: the hearthstone showed no time at all).
 #[test]
 fn travel_steps_hold_their_own_time() {
     use fg_route::export::StepKind;
-    let request = PlanRequest {
-        params: Some(overrides().params.with_overrides(&["effort=0".to_owned()]).unwrap()),
-        ..request("human", "mage", 24, &[])
-    };
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
-    let cast = overrides().params.hearth_cast;
+    use job::RouteStep;
+    let (editor, _) = leveling(24)
+        .inn("Barrens Inn", 3, 54.0, 54.0)
+        .guide();
+    let draft = [
+        RouteStep::FlightMaster { node: 25 },
+        RouteStep::Bind { inn: 600_001 },
+        RouteStep::Fly { from: 25, to: 23 },
+        RouteStep::Hearth { recall: false },
+    ];
+    let route = editor.save(&draft, vec![]).unwrap().route;
+    let cast = fg_route::params::Params::default().hearth_cast;
     let (mut hearths, mut flights) = (0, 0);
     for (k, step) in route.steps.iter().enumerate().skip(1) {
         let took = step.time - route.steps[k - 1].time;
@@ -3247,9 +3245,7 @@ fn travel_steps_hold_their_own_time() {
         }
     }
     assert!(hearths > 0 && flights > 0, "{hearths} hearthstones, {flights} flights");
-}
-
-/// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
+}/// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
 /// nearest spirit healer when that is faster, never once a level and a half past 10 (no
 /// resurrection sickness before 11), and the guide editor replays them as they were.
 #[test]
