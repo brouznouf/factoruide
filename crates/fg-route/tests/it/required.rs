@@ -3,8 +3,8 @@
 use crate::common::{database_of, repo};
 use fg_route::faction::Faction;
 use fg_route::job::{self, Editor, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
-use fg_route::testing::{At, Obj, Q, Scenario};
 use fg_route::plan::{Kind, Planner, Stop};
+use fg_route::testing::{At, Obj, Q, Scenario};
 use fg_route::xp::Edition;
 
 fn request(race: &str, class: &str, required: &[RequiredQuest]) -> PlanRequest {
@@ -21,9 +21,23 @@ fn request(race: &str, class: &str, required: &[RequiredQuest]) -> PlanRequest {
 fn required_quest_chain_is_included_and_survives_zero_penalty() {
     let p = Scenario::new()
         .params(|p| p.mandatory_penalty = 0.0)
-        .quest(Q::new(20, "Echo Ridge Beginnings").giver(1, 40.0, 40.0).kill("Kobold", 1, 4, 1, 45.0, 45.0))
-        .quest(Q::new(21, "Skirmish at Echo Ridge").level(2).after_any(&[20]).giver(1, 41.0, 41.0).kill("Kobold", 2, 4, 1, 46.0, 46.0))
-        .quest(Q::new(30, "Wolves").giver(1, 60.0, 60.0).kill("Wolf", 1, 4, 1, 62.0, 62.0))
+        .quest(
+            Q::new(20, "Echo Ridge Beginnings")
+                .giver(1, 40.0, 40.0)
+                .kill("Kobold", 1, 4, 1, 45.0, 45.0),
+        )
+        .quest(
+            Q::new(21, "Skirmish at Echo Ridge")
+                .level(2)
+                .after_any(&[20])
+                .giver(1, 41.0, 41.0)
+                .kill("Kobold", 2, 4, 1, 46.0, 46.0),
+        )
+        .quest(
+            Q::new(30, "Wolves")
+                .giver(1, 60.0, 60.0)
+                .kill("Wolf", 1, 4, 1, 62.0, 62.0),
+        )
         .required(21)
         .build();
     let target = &p.model.quests[p.model.index[&21]];
@@ -45,8 +59,18 @@ fn required_quest_chain_is_included_and_survives_zero_penalty() {
 fn required_quest_editor_refuses_removal() {
     let scenario = |required: bool| {
         let s = Scenario::new()
-            .quest(Q::new(783, "A Threat Within").level(5).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
-            .quest(Q::new(33, "Wolves").level(2).giver(1, 60.0, 60.0).kill("Wolf", 2, 4, 1, 62.0, 62.0));
+            .quest(
+                Q::new(783, "A Threat Within")
+                    .level(5)
+                    .giver(1, 40.0, 40.0)
+                    .kill("Defias", 5, 4, 1, 45.0, 45.0),
+            )
+            .quest(
+                Q::new(33, "Wolves")
+                    .level(2)
+                    .giver(1, 60.0, 60.0)
+                    .kill("Wolf", 2, 4, 1, 62.0, 62.0),
+            );
         Editor::from_prepared(if required { s.required(783) } else { s }.build())
     };
     let editor = scenario(true);
@@ -94,8 +118,19 @@ fn required_quest_completed_profile_needs_no_repeat() {
                 completed: vec![QuestId(783)],
                 ..StartState::default()
             })
-            .quest(Q::new(783, "A Threat Within").level(5).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
-            .quest(Q::new(3100, "Tome").level(30).mandatory().giver(1, 60.0, 60.0).kill("Imp", 30, 4, 1, 62.0, 62.0));
+            .quest(
+                Q::new(783, "A Threat Within")
+                    .level(5)
+                    .giver(1, 40.0, 40.0)
+                    .kill("Defias", 5, 4, 1, 45.0, 45.0),
+            )
+            .quest(
+                Q::new(3100, "Tome")
+                    .level(30)
+                    .mandatory()
+                    .giver(1, 60.0, 60.0)
+                    .kill("Imp", 30, 4, 1, 62.0, 62.0),
+            );
         if required { s.required(783) } else { s }.build()
     };
     let (p, ordinary) = (scenario(true), scenario(false));
@@ -113,7 +148,13 @@ fn required_quest_completed_profile_needs_no_repeat() {
 fn required_quests_continue_after_target_level() {
     let p = Scenario::new()
         .levels(1, 5)
-        .quest(Q::new(783, "A Threat Within").level(5).xp(100_000).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
+        .quest(
+            Q::new(783, "A Threat Within")
+                .level(5)
+                .xp(100_000)
+                .giver(1, 40.0, 40.0)
+                .kill("Defias", 5, 4, 1, 45.0, 45.0),
+        )
         .quest(Q::new(7, "Kobolds").xp(100_000).giver(1, 60.0, 60.0))
         .required(783)
         .build();
@@ -192,7 +233,13 @@ fn required_quest_completed_by_one_group_member_is_still_required_by_the_other()
         .levels(10, 11)
         .start(leader)
         .mates(vec![partner])
-        .quest(Q::new(783, "A Threat Within").level(5).members(0b11).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
+        .quest(
+            Q::new(783, "A Threat Within")
+                .level(5)
+                .members(0b11)
+                .giver(1, 40.0, 40.0)
+                .kill("Defias", 5, 4, 1, 45.0, 45.0),
+        )
         .required(783)
         .build();
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
@@ -213,7 +260,12 @@ fn required_quest_completed_by_one_group_member_is_still_required_by_the_other()
 fn required_generation_refuses_an_incomplete_chain() {
     let p = Scenario::new()
         .levels(1, 5)
-        .quest(Q::new(79975, "Eagle's Fist").level(1).giver(1, 40.0, 40.0).kill("Cat", 1, 4, 1, 45.0, 45.0))
+        .quest(
+            Q::new(79975, "Eagle's Fist")
+                .level(1)
+                .giver(1, 40.0, 40.0)
+                .kill("Cat", 1, 4, 1, 45.0, 45.0),
+        )
         .quest(
             Q::new(79976, "This Must Be The Place")
                 .level(2)
@@ -241,8 +293,18 @@ fn completed_required_prerequisite_is_not_repeated() {
             completed: vec![QuestId(79007)],
             ..StartState::default()
         })
-        .quest(Q::new(79007, "Starter").giver(1, 40.0, 40.0).kill("Cat", 1, 4, 1, 45.0, 45.0))
-        .quest(Q::new(79976, "This Must Be The Place").level(30).after(&[79007]).giver(1, 41.0, 41.0).kill("Cat", 30, 4, 1, 46.0, 46.0))
+        .quest(
+            Q::new(79007, "Starter")
+                .giver(1, 40.0, 40.0)
+                .kill("Cat", 1, 4, 1, 45.0, 45.0),
+        )
+        .quest(
+            Q::new(79976, "This Must Be The Place")
+                .level(30)
+                .after(&[79007])
+                .giver(1, 41.0, 41.0)
+                .kill("Cat", 30, 4, 1, 46.0, 46.0),
+        )
         .required(79976)
         .build();
     assert!(!p.model.quests.iter().any(|q| q.required && q.id == 79007));
@@ -280,7 +342,13 @@ fn ineligible_group_member_does_not_repeat_a_completed_class_quest() {
         .levels(10, 11)
         .start(leader)
         .mates(vec![mage])
-        .quest(Q::new(3100, "Berserker").level(10).members(0b01).giver(1, 40.0, 40.0).kill("Imp", 10, 4, 1, 45.0, 45.0))
+        .quest(
+            Q::new(3100, "Berserker")
+                .level(10)
+                .members(0b01)
+                .giver(1, 40.0, 40.0)
+                .kill("Imp", 10, 4, 1, 45.0, 45.0),
+        )
         .required(3100)
         .build();
     assert!(!p.model.quests.iter().any(|q| q.required));
@@ -338,7 +406,11 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
             .mates(vec![mage.clone()])
             .required(3100);
         // The warrior has more XP than the mage the guide is planned for: second of the players.
-        let quest = Q::new(3100, "Berserker").level(10).members(0b10).giver(1, 40.0, 40.0).kill("Imp", 10, 4, 1, 45.0, 45.0);
+        let quest = Q::new(3100, "Berserker")
+            .level(10)
+            .members(0b10)
+            .giver(1, 40.0, 40.0)
+            .kill("Imp", 10, 4, 1, 45.0, 45.0);
         s.quest(if with_quest { quest } else { quest.excluded() }).build()
     };
     let saved = Editor::from_prepared(scenario(warrior.clone(), true))
@@ -395,7 +467,19 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
             Q::new(8422, "Trolls of a Feather")
                 .level(52)
                 .giver(1, 40.0, 40.0)
-                .objective(Obj::kill("Troll", 50, 6, At { zone: 1, x: 70.0, y: 50.0 }).inside(0)),
+                .objective(
+                    Obj::kill(
+                        "Troll",
+                        50,
+                        6,
+                        At {
+                            zone: 1,
+                            x: 70.0,
+                            y: 50.0,
+                        },
+                    )
+                    .inside(0),
+                ),
         )
         .required(8422)
         .build();
@@ -421,7 +505,17 @@ fn a_child_quest_is_done_between_its_parent_accept_and_turn_in() {
                     .level(8)
                     .timed(2700.0)
                     .giver(1, 50.0, 50.0)
-                    .objective(Obj::visit("Venomtail Antidote", At { zone: 2, x: 50.0, y: 50.0 }).handed_by(&[813])),
+                    .objective(
+                        Obj::visit(
+                            "Venomtail Antidote",
+                            At {
+                                zone: 2,
+                                x: 50.0,
+                                y: 50.0,
+                            },
+                        )
+                        .handed_by(&[813]),
+                    ),
             )
             .quest(
                 Q::new(813, "Finding the Antidote")
@@ -441,6 +535,9 @@ fn a_child_quest_is_done_between_its_parent_accept_and_turn_in() {
         };
         let (accept, turn_in) = (at(812, Kind::Accept).unwrap(), at(812, Kind::TurnIn).unwrap());
         let (c_accept, c_turn_in) = (at(813, Kind::Accept).unwrap(), at(813, Kind::TurnIn).unwrap());
-        assert!(accept < c_accept && c_accept < c_turn_in && c_turn_in < turn_in, "child_glue={glue}");
+        assert!(
+            accept < c_accept && c_accept < c_turn_in && c_turn_in < turn_in,
+            "child_glue={glue}"
+        );
     }
 }

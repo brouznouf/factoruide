@@ -10,12 +10,19 @@
 //!     .build();
 //! ```
 
-#![allow(clippy::return_self_not_must_use, reason = "builders chained by the tests, which use the result")]
-#![allow(clippy::must_use_candidate, reason = "builders chained by the tests, which use the result")]
+#![allow(
+    clippy::return_self_not_must_use,
+    reason = "builders chained by the tests, which use the result"
+)]
+#![allow(
+    clippy::must_use_candidate,
+    reason = "builders chained by the tests, which use the result"
+)]
 
 use super::farm::MobRow;
 use super::{
-    Dungeon, EntityKind, Guard, Initial, Loc, Model, Names, Objective, Profile, Quest, chains, required, sources::QuestRow,
+    Dungeon, EntityKind, Guard, Initial, Loc, Model, Names, Objective, Profile, Quest, chains, required,
+    sources::QuestRow,
 };
 use crate::faction::Faction;
 use crate::job::{PlanRequest, Prepared, StartState};
@@ -276,7 +283,11 @@ impl Q {
             .enumerate()
             .map(|(k, o)| {
                 let loc = Loc {
-                    kind: if o.kills > 0.0 { EntityKind::Npc } else { EntityKind::Object },
+                    kind: if o.kills > 0.0 {
+                        EntityKind::Npc
+                    } else {
+                        EntityKind::Object
+                    },
                     id: 200_000 + id * 10 + k as i64,
                     ..Self::at(o.at, 0, &o.text, world)
                 };
@@ -516,7 +527,9 @@ impl Scenario {
         let members = request.members(self.params.edition.rules());
         let first = members.first().copied().or(request.start.as_ref());
         // What the character did; in a group, what every player who could do it did.
-        self.profile.completed_quests = first.map(|s| s.completed.iter().map(|q| q.0).collect()).unwrap_or_default();
+        self.profile.completed_quests = first
+            .map(|s| s.completed.iter().map(|q| q.0).collect())
+            .unwrap_or_default();
         if members.len() > 1 {
             self.profile
                 .completed_quests
@@ -563,10 +576,25 @@ impl Scenario {
         }
         model.farm = super::FarmMobs::from_rows(&world, rows, &tags, by_tag);
         let place = |at: At, id: i64, name: &str| Q::at(at, id, name, &world);
-        model.trainers = self.trainers.iter().enumerate().map(|(i, &at)| place(at, 400_000 + i as i64, "Trainer")).collect();
-        model.vendors = self.vendors.iter().enumerate().map(|(i, &at)| place(at, 500_000 + i as i64, "Vendor")).collect();
+        model.trainers = self
+            .trainers
+            .iter()
+            .enumerate()
+            .map(|(i, &at)| place(at, 400_000 + i as i64, "Trainer"))
+            .collect();
+        model.vendors = self
+            .vendors
+            .iter()
+            .enumerate()
+            .map(|(i, &at)| place(at, 500_000 + i as i64, "Vendor"))
+            .collect();
         if !self.inns.is_empty() {
-            model.inns = self.inns.iter().enumerate().map(|(i, &(name, at))| place(at, 600_000 + i as i64, name)).collect();
+            model.inns = self
+                .inns
+                .iter()
+                .enumerate()
+                .map(|(i, &(name, at))| place(at, 600_000 + i as i64, name))
+                .collect();
             model.start_inn = 0;
         }
         model.initial.known = self

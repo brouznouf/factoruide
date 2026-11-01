@@ -660,11 +660,24 @@ impl Planner<'_> {
     /// Quest `i` is, or is a child of, a timed quest being done that hands it an item.
     fn on_clock(&self, s: &State, i: u32) -> bool {
         let q = self.quest(i);
-        let ticking = |id: &i64| self.model.index.get(id).is_some_and(|&j| s.timers.iter().any(|&(t, _)| t == j as u32));
-        (q.time_limit.is_some() && s.timers.iter().any(|&(t, _)| t == i) && q.objectives.iter().any(|o| !o.handed_by.is_empty()))
-            || q.pre_held.iter().any(|p| ticking(p) && self.model.index.get(p).is_some_and(|&j| {
-                self.model.quests[j].objectives.iter().any(|o| o.handed_by.contains(&q.id))
-            }))
+        let ticking = |id: &i64| {
+            self.model
+                .index
+                .get(id)
+                .is_some_and(|&j| s.timers.iter().any(|&(t, _)| t == j as u32))
+        };
+        (q.time_limit.is_some()
+            && s.timers.iter().any(|&(t, _)| t == i)
+            && q.objectives.iter().any(|o| !o.handed_by.is_empty()))
+            || q.pre_held.iter().any(|p| {
+                ticking(p)
+                    && self.model.index.get(p).is_some_and(|&j| {
+                        self.model.quests[j]
+                            .objectives
+                            .iter()
+                            .any(|o| o.handed_by.contains(&q.id))
+                    })
+            })
     }
 
     /// Whether a parent quest and its child are put in a route together (`Params::child_glue`):
@@ -708,7 +721,11 @@ impl Planner<'_> {
         let quest = self.quest(q);
         let tight = tight || quest.time_limit.is_some();
         let place = |route: &[Stop], pos: &Pos, from: usize| {
-            if tight { from.min(route.len()) } else { self.insert_near(route, pos, from) }
+            if tight {
+                from.min(route.len())
+            } else {
+                self.insert_near(route, pos, from)
+            }
         };
         let in_log = self.in_log_at_start(q);
         let parents: Vec<u32> = (quest.pre_held.iter())
@@ -805,7 +822,9 @@ impl Planner<'_> {
                     _ => false,
                 };
                 let me = Self::position_of(route, q, Kind::TurnIn)?;
-                let moved: Vec<usize> = (0..me).filter(|&i| route[i].is_quest() && route[i].index == p && hands(&route[i])).collect();
+                let moved: Vec<usize> = (0..me)
+                    .filter(|&i| route[i].is_quest() && route[i].index == p && hands(&route[i]))
+                    .collect();
                 (!moved.is_empty()).then_some((me, moved))
             };
             if let Some((me, moved)) = pending(route) {

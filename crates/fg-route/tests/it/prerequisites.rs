@@ -54,7 +54,13 @@ struct Who {
 /// class: taking `quest` at `level` as `race` `class`, with `completed` done (None: nothing known of
 /// the character), works or not (`expected`).
 fn alternatives(edition: Edition, refreshed: bool, who: &Who, expected: bool) {
-    let Who { quest, race, class, level, completed } = *who;
+    let Who {
+        quest,
+        race,
+        class,
+        level,
+        completed,
+    } = *who;
     let conn = database_of(edition.key());
     let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
     if refreshed {
@@ -94,31 +100,257 @@ macro_rules! branch {
     ($name:ident, $edition:expr, $refreshed:expr, $quest:expr, $race:expr, $class:expr, $level:expr, $completed:expr, $expected:expr) => {
         #[test]
         fn $name() {
-            let who = Who { quest: $quest, race: $race, class: $class, level: $level, completed: $completed };
+            let who = Who {
+                quest: $quest,
+                race: $race,
+                class: $class,
+                level: $level,
+                completed: $completed,
+            };
             alternatives($edition, $refreshed, &who, $expected);
         }
     };
 }
 
-branch!(classic_built_warlock_branch_missing, Edition::Classic, false, 794, "orc", "warrior", 3, None, false);
-branch!(classic_built_warlock_branch_done, Edition::Classic, false, 794, "orc", "warrior", 3, Some(&[792]), true);
-branch!(classic_refreshed_warlock_branch_missing, Edition::Classic, true, 794, "orc", "warrior", 3, None, false);
-branch!(classic_refreshed_warlock_branch_done, Edition::Classic, true, 794, "orc", "warrior", 3, Some(&[792]), true);
-branch!(tbc_built_warlock_branch_missing, Edition::Tbc, false, 794, "orc", "warrior", 3, None, false);
-branch!(tbc_built_warlock_branch_done, Edition::Tbc, false, 794, "orc", "warrior", 3, Some(&[792]), true);
-branch!(tbc_refreshed_warlock_branch_missing, Edition::Tbc, true, 794, "orc", "warrior", 3, None, false);
-branch!(tbc_refreshed_warlock_branch_done, Edition::Tbc, true, 794, "orc", "warrior", 3, Some(&[792]), true);
-branch!(forever_built_warlock_branch_missing, Edition::Forever, false, 794, "orc", "warrior", 3, None, false);
-branch!(forever_built_warlock_branch_done, Edition::Forever, false, 794, "orc", "warrior", 3, Some(&[792]), true);
-branch!(forever_built_orc_cat_done, Edition::Forever, false, 79192, "orc", "warrior", 20, Some(&[79007]), true);
-branch!(forever_built_human_cat_done, Edition::Forever, false, 79192, "human", "warrior", 20, Some(&[79008]), true);
-branch!(forever_built_orc_cat_none_done, Edition::Forever, false, 79192, "orc", "warrior", 20, Some(&[]), false);
-branch!(forever_built_orc_cat_unknown, Edition::Forever, false, 79192, "orc", "warrior", 20, None, false);
-branch!(forever_built_human_cat_unknown, Edition::Forever, false, 79192, "human", "warrior", 20, None, false);
-branch!(forever_refreshed_warlock_branch_missing, Edition::Forever, true, 794, "orc", "warrior", 3, None, false);
-branch!(forever_refreshed_warlock_branch_done, Edition::Forever, true, 794, "orc", "warrior", 3, Some(&[792]), true);
-branch!(forever_refreshed_orc_cat_done, Edition::Forever, true, 79192, "orc", "warrior", 20, Some(&[79007]), true);
-branch!(forever_refreshed_human_cat_done, Edition::Forever, true, 79192, "human", "warrior", 20, Some(&[79008]), true);
-branch!(forever_refreshed_orc_cat_none_done, Edition::Forever, true, 79192, "orc", "warrior", 20, Some(&[]), false);
-branch!(forever_refreshed_orc_cat_unknown, Edition::Forever, true, 79192, "orc", "warrior", 20, None, false);
-branch!(forever_refreshed_human_cat_unknown, Edition::Forever, true, 79192, "human", "warrior", 20, None, false);
+branch!(
+    classic_built_warlock_branch_missing,
+    Edition::Classic,
+    false,
+    794,
+    "orc",
+    "warrior",
+    3,
+    None,
+    false
+);
+branch!(
+    classic_built_warlock_branch_done,
+    Edition::Classic,
+    false,
+    794,
+    "orc",
+    "warrior",
+    3,
+    Some(&[792]),
+    true
+);
+branch!(
+    classic_refreshed_warlock_branch_missing,
+    Edition::Classic,
+    true,
+    794,
+    "orc",
+    "warrior",
+    3,
+    None,
+    false
+);
+branch!(
+    classic_refreshed_warlock_branch_done,
+    Edition::Classic,
+    true,
+    794,
+    "orc",
+    "warrior",
+    3,
+    Some(&[792]),
+    true
+);
+branch!(
+    tbc_built_warlock_branch_missing,
+    Edition::Tbc,
+    false,
+    794,
+    "orc",
+    "warrior",
+    3,
+    None,
+    false
+);
+branch!(
+    tbc_built_warlock_branch_done,
+    Edition::Tbc,
+    false,
+    794,
+    "orc",
+    "warrior",
+    3,
+    Some(&[792]),
+    true
+);
+branch!(
+    tbc_refreshed_warlock_branch_missing,
+    Edition::Tbc,
+    true,
+    794,
+    "orc",
+    "warrior",
+    3,
+    None,
+    false
+);
+branch!(
+    tbc_refreshed_warlock_branch_done,
+    Edition::Tbc,
+    true,
+    794,
+    "orc",
+    "warrior",
+    3,
+    Some(&[792]),
+    true
+);
+branch!(
+    forever_built_warlock_branch_missing,
+    Edition::Forever,
+    false,
+    794,
+    "orc",
+    "warrior",
+    3,
+    None,
+    false
+);
+branch!(
+    forever_built_warlock_branch_done,
+    Edition::Forever,
+    false,
+    794,
+    "orc",
+    "warrior",
+    3,
+    Some(&[792]),
+    true
+);
+branch!(
+    forever_built_orc_cat_done,
+    Edition::Forever,
+    false,
+    79192,
+    "orc",
+    "warrior",
+    20,
+    Some(&[79007]),
+    true
+);
+branch!(
+    forever_built_human_cat_done,
+    Edition::Forever,
+    false,
+    79192,
+    "human",
+    "warrior",
+    20,
+    Some(&[79008]),
+    true
+);
+branch!(
+    forever_built_orc_cat_none_done,
+    Edition::Forever,
+    false,
+    79192,
+    "orc",
+    "warrior",
+    20,
+    Some(&[]),
+    false
+);
+branch!(
+    forever_built_orc_cat_unknown,
+    Edition::Forever,
+    false,
+    79192,
+    "orc",
+    "warrior",
+    20,
+    None,
+    false
+);
+branch!(
+    forever_built_human_cat_unknown,
+    Edition::Forever,
+    false,
+    79192,
+    "human",
+    "warrior",
+    20,
+    None,
+    false
+);
+branch!(
+    forever_refreshed_warlock_branch_missing,
+    Edition::Forever,
+    true,
+    794,
+    "orc",
+    "warrior",
+    3,
+    None,
+    false
+);
+branch!(
+    forever_refreshed_warlock_branch_done,
+    Edition::Forever,
+    true,
+    794,
+    "orc",
+    "warrior",
+    3,
+    Some(&[792]),
+    true
+);
+branch!(
+    forever_refreshed_orc_cat_done,
+    Edition::Forever,
+    true,
+    79192,
+    "orc",
+    "warrior",
+    20,
+    Some(&[79007]),
+    true
+);
+branch!(
+    forever_refreshed_human_cat_done,
+    Edition::Forever,
+    true,
+    79192,
+    "human",
+    "warrior",
+    20,
+    Some(&[79008]),
+    true
+);
+branch!(
+    forever_refreshed_orc_cat_none_done,
+    Edition::Forever,
+    true,
+    79192,
+    "orc",
+    "warrior",
+    20,
+    Some(&[]),
+    false
+);
+branch!(
+    forever_refreshed_orc_cat_unknown,
+    Edition::Forever,
+    true,
+    79192,
+    "orc",
+    "warrior",
+    20,
+    None,
+    false
+);
+branch!(
+    forever_refreshed_human_cat_unknown,
+    Edition::Forever,
+    true,
+    79192,
+    "human",
+    "warrior",
+    20,
+    None,
+    false
+);

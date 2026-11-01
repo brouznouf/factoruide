@@ -63,4 +63,3 @@ pub fn leveling(to_level: i64) -> Scenario {
     }
     s
 }
-

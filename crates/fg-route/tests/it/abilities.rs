@@ -62,4 +62,9 @@ preset!(forever_human_mage, Edition::Forever, "human", "mage");
 preset!(forever_human_warlock, Edition::Forever, "human", "warlock");
 preset!(forever_nightelf_druid, Edition::Forever, "nightelf", "druid");
 preset!(forever_skyborne_druid, Edition::Forever, "skyborne", "druid");
-preset!(forever_skyborne_horde_druid, Edition::Forever, "skyborne_horde", "druid");
+preset!(
+    forever_skyborne_horde_druid,
+    Edition::Forever,
+    "skyborne_horde",
+    "druid"
+);

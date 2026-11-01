@@ -226,12 +226,7 @@ static LINK_CHAINS: std::sync::Mutex<Vec<(u64, LinkChains)>> = std::sync::Mutex:
 
 type LinkChains = std::sync::Arc<Vec<Vec<Vec<f64>>>>;
 
-type PassWalks = std::sync::Arc<(
-    Vec<Vec<f64>>,
-    Vec<Vec<usize>>,
-    Vec<Vec<bool>>,
-    FxHashMap<u8, PassGraph>,
-)>;
+type PassWalks = std::sync::Arc<(Vec<Vec<f64>>, Vec<Vec<usize>>, Vec<Vec<bool>>, FxHashMap<u8, PassGraph>)>;
 
 /// A named place of a zone map (Ratchet, Valley of Trials...), at the center of its overlay.
 struct Landmark {
@@ -450,7 +445,11 @@ impl World {
     /// the corner of its square in world yards; a zone is 1000 yards on a side), no flight path,
     /// passage or link, and terrain without any obstacle.
     #[cfg(any(test, feature = "testing"))]
-    pub fn flat(zones: &[(i64, &str, i64, f64, f64)], flight_masters: &[(i64, &str, i64, f64, f64)], flight_speed: f64) -> Self {
+    pub fn flat(
+        zones: &[(i64, &str, i64, f64, f64)],
+        flight_masters: &[(i64, &str, i64, f64, f64)],
+        flight_speed: f64,
+    ) -> Self {
         let rects = zones
             .iter()
             .map(|&(id, _, continent, x, y)| {
@@ -512,11 +511,19 @@ impl World {
         world.direct = (0..n)
             .map(|i| {
                 (0..n)
-                    .map(|j| if i == j { 0.0 } else { seconds(&world.taxi_nodes[i], &world.taxi_nodes[j]) })
+                    .map(|j| {
+                        if i == j {
+                            0.0
+                        } else {
+                            seconds(&world.taxi_nodes[i], &world.taxi_nodes[j])
+                        }
+                    })
                     .collect()
             })
             .collect();
-        world.direct_cost = (0..n).map(|i| (0..n).map(|j| if i == j { 0.0 } else { 100.0 }).collect()).collect();
+        world.direct_cost = (0..n)
+            .map(|i| (0..n).map(|j| if i == j { 0.0 } else { 100.0 }).collect())
+            .collect();
         world.taxi_by_x = world.taxi_nodes.iter().enumerate().map(|(i, n)| (n.pos.x, i)).collect();
         world.taxi_by_x.sort_by(|a, b| a.0.total_cmp(&b.0));
         world
@@ -927,14 +934,23 @@ impl World {
         let key = self.stamp.map(|stamp| {
             use std::hash::{Hash, Hasher};
             let mut h = std::collections::hash_map::DefaultHasher::new();
-            (stamp, format!("{:?}", self.links), walk_speed.to_bits(), &self.link_quests).hash(&mut h);
+            (
+                stamp,
+                format!("{:?}", self.links),
+                walk_speed.to_bits(),
+                &self.link_quests,
+            )
+                .hash(&mut h);
             h.finish()
         });
         // One world computes them while the others wait for the same.
         let _computing = key.map(|_| LINK_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
         let kept = key.and_then(|key| {
             let cache = LINK_CHAINS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-            cache.iter().find(|(k, _)| *k == key).map(|(_, c)| std::sync::Arc::clone(c))
+            cache
+                .iter()
+                .find(|(k, _)| *k == key)
+                .map(|(_, c)| std::sync::Arc::clone(c))
         });
         if let Some(chains) = kept {
             self.link_chains.clone_from(chains.as_ref());
@@ -1346,9 +1362,12 @@ impl World {
         });
         let _computing = key.map(|_| PASS_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
         if let Some(key) = key
-            && let Some(walks) = (PASS_WALKS.lock().unwrap_or_else(std::sync::PoisonError::into_inner).iter())
-                .find(|(k, _)| *k == key)
-                .map(|(_, w)| std::sync::Arc::clone(w))
+            && let Some(walks) = (PASS_WALKS
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .iter())
+            .find(|(k, _)| *k == key)
+            .map(|(_, w)| std::sync::Arc::clone(w))
         {
             (self.pass_dist, self.pass_next, self.pass_shortcut, self.pass_closed) =
                 (walks.0.clone(), walks.1.clone(), walks.2.clone(), walks.3.clone());

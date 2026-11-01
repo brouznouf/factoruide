@@ -439,7 +439,11 @@ fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
     let objective = |id| &p.model.quests[quest(&p, id).unwrap() as usize].objectives[0];
     for id in [168, 167] {
         let o = objective(id);
-        assert!(o.dungeon.is_some() && o.loc.kind == EntityKind::Item, "{id}: {:?}", o.loc.kind);
+        assert!(
+            o.dungeon.is_some() && o.loc.kind == EntityKind::Item,
+            "{id}: {:?}",
+            o.loc.kind
+        );
     }
     assert_eq!(objective(214).loc.kind, EntityKind::Dungeon);
 }
@@ -2840,7 +2844,12 @@ fn items_a_child_hands_over_are_got_at_its_hand_in() {
     let p = orc_warlock();
     let reports = quest(p, 6543).expect("The Warsong Reports planned");
     let q = &p.model.quests[reports as usize];
-    let handing: Vec<&Vec<i64>> = q.objectives.iter().map(|o| &o.handed_by).filter(|h| !h.is_empty()).collect();
+    let handing: Vec<&Vec<i64>> = q
+        .objectives
+        .iter()
+        .map(|o| &o.handed_by)
+        .filter(|h| !h.is_empty())
+        .collect();
     assert_eq!(handing.len(), 3, "the three scouts' updates: {handing:?}");
     assert!(
         q.objectives.iter().all(|o| o.vendors.is_empty()),

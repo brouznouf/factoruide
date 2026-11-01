@@ -4,6 +4,7 @@ use anyhow::Result;
 use fg_route::audit;
 use fg_route::job::Overrides;
 use rusqlite::Connection;
+use std::fmt::Write as _;
 use std::path::Path;
 
 /// Print the findings, the accepted ones apart; fails when errors are left (not accepted).
@@ -90,7 +91,7 @@ fn write_proposals(path: &Path, findings: &[audit::Finding], accepted: &[audit::
         }
         for &(id, side) in &f.npcs {
             if seen.insert(id) {
-                lines.push_str(&format!("npc:{id}\t{side}\t{}\t{}: {}\n", f.check, f.key, f.detail));
+                writeln!(lines, "npc:{id}\t{side}\t{}\t{}: {}", f.check, f.key, f.detail)?;
             }
         }
     }
