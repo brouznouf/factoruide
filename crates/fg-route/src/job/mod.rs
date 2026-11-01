@@ -235,15 +235,7 @@ pub fn prepare(
     progress("Loading quests");
     progress(r#"@progress {"phase":"prepare","step":"quests"}"#);
     let mut model = model::load(conn, &world, &profile, &params)?;
-    // Every dungeon it could run has levels to run it at.
-    if let Some(d) = (model.dungeons.iter()).find(|d| d.min_level != i64::MAX && d.min_level > d.max_level) {
-        return Err(RequestError::NoDungeonLevels {
-            dungeon: d.name.clone(),
-            from: params.dungeon_from,
-            to: params.dungeon_to,
-        }
-        .into());
-    }
+    check_dungeon_levels(&model, &params)?;
     let mut start_notes = Vec::new();
     let members = req.members(params.edition.rules());
     check_exclusive_choices(&model, &members)?;
@@ -299,6 +291,18 @@ pub fn prepare(
         model,
         notes,
     })
+}
+
+/// Every dungeon the character could run has levels to run it at.
+pub(crate) fn check_dungeon_levels(model: &Model, params: &Params) -> Result<(), RequestError> {
+    match (model.dungeons.iter()).find(|d| d.min_level != i64::MAX && d.min_level > d.max_level) {
+        Some(d) => Err(RequestError::NoDungeonLevels {
+            dungeon: d.name.clone(),
+            from: params.dungeon_from,
+            to: params.dungeon_to,
+        }),
+        None => Ok(()),
+    }
 }
 
 /// A member who already chose an exclusive alternative cannot meet an exact requirement.

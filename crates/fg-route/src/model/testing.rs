@@ -322,6 +322,7 @@ pub struct Scenario {
     /// Normal mobs anyone can farm: where, their level and how many.
     mobs: Vec<(At, i64, u32)>,
     teleports: Vec<(&'static str, i64, At)>,
+    graveyards: Vec<At>,
 }
 
 impl Default for Scenario {
@@ -349,6 +350,7 @@ impl Scenario {
             inns: Vec::new(),
             mobs: Vec::new(),
             teleports: Vec::new(),
+            graveyards: Vec::new(),
         }
     }
 
@@ -374,6 +376,12 @@ impl Scenario {
     /// The character knows this flight path from the start.
     pub fn knows_flight(mut self, id: i64) -> Self {
         self.known_flights.push(id);
+        self
+    }
+
+    /// A spirit healer, where a character that dies respawns.
+    pub fn graveyard(mut self, zone: i64, x: f64, y: f64) -> Self {
+        self.graveyards.push(At { zone, x, y });
         self
     }
 
@@ -557,6 +565,13 @@ impl Scenario {
         required::apply(&mut quests, &rows, &[], &self.profile, &self.params)?;
         super::settle_quests(&mut quests, &dungeons, &self.params);
         let mut dungeons = dungeons;
+        super::dungeons::set_dungeon_levels(
+            &mut dungeons,
+            &quests,
+            &HashMap::new(),
+            (self.params.dungeon_from, self.params.dungeon_to),
+            self.params.edition.rules().max_level,
+        );
         super::settle_dungeons(&mut dungeons, &quests, &self.profile, &self.params);
         let mut model = bare(quests, dungeons, start, &self.params);
         let (tags, by_tag) = super::FarmMobs::quest_tags(&model.quests);
@@ -576,6 +591,12 @@ impl Scenario {
             }
         }
         model.farm = super::FarmMobs::from_rows(&world, rows, &tags, by_tag);
+        model.graveyards = self
+            .graveyards
+            .iter()
+            .enumerate()
+            .map(|(i, &at)| Q::at(at, 900_000 + i as i64, "Spirit Healer", &world))
+            .collect();
         model.teleports = self
             .teleports
             .iter()
@@ -599,6 +620,7 @@ impl Scenario {
             .iter()
             .filter_map(|id| world.taxi_nodes.iter().position(|n| n.id == *id))
             .fold(0u128, |bits, i| bits | 1u128 << i);
+        crate::job::check_dungeon_levels(&model, &self.params)?;
         let mut notes = Vec::new();
         crate::job::check_exclusive_choices(&model, &members)?;
         if let Some(start) = first {

@@ -5,7 +5,7 @@ use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanR
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
 use fg_route::plan::{Edit, Event, Kind, Outcome, Planner, Stop};
-use fg_route::testing::{Q, Scenario};
+use fg_route::testing::{At, Obj, Q, Scenario};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use std::sync::OnceLock;
@@ -3116,20 +3116,25 @@ fn ruins_of_lordaeron_is_run_at_the_games_levels() {
 /// never past them; a choice leaving no levels for a dungeon it could run is refused.
 #[test]
 fn dungeons_are_run_within_the_levels_chosen() {
-    let window = |from: i64, to: i64| {
-        let params = [
-            format!("dungeon_from={from}"),
-            format!("dungeon_to={to}"),
-            "effort=0".to_owned(),
-        ];
-        PlanRequest {
-            params: Some(overrides().params.with_overrides(&params).unwrap()),
-            ..request("human", "warrior", 30, &[])
-        }
+    let scenario = |from: i64, to: i64| {
+        leveling(30)
+            .dungeon("The Deadmines", 1, 70.0, 70.0)
+            .quest(
+                Q::new(300, "Red Silk Bandanas")
+                    .level(18)
+                    .giver(1, 40.0, 40.0)
+                    .objective(Obj::kill("Defias", 18, 6, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+            )
+            .params(move |p| (p.dungeon_from, p.dungeon_to, p.effort) = (from, to, 0.0))
     };
-    let request = window(0, 1);
-    let p = prepare_request(&request);
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let p = scenario(0, 1).build();
+    let route = scenario(0, 1).job(&|_| {}, &job::Interrupt::default(), None).unwrap().route;
+    let runs = route
+        .steps
+        .iter()
+        .filter(|s| s.kind == fg_route::export::StepKind::Dungeon)
+        .count();
+    assert!(runs > 0, "the dungeon is run");
     for s in route
         .steps
         .iter()
@@ -3143,9 +3148,7 @@ fn dungeons_are_run_within_the_levels_chosen() {
             s.level
         );
     }
-    let err = job::prepare(&database(), &overrides(), &window(3, 1), &|_| {})
-        .err()
-        .map(|e| e.to_string());
+    let err = scenario(3, 1).try_build().err().map(|e| e.to_string());
     assert!(err.is_some_and(|e| e.contains("leave none")));
 }
 
@@ -3416,24 +3419,19 @@ fn travel_steps_hold_their_own_time() {
 /// resurrection sickness before 11), and the guide editor replays them as they were.
 #[test]
 fn death_skips_below_level_ten_and_a_half() {
-    let plan = |on: bool| {
-        let params = [format!("death_skips={on}"), "effort=0".to_owned()];
-        let request = PlanRequest {
-            params: Some(overrides().params.with_overrides(&params).unwrap()),
-            ..request("orc", "warrior", 13, &[])
-        };
-        (
-            job::plan(&database(), &overrides(), &request, &|_| {}).unwrap(),
-            request,
-        )
+    let scenario = |on: bool| {
+        leveling(13)
+            .graveyard(3, 50.0, 50.0)
+            .params(move |p| (p.death_skips, p.effort) = (on, 0.0))
     };
     let deaths = |o: &job::PlanOutcome| {
         (o.route.steps.iter())
             .filter(|s| s.kind == fg_route::export::StepKind::DeathSkip)
             .count()
     };
-    assert_eq!(deaths(&plan(false).0), 0);
-    let (outcome, request) = plan(true);
+    let interrupt = job::Interrupt::default();
+    assert_eq!(deaths(&scenario(false).job(&|_| {}, &interrupt, None).unwrap()), 0);
+    let (editor, outcome) = scenario(true).guide();
     assert!(deaths(&outcome) > 0);
     for (k, s) in outcome.route.steps.iter().enumerate() {
         if s.kind == fg_route::export::StepKind::DeathSkip {
@@ -3452,9 +3450,7 @@ fn death_skips_below_level_ten_and_a_half() {
         .filter(|s| matches!(s, job::RouteStep::DeathSkip))
         .count();
     assert_eq!(skips, deaths(&outcome), "the plan has them as steps");
-    let conn = database();
-    let editor = job::Editor::open(&conn, &overrides(), &request, None).unwrap();
-    let report = editor.simulate(&outcome.plan, &fg_route::model::Names::load(&conn, "enUS").unwrap());
+    let report = editor.simulate(&outcome.plan, &fg_route::model::Names::default());
     assert_eq!(
         report.errors,
         0,
