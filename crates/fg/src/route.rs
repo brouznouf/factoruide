@@ -254,7 +254,7 @@ pub struct ShareOptions {
     pub to_level: i64,
     pub effort: Option<f64>,
     pub name: String,
-    /// Must-have quests, by ID or exact name.
+    /// Must-have quests, by ID, exact name or JSON completion window.
     pub required_quests: Vec<String>,
     /// Planner parameter overrides (key=value).
     pub params: Vec<String>,
