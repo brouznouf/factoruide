@@ -25,8 +25,8 @@ past its target level until they are complete. Generated guides and saved edits 
 Entries can include `min_level` and/or `max_level`, inclusive at turn-in before reward XP:
 `--required-quest '{"quest":21,"min_level":3,"max_level":4}'`. IDs and exact names without
 bounds keep their existing meaning. Prerequisites and child quests inherit deadline priority,
-not the lower bound. Near a deadline, the chain's available quest work takes priority. Replay
-omits optional work needing grinding beyond a scheduled deadline. Turn-ins check each member
+not the lower bound. Near a deadline, the chain's available quest work takes priority among
+quest stops. Forced and must-have dungeon runs can take precedence. Replay omits optional work needing grinding beyond a scheduled deadline. Turn-ins check each member
 still needing the quest, including after travel; imported completion already satisfies the goal.
 Planning and edited-guide saves reject missed windows.
 
