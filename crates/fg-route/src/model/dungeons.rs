@@ -258,7 +258,12 @@ pub(super) fn set_dungeon_levels(
             .map(|q| q.level)
             .collect();
         if own.is_empty() {
+            // Not planned, but its levels are known when a request forces it (`check_dungeon_levels`).
             dungeon.min_level = i64::MAX;
+            if let Some(&level) = levels.get(&dungeon.area) {
+                dungeon.mob_level = level;
+                dungeon.max_level = (level + window.1).min(max_level);
+            }
             continue;
         }
         own.sort_unstable();
