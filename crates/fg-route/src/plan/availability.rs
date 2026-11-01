@@ -56,20 +56,32 @@ impl Availability<'_> {
     pub(crate) fn prereqs_met(&self, s: &State, i: u32) -> bool {
         let q = self.quest_at(i);
         let init = &self.model.initial;
+        let known = |id: &i64| {
+            !q.required
+                && !q.zone_forced
+                && self.model.known_class_prerequisites.contains(id)
+                && self
+                    .model
+                    .index
+                    .get(id)
+                    .is_none_or(|&i| !self.model.quests[i].required && !self.model.quests[i].zone_forced)
+        };
         // In the log: taken, not turned in nor given up.
         let held = |id: &i64| self.model.index.get(id).is_some_and(|&j| s.accepted[j] && !s.turned[j]);
         if init.mates.is_empty() {
             let done = |id: &i64| match self.model.index.get(id) {
-                Some(&i) => s.rewarded(i),
+                Some(&i) => s.rewarded(i) || known(id),
                 // Not plannable (other class, removed, gray...): known for a character met in
                 // game, else assumed done only when starting mid-way.
-                None => init.done_outside(*id, self.profile.from_level),
+                None => init.done_outside(*id, self.profile.from_level) || known(id),
             };
             return q.pre_all.iter().all(done) && q.pre_any_met(done) && q.pre_held.iter().all(held);
         }
         let need = init.need(i as usize);
         (0..=init.mates.len()).filter(|m| need & (1 << m) != 0).all(|m| {
-            let done = |id: &i64| init.done_by(m, *id) || self.model.index.get(id).is_some_and(|&j| s.rewarded(j));
+            let done = |id: &i64| {
+                known(id) || init.done_by(m, *id) || self.model.index.get(id).is_some_and(|&j| s.rewarded(j))
+            };
             q.pre_all.iter().all(done) && q.pre_any_met(done)
         }) && q.pre_held.iter().all(held)
     }

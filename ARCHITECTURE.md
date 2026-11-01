@@ -146,6 +146,11 @@ quest whose objectives are far out of reach is not picked up.
   the steps of the name leading to them, not a later quest of the same name (the orc's second
   Vile Familiars, in Durotar, is not the undead warlock's). A quest the route takes and gives up
   costs it `abandon_weight`.
+  Missing unlocks keep their earlier prerequisites; known rewards avoid repeating unlocks.
+  A spell proves a prerequisite only when one eligible quest grants it on completion. Shared
+  rewards need recorded quest history. Moonglade teaches its teleport on acceptance, so its
+  turn-in still gates the next quest. Group knowledge requires every eligible member; explicit
+  must-have quests still need completion.
 - **Class quests** giving a pet or a form (`overrides/class_quests.toml`) add levels of power
   too (a 1.4 times faster fight is 3.2 levels), and count like an upgrade when choosing quests;
   the quest teaching that spell gives it, whatever its name (Piercing the Veil, the undead's

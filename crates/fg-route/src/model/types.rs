@@ -46,6 +46,7 @@ pub struct Profile {
 /// Another player of a group guide.
 #[derive(Debug, Clone)]
 pub struct Mate {
+    pub class_name: String,
     /// "Name-Realm".
     pub name: String,
     pub race_id: i64,
@@ -465,6 +466,8 @@ impl Quest {
 
 pub struct Model {
     pub abilities: crate::abilities::Abilities,
+    /// Class prerequisites proven by completion or an unambiguous learned reward.
+    pub known_class_prerequisites: HashSet<i64>,
     pub quests: Vec<Quest>,
     pub dungeons: Vec<Dungeon>,
     pub professions: Vec<ProfessionPlan>,
@@ -529,7 +532,8 @@ pub struct Model {
 pub struct Teleport {
     pub name: String,
     pub level: i64,
-    pub quests: Vec<usize>,
+    /// Quest-taught ability, or zero for a city trainer teleport.
+    pub ability: u64,
     pub to: Loc,
 }
 
@@ -537,6 +541,7 @@ pub struct Teleport {
 /// taking "Moonglade" teaches the druid Teleport: Moonglade.
 #[derive(Debug, Clone, serde::Deserialize)]
 pub struct TeleportDef {
+    pub spell: i64,
     pub name: String,
     /// Class file name, lower case (druid).
     pub class: String,

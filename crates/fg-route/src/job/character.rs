@@ -36,6 +36,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
         .map(|m| {
             let (class_id, class_name) = class_of(conn, &m.class)?;
             Ok(Mate {
+                class_name: class_name.clone(),
                 name: m.name.clone(),
                 race_id: m.race,
                 class_id,
@@ -131,12 +132,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
         dungeons: overrides.dungeons.clone(),
         quest_overrides: overrides.quest_overrides.clone(),
         objective_orders: overrides.objective_orders.clone(),
-        quest_teleports: overrides
-            .teleports
-            .iter()
-            .filter(|t| t.class == class)
-            .cloned()
-            .collect(),
+        quest_teleports: overrides.teleports.clone(),
         professions,
         locale: req.locale.clone(),
         player: if mates.is_empty() {

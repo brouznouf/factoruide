@@ -721,6 +721,7 @@ fn the_class_and_gathering_keep_bag_room() {
     // A group goes to the vendor when the fullest bags are: a hunter's, with a quiver.
     p.profile.professions.clear();
     p.profile.mates = vec![crate::model::Mate {
+        class_name: "Hunter".into(),
         name: "Hunter".into(),
         race_id: 2,
         class_id: 3,

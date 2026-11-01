@@ -216,8 +216,8 @@ pub(super) fn drop_unhanded(quests: &mut Vec<Quest>, skipped: &mut Vec<(i64, Str
 }
 
 /// A class quest whose prerequisite cannot be planned cannot be required either.
-pub(super) fn release_impossible_class_quests(quests: &mut [Quest]) {
-    let mut doable: HashSet<i64> = quests.iter().map(|q| q.id).collect();
+pub(super) fn release_impossible_class_quests(quests: &mut [Quest], known: &HashSet<i64>) {
+    let mut doable: HashSet<i64> = quests.iter().map(|q| q.id).chain(known.iter().copied()).collect();
     loop {
         let mut changed = false;
         for q in quests.iter_mut() {

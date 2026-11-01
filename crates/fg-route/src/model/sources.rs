@@ -145,7 +145,15 @@ pub(super) struct Sources {
 }
 
 impl Sources {
-    pub(super) fn read(conn: &Connection, world: &World, profile: &Profile, params: &Params) -> Result<Self> {
+    pub(super) fn read(
+        conn: &Connection,
+        world: &World,
+        profile: &Profile,
+        params: &Params,
+        known_rewards: &HashSet<i64>,
+        known_prerequisites: &HashSet<i64>,
+        reward_quests: &HashSet<i64>,
+    ) -> Result<Self> {
         let mut entities = Entities::load(conn, profile.faction)?;
         let start = start_place(&entities, world, profile)?;
         let reachable = world.reachable_continents(start.pos.continent);
@@ -160,7 +168,15 @@ impl Sources {
         Ok(Self {
             elites: EliteSpawns::new(&entities, world),
             guards: super::Guards::load(conn, world)?,
-            class_quest_ids: class_quest_ids(&rows, profile, &links),
+            class_quest_ids: class_quest_ids(
+                &rows,
+                profile,
+                &links,
+                known_rewards,
+                known_prerequisites,
+                reward_quests,
+                params.max_quest_above,
+            ),
             relations: relations(conn)?,
             links,
             default_xp: default_xp(conn, params)?,
@@ -315,27 +331,43 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
     Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
-/// The class quests the profile requires, of the classes in the group; another player's come
-/// with the rest of their chain (its prerequisites are of that class too, under other names).
-fn class_quest_ids(rows: &[QuestRow], profile: &Profile, links: &HashMap<i64, Vec<(LinkKind, i64)>>) -> HashSet<i64> {
-    let mut ids: HashSet<i64> = rows
+/// Retain missing spell-unlock chains; known rewards do not require repeating their quests.
+fn class_quest_ids(
+    rows: &[QuestRow],
+    profile: &Profile,
+    links: &HashMap<i64, Vec<(LinkKind, i64)>>,
+    known: &HashSet<i64>,
+    known_prerequisites: &HashSet<i64>,
+    reward_quests: &HashSet<i64>,
+    max_above: i64,
+) -> HashSet<i64> {
+    let mut ids: HashSet<_> = rows
         .iter()
         .filter(|r| profile.class_ids().iter().any(|c| r.of_class(*c)))
-        .filter(|r| profile.required_class_quests.iter().any(|n| n == &r.name))
-        // Of a member's race and class.
+        .filter(|r| profile.required_class_quests.contains(&r.name) || reward_quests.contains(&r.id))
+        .filter(|r| !known.contains(&r.id))
+        .filter(|r| {
+            reward_quests.contains(&r.id)
+                || r.classes.is_some_and(|m| m & profile.class_bit() == 0)
+                || profile.within_levels(r.level.unwrap_or(1).max(1), r.min_level.unwrap_or(1).max(1), max_above)
+        })
         .filter(|r| r.classes.is_some_and(|m| m != 0) && profile.members_of(r.races, r.classes) != 0)
         .filter(|r| r.min_level.unwrap_or(1) <= profile.to_level)
         .map(|r| r.id)
         .collect();
-    let others: HashSet<i64> = rows
+    let eligible: HashSet<_> = rows
         .iter()
-        .filter(|r| r.classes.is_some_and(|m| m != 0 && m & profile.class_bit() == 0))
+        .filter(|r| profile.members_of(r.races, r.classes) != 0)
         .map(|r| r.id)
         .collect();
-    let mut stack: Vec<i64> = ids.iter().copied().filter(|id| others.contains(id)).collect();
+    let mut stack: Vec<_> = ids.iter().copied().collect();
     while let Some(id) = stack.pop() {
         for &(kind, pre) in links.get(&id).into_iter().flatten() {
-            if matches!(kind, LinkKind::PreAll | LinkKind::PreAny) && others.contains(&pre) && ids.insert(pre) {
+            if matches!(kind, LinkKind::PreAll | LinkKind::PreAny)
+                && eligible.contains(&pre)
+                && !known_prerequisites.contains(&pre)
+                && ids.insert(pre)
+            {
                 stack.push(pre);
             }
         }

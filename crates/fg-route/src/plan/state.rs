@@ -365,12 +365,11 @@ impl State {
     /// The class teleport `i` is learned: at its city's trainer (a mage learns Teleport: Ironforge
     /// in Ironforge), or on taking one of the quests teaching it.
     pub(crate) fn knows(&self, i: usize, tp: &crate::model::Teleport) -> bool {
-        tp.level <= self.trained
-            && if tp.quests.is_empty() {
-                self.taught & (1 << i) != 0
-            } else {
-                tp.quests.iter().any(|&q| self.accepted[q] || self.turned[q])
-            }
+        if tp.ability != 0 {
+            self.abilities & tp.ability != 0
+        } else {
+            tp.level <= self.trained && self.taught & (1 << i) != 0
+        }
     }
 }
 

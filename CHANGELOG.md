@@ -27,6 +27,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - A quest item that rots is looted right before the objective using it: the Fresh Zhevra Carcass (30 minutes) just before Ishamuhale, instead of hours earlier (WoW Forever and Classic).
 - A must-have quest is planned even when its mobs are elites (Forever's Rare Books, whose books drop from Mother Fang and two other elites).
 - A quest item whose name holds a colon ("Picture Book: Fun with Elementals") is looted once, not six times.
+- Missing class unlocks keep their prerequisites; known unlocks are not repeated. Druids include Moonglade by default.
 - Guides complete must-have quests and their prerequisites, even past the target level.
 - WoW Forever: the new dungeons follow the game's level ranges, not their quests' levels: Ruins of Lordaeron 15-20 (was 21-22), Excavation Site 24-29, City of Dalaran 28-33.
 - WoW Forever: Ruins of Lordaeron's quests started by an item found inside (Crest of Lordaeron, Remember That I Love You) are planned, taken during the run.

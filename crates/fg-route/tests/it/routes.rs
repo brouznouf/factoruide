@@ -2540,12 +2540,10 @@ fn druid_bear_form_through_moonglade() {
         .iter()
         .find(|t| t.name == "Teleport: Moonglade")
         .unwrap();
-    let taught: Vec<&str> = teleport
-        .quests
-        .iter()
-        .map(|&i| p.model.quests[i].name.as_str())
-        .collect();
-    assert!(!taught.is_empty() && taught.iter().all(|n| *n == "Moonglade"));
+    assert_eq!(
+        teleport.ability,
+        p.model.abilities.bit(18960).expect("Moonglade ability")
+    );
     assert!(
         p.model
             .teleports

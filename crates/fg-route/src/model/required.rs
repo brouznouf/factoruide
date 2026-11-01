@@ -110,6 +110,7 @@ impl Requirements<'_> {
 pub(super) fn apply(
     quests: &mut Vec<Quest>,
     rows: &[super::sources::QuestRow],
+    class_quests: &HashSet<i64>,
     skipped: &[(i64, String, String)],
     profile: &Profile,
     params: &Params,
@@ -158,6 +159,8 @@ pub(super) fn apply(
         })
         .map(|r| r.id)
         .collect();
-    quests.retain(|q| !incompatible.contains(&q.id) && (q.required || ordinary.contains(&q.id)));
+    quests.retain(|q| {
+        !incompatible.contains(&q.id) && (q.required || class_quests.contains(&q.id) || ordinary.contains(&q.id))
+    });
     Ok(())
 }
