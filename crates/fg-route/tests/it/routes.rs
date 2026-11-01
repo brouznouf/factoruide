@@ -3430,11 +3430,11 @@ fn a_dungeon_forced_with_its_quests_takes_them_all() {
         );
     }
 }
-/// A forced dungeon can be run up to the target level, past the levels its window gives it
-/// (GitHub #66): with nine dungeons forced, each window is too short for them all, and the
-/// Alliance's far away Wailing Caverns was left out for the penalty of a missing dungeon.
+/// A forced dungeon stays within the levels of its window: the route that cannot run it there is
+/// refused (GitHub #84, a forced Ragefire Chasm run at level 47). A dungeon a must-have quest
+/// needs is run past them.
 #[test]
-fn a_forced_dungeon_is_not_held_to_its_levels() {
+fn a_forced_dungeon_is_held_to_its_levels() {
     let levels = |change: fn(&mut fg_route::Params)| {
         let p = with_deadmines(leveling(30)).params(change).build();
         (p.model.dungeons[0].min_level, p.model.dungeons[0].max_level)
@@ -3446,14 +3446,30 @@ fn a_forced_dungeon_is_not_held_to_its_levels() {
         levels(|p| {
             (p.dungeon_from, p.dungeon_to, p.forced_dungeons) = (-1, 3, vec![900]);
         }),
-        (min, 30)
+        (min, window_end)
     );
     assert_eq!(
         levels(|p| {
             (p.dungeon_from, p.dungeon_to, p.forced_dungeon_quests) = (-1, 3, vec![900]);
         }),
-        (min, 30)
+        (min, window_end)
     );
+}
+
+/// A guide that starts past the levels of a forced dungeon cannot run it: the request is refused
+/// at once, saying which dungeon.
+#[test]
+fn a_forced_dungeon_below_the_start_level_is_refused() {
+    let scenario = |from: i64, forced: Vec<i64>| {
+        with_deadmines(leveling(60))
+            .levels(from, 60)
+            .params(move |p| p.forced_dungeons = forced)
+            .try_build()
+    };
+    let error = scenario(28, vec![900]).err().expect("refused").to_string();
+    assert!(error.contains("The Deadmines") && error.contains("forced"), "{error}");
+    assert!(scenario(28, vec![]).is_ok(), "not forced: left aside");
+    assert!(scenario(20, vec![900]).is_ok(), "still within its levels");
 }
 
 /// A mage learns each city's teleport from that city's trainer (GitHub #75): the guide teleports
