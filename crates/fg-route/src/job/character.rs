@@ -243,3 +243,74 @@ fn required_class_quests(
     }
     quests
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::job::MapPos;
+    use crate::xp::Edition;
+
+    fn player(name: &str, race: i64, class: &str, level: i64) -> StartState {
+        StartState {
+            name: name.into(),
+            race,
+            class: class.to_uppercase(),
+            level,
+            ..StartState::default()
+        }
+    }
+
+    /// Why a group is refused, or an empty string.
+    fn refusal(start: StartState, mates: Vec<StartState>) -> String {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../overrides");
+        let overrides = Overrides::load_edition(&dir, Edition::Classic).unwrap();
+        let req = PlanRequest {
+            start: Some(start),
+            mates,
+            ..serde_json::from_value(serde_json::json!({
+                "race": "human", "class": "warrior", "from_level": 1, "to_level": 30,
+            }))
+            .unwrap()
+        };
+        let members = req.members(overrides.params.edition.rules());
+        check_group(&overrides, &req, &members).err().map(|e| e.to_string()).unwrap_or_default()
+    }
+
+    /// A group guide needs every player at level 10, or all in one zone, and of one faction,
+    /// five players at most.
+    #[test]
+    fn group_guides_have_rules() {
+        // Below level 10 it needs the same zone for everyone.
+        let at = |mut p: StartState, map: i64| {
+            p.position = Some(MapPos { map, x: 50.0, y: 50.0 });
+            p
+        };
+        let low = refusal(at(player("A", 1, "warrior", 12), 1429), vec![player("B", 1, "mage", 9)]);
+        assert!(low.contains("level 10"), "{low}");
+        // New characters the addon never saw start at their race's starting place: an orc and a
+        // troll together in the Valley of Trials, not a human and a dwarf.
+        let new = refusal(player("A", 2, "warrior", 1), vec![player("B", 8, "mage", 1)]);
+        assert!(new.is_empty(), "{new}");
+        let far = refusal(player("A", 1, "warrior", 1), vec![player("B", 3, "mage", 1)]);
+        assert!(far.contains("same zone"), "{far}");
+        let apart = refusal(
+            at(player("A", 1, "warrior", 5), 1429),
+            vec![at(player("B", 1, "mage", 6), 1426)],
+        );
+        assert!(apart.contains("same zone"), "{apart}");
+        let together = refusal(
+            at(player("A", 1, "warrior", 5), 1429),
+            vec![at(player("B", 1, "mage", 6), 1429)],
+        );
+        assert!(together.is_empty(), "new characters together in Elwynn: {together}");
+        let horde = refusal(player("A", 1, "warrior", 12), vec![player("B", 2, "warrior", 12)]);
+        assert!(horde.contains("faction"), "{horde}");
+        let six = refusal(
+            player("A", 1, "warrior", 12),
+            (0..5).map(|k| player(&format!("B{k}"), 1, "mage", 12)).collect(),
+        );
+        assert!(six.contains("at most"), "{six}");
+        let twice = refusal(player("A", 1, "warrior", 12), vec![player("A", 1, "warrior", 12)]);
+        assert!(twice.contains("twice"), "{twice}");
+    }
+}

@@ -544,8 +544,15 @@ impl Scenario {
         // The players: the character is the first, the others its mates.
         if let Some(first) = first {
             self.profile.player.clone_from(&first.name);
-            self.profile.race_id = first.race;
+            self.profile.from_level = first.level;
+            if first.race != 0 {
+                self.profile.race_id = first.race;
+            }
             self.profile.class_id = class_id(&first.class);
+            if !first.class.is_empty() {
+                let lower = first.class.to_lowercase();
+                self.profile.class_name = lower[..1].to_uppercase() + &lower[1..];
+            }
         }
         self.profile.mates = members
             .iter()

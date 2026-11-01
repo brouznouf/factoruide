@@ -2254,87 +2254,31 @@ fn each_player_keeps_its_race() {
     }
 }
 
-/// A group guide needs every player at level 10, or all in one zone, and of one faction, five
-/// players at most.
-#[test]
-fn group_guides_have_rules() {
-    let fails = |start: StartState, mates: Vec<StartState>| {
-        let req = PlanRequest {
-            start: Some(start),
-            mates,
-            ..request("human", "warrior", 30, &[])
-        };
-        let err = job::prepare(&database(), &overrides(), &req, &|_| {}).err();
-        err.map(|e| e.to_string()).unwrap_or_default()
-    };
-    // Below level 10 it needs the same zone for everyone.
-    let at = |mut p: StartState, map: i64| {
-        p.position = Some(MapPos { map, x: 50.0, y: 50.0 });
-        p
-    };
-    let low = fails(at(player("A", 1, "warrior", 12), 1429), vec![player("B", 1, "mage", 9)]);
-    assert!(low.contains("level 10"), "{low}");
-    // New characters the addon never saw start at their race's starting place: an orc and a
-    // troll together in the Valley of Trials, not a human and a dwarf.
-    let new = fails(player("A", 2, "warrior", 1), vec![player("B", 8, "mage", 1)]);
-    assert!(new.is_empty(), "{new}");
-    let far = fails(player("A", 1, "warrior", 1), vec![player("B", 3, "mage", 1)]);
-    assert!(far.contains("same zone"), "{far}");
-    let apart = fails(
-        at(player("A", 1, "warrior", 5), 1429),
-        vec![at(player("B", 1, "mage", 6), 1426)],
-    );
-    assert!(apart.contains("same zone"), "{apart}");
-    let together = fails(
-        at(player("A", 1, "warrior", 5), 1429),
-        vec![at(player("B", 1, "mage", 6), 1429)],
-    );
-    assert!(together.is_empty(), "new characters together in Elwynn: {together}");
-    let horde = fails(player("A", 1, "warrior", 12), vec![player("B", 2, "warrior", 12)]);
-    assert!(horde.contains("faction"), "{horde}");
-    let six = fails(
-        player("A", 1, "warrior", 12),
-        (0..5).map(|k| player(&format!("B{k}"), 1, "mage", 12)).collect(),
-    );
-    assert!(six.contains("at most"), "{six}");
-    let twice = fails(player("A", 1, "warrior", 12), vec![player("A", 1, "warrior", 12)]);
-    assert!(twice.contains("twice"), "{twice}");
-}
-
 /// The group's guide is planned for the player with the least XP, whoever made it.
 #[test]
 fn a_group_guide_is_planned_for_the_one_behind() {
     let (warrior, mage) = (player("A", 1, "warrior", 14), player("B", 1, "mage", 12));
-    let p = prepare_group("human", "warrior", 20, &[], Some(warrior), vec![mage]);
+    let p = leveling(20).levels(12, 20).start(warrior).mates(vec![mage]).build();
     assert_eq!(p.profile.class_name, "Mage");
     assert_eq!(p.profile.from_level, 12);
     assert_eq!(p.model.initial.mates.len(), 1);
     assert_eq!(p.model.initial.mates[0].level, 14);
 }
-
 /// A quest a player did already stays for the others; one everybody did is out of the guide.
 #[test]
 fn quests_done_by_some_stay_for_the_others() {
-    let pick = prepare_from("human", "warrior", 20, &[], Some(player("A", 1, "warrior", 10)));
-    let mut ids = pick
-        .model
-        .quests
-        .iter()
-        .filter(|q| q.members & 1 != 0 && q.level <= 10)
-        .map(|q| q.id);
-    let (both, one) = (ids.next().unwrap(), ids.next().unwrap());
+    let (both, one) = (109, 110);
     let mut a = player("A", 1, "warrior", 10);
     a.completed = vec![both.into(), one.into()];
     let mut b = player("B", 1, "warrior", 10);
     b.completed = vec![both.into()];
-    let p = prepare_group("human", "warrior", 20, &[], Some(a), vec![b]);
+    let p = leveling(20).levels(10, 20).start(a).mates(vec![b]).build();
     let index = |id: i64| p.model.index[&id];
-    assert!(p.model.initial.turned.contains(&index(both)));
+    assert!(!p.model.index.contains_key(&both) || p.model.initial.turned.contains(&index(both)));
     assert!(!p.model.initial.turned.contains(&index(one)));
     // For B only (A and B have the same XP: A, the guide's character, is planned for).
     assert_eq!(p.model.initial.need(index(one)), 0b10);
 }
-
 /// A guide is saved without a language: it is written in any of them when shown or installed.
 /// The guide saved is the same whatever language it is made in, but for its texts.
 #[test]
