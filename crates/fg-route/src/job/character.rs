@@ -281,7 +281,10 @@ mod tests {
             .unwrap()
         };
         let members = req.members(overrides.params.edition.rules());
-        check_group(&overrides, &req, &members).err().map(|e| e.to_string()).unwrap_or_default()
+        check_group(&overrides, &req, &members)
+            .err()
+            .map(|e| e.to_string())
+            .unwrap_or_default()
     }
 
     /// The class power curve and gear dependence of the advanced settings replace the class's.
@@ -293,7 +296,10 @@ mod tests {
         assert!(curve[15] < 0.0 && (gear - 1.5).abs() < 1e-9);
         let own = overrides
             .params
-            .with_overrides(&["power_curve=[[10, 1.0], [30, 2.0]]".to_owned(), "power_gear=0.5".to_owned()])
+            .with_overrides(&[
+                "power_curve=[[10, 1.0], [30, 2.0]]".to_owned(),
+                "power_gear=0.5".to_owned(),
+            ])
             .unwrap();
         let (curve, gear) = class_power(&overrides, "warrior", &own, 100).unwrap();
         assert!((curve[5] - 1.0).abs() < 1e-9);

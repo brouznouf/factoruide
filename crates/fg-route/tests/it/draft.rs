@@ -183,10 +183,19 @@ fn a_dungeon_quest_without_its_run_is_an_error() {
         .params(|p| p.forced_dungeons = vec![DEADMINES]);
     for (id, name) in [(300, "Red Silk Bandanas"), (301, "Collecting Memories")] {
         scenario = scenario.quest(
-            Q::new(id, name)
-                .level(18)
-                .giver(1, 40.0, 40.0)
-                .objective(Obj::kill("Defias", 18, 6, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+            Q::new(id, name).level(18).giver(1, 40.0, 40.0).objective(
+                Obj::kill(
+                    "Defias",
+                    18,
+                    6,
+                    At {
+                        zone: 1,
+                        x: 70.0,
+                        y: 70.0,
+                    },
+                )
+                .inside(0),
+            ),
         );
     }
     let (editor, guide) = scenario.guide();

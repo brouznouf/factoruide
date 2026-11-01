@@ -64,7 +64,6 @@ pub fn leveling(to_level: i64) -> Scenario {
     s
 }
 
-
 /// The walking world of an edition for a faction, loaded once for the tests that only read it.
 pub fn world(edition: fg_route::xp::Edition, faction: fg_route::faction::Faction) -> &'static fg_route::world::World {
     static WORLDS: Mutex<Vec<(String, &'static fg_route::world::World)>> = Mutex::new(Vec::new());
@@ -74,8 +73,9 @@ pub fn world(edition: fg_route::xp::Edition, faction: fg_route::faction::Faction
         return world;
     }
     let overrides = fg_route::job::Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-    let world: &'static fg_route::world::World =
-        Box::leak(Box::new(fg_route::job::game_world(&database_of(edition.key()), &overrides, faction, 0).unwrap()));
+    let world: &'static fg_route::world::World = Box::leak(Box::new(
+        fg_route::job::game_world(&database_of(edition.key()), &overrides, faction, 0).unwrap(),
+    ));
     worlds.push((key, world));
     world
 }

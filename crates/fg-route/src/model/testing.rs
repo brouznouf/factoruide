@@ -10,12 +10,19 @@
 //!     .build();
 //! ```
 
-#![allow(clippy::return_self_not_must_use, reason = "builders chained by the tests, which use the result")]
-#![allow(clippy::must_use_candidate, reason = "builders chained by the tests, which use the result")]
+#![allow(
+    clippy::return_self_not_must_use,
+    reason = "builders chained by the tests, which use the result"
+)]
+#![allow(
+    clippy::must_use_candidate,
+    reason = "builders chained by the tests, which use the result"
+)]
 
 use super::farm::MobRow;
 use super::{
-    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, chains, required, sources::QuestRow,
+    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, chains, required,
+    sources::QuestRow,
 };
 use crate::faction::Faction;
 use crate::job::{PlanRequest, Prepared, StartState};
@@ -309,7 +316,11 @@ impl Q {
             .map(|(k, o)| {
                 let loc_id = 200_000 + id * 10 + k as i64;
                 let loc = Loc {
-                    kind: if o.kills > 0.0 { EntityKind::Npc } else { EntityKind::Object },
+                    kind: if o.kills > 0.0 {
+                        EntityKind::Npc
+                    } else {
+                        EntityKind::Object
+                    },
                     id: loc_id,
                     ..Self::at(o.at, 0, &o.text, world)
                 };
@@ -325,7 +336,11 @@ impl Q {
                     count: o.kills.max(o.uses),
                     slot: u8::try_from(k + 1).ok(),
                     // The creatures to target: one of the objective's name.
-                    mobs: if o.kills > 0.0 { vec![(loc_id, o.text.clone())] } else { Vec::new() },
+                    mobs: if o.kills > 0.0 {
+                        vec![(loc_id, o.text.clone())]
+                    } else {
+                        Vec::new()
+                    },
                     ..Objective::plain(loc, o.text.clone(), 0.0)
                 }
             })
@@ -395,7 +410,11 @@ impl Scenario {
     /// A character of a request (its race, class, levels and settings) in a scenario with the
     /// class's spells and power read from the database, and nothing else of it: for the tests of
     /// what a character knows and learns.
-    pub fn of_class(conn: &rusqlite::Connection, overrides: &crate::job::Overrides, req: &PlanRequest) -> anyhow::Result<Self> {
+    pub fn of_class(
+        conn: &rusqlite::Connection,
+        overrides: &crate::job::Overrides,
+        req: &PlanRequest,
+    ) -> anyhow::Result<Self> {
         let (profile, params) = crate::job::character(conn, overrides, req)?;
         let abilities = crate::abilities::Abilities::load(conn, &profile)?;
         let power = crate::power::PowerModel::load(
@@ -553,7 +572,12 @@ impl Scenario {
                 .unwrap_or_else(|e| panic!("{e}"))
             })
             .collect();
-        world.add_links(&boats, self.profile.faction, self.params.run_speed, self.params.link_wait);
+        world.add_links(
+            &boats,
+            self.profile.faction,
+            self.params.run_speed,
+            self.params.link_wait,
+        );
         let start = Q::at(
             At {
                 zone: 1,
@@ -642,7 +666,9 @@ impl Scenario {
             .collect();
         self.params.group_size = members.len().max(1) as i64;
         // What the character did; in a group, what every player who could do it did.
-        self.profile.completed_quests = first.map(|s| s.completed.iter().map(|q| q.0).collect()).unwrap_or_default();
+        self.profile.completed_quests = first
+            .map(|s| s.completed.iter().map(|q| q.0).collect())
+            .unwrap_or_default();
         if members.len() > 1 {
             self.profile
                 .completed_quests
@@ -716,10 +742,25 @@ impl Scenario {
             })
             .collect();
         let place = |at: At, id: i64, name: &str| Q::at(at, id, name, &world);
-        model.trainers = self.trainers.iter().enumerate().map(|(i, &at)| place(at, 400_000 + i as i64, "Trainer")).collect();
-        model.vendors = self.vendors.iter().enumerate().map(|(i, &at)| place(at, 500_000 + i as i64, "Vendor")).collect();
+        model.trainers = self
+            .trainers
+            .iter()
+            .enumerate()
+            .map(|(i, &at)| place(at, 400_000 + i as i64, "Trainer"))
+            .collect();
+        model.vendors = self
+            .vendors
+            .iter()
+            .enumerate()
+            .map(|(i, &at)| place(at, 500_000 + i as i64, "Vendor"))
+            .collect();
         if !self.inns.is_empty() {
-            model.inns = self.inns.iter().enumerate().map(|(i, &(name, at))| place(at, 600_000 + i as i64, name)).collect();
+            model.inns = self
+                .inns
+                .iter()
+                .enumerate()
+                .map(|(i, &(name, at))| place(at, 600_000 + i as i64, name))
+                .collect();
             model.start_inn = 0;
         }
         model.initial.known = self
@@ -785,9 +826,22 @@ impl Scenario {
 /// The game's ID of a class (its file name, any case).
 fn class_id(class: &str) -> i64 {
     const CLASSES: [&str; 11] = [
-        "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "DEATHKNIGHT", "SHAMAN", "MAGE", "WARLOCK", "MONK", "DRUID",
+        "WARRIOR",
+        "PALADIN",
+        "HUNTER",
+        "ROGUE",
+        "PRIEST",
+        "DEATHKNIGHT",
+        "SHAMAN",
+        "MAGE",
+        "WARLOCK",
+        "MONK",
+        "DRUID",
     ];
-    CLASSES.iter().position(|c| c.eq_ignore_ascii_case(class)).map_or(1, |i| i as i64 + 1)
+    CLASSES
+        .iter()
+        .position(|c| c.eq_ignore_ascii_case(class))
+        .map_or(1, |i| i as i64 + 1)
 }
 
 /// A character of `faction` going from level `from` to `to`.

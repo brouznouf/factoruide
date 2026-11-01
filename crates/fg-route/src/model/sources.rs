@@ -782,18 +782,28 @@ mod links_tests {
         )
         .unwrap();
         for q in quests {
-            conn.execute("INSERT INTO m_quest VALUES (?1, ?2, ?3)", rusqlite::params![q.0, q.1, q.2])
-                .unwrap();
+            conn.execute(
+                "INSERT INTO m_quest VALUES (?1, ?2, ?3)",
+                rusqlite::params![q.0, q.1, q.2],
+            )
+            .unwrap();
         }
         for l in links {
-            conn.execute("INSERT INTO m_quest_link VALUES (?1, ?2, ?3)", rusqlite::params![l.0, l.1, l.2])
-                .unwrap();
+            conn.execute(
+                "INSERT INTO m_quest_link VALUES (?1, ?2, ?3)",
+                rusqlite::params![l.0, l.1, l.2],
+            )
+            .unwrap();
         }
         conn
     }
 
     fn any_of(links: &HashMap<i64, Vec<(LinkKind, i64)>>, quest: i64) -> Vec<i64> {
-        let mut ids: Vec<i64> = links[&quest].iter().filter(|(k, _)| *k == LinkKind::PreAny).map(|l| l.1).collect();
+        let mut ids: Vec<i64> = links[&quest]
+            .iter()
+            .filter(|(k, _)| *k == LinkKind::PreAny)
+            .map(|l| l.1)
+            .collect();
         ids.sort_unstable();
         ids
     }
@@ -814,7 +824,10 @@ mod links_tests {
         assert_eq!(any_of(&links_of(&character(Faction::Horde, ORC, WARRIOR)), 794), [792]);
         assert_eq!(any_of(&links_of(&character(Faction::Horde, ORC, WARLOCK)), 794), [1499]);
         // A human can do neither: the links stay as they are.
-        assert_eq!(any_of(&links_of(&character(Faction::Alliance, HUMAN, WARRIOR)), 794), [792, 1499]);
+        assert_eq!(
+            any_of(&links_of(&character(Faction::Alliance, HUMAN, WARRIOR)), 794),
+            [792, 1499]
+        );
         // A group of a warrior and a warlock needs both branches.
         let mut group = character(Faction::Horde, ORC, WARRIOR);
         group.mates = vec![Mate {
@@ -848,7 +861,13 @@ mod links_tests {
     fn a_link_is_kept_once_with_its_kind() {
         let conn = db(
             &[(1, 0, 0), (2, 0, 0), (3, 0, 0)],
-            &[(3, "pre_all", 1), (3, "pre_all", 1), (3, "exclusive", 2), (3, "child", 2), (3, "breadcrumb", 1)],
+            &[
+                (3, "pre_all", 1),
+                (3, "pre_all", 1),
+                (3, "exclusive", 2),
+                (3, "child", 2),
+                (3, "breadcrumb", 1),
+            ],
         );
         let kept = &links(&conn, &character(Faction::Horde, ORC, WARRIOR)).unwrap()[&3];
         assert_eq!(kept.iter().filter(|l| **l == (LinkKind::PreAll, 1)).count(), 1);

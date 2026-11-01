@@ -2,10 +2,10 @@
 //! impossible steps reported. The guides are those of a small scenario built by hand (a valley, a
 //! plain and a far barrens, a trainer, two flight masters).
 
+use crate::common::leveling;
 use crate::common::repo;
 use fg_route::job::{Editor, Overrides, PlanOutcome, PlanRequest, RouteStep};
 use fg_route::model::Names;
-use crate::common::leveling;
 use fg_route::testing::{Q, Scenario};
 use fg_route::xp::Edition;
 use std::sync::OnceLock;
@@ -257,15 +257,42 @@ fn a_guide_with_a_child_quest_replays_in_the_editor() {
             Q::new(3909, "The Videre Elixir")
                 .level(48)
                 .giver(1, 40.0, 40.0)
-                .objective(Obj::visit("Videre Elixir", At { zone: 1, x: 40.0, y: 40.0 }).handed_by(&[4041])),
+                .objective(
+                    Obj::visit(
+                        "Videre Elixir",
+                        At {
+                            zone: 1,
+                            x: 40.0,
+                            y: 40.0,
+                        },
+                    )
+                    .handed_by(&[4041]),
+                ),
         )
-        .quest(Q::new(4041, "The Videre Elixir").level(48).while_in_log(&[3909]).giver(1, 60.0, 60.0).kill("Imp", 48, 4, 1, 62.0, 62.0))
-        .quest(Q::new(3912, "Meet at the Grave").level(48).after(&[3909]).giver(1, 41.0, 41.0).kill("Ghoul", 48, 4, 1, 45.0, 45.0))
+        .quest(
+            Q::new(4041, "The Videre Elixir")
+                .level(48)
+                .while_in_log(&[3909])
+                .giver(1, 60.0, 60.0)
+                .kill("Imp", 48, 4, 1, 62.0, 62.0),
+        )
+        .quest(
+            Q::new(3912, "Meet at the Grave")
+                .level(48)
+                .after(&[3909])
+                .giver(1, 41.0, 41.0)
+                .kill("Ghoul", 48, 4, 1, 45.0, 45.0),
+        )
         .required(3912)
         .guide();
     let (steps, _) = editor.steps(&outcome);
     let report = editor.simulate(&steps, &Names::default());
-    let broken: Vec<_> = steps.iter().zip(&report.steps).filter(|(_, r)| r.status == "error").map(|(s, r)| (s, r.reason)).collect();
+    let broken: Vec<_> = steps
+        .iter()
+        .zip(&report.steps)
+        .filter(|(_, r)| r.status == "error")
+        .map(|(s, r)| (s, r.reason))
+        .collect();
     assert_eq!(report.errors, 0, "{broken:?}");
 }
 

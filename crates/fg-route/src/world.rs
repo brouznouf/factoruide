@@ -138,21 +138,43 @@ type LiftSides = (usize, usize, usize);
 /// database in memory (nothing tells it from another).
 pub(crate) fn file_stamp(conn: &Connection) -> Option<u64> {
     use std::hash::{Hash, Hasher};
-    let path = conn.path().filter(|p| !p.is_empty())?;
+    let Some(path) = conn.path().filter(|p| !p.is_empty()) else {
+        return named_stamp(conn);
+    };
     let meta = std::fs::metadata(path).ok()?;
     let mut h = std::collections::hash_map::DefaultHasher::new();
     (path, meta.modified().ok()?, meta.len()).hash(&mut h);
     Some(h.finish())
 }
 
+/// Say which database a connection in memory holds (`id`: the same for the same bytes), so that
+/// what is worked out from it (the walks, the dungeons' levels) is kept for the next connection
+/// to it. Without it nothing tells a database in memory from another.
+///
+/// # Errors
+///
+/// When the connection cannot be written to (it is read-only).
+pub fn name_database(conn: &Connection, id: u64) -> rusqlite::Result<()> {
+    conn.execute_batch("CREATE TEMP TABLE IF NOT EXISTS fg_database_name (id INTEGER)")?;
+    conn.execute("DELETE FROM temp.fg_database_name", [])?;
+    conn.execute("INSERT INTO temp.fg_database_name VALUES (?1)", [id as i64])?;
+    Ok(())
+}
+
+/// The name given to a database in memory (`name_database`).
+fn named_stamp(conn: &Connection) -> Option<u64> {
+    conn.query_row("SELECT id FROM temp.fg_database_name", [], |r| r.get::<_, i64>(0))
+        .ok()
+        .map(|id| id as u64)
+}
+
 /// Which database file a world is loaded from: its path, modification time and size, with the
 /// faction and drop tier. None for a database in memory (nothing tells it from another).
 fn database_stamp(conn: &Connection, faction: Faction, drop_tier: usize) -> Option<u64> {
     use std::hash::{Hash, Hasher};
-    let path = conn.path().filter(|p| !p.is_empty())?;
-    let meta = std::fs::metadata(path).ok()?;
+    let file = file_stamp(conn)?;
     let mut h = std::collections::hash_map::DefaultHasher::new();
-    (path, meta.modified().ok()?, meta.len(), faction.name(), drop_tier).hash(&mut h);
+    (file, faction.name(), drop_tier).hash(&mut h);
     Some(h.finish())
 }
 
@@ -237,12 +259,7 @@ static LINK_CHAINS: std::sync::Mutex<Vec<(u64, LinkChains)>> = std::sync::Mutex:
 
 type LinkChains = std::sync::Arc<Vec<Vec<Vec<f64>>>>;
 
-type PassWalks = std::sync::Arc<(
-    Vec<Vec<f64>>,
-    Vec<Vec<usize>>,
-    Vec<Vec<bool>>,
-    FxHashMap<u8, PassGraph>,
-)>;
+type PassWalks = std::sync::Arc<(Vec<Vec<f64>>, Vec<Vec<usize>>, Vec<Vec<bool>>, FxHashMap<u8, PassGraph>)>;
 
 /// A named place of a zone map (Ratchet, Valley of Trials...), at the center of its overlay.
 struct Landmark {
@@ -461,7 +478,11 @@ impl World {
     /// the corner of its square in world yards; a zone is 1000 yards on a side), no flight path,
     /// passage or link, and terrain without any obstacle.
     #[cfg(any(test, feature = "testing"))]
-    pub fn flat(zones: &[(i64, &str, i64, f64, f64)], flight_masters: &[(i64, &str, i64, f64, f64)], flight_speed: f64) -> Self {
+    pub fn flat(
+        zones: &[(i64, &str, i64, f64, f64)],
+        flight_masters: &[(i64, &str, i64, f64, f64)],
+        flight_speed: f64,
+    ) -> Self {
         let rects = zones
             .iter()
             .map(|&(id, _, continent, x, y)| {
@@ -523,11 +544,19 @@ impl World {
         world.direct = (0..n)
             .map(|i| {
                 (0..n)
-                    .map(|j| if i == j { 0.0 } else { seconds(&world.taxi_nodes[i], &world.taxi_nodes[j]) })
+                    .map(|j| {
+                        if i == j {
+                            0.0
+                        } else {
+                            seconds(&world.taxi_nodes[i], &world.taxi_nodes[j])
+                        }
+                    })
                     .collect()
             })
             .collect();
-        world.direct_cost = (0..n).map(|i| (0..n).map(|j| if i == j { 0.0 } else { 100.0 }).collect()).collect();
+        world.direct_cost = (0..n)
+            .map(|i| (0..n).map(|j| if i == j { 0.0 } else { 100.0 }).collect())
+            .collect();
         world.taxi_by_x = world.taxi_nodes.iter().enumerate().map(|(i, n)| (n.pos.x, i)).collect();
         world.taxi_by_x.sort_by(|a, b| a.0.total_cmp(&b.0));
         world
@@ -938,14 +967,23 @@ impl World {
         let key = self.stamp.map(|stamp| {
             use std::hash::{Hash, Hasher};
             let mut h = std::collections::hash_map::DefaultHasher::new();
-            (stamp, format!("{:?}", self.links), walk_speed.to_bits(), &self.link_quests).hash(&mut h);
+            (
+                stamp,
+                format!("{:?}", self.links),
+                walk_speed.to_bits(),
+                &self.link_quests,
+            )
+                .hash(&mut h);
             h.finish()
         });
         // One world computes them while the others wait for the same.
         let _computing = key.map(|_| LINK_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
         let kept = key.and_then(|key| {
             let cache = LINK_CHAINS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-            cache.iter().find(|(k, _)| *k == key).map(|(_, c)| std::sync::Arc::clone(c))
+            cache
+                .iter()
+                .find(|(k, _)| *k == key)
+                .map(|(_, c)| std::sync::Arc::clone(c))
         });
         if let Some(chains) = kept {
             self.link_chains.clone_from(chains.as_ref());
@@ -1357,9 +1395,12 @@ impl World {
         });
         let _computing = key.map(|_| PASS_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
         if let Some(key) = key
-            && let Some(walks) = (PASS_WALKS.lock().unwrap_or_else(std::sync::PoisonError::into_inner).iter())
-                .find(|(k, _)| *k == key)
-                .map(|(_, w)| std::sync::Arc::clone(w))
+            && let Some(walks) = (PASS_WALKS
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .iter())
+            .find(|(k, _)| *k == key)
+            .map(|(_, w)| std::sync::Arc::clone(w))
         {
             (self.pass_dist, self.pass_next, self.pass_shortcut, self.pass_closed) =
                 (walks.0.clone(), walks.1.clone(), walks.2.clone(), walks.3.clone());

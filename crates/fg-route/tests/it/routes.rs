@@ -124,11 +124,21 @@ fn quests_at_start_as(race: &str, class: &str, n: usize) -> Prepared {
         fg_route::faction::Faction::Horde
     };
     // Made-up quests anywhere for a level 1: the zones too strong for it do not count here.
-    let mut scenario = Scenario::new().levels(1, 2).faction(faction).zone(12, "Elwynn Forest").zone(1537, "Ironforge").params(|p| {
-        (p.zone_gap, p.camp_radius, p.farm_on_way, p.flight_learn_radius) = (0.0, 0.0, false, 0.0);
-    });
+    let mut scenario = Scenario::new()
+        .levels(1, 2)
+        .faction(faction)
+        .zone(12, "Elwynn Forest")
+        .zone(1537, "Ironforge")
+        .params(|p| {
+            (p.zone_gap, p.camp_radius, p.farm_on_way, p.flight_learn_radius) = (0.0, 0.0, false, 0.0);
+        });
     for i in 0..n {
-        scenario = scenario.quest(Q::new(900_000 + i as i64, &format!("quest {i}")).xp(0).observed().giver(1, 50.0, 50.0));
+        scenario = scenario.quest(
+            Q::new(900_000 + i as i64, &format!("quest {i}"))
+                .xp(0)
+                .observed()
+                .giver(1, 50.0, 50.0),
+        );
     }
     scenario.build()
 }
@@ -168,12 +178,28 @@ fn quests_at_start_on_the_data_as(race: &str, class: &str, n: usize) -> Prepared
 /// The leveling scenario with a dungeon (the Deadmines, area 900) and three quests done inside it.
 fn with_deadmines(scenario: Scenario) -> Scenario {
     let mut s = scenario.dungeon("The Deadmines", 1, 70.0, 70.0);
-    for (id, name) in [(300, "Red Silk Bandanas"), (301, "Collecting Memories"), (302, "The Defias Brotherhood")] {
+    for (id, name) in [
+        (300, "Red Silk Bandanas"),
+        (301, "Collecting Memories"),
+        (302, "The Defias Brotherhood"),
+    ] {
         s = s.quest(
             Q::new(id, name)
                 .level(18)
                 .giver(1, 40.0 + id as f64 - 300.0, 40.0)
-                .objective(Obj::kill("Defias", 18, 6, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+                .objective(
+                    Obj::kill(
+                        "Defias",
+                        18,
+                        6,
+                        At {
+                            zone: 1,
+                            x: 70.0,
+                            y: 70.0,
+                        },
+                    )
+                    .inside(0),
+                ),
         );
     }
     s
@@ -226,13 +252,28 @@ fn elite_camp_needs_a_few_levels_more() {
 #[test]
 fn item_handed_by_another_quest_waits_for_its_turn_in() {
     let p = leveling(30)
-        .quest(Q::new(583, "Jungle").level(5).giver(1, 30.0, 40.0).kill("Beast", 5, 3, 1, 32.0, 70.0))
+        .quest(
+            Q::new(583, "Jungle")
+                .level(5)
+                .giver(1, 30.0, 40.0)
+                .kill("Beast", 5, 3, 1, 32.0, 70.0),
+        )
         .quest(
             Q::new(338, "The Green Hills")
                 .level(6)
                 .after(&[583])
                 .giver(1, 31.0, 40.0)
-                .objective(Obj::visit("Chapter IV", At { zone: 1, x: 31.0, y: 40.0 }).handed_by(&[342])),
+                .objective(
+                    Obj::visit(
+                        "Chapter IV",
+                        At {
+                            zone: 1,
+                            x: 31.0,
+                            y: 40.0,
+                        },
+                    )
+                    .handed_by(&[342]),
+                ),
         )
         .quest(
             Q::new(342, "Chapter IV")
@@ -243,7 +284,11 @@ fn item_handed_by_another_quest_waits_for_its_turn_in() {
         )
         .build();
     let planner = planner(&p);
-    let (book, chapter, jungle) = (quest(&p, 338).unwrap(), quest(&p, 342).unwrap(), quest(&p, 583).unwrap());
+    let (book, chapter, jungle) = (
+        quest(&p, 338).unwrap(),
+        quest(&p, 342).unwrap(),
+        quest(&p, 583).unwrap(),
+    );
     let k = p.model.quests[book as usize]
         .objectives
         .iter()
@@ -261,14 +306,21 @@ fn item_handed_by_another_quest_waits_for_its_turn_in() {
         .collect();
     let bound = Stop::quest(book, Kind::Objective(k));
     let early: Vec<Stop> = take.iter().copied().chain([bound]).collect();
-    assert!(planner.simulate_full(&early, None).is_none(), "chapter counted before it is bound");
+    assert!(
+        planner.simulate_full(&early, None).is_none(),
+        "chapter counted before it is bound"
+    );
     let route: Vec<Stop> = take
         .iter()
         .copied()
         .chain(pages)
         .chain([Stop::quest(chapter, Kind::TurnIn), bound])
         .collect();
-    assert!(planner.simulate_full(&route, None).is_some(), "{:?}", planner.diagnose(&route));
+    assert!(
+        planner.simulate_full(&route, None).is_some(),
+        "{:?}",
+        planner.diagnose(&route)
+    );
 }
 /// The item starting a quest drops from a mob the character must be able to take on (a
 /// warlock, stronger than most classes in its twenties, a level earlier).
@@ -328,8 +380,20 @@ fn rare_drop_start_is_left_out() {
 fn reputation_goal_takes_its_factions_quests() {
     let taken = |goals: Vec<ReputationGoal>| {
         let mut p = leveling(2)
-            .quest(Q::new(800, "For Stormwind").level(1).xp(0).reputation(72, 250.0).giver(1, 30.0, 40.0))
-            .quest(Q::new(801, "For Ironforge").level(1).xp(0).reputation(69, 250.0).giver(1, 31.0, 40.0))
+            .quest(
+                Q::new(800, "For Stormwind")
+                    .level(1)
+                    .xp(0)
+                    .reputation(72, 250.0)
+                    .giver(1, 30.0, 40.0),
+            )
+            .quest(
+                Q::new(801, "For Ironforge")
+                    .level(1)
+                    .xp(0)
+                    .reputation(69, 250.0)
+                    .giver(1, 31.0, 40.0),
+            )
             .build();
         p.model.initial.reputation = vec![4000.0; goals.len()];
         p.params.reputation_goals = goals;
@@ -340,7 +404,10 @@ fn reputation_goal_takes_its_factions_quests() {
         ((turned(a), turned(b)), planner.reputation_reached(&route))
     };
     assert_eq!(
-        taken(vec![ReputationGoal { faction: 72, target: 9000 }]),
+        taken(vec![ReputationGoal {
+            faction: 72,
+            target: 9000
+        }]),
         ((true, false), vec![4250.0])
     );
     assert_eq!(taken(vec![]), ((false, false), vec![]));
@@ -350,7 +417,10 @@ fn reputation_goal_takes_its_factions_quests() {
 #[test]
 fn a_human_starts_with_stormwinds_reputation() {
     let goal = r#"reputation_goals=[{"faction":72,"target":9000}]"#;
-    assert_eq!(prepare("human", "warrior", 2, &[goal]).model.initial.reputation, vec![4000.0]);
+    assert_eq!(
+        prepare("human", "warrior", 2, &[goal]).model.initial.reputation,
+        vec![4000.0]
+    );
 }
 /// A forced zone's quests are all required: those filed under it or a subzone (Shadowglen's in
 /// Teldrassil), class quests given there (the night elf warrior's Simple Sigil), not those
@@ -495,7 +565,11 @@ fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
     let objective = |id| &p.model.quests[quest(&p, id).unwrap() as usize].objectives[0];
     for id in [168, 167] {
         let o = objective(id);
-        assert!(o.dungeon.is_some() && o.loc.kind == EntityKind::Item, "{id}: {:?}", o.loc.kind);
+        assert!(
+            o.dungeon.is_some() && o.loc.kind == EntityKind::Item,
+            "{id}: {:?}",
+            o.loc.kind
+        );
     }
     assert_eq!(objective(214).loc.kind, EntityKind::Dungeon);
 }
@@ -554,7 +628,11 @@ fn constructed_route_keeps_its_log_in_bounds() {
             .build();
         let planner = planner(&p);
         let route = planner.construct(|_| {});
-        assert!(planner.simulate(&route, None).is_some(), "{w:?}: {:?}", planner.diagnose(&route));
+        assert!(
+            planner.simulate(&route, None).is_some(),
+            "{w:?}: {:?}",
+            planner.diagnose(&route)
+        );
     }
 }
 
@@ -608,7 +686,10 @@ fn stopped_job_keeps_a_guide() {
     let interrupt = job::Interrupt::default();
     interrupt.stop();
     let begun = std::time::Instant::now();
-    let outcome = leveling(12).params(|p| p.effort = 100.0).job(&|_| {}, &interrupt, None).unwrap();
+    let outcome = leveling(12)
+        .params(|p| p.effort = 100.0)
+        .job(&|_| {}, &interrupt, None)
+        .unwrap();
     assert!(
         begun.elapsed() < std::time::Duration::from_secs(300),
         "took {:?}",
@@ -955,8 +1036,27 @@ fn item_used_by_an_objective_is_got_first() {
             Q::new(800, "Last Wish")
                 .level(5)
                 .giver(1, 30.0, 40.0)
-                .objective(Obj::kill("Fipps", 5, 1, At { zone: 1, x: 40.0, y: 70.0 }))
-                .objective(Obj::visit("Bury the remains", At { zone: 1, x: 60.0, y: 70.0 }).after(&[0])),
+                .objective(Obj::kill(
+                    "Fipps",
+                    5,
+                    1,
+                    At {
+                        zone: 1,
+                        x: 40.0,
+                        y: 70.0,
+                    },
+                ))
+                .objective(
+                    Obj::visit(
+                        "Bury the remains",
+                        At {
+                            zone: 1,
+                            x: 60.0,
+                            y: 70.0,
+                        },
+                    )
+                    .after(&[0]),
+                ),
         )
         .build();
     let marla = quest(&p, 800).unwrap();
@@ -1317,12 +1417,27 @@ fn quest_given_up_opens_no_follow_up() {
         .dungeon("Razorfen Kraul", 1, 70.0, 70.0)
         .params(|p| p.dungeons = false)
         .quest(
-            Q::new(800, "Mail")
-                .level(4)
-                .giver(1, 30.0, 40.0)
-                .objective(Obj::kill("Boss", 4, 1, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+            Q::new(800, "Mail").level(4).giver(1, 30.0, 40.0).objective(
+                Obj::kill(
+                    "Boss",
+                    4,
+                    1,
+                    At {
+                        zone: 1,
+                        x: 70.0,
+                        y: 70.0,
+                    },
+                )
+                .inside(0),
+            ),
         )
-        .quest(Q::new(801, "Armor").level(5).after(&[800]).giver(1, 31.0, 40.0).kill("Beast", 5, 3, 1, 33.0, 70.0))
+        .quest(
+            Q::new(801, "Armor")
+                .level(5)
+                .after(&[800])
+                .giver(1, 31.0, 40.0)
+                .kill("Beast", 5, 3, 1, 33.0, 70.0),
+        )
         .build();
     let (mail, armor) = (quest(&p, 800).unwrap(), quest(&p, 801).unwrap());
     let first = Stop::quest(quest(&p, 100).unwrap(), Kind::Accept);
@@ -1468,7 +1583,9 @@ fn addon_knows_the_mobs_of_each_step() {
 #[test]
 fn dungeon_quests_are_steps_of_their_own() {
     use fg_route::export::StepKind;
-    let p = with_deadmines(leveling(25)).params(|p| p.forced_dungeons = vec![900]).build();
+    let p = with_deadmines(leveling(25))
+        .params(|p| p.forced_dungeons = vec![900])
+        .build();
     let planner = planner(&p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -1551,8 +1668,27 @@ fn affray_grate_first_and_taken_strong_enough() {
                 .level(34)
                 .timed(600.0)
                 .giver(3, 30.0, 40.0)
-                .objective(Obj::kill("Big Will", 38, 1, At { zone: 3, x: 40.0, y: 70.0 }).after(&[1]))
-                .objective(Obj::visit("Grate", At { zone: 3, x: 39.0, y: 70.0 })),
+                .objective(
+                    Obj::kill(
+                        "Big Will",
+                        38,
+                        1,
+                        At {
+                            zone: 3,
+                            x: 40.0,
+                            y: 70.0,
+                        },
+                    )
+                    .after(&[1]),
+                )
+                .objective(Obj::visit(
+                    "Grate",
+                    At {
+                        zone: 3,
+                        x: 39.0,
+                        y: 70.0,
+                    },
+                )),
         )
         .build();
     let i = quest(&p, 800).unwrap();
@@ -1565,7 +1701,10 @@ fn affray_grate_first_and_taken_strong_enough() {
             Stop::quest(i, Kind::TurnIn),
         ]
     };
-    assert!(planner(&p).simulate(&route(will, grate), None).is_none(), "Big Will first");
+    assert!(
+        planner(&p).simulate(&route(will, grate), None).is_none(),
+        "Big Will first"
+    );
     let mut trace = Vec::new();
     planner(&p)
         .simulate(&route(grate, will), Some(&mut trace))
@@ -1580,7 +1719,11 @@ fn affray_grate_first_and_taken_strong_enough() {
         })
     };
     assert!(!given_up && level(Kind::TurnIn).is_some(), "turned in in time");
-    assert!(level(Kind::Accept).is_some_and(|l| l > 30), "taken stronger: {:?}", level(Kind::Accept));
+    assert!(
+        level(Kind::Accept).is_some_and(|l| l > 30),
+        "taken stronger: {:?}",
+        level(Kind::Accept)
+    );
 }
 /// Dungeon mobs keep their level: a character far above them gets no XP from the run (they used
 /// to follow the character's level).
@@ -1588,7 +1731,11 @@ fn affray_grate_first_and_taken_strong_enough() {
 fn outleveled_dungeon_gives_no_mob_xp() {
     let mut p = with_deadmines(leveling(40)).levels(32, 40).build();
     // Run that late only with levels chosen up to it, its mobs around level 18.
-    (p.model.dungeons[0].min_level, p.model.dungeons[0].max_level, p.model.dungeons[0].mob_level) = (14, 40, 18);
+    (
+        p.model.dungeons[0].min_level,
+        p.model.dungeons[0].max_level,
+        p.model.dungeons[0].mob_level,
+    ) = (14, 40, 18);
     let run = Stop {
         index: 0,
         kind: Kind::Dungeon,
@@ -1629,7 +1776,12 @@ fn map_pos(p: &Prepared, pos: &fg_route::world::Pos, zone: i64) -> MapPos {
 fn orc_valley() -> Scenario {
     leveling(30)
         .levels(1, 30)
-        .quest(Q::new(788, "Cutting Teeth").level(1).giver(1, 60.0, 60.0).kill("Boar", 1, 10, 1, 62.0, 62.0))
+        .quest(
+            Q::new(788, "Cutting Teeth")
+                .level(1)
+                .giver(1, 60.0, 60.0)
+                .kill("Boar", 1, 10, 1, 62.0, 62.0),
+        )
         .quest(
             Q::new(789, "Sting of the Scorpid")
                 .level(3)
@@ -1791,7 +1943,10 @@ fn quests_of_the_log_the_guide_does_not_finish_are_abandoned_first() {
 /// given up: the construction puts its turn-in where the route goes there.
 #[test]
 fn quest_complete_in_the_log_is_turned_in_on_the_way() {
-    let p = orc_valley().levels(4, 8).start(orc_met_in_game(vec![], true, 0)).build();
+    let p = orc_valley()
+        .levels(4, 8)
+        .start(orc_met_in_game(vec![], true, 0))
+        .build();
     let planner = planner(&p);
     let scorpids = quest(&p, 789).unwrap();
     let route = planner.construct(|_| {});
@@ -1952,7 +2107,13 @@ fn mage_teleports_to_a_capital() {
         .zone(12, "Elwynn Forest")
         .zone(1537, "Ironforge")
         .teleport("Teleport: Ironforge", 20, 1537, 50.0, 50.0)
-        .quest(Q::new(900_000, "quest 0").level(27).xp(0).observed().giver(1, 50.0, 50.0))
+        .quest(
+            Q::new(900_000, "quest 0")
+                .level(27)
+                .xp(0)
+                .observed()
+                .giver(1, 50.0, 50.0),
+        )
         .build();
     let ironforge = p.model.teleports[0].to.clone();
     let mut o = one_kill_east_of_start(&p, 0.0);
@@ -2683,14 +2844,28 @@ fn campfire_beside_the_giver_needs_no_power() {
                 .level(8)
                 .min_level(5)
                 .giver(1, 50.0, 40.0)
-                .objective(Obj::visit("Sit by the Basic Campfire", At { zone: 1, x: 50.5, y: 40.0 })),
+                .objective(Obj::visit(
+                    "Sit by the Basic Campfire",
+                    At {
+                        zone: 1,
+                        x: 50.5,
+                        y: 40.0,
+                    },
+                )),
         )
         .quest(
             Q::new(901, "Far fire")
                 .level(8)
                 .min_level(5)
                 .giver(1, 50.0, 40.0)
-                .objective(Obj::visit("Sit by the other fire", At { zone: 1, x: 80.0, y: 40.0 })),
+                .objective(Obj::visit(
+                    "Sit by the other fire",
+                    At {
+                        zone: 1,
+                        x: 80.0,
+                        y: 40.0,
+                    },
+                )),
         )
         .quest(
             Q::new(902, "Beasts at the door")
@@ -2704,7 +2879,11 @@ fn campfire_beside_the_giver_needs_no_power() {
     let might = fg_route::params::Might::PLAIN;
     let need = |id: i64| {
         let q = &p.model.quests[quest(&p, id).unwrap() as usize];
-        (q.objectives[0].beside_giver, planner.combat().level(q, 0, might), q.min_level)
+        (
+            q.objectives[0].beside_giver,
+            planner.combat().level(q, 0, might),
+            q.min_level,
+        )
     };
     let (beside, level, min) = need(900);
     assert!(beside && level <= min, "done at level {level}, taken at {min}");
@@ -2717,7 +2896,12 @@ fn campfire_beside_the_giver_needs_no_power() {
 fn great_outdoors_campfires_are_beside_their_giver() {
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let request = PlanRequest {
-        params: Some(overrides.params.with_overrides(&["progression=cautious".into()]).unwrap()),
+        params: Some(
+            overrides
+                .params
+                .with_overrides(&["progression=cautious".into()])
+                .unwrap(),
+        ),
         ..request("human", "warrior", 20, &[])
     };
     let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
@@ -2764,7 +2948,12 @@ fn items_a_child_hands_over_are_got_at_its_hand_in() {
     let p = orc_warlock();
     let reports = quest(p, 6543).expect("The Warsong Reports planned");
     let q = &p.model.quests[reports as usize];
-    let handing: Vec<&Vec<i64>> = q.objectives.iter().map(|o| &o.handed_by).filter(|h| !h.is_empty()).collect();
+    let handing: Vec<&Vec<i64>> = q
+        .objectives
+        .iter()
+        .map(|o| &o.handed_by)
+        .filter(|h| !h.is_empty())
+        .collect();
     assert_eq!(handing.len(), 3, "the three scouts' updates: {handing:?}");
     assert!(
         q.objectives.iter().all(|o| o.vendors.is_empty()),
@@ -2854,7 +3043,13 @@ fn a_group_guide_tells_the_addon_its_players() {
         .route;
     let names: Vec<&str> = route.players.iter().map(|p| p.name.as_str()).collect();
     assert_eq!(names, ["A-Realm", "B-Realm"]);
-    assert!(route.steps.iter().filter(|s| s.level > 0).all(|s| s.party.len() == 2 || s.event.is_none()));
+    assert!(
+        route
+            .steps
+            .iter()
+            .filter(|s| s.level > 0)
+            .all(|s| s.party.len() == 2 || s.event.is_none())
+    );
     let lua = fg_route::export::to_lua(std::slice::from_ref(&route));
     assert!(lua.contains(
         r#"players = { { n = "A-Realm", race = 1, class = 1, professions = {  } }, { n = "B-Realm", race = 1, class = 8, professions = {  } } }"#
@@ -2864,7 +3059,8 @@ fn a_group_guide_tells_the_addon_its_players() {
     for s in route.steps.iter().filter(|s| s.quest == Some(700)) {
         assert_eq!(s.members, Some(0b01), "{:?}", s.quest_name);
     }
-}/// A step of an edited guide that only a zone too strong for the character makes possible is
+}
+/// A step of an edited guide that only a zone too strong for the character makes possible is
 /// done, with a warning (the planner itself keeps out of such zones): Gadgetzan's flight path
 /// from Thousand Needles at level 34, Tanaris closed to it.
 #[test]
@@ -2981,12 +3177,27 @@ fn dungeons_are_run_within_the_levels_chosen() {
                 Q::new(300, "Red Silk Bandanas")
                     .level(18)
                     .giver(1, 40.0, 40.0)
-                    .objective(Obj::kill("Defias", 18, 6, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+                    .objective(
+                        Obj::kill(
+                            "Defias",
+                            18,
+                            6,
+                            At {
+                                zone: 1,
+                                x: 70.0,
+                                y: 70.0,
+                            },
+                        )
+                        .inside(0),
+                    ),
             )
             .params(move |p| (p.dungeon_from, p.dungeon_to, p.effort) = (from, to, 0.0))
     };
     let p = scenario(0, 1).build();
-    let route = scenario(0, 1).job(&|_| {}, &job::Interrupt::default(), None).unwrap().route;
+    let route = scenario(0, 1)
+        .job(&|_| {}, &job::Interrupt::default(), None)
+        .unwrap()
+        .route;
     let runs = route
         .steps
         .iter()
@@ -3057,8 +3268,30 @@ fn a_carcass_that_rots_is_looted_right_before_ishamuhale() {
             Q::new(882, "Ishamuhale")
                 .level(20)
                 .giver(2, 30.0, 40.0)
-                .objective(Obj::kill("Zhevra", 20, 1, At { zone: 2, x: 35.0, y: 70.0 }).lasts(1800.0))
-                .objective(Obj::visit("Fang", At { zone: 2, x: 36.0, y: 70.0 }).after(&[0])),
+                .objective(
+                    Obj::kill(
+                        "Zhevra",
+                        20,
+                        1,
+                        At {
+                            zone: 2,
+                            x: 35.0,
+                            y: 70.0,
+                        },
+                    )
+                    .lasts(1800.0),
+                )
+                .objective(
+                    Obj::visit(
+                        "Fang",
+                        At {
+                            zone: 2,
+                            x: 36.0,
+                            y: 70.0,
+                        },
+                    )
+                    .after(&[0]),
+                ),
         )
         .build();
     let ishamuhale = quest(&p, 882).unwrap();
@@ -3157,14 +3390,34 @@ fn a_dungeon_forced_with_its_quests_takes_them_all() {
             Q::new(id, &format!("Mine quest {id}"))
                 .level(18)
                 .giver(1, 40.0, 40.0)
-                .objective(Obj::kill("Defias", 18, 6, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+                .objective(
+                    Obj::kill(
+                        "Defias",
+                        18,
+                        6,
+                        At {
+                            zone: 1,
+                            x: 70.0,
+                            y: 70.0,
+                        },
+                    )
+                    .inside(0),
+                ),
         );
     }
     let (_, guide) = scenario.guide();
-    assert!(guide.plan.iter().any(|s| matches!(s, job::RouteStep::Dungeon { dungeon: DEADMINES })));
+    assert!(
+        guide
+            .plan
+            .iter()
+            .any(|s| matches!(s, job::RouteStep::Dungeon { dungeon: DEADMINES }))
+    );
     for id in 300..304 {
         assert!(
-            guide.plan.iter().any(|s| matches!(s, job::RouteStep::TurnIn { quest } if *quest == id)),
+            guide
+                .plan
+                .iter()
+                .any(|s| matches!(s, job::RouteStep::TurnIn { quest } if *quest == id)),
             "{id} turned in"
         );
     }
@@ -3209,18 +3462,21 @@ fn a_mage_teleports_only_to_cities_it_trained_in() {
     let cast = Edit::Teleport { to: 0 };
     let up = Edit::GrindTo { level: 21 };
     assert_ne!(edit(&[up, cast]), Outcome::Done, "teleport before training in its city");
-    assert_ne!(edit(&[up, Edit::Train { trainer: 0 }, cast]), Outcome::Done, "trained in another city");
+    assert_ne!(
+        edit(&[up, Edit::Train { trainer: 0 }, cast]),
+        Outcome::Done,
+        "trained in another city"
+    );
     assert_eq!(edit(&[up, train, cast]), Outcome::Done, "trained there");
-}/// A step that travels (hearthstone, flight, boat, teleport) holds the time of its trip, which is
+}
+/// A step that travels (hearthstone, flight, boat, teleport) holds the time of its trip, which is
 /// A step that travels (hearthstone, flight, boat, teleport) holds the time of its trip, which is
 /// not counted in the step after it (GitHub #68: the hearthstone showed no time at all).
 #[test]
 fn travel_steps_hold_their_own_time() {
     use fg_route::export::StepKind;
     use job::RouteStep;
-    let (editor, _) = leveling(24)
-        .inn("Barrens Inn", 3, 54.0, 54.0)
-        .guide();
+    let (editor, _) = leveling(24).inn("Barrens Inn", 3, 54.0, 54.0).guide();
     let draft = [
         RouteStep::FlightMaster { node: 25 },
         RouteStep::Bind { inn: 600_001 },
@@ -3245,7 +3501,8 @@ fn travel_steps_hold_their_own_time() {
         }
     }
     assert!(hearths > 0 && flights > 0, "{hearths} hearthstones, {flights} flights");
-}/// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
+}
+/// Death skips (`death_skips`, GitHub #54): off unless asked; on, the guide dies to respawn at the
 /// nearest spirit healer when that is faster, never once a level and a half past 10 (no
 /// resurrection sickness before 11), and the guide editor replays them as they were.
 #[test]

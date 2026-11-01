@@ -2,7 +2,6 @@
 //! app.
 
 mod character;
-#[cfg(any(test, feature = "testing"))]
 pub(crate) use character::character;
 mod draft;
 mod edit;
@@ -46,17 +45,17 @@ pub use routes::{
 };
 pub use services::{Place, Service, places, services_lua};
 pub use start::{Bind, LogObjective, LogQuest, MapPos, QuestId, Skill, Standing, StartState};
-pub use starts::{StartOption, StartPreview, preview_starts};
 #[cfg(any(test, feature = "testing"))]
 pub(crate) use starts::preview_starts_of;
+pub use starts::{StartOption, StartPreview, preview_starts};
 pub use timeline::{InnInfo, Leg, LegMode, NodeInfo, ObjectiveInfo, QuestInfo, StartView, Timeline, TimelineStep};
 
 use crate::export;
+use crate::model::Model;
 use crate::model::{self, Profile};
 use crate::params::Params;
 use crate::plan::Planner;
 use crate::terrain::Walks;
-use crate::model::Model;
 use crate::world::World;
 use anyhow::Result;
 use rusqlite::Connection;
@@ -229,7 +228,7 @@ pub fn prepare(
     req: &PlanRequest,
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<Prepared> {
-    let (mut profile, mut params) = character::character(conn, overrides, req)?;
+    let (mut profile, mut params) = character(conn, overrides, req)?;
     profile.required_quests = required::resolve(conn, req, &profile)?;
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
@@ -250,7 +249,8 @@ pub fn prepare(
             let found = if s.flights_final {
                 None
             } else {
-                s.faction.and_then(|side| inferred_flights(conn, side, &s.completed).ok())
+                s.faction
+                    .and_then(|side| inferred_flights(conn, side, &s.completed).ok())
             };
             s.with_deduced_flights(overrides.start_flights(s.race), found)
         };
@@ -357,7 +357,12 @@ fn load_world(
 /// # Errors
 ///
 /// When the game data cannot be read.
-pub fn game_world(conn: &Connection, overrides: &Overrides, faction: crate::faction::Faction, race_id: i64) -> Result<World> {
+pub fn game_world(
+    conn: &Connection,
+    overrides: &Overrides,
+    faction: crate::faction::Faction,
+    race_id: i64,
+) -> Result<World> {
     world_for(conn, overrides, faction, race_id, &overrides.params, &|_| {})
 }
 
@@ -404,11 +409,6 @@ fn world_for(
         })
         .cloned()
         .collect();
-    world.add_links(
-        &links,
-        faction,
-        params.run_speed / params.detour,
-        params.link_wait,
-    );
+    world.add_links(&links, faction, params.run_speed / params.detour, params.link_wait);
     Ok(world)
 }

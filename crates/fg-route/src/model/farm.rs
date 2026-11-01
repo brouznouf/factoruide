@@ -103,13 +103,27 @@ impl FarmMobs {
 
     /// The farm mobs of these spawns (zone, percent coordinates, levels, NPC), as the database's
     /// query gives them: each tagged with `tags` (NPC ID to tag), the same one listed twice kept once.
-    pub(super) fn from_rows(world: &World, rows: Vec<MobRow>, tags: &FxHashMap<i64, u32>, by_tag: Vec<Box<[u32]>>) -> Self {
+    pub(super) fn from_rows(
+        world: &World,
+        rows: Vec<MobRow>,
+        tags: &FxHashMap<i64, u32>,
+        by_tag: Vec<Box<[u32]>>,
+    ) -> Self {
         let mut cells = Cells::default();
         // The zone and height of each spawn, in the order of its cell's (for the camps).
         let mut zones = CellPlaces::default();
         // Each spawn kept: its cell and its place there.
         let mut seen: FxHashMap<(i64, i64, i64, u8), (CellKey, usize)> = FxHashMap::default();
-        for MobRow { zone, x, y, min_level: min, max_level: max, npc, z } in rows {
+        for MobRow {
+            zone,
+            x,
+            y,
+            min_level: min,
+            max_level: max,
+            npc,
+            z,
+        } in rows
+        {
             let Some(p) = world.to_world(zone, x, y) else { continue };
             let level = i64::midpoint(min, max).clamp(1, 255) as u8;
             let tag = tags.get(&npc).copied().unwrap_or(0);

@@ -28,17 +28,15 @@ fn database_of(edition: &str) -> Connection {
     Connection::open(path).unwrap()
 }
 
-/// The Classic database, unpacked next to the packed one when missing or older.
-fn database() -> Connection {
-    database_of("classic")
-}
-
 /// Level 1 human warrior with only `n` quests of its own: taken and turned in at the start NPC,
 /// nothing to do, no XP (each test sets what it checks). Nothing done on the way.
 pub(crate) fn quests_at_start(n: usize) -> Prepared {
     use crate::testing::{Q, Scenario};
     at_start(
-        Scenario::new().levels(1, 2).quest(Q::new(900, "Quest").level(1)).build(),
+        Scenario::new()
+            .levels(1, 2)
+            .quest(Q::new(900, "Quest").level(1))
+            .build(),
         n,
     )
 }
@@ -580,8 +578,16 @@ fn trips_fly_to_a_boat_and_from_it() {
         .flight_master(3, "Theramore", 3, 50.0, 50.0)
         .boat(
             "Boat Menethil Harbor - Theramore",
-            At { zone: 2, x: 52.0, y: 50.0 },
-            At { zone: 3, x: 48.0, y: 50.0 },
+            At {
+                zone: 2,
+                x: 52.0,
+                y: 50.0,
+            },
+            At {
+                zone: 3,
+                x: 48.0,
+                y: 50.0,
+            },
             30.0,
         )
         .params(|p| p.link_wait = 0.0)

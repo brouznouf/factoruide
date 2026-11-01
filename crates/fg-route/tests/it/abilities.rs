@@ -38,4 +38,9 @@ preset!(classic_orc_shaman, Edition::Classic, "orc", "shaman");
 preset!(tbc_bloodelf_paladin, Edition::Tbc, "bloodelf", "paladin");
 preset!(tbc_draenei_shaman, Edition::Tbc, "draenei", "shaman");
 preset!(forever_skyborne_druid, Edition::Forever, "skyborne", "druid");
-preset!(forever_skyborne_horde_druid, Edition::Forever, "skyborne_horde", "druid");
+preset!(
+    forever_skyborne_horde_druid,
+    Edition::Forever,
+    "skyborne_horde",
+    "druid"
+);

@@ -181,13 +181,19 @@ fn filed_levels(conn: &Connection) -> Result<HashMap<i64, i64>> {
     static KEPT: std::sync::Mutex<Vec<(u64, HashMap<i64, i64>)>> = std::sync::Mutex::new(Vec::new());
     let stamp = crate::world::file_stamp(conn);
     if let Some(stamp) = stamp
-        && let Some((_, levels)) = KEPT.lock().unwrap_or_else(std::sync::PoisonError::into_inner).iter().find(|(s, _)| *s == stamp)
+        && let Some((_, levels)) = KEPT
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .iter()
+            .find(|(s, _)| *s == stamp)
     {
         return Ok(levels.clone());
     }
     let levels = read_filed_levels(conn)?;
     if let Some(stamp) = stamp {
-        KEPT.lock().unwrap_or_else(std::sync::PoisonError::into_inner).push((stamp, levels.clone()));
+        KEPT.lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .push((stamp, levels.clone()));
     }
     Ok(levels)
 }

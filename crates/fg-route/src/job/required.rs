@@ -84,7 +84,12 @@ pub fn quest_choices(
 }
 
 /// The quests of a race and class (as bits, 0: any) matching the query (see `quest_choices`).
-fn choices(conn: &Connection, (race_bit, class_bit): (i64, i64), query: &str, locale: Option<&str>) -> Result<Vec<QuestChoice>> {
+fn choices(
+    conn: &Connection,
+    (race_bit, class_bit): (i64, i64),
+    query: &str,
+    locale: Option<&str>,
+) -> Result<Vec<QuestChoice>> {
     use rusqlite::types::Value;
     const SHOWN: i64 = 100;
     let words: Vec<&str> = query.split_whitespace().collect();
@@ -160,15 +165,20 @@ mod tests {
         )
         .unwrap();
         for q in quests {
-            conn.execute("INSERT INTO m_quest VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)", rusqlite::params![q.0, q.1, q.2, q.3, q.4, q.5, q.6])
-                .unwrap();
+            conn.execute(
+                "INSERT INTO m_quest VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+                rusqlite::params![q.0, q.1, q.2, q.3, q.4, q.5, q.6],
+            )
+            .unwrap();
         }
         conn
     }
 
     fn request(choices: Vec<RequiredQuest>) -> PlanRequest {
-        let mut r: PlanRequest =
-            serde_json::from_value(serde_json::json!({"race": "human", "class": "warrior", "from_level": 1, "to_level": 5})).unwrap();
+        let mut r: PlanRequest = serde_json::from_value(
+            serde_json::json!({"race": "human", "class": "warrior", "from_level": 1, "to_level": 5}),
+        )
+        .unwrap();
         r.required_quests = choices;
         r
     }
@@ -187,7 +197,10 @@ mod tests {
     #[test]
     fn a_must_have_quest_is_found_by_id_or_exact_name_and_once() {
         let conn = db(&[(21, "Skirmish at Echo Ridge", 0, 0, "available", 2, 12)]);
-        let both = request(vec![RequiredQuest::Id(21), RequiredQuest::Name(" skirmish at echo ridge ".into())]);
+        let both = request(vec![
+            RequiredQuest::Id(21),
+            RequiredQuest::Name(" skirmish at echo ridge ".into()),
+        ]);
         assert_eq!(resolve(&conn, &both, &human_warrior()).unwrap(), [21]);
     }
 
@@ -219,8 +232,16 @@ mod tests {
             (5091, name, 0, 0, "available", 50, 0),
             (5092, name, 0, 0, "removed", 50, 0),
         ]);
-        let error = resolve(&conn, &request(vec![RequiredQuest::Name(name.into())]), &human_warrior()).unwrap_err();
-        assert!(format!("{error:#}").contains("ambiguous name; choose an ID (5066, 5090, 5091)"), "{error:#}");
+        let error = resolve(
+            &conn,
+            &request(vec![RequiredQuest::Name(name.into())]),
+            &human_warrior(),
+        )
+        .unwrap_err();
+        assert!(
+            format!("{error:#}").contains("ambiguous name; choose an ID (5066, 5090, 5091)"),
+            "{error:#}"
+        );
     }
 
     /// Must-have quests are found by ID, level, part of their name or of their zone's, in English or
@@ -252,14 +273,19 @@ mod tests {
         assert_eq!(find(human, "rare book", None)[0].0, 91777);
         assert_eq!(find(human, "livres", Some("frFR"))[0].0, 91777);
         let orc = (1 << 1, 1 << (WARRIOR - 1));
-        assert!(find(orc, "Rare Books", None).iter().all(|(id, _)| *id != 91777), "Alliance only");
+        assert!(
+            find(orc, "Rare Books", None).iter().all(|(id, _)| *id != 91777),
+            "Alliance only"
+        );
         assert_eq!(find(human, "", None), []);
         let level = choices(&conn, human, "45", None).unwrap();
         assert!(!level.is_empty() && level.iter().all(|q| q.level == 45 || q.id == 45));
         let barrens = choices(&conn, orc, "barrens 20", None).unwrap();
         assert!(!barrens.is_empty());
         assert!(
-            barrens.iter().all(|q| q.level == 20 && q.zone.as_deref() == Some("The Barrens")),
+            barrens
+                .iter()
+                .all(|q| q.level == 20 && q.zone.as_deref() == Some("The Barrens")),
             "{barrens:?}"
         );
     }

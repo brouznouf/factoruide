@@ -5,8 +5,8 @@ use super::builder::{QuestBuilder, Skip};
 use super::entities::{alternatives, best_cluster};
 use super::givers::Givers;
 use super::sources::{
-    ObjectiveKind, QuestRow, Role, SourceKind, asks_for_work, count_for, on_reachable, one_place,
-    parse_requirements, talks_to, tames,
+    ObjectiveKind, QuestRow, Role, SourceKind, asks_for_work, count_for, on_reachable, one_place, parse_requirements,
+    talks_to, tames,
 };
 use super::types::{EntityKind, Guard, Loc, Objective, Spots};
 use crate::world::Pos;
@@ -27,8 +27,7 @@ pub(super) fn mark_beside_givers(starts: &[Loc], ends: &[Loc], objs: &mut [Objec
             && o.kills <= 0.0
             && o.loc.kind == EntityKind::Object
             && !o.guard.elite
-            && (starts.iter().chain(ends))
-                .any(|l| l.kind == EntityKind::Npc && l.pos.dist(&o.loc.pos) <= BESIDE_GIVER)
+            && (starts.iter().chain(ends)).any(|l| l.kind == EntityKind::Npc && l.pos.dist(&o.loc.pos) <= BESIDE_GIVER)
     };
     for o in objs {
         o.beside_giver = beside(o);

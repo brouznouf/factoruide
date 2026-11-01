@@ -7,8 +7,8 @@ use fg_route::faction::Faction;
 use fg_route::job::{self, Overrides, Service};
 use fg_route::model::Names;
 use fg_route::plan::Breakdown;
-use fg_route::xp::Edition;
 use fg_route::world::World;
+use fg_route::xp::Edition;
 use serde_json::json;
 
 fn overrides() -> Overrides {
