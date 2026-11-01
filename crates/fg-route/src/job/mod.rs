@@ -2,6 +2,8 @@
 //! app.
 
 mod character;
+#[cfg(any(test, feature = "testing"))]
+pub(crate) use character::character;
 mod draft;
 mod edit;
 mod error;

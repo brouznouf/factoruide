@@ -12,7 +12,7 @@ use anyhow::{Context, Result};
 use rusqlite::{Connection, OptionalExtension};
 use std::collections::HashMap;
 
-pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> Result<(Profile, Params)> {
+pub(crate) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> Result<(Profile, Params)> {
     let mut params = req.params.clone().unwrap_or_else(|| overrides.params.clone());
     let members = req.members(params.edition.rules());
     check_group(overrides, req, &members)?;

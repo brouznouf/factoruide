@@ -355,6 +355,8 @@ pub struct Scenario {
     mobs: Vec<(At, i64, u32)>,
     teleports: Vec<(&'static str, i64, At)>,
     graveyards: Vec<At>,
+    /// The class's spells and power as the database has them (`Scenario::of_class`).
+    class: Option<(crate::abilities::Abilities, Option<crate::power::PowerModel>)>,
 }
 
 impl Default for Scenario {
@@ -383,7 +385,30 @@ impl Scenario {
             mobs: Vec::new(),
             teleports: Vec::new(),
             graveyards: Vec::new(),
+            class: None,
         }
+    }
+
+    /// A character of a request (its race, class, levels and settings) in a scenario with the
+    /// class's spells and power read from the database, and nothing else of it: for the tests of
+    /// what a character knows and learns.
+    pub fn of_class(conn: &rusqlite::Connection, overrides: &crate::job::Overrides, req: &PlanRequest) -> anyhow::Result<Self> {
+        let (profile, params) = crate::job::character(conn, overrides, req)?;
+        let abilities = crate::abilities::Abilities::load(conn, &profile)?;
+        let power = crate::power::PowerModel::load(
+            conn,
+            profile.class_id,
+            profile.race_id,
+            profile.to_level.max(60),
+            &profile.spell_weights,
+            &params,
+            &abilities,
+        )?;
+        let mut scenario = Self::new();
+        (scenario.profile, scenario.params) = (profile, params);
+        (scenario.start, scenario.mates) = (req.start.clone(), req.mates.clone());
+        scenario.class = Some((abilities, power));
+        Ok(scenario)
     }
 
     /// `count` normal mobs of `level` at a place: the character kills them on the way, or grinds
@@ -631,6 +656,9 @@ impl Scenario {
         );
         super::settle_dungeons(&mut dungeons, &quests, &self.profile, &self.params);
         let mut model = bare(quests, dungeons, start, &self.params);
+        if let Some((abilities, power)) = self.class.take() {
+            (model.abilities, model.power) = (abilities, power);
+        }
         let (tags, by_tag) = super::FarmMobs::quest_tags(&model.quests);
         let mut rows = Vec::new();
         for &(at, level, count) in &self.mobs {

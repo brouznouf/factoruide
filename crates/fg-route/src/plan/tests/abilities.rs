@@ -2,6 +2,20 @@
 
 use super::*;
 
+/// The character of a request with its class's spells and power from the database, and one quest.
+fn class_prepared(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> Prepared {
+    use crate::testing::{Q, Scenario};
+    let level = req.from_level.max(1);
+    let mut scenario = Scenario::of_class(conn, overrides, req)
+        .unwrap()
+        .quest(Q::new(900, "Quest").level(level).min_level(level));
+    // The quests the character did.
+    for done in req.start.iter().flat_map(|s| &s.completed) {
+        scenario = scenario.quest(Q::new(done.0, "Done").level(level).min_level(level));
+    }
+    scenario.build()
+}
+
 /// A form unlocked late (the druid's cat and bear forms by their quests) credits no attack rank
 /// trained before it, whatever the rank (a test each, so that they run side by side).
 fn late_form_unlock(family: &str, rank: i64, quest_id: i64) {
@@ -17,7 +31,7 @@ fn late_form_unlock(family: &str, rank: i64, quest_id: i64) {
         "required_class_quests":[], "start":{"level":40}
     }))
     .unwrap();
-    let mut original = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+    let mut original = class_prepared(&conn, &overrides, &req);
     let power = original.model.power.take();
     let mut p = at_start(original, 2);
     p.model.power = power;
@@ -130,7 +144,7 @@ fn late_form_unlock(family: &str, rank: i64, quest_id: i64) {
     let mut next = req.clone();
     next.to_level = learned.level + 1;
     next.start = Some(learned);
-    let mut continued = at_start(job::prepare(&conn, &overrides, &next, &|_| {}).unwrap(), 1);
+    let mut continued = at_start(class_prepared(&conn, &overrides, &next), 1);
     continued.model.trainers.push(continued.model.start.clone());
     let next_plan = planner(&continued).replaying().explicit();
     let edited = next_plan.edit(&[train]);
@@ -150,7 +164,7 @@ fn late_form_unlock(family: &str, rank: i64, quest_id: i64) {
         // The spellbook records only the highest rank; continuing guides must not rebuy it.
         let mut imported = req;
         imported.start.as_mut().unwrap().spells = vec![768, 3029, 1079];
-        let imported = job::prepare(&conn, &overrides, &imported, &|_| {}).unwrap();
+        let imported = class_prepared(&conn, &overrides, &imported);
         p.model.initial.abilities = imported.model.initial.abilities;
         let plan = planner(&p).replaying().explicit();
         let replay = plan.edit(&[train]);
@@ -194,7 +208,7 @@ fn undead_paladin_learns_holy_light_from_its_quest() {
         "required_class_quests":[],"start":{"level":6}
     }))
     .unwrap();
-    let mut p = at_start(job::prepare(&conn, &overrides, &req, &|_| {}).unwrap(), 1);
+    let mut p = at_start(class_prepared(&conn, &overrides, &req), 1);
     p.model.quests[0].id = 90902; // Rediscovering the Light rewards Holy Light 1.
     p.model.index = [(90902, 0)].into_iter().collect();
     let trainer = p.model.start.clone();
@@ -282,7 +296,7 @@ fn starting_knowledge(level: i64, recorded: bool, spells: &[i64], completed: &[i
             "required_class_quests":if selected { serde_json::Value::Null } else { serde_json::json!([]) },
             "start":if recorded { serde_json::json!({"level":level,"spells":spells,"completed":completed}) } else { serde_json::Value::Null }
         })).unwrap();
-        let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let p = class_prepared(&conn, &overrides, &req);
         let end = planner(&p).replaying().explicit().end_of(&[]).unwrap();
         // Observe simulated knowledge without copying the input spellbook into the result.
         let start = job::StartState::default().after(&p.model, &p.world, Edition::Forever.rules(), &end);
@@ -327,7 +341,7 @@ fn higher_rank_and_cosmetic_mage_quests_do_not_gate_basic_training() {
             "required_class_quests":[], "start":{"level":8,"spells":[133]}
         }))
         .unwrap();
-        let mut original = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let mut original = class_prepared(&conn, &overrides, &req);
         let power = original.model.power.take();
         let mut p = at_start(original, 1);
         p.model.power = power;
@@ -362,7 +376,7 @@ fn higher_rank_and_cosmetic_mage_quests_do_not_gate_basic_training() {
             spells: taught,
             ..learned.clone()
         });
-        let continued = at_start(job::prepare(&conn, &overrides, &next, &|_| {}).unwrap(), 1);
+        let continued = at_start(class_prepared(&conn, &overrides, &next), 1);
         let end = planner(&continued).replaying().explicit().end_of(&[]).unwrap();
         let learned = learned.after(&continued.model, &continued.world, edition.rules(), &end);
         for quest_spell in [10140, 28272] {
