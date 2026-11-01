@@ -1,7 +1,7 @@
-//! A guide replayed to be watched, on the Classic database: its times are the guide's, the
+//! A guide replayed to be watched, on a scenario built by hand: its times are the guide's, the
 //! character moves to where each step is done, and what it holds follows the steps.
 
-use crate::common::{database, repo};
+use crate::common::{database, leveling, repo};
 use fg_route::export::StepKind;
 use fg_route::job::{self, Editor, LegMode, Overrides, PlanOutcome, PlanRequest, Timeline};
 use fg_route::model::Names;
@@ -9,45 +9,34 @@ use fg_route::xp::Edition;
 use std::collections::HashSet;
 use std::sync::OnceLock;
 
-fn overrides() -> Overrides {
-    Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap()
-}
-
-/// An orc warlock to 25 (its first routes, no optimization): it flies and takes boats.
-fn request() -> PlanRequest {
-    PlanRequest {
-        race: "orc".into(),
-        class: "warlock".into(),
-        from_level: 1,
-        to_level: 25,
-        name: None,
-        params: Some(
-            overrides()
-                .params
-                .with_overrides(&["progression=cautious".to_owned()])
-                .unwrap(),
-        ),
-        required_class_quests: None,
-        required_quests: vec![],
-        professions: vec![],
-        locale: None,
-        mates: vec![],
-        mate_professions: vec![],
-        start: None,
-    }
-}
-
-/// The guide, the editor that replays it and its timeline.
+/// The leveling scenario's guide to 25 (its first routes, no optimization): it flies. The editor
+/// that replays it and its timeline.
 fn setup() -> &'static (PlanOutcome, Editor, Timeline) {
     static SETUP: OnceLock<(PlanOutcome, Editor, Timeline)> = OnceLock::new();
     SETUP.get_or_init(|| {
+        let (editor, guide) = leveling(25).guide();
+        let timeline = editor.timeline(&guide, &Names::default());
+        (guide, editor, timeline)
+    })
+}
+
+/// A guide on the real Classic terrain, to level 12: its walks go around the mountains.
+fn on_the_terrain() -> &'static (PlanOutcome, Timeline) {
+    static SETUP: OnceLock<(PlanOutcome, Timeline)> = OnceLock::new();
+    SETUP.get_or_init(|| {
         let conn = database();
+        let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+        let request: PlanRequest = serde_json::from_value(serde_json::json!({
+            "race": "orc", "class": "warlock", "from_level": 1, "to_level": 12,
+            "params": overrides.params.with_overrides(&["progression=cautious".to_owned()]).unwrap(),
+        }))
+        .unwrap();
         let interrupt = job::Interrupt::default();
         interrupt.stop();
-        let guide = job::plan_interruptible(&conn, &overrides(), &request(), &|_| {}, &interrupt, None).unwrap();
-        let editor = Editor::open(&conn, &overrides(), &request(), None).unwrap();
+        let guide = job::plan_interruptible(&conn, &overrides, &request, &|_| {}, &interrupt, None).unwrap();
+        let editor = Editor::open(&conn, &overrides, &request, None).unwrap();
         let timeline = editor.timeline(&guide, &Names::load(&conn, "enUS").unwrap());
-        (guide, editor, timeline)
+        (guide, timeline)
     })
 }
 
@@ -111,7 +100,7 @@ fn accepted_quests_are_in_the_log_until_turned_in() {
         }
         checked += 1;
     }
-    assert!(checked > 20);
+    assert!(checked > 10);
     // The log never holds more than its size.
     assert!(logs.iter().all(|l| l.len() <= timeline.log_size));
     // What the log holds is named.
@@ -162,7 +151,7 @@ fn the_character_moves_to_each_step() {
 /// continent, never shorter than the straight line.
 #[test]
 fn walks_go_around_the_terrain() {
-    let (_, _, timeline) = setup();
+    let (_, timeline) = on_the_terrain();
     let mut bent = 0;
     for leg in timeline
         .legs
@@ -190,7 +179,7 @@ fn walks_go_around_the_terrain() {
 /// around the terrain has it from the replay's leg, and no walk the app draws is lost.
 #[test]
 fn the_addon_follows_the_walks_the_app_draws() {
-    let (guide, _, timeline) = setup();
+    let (guide, timeline) = on_the_terrain();
     let steps = &guide.route.steps;
     let mut walks = 0;
     for (k, (step, shown)) in steps.iter().zip(&timeline.steps).enumerate() {
@@ -227,26 +216,14 @@ fn the_addon_follows_the_walks_the_app_draws() {
 /// A character starting at level 1 has one place to begin: nothing to choose from.
 #[test]
 fn a_new_character_has_no_start_to_choose() {
-    let conn = database();
-    let preview = job::preview_starts(
-        &conn,
-        &overrides(),
-        &request(),
-        &|_| {},
-        &job::Interrupt::default(),
-        None,
-    )
-    .unwrap();
+    let preview = leveling(25).starts();
     assert!(preview.options.len() < 2, "{} starts", preview.options.len());
 }
 
 /// Below level 10 the first quests are in one place: no start is tried, whatever the zones.
 #[test]
 fn no_start_is_compared_before_level_10() {
-    let conn = database();
-    let mut req = request();
-    req.from_level = 9;
-    let preview = job::preview_starts(&conn, &overrides(), &req, &|_| {}, &job::Interrupt::default(), None).unwrap();
+    let preview = leveling(25).levels(9, 25).starts();
     assert_eq!((preview.tried, preview.options.len()), (0, 0));
 }
 
@@ -255,42 +232,41 @@ fn no_start_is_compared_before_level_10() {
 #[test]
 fn log_quests_with_nothing_done_are_not_held() {
     use fg_route::job::{LogObjective, LogQuest, StartState};
-    let conn = database();
-    let base = job::prepare(&conn, &overrides(), &request(), &|_| {}).unwrap();
-    let ids: Vec<i64> = base.model.quests.iter().take(3).map(|q| q.id).collect();
-    let mut req = request();
-    req.start = Some(StartState {
-        name: "Test-Realm".into(),
-        race: 2,
-        class: "WARLOCK".into(),
-        faction: Some(fg_route::faction::Faction::Horde),
-        level: 5,
-        xp_max: 1000,
-        log: vec![
-            LogQuest {
-                id: ids[0].into(),
-                complete: false,
-                objectives: vec![],
-            },
-            LogQuest {
-                id: ids[1].into(),
-                complete: false,
-                objectives: vec![LogObjective {
-                    text: "x".into(),
-                    done: 2,
-                    need: 8,
-                    finished: false,
-                }],
-            },
-            LogQuest {
-                id: ids[2].into(),
-                complete: true,
-                objectives: vec![],
-            },
-        ],
-        ..StartState::default()
-    });
-    let prepared = job::prepare(&conn, &overrides(), &req, &|_| {}).unwrap();
+    let ids: Vec<i64> = (100..103).collect();
+    let prepared = leveling(25)
+        .levels(5, 25)
+        .start(StartState {
+            name: "Test-Realm".into(),
+            race: 2,
+            class: "WARLOCK".into(),
+            faction: Some(fg_route::faction::Faction::Horde),
+            level: 5,
+            xp_max: 1000,
+            log: vec![
+                LogQuest {
+                    id: ids[0].into(),
+                    complete: false,
+                    objectives: vec![],
+                },
+                LogQuest {
+                    id: ids[1].into(),
+                    complete: false,
+                    objectives: vec![LogObjective {
+                        text: "x".into(),
+                        done: 2,
+                        need: 8,
+                        finished: false,
+                    }],
+                },
+                LogQuest {
+                    id: ids[2].into(),
+                    complete: true,
+                    objectives: vec![],
+                },
+            ],
+            ..StartState::default()
+        })
+        .build();
     let held: Vec<i64> = prepared
         .model
         .initial

@@ -171,8 +171,12 @@ pub fn dungeon_levels(conn: &Connection, defs: &[DungeonDef]) -> Result<HashMap<
            SELECT area, area FROM dungeon
            UNION SELECT d.area, j.value FROM dungeon d, json_each(coalesce(d.alt_areas, '[]')) j),
          -- What lives only in one dungeon (nowhere outside it).
+         -- Only the creatures and objects with a spawn in a dungeon are looked at.
          within(dungeon, entity_type, entity_id) AS (
-           SELECT min(i.dungeon), s.entity_type, s.entity_id FROM m_spawn s LEFT JOIN inside i ON i.zone = s.zone_id
+           SELECT min(i.dungeon), s.entity_type, s.entity_id
+           FROM (SELECT DISTINCT entity_type, entity_id FROM m_spawn WHERE zone_id IN (SELECT zone FROM inside)) e
+           JOIN m_spawn s ON s.entity_type = e.entity_type AND s.entity_id = e.entity_id
+           LEFT JOIN inside i ON i.zone = s.zone_id
            GROUP BY s.entity_type, s.entity_id HAVING count(i.dungeon) = count(*) AND min(i.dungeon) = max(i.dungeon)),
          filed(dungeon, id, level) AS (
            SELECT i.dungeon, q.id, q.level FROM inside i JOIN m_quest q ON q.zone_or_sort = i.zone
