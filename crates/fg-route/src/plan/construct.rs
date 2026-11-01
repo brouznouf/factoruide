@@ -183,6 +183,16 @@ impl Planner<'_> {
     fn nearest_stop(&self, s: &State, pull: Option<i64>) -> Option<Stop> {
         let n = self.model.quests.len() as u32;
         let bound = self.trips().bound(s);
+        // A dungeon the player forced is run once the character reaches the middle of its levels
+        // (Ragefire Chasm, 13 to 19, at 16): left to the weighing of the stops, it would be passed
+        // over for nearer ones until its levels are gone, and the route refused without it.
+        let forced_now = (0..self.model.dungeons.len())
+            .filter(|&d| self.availability().dungeon_forced(d) && s.level >= self.model.dungeons[d].mob_level)
+            .filter_map(|d| self.forced_dungeon_stop(s, d))
+            .find(|&stop| bound.at(&self.places().pos(s, stop)).is_finite());
+        if forced_now.is_some() {
+            return forced_now;
+        }
         // Quest value only decides what is worth accepting. Weights favour finishing what
         // is in the log, and class quests.
         let mut candidates: Vec<Candidate> = Vec::new();
@@ -986,6 +996,20 @@ impl Planner<'_> {
         first
     }
 
+    /// The quest of dungeon `d` to pick up before its run: one that can be accepted at this level
+    /// and is worth it.
+    fn quest_before_dungeon(&self, s: &State, d: usize) -> Option<u32> {
+        self.availability().dungeon_quests(d).find(|&i| {
+            let iu = i as usize;
+            !s.accepted[iu]
+                && !s.turned[iu]
+                && s.log < self.params.quest_log_size
+                && self.quest(i).min_level <= s.level
+                && self.availability().can_accept(s, i)
+                && self.worth().worth_it(s, i, s.level, 0.0)
+        })
+    }
+
     /// A dungeon run worth doing now: some quests of the log need it, and every quest of the
     /// dungeon that can be picked up at this level has been picked up first.
     pub(crate) fn dungeon_ready(&self, s: &State, d: usize) -> Option<Stop> {
@@ -996,23 +1020,52 @@ impl Planner<'_> {
         if s.dungeons & (1u128 << d) != 0 || s.level < dungeon.min_level || s.level > dungeon.max_level {
             return None;
         }
-        let mut needed = false;
-        for i in self.availability().dungeon_quests(d) {
-            let iu = i as usize;
-            if s.accepted[iu] && !s.turned[iu] {
-                needed = true;
-            } else if !s.turned[iu]
-                && s.log < self.params.quest_log_size
-                && self.quest(i).min_level <= s.level
-                && self.availability().can_accept(s, i)
-                && self.worth().worth_it(s, i, s.level, 0.0)
-            {
-                return None; // pick it up first
-            }
+        if self.quest_before_dungeon(s, d).is_some() {
+            return None; // pick it up first
         }
+        let needed = self.availability().dungeon_quests(d).any(|i| {
+            let iu = i as usize;
+            s.accepted[iu] && !s.turned[iu]
+        });
         (needed || self.availability().dungeon_forced(d)).then_some(Stop {
             index: d as u32,
             kind: Kind::Dungeon,
+        })
+    }
+
+    /// The next stop towards the run of forced dungeon `d`, within its levels: a quest of it to
+    /// pick up first (as the weighing of the stops takes it: not guarded, worth the trip), else the
+    /// run.
+    fn forced_dungeon_stop(&self, s: &State, d: usize) -> Option<Stop> {
+        let dungeon = &self.model.dungeons[d];
+        if !self.availability().dungeon_allowed(d)
+            || s.dungeons & (1u128 << d) != 0
+            || s.level < dungeon.min_level
+            || s.level > dungeon.max_level
+        {
+            return None;
+        }
+        let reach = self.params.reach(s.level, s.might());
+        let bound = self.trips().bound(s);
+        let pick_up = self.availability().dungeon_quests(d).find(|&i| {
+            let iu = i as usize;
+            let stop = Stop::quest(i, Kind::Accept);
+            let lower = bound.at(&self.places().pos(s, stop));
+            !s.accepted[iu]
+                && !s.turned[iu]
+                && s.log < self.params.quest_log_size
+                && self.quest(i).min_level <= s.level
+                && self.combat().guard_need(&self.quest(i).start_guard) <= reach
+                && self.availability().can_accept(s, i)
+                && lower.is_finite()
+                && self.worth().worth_it(s, i, s.level, lower)
+        });
+        Some(match pick_up {
+            Some(i) => Stop::quest(i, Kind::Accept),
+            None => Stop {
+                index: d as u32,
+                kind: Kind::Dungeon,
+            },
         })
     }
 }

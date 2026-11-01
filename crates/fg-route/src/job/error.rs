@@ -27,6 +27,8 @@ pub enum RequestError {
     GroupMixedFactions,
     #[error("the dungeons' levels (from {from:+} to {to:+} around each) leave none for {dungeon}")]
     NoDungeonLevels { dungeon: String, from: i64, to: i64 },
+    #[error("{dungeon} is forced but can be run up to level {ends} only: the guide starts at level {from}")]
+    ForcedDungeonTooLow { dungeon: String, ends: i64, from: i64 },
 }
 
 /// Why a planning job gave no guide.

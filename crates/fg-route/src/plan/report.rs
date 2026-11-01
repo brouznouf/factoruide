@@ -38,7 +38,7 @@ impl Planner<'_> {
             .filter(|&d| {
                 self.availability().dungeon_forced(d)
                     && end.dungeons & (1u128 << d) == 0
-                    && self.model.dungeons[d].min_level <= self.profile.to_level
+                    && self.model.dungeons[d].min_level < self.profile.to_level
             })
             .map(|d| self.model.dungeons[d].name.clone())
             .collect()

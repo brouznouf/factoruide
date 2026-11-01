@@ -65,7 +65,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         window,
         params.edition.rules().max_level,
     );
-    settle_dungeons(&mut sources.dungeons, &quests, profile, params);
+    settle_dungeons(&mut sources.dungeons, &quests, profile);
     let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     let mut teleports = places.teleports;
     teleports.extend(places::quest_teleports(world, profile, &quests));
@@ -183,18 +183,17 @@ pub(crate) fn settle_quests(quests: &mut [Quest], dungeons: &[Dungeon], params: 
     }
 }
 
-/// A dungeon holding an objective of a must-have quest is run like a forced one, and a forced
-/// dungeon whenever the route can fit it, past its levels too: they only tell when it is best to go.
-pub(crate) fn settle_dungeons(dungeons: &mut [Dungeon], quests: &[Quest], profile: &Profile, params: &Params) {
+/// A dungeon holding an objective of a must-have quest is run like a forced one, and past its
+/// levels too: the quest asks for it. A dungeon the player forced stays within its levels, the
+/// route being refused when it cannot be run there.
+pub(crate) fn settle_dungeons(dungeons: &mut [Dungeon], quests: &[Quest], profile: &Profile) {
     for q in quests.iter().filter(|q| q.required) {
         for d in q.objectives.iter().filter_map(|o| o.dungeon) {
             dungeons[d].needed = true;
         }
     }
-    for d in dungeons {
-        if d.needed || params.forced_dungeons.contains(&d.area) || params.forced_dungeon_quests.contains(&d.area) {
-            d.max_level = d.max_level.max(profile.to_level);
-        }
+    for d in dungeons.iter_mut().filter(|d| d.needed) {
+        d.max_level = d.max_level.max(profile.to_level);
     }
 }
 
