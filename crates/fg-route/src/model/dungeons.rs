@@ -110,6 +110,7 @@ pub(super) fn load_dungeons(
             kills: def.kills.unwrap_or(0.0),
             mob_level: 0,
             content: expansion.map_or_else(|| xp::content_at(pos.continent, ez), |e| e.max(0) as usize),
+            needed: false,
         });
     }
     let mut inside = HashMap::new();

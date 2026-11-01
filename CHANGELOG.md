@@ -31,6 +31,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Without a combat spell catalog, trainer steps let the addon train all available spells.
 - Learned class movement spells affect walks entirely on exposed ground without swimming; most walks keep the usual estimate.
 - Guides complete must-have quests and their prerequisites, even past the target level.
+- A must-have quest whose objectives are inside a dungeon (Trolls of a Feather, Sunken Temple) runs that dungeon, without having to force it too.
 - WoW Forever: the new dungeons follow the game's level ranges, not their quests' levels: Ruins of Lordaeron 15-20 (was 21-22), Excavation Site 24-29, City of Dalaran 28-33.
 - WoW Forever: Ruins of Lordaeron's quests started by an item found inside (Crest of Lordaeron, Remember That I Love You) are planned, taken during the run.
 - A new character knows its capital's flight path from the start, as in the game (Stormwind for humans, Ironforge for dwarves and gnomes, Orgrimmar for orcs and trolls...): guides no longer stop to learn it, and fly from there right away.
