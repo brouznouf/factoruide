@@ -84,12 +84,19 @@ pub fn load(
         .into_iter()
         .filter_map(|(q, (known, _))| known.then_some(q))
         .collect();
+    let logged: HashSet<_> = starts.iter().flat_map(|s| s.log.iter().map(|q| q.id.0)).collect();
+    let finished: HashSet<_> = starts.iter().flat_map(|s| s.completed.iter().map(|q| q.0)).collect();
+    let skip_known: HashSet<_> = known_rewards
+        .iter()
+        .copied()
+        .filter(|q| !logged.contains(q) && !finished.contains(q))
+        .collect();
     let mut sources = Sources::read(
         conn,
         world,
         profile,
         params,
-        &known_rewards,
+        &skip_known,
         &known_prerequisites,
         &reward_quests,
     )?;
@@ -124,11 +131,15 @@ pub fn load(
     for q in &mut quests {
         if known_names.contains(&q.name) && !q.required && !q.zone_forced {
             q.mandatory = false;
-            q.power = None;
         }
     }
     quests.retain(|q| {
-        !known_rewards.contains(&q.id) || sources.class_quest_ids.contains(&q.id) || q.required || q.zone_forced
+        !known_rewards.contains(&q.id)
+            || logged.contains(&q.id)
+            || profile.completed_quests.contains(&q.id)
+            || sources.class_quest_ids.contains(&q.id)
+            || q.required
+            || q.zone_forced
     });
     // The quests of the dungeons run with all their quests.
     for q in &mut quests {
@@ -215,7 +226,14 @@ pub fn load(
             bundles[i].push(f as u32);
         }
     }
+    let known_class_powers = profile
+        .class_powers
+        .iter()
+        .enumerate()
+        .filter(|(_, (name, _))| known_names.contains(name))
+        .fold(0, |bits, (k, _)| bits | (1 << k));
     Ok(Model {
+        known_class_powers,
         abilities,
         quests,
         dungeons: sources.dungeons,

@@ -21,9 +21,21 @@ fn normal_skyborne_druid_planning_completes_the_cat_chain() {
     req.to_level = 30;
     req.required_class_quests = None;
     let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
-    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
-    let route = planner.construct(|_| {});
-    let guide = fg_route::export::build(&planner, &p.profile, &route);
+    let mut params = p.params.clone();
+    params.effort = 0.0;
+    params.threads = 1;
+    req.params = Some(params);
+    let outcome = job::plan(&conn, &overrides, &req, &|_| {}).unwrap();
+    let end = outcome.end.unwrap();
+    assert!(
+        end.spells.contains(&768) && end.spells.contains(&18960),
+        "earned form and teleport survive continuation"
+    );
+    assert!(
+        end.completed.contains(&job::QuestId(98362)),
+        "the real form quest completion is retained"
+    );
+    let guide = outcome.route;
     for id in [98340, 98341, 98404, 98738, 98362] {
         assert!(
             guide
@@ -319,4 +331,62 @@ fn recorded_spells_do_not_complete_an_explicit_quest_requirement() {
             .validate_required(&[])
             .is_err()
     );
+}
+
+#[test]
+fn known_rewards_keep_imported_log_quests() {
+    for edition in Edition::ALL {
+        let conn = database_of(edition.key());
+        let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+        let mut req = request("dwarf", "warrior");
+        req.from_level = 11;
+        req.to_level = 12;
+        req.start = Some(
+            serde_json::from_value(
+                serde_json::json!({"level":11,"spells":[71],"completed":[1678],"log":[{"id":1665,"complete":true}]}),
+            )
+            .unwrap(),
+        );
+        let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let edited = plan.edit(&[Edit::Stop {
+            stop: Stop::quest(p.model.index[&1665] as u32, Kind::TurnIn),
+            farm: false,
+            spot: None,
+        }]);
+        assert!(
+            matches!(edited.steps[0].outcome, Outcome::Done),
+            "the held quest can still be turned in: {:?}",
+            edited.steps[0].outcome
+        );
+    }
+}
+
+#[test]
+fn known_pet_power_survives_continuation() {
+    let conn = database();
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+    let mut req = request("dwarf", "hunter");
+    req.from_level = 11;
+    req.to_level = 12;
+    let time = |req: &PlanRequest| {
+        let p = job::prepare(&conn, &overrides, req, &|_| {}).unwrap();
+        Planner::new(&p.model, &p.world, &p.params, &p.profile)
+            .simulate_full(&[], None)
+            .unwrap()
+            .1
+            .grinding
+    };
+    req.start = Some(serde_json::from_value(serde_json::json!({"level":11})).unwrap());
+    let unknown = time(&req);
+    for state in [
+        serde_json::json!({"level":11,"completed":[6086]}),
+        serde_json::json!({"level":11,"spells":[5149]}),
+    ] {
+        req.start = Some(serde_json::from_value(state).unwrap());
+        assert!(
+            (unknown / time(&req) - 1.3).abs() < 0.001,
+            "the learned pet keeps its 1.3x power"
+        );
+    }
 }

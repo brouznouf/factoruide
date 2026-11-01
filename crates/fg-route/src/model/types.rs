@@ -465,6 +465,8 @@ impl Quest {
 }
 
 pub struct Model {
+    /// Configured class powers whose reward is already known.
+    pub known_class_powers: u32,
     pub abilities: crate::abilities::Abilities,
     /// Class prerequisites proven by completion or an unambiguous learned reward.
     pub known_class_prerequisites: HashSet<i64>,
