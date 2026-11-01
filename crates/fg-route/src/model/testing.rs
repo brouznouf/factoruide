@@ -160,6 +160,12 @@ impl Q {
         }
     }
 
+    /// Its XP was received in game: no level penalty applies to it.
+    pub fn observed(mut self) -> Self {
+        self.quest.xp_observed = true;
+        self
+    }
+
     pub fn level(mut self, level: i64) -> Self {
         self.quest.level = level;
         self.quest.min_level = self.quest.min_level.min(level);
@@ -315,6 +321,7 @@ pub struct Scenario {
     inns: Vec<(&'static str, At)>,
     /// Normal mobs anyone can farm: where, their level and how many.
     mobs: Vec<(At, i64, u32)>,
+    teleports: Vec<(&'static str, i64, At)>,
 }
 
 impl Default for Scenario {
@@ -341,6 +348,7 @@ impl Scenario {
             vendors: Vec::new(),
             inns: Vec::new(),
             mobs: Vec::new(),
+            teleports: Vec::new(),
         }
     }
 
@@ -348,6 +356,12 @@ impl Scenario {
     /// there (a camp holds eight of a level).
     pub fn mobs(mut self, zone: i64, x: f64, y: f64, level: i64, count: u32) -> Self {
         self.mobs.push((At { zone, x, y }, level, count));
+        self
+    }
+
+    /// A class spell taking the character to a place, learned at the trainer from `level`.
+    pub fn teleport(mut self, name: &'static str, level: i64, zone: i64, x: f64, y: f64) -> Self {
+        self.teleports.push((name, level, At { zone, x, y }));
         self
     }
 
@@ -562,6 +576,17 @@ impl Scenario {
             }
         }
         model.farm = super::FarmMobs::from_rows(&world, rows, &tags, by_tag);
+        model.teleports = self
+            .teleports
+            .iter()
+            .enumerate()
+            .map(|(i, &(name, level, at))| super::Teleport {
+                name: name.to_owned(),
+                level,
+                quests: Vec::new(),
+                to: Q::at(at, 800_000 + i as i64, name, &world),
+            })
+            .collect();
         let place = |at: At, id: i64, name: &str| Q::at(at, id, name, &world);
         model.trainers = self.trainers.iter().enumerate().map(|(i, &at)| place(at, 400_000 + i as i64, "Trainer")).collect();
         model.vendors = self.vendors.iter().enumerate().map(|(i, &at)| place(at, 500_000 + i as i64, "Vendor")).collect();

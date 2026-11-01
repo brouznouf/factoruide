@@ -5,6 +5,7 @@ use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanR
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
 use fg_route::plan::{Edit, Event, Kind, Outcome, Planner, Stop};
+use fg_route::testing::{Q, Scenario};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use std::sync::OnceLock;
@@ -97,8 +98,27 @@ fn quests_at_start(n: usize) -> Prepared {
     quests_at_start_as("human", "warrior", n)
 }
 
-/// `quests_at_start` for another race and class.
+/// `quests_at_start` for another race and class (the race sets the side).
 fn quests_at_start_as(race: &str, class: &str, n: usize) -> Prepared {
+    let _ = class;
+    let faction = if ["human", "dwarf", "gnome", "nightelf"].contains(&race) {
+        fg_route::faction::Faction::Alliance
+    } else {
+        fg_route::faction::Faction::Horde
+    };
+    // Made-up quests anywhere for a level 1: the zones too strong for it do not count here.
+    let mut scenario = Scenario::new().levels(1, 2).faction(faction).zone(12, "Elwynn Forest").zone(1537, "Ironforge").params(|p| {
+        (p.zone_gap, p.camp_radius, p.farm_on_way, p.flight_learn_radius) = (0.0, 0.0, false, 0.0);
+    });
+    for i in 0..n {
+        scenario = scenario.quest(Q::new(900_000 + i as i64, &format!("quest {i}")).xp(0).observed().giver(1, 50.0, 50.0));
+    }
+    scenario.build()
+}
+
+/// `quests_at_start` on the real data of Classic (its world, its teleports, its recall): for the tests of what
+/// the data holds.
+fn quests_at_start_on_the_data_as(race: &str, class: &str, n: usize) -> Prepared {
     // Made-up quests anywhere for a level 1: the zones too strong for it do not count here.
     let mut p = prepare(race, class, 2, &["zone_gap=0"]);
     let here = p.model.start.clone();
@@ -1133,7 +1153,7 @@ fn walks_do_not_go_into_zones_far_above_the_character() {
 /// of the guide (it is not on any road).
 #[test]
 fn mountain_skip_is_one_way_and_a_step_of_the_guide() {
-    let mut p = quests_at_start_as("dwarf", "warrior", 1);
+    let mut p = quests_at_start_on_the_data_as("dwarf", "warrior", 1);
     let w = &p.world;
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let (kharanos, menethil) = (at(1, 47.0, 52.0), at(11, 10.5, 56.0));
@@ -1940,26 +1960,32 @@ fn time_outside_the_preferred_zones_counts() {
     assert!(outside > inside, "{outside} outside, {inside} inside");
 }
 
-/// A mage trained in its teleports goes to a capital with one rather than across the world.
+/// A mage's teleports on the real data: to the capitals of its side only, the first at level 20.
 #[test]
-fn mage_teleports_to_a_capital() {
-    let mut p = quests_at_start_as("human", "mage", 1);
+fn mage_teleports_are_the_capitals_of_its_side() {
+    let p = quests_at_start_on_the_data_as("human", "mage", 0);
     let names: Vec<(&str, i64)> = p.model.teleports.iter().map(|t| (t.name.as_str(), t.level)).collect();
     assert!(names.contains(&("Teleport: Ironforge", 20)), "{names:?}");
     assert!(!names.iter().any(|(n, _)| n.contains("Orgrimmar")), "{names:?}");
-    let ironforge = p
-        .model
-        .teleports
-        .iter()
-        .find(|t| t.name == "Teleport: Ironforge")
-        .unwrap()
-        .to
-        .clone();
+}
+
+/// A mage trained in its teleports goes to a capital with one rather than across the world.
+#[test]
+fn mage_teleports_to_a_capital() {
+    let mut p = Scenario::new()
+        .levels(25, 30)
+        .faction(fg_route::faction::Faction::Alliance)
+        .zone(12, "Elwynn Forest")
+        .zone(1537, "Ironforge")
+        .teleport("Teleport: Ironforge", 20, 1537, 50.0, 50.0)
+        .quest(Q::new(900_000, "quest 0").level(27).xp(0).observed().giver(1, 50.0, 50.0))
+        .build();
+    let ironforge = p.model.teleports[0].to.clone();
     let mut o = one_kill_east_of_start(&p, 0.0);
     o.loc = ironforge;
     p.model.quests[0].objectives = vec![o];
     p.model.initial.accepted = vec![0];
-    (p.profile.from_level, p.profile.to_level, p.model.initial.trained) = (25, 30, Some(25));
+    p.model.initial.trained = Some(25);
     let route = [Stop::quest(0, Kind::Objective(0))];
     // When the objective is done (the grinding to the target level comes after).
     let done = |p: &Prepared, teleport: bool| {
@@ -1986,7 +2012,7 @@ fn mage_teleports_to_a_capital() {
 /// A shaman has a second hearthstone from level 30.
 #[test]
 fn shaman_has_astral_recall() {
-    let p = quests_at_start_as("orc", "shaman", 0);
+    let p = quests_at_start_on_the_data_as("orc", "shaman", 0);
     assert_eq!(p.model.recall, Some(30));
     assert!(p.model.teleports.is_empty());
 }
