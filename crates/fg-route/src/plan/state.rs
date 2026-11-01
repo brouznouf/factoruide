@@ -102,6 +102,8 @@ pub enum Event {
     /// Class training: `since` is the level of the previous training.
     Train {
         trainer: usize,
+        /// Outbound part of a nearby trainer detour; the return can use a newly learned spell.
+        outbound: f64,
         since: i64,
         abilities: u64,
     },

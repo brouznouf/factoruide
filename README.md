@@ -44,6 +44,10 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   prerequisites and finishes the chain, even past your target level. It cannot be saved with
   a required quest missing. For the Sleeping Bag in Forever, add **79976** (**This Must Be The
   Place**); its XP bonus is not simulated.
+- **Your travel spells**: learned Cat Form, Travel Form, Ghost Wolf and Aspect of the Cheetah
+  affect walking estimates only for walks entirely outdoors without swimming; few walks currently
+  qualify. In Advanced, **Assume movement talents are learned** is on by default. Cheetah needs
+  no talent. Forms become available through the quests or trainers of your game version.
 - **Your class spells**: quest rewards and trainer visits determine which spells are known.
   Form attacks need both the form and its learned attack rank. Imported characters use their
   recorded spells and completed quests. Without a character profile, earlier class unlocks

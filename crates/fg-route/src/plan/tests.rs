@@ -13,7 +13,7 @@ fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-fn database_of(edition: &str) -> Connection {
+pub(crate) fn database_of(edition: &str) -> Connection {
     static UNPACK: Mutex<()> = Mutex::new(());
     let _guard = UNPACK.lock().unwrap();
     let (path, packed) = (
@@ -920,3 +920,4 @@ fn the_player_behind_catches_up() {
 }
 
 mod abilities;
+mod movement;

@@ -260,7 +260,7 @@ impl Planner<'_> {
             let direct = self.trips().fastest(s, &target).0;
             let inn = &self.model.inns[inn_at(k)].pos;
             let open = self.trips().open_links(s);
-            direct - cast - self.trips().leg(inn, &target, s.level, s.known, open).0
+            direct - cast - self.trips().at(s).leg(inn, &target, s.level, s.known, open).0
         };
         let mut uses = Vec::new();
         let mut ready = if recall {

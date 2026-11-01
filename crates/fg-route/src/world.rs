@@ -1522,6 +1522,20 @@ impl World {
     /// passages it takes between zones, the turns around the steep terrain
     /// (`Terrain::waypoints`). Only the ends when it goes straight, or when no walk goes there.
     pub fn walk_path(&self, a: &Pos, b: &Pos, level: u8) -> Vec<Pos> {
+        self.path_points(a, self.walk_legs(a, b, level))
+    }
+
+    /// Outdoor ground known along the whole walk, excluding passages and estimated links.
+    pub fn exposed_walk(&self, a: &Pos, b: &Pos, level: u8) -> bool {
+        let legs = self.walk_legs(a, b, level);
+        if legs.iter().any(|(_, _, leg)| *leg != Leg::Terrain) {
+            return false;
+        }
+        let path = self.path_points(a, legs);
+        path.len() >= 2 && path.windows(2).all(|p| self.terrain.exposed_ground_line(&p[0], &p[1]))
+    }
+
+    fn walk_legs(&self, a: &Pos, b: &Pos, level: u8) -> Vec<(Pos, Pos, Leg)> {
         // The legs: those drawn straight (to or through a passage) or over the terrain.
         let mut legs: Vec<(Pos, Pos, Leg)> = Vec::new();
         if a.zone != b.zone
@@ -1542,6 +1556,10 @@ impl World {
         } else {
             self.ground_legs(a, b, level, &mut legs);
         }
+        legs
+    }
+
+    fn path_points(&self, a: &Pos, legs: Vec<(Pos, Pos, Leg)>) -> Vec<Pos> {
         let mut path = vec![*a];
         for (from, to, leg) in legs {
             if leg == Leg::Terrain {

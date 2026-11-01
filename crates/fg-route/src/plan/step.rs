@@ -74,7 +74,7 @@ impl Planner<'_> {
         }
         let every = s.level >= s.trained + self.params.train_every;
         let every_late = s.level >= s.trained + self.params.train_every + self.params.train_max_delay;
-        let (due, late) = match self.model.power.as_ref().filter(|p| p.has_spells()) {
+        let (mut due, late) = match self.model.power.as_ref().filter(|p| p.has_spells()) {
             Some(p) => {
                 let gain = p.train_gain(
                     s.trained,
@@ -91,6 +91,14 @@ impl Planner<'_> {
             }
             None => (every, every_late),
         };
+        if self.model.initial.mates.is_empty() {
+            let abilities = &self.model.abilities;
+            let available = s.abilities | abilities.trained(s.abilities, s.level);
+            let gain = abilities.speed(available, s.level, self.params)
+                / abilities.speed(s.abilities, s.level, self.params)
+                - 1.0;
+            due |= gain >= self.params.train_min_gain && gain > 0.0;
+        }
         if !due {
             return;
         }
@@ -156,7 +164,7 @@ impl Planner<'_> {
     pub(crate) fn sell_at(&self, s: &mut State, i: usize, record: &mut impl FnMut(&State, Event)) {
         let vendor = &self.model.vendors[i];
         let detour = (s.landed == Landed::No && s.pos.dist(&vendor.pos) <= self.params.sell_radius)
-            .then(|| 2.0 * self.trips().walk(&s.pos, &vendor.pos, s.level))
+            .then(|| 2.0 * self.trips().at(s).walk(&s.pos, &vendor.pos, s.level))
             .filter(|d| d.is_finite());
         if let Some(detour) = detour {
             s.time += detour;
@@ -177,9 +185,17 @@ impl Planner<'_> {
         let trainer = &self.model.trainers[i];
         // Close as the crow flies, but maybe not on foot (another side of the mountains).
         let detour = (s.landed == Landed::No && s.pos.dist(&trainer.pos) <= self.params.train_radius)
-            .then(|| 2.0 * self.trips().walk(&s.pos, &trainer.pos, s.level))
-            .filter(|d| d.is_finite());
-        if let Some(detour) = detour {
+            .then(|| {
+                let trips = self.trips().at(s);
+                let learned = s.abilities | self.model.abilities.trained(s.abilities, s.level);
+                let outbound = trips.walk(&s.pos, &trainer.pos, s.level);
+                (
+                    outbound,
+                    outbound + trips.with_movement(learned).walk(&s.pos, &trainer.pos, s.level),
+                )
+            })
+            .filter(|(_, total)| total.is_finite());
+        if let Some((_, detour)) = detour {
             s.time += detour;
             s.spent.travel += detour;
         } else {
@@ -202,6 +218,7 @@ impl Planner<'_> {
             s,
             Event::Train {
                 trainer: i,
+                outbound: detour.map_or(0.0, |(outbound, _)| outbound),
                 since,
                 abilities: s.abilities & !abilities_before,
             },
@@ -707,7 +724,12 @@ impl Planner<'_> {
         if s.known & (1u128 << node) != 0 {
             return;
         }
-        let detour = 2.0 * self.trips().walk(&s.pos, &self.world.taxi_nodes[node].pos, s.level) + 5.0;
+        let detour = 2.0
+            * self
+                .trips()
+                .at(s)
+                .walk(&s.pos, &self.world.taxi_nodes[node].pos, s.level)
+            + 5.0;
         if !detour.is_finite() {
             return;
         }

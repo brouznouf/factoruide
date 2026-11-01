@@ -1524,6 +1524,35 @@ impl Terrain {
         (Self::cell(p), p.z)
     }
 
+    /// Whether the whole segment stays on known outdoor terrain without swimming.
+    pub(crate) fn exposed_ground_line(&self, a: &Pos, b: &Pos) -> bool {
+        let Some(grid) = self.grids.get(&a.continent) else {
+            return false;
+        };
+        if a.continent != b.continent {
+            return false;
+        }
+        let (Some(from), Some(to)) = (
+            self.snapped(grid, a.continent, Self::spot(a)),
+            self.snapped(grid, b.continent, Self::spot(b)),
+        ) else {
+            return false;
+        };
+        if from.cell() != Self::cell(a) || to.cell() != Self::cell(b) {
+            return false;
+        }
+        Self::line_with(grid, from, to, |n| {
+            let Some((tile, local)) = grid.locate(n) else {
+                return false;
+            };
+            let Some(nodes) = grid.nodes(tile) else { return false };
+            nodes.flags[local] & (NO_GO | SWIM) == 0
+                && nodes.kind[local] & (SURFACE | layers::UNDER | layers::MODEL) == SURFACE
+                && n.f() + 1 == grid.floors(n.r(), n.c())
+        })
+        .is_some()
+    }
+
     /// `Grid::snap_at` of a place of continent `map`, remembered in the thread.
     fn snapped(&self, grid: &Grid, map: i64, ((r, c), z): Spot) -> Option<Node> {
         // Most places: a single floor, in a large area (whatever their height: the floors keep
@@ -1554,10 +1583,14 @@ impl Terrain {
     /// -1 when all are walked, else what its swum steps make it cost (yards). None when it
     /// cannot be followed.
     fn line(grid: &Grid, a: Node, b: Node) -> Option<f64> {
+        Self::line_with(grid, a, b, |_| true)
+    }
+
+    fn line_with(grid: &Grid, a: Node, b: Node, allowed: impl Fn(Node) -> bool) -> Option<f64> {
         let (ca, cb) = (a.cell(), b.cell());
         let (dr, dc) = (cb.0 - ca.0, cb.1 - ca.1);
         let n = dr.abs().max(dc.abs()) * 2;
-        if grid.blocked(a) {
+        if grid.blocked(a) || !allowed(a) {
             return None;
         }
         let height = |x: Node| {
@@ -1594,6 +1627,9 @@ impl Terrain {
                 let (m, step, _) = next?;
                 (m, step)
             };
+            if !allowed(m) {
+                return None;
+            }
             swum |= step != WALKED[diagonal];
             cost += step;
             at = m;
@@ -2248,3 +2284,20 @@ impl Terrain {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+#[derive(Clone, Copy)]
+pub(crate) enum TestGround {
+    Dry,
+    Shallow,
+    Mixed,
+    Covered,
+    Indoor,
+    Passage,
+    Unknown,
+}
+
+#[cfg(test)]
+pub(crate) fn movement_test_ground(kind: TestGround) -> Terrain {
+    tests::movement_ground(kind)
+}

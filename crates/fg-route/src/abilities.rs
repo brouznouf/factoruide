@@ -1,9 +1,30 @@
 //! Spells learned from quest rewards, class trainers and recorded characters.
 
-use crate::{job::StartState, model::Profile};
+use crate::{Params, job::StartState, model::Profile};
 use anyhow::Result;
 use rusqlite::Connection;
+use serde::Deserialize;
 use std::collections::HashMap;
+
+#[derive(Debug, Clone, Copy, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum MovementTalent {
+    FeralSwiftness,
+    ImprovedGhostWolf,
+}
+
+#[derive(Debug, Clone, Deserialize)]
+pub struct MovementDef {
+    pub class: String,
+    pub name: String,
+    pub spells: Vec<i64>,
+    pub bonus: f64,
+    pub activation: f64,
+    pub talent: Option<MovementTalent>,
+    /// A trainer level supplied by movement.toml when the spell catalog has none.
+    #[serde(skip)]
+    pub trained_at: Option<i64>,
+}
 
 pub struct Ability {
     pub name: String,
@@ -14,6 +35,13 @@ pub struct Ability {
     pub rank: Option<i64>,
     pub requires: u64,
     quests: Vec<(i64, i64)>,
+    travel: Option<Travel>,
+}
+
+struct Travel {
+    bonus: f64,
+    activation: f64,
+    talent: Option<MovementTalent>,
 }
 
 #[derive(Default)]
@@ -38,6 +66,23 @@ impl Abilities {
             })?
             .collect::<rusqlite::Result<Vec<_>>>()?;
         let mut abilities = Self::default();
+        for def in &profile.abilities {
+            abilities.entries.push(Ability {
+                name: def.name.clone(),
+                spells: def.spells.clone(),
+                known_spells: def.spells.clone(),
+                level: None,
+                rank: None,
+                requires: 0,
+                quests: vec![],
+                travel: Some(Travel {
+                    bonus: def.bonus,
+                    activation: def.activation,
+                    talent: def.talent,
+                }),
+            });
+        }
+
         let mut stmt = conn.prepare(
             "SELECT id, reward_spell, coalesce(min_level,1) FROM m_quest WHERE status = 'available' AND reward_spell > 0
              AND (coalesce(classes_mask,0) & ?1 != 0 OR zone_or_sort = ?2)
@@ -117,6 +162,15 @@ impl Abilities {
                     a.level = Some(a.level.map_or(*level, |old| old.min(*level)));
                 }
             }
+            if a.quests.is_empty() {
+                a.level = a.level.or_else(|| {
+                    profile
+                        .abilities
+                        .iter()
+                        .find(|def| def.name == a.name)
+                        .and_then(|def| def.trained_at)
+                });
+            }
             a.spells.sort_unstable();
             a.spells.dedup();
             for &(quest, _) in &a.quests {
@@ -144,6 +198,7 @@ impl Abilities {
             rank: None,
             requires: 0,
             quests: vec![],
+            travel: None,
         });
         Ok(self.entries.len() - 1)
     }
@@ -197,6 +252,59 @@ impl Abilities {
 
     pub fn quest(&self, quest: i64) -> u64 {
         self.by_quest.get(&quest).copied().unwrap_or(0)
+    }
+
+    pub fn movement(&self, known: u64) -> u64 {
+        self.entries
+            .iter()
+            .enumerate()
+            .filter(|(_, a)| a.travel.is_some())
+            .fold(0, |mask, (i, _)| mask | (known & (1 << i)))
+    }
+
+    fn travel(&self, known: u64, level: i64, params: &Params) -> impl Iterator<Item = (f64, f64)> + '_ {
+        let talents = params.assume_movement_talents;
+        let edition = params.edition;
+        self.entries
+            .iter()
+            .enumerate()
+            .filter(move |(i, _)| known & (1 << i) != 0)
+            .filter_map(move |(_, a)| {
+                let t = a.travel.as_ref()?;
+                Some(match (t.talent, talents) {
+                    (Some(MovementTalent::FeralSwiftness), true) => (
+                        if edition != crate::xp::Edition::Forever && level == 20 {
+                            0.15
+                        } else {
+                            0.3
+                        },
+                        t.activation,
+                    ),
+                    (Some(MovementTalent::ImprovedGhostWolf), trained) => (
+                        t.bonus,
+                        match (trained, edition) {
+                            (true, crate::xp::Edition::Classic) => 1.0,
+                            (true, _) => 0.0,
+                            (false, crate::xp::Edition::Tbc) => 2.0,
+                            (false, _) => t.activation,
+                        },
+                    ),
+                    _ => (t.bonus, t.activation),
+                })
+            })
+    }
+
+    /// Optimistic speed for travel bounds. Forms and mounts do not stack.
+    pub fn speed(&self, known: u64, level: i64, params: &Params) -> f64 {
+        self.travel(known, level, params)
+            .map(|(bonus, _)| params.run_speed * (1.0 + bonus))
+            .fold(params.speed(level), f64::max)
+    }
+
+    pub fn walk_time(&self, distance: f64, known: u64, level: i64, params: &Params) -> f64 {
+        self.travel(known, level, params)
+            .map(|(bonus, activation)| distance / (params.run_speed * (1.0 + bonus)) + activation)
+            .fold(distance / params.speed(level), f64::min)
     }
 
     /// Only trainer-learned spells belong in the addon's purchase list.
