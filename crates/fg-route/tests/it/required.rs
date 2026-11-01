@@ -111,7 +111,7 @@ fn sleeping_bag_option_requires_the_chain_and_recognizes_imported_completion() {
         assert!(!p.model.index.contains_key(&other));
         req.start = Some(StartState {
             level: 35,
-            completed: vec![fg_route::job::QuestId(79976)],
+            completed: vec![QuestId(79976)],
             ..StartState::default()
         });
         let imported = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
