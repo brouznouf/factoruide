@@ -7,11 +7,17 @@ use fg_route::faction::Faction;
 use fg_route::job::{self, Overrides, Service};
 use fg_route::model::Names;
 use fg_route::plan::Breakdown;
+use fg_route::world::World;
 use fg_route::xp::Edition;
 use serde_json::json;
 
 fn overrides() -> Overrides {
     Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap()
+}
+
+/// The Classic world of a faction, loaded once for the tests that only read it.
+fn world(faction: Faction) -> &'static World {
+    crate::common::world(Edition::Classic, faction)
 }
 
 /// A guide of these steps (`kind`, Tirisfal Glades map percent), as guides made before the
@@ -39,10 +45,9 @@ fn length(points: &[[f64; 2]]) -> f64 {
 /// the step before is, and is longer than the straight line.
 #[test]
 fn a_walk_around_the_steep_ground_starts_at_the_step_before() {
-    let conn = database();
-    let world = job::walk_world(&conn, &overrides(), Faction::Horde).unwrap();
+    let world = world(Faction::Horde);
     let mut r = route(&[("accept", 30.23, 71.61), ("accept", 30.87, 66.2)]);
-    job::add_walk_paths(&world, &mut r);
+    job::add_walk_paths(world, &mut r);
     assert!(r.steps[0].path.is_empty(), "nothing before the first step");
     let path = &r.steps[1].path;
     assert!(path.len() >= 2, "the walk turns: {path:?}");
@@ -57,14 +62,13 @@ fn a_walk_around_the_steep_ground_starts_at_the_step_before() {
 /// No walk after a boat (the character lands elsewhere), nor to a step done along the way.
 #[test]
 fn no_walk_after_a_boat_nor_to_a_step_along_the_way() {
-    let conn = database();
-    let world = job::walk_world(&conn, &overrides(), Faction::Horde).unwrap();
+    let world = world(Faction::Horde);
     let mut r = route(&[
         ("accept", 30.23, 71.61),
         ("link", 30.23, 71.61),
         ("accept", 30.87, 66.2),
     ]);
-    job::add_walk_paths(&world, &mut r);
+    job::add_walk_paths(world, &mut r);
     assert!(r.steps[2].path.is_empty(), "after the boat");
     let mut r = route(&[
         ("accept", 30.23, 71.61),
@@ -72,7 +76,7 @@ fn no_walk_after_a_boat_nor_to_a_step_along_the_way() {
         ("accept", 30.87, 66.2),
     ]);
     r.steps[1].bg = true;
-    job::add_walk_paths(&world, &mut r);
+    job::add_walk_paths(world, &mut r);
     assert!(r.steps[1].path.is_empty(), "to the step along the way");
     assert!(
         !r.steps[2].path.is_empty(),
@@ -85,8 +89,8 @@ fn no_walk_after_a_boat_nor_to_a_step_along_the_way() {
 #[test]
 fn places_of_services() {
     let conn = database();
-    let world = job::walk_world(&conn, &overrides(), Faction::Alliance).unwrap();
-    let places = job::places(&conn, &world, Edition::Classic, &Names::load(&conn, "frFR").unwrap()).unwrap();
+    let world = world(Faction::Alliance);
+    let places = job::places(&conn, world, Edition::Classic, &Names::load(&conn, "frFR").unwrap()).unwrap();
     let find = |name: &str| places.iter().filter(|p| p.name == name).collect::<Vec<_>>();
     let mage = find("Marryk Nurribit");
     assert!(
@@ -127,8 +131,7 @@ fn each_guide_carries_its_format() {
 /// the walk give the floor by floor path's length (Ziz Fizziks in Stonetalon to Ratchet).
 #[test]
 fn a_long_walk_follows_the_ground_between_gates() {
-    let conn = database();
-    let world = job::walk_world(&conn, &overrides(), Faction::Alliance).unwrap();
+    let world = world(Faction::Alliance);
     let a = world
         .to_world(world.zone_of_ui_map(1442).unwrap(), 58.99, 62.6)
         .unwrap();
@@ -181,8 +184,7 @@ fn quests_done_in_a_town_give_its_flight_path() {
 /// The capital cities are not starts to choose: every route passes through them.
 #[test]
 fn capitals_are_known_from_the_area_flags() {
-    let conn = database();
-    let world = job::walk_world(&conn, &overrides(), Faction::Alliance).unwrap();
+    let world = world(Faction::Alliance);
     for capital in [1519, 1537, 1657, 1637, 1497, 1638] {
         assert!(world.is_capital(capital), "{}", world.zone_name(capital));
     }

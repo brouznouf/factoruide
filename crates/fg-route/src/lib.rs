@@ -6,6 +6,7 @@ pub mod export;
 pub mod faction;
 pub mod help;
 pub mod job;
+mod memo;
 pub mod model;
 pub mod params;
 pub mod plan;

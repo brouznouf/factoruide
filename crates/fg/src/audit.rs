@@ -91,7 +91,7 @@ fn write_proposals(path: &Path, findings: &[audit::Finding], accepted: &[audit::
         }
         for &(id, side) in &f.npcs {
             if seen.insert(id) {
-                writeln!(lines, "npc:{id}\t{side}\t{}\t{}: {}", f.check, f.key, f.detail)?;
+                let _ = writeln!(lines, "npc:{id}\t{side}\t{}\t{}: {}", f.check, f.key, f.detail);
             }
         }
     }
