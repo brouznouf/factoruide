@@ -822,6 +822,7 @@ fn timed_quest_taken_once_strong_enough_for_its_objectives() {
     let (accept, objective) = gates(&p);
     assert_eq!(accept, objective, "timed: taken at the mob's level");
     p.model.quests[0].required = true;
+    p.model.quests[0].mandatory = true;
     p.model.quests[0].completion_window.min_level = Some(18);
     assert_eq!(gates(&p).0, 18, "wait for the turn-in window before starting the clock");
     let mut trace = Vec::new();
@@ -973,15 +974,17 @@ mod abilities;
 
 #[test]
 fn an_unbounded_required_quest_stays_in_the_log_when_gray() {
-    let mut p = quests_at_start(1);
-    p.profile.from_level = 20;
-    p.profile.to_level = 21;
-    p.model.initial.accepted = vec![0];
-    for required in [false, true] {
-        p.model.quests[0].required = required;
-        let plan = planner(&p);
-        let mut state = plan.initial_state();
-        plan.abandon_hopeless(&mut state, &mut |_, _| {});
-        assert_eq!(state.accepted[0], required);
-    }
+    let conn = database();
+    let o = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+    let req=serde_json::from_value(serde_json::json!({"race":"human","class":"warrior","from_level":20,"to_level":21,"required_class_quests":[],"required_quests":[783],"start":{"level":20,"log":[{"id":783,"complete":true}]}})).unwrap();
+    let p = job::prepare(&conn, &o, &req, &|_| {}).unwrap();
+    let i = p.model.index[&783];
+    assert!(
+        p.model.quests[i].required && p.model.quests[i].mandatory,
+        "model construction makes exact requirements mandatory"
+    );
+    let plan = planner(&p);
+    let mut state = plan.initial_state();
+    plan.abandon_hopeless(&mut state, &mut |_, _| {});
+    assert!(state.accepted[i]);
 }

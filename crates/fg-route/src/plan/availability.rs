@@ -53,18 +53,28 @@ pub(crate) struct Availability<'v> {
 impl Availability<'_> {
     /// Only members still needing the quest must meet its completion window.
     pub(crate) fn completion_error(&self, s: &State, i: u32) -> Option<(u8, i64)> {
-        let need = self.model.initial.need(i as usize);
         let window = self.quest_at(i).completion_window;
+        self.completion_members(s, i)
+            .find(|&(_, level)| !window.contains(level))
+    }
+
+    fn completion_members<'s>(&self, s: &'s State, i: u32) -> impl Iterator<Item = (u8, i64)> + 's {
+        let need = self.model.initial.need(i as usize);
         s.member_levels(self.model.initial.mates.len())
-            .find(|&(member, level)| need & (1 << member) != 0 && !window.contains(level))
+            .filter(move |&(member, _)| need & (1 << member) != 0)
     }
 
     pub(crate) fn completion_floor(&self, s: &State, i: u32) -> i64 {
-        let need = self.model.initial.need(i as usize);
-        s.member_levels(self.model.initial.mates.len())
-            .filter(|&(member, _)| need & (1 << member) != 0)
+        self.completion_members(s, i)
             .map(|(_, level)| level)
             .min()
+            .unwrap_or(s.level)
+    }
+
+    pub(crate) fn completion_ceiling(&self, s: &State, i: u32) -> i64 {
+        self.completion_members(s, i)
+            .map(|(_, level)| level)
+            .max()
             .unwrap_or(s.level)
     }
     /// The prerequisites of quest `i` are done: in a group, by each member it is for (before the
@@ -137,7 +147,6 @@ impl Availability<'_> {
     pub(crate) fn gray_dead_end(&self, s: &State, q: &Quest, i: u32) -> bool {
         let gray = xp::Rules::gray_level(s.level);
         !q.mandatory
-            && !q.required
             && q.skill.is_none()
             && !self.missing_reputation_of(s, q)
             && !self.replaying

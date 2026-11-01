@@ -325,8 +325,11 @@ impl Planner<'_> {
         let deadline = candidates
             .iter()
             .filter(|c| c.stop.is_quest())
-            .filter_map(|c| self.quest(c.stop.index).priority_deadline)
-            .filter(|&level| level < self.rules().max_level && level <= s.level + DEADLINE_AHEAD)
+            .filter_map(|c| {
+                let deadline = self.quest(c.stop.index).priority_deadline?;
+                let level = self.availability().completion_ceiling(s, c.stop.index);
+                (deadline < self.rules().max_level && deadline <= level + DEADLINE_AHEAD).then_some(deadline)
+            })
             .min();
         if let Some(deadline) = deadline {
             candidates.retain(|c| {
@@ -834,5 +837,31 @@ impl Planner<'_> {
             index: d as u32,
             kind: Kind::Dungeon,
         })
+    }
+}
+
+#[cfg(test)]
+mod deadline_tests {
+    use super::*;
+
+    #[test]
+    fn priority_uses_the_highest_member_still_needing_the_deadline_quest() {
+        let mut p = crate::plan::tests::quests_at_start(2);
+        p.model.quests[0].required = true;
+        p.model.quests[0].mandatory = true;
+        p.model.quests[0].priority_deadline = Some(4);
+        p.model.quests[0].starts[0].pos.x += 10_000.0;
+        p.model.quests[1].xp = 500;
+        p.model.initial.mates = vec![crate::model::MateStart {
+            level: 3,
+            ..Default::default()
+        }];
+        for need in [3, 1] {
+            p.model.initial.need = vec![need, 3];
+            let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+            let state = plan.initial_state();
+            let next = plan.nearest_stop(&state, None).unwrap();
+            assert_eq!(next, Stop::quest(if need == 3 { 0 } else { 1 }, Kind::Accept));
+        }
     }
 }
