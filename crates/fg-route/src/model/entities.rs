@@ -5,35 +5,59 @@ use crate::world::{Pos, World};
 use anyhow::Result;
 use rusqlite::Connection;
 use std::collections::{HashMap, HashSet};
+use std::sync::Arc;
 
 /// Each entity's spawns: zone, map percent coordinates and height when known (`Pos::z`).
+/// The points of a path a patrolling NPC walks: zone and percent coordinates.
+type PathPoints = Vec<(i64, f64, f64)>;
+
 pub(super) type Spawns = HashMap<(EntityKind, i64), Vec<(i64, f64, f64, Option<i16>)>>;
 
 pub(super) struct Entities {
-    pub(super) npc: HashMap<i64, (String, i64, i64, i64)>, // name, min level, max level, rank
-    pub(super) object: HashMap<i64, String>,
-    pub(super) item: HashMap<i64, String>,
+    pub(super) npc: Arc<HashMap<i64, (String, i64, i64, i64)>>, // name, min level, max level, rank
+    pub(super) object: Arc<HashMap<i64, String>>,
+    pub(super) item: Arc<HashMap<i64, String>>,
     pub(super) spawns: Spawns,
     /// NPCs that only talk to the other faction.
-    pub(super) hostile: HashSet<i64>,
+    pub(super) hostile: Arc<HashSet<i64>>,
     /// NPCs friendly to the character: objectives on them are talks, not kills.
-    pub(super) friendly: HashSet<i64>,
+    pub(super) friendly: Arc<HashSet<i64>>,
     /// NPCs of the character's own side nobody talks to (no gossip, vendor...): Sentinel Shaya,
     /// the Lazy Peons. Quests heal them, wake them, use an item on them; seldom fight them.
-    pub(super) own_side: HashSet<i64>,
+    pub(super) own_side: Arc<HashSet<i64>>,
     /// Seconds NPCs and objects take to come back once killed or used, where known.
-    pub(super) respawn: HashMap<(EntityKind, i64), f64>,
+    pub(super) respawn: Arc<HashMap<(EntityKind, i64), f64>>,
     /// The paths patrolling NPCs walk: zone and percent coordinates of each point, in order.
-    pub(super) paths: HashMap<i64, Vec<(i64, f64, f64)>>,
+    pub(super) paths: Arc<HashMap<i64, PathPoints>>,
     /// Items vendors sell in limited supply, by (vendor, item): how many at most, and the
     /// seconds to get one more back.
-    pub(super) vendor_stock: HashMap<(i64, i64), (u32, f64)>,
+    pub(super) vendor_stock: Arc<HashMap<(i64, i64), (u32, f64)>>,
     /// Auctioneers the character can buy from (its side's, the neutral ones).
-    pub(super) auctioneers: Vec<i64>,
+    pub(super) auctioneers: Arc<Vec<i64>>,
 }
 
 impl Entities {
+    /// What the database says of the entities, read once for a database and a faction.
     pub(super) fn load(conn: &Connection, faction: crate::faction::Faction) -> Result<Self> {
+        let read = crate::memo::rows(conn, "entities", crate::memo::setting(faction.letter()), || {
+            Self::read(conn, faction)
+        })?;
+        Ok(Self {
+            npc: Arc::clone(&read.npc),
+            object: Arc::clone(&read.object),
+            item: Arc::clone(&read.item),
+            spawns: read.spawns.clone(),
+            hostile: Arc::clone(&read.hostile),
+            friendly: Arc::clone(&read.friendly),
+            own_side: Arc::clone(&read.own_side),
+            respawn: Arc::clone(&read.respawn),
+            paths: Arc::clone(&read.paths),
+            vendor_stock: Arc::clone(&read.vendor_stock),
+            auctioneers: Arc::clone(&read.auctioneers),
+        })
+    }
+
+    fn read(conn: &Connection, faction: crate::faction::Faction) -> Result<Self> {
         let letter = faction.letter();
         let mut hostile = HashSet::new();
         let mut stmt = conn.prepare(
@@ -154,17 +178,17 @@ impl Entities {
             }
         }
         Ok(Self {
-            npc,
-            object,
-            item,
+            npc: Arc::new(npc),
+            object: Arc::new(object),
+            item: Arc::new(item),
             spawns,
-            hostile,
-            friendly,
-            own_side,
-            respawn,
-            paths,
-            vendor_stock,
-            auctioneers,
+            hostile: Arc::new(hostile),
+            friendly: Arc::new(friendly),
+            own_side: Arc::new(own_side),
+            respawn: Arc::new(respawn),
+            paths: Arc::new(paths),
+            vendor_stock: Arc::new(vendor_stock),
+            auctioneers: Arc::new(auctioneers),
         })
     }
 

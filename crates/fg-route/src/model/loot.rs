@@ -36,27 +36,32 @@ impl CommonLoot {
             return Ok(Self::default());
         }
         // Normal hostile (or neutral) mobs, as `FarmMobs` counts them: the kills of a zone.
-        let mut stmt = conn.prepare(
-            "SELECT s.zone_id, count(*) FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
-             WHERE s.entity_type = 'npc' AND s.x >= 0 AND coalesce(n.rank, 0) = 0
-               AND coalesce(n.npc_flags, 0) = 0 AND coalesce(n.friendly_to, '') IN ('', 'AH')
-             GROUP BY s.zone_id",
-        )?;
-        let mobs: FxHashMap<i64, f64> = stmt
-            .query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, f64>(1)?)))?
-            .collect::<Result<_, _>>()?;
+        let mobs = crate::memo::rows(conn, "mobs of a zone", 0, || {
+            let mut stmt = conn.prepare(
+                "SELECT s.zone_id, count(*) FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
+                 WHERE s.entity_type = 'npc' AND s.x >= 0 AND coalesce(n.rank, 0) = 0
+                   AND coalesce(n.npc_flags, 0) = 0 AND coalesce(n.friendly_to, '') IN ('', 'AH')
+                 GROUP BY s.zone_id",
+            )?;
+            Ok(stmt
+                .query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, f64>(1)?)))?
+                .collect::<Result<FxHashMap<i64, f64>, _>>()?)
+        })?;
         let list = items.iter().map(i64::to_string).collect::<Vec<_>>().join(",");
-        let mut stmt = conn.prepare(&format!(
-            "SELECT i.item_id, s.zone_id, sum(i.chance) FROM m_item_source i
-             JOIN m_spawn s ON s.entity_type = 'npc' AND s.entity_id = i.from_id AND s.x >= 0
-             WHERE i.from_type = 'npc' AND i.chance > 0 AND i.item_id IN ({list})
-             GROUP BY i.item_id, s.zone_id"
-        ))?;
+        let drops = crate::memo::rows(conn, "drops of items", crate::memo::setting(&list), || {
+            let mut stmt = conn.prepare(&format!(
+                "SELECT i.item_id, s.zone_id, sum(i.chance) FROM m_item_source i
+                 JOIN m_spawn s ON s.entity_type = 'npc' AND s.entity_id = i.from_id AND s.x >= 0
+                 WHERE i.from_type = 'npc' AND i.chance > 0 AND i.item_id IN ({list})
+                 GROUP BY i.item_id, s.zone_id"
+            ))?;
+            let rows = stmt.query_map([], |r| {
+                Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?, r.get::<_, f64>(2)?))
+            })?;
+            Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+        })?;
         let mut by_zone: FxHashMap<i64, Vec<(u16, f32)>> = FxHashMap::default();
-        for row in stmt.query_map([], |r| {
-            Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?, r.get::<_, f64>(2)?))
-        })? {
-            let (item, zone, dropped) = row?;
+        for &(item, zone, dropped) in drops.iter() {
             let (Some(i), Some(&total)) = (items.iter().position(|&it| it == item), mobs.get(&zone)) else {
                 continue;
             };

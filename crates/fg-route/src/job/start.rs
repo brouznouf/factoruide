@@ -291,6 +291,19 @@ impl StartState {
         }
     }
 
+    /// The character with the flight paths the game gives its race (`race_flights`) and those of
+    /// the towns it did quests in (`found`), unless the list was settled by hand.
+    pub(super) fn with_deduced_flights(&self, race_flights: &[i64], found: Option<Vec<i64>>) -> Self {
+        let mut copy = self.clone();
+        if !self.flights_final {
+            copy.flights.extend(race_flights);
+            copy.flights.extend(found.unwrap_or_default());
+            copy.flights.sort_unstable();
+            copy.flights.dedup();
+        }
+        copy
+    }
+
     /// The flight paths known, a bit per taxi node.
     pub(super) fn known_flights(&self, world: &World) -> u128 {
         flight_bits(world, &self.flights)
@@ -410,6 +423,23 @@ mod tests {
     use super::*;
     use crate::model::ProfessionPlan;
     use crate::profession::ProfessionGoal;
+
+    /// A new character knows its capital's flight path; a character met in game keeps those it
+    /// has on top, unless its list was settled by hand.
+    #[test]
+    fn flight_paths_are_deduced_unless_settled() {
+        let met = StartState {
+            flights: vec![26],
+            ..StartState::default()
+        };
+        assert_eq!(met.with_deduced_flights(&[2], Some(vec![6, 2])).flights, [2, 6, 26]);
+        assert_eq!(met.with_deduced_flights(&[2], None).flights, [2, 26]);
+        let settled = StartState {
+            flights_final: true,
+            ..met
+        };
+        assert_eq!(settled.with_deduced_flights(&[2], Some(vec![6])).flights, [26]);
+    }
 
     /// The sides the addon records, in any case; the game's "Neutral" or nothing is no side.
     #[test]

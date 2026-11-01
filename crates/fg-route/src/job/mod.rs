@@ -2,6 +2,7 @@
 //! app.
 
 mod character;
+pub(crate) use character::character;
 mod draft;
 mod edit;
 mod error;
@@ -31,7 +32,7 @@ pub use flights::inferred_flights;
 pub use options::{
     FactionOption, FlightOption, NamedId, Options, RaceOption, ZoneOption, class_quests, options, race_classes,
 };
-pub use overrides::{Overrides, RaceDef};
+pub use overrides::{Overrides, RaceDef, curve_by_level};
 pub use paths::{add_walk_paths, route_walks, walk_world};
 pub use race::{optimize, optimize_interruptible};
 pub use reputation::race_base;
@@ -229,7 +230,7 @@ pub fn prepare(
     req: &PlanRequest,
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<Prepared> {
-    let (mut profile, mut params) = character::character(conn, overrides, req)?;
+    let (mut profile, mut params) = character(conn, overrides, req)?;
     profile.required_quests = required::resolve(conn, req, &profile, &params)?;
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
@@ -237,15 +238,7 @@ pub fn prepare(
     progress("Loading quests");
     progress(r#"@progress {"phase":"prepare","step":"quests"}"#);
     let mut model = model::load(conn, &world, &profile, &params)?;
-    // Every dungeon it could run has levels to run it at.
-    if let Some(d) = (model.dungeons.iter()).find(|d| d.min_level != i64::MAX && d.min_level > d.max_level) {
-        return Err(RequestError::NoDungeonLevels {
-            dungeon: d.name.clone(),
-            from: params.dungeon_from,
-            to: params.dungeon_to,
-        }
-        .into());
-    }
+    check_dungeon_levels(&model, &params)?;
     let mut start_notes = Vec::new();
     let members = req.members(params.edition.rules());
     check_exclusive_choices(&model, &members)?;
@@ -255,16 +248,13 @@ pub fn prepare(
         // Its race's flight paths and those of the towns it did quests in count as learned,
         // unless the list was settled by hand.
         let with_deduced = |s: &StartState| {
-            let mut copy = s.clone();
-            if !s.flights_final {
-                copy.flights.extend(overrides.start_flights(s.race));
-                if let Some(Ok(found)) = s.faction.map(|side| inferred_flights(conn, side, &s.completed)) {
-                    copy.flights.extend(found);
-                }
-                copy.flights.sort_unstable();
-                copy.flights.dedup();
-            }
-            copy
+            let found = if s.flights_final {
+                None
+            } else {
+                s.faction
+                    .and_then(|side| inferred_flights(conn, side, &s.completed).ok())
+            };
+            s.with_deduced_flights(overrides.start_flights(s.race), found)
         };
         let deduced = with_deduced(start);
         let start = &deduced;
@@ -302,6 +292,18 @@ pub fn prepare(
         model,
         notes,
     })
+}
+
+/// Every dungeon the character could run has levels to run it at.
+pub(crate) fn check_dungeon_levels(model: &Model, params: &Params) -> Result<(), RequestError> {
+    match (model.dungeons.iter()).find(|d| d.min_level != i64::MAX && d.min_level > d.max_level) {
+        Some(d) => Err(RequestError::NoDungeonLevels {
+            dungeon: d.name.clone(),
+            from: params.dungeon_from,
+            to: params.dungeon_to,
+        }),
+        None => Ok(()),
+    }
 }
 
 /// A member who already chose an exclusive alternative cannot meet an exact requirement.
@@ -349,7 +351,33 @@ fn load_world(
     params: &Params,
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<World> {
-    let mut world = World::load(conn, profile.faction, params.flight_speed, params.drop_tier())?;
+    world_for(conn, overrides, profile.faction, profile.race_id, params, progress)
+}
+
+/// The world of a race, as a plan walks it (the terrain, the zones' levels, the passages, the
+/// boats and portals of its race), with the default settings: for the tools and the tests.
+///
+/// # Errors
+///
+/// When the game data cannot be read.
+pub fn game_world(
+    conn: &Connection,
+    overrides: &Overrides,
+    faction: crate::faction::Faction,
+    race_id: i64,
+) -> Result<World> {
+    world_for(conn, overrides, faction, race_id, &overrides.params, &|_| {})
+}
+
+fn world_for(
+    conn: &Connection,
+    overrides: &Overrides,
+    faction: crate::faction::Faction,
+    race_id: i64,
+    params: &Params,
+    progress: &(dyn Fn(&str) + Sync),
+) -> Result<World> {
+    let mut world = World::load(conn, faction, params.flight_speed, params.drop_tier())?;
     let passes: Vec<_> = overrides
         .passes
         .iter()
@@ -374,21 +402,7 @@ fn load_world(
     for warning in world.add_passes(conn, &passes)? {
         progress(&warning);
     }
-    // Links kept to some races (the Skyborne's portals): those of the character's race.
-    let links: Vec<_> = (overrides.links.iter())
-        .filter(|l| {
-            l.races.is_empty()
-                || l.races
-                    .iter()
-                    .any(|r| overrides.races.get(r).is_some_and(|d| d.id == profile.race_id))
-        })
-        .cloned()
-        .collect();
-    world.add_links(
-        &links,
-        profile.faction,
-        params.run_speed / params.detour,
-        params.link_wait,
-    );
+    let links = overrides.links_of_race(race_id);
+    world.add_links(&links, faction, params.run_speed / params.detour, params.link_wait);
     Ok(world)
 }

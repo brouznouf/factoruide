@@ -61,31 +61,17 @@ fn database_of(edition: &str) -> Connection {
     Connection::open(path).unwrap()
 }
 
-/// The Classic database, unpacked next to the packed one when missing or older.
-fn database() -> Connection {
-    database_of("classic")
-}
-
 /// Level 1 human warrior with only `n` quests of its own: taken and turned in at the start NPC,
 /// nothing to do, no XP (each test sets what it checks). Nothing done on the way.
 pub(crate) fn quests_at_start(n: usize) -> Prepared {
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let request = PlanRequest {
-        race: "human".into(),
-        class: "warrior".into(),
-        from_level: 1,
-        to_level: 2,
-        name: None,
-        params: Some(overrides.params.clone()),
-        required_class_quests: None,
-        required_quests: vec![],
-        professions: vec![],
-        locale: None,
-        mates: vec![],
-        mate_professions: vec![],
-        start: None,
-    };
-    at_start(job::prepare(&database(), &overrides, &request, &|_| {}).unwrap(), n)
+    use crate::testing::{Q, Scenario};
+    at_start(
+        Scenario::new()
+            .levels(1, 2)
+            .quest(Q::new(900, "Quest").level(1))
+            .build(),
+        n,
+    )
 }
 
 fn at_start(mut p: Prepared, n: usize) -> Prepared {
@@ -615,7 +601,30 @@ fn greedy_grinds_to_the_mobs_of_a_quest_in_reach() {
 #[test]
 fn trips_fly_to_a_boat_and_from_it() {
     use super::state::Leg;
-    let mut p = quests_at_start(0);
+    use crate::testing::{At, Scenario};
+    let mut p = Scenario::new()
+        .levels(1, 2)
+        .zone(2, "Wetlands")
+        .zone(3, "Dustwallow")
+        .flight_master(1, "Ironforge", 1, 50.0, 50.0)
+        .flight_master(2, "Menethil Harbor", 2, 50.0, 50.0)
+        .flight_master(3, "Theramore", 3, 50.0, 50.0)
+        .boat(
+            "Boat Menethil Harbor - Theramore",
+            At {
+                zone: 2,
+                x: 52.0,
+                y: 50.0,
+            },
+            At {
+                zone: 3,
+                x: 48.0,
+                y: 50.0,
+            },
+            30.0,
+        )
+        .params(|p| p.link_wait = 0.0)
+        .build();
     p.params.gold_weight = 0.0;
     let planner = planner(&p);
     let trips = planner.trips();
@@ -646,7 +655,6 @@ fn trips_fly_to_a_boat_and_from_it() {
         "{leg:?}"
     );
 }
-
 /// A kill's loot fills the bags (`Params::loot_per_kill`) up to the room a level 1 character
 /// has; what no longer fits costs `bag_weight` a slot, and quest items take room too.
 #[test]

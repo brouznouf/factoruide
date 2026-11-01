@@ -10,6 +10,7 @@ use crate::world::{Pos, World};
 use anyhow::{Context, Result};
 use rusqlite::Connection;
 use std::collections::{HashMap, HashSet};
+use std::sync::Arc;
 
 /// Objective rows by quest: (kind, target, text, extra, amount).
 pub(super) type ObjectiveRows =
@@ -127,8 +128,8 @@ pub(super) struct Sources {
     pub(super) relations: Relations,
     pub(super) links: HashMap<i64, Vec<(LinkKind, i64)>>,
     pub(super) objectives: ObjectiveRows,
-    pub(super) item_origins: HashMap<i64, Vec<(SourceKind, i64)>>,
-    pub(super) drop_chance: HashMap<(i64, i64), f64>,
+    pub(super) item_origins: Arc<HashMap<i64, Vec<(SourceKind, i64)>>>,
+    pub(super) drop_chance: Arc<HashMap<(i64, i64), f64>>,
     /// Seconds the items that do not last are kept, by item.
     pub(super) item_durations: HashMap<i64, f64>,
     /// XP of quests the quest data has no value for: the most common reward column for their level.
@@ -460,19 +461,41 @@ fn item_durations(conn: &Connection) -> Result<HashMap<i64, f64>> {
 fn item_origins(
     conn: &Connection,
     params: &Params,
+) -> Result<(Arc<HashMap<i64, Vec<(SourceKind, i64)>>>, Arc<HashMap<(i64, i64), f64>>)> {
+    // The same for a database and the limit on what a container holds.
+    let kept = crate::memo::rows(
+        conn,
+        "item origins",
+        crate::memo::setting(params.max_object_loot),
+        || {
+            let (origins, chances) = read_item_origins(conn, params)?;
+            Ok((Arc::new(origins), Arc::new(chances)))
+        },
+    )?;
+    Ok((Arc::clone(&kept.0), Arc::clone(&kept.1)))
+}
+
+#[expect(
+    clippy::type_complexity,
+    reason = "two maps read by one query, destructured by the caller"
+)]
+fn read_item_origins(
+    conn: &Connection,
+    params: &Params,
 ) -> Result<(HashMap<i64, Vec<(SourceKind, i64)>>, HashMap<(i64, i64), f64>)> {
     let mut item_sources: HashMap<i64, Vec<(SourceKind, i64)>> = HashMap::new();
     let mut drop_chance: HashMap<(i64, i64), f64> = HashMap::new();
     let mut stmt = conn.prepare(&format!(
         "WITH loot AS (SELECT from_id, count(DISTINCT item_id) AS n FROM m_item_source
                        WHERE from_type = 'object' GROUP BY from_id),
-              chest AS (SELECT from_id FROM loot WHERE {limit} > 0 AND n > {limit})
+              chest AS (SELECT from_id FROM loot WHERE {limit} > 0 AND n > {limit}),
+              -- Items with a source that is not a chest.
+              other AS (SELECT DISTINCT item_id FROM m_item_source
+                        WHERE from_type != 'object' OR from_id NOT IN chest)
          SELECT s.item_id, s.from_type, s.from_id, s.chance, coalesce(l.n, 0)
          FROM m_item_source s
          LEFT JOIN loot l ON s.from_type = 'object' AND l.from_id = s.from_id
-         WHERE s.from_type != 'object' OR s.from_id NOT IN chest OR NOT EXISTS (
-           SELECT 1 FROM m_item_source o WHERE o.item_id = s.item_id
-             AND NOT (o.from_type = 'object' AND o.from_id IN chest))",
+         WHERE s.from_type != 'object' OR s.from_id NOT IN chest OR s.item_id NOT IN other",
         limit = params.max_object_loot
     ))?;
     for row in stmt.query_map([], |r| {
@@ -750,5 +773,129 @@ mod tests {
         assert!(tames(&reqs(r#"["Tame a Vuldren"]"#), "Vuldren Alpha"));
         assert!(!tames(&reqs(r#"["Large Crag Boar x 8"]"#), "Large Crag Boar"));
         assert!(!tames(&reqs(r#"["Tame a Snow Leopard"]"#), "Ice Claw Bear"));
+    }
+}
+
+#[cfg(test)]
+mod links_tests {
+    use super::*;
+    use crate::faction::Faction;
+    use crate::model::Mate;
+    use crate::model::testing::profile;
+
+    const ORC: i64 = 2;
+    const HUMAN: i64 = 1;
+    const WARRIOR: i64 = 1;
+    const WARLOCK: i64 = 9;
+
+    fn character(faction: Faction, race_id: i64, class_id: i64) -> Profile {
+        Profile {
+            race_id,
+            class_id,
+            ..profile(faction, 1, 30)
+        }
+    }
+
+    /// The quests (id, races mask, classes mask) and their links (quest, kind, other).
+    fn db(quests: &[(i64, i64, i64)], links: &[(i64, &str, i64)]) -> Connection {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch(
+            "CREATE TABLE m_quest(id INTEGER, races_mask INTEGER, classes_mask INTEGER);
+             CREATE TABLE m_quest_link(quest_id INTEGER, kind TEXT, other_id INTEGER);",
+        )
+        .unwrap();
+        for q in quests {
+            conn.execute(
+                "INSERT INTO m_quest VALUES (?1, ?2, ?3)",
+                rusqlite::params![q.0, q.1, q.2],
+            )
+            .unwrap();
+        }
+        for l in links {
+            conn.execute(
+                "INSERT INTO m_quest_link VALUES (?1, ?2, ?3)",
+                rusqlite::params![l.0, l.1, l.2],
+            )
+            .unwrap();
+        }
+        conn
+    }
+
+    fn any_of(links: &HashMap<i64, Vec<(LinkKind, i64)>>, quest: i64) -> Vec<i64> {
+        let mut ids: Vec<i64> = links[&quest]
+            .iter()
+            .filter(|(k, _)| *k == LinkKind::PreAny)
+            .map(|l| l.1)
+            .collect();
+        ids.sort_unstable();
+        ids
+    }
+
+    /// Vile Familiars' follow-up (794) has a branch for each class: the warrior's quest (792) and
+    /// the warlock's (1499). A character keeps the branch it can do; one that can do none, or both
+    /// (a group), keeps them all.
+    #[test]
+    fn a_follow_up_keeps_the_branch_of_the_character() {
+        let orc = 1 << (ORC - 1);
+        let warrior = 1 << (WARRIOR - 1);
+        let warlock = 1 << (WARLOCK - 1);
+        let conn = db(
+            &[(792, orc, warrior), (1499, orc, warlock), (794, orc, 0)],
+            &[(794, "pre_any", 792), (794, "pre_any", 1499)],
+        );
+        let links_of = |profile: &Profile| links(&conn, profile).unwrap();
+        assert_eq!(any_of(&links_of(&character(Faction::Horde, ORC, WARRIOR)), 794), [792]);
+        assert_eq!(any_of(&links_of(&character(Faction::Horde, ORC, WARLOCK)), 794), [1499]);
+        // A human can do neither: the links stay as they are.
+        assert_eq!(
+            any_of(&links_of(&character(Faction::Alliance, HUMAN, WARRIOR)), 794),
+            [792, 1499]
+        );
+        // A group of a warrior and a warlock needs both branches.
+        let mut group = character(Faction::Horde, ORC, WARRIOR);
+        group.mates = vec![Mate {
+            name: "Warlock-Realm".into(),
+            race_id: ORC,
+            class_id: WARLOCK,
+            spell_weights: Vec::new(),
+            professions: Vec::new(),
+        }];
+        assert_eq!(any_of(&links_of(&group), 794), [792, 1499]);
+    }
+
+    /// Forever's Windborne Cat quest has a predecessor for each side (the Horde's 98340, the
+    /// Alliance's 98393): each side keeps its own, and both stay when the quest's race scope is
+    /// the same.
+    #[test]
+    fn each_side_keeps_its_own_predecessor() {
+        let (horde, alliance) = (1 << 32, 1 << (HUMAN - 1));
+        let conn = db(
+            &[(98340, horde, 0), (98393, alliance, 0), (98400, 0, 0)],
+            &[(98400, "pre_any", 98340), (98400, "pre_any", 98393)],
+        );
+        let skyborne_horde = character(Faction::Horde, 95, WARRIOR);
+        assert_eq!(any_of(&links(&conn, &skyborne_horde).unwrap(), 98400), [98340]);
+        let human = character(Faction::Alliance, HUMAN, WARRIOR);
+        assert_eq!(any_of(&links(&conn, &human).unwrap(), 98400), [98393]);
+    }
+
+    /// Links from the quest data are kept once each, with their kind.
+    #[test]
+    fn a_link_is_kept_once_with_its_kind() {
+        let conn = db(
+            &[(1, 0, 0), (2, 0, 0), (3, 0, 0)],
+            &[
+                (3, "pre_all", 1),
+                (3, "pre_all", 1),
+                (3, "exclusive", 2),
+                (3, "child", 2),
+                (3, "breadcrumb", 1),
+            ],
+        );
+        let kept = &links(&conn, &character(Faction::Horde, ORC, WARRIOR)).unwrap()[&3];
+        assert_eq!(kept.iter().filter(|l| **l == (LinkKind::PreAll, 1)).count(), 1);
+        assert!(kept.contains(&(LinkKind::Exclusive, 2)));
+        assert!(kept.contains(&(LinkKind::Child, 2)));
+        assert!(kept.contains(&(LinkKind::Other, 1)));
     }
 }
