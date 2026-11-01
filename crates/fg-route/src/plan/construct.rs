@@ -5,6 +5,9 @@ use super::state::{Kind, State, Stop, fmt_time};
 use crate::params::Construction;
 use crate::world::Pos;
 
+/// Leave room for a deadline chain before the last two levels of its completion window.
+const DEADLINE_AHEAD: i64 = 2;
+
 /// A stop `nearest_stop` weighs: where it is, its weights, the quest that must be worth taking
 /// on the trip, and the least score the trip's bound gives.
 struct Candidate {
@@ -323,6 +326,7 @@ impl Planner<'_> {
             .iter()
             .filter(|c| c.stop.is_quest())
             .filter_map(|c| self.quest(c.stop.index).priority_deadline)
+            .filter(|&level| level < self.rules().max_level && level <= s.level + DEADLINE_AHEAD)
             .min();
         if let Some(deadline) = deadline {
             candidates.retain(|c| {

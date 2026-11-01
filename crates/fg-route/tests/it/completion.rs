@@ -358,3 +358,22 @@ fn starting_deadlines_only_check_members_pursuing_the_quests_profession() {
         .unwrap();
     assert!(format!("{error:#}").contains("above completion level"), "{error:#}");
 }
+
+#[test]
+fn a_deadline_at_the_level_cap_does_not_change_the_greedy_route() {
+    for edition in Edition::ALL {
+        let conn = database_of(edition.key());
+        let o = overrides(edition);
+        let plain = request(&json!([21]));
+        let capped = request(&json!([{"quest":21,"max_level":edition.rules().max_level}]));
+        let a = job::prepare(&conn, &o, &plain, &|_| {}).unwrap();
+        let b = job::prepare(&conn, &o, &capped, &|_| {}).unwrap();
+        let pa = Planner::new(&a.model, &a.world, &a.params, &a.profile);
+        let pb = Planner::new(&b.model, &b.world, &b.params, &b.profile);
+        assert_eq!(
+            pa.greedy(),
+            pb.greedy(),
+            "{edition:?}: a non-binding maximum should not force detours"
+        );
+    }
+}
