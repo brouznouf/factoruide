@@ -641,3 +641,23 @@ fn sleeping_bag_option_requires_the_chain_and_recognizes_imported_completion() {
         assert_eq!(required, Vec::<i64>::new());
     }
 }
+
+#[test]
+fn sleeping_bag_option_preserves_an_explicit_completion_window() {
+    let conn = database_of("forever");
+    let o = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let req = serde_json::from_value(serde_json::json!({
+        "race":"human","class":"warrior","from_level":1,"to_level":60,
+        "required_class_quests":[],"required_quests":[{"quest":79976,"min_level":20,"max_level":60}],
+        "params":{"edition":"forever","sleeping_bag":true,"food_xp":true}
+    }))
+    .unwrap();
+    let p = job::prepare(&conn, &o, &req, &|_| {}).unwrap();
+    let choices: Vec<_> = p.profile.required_quests.iter().filter(|q| q.id == 79976).collect();
+    assert_eq!(choices.len(), 1);
+    assert_eq!(choices[0].window.min_level, Some(20));
+    assert_eq!(
+        p.model.quests[p.model.index[&79976]].completion_window.max_level,
+        Some(60)
+    );
+}
