@@ -892,7 +892,7 @@ fn checkpoints_wait_for_their_level() {
 /// those shown to the other faction only.
 #[test]
 fn flight_paths_are_flight_masters() {
-    let world = &orc_warlock().world;
+    let world = crate::common::world(Edition::Classic, fg_route::faction::Faction::Horde);
     let has = |name: &str| world.taxi_nodes.iter().any(|n| n.name.starts_with(name));
     assert!(has("Ratchet") && has("Crossroads") && has("Hammerfall"));
     assert!(!has("Quest Path"), "a shaman quest's flight");
@@ -904,7 +904,7 @@ fn flight_paths_are_flight_masters() {
 /// their own zone (a city's own map in a city), and towns are named.
 #[test]
 fn flight_paths_are_in_their_zone() {
-    let world = &orc_warlock().world;
+    let world = crate::common::world(Edition::Classic, fg_route::faction::Faction::Horde);
     let zone_of = |town: &str| {
         let n = world.taxi_nodes.iter().find(|n| n.name.starts_with(town)).unwrap();
         world.zone_name(n.pos.zone).to_owned()
@@ -952,8 +952,7 @@ fn item_used_by_an_objective_is_got_first() {
 /// sea to Auberdine, the portal and the boat do. Darnassus is walked to from Dolanaar.
 #[test]
 fn rut_theran_is_left_by_portal_or_boat() {
-    let p = prepare("nightelf", "warrior", 2, &[]);
-    let w = &p.world;
+    let w = crate::common::world(Edition::Classic, fg_route::faction::Faction::Alliance);
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let (village, dolanaar) = (at(141, 55.5, 90.0), at(141, 55.6, 59.8));
     assert!(w.walk_distance(&village, &dolanaar).is_infinite());
@@ -969,17 +968,14 @@ fn rut_theran_is_left_by_portal_or_boat() {
 }
 
 /// The walking world of each edition for a faction (`job::walk_world`).
-fn walk_worlds(faction: fg_route::faction::Faction) -> Vec<(&'static str, fg_route::world::World)> {
+fn walk_worlds(faction: fg_route::faction::Faction) -> Vec<(&'static str, &'static fg_route::world::World)> {
     [
         ("forever", Edition::Forever),
         ("classic", Edition::Classic),
         ("tbc", Edition::Tbc),
     ]
     .into_iter()
-    .map(|(name, edition)| {
-        let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-        (name, job::walk_world(&database_of(name), &overrides, faction).unwrap())
-    })
+    .map(|(name, edition)| (name, crate::common::world(edition, faction)))
     .collect()
 }
 

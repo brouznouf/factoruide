@@ -10,7 +10,6 @@ use fg_route::plan::Breakdown;
 use fg_route::xp::Edition;
 use fg_route::world::World;
 use serde_json::json;
-use std::sync::OnceLock;
 
 fn overrides() -> Overrides {
     Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap()
@@ -18,10 +17,7 @@ fn overrides() -> Overrides {
 
 /// The Classic world of a faction, loaded once for the tests that only read it.
 fn world(faction: Faction) -> &'static World {
-    static HORDE: OnceLock<World> = OnceLock::new();
-    static ALLIANCE: OnceLock<World> = OnceLock::new();
-    let cell = if faction == Faction::Horde { &HORDE } else { &ALLIANCE };
-    cell.get_or_init(|| job::walk_world(&database(), &overrides(), faction).unwrap())
+    crate::common::world(Edition::Classic, faction)
 }
 
 /// A guide of these steps (`kind`, Tirisfal Glades map percent), as guides made before the

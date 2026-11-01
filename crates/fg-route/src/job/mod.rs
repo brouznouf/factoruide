@@ -45,6 +45,7 @@ pub use routes::{
 pub use services::{Place, Service, places, services_lua};
 pub use start::{Bind, LogObjective, LogQuest, MapPos, QuestId, Skill, Standing, StartState};
 pub use starts::{StartOption, StartPreview, preview_starts};
+#[cfg(any(test, feature = "testing"))]
 pub(crate) use starts::preview_starts_of;
 pub use timeline::{InnInfo, Leg, LegMode, NodeInfo, ObjectiveInfo, QuestInfo, StartView, Timeline, TimelineStep};
 
@@ -345,7 +346,28 @@ fn load_world(
     params: &Params,
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<World> {
-    let mut world = World::load(conn, profile.faction, params.flight_speed, params.drop_tier())?;
+    world_for(conn, overrides, profile.faction, profile.race_id, params, progress)
+}
+
+/// The world of a race, as a plan walks it (the terrain, the zones' levels, the passages, the
+/// boats and portals of its race), with the default settings: for the tools and the tests.
+///
+/// # Errors
+///
+/// When the game data cannot be read.
+pub fn game_world(conn: &Connection, overrides: &Overrides, faction: crate::faction::Faction, race_id: i64) -> Result<World> {
+    world_for(conn, overrides, faction, race_id, &overrides.params, &|_| {})
+}
+
+fn world_for(
+    conn: &Connection,
+    overrides: &Overrides,
+    faction: crate::faction::Faction,
+    race_id: i64,
+    params: &Params,
+    progress: &(dyn Fn(&str) + Sync),
+) -> Result<World> {
+    let mut world = World::load(conn, faction, params.flight_speed, params.drop_tier())?;
     let passes: Vec<_> = overrides
         .passes
         .iter()
@@ -376,13 +398,13 @@ fn load_world(
             l.races.is_empty()
                 || l.races
                     .iter()
-                    .any(|r| overrides.races.get(r).is_some_and(|d| d.id == profile.race_id))
+                    .any(|r| overrides.races.get(r).is_some_and(|d| d.id == race_id))
         })
         .cloned()
         .collect();
     world.add_links(
         &links,
-        profile.faction,
+        faction,
         params.run_speed / params.detour,
         params.link_wait,
     );
