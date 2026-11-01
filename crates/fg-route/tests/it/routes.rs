@@ -2830,7 +2830,7 @@ fn a_group_takes_on_what_its_weakest_class_does() {
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let curve = |class: &str| {
         let points = overrides.class_power[class].points().unwrap();
-        fg_route::job::curve_by_level(&points, 100)
+        job::curve_by_level(&points, 100)
     };
     let (warrior, mage) = (curve("warrior"), curve("mage"));
     let mut group = warrior.clone();

@@ -134,6 +134,17 @@ const ZONE_MOB_LEVEL_MAX: i64 = 70;
 /// A lift of `World::area_lifts`: passage and the indices of its two sides.
 type LiftSides = (usize, usize, usize);
 
+/// Which database file a connection is on: its path, modification time and size. None for a
+/// database in memory (nothing tells it from another).
+pub(crate) fn file_stamp(conn: &Connection) -> Option<u64> {
+    use std::hash::{Hash, Hasher};
+    let path = conn.path().filter(|p| !p.is_empty())?;
+    let meta = std::fs::metadata(path).ok()?;
+    let mut h = std::collections::hash_map::DefaultHasher::new();
+    (path, meta.modified().ok()?, meta.len()).hash(&mut h);
+    Some(h.finish())
+}
+
 /// Which database file a world is loaded from: its path, modification time and size, with the
 /// faction and drop tier. None for a database in memory (nothing tells it from another).
 fn database_stamp(conn: &Connection, faction: Faction, drop_tier: usize) -> Option<u64> {
