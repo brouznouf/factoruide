@@ -188,11 +188,14 @@ impl Planner<'_> {
             .then(|| {
                 let trips = self.trips().at(s);
                 let learned = s.abilities | self.model.abilities.trained(s.abilities, s.level);
-                trips.walk(&s.pos, &trainer.pos, s.level)
-                    + trips.with_movement(learned).walk(&trainer.pos, &s.pos, s.level)
+                let outbound = trips.walk(&s.pos, &trainer.pos, s.level);
+                (
+                    outbound,
+                    outbound + trips.with_movement(learned).walk(&s.pos, &trainer.pos, s.level),
+                )
             })
-            .filter(|d| d.is_finite());
-        if let Some(detour) = detour {
+            .filter(|(_, total)| total.is_finite());
+        if let Some((_, detour)) = detour {
             s.time += detour;
             s.spent.travel += detour;
         } else {
@@ -215,6 +218,7 @@ impl Planner<'_> {
             s,
             Event::Train {
                 trainer: i,
+                outbound: detour.map_or(0.0, |(outbound, _)| outbound),
                 since,
                 abilities: s.abilities & !abilities_before,
             },

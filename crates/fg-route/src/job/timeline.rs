@@ -931,10 +931,14 @@ impl<'r> Replay<'r> {
                     if !apart(&at, &p) {
                         push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
                     } else if !apart(&after.pos, &at) {
-                        // A detour: there and back.
+                        // Training can make the return faster; other detours retain equal halves.
+                        let outbound = match e.event {
+                            Event::Train { outbound, .. } => outbound.min(walk),
+                            _ => walk / 2.0,
+                        };
                         push(
                             out,
-                            walk / 2.0,
+                            outbound,
                             &mut t,
                             [1.0, 0.0, 0.0, 0.0],
                             Some(leg(walk_mode, &at, &p, Vec::new())),
@@ -1300,7 +1304,7 @@ mod movement_tests {
         };
         p.model.initial.pos = Some((a, 0));
         p.model.trainers = vec![p.model.start.clone()];
-        p.model.trainers[0].pos = a;
+        p.model.trainers[0].pos = Pos { x: -200.0, ..a };
         p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Dry);
         (p.params.run_speed, p.params.detour, p.params.mount_level) = (7.0, 1.0, 40);
         let names = Names::load(&conn, "enUS").unwrap();
@@ -1308,6 +1312,18 @@ mod movement_tests {
         let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile).explicit();
         let replay = Replay::run(&editor, &planner, &[Edit::Train { trainer: 0 }], &names, Lines::Events).unwrap();
         let train = replay.lines.iter().position(|s| s.kind == StepKind::Train).unwrap();
+        let mut scaled = replay.lines[train].clone();
+        scaled.time = replay.edited.trace[scaled.event.unwrap()].time * 2.0;
+        let playback = replay.timeline(&[scaled]);
+        assert!(
+            (playback.legs[0].end - playback.legs[0].start - 2.0 * 100.0 / 7.0).abs() < 0.11,
+            "outbound keeps normal speed"
+        );
+        assert!(
+            (playback.legs[1].end - playback.legs[1].start - 2.0 * 100.0 / 9.1).abs() < 0.11,
+            "return uses Cheetah, including saved-time scaling"
+        );
+
         assert!(replay.snaps[1].time < 800.0);
         let mut missing = replay.lines[train].clone();
         missing.kind = StepKind::Objective;
