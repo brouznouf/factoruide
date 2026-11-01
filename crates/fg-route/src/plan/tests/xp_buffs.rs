@@ -348,3 +348,16 @@ fn group_exports_each_recipients_quest_reward() {
         }));
     }
 }
+
+#[test]
+fn buffed_kills_can_move_a_later_turn_in_outside_its_window() {
+    let mut p = prepared();
+    p.model.initial.xp = Edition::Forever.rules().to_next_level(3) - 61;
+    p.model.quests[1].required = true;
+    p.model.quests[1].completion_window.max_level = Some(3);
+    for food in [false, true] {
+        p.params.food_xp = food;
+        let report = planner(&p).edit(&[Edit::Grind { mobs: 1 }, stop(1, Kind::Accept), stop(1, Kind::TurnIn)]);
+        assert_eq!(report.errors(), usize::from(food));
+    }
+}
