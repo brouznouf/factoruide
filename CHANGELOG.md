@@ -74,6 +74,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### WoW data
 
+- WoW Forever's Hall of Thanes: An Ancient Grudge is planned (its giver and its objective were missing), and The Restless Dead asks to put Faldrim Anvilmar to rest (GitHub #82).
 - Quest, NPC and spawn data brought up to date, with 51 more contributions from players: WoW Forever gets quests it had wrongly left out or marked unavailable, and corrected XP, races, classes and zones; TBC gets 11 quests it lacked; Classic is unchanged.
 - 206 contributed names, titles, levels and objectives checked against public pages and added: Spanish and French translations that were old or literal, minimum levels, a few objectives.
 
