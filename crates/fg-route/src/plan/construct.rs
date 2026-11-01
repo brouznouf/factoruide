@@ -861,7 +861,7 @@ mod deadline_tests {
             let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
             let state = plan.initial_state();
             let next = plan.nearest_stop(&state, None).unwrap();
-            assert_eq!(next, Stop::quest(if need == 3 { 0 } else { 1 }, Kind::Accept));
+            assert_eq!(next, Stop::quest(u32::from(need != 3), Kind::Accept));
         }
     }
 }
