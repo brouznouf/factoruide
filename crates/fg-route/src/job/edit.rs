@@ -516,28 +516,27 @@ impl Editor {
             for (i, s) in steps.into_iter().enumerate() {
                 if i == last {
                     out.append(&mut block);
-                } else if !past(&s) {
-                    let s = if let RouteStep::Objective {
+                } else if past(&s) {
+                    // Handed in with the child now.
+                } else if let RouteStep::Objective {
+                    quest,
+                    objective,
+                    farm,
+                    spot,
+                } = s
+                {
+                    let objective = if quest == parent.id {
+                        own.get(usize::from(objective)).copied().unwrap_or(objective)
+                    } else {
+                        objective
+                    };
+                    out.push(RouteStep::Objective {
                         quest,
                         objective,
                         farm,
                         spot,
-                    } = s
-                    {
-                        let objective = if quest == parent.id {
-                            own.get(usize::from(objective)).copied().unwrap_or(objective)
-                        } else {
-                            objective
-                        };
-                        RouteStep::Objective {
-                            quest,
-                            objective,
-                            farm,
-                            spot,
-                        }
-                    } else {
-                        s
-                    };
+                    });
+                } else {
                     out.push(s);
                 }
             }
