@@ -30,10 +30,7 @@ impl Worth<'_> {
     /// Rough standalone cost of a quest, to skip quests not worth the trip.
     pub(crate) fn quest_cost(&self, i: u32, level: i64, bonus: f64, abilities: u64) -> f64 {
         let q = self.quest(i);
-        let trips = Trips {
-            abilities,
-            ..self.trips
-        };
+        let trips = self.trips.with_movement(abilities);
         let leg = |a: &crate::world::Pos, b: &crate::world::Pos| trips.leg(a, b, level, 0, u8::MAX).0;
         let work_at = |o: &Objective| {
             o.kills * self.combat.kill_time(level, bonus, o) + o.uses * self.params.object_time + o.extra

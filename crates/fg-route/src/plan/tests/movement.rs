@@ -1,10 +1,11 @@
 //! Learned movement abilities, activation time and terrain through route estimates.
 
 use super::*;
+use crate::plan::Event;
 
 #[test]
 fn known_and_trained_movement_spells_change_the_eligible_walking_legs() {
-    use crate::terrain::TestGround::{Covered, Dry, Mixed, Shallow, Unknown};
+    use crate::terrain::TestGround::{Covered, Dry, Indoor, Mixed, Shallow, Unknown};
     for (edition, race, class, spell, seconds) in [
         (Edition::Classic, "nightelf", "druid", 783, 61.22449),
         (Edition::Classic, "orc", "shaman", 2645, 63.22449),
@@ -53,7 +54,7 @@ fn known_and_trained_movement_spells_change_the_eligible_walking_legs() {
         };
         let acquisition = if spell == 783 { 30 } else { 20 };
         let earlier = if class == "druid" && edition != Edition::Forever {
-            65.93407 // The trainer already offers Cat Form at level 29.
+            65.93407 // Cat Form and Feral Swiftness are available at level 29.
         } else {
             85.71429
         };
@@ -73,6 +74,7 @@ fn known_and_trained_movement_spells_change_the_eligible_walking_legs() {
             ),
             (30, 300.0, Mixed, 40, 0.6, None),
             (30, 300.0, Covered, 40, 0.6, None),
+            (30, 300.0, Indoor, 40, 0.6, None),
             (30, 300.0, Unknown, 40, 0.6, None),
         ] {
             let a = crate::world::Pos {
@@ -388,4 +390,92 @@ fn group_travel_keeps_the_shared_speed_when_the_druid_knows_travel_form() {
             "{edition:?}: the warrior cannot share the druid's movement speed"
         );
     }
+}
+
+#[test]
+fn movement_training_waits_for_a_nearby_trainer() {
+    let conn = database_of("classic");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+    let req: PlanRequest = serde_json::from_value(serde_json::json!({
+        "race":"orc", "class":"hunter", "from_level":20, "to_level":21,
+        "start":{"level":20,"spells":[]}, "required_class_quests":[]
+    }))
+    .unwrap();
+    let mut p = at_start(job::prepare(&conn, &overrides, &req, &|_| {}).unwrap(), 1);
+    p.model.power = None;
+    p.params.train_every = 100;
+    p.params.train_radius = 50.0;
+    let mut trainer = p.model.start.clone();
+    trainer.pos.x += 1000.0;
+    p.model.trainers = vec![trainer];
+    let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let mut state = plan.initial_state();
+    let mut events = Vec::new();
+    plan.train(&mut state, &mut |_, e| events.push(e));
+    assert!(
+        events.is_empty(),
+        "a movement gain alone does not justify a dedicated trip"
+    );
+    p.model.trainers[0].pos = p.model.start.pos;
+    let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    plan.train(&mut state, &mut |_, e| events.push(e));
+    assert!(
+        events.iter().any(|e| matches!(e, Event::Train { .. })),
+        "learn Cheetah at a nearby trainer"
+    );
+}
+
+#[test]
+fn passage_walks_keep_the_normal_speed_even_with_dry_ground_under_them() {
+    use crate::world::{PassDef, Pos, ZonePoint};
+    let conn = database();
+    let mut p = quests_at_start(1);
+    p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Passage);
+    p.world.passes.clear();
+    let a = Pos {
+        continent: 1,
+        x: -100.0,
+        y: -100.0,
+        zone: 14,
+        z: None,
+    };
+    let b = Pos {
+        x: -1800.0,
+        zone: 17,
+        ..a
+    };
+    let mid = Pos { x: -900.0, ..a };
+    let at = p.world.to_map(14, &mid).unwrap();
+    let warnings = p
+        .world
+        .add_passes(
+            &conn,
+            &[PassDef {
+                name: "Lift".into(),
+                zones: [14, 17],
+                subzone: None,
+                at: Some(ZonePoint {
+                    zone: 14,
+                    x: at.x,
+                    y: at.y,
+                    z: None,
+                }),
+                shortcut: false,
+                one_way: false,
+                lift: true,
+            }],
+        )
+        .unwrap();
+    assert!(warnings.is_empty(), "{warnings:?}");
+    let path = p.world.walk_path(&a, &b, 0);
+    assert!(path.len() >= 3, "the walk takes its passage");
+    assert!(
+        path.windows(2)
+            .all(|pair| p.world.terrain.exposed_ground_line(&pair[0], &pair[1])),
+        "the drawn line alone looks safe"
+    );
+    assert!(
+        !p.world.exposed_walk(&a, &b, 0),
+        "passage segments are not known walked ground"
+    );
 }

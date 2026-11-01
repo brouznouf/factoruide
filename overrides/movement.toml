@@ -30,6 +30,7 @@ spells = [5118]
 bonus = 0.3
 activation = 0.0
 
+# Talent ranks and edition-specific Ghost Wolf cast times are applied in abilities.rs.
 # Cat speed requires Feral Swiftness and a learned Cat Form.
 [[ability]]
 class = "druid"

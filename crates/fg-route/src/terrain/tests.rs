@@ -695,6 +695,12 @@ pub(super) fn movement_ground(kind: TestGround) -> Terrain {
         TestGround::Dry => return flat(|_, _| false),
         TestGround::Shallow => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, WET | 1 << 3)]),
         TestGround::Covered => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, 0), (20, 0)]),
+        TestGround::Indoor => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, UNDER)]),
+        TestGround::Passage => {
+            return floors_terrain(&[(1, 32, 32), (1, 33, 32), (1, 34, 32), (1, 35, 32)], |_, _, _| {
+                vec![(0, 0)]
+            });
+        }
         TestGround::Unknown => return Terrain::default(),
         TestGround::Mixed => {}
     }

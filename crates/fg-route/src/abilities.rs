@@ -254,6 +254,14 @@ impl Abilities {
         self.by_quest.get(&quest).copied().unwrap_or(0)
     }
 
+    pub fn movement(&self, known: u64) -> u64 {
+        self.entries
+            .iter()
+            .enumerate()
+            .filter(|(_, a)| a.travel.is_some())
+            .fold(0, |mask, (i, _)| mask | (known & (1 << i)))
+    }
+
     fn travel(&self, known: u64, level: i64, params: &Params) -> impl Iterator<Item = (f64, f64)> + '_ {
         let talents = params.assume_movement_talents;
         let edition = params.edition;

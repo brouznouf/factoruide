@@ -24,7 +24,7 @@ type PosKey = [u64; 4];
 
 /// Trips already computed (from with mounted or not and the links opened, to, known flight
 /// paths): a replay asks the same trips again and again. Emptied when full.
-pub(crate) type Legs = RefCell<FxHashMap<(PosKey, PosKey, u128, u64), (f64, Hop)>>;
+pub(crate) type Legs = RefCell<FxHashMap<(PosKey, PosKey, u128, u64, u64), (f64, Hop)>>;
 pub(crate) type Grounds = RefCell<FxHashMap<(PosKey, PosKey, u8), bool>>;
 
 /// What a table of 2^18 buckets holds (7/8 of them): it never grows past them.
@@ -124,7 +124,7 @@ impl Trips<'_> {
 
     fn travel_abilities(&self) -> u64 {
         if self.model.initial.mates.is_empty() {
-            self.abilities
+            self.model.abilities.movement(self.abilities)
         } else {
             0
         }
@@ -141,11 +141,7 @@ impl Trips<'_> {
         if let Some(value) = key.and_then(|k| self.grounds.borrow().get(&k).copied()) {
             return value;
         }
-        let path = self.world.walk_path(a, b, closed);
-        let exposed = path.len() >= 2
-            && path
-                .windows(2)
-                .all(|p| self.world.terrain.exposed_ground_line(&p[0], &p[1]));
+        let exposed = self.world.exposed_walk(a, b, closed);
         if let Some(key) = key {
             let mut cache = self.grounds.borrow_mut();
             if cache.len() >= LEGS_MAX {
@@ -181,6 +177,18 @@ impl Trips<'_> {
         }
     }
 
+    /// The level a trip is remembered at (`Legs`): what its time and choice depend on apart
+    /// from the speed, the zones closed to walks (`World::walk_level`) and the weight of gold
+    /// (`Params::gold_weight_at`, by bands of 5 levels, the same up to level 30).
+    fn leg_level(&self, level: i64) -> u8 {
+        let band = ((level.clamp(1, 250) + 4) / 5 * 5) as u8;
+        if self.params.gold_weight > 0.0 && f64::from(band) > crate::params::GOLD_WEIGHT_LEVEL {
+            band
+        } else {
+            self.world.walk_level(level)
+        }
+    }
+
     /// The links `s` may take (see `World::link_chain`): those a quest opens once it is taken,
     /// or when the character cannot take it; those open only while a quest is in the log, while
     /// it is.
@@ -203,11 +211,11 @@ impl Trips<'_> {
         }
         // The level affects mounts, talent ranks, closed zones and the weight of gold.
         let mounted = level >= self.params.mount_level;
-        let (Some(mut a), Some(z)) = (pos_key(from, mounted, level as u8), pos_key(b, false, 0)) else {
+        let (Some(mut a), Some(z)) = (pos_key(from, mounted, self.leg_level(level)), pos_key(b, false, 0)) else {
             return self.compute_leg(from, b, level, known, open);
         };
         a[0] |= u64::from(open) << 58;
-        let key = (a, z, known, self.abilities);
+        let key = (a, z, known, self.travel_abilities(), self.speed(level).to_bits());
         if let Some(&(t, hop)) = self.legs.borrow().get(&key) {
             return (t, hop.leg());
         }

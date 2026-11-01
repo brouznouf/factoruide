@@ -2296,6 +2296,8 @@ pub(crate) enum TestGround {
     Shallow,
     Mixed,
     Covered,
+    Indoor,
+    Passage,
     Unknown,
 }
 

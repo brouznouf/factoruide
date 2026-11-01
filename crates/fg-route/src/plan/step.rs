@@ -74,7 +74,7 @@ impl Planner<'_> {
         }
         let every = s.level >= s.trained + self.params.train_every;
         let every_late = s.level >= s.trained + self.params.train_every + self.params.train_max_delay;
-        let (mut due, mut late) = match self.model.power.as_ref().filter(|p| p.has_spells()) {
+        let (mut due, late) = match self.model.power.as_ref().filter(|p| p.has_spells()) {
             Some(p) => {
                 let gain = p.train_gain(
                     s.trained,
@@ -98,7 +98,6 @@ impl Planner<'_> {
                 / abilities.speed(s.abilities, s.level, self.params)
                 - 1.0;
             due |= gain >= self.params.train_min_gain && gain > 0.0;
-            late |= gain >= self.params.train_trip_gain && gain > 0.0;
         }
         if !due {
             return;
