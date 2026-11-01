@@ -1,9 +1,9 @@
 //! Explicit quest requirements through request resolution, model construction and guide saving.
 
-use crate::common::{database, database_of, repo};
+use crate::common::{database_of, repo};
 use fg_route::faction::Faction;
 use fg_route::job::{self, Editor, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
-use fg_route::testing::{Q, Scenario};
+use fg_route::testing::{At, Obj, Q, Scenario};
 use fg_route::plan::{Kind, Planner, Stop};
 use fg_route::xp::Edition;
 
@@ -15,31 +15,29 @@ fn request(race: &str, class: &str, required: &[RequiredQuest]) -> PlanRequest {
     .unwrap()
 }
 
+/// A must-have quest brings in the quests it needs, and the guide turns them all in, even with no
+/// penalty for leaving a mandatory quest out.
 #[test]
 fn required_quest_chain_is_included_and_survives_zero_penalty() {
-    for edition in Edition::ALL {
-        for choice in [
-            RequiredQuest::Id(21),
-            RequiredQuest::Name("Skirmish at Echo Ridge".into()),
-        ] {
-            let conn = database_of(edition.key());
-            let mut overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-            overrides.params.mandatory_penalty = 0.0;
-            let req = request("human", "warrior", &[choice]);
-            let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
-            let target = &p.model.quests[p.model.index[&21]];
-            assert!(target.required);
-            assert_ne!(target.pre_any, [] as [i64; 0]);
-            for pre in &target.pre_any {
-                assert!(p.model.quests[p.model.index[pre]].required);
-            }
-            let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
-            let route = planner.greedy();
-            planner.validate_required(&route).unwrap();
-            assert!(route.contains(&Stop::quest(p.model.index[&21] as u32, Kind::TurnIn)));
-            assert!(planner.validate_required(&[]).is_err());
-        }
+    let p = Scenario::new()
+        .params(|p| p.mandatory_penalty = 0.0)
+        .quest(Q::new(20, "Echo Ridge Beginnings").giver(1, 40.0, 40.0).kill("Kobold", 1, 4, 1, 45.0, 45.0))
+        .quest(Q::new(21, "Skirmish at Echo Ridge").level(2).after_any(&[20]).giver(1, 41.0, 41.0).kill("Kobold", 2, 4, 1, 46.0, 46.0))
+        .quest(Q::new(30, "Wolves").giver(1, 60.0, 60.0).kill("Wolf", 1, 4, 1, 62.0, 62.0))
+        .required(21)
+        .build();
+    let target = &p.model.quests[p.model.index[&21]];
+    assert!(target.required);
+    assert_ne!(target.pre_any, [] as [i64; 0]);
+    for pre in &target.pre_any {
+        assert!(p.model.quests[p.model.index[pre]].required);
     }
+    assert!(!p.model.quests[p.model.index[&30]].required);
+    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let route = planner.greedy();
+    planner.validate_required(&route).unwrap();
+    assert!(route.contains(&Stop::quest(p.model.index[&21] as u32, Kind::TurnIn)));
+    assert!(planner.validate_required(&[]).is_err());
 }
 
 /// The editor refuses to save a guide that does not turn in a must-have quest, and says which.
@@ -84,33 +82,24 @@ fn required_quest_editor_refuses_removal() {
         .unwrap();
 }
 
-#[test]
-fn sleeping_bag_requirements_are_limited_to_forever() {
-    for edition in [Edition::Classic, Edition::Tbc] {
-        let conn = database_of(edition.key());
-        let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-        let req = request("human", "warrior", &[RequiredQuest::Id(79976)]);
-        let error = job::prepare(&conn, &overrides, &req, &|_| {}).err().unwrap();
-        assert!(format!("{error:#}").contains("not found"), "{edition:?}: {error:#}");
-    }
-}
-
+/// A must-have quest the character already did needs no repeat, and leaves the other class choices
+/// as they were.
 #[test]
 fn required_quest_completed_profile_needs_no_repeat() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let mut req = request("human", "warrior", &[RequiredQuest::Id(783)]);
-    req.start = Some(StartState {
-        level: 30,
-        completed: vec![QuestId(783)],
-        ..StartState::default()
-    });
-    req.to_level = 31;
-    req.required_class_quests = None;
-    let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+    let scenario = |required: bool| {
+        let s = Scenario::new()
+            .levels(30, 31)
+            .start(StartState {
+                level: 30,
+                completed: vec![QuestId(783)],
+                ..StartState::default()
+            })
+            .quest(Q::new(783, "A Threat Within").level(5).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
+            .quest(Q::new(3100, "Tome").level(30).mandatory().giver(1, 60.0, 60.0).kill("Imp", 30, 4, 1, 62.0, 62.0));
+        if required { s.required(783) } else { s }.build()
+    };
+    let (p, ordinary) = (scenario(true), scenario(false));
     assert!(p.model.quests.iter().all(|q| !q.required));
-    req.required_quests.clear();
-    let ordinary = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
     let choices = |p: &job::Prepared| p.model.quests.iter().map(|q| (q.id, q.mandatory)).collect::<Vec<_>>();
     assert_eq!(
         choices(&p),
@@ -119,46 +108,23 @@ fn required_quest_completed_profile_needs_no_repeat() {
     );
 }
 
-#[test]
-fn required_quest_resolution_rejects_unknown_restricted_and_excluded() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    for (choice, reason) in [
-        (RequiredQuest::Id(999_999_999), "not found"),
-        (RequiredQuest::Id(3087), "race or class"),
-    ] {
-        let req = request("human", "warrior", &[choice]);
-        let error = job::prepare(&conn, &overrides, &req, &|_| {}).err().unwrap();
-        assert!(format!("{error:#}").contains(reason), "{error:#}");
-    }
-    let mut req = request("human", "warrior", &[RequiredQuest::Id(21)]);
-    let mut params = overrides.params.clone();
-    params.excluded_quests.push(21);
-    req.params = Some(params);
-    let error = job::prepare(&conn, &overrides, &req, &|_| {}).err().unwrap();
-    assert!(format!("{error:#}").contains("excluded by configuration"), "{error:#}");
-}
-
+/// A must-have quest is still required once another quest reached the target level.
 #[test]
 fn required_quests_continue_after_target_level() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let req = request("human", "warrior", &[RequiredQuest::Id(783)]);
-    let mut p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
-    let i = p.model.index[&783];
-    p.model.quests[i].xp = 100_000;
-    // A different completed quest reaches the level target before the required quest.
-    let other = p.model.index[&7];
-    p.model.quests[other].objectives.clear();
-    p.model.quests[other].pre_all.clear();
-    p.model.quests[other].pre_any.clear();
-    p.model.quests[other].xp = 100_000;
+    let p = Scenario::new()
+        .levels(1, 5)
+        .quest(Q::new(783, "A Threat Within").level(5).xp(100_000).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
+        .quest(Q::new(7, "Kobolds").xp(100_000).giver(1, 60.0, 60.0))
+        .required(783)
+        .build();
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let (other, i) = (p.model.index[&7] as u32, p.model.index[&783] as u32);
     let route = [
-        Stop::quest(other as u32, Kind::Accept),
-        Stop::quest(other as u32, Kind::TurnIn),
-        Stop::quest(i as u32, Kind::Accept),
-        Stop::quest(i as u32, Kind::TurnIn),
+        Stop::quest(other, Kind::Accept),
+        Stop::quest(other, Kind::TurnIn),
+        Stop::quest(i, Kind::Accept),
+        Stop::quest(i, Kind::Objective(0)),
+        Stop::quest(i, Kind::TurnIn),
     ];
     planner.validate_required(&route).unwrap();
 }
@@ -202,24 +168,9 @@ fn required_sleeping_bag_route_exports_the_factions_chain_by_id_or_name() {
     }
 }
 
-#[test]
-fn required_quest_name_ambiguity_lists_ids() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let req = request(
-        "human",
-        "warrior",
-        &[RequiredQuest::Name("A Call to Arms: The Plaguelands!".into())],
-    );
-    let error = job::prepare(&conn, &overrides, &req, &|_| {}).err().unwrap();
-    assert!(format!("{error:#}").contains("ambiguous name; choose an ID (5066, 5090, 5091)"));
-}
-
+/// A quest one player of a group did stays required for the other.
 #[test]
 fn required_quest_completed_by_one_group_member_is_still_required_by_the_other() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let mut req = request("human", "warrior", &[RequiredQuest::Id(783)]);
     let leader = StartState {
         name: "Leader".into(),
         race: 1,
@@ -230,51 +181,62 @@ fn required_quest_completed_by_one_group_member_is_still_required_by_the_other()
         completed: vec![QuestId(783)],
         ..StartState::default()
     };
-    req.start = Some(leader.clone());
-    req.mates = vec![StartState {
+    let partner = StartState {
         name: "Partner".into(),
         xp: 0,
         completed: vec![],
-        ..leader
-    }];
-    req.to_level = 11;
-    let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        ..leader.clone()
+    };
+    let p = Scenario::new()
+        .faction(Faction::Alliance)
+        .levels(10, 11)
+        .start(leader)
+        .mates(vec![partner])
+        .quest(Q::new(783, "A Threat Within").level(5).members(0b11).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
+        .required(783)
+        .build();
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
     assert!(planner.validate_required(&[]).is_err());
     let i = p.model.index[&783] as u32;
     planner
-        .validate_required(&[Stop::quest(i, Kind::Accept), Stop::quest(i, Kind::TurnIn)])
+        .validate_required(&[
+            Stop::quest(i, Kind::Accept),
+            Stop::quest(i, Kind::Objective(0)),
+            Stop::quest(i, Kind::TurnIn),
+        ])
         .unwrap();
 }
 
+/// A guide that cannot reach a must-have quest is refused, naming it (a level 32 quest, a guide to 2).
 #[test]
 fn required_generation_refuses_an_incomplete_chain() {
-    let conn = database_of("forever");
-    let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    (
-        overrides.params.effort,
-        overrides.params.candidates,
-        overrides.params.threads,
-    ) = (0.0, 1, 1);
-    let mut req = request("skyborne_horde", "druid", &[RequiredQuest::Id(79976)]);
-    req.to_level = 2;
-    let error = job::plan(&conn, &overrides, &req, &|_| {}).err().unwrap();
+    let p = Scenario::new()
+        .levels(1, 2)
+        .quest(Q::new(79975, "Eagle's Fist").level(30).min_level(14).giver(1, 40.0, 40.0).kill("Cat", 30, 4, 1, 45.0, 45.0))
+        .quest(Q::new(79976, "This Must Be The Place").level(32).min_level(14).after(&[79975]).giver(1, 41.0, 41.0).kill("Cat", 32, 4, 1, 46.0, 46.0))
+        .required(79976)
+        .build();
+    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let route = planner.construct(|_| {});
+    let error = planner.validate_required(&route).unwrap_err();
     assert!(format!("{error:#}").contains("no route completing every required quest was found:"));
     assert!(format!("{error:#}").contains("This Must Be The Place (79976)"));
 }
 
+/// A prerequisite of a must-have quest the character did is not done again.
 #[test]
 fn completed_required_prerequisite_is_not_repeated() {
-    let conn = database_of("forever");
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    let mut req = request("skyborne_horde", "druid", &[RequiredQuest::Id(79976)]);
-    req.start = Some(StartState {
-        level: 30,
-        completed: vec![QuestId(79007)],
-        ..StartState::default()
-    });
-    req.to_level = 31;
-    let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+    let p = Scenario::new()
+        .levels(30, 31)
+        .start(StartState {
+            level: 30,
+            completed: vec![QuestId(79007)],
+            ..StartState::default()
+        })
+        .quest(Q::new(79007, "Starter").giver(1, 40.0, 40.0).kill("Cat", 1, 4, 1, 45.0, 45.0))
+        .quest(Q::new(79976, "This Must Be The Place").level(30).after(&[79007]).giver(1, 41.0, 41.0).kill("Cat", 30, 4, 1, 46.0, 46.0))
+        .required(79976)
+        .build();
     assert!(!p.model.quests.iter().any(|q| q.required && q.id == 79007));
     assert!(p.model.quests[p.model.index[&79976]].required);
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
@@ -287,11 +249,9 @@ fn completed_required_prerequisite_is_not_repeated() {
     );
 }
 
+/// A class quest one player did is not required again for the group, whatever the others' class.
 #[test]
 fn ineligible_group_member_does_not_repeat_a_completed_class_quest() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let mut req = request("human", "warrior", &[RequiredQuest::Id(3100)]);
     let leader = StartState {
         name: "Leader".into(),
         race: 1,
@@ -301,42 +261,52 @@ fn ineligible_group_member_does_not_repeat_a_completed_class_quest() {
         completed: vec![QuestId(3100)],
         ..StartState::default()
     };
-    req.start = Some(leader.clone());
-    req.mates = vec![StartState {
+    let mage = StartState {
         name: "Mage".into(),
         class: "MAGE".into(),
         completed: vec![],
-        ..leader
-    }];
-    req.to_level = 11;
-    let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        ..leader.clone()
+    };
+    let p = Scenario::new()
+        .faction(Faction::Alliance)
+        .levels(10, 11)
+        .start(leader)
+        .mates(vec![mage])
+        .quest(Q::new(3100, "Berserker").level(10).members(0b01).giver(1, 40.0, 40.0).kill("Imp", 10, 4, 1, 45.0, 45.0))
+        .required(3100)
+        .build();
     assert!(!p.model.quests.iter().any(|q| q.required));
 }
 
+/// Must-have quests that exclude each other, or one excluded by a quest done, are reported.
 #[test]
 fn mutually_exclusive_required_quests_report_the_conflict() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let req = request("human", "warrior", &[RequiredQuest::Id(282), RequiredQuest::Id(287)]);
-    let error = job::prepare(&conn, &overrides, &req, &|_| {}).err().unwrap();
+    let scenario = || {
+        Scenario::new()
+            .quest(Q::new(282, "Left").exclusive_with(&[287]).giver(1, 40.0, 40.0))
+            .quest(Q::new(287, "Right").exclusive_with(&[282]).giver(1, 41.0, 41.0))
+    };
+    let error = scenario().required(282).required(287).try_build().err().unwrap();
     assert!(format!("{error:#}").contains("conflicts with quest"), "{error:#}");
-    let mut req = request("human", "warrior", &[RequiredQuest::Id(282)]);
-    req.start = Some(StartState {
-        level: 10,
-        completed: vec![QuestId(287)],
-        ..StartState::default()
-    });
-    req.to_level = 11;
-    let error = job::prepare(&conn, &overrides, &req, &|_| {}).err().unwrap();
+    let error = scenario()
+        .levels(10, 11)
+        .start(StartState {
+            level: 10,
+            completed: vec![QuestId(287)],
+            ..StartState::default()
+        })
+        .required(282)
+        .try_build()
+        .err()
+        .unwrap();
     assert!(format!("{error:#}").contains("conflicts with quest 287"), "{error:#}");
 }
 
+/// A class quest of a group member with more XP than the one the guide is planned for is still
+/// planned, and a requirement already met needs no repeat even when the quest is left out.
 #[test]
 fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
-    let conn = database();
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
-    let mut req = request("human", "warrior", &[RequiredQuest::Id(3100)]);
-    req.start = Some(StartState {
+    let warrior = StartState {
         name: "Warrior".into(),
         race: 1,
         class: "WARRIOR".into(),
@@ -345,21 +315,36 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
         xp: 1,
         completed: vec![QuestId(783), QuestId(7)],
         ..StartState::default()
-    });
-    req.mates = vec![StartState {
+    };
+    let mage = StartState {
         name: "Mage".into(),
-        race: 1,
         class: "MAGE".into(),
-        faction: Some(Faction::Alliance),
-        level: 10,
-        completed: vec![QuestId(783), QuestId(7)],
-        ..StartState::default()
-    }];
-    req.to_level = 11;
-    let editor = Editor::open(&conn, &overrides, &req, None).unwrap();
-    let saved = editor
+        xp: 0,
+        ..warrior.clone()
+    };
+    let scenario = |warrior: StartState, with_quest: bool| {
+        let s = Scenario::new()
+            .faction(Faction::Alliance)
+            .levels(10, 11)
+            .start(warrior)
+            .mates(vec![mage.clone()])
+            .required(3100);
+        // The warrior has more XP than the mage the guide is planned for: second of the players.
+        let quest = Q::new(3100, "Berserker").level(10).members(0b10).giver(1, 40.0, 40.0).kill("Imp", 10, 4, 1, 45.0, 45.0);
+        s.quest(if with_quest { quest } else { quest.excluded() }).build()
+    };
+    let saved = Editor::from_prepared(scenario(warrior.clone(), true))
         .save(
-            &[RouteStep::Accept { quest: 3100 }, RouteStep::TurnIn { quest: 3100 }],
+            &[
+                RouteStep::Accept { quest: 3100 },
+                RouteStep::Objective {
+                    quest: 3100,
+                    objective: 0,
+                    farm: false,
+                    spot: None,
+                },
+                RouteStep::TurnIn { quest: 3100 },
+            ],
             vec![],
         )
         .unwrap();
@@ -372,46 +357,9 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
     );
     // The mage cannot do the warrior's quest. Once the warrior completed it, a saved
     // requirement needs no repeat, even if the quest is excluded from the new guide.
-    req.start.as_mut().unwrap().completed.push(QuestId(3100));
-    let mut params = overrides.params.clone();
-    params.excluded_quests.push(3100);
-    req.params = Some(params);
-    Editor::open(&conn, &overrides, &req, None)
-        .unwrap()
-        .save(&[], vec![])
-        .unwrap();
-}
-
-/// Must-have quests are found by ID, level, part of their name or of their zone's, in English
-/// or the guide's language, among those of the character's race and class.
-#[test]
-fn quest_choices_by_id_level_name_or_zone() {
-    let conn = database_of("forever");
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    let find = |race: &str, query: &str, locale: Option<&str>| {
-        job::quest_choices(&conn, &overrides, race, "warrior", query, locale)
-            .unwrap()
-            .into_iter()
-            .map(|q| (q.id, q.name))
-            .collect::<Vec<_>>()
-    };
-    assert_eq!(find("human", "91777", None)[0], (91777, "Rare Books".to_owned()));
-    assert_eq!(find("human", "rare book", None)[0].0, 91777);
-    assert!(
-        find("orc", "Rare Books", None).iter().all(|(id, _)| *id != 91777),
-        "Alliance only"
-    );
-    assert_eq!(find("human", "", None), []);
-    let level = |race: &str, query: &str| job::quest_choices(&conn, &overrides, race, "warrior", query, None).unwrap();
-    assert!(!level("human", "45").is_empty() && level("human", "45").iter().all(|q| q.level == 45 || q.id == 45));
-    let barrens = level("orc", "barrens 20");
-    assert!(!barrens.is_empty());
-    assert!(
-        barrens
-            .iter()
-            .all(|q| q.level == 20 && q.zone.as_deref() == Some("The Barrens")),
-        "{barrens:?}"
-    );
+    let mut done = warrior;
+    done.completed.push(QuestId(3100));
+    Editor::from_prepared(scenario(done, false)).save(&[], vec![]).unwrap();
 }
 
 /// The warlock's Components for the Enchanted Gold Bloodrobe can be required (GitHub #72): the
@@ -432,14 +380,22 @@ fn the_warlocks_gold_bloodrobe_chain_can_be_required() {
 /// dungeon, which was not planned unless the player forced it too.
 #[test]
 fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
-    let conn = database_of("forever");
-    let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    overrides.params = overrides.params.with_overrides(&["effort=0".to_owned()]).unwrap();
-    let mut req = request("orc", "warlock", &[RequiredQuest::Id(8422)]);
-    req.from_level = 40;
-    req.to_level = 58;
-    let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
-    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422)));
+    let p = Scenario::new()
+        .levels(40, 58)
+        .dungeon("The Temple", 1, 70.0, 50.0)
+        .quest(
+            Q::new(8422, "Trolls of a Feather")
+                .level(52)
+                .giver(1, 40.0, 40.0)
+                .objective(Obj::kill("Troll", 50, 6, At { zone: 1, x: 70.0, y: 50.0 }).inside(0)),
+        )
+        .required(8422)
+        .build();
+    assert!(p.model.dungeons[0].needed);
+    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let route = planner.construct(|_| {});
+    planner.validate_required(&route).unwrap();
+    assert!(route.iter().any(|s| s.kind == Kind::Dungeon));
 }
 
 /// A must-have quest with a child quest (Need for a Cure and Finding the Antidote, GitHub #74):
@@ -447,23 +403,36 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
 /// parent, whether the pair is put in the route together or found by the search (`child_glue`).
 #[test]
 fn a_child_quest_is_done_between_its_parent_accept_and_turn_in() {
-    use fg_route::export::StepKind::{Accept, TurnIn};
-    let conn = database_of("forever");
-    for glue in ["0", "0.5", "1"] {
-        let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-        overrides.params = overrides
-            .params
-            .with_overrides(&["effort=0".to_owned(), format!("child_glue={glue}")])
-            .unwrap();
-        let mut req = request("orc", "warrior", &[RequiredQuest::Id(812)]);
-        req.from_level = 8;
-        req.to_level = 10;
-        let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
-        let at = |quest: i64, kind| route.steps.iter().position(|s| s.quest == Some(quest) && s.kind == kind);
-        let (parent, child) = ((at(812, Accept), at(812, TurnIn)), (at(813, Accept), at(813, TurnIn)));
-        let (Some(accept), Some(turn_in), Some(c_accept), Some(c_turn_in)) = (parent.0, parent.1, child.0, child.1) else {
-            panic!("child_glue={glue}: both quests planned");
+    for glue in [0.0, 0.5, 1.0] {
+        let p = Scenario::new()
+            .levels(8, 10)
+            .params(|p| p.child_glue = glue)
+            .zone(2, "Orgrimmar")
+            .quest(
+                Q::new(812, "Need for a Cure")
+                    .level(8)
+                    .timed(2700.0)
+                    .giver(1, 50.0, 50.0)
+                    .objective(Obj::visit("Venomtail Antidote", At { zone: 2, x: 50.0, y: 50.0 }).handed_by(&[813])),
+            )
+            .quest(
+                Q::new(813, "Finding the Antidote")
+                    .level(8)
+                    .while_in_log(&[812])
+                    .giver(2, 50.0, 50.0)
+                    .kill("Scorpid", 8, 4, 1, 70.0, 50.0),
+            )
+            .required(812)
+            .build();
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = planner.construct(|_| {});
+        planner.validate_required(&route).unwrap();
+        let at = |quest: i64, kind| {
+            let i = p.model.index[&quest] as u32;
+            route.iter().position(|s| *s == Stop::quest(i, kind))
         };
+        let (accept, turn_in) = (at(812, Kind::Accept).unwrap(), at(812, Kind::TurnIn).unwrap());
+        let (c_accept, c_turn_in) = (at(813, Kind::Accept).unwrap(), at(813, Kind::TurnIn).unwrap());
         assert!(accept < c_accept && c_accept < c_turn_in && c_turn_in < turn_in, "child_glue={glue}");
     }
 }

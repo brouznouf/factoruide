@@ -52,6 +52,7 @@ use crate::model::{self, Profile};
 use crate::params::Params;
 use crate::plan::Planner;
 use crate::terrain::Walks;
+use crate::model::Model;
 use crate::world::World;
 use anyhow::Result;
 use rusqlite::Connection;
@@ -232,22 +233,7 @@ pub fn prepare(
     }
     let mut start_notes = Vec::new();
     let members = req.members(params.edition.rules());
-    // A member who already chose an exclusive alternative cannot meet an exact requirement.
-    for q in model.quests.iter().filter(|q| q.required) {
-        for (k, member) in members.iter().enumerate() {
-            if q.members & (1 << k) != 0
-                && !member.completed.contains(&QuestId(q.id))
-                && q.exclusive.iter().any(|&id| member.completed.contains(&QuestId(id)))
-            {
-                anyhow::bail!(
-                    "required quest {} ({}) conflicts with an exclusive quest already completed by {}",
-                    q.name,
-                    q.id,
-                    member.name
-                );
-            }
-        }
-    }
+    check_exclusive_choices(&model, &members)?;
     // A group is planned for the member with the least XP.
     let start = members.first().copied().or(req.start.as_ref());
     if let Some(start) = start {
@@ -267,17 +253,8 @@ pub fn prepare(
         };
         let deduced = with_deduced(start);
         let start = &deduced;
-        model.initial = start.initial(&model, &world, &mut params, &mut start_notes);
-        if members.len() > 1 {
-            let mates: Vec<StartState> = members[1..].iter().map(|m| with_deduced(m)).collect();
-            group::join(
-                &mut model,
-                &world,
-                start,
-                &mates.iter().collect::<Vec<_>>(),
-                &mut start_notes,
-            );
-        }
+        let mates: Vec<StartState> = members.iter().skip(1).map(|m| with_deduced(m)).collect();
+        start_from(&mut model, &world, &mut params, start, &mates, &mut start_notes);
         // Quests of the log the model does not have: named from the database, for their abandon.
         for (id, name) in model.initial.log.iter_mut().filter(|(_, name)| name.is_empty()) {
             *name = conn
@@ -309,6 +286,42 @@ pub fn prepare(
         model,
         notes,
     })
+}
+
+/// A member who already chose an exclusive alternative cannot meet an exact requirement.
+pub(crate) fn check_exclusive_choices(model: &Model, members: &[&StartState]) -> Result<()> {
+    for q in model.quests.iter().filter(|q| q.required) {
+        for (k, member) in members.iter().enumerate() {
+            if q.members & (1 << k) != 0
+                && !member.completed.contains(&QuestId(q.id))
+                && q.exclusive.iter().any(|&id| member.completed.contains(&QuestId(id)))
+            {
+                anyhow::bail!(
+                    "required quest {} ({}) conflicts with an exclusive quest already completed by {}",
+                    q.name,
+                    q.id,
+                    member.name
+                );
+            }
+        }
+    }
+    Ok(())
+}
+
+/// The model from where `start` stands (what it did, its log, its place), and the other players
+/// of its group joined to it.
+pub(crate) fn start_from(
+    model: &mut Model,
+    world: &World,
+    params: &mut Params,
+    start: &StartState,
+    mates: &[StartState],
+    notes: &mut Vec<String>,
+) {
+    model.initial = start.initial(model, world, params, notes);
+    if !mates.is_empty() {
+        group::join(model, world, start, &mates.iter().collect::<Vec<_>>(), notes);
+    }
 }
 
 /// Zones and flights of the character's faction, with the walking passages between zones and

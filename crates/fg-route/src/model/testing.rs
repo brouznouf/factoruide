@@ -14,10 +14,10 @@
 #![allow(clippy::must_use_candidate, reason = "builders chained by the tests, which use the result")]
 
 use super::{
-    Dungeon, EntityKind, Guard, Initial, Loc, Model, Names, Objective, Profile, Quest, chains,
+    Dungeon, EntityKind, Guard, Initial, Loc, Model, Names, Objective, Profile, Quest, chains, required, sources::QuestRow,
 };
 use crate::faction::Faction;
-use crate::job::Prepared;
+use crate::job::{PlanRequest, Prepared, StartState};
 use crate::params::Params;
 use crate::world::{Pos, World};
 use rustc_hash::FxHashMap;
@@ -104,6 +104,7 @@ pub struct Q {
     giver: At,
     turn_in: At,
     objectives: Vec<Obj>,
+    excluded: bool,
 }
 
 impl Q {
@@ -154,6 +155,7 @@ impl Q {
             giver: here,
             turn_in: here,
             objectives: Vec::new(),
+            excluded: false,
         }
     }
 
@@ -228,6 +230,19 @@ impl Q {
     }
 
     /// A class quest, always planned.
+    /// Left out of the guide (excluded by the player) though the game has it: its players still
+    /// count for what was done.
+    pub fn excluded(mut self) -> Self {
+        self.excluded = true;
+        self
+    }
+
+    /// Which players of a group it is for (a bit each, the character's first).
+    pub fn members(mut self, mask: u8) -> Self {
+        self.quest.members = mask;
+        self
+    }
+
     pub fn mandatory(mut self) -> Self {
         self.quest.mandatory = true;
         self
@@ -289,6 +304,8 @@ pub struct Scenario {
     params: Params,
     profile: Profile,
     dungeons: Vec<(&'static str, At)>,
+    start: Option<StartState>,
+    mates: Vec<StartState>,
 }
 
 impl Default for Scenario {
@@ -307,7 +324,22 @@ impl Scenario {
             params: Params::default(),
             profile: profile(Faction::Horde, 1, 30),
             dungeons: Vec::new(),
+            start: None,
+            mates: Vec::new(),
         }
+    }
+
+    /// A character met in game: what it did, its log, its level (`StartState`).
+    pub fn start(mut self, start: StartState) -> Self {
+        self.profile.from_level = start.level;
+        self.start = Some(start);
+        self
+    }
+
+    /// The other players of a group guide.
+    pub fn mates(mut self, mates: Vec<StartState>) -> Self {
+        self.mates = mates;
+        self
     }
 
     pub fn levels(mut self, from: i64, to: i64) -> Self {
@@ -350,7 +382,13 @@ impl Scenario {
         self
     }
 
-    pub fn build(mut self) -> Prepared {
+    /// The scenario, planned as the loader would: panics when a must-have quest cannot be done.
+    pub fn build(self) -> Prepared {
+        self.try_build().unwrap_or_else(|e| panic!("{e:#}"))
+    }
+
+    /// The scenario, or why a must-have quest cannot be planned (`required::apply`).
+    pub fn try_build(mut self) -> anyhow::Result<Prepared> {
         let zones: Vec<(i64, &str, i64, f64, f64)> = self
             .zones
             .iter()
@@ -391,23 +429,79 @@ impl Scenario {
                 }
             })
             .collect();
-        let mut quests: Vec<Quest> = std::mem::take(&mut self.quests)
-            .into_iter()
-            .map(|q| q.finish(&world))
-            .collect();
-        for q in &mut quests {
-            q.required = self.required.contains(&q.id);
-            q.mandatory |= q.required;
+        let mut scopes: HashMap<i64, u8> = HashMap::new();
+        let mut quests: Vec<Quest> = Vec::new();
+        for q in std::mem::take(&mut self.quests) {
+            let (excluded, built) = (q.excluded, q.finish(&world));
+            scopes.insert(built.id, built.members);
+            if !excluded {
+                quests.push(built);
+            }
         }
         self.profile.required_quests.clone_from(&self.required);
-        let model = bare(quests, dungeons, start, &self.params);
-        Prepared {
+        // What the loader does with the quests it built.
+        let rows: Vec<QuestRow> = quests
+            .iter()
+            .map(|q| QuestRow {
+                id: q.id,
+                name: q.name.clone(),
+                level: Some(q.level),
+                min_level: Some(q.min_level),
+                ..QuestRow::default()
+            })
+            .collect();
+        // The players, the one with the least XP first, as a request puts them.
+        let mut request: PlanRequest = serde_json::from_value(serde_json::json!({
+            "race": "orc", "class": "warrior",
+            "from_level": self.profile.from_level, "to_level": self.profile.to_level,
+        }))?;
+        (request.start, request.mates) = (self.start.take(), std::mem::take(&mut self.mates));
+        let members = request.members(self.params.edition.rules());
+        let first = members.first().copied().or(request.start.as_ref());
+        // What the character did; in a group, what every player who could do it did.
+        self.profile.completed_quests = first.map(|s| s.completed.iter().map(|q| q.0).collect()).unwrap_or_default();
+        if members.len() > 1 {
+            self.profile
+                .completed_quests
+                .extend(members.iter().flat_map(|m| m.completed.iter()).map(|q| q.0));
+            let done = self.profile.completed_quests.clone();
+            for id in done {
+                let for_players = scopes.get(&id).copied().unwrap_or(!0);
+                if members
+                    .iter()
+                    .enumerate()
+                    .any(|(k, m)| for_players & (1 << k) != 0 && !m.completed.iter().any(|q| q.0 == id))
+                {
+                    self.profile.completed_quests.remove(&id);
+                }
+            }
+        }
+        // Quests outside the levels of the character are not built, but for the must-haves.
+        quests.retain(|q| {
+            self.required.contains(&q.id)
+                || self
+                    .profile
+                    .within_levels(q.level, q.min_level, self.params.max_quest_above)
+        });
+        required::apply(&mut quests, &rows, &[], &self.profile, &self.params)?;
+        super::settle_quests(&mut quests, &dungeons, &self.params);
+        let mut dungeons = dungeons;
+        super::settle_dungeons(&mut dungeons, &quests, &self.profile, &self.params);
+        let mut model = bare(quests, dungeons, start, &self.params);
+        let mut notes = Vec::new();
+        crate::job::check_exclusive_choices(&model, &members)?;
+        if let Some(start) = first {
+            let mates: Vec<StartState> = members.iter().skip(1).copied().cloned().collect();
+            crate::job::start_from(&mut model, &world, &mut self.params, start, &mates, &mut notes);
+        }
+        model.initial.abilities = model.abilities.initial(first, self.profile.from_level);
+        Ok(Prepared {
             profile: self.profile,
             params: self.params,
             world,
             model,
-            notes: Vec::new(),
-        }
+            notes,
+        })
     }
 }
 

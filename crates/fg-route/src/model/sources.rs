@@ -530,7 +530,7 @@ fn tokens(objectives: &ObjectiveRows, item_origins: &HashMap<i64, Vec<(SourceKin
 }
 
 /// A row of `m_quest`.
-#[cfg_attr(test, derive(Default))]
+#[cfg_attr(any(test, feature = "testing"), derive(Default))]
 pub(super) struct QuestRow {
     pub(super) id: i64,
     pub(super) name: String,
