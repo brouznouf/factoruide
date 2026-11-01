@@ -91,6 +91,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
                 race_id: m.race_id,
                 class_id: m.class_id,
                 spell_weights: m.spell_weights.clone(),
+                abilities: Vec::new(),
                 ..profile.clone()
             },
         )?;
