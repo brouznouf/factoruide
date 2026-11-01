@@ -21,7 +21,7 @@ fn normal_skyborne_druid_planning_completes_the_cat_chain() {
     req.to_level = 30;
     req.required_class_quests = None;
     let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
-    let mut params = p.params.clone();
+    let mut params = p.params;
     params.effort = 0.0;
     params.threads = 1;
     req.params = Some(params);
