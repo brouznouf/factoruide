@@ -428,6 +428,22 @@ fn an_item_lying_in_a_camp_of_the_other_side_is_guarded() {
     assert!(guard.level >= 6 && guard.count >= 3, "{guard:?}");
 }
 
+/// The Deadmines' Collecting Memories and Oh Brother... are filed under the dungeon but their
+/// items drop from elites in the quarry beside its entrance (GitHub #82): done with the dungeon's
+/// group, at that place; Red Silk Bandanas also drops inside and stays a dungeon objective.
+#[test]
+fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
+    let conn = crate::common::database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let p = job::prepare(&conn, &overrides, &request("human", "warrior", 24, &[]), &|_| {}).unwrap();
+    let objective = |id| &p.model.quests[quest(&p, id).unwrap() as usize].objectives[0];
+    for id in [168, 167] {
+        let o = objective(id);
+        assert!(o.dungeon.is_some() && o.loc.kind == EntityKind::Item, "{id}: {:?}", o.loc.kind);
+    }
+    assert_eq!(objective(214).loc.kind, EntityKind::Dungeon);
+}
+
 /// The warlock's imp is taken first: it makes every fight that follows easier.
 #[test]
 fn pet_quest_comes_early() {

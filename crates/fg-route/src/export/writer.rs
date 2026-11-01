@@ -766,7 +766,13 @@ impl StepWriter<'_> {
                     let o = &q.objectives[k as usize];
                     let text = o.text.strip_prefix(&prefix).unwrap_or(&o.text);
                     let n = o.count.round() as i64;
-                    Arg::Text(if n > 1 { format!("{text} x{n}") } else { text.to_owned() })
+                    let text = if n > 1 { format!("{text} x{n}") } else { text.to_owned() };
+                    // Found beside the entrance (the quarry of the Deadmines), not inside.
+                    Arg::Text(if o.loc.kind == EntityKind::Dungeon {
+                        text
+                    } else {
+                        format!("{text} (outside {}, with the group)", model.dungeons[d].name)
+                    })
                 });
                 step.say = vec![
                     Phrase::new("dungeon.quest")

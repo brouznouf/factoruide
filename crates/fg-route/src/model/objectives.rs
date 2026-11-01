@@ -14,6 +14,8 @@ use std::collections::HashMap;
 
 /// An object this close to the NPC giving or taking back the quest (yards) is used in their camp.
 const BESIDE_GIVER: f64 = 30.0;
+/// Creatures this close to a dungeon's entrance (yards) are done with its group, before the run.
+const OUTSIDE_NEAR: f64 = 600.0;
 
 /// Objects used right beside the NPC giving or taking back the quest, no elite around them (the
 /// campfire to sit at next to Kaga Wildhoof, The Great Outdoors): the character stands there to
@@ -327,11 +329,43 @@ impl QuestBuilder<'_> {
                 self.sources.entities.name(kind.entity(), target)
             )
         });
+        // An item only creatures outside the instance carry (the Miners' Union Cards of the
+        // Deadmines' quarry): done with the dungeon's group, at the place they stand, which is
+        // next to the entrance, not inside.
+        let place = (kind == ObjectiveKind::Item)
+            .then(|| self.outside_place(target, &quest.parts, &dungeon.entrance))
+            .flatten();
         Some(Objective {
             dungeon: Some(d),
             // Shown in the guide ("Defias Prisoner x10").
             count: amount.map_or(1.0, |n| n.max(1) as f64),
-            ..Objective::plain(dungeon.entrance.clone(), text, 0.0)
+            ..Objective::plain(place.unwrap_or_else(|| dungeon.entrance.clone()), text, 0.0)
+        })
+    }
+
+    /// Where an item whose every source lives outside the dungeons stands closest to `entrance`
+    /// (None when one of its sources is inside, or none is placed).
+    fn outside_place(&self, item: i64, parts: &[i64], entrance: &Loc) -> Option<Loc> {
+        let sources = self.item_sources(item, parts);
+        let creatures: Vec<(EntityKind, i64)> = sources
+            .iter()
+            .filter(|(t, _)| *t != SourceKind::Item)
+            .filter_map(|(t, id)| t.entity().map(|e| (e, *id)))
+            .collect();
+        if creatures.is_empty() || creatures.iter().any(|(e, id)| self.dungeon_of(*e, *id).is_some()) {
+            return None;
+        }
+        let (pos, zone) = creatures
+            .iter()
+            .flat_map(|(e, id)| self.sources.entities.points(self.world, *e, *id))
+            .min_by(|a, b| a.0.dist(&entrance.pos).total_cmp(&b.0.dist(&entrance.pos)))?;
+        // Beside the entrance only: a source far from it is not the dungeon's to do.
+        (pos.dist(&entrance.pos) <= OUTSIDE_NEAR).then(|| Loc {
+            pos,
+            zone,
+            kind: EntityKind::Item,
+            id: item,
+            name: self.sources.entities.name(EntityKind::Item, item),
         })
     }
 
