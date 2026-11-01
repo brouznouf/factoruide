@@ -970,7 +970,7 @@ mod abilities;
 
 #[test]
 fn an_unbounded_required_quest_stays_in_the_log_when_gray() {
-    let conn = database();
+    let conn = database_of("classic");
     let o = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let req=serde_json::from_value(serde_json::json!({"race":"human","class":"warrior","from_level":20,"to_level":21,"required_class_quests":[],"required_quests":[783],"start":{"level":20,"log":[{"id":783,"complete":true}]}})).unwrap();
     let p = job::prepare(&conn, &o, &req, &|_| {}).unwrap();
