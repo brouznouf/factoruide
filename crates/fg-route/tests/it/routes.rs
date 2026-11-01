@@ -718,7 +718,8 @@ fn job_saves_its_walks() {
         job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
     assert_eq!(walks.len(), known, "paths searched again");
     assert_eq!(again.walks.map(|m| m.len()), Some(memory.len()));
-}/// A search that panics ends the job with its panic instead of hanging it: the thread reporting
+}
+/// A search that panics ends the job with its panic instead of hanging it: the thread reporting
 /// the progress stops with the searches (the app then shows the error).
 #[test]
 fn panicking_search_ends_the_job() {
@@ -1307,7 +1308,11 @@ fn link_kept_to_a_race() {
         .clone();
     (tram.name, tram.races) = ("Gnomes only".into(), vec!["gnome".into()]);
     o.links.push(tram);
-    let has = |race: &str| o.links_of_race(o.races[race].id).iter().any(|l| l.name == "Gnomes only");
+    let has = |race: &str| {
+        o.links_of_race(o.races[race].id)
+            .iter()
+            .any(|l| l.name == "Gnomes only")
+    };
     assert!(has("gnome"));
     assert!(!has("human"));
 }

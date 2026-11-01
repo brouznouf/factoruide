@@ -10,6 +10,7 @@ use crate::world::{Pos, World};
 use anyhow::{Context, Result};
 use rusqlite::Connection;
 use std::collections::{HashMap, HashSet};
+use std::sync::Arc;
 
 /// Objective rows by quest: (kind, target, text, extra, amount).
 pub(super) type ObjectiveRows =
@@ -127,8 +128,8 @@ pub(super) struct Sources {
     pub(super) relations: Relations,
     pub(super) links: HashMap<i64, Vec<(LinkKind, i64)>>,
     pub(super) objectives: ObjectiveRows,
-    pub(super) item_origins: HashMap<i64, Vec<(SourceKind, i64)>>,
-    pub(super) drop_chance: HashMap<(i64, i64), f64>,
+    pub(super) item_origins: Arc<HashMap<i64, Vec<(SourceKind, i64)>>>,
+    pub(super) drop_chance: Arc<HashMap<(i64, i64), f64>>,
     /// Seconds the items that do not last are kept, by item.
     pub(super) item_durations: HashMap<i64, f64>,
     /// XP of quests the quest data has no value for: the most common reward column for their level.
@@ -460,19 +461,41 @@ fn item_durations(conn: &Connection) -> Result<HashMap<i64, f64>> {
 fn item_origins(
     conn: &Connection,
     params: &Params,
+) -> Result<(Arc<HashMap<i64, Vec<(SourceKind, i64)>>>, Arc<HashMap<(i64, i64), f64>>)> {
+    // The same for a database and the limit on what a container holds.
+    let kept = crate::memo::rows(
+        conn,
+        "item origins",
+        crate::memo::setting(params.max_object_loot),
+        || {
+            let (origins, chances) = read_item_origins(conn, params)?;
+            Ok((Arc::new(origins), Arc::new(chances)))
+        },
+    )?;
+    Ok((Arc::clone(&kept.0), Arc::clone(&kept.1)))
+}
+
+#[expect(
+    clippy::type_complexity,
+    reason = "two maps read by one query, destructured by the caller"
+)]
+fn read_item_origins(
+    conn: &Connection,
+    params: &Params,
 ) -> Result<(HashMap<i64, Vec<(SourceKind, i64)>>, HashMap<(i64, i64), f64>)> {
     let mut item_sources: HashMap<i64, Vec<(SourceKind, i64)>> = HashMap::new();
     let mut drop_chance: HashMap<(i64, i64), f64> = HashMap::new();
     let mut stmt = conn.prepare(&format!(
         "WITH loot AS (SELECT from_id, count(DISTINCT item_id) AS n FROM m_item_source
                        WHERE from_type = 'object' GROUP BY from_id),
-              chest AS (SELECT from_id FROM loot WHERE {limit} > 0 AND n > {limit})
+              chest AS (SELECT from_id FROM loot WHERE {limit} > 0 AND n > {limit}),
+              -- Items with a source that is not a chest.
+              other AS (SELECT DISTINCT item_id FROM m_item_source
+                        WHERE from_type != 'object' OR from_id NOT IN chest)
          SELECT s.item_id, s.from_type, s.from_id, s.chance, coalesce(l.n, 0)
          FROM m_item_source s
          LEFT JOIN loot l ON s.from_type = 'object' AND l.from_id = s.from_id
-         WHERE s.from_type != 'object' OR s.from_id NOT IN chest OR NOT EXISTS (
-           SELECT 1 FROM m_item_source o WHERE o.item_id = s.item_id
-             AND NOT (o.from_type = 'object' AND o.from_id IN chest))",
+         WHERE s.from_type != 'object' OR s.from_id NOT IN chest OR s.item_id NOT IN other",
         limit = params.max_object_loot
     ))?;
     for row in stmt.query_map([], |r| {

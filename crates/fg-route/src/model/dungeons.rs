@@ -114,12 +114,16 @@ pub(super) fn load_dungeons(
         });
     }
     let mut inside = HashMap::new();
-    let mut stmt = conn.prepare("SELECT DISTINCT entity_type, entity_id, zone_id FROM m_spawn")?;
-    for row in stmt.query_map([], |r| {
-        Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?, r.get::<_, i64>(2)?))
-    })? {
-        let (t, id, zone) = row?;
-        if let (Some(&d), Some(kind)) = (by_area.get(&zone), EntityKind::parse(&t)) {
+    let places = crate::memo::rows(conn, "places of spawns", 0, || {
+        let mut stmt = conn.prepare("SELECT DISTINCT entity_type, entity_id, zone_id FROM m_spawn")?;
+        let rows = stmt.query_map([], |r| {
+            Ok((r.get::<_, String>(0)?, r.get::<_, i64>(1)?, r.get::<_, i64>(2)?))
+        })?;
+        Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
+    })?;
+    for (t, id, zone) in places.iter() {
+        let (id, zone) = (*id, *zone);
+        if let (Some(&d), Some(kind)) = (by_area.get(&zone), EntityKind::parse(t)) {
             inside.insert((kind, id), d);
         }
     }

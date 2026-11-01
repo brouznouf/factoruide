@@ -26,6 +26,7 @@ type Cells = FxHashMap<CellKey, Vec<Spawn>>;
 type CellPlaces = FxHashMap<CellKey, Vec<(i64, Option<i16>)>>;
 
 /// A spawn of a normal mob as the database gives it.
+#[derive(Clone)]
 pub(super) struct MobRow {
     pub(super) zone: i64,
     pub(super) x: f64,
@@ -77,28 +78,31 @@ impl FarmMobs {
             [],
             |r| r.get(0),
         )?;
-        let mut stmt = conn.prepare(&format!(
-            "SELECT s.zone_id, s.x, s.y, coalesce(n.min_level, 1), coalesce(n.max_level, n.min_level, 1), n.id, {}
-             FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
-             WHERE s.entity_type = 'npc' AND s.x >= 0 AND coalesce(n.rank, 0) = 0
-               AND coalesce(n.npc_flags, 0) = 0 AND coalesce(n.friendly_to, '') IN ('', 'AH')
-               AND s.zone_id NOT IN (SELECT ID FROM client_areatable WHERE (Flags_0 & 256) != 0)",
-            if heights { "s.z" } else { "NULL" }
-        ))?;
-        let rows = stmt
-            .query_map([], |r| {
-                Ok(MobRow {
-                    zone: r.get::<_, i64>(0)?,
-                    x: r.get::<_, f64>(1)?,
-                    y: r.get::<_, f64>(2)?,
-                    min_level: r.get::<_, i64>(3)?,
-                    max_level: r.get::<_, i64>(4)?,
-                    npc: r.get::<_, i64>(5)?,
-                    z: r.get::<_, Option<f64>>(6)?,
-                })
-            })?
-            .collect::<rusqlite::Result<Vec<_>>>()?;
-        Ok(Self::from_rows(world, rows, &tags, by_tag))
+        let rows = crate::memo::rows(conn, "farm mobs", 0, || {
+            let mut stmt = conn.prepare(&format!(
+                "SELECT s.zone_id, s.x, s.y, coalesce(n.min_level, 1), coalesce(n.max_level, n.min_level, 1), n.id, {}
+                 FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
+                 WHERE s.entity_type = 'npc' AND s.x >= 0 AND coalesce(n.rank, 0) = 0
+                   AND coalesce(n.npc_flags, 0) = 0 AND coalesce(n.friendly_to, '') IN ('', 'AH')
+                   AND s.zone_id NOT IN (SELECT ID FROM client_areatable WHERE (Flags_0 & 256) != 0)",
+                if heights { "s.z" } else { "NULL" }
+            ))?;
+            let rows = stmt
+                .query_map([], |r| {
+                    Ok(MobRow {
+                        zone: r.get::<_, i64>(0)?,
+                        x: r.get::<_, f64>(1)?,
+                        y: r.get::<_, f64>(2)?,
+                        min_level: r.get::<_, i64>(3)?,
+                        max_level: r.get::<_, i64>(4)?,
+                        npc: r.get::<_, i64>(5)?,
+                        z: r.get::<_, Option<f64>>(6)?,
+                    })
+                })?
+                .collect::<rusqlite::Result<Vec<_>>>()?;
+            Ok(rows)
+        })?;
+        Ok(Self::from_rows(world, rows.to_vec(), &tags, by_tag))
     }
 
     /// The farm mobs of these spawns (zone, percent coordinates, levels, NPC), as the database's
