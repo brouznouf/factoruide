@@ -657,6 +657,7 @@ impl Scenario {
             .iter()
             .skip(1)
             .map(|m| Mate {
+                class_name: m.class.clone(),
                 name: m.name.clone(),
                 race_id: m.race,
                 class_id: class_id(&m.class),
@@ -743,7 +744,7 @@ impl Scenario {
             .map(|(i, &(name, level, at))| super::Teleport {
                 name: name.to_owned(),
                 level,
-                quests: Vec::new(),
+                ability: None,
                 to: Q::at(at, 800_000 + i as i64, name, &world),
             })
             .collect();
