@@ -1,0 +1,2 @@
+# Tauri's generate_context!() writes its compressed assets into OUT_DIR, which mbx shares read-only.
+share_out_dir = false

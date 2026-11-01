@@ -7,7 +7,6 @@ mod addon;
 mod common;
 mod draft;
 mod edit;
-mod prerequisites;
 mod required;
 mod routes;
 mod timeline;
