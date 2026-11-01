@@ -304,6 +304,11 @@ fn a_guide_with_a_child_quest_replays_in_the_editor() {
     let names = Names::load(&conn, "enUS").unwrap();
     let (steps, _) = editor.steps(&outcome);
     let report = editor.simulate(&steps, &names);
-    let broken: Vec<_> = steps.iter().zip(&report.steps).filter(|(_, r)| r.status == "error").map(|(s, r)| (s, r.reason)).collect();
+    let broken: Vec<_> = steps
+        .iter()
+        .zip(&report.steps)
+        .filter(|(_, r)| r.status == "error")
+        .map(|(s, r)| (s, r.reason))
+        .collect();
     assert_eq!(report.errors, 0, "{broken:?}");
 }

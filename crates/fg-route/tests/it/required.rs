@@ -436,7 +436,12 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
     req.from_level = 40;
     req.to_level = 58;
     let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
-    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422)));
+    assert!(
+        route
+            .steps
+            .iter()
+            .any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422))
+    );
 }
 
 /// A must-have quest whose child is a repeatable quest (Need for a Cure and Finding the
@@ -450,5 +455,10 @@ fn a_required_quest_with_a_repeatable_child_is_planned() {
     req.from_level = 8;
     req.to_level = 10;
     let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
-    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(812)));
+    assert!(
+        route
+            .steps
+            .iter()
+            .any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(812))
+    );
 }
