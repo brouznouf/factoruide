@@ -1634,11 +1634,23 @@ fn map_pos(p: &Prepared, pos: &fg_route::world::Pos, zone: i64) -> MapPos {
     }
 }
 
+/// The valley of an orc: Gornek gives Cutting Teeth (788), then Sting of the Scorpid (789).
+fn orc_valley() -> Scenario {
+    leveling(30)
+        .levels(1, 30)
+        .quest(Q::new(788, "Cutting Teeth").level(1).giver(1, 60.0, 60.0).kill("Boar", 1, 10, 1, 62.0, 62.0))
+        .quest(
+            Q::new(789, "Sting of the Scorpid")
+                .level(3)
+                .after(&[788])
+                .giver(1, 60.0, 60.0)
+                .kill("Scorpid Worker", 3, 10, 1, 65.0, 65.0),
+        )
+}
+
 /// An orc of level 4 standing next to Gornek, Cutting Teeth turned in and Sting of the Scorpid
 /// in the log (with `objectives` as its log shows them).
 fn orc_met_in_game(objectives: Vec<LogObjective>, complete: bool, rested: i64) -> StartState {
-    let p = orc_warlock();
-    let gornek = &p.model.quests[quest(p, 788).unwrap() as usize].ends[0];
     StartState {
         name: "Brouz-Realm".into(),
         level: 4,
@@ -1650,7 +1662,11 @@ fn orc_met_in_game(objectives: Vec<LogObjective>, complete: bool, rested: i64) -
             complete,
             objectives,
         }],
-        position: Some(map_pos(p, &gornek.pos, gornek.zone)),
+        position: Some(MapPos {
+            map: 1,
+            x: 60.0,
+            y: 60.0,
+        }),
         ..StartState::default()
     }
 }
@@ -1660,21 +1676,15 @@ fn orc_met_in_game(objectives: Vec<LogObjective>, complete: bool, rested: i64) -
 /// again.
 #[test]
 fn a_character_met_in_game_goes_on_from_where_it_stands() {
-    let new = orc_warlock();
-    let scorpids = quest(new, 789).unwrap();
+    let new = orc_valley().build();
+    let scorpids = quest(&new, 789).unwrap();
     let accept = Stop::quest(scorpids, Kind::Accept);
     assert!(
-        planner(new).simulate(&[accept], None).is_none(),
+        planner(&new).simulate(&[accept], None).is_none(),
         "a new character must do Cutting Teeth first"
     );
 
-    let p = prepare_from(
-        "orc",
-        "warlock",
-        30,
-        &["progression=cautious"],
-        Some(orc_met_in_game(vec![], true, 0)),
-    );
+    let p = orc_valley().start(orc_met_in_game(vec![], true, 0)).build();
     assert_eq!(p.profile.from_level, 4);
     let scorpids = quest(&p, 789).unwrap();
     let turn_in = Stop::quest(scorpids, Kind::TurnIn);
@@ -1704,13 +1714,10 @@ fn objectives_done_in_the_log_are_not_done_again() {
         }]
     };
     let mob_xp = |done| {
-        let p = prepare_from(
-            "orc",
-            "warlock",
-            30,
-            &["progression=cautious", "farm_on_way=false"],
-            Some(orc_met_in_game(log(done), false, 0)),
-        );
+        let p = orc_valley()
+            .params(|p| p.farm_on_way = false)
+            .start(orc_met_in_game(log(done), false, 0))
+            .build();
         let scorpids = quest(&p, 789).unwrap();
         // Nothing done: not held, the guide takes the quest itself.
         let mut route = vec![];
@@ -1737,13 +1744,10 @@ fn rested_xp_doubles_kill_xp() {
         }]
     };
     let mob_xp = |rested| {
-        let p = prepare_from(
-            "orc",
-            "warlock",
-            30,
-            &["progression=cautious", "farm_on_way=false"],
-            Some(orc_met_in_game(objectives(), false, rested)),
-        );
+        let p = orc_valley()
+            .params(|p| p.farm_on_way = false)
+            .start(orc_met_in_game(objectives(), false, rested))
+            .build();
         let scorpids = quest(&p, 789).unwrap();
         let route = [
             Stop::quest(scorpids, Kind::Accept),
@@ -1772,7 +1776,7 @@ fn quests_of_the_log_the_guide_does_not_finish_are_abandoned_first() {
         id: 999_999.into(),
         ..LogQuest::default()
     });
-    let p = prepare_from("orc", "warlock", 30, &["progression=cautious"], Some(start));
+    let p = orc_valley().start(start).build();
     let planner = planner(&p);
     let scorpids = quest(&p, 789).unwrap();
     let abandoned = |route: &[Stop]| -> Vec<i64> {
@@ -1796,14 +1800,7 @@ fn quests_of_the_log_the_guide_does_not_finish_are_abandoned_first() {
 /// given up: the construction puts its turn-in where the route goes there.
 #[test]
 fn quest_complete_in_the_log_is_turned_in_on_the_way() {
-    let mut p = prepare_from(
-        "orc",
-        "warlock",
-        30,
-        &["progression=cautious"],
-        Some(orc_met_in_game(vec![], true, 0)),
-    );
-    p.profile.to_level = 8;
+    let p = orc_valley().levels(4, 8).start(orc_met_in_game(vec![], true, 0)).build();
     let planner = planner(&p);
     let scorpids = quest(&p, 789).unwrap();
     let route = planner.construct(|_| {});
