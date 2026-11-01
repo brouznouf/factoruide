@@ -247,6 +247,8 @@ pub struct ShareOptions {
     pub to_level: i64,
     pub effort: Option<f64>,
     pub name: String,
+    /// Must-have quests, by ID or exact name.
+    pub required_quests: Vec<String>,
     /// Planner parameter overrides (key=value).
     pub params: Vec<String>,
     pub locale: String,
@@ -277,7 +279,14 @@ pub fn share(conn: &Connection, overrides_dir: &Path, opts: &ShareOptions, out: 
         name: Some(opts.name.clone()),
         params: Some(params),
         required_class_quests: Some(options.class_quests.get(&class_name).cloned().unwrap_or_default()),
-        required_quests: vec![],
+        required_quests: opts
+            .required_quests
+            .iter()
+            .map(|q| {
+                q.parse::<i64>()
+                    .map_or_else(|_| job::RequiredQuest::Name(q.clone()), job::RequiredQuest::Id)
+            })
+            .collect(),
         professions: vec![],
         locale: Some(opts.locale.clone()),
         mates: vec![],

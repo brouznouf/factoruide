@@ -171,6 +171,9 @@ enum Command {
         /// The guide's name (its id in the apps is made from it)
         #[arg(long)]
         name: String,
+        /// A must-have quest ID or exact name (repeatable); includes its prerequisites
+        #[arg(long = "required-quest")]
+        required_quests: Vec<String>,
         /// Planner parameters, as key=value (repeatable)
         #[arg(long = "param")]
         params: Vec<String>,
@@ -352,6 +355,7 @@ fn main() -> Result<()> {
             to_level,
             effort,
             name,
+            required_quests,
             params,
             locale,
             out,
@@ -365,6 +369,7 @@ fn main() -> Result<()> {
                 to_level: to_level.unwrap_or(edition.rules().max_level),
                 effort,
                 name,
+                required_quests,
                 params,
                 locale,
             },
