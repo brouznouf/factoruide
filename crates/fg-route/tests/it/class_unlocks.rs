@@ -54,6 +54,8 @@ fn known_reward_does_not_put_its_parent_in_the_log() {
 }
 
 #[test]
+// The source data makes 4962 and 4963 exclusive children of 1799. This history chose
+// 4962, which Cleansing of the Orb of Orahil (4961) requires.
 fn a_completed_child_keeps_later_class_quests_feasible() {
     for edition in Edition::ALL {
         let conn = database_of(edition.key());
