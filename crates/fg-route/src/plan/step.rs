@@ -328,11 +328,11 @@ impl Planner<'_> {
         let q = self.quest(i);
         self.release(s, i);
         s.timers.retain(|&(q, _)| q != i);
-        s.turned.set(i as usize, true);
         s.log -= 1;
         s.started.retain(|&(q, _, _)| q != i);
         s.required_left = s.required_left.saturating_sub(u32::from(q.required));
         s.spent.quest_xp += self.growth().reward(s, i);
+        s.turned.set(i as usize, true);
         self.growth().gain_power(s, i);
         if s.forced_left > 0 {
             let closed = (q.exclusive.iter())
@@ -510,43 +510,46 @@ impl Planner<'_> {
         // XP to `target` from (level, xp), and the time it takes alone.
         let combat = self.combat();
         let group = self.params.group_xp_share() * self.params.group_damage();
-        let need = |level: i64, xp: i64| -> (i64, f64) {
-            let (mut l, mut x, mut need, mut time) = (level, xp, 0, 0.0);
+        let need = |level: i64, xp: i64, rested: i64, member: u8| -> (i64, f64, i64) {
+            let (mut l, mut x, mut need, mut time, mut left) = (level, xp, 0, 0.0, rested);
             while at(l, x) < target && l < rules.max_level {
                 let bar = rules.to_next_level(l);
                 let to = ((target - l as f64).min(1.0) * bar as f64).ceil() as i64;
                 let gained = (to - x).max(0);
                 need += gained;
-                time += gained as f64 / (combat.grind_rate(l, s.bonus, &s.pos) / group);
+                let (work, consumed) = growth.kill_work(s, member, gained, left);
+                left -= consumed;
+                time += work / (combat.grind_rate(l, s.bonus, &s.pos) / group);
                 if to >= bar {
                     (l, x) = (l + 1, 0);
                 } else {
                     x = to;
                 }
             }
-            (need, time)
+            (need, time, rested - left)
         };
         let mut members = 0u8;
         let mut seconds = 0.0f64;
-        let (own, t) = need(s.level, s.xp);
+        let (own, t, own_rested) = need(s.level, s.xp, s.rested, s.order[0]);
         if own > 0 {
             members |= 1 << s.order[0];
             seconds = seconds.max(t);
         }
-        let mut gains = [0i64; super::state::MATES];
+        let mut gains = [(0i64, 0i64); super::state::MATES];
         for (k, (m, g)) in s.mates[..n].iter().zip(&mut gains).enumerate() {
-            let (gain, t) = need(m.level, m.xp);
+            let (gain, t, consumed) = need(m.level, m.xp, m.rested, s.order[k + 1]);
             if gain > 0 {
                 members |= 1 << s.order[k + 1];
                 seconds = seconds.max(t);
-                *g = gain;
+                *g = (gain, consumed);
             }
         }
         if members == 0 {
             return;
         }
-        for (k, &gain) in gains.iter().enumerate().take(n) {
+        for (k, &(gain, consumed)) in gains.iter().enumerate().take(n) {
             let m = &mut s.mates[k];
+            m.rested -= consumed;
             m.xp += gain;
             while m.level < rules.max_level && m.xp >= rules.to_next_level(m.level) {
                 m.xp -= rules.to_next_level(m.level);
@@ -554,6 +557,7 @@ impl Planner<'_> {
             }
         }
         if own > 0 {
+            s.rested -= own_rested;
             s.spent.grind_xp += own;
             s.grind_used += own;
             growth.gain(s, own);

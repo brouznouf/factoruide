@@ -93,6 +93,40 @@ fn sleeping_bag_requirements_are_limited_to_forever() {
 }
 
 #[test]
+fn sleeping_bag_option_requires_the_chain_and_recognizes_imported_completion() {
+    let conn = database_of("forever");
+    let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    overrides.params.sleeping_bag = true;
+    for (race, class, starter, other) in [
+        ("human", "warrior", 79008, 79007),
+        ("skyborne_horde", "druid", 79007, 79008),
+    ] {
+        let mut req = request(race, class, &[]);
+        req.from_level = 35;
+        req.to_level = 36;
+        let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        for id in [starter, 79192, 79980, 79974, 79975, 79976] {
+            assert!(p.model.quests[p.model.index[&id]].required, "required bag quest {id}");
+        }
+        assert!(!p.model.index.contains_key(&other));
+        req.start = Some(StartState {
+            level: 35,
+            completed: vec![79976],
+            ..StartState::default()
+        });
+        let imported = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        assert!(imported.model.quests.iter().all(|q| !q.required));
+    }
+    for edition in [Edition::Classic, Edition::Tbc] {
+        let conn = database_of(edition.key());
+        let mut other = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+        other.params.sleeping_bag = true;
+        let p = job::prepare(&conn, &other, &request("human", "warrior", &[]), &|_| {}).unwrap();
+        assert_eq!(p.profile.required_quests, [] as [i64; 0]);
+    }
+}
+
+#[test]
 fn required_quest_completed_profile_needs_no_repeat() {
     let conn = database();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();

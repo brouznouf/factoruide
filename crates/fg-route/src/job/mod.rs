@@ -215,6 +215,12 @@ pub fn prepare(
 ) -> Result<Prepared> {
     let (mut profile, mut params) = character::character(conn, overrides, req)?;
     profile.required_quests = required::resolve(conn, req, &profile)?;
+    if params.edition == crate::xp::Edition::Forever
+        && params.sleeping_bag
+        && !profile.required_quests.contains(&crate::xp::SLEEPING_BAG_QUEST)
+    {
+        profile.required_quests.push(crate::xp::SLEEPING_BAG_QUEST);
+    }
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
     let world = load_world(conn, overrides, &profile, &params, progress)?;

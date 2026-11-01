@@ -373,6 +373,10 @@ pub struct Params {
     pub group_sync_max: f64,
     /// Distance from an area's center at which passing by discovers it (exploration XP).
     pub explore_radius: f64,
+    /// Forever: keep the 5% Well Fed kill-XP bonus active, without food or refresh time.
+    pub food_xp: bool,
+    /// Forever: require the Sleeping Bag quest and keep its three-stack XP buff active after it.
+    pub sleeping_bag: bool,
     /// Game version: experience rules, level cap.
     pub edition: crate::xp::Edition,
 }
@@ -591,6 +595,8 @@ impl Default for Params {
             group_sync_weight: 1.0,
             group_sync_max: 1.0,
             explore_radius: 250.0,
+            food_xp: false,
+            sleeping_bag: false,
             edition: crate::xp::Edition::Forever,
         }
     }

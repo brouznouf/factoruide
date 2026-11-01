@@ -56,6 +56,13 @@ level:
 - **XP**: quest XP with the level penalty, mob XP with the classic formula (`5 × level + 45`,
   adjusted by the level difference). Level-ups change everything that follows: which quests are
   worth it, how fast mobs die, how much XP they give.
+  Forever's optional `food_xp` and `sleeping_bag` assume continuous buff uptime. The bag requires
+  quest 79976 and activates after its turn-in; imported completion also counts, per group member.
+  Food adds 5% to kill XP and the bag adds 3% to kill and quest XP. The estimate adds the kill
+  bonuses before applying the finite rested pool, including grinding and group catch-up.
+  Exploration, food costs and buff refresh time are outside this estimate. Effect scopes:
+  [Well Fed](https://www.wowhead.com/forever/spell=1243969/well-fed-xp-boost),
+  [Well-Rested](https://www.wowhead.com/forever/spell=429959/well-rested).
 - **On the way**: class training when the new spells are worth it, the loot sold at a vendor nearby
   once the bags are half full, flight paths picked up nearby,
   dungeon runs, the normal mobs met on foot (`farm_on_way`, mobs near the character's level, up to

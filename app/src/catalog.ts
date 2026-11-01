@@ -5,6 +5,12 @@
 type Entry = Partial<Record<"en" | "de" | "es" | "esMX" | "pt" | "ru" | "ko" | "zhCN" | "zhTW", string>>;
 
 export const CATALOG: Record<string, Entry> = {
+  "Bonus d'XP": { en: "XP bonuses" },
+  "Estimation : les bonus s'additionnent avant l'XP de repos, qui reste limitée au stock du personnage.": { en: "Estimate: the bonuses add before rested XP, which remains limited to the character's stored amount." },
+  "Bonus d'XP de nourriture (+5 %)": { en: "Food XP bonus (+5%)" },
+  "XP des kills uniquement. Le bonus est supposé actif en permanence, sans temps ni coût de nourriture.": { en: "Kill XP only. Assumes the bonus stays active, with no food time or cost." },
+  "Sac de couchage (+3 %)": { en: "Sleeping Bag (+3%)" },
+  "Inclut la suite de quêtes. Après la récompense, trois charges sont supposées actives en permanence sur les kills et les quêtes, sans temps de repos. Une quête déjà terminée dans le profil active le bonus dès le départ.": { en: "Includes the quest chain. After the reward, assumes three stacks stay active for kills and quests, with no resting time. Completion recorded in the profile enables the bonus from the start." },
   "Joueur {n}": { en: "Player {n}", de: "Spieler {n}", es: "Jugador {n}", pt: "Jogador {n}", ru: "Игрок {n}", ko: "플레이어 {n}", zhCN: "玩家 {n}", zhTW: "玩家 {n}" },
   "Nom du personnage en jeu (facultatif)": { en: "Character's name in game (optional)", de: "Name des Charakters im Spiel (optional)", es: "Nombre del personaje en el juego (opcional)", pt: "Nome do personagem no jogo (opcional)", ru: "Имя персонажа в игре (необязательно)", ko: "게임 속 캐릭터 이름 (선택)", zhCN: "游戏中的角色名（可选）", zhTW: "遊戲中的角色名稱（選填）" },
   "ex. Brouz-Realm": { en: "e.g. Brouz-Realm", de: "z. B. Brouz-Realm", es: "p. ej. Brouz-Realm", pt: "ex. Brouz-Realm", ru: "напр. Brouz-Realm", ko: "예: Brouz-Realm", zhCN: "例如 Brouz-Realm", zhTW: "例如 Brouz-Realm" },

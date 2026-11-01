@@ -112,6 +112,7 @@ function Toggle({ label, help, checked, onChange }: { label: string; help: strin
 export function ConfigForm({ options, initial, startCharacter, defaultLocale, onRun, compareStarts, onCompareStarts, onManual, onExport, onChange }: Props) {
   const t = useT();
   const defaults = options.params;
+  const availableSections = sections.filter((s) => defaults.edition === "forever" || s.title !== "Bonus d'XP");
   const [view, setView] = useState<View>("simple");
   // The players: the guide's own character first, then the others of a group guide.
   const [players, setPlayers] = useState<PlayerSetup[]>(() => {
@@ -219,7 +220,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   // The pace preset whose values are all in use, if any.
   const pace = presets.find((p) => Object.entries(p.values).every(([k, v]) => params[k as keyof Params] === v))?.label ?? null;
   // Settings of the advanced view, and those that differ from the defaults.
-  const advancedKeys = sections.flatMap((s) => s.fields).map((f) => f.key).filter((k) => !SIMPLE_KEYS.includes(k));
+  const advancedKeys = availableSections.flatMap((s) => s.fields).map((f) => f.key).filter((k) => !SIMPLE_KEYS.includes(k));
   const isChanged = (k: keyof Params) => JSON.stringify(params[k]) !== JSON.stringify(defaults[k]);
   // The class power curve (in "Puissance du personnage"), adjusted or not.
   const powerChanged = Boolean(params.power_curve?.length) || params.power_gear != null;
@@ -569,10 +570,10 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
           </section>
           )}
 
-          {sections.slice(0, 3).map(settingsSection)}
+          {availableSections.slice(0, 3).map(settingsSection)}
           </div>
-          <div className="config-col">{sections.slice(3).map(settingsSection)}</div>
-          {query.trim() && !sections.some((s) => s.fields.some((f) => !SIMPLE_KEYS.includes(f.key) && matches(f))) && <p className="muted settings-none">{t("Aucun réglage trouvé.")}</p>}
+          <div className="config-col">{availableSections.slice(3).map(settingsSection)}</div>
+          {query.trim() && !availableSections.some((s) => s.fields.some((f) => !SIMPLE_KEYS.includes(f.key) && matches(f))) && <p className="muted settings-none">{t("Aucun réglage trouvé.")}</p>}
         </div>
         </>
       )}

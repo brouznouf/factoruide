@@ -43,7 +43,9 @@ zones to do, the level to reach before moving on from each, and where the XP is.
 - **Your quests**: search a must-have quest by name or ID (bottom of the new guide page). The guide includes its
   prerequisites and finishes the chain, even past your target level. It cannot be saved with
   a required quest missing. For the Sleeping Bag in Forever, add **79976** (**This Must Be The
-  Place**); its XP bonus is not simulated.
+  Place**). Forever's optional food buff adds 5% kill XP. The Sleeping Bag adds 3% kill and
+  quest XP after its quest chain is completed; enabling it includes the chain. Both buffs
+  are assumed to stay active.
 - **Your class spells**: quest rewards and trainer visits determine which spells are known.
   Form attacks need both the form and its learned attack rank. Imported characters use their
   recorded spells and completed quests. Without a character profile, earlier class unlocks

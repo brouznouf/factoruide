@@ -182,6 +182,8 @@ export interface Params {
   group_kill_speed: number;
   group_shared_drops: boolean;
   explore_radius: number;
+  food_xp: boolean;
+  sleeping_bag: boolean;
   edition: Edition;
 }
 

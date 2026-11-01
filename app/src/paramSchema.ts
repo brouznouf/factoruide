@@ -16,6 +16,14 @@ export interface Section {
 
 export const sections: Section[] = [
   {
+    title: "Bonus d'XP",
+    help: "Estimation : les bonus s'additionnent avant l'XP de repos, qui reste limitée au stock du personnage.",
+    fields: [
+      { key: "food_xp", kind: "bool", label: "Bonus d'XP de nourriture (+5 %)", help: "XP des kills uniquement. Le bonus est supposé actif en permanence, sans temps ni coût de nourriture." },
+      { key: "sleeping_bag", kind: "bool", label: "Sac de couchage (+3 %)", help: "Inclut la suite de quêtes. Après la récompense, trois charges sont supposées actives en permanence sur les kills et les quêtes, sans temps de repos. Une quête déjà terminée dans le profil active le bonus dès le départ." },
+    ],
+  },
+  {
     title: "Contenu",
     fields: [
       { key: "dungeons", kind: "bool", label: "Faire les donjons rentables en groupe", help: "Un donjon est fait, avec ses quêtes, quand il fait gagner du temps." },
