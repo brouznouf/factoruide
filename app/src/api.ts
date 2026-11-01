@@ -171,6 +171,7 @@ export interface Params {
   common_item_time: number;
   dungeons: boolean;
   dungeon_pickup_ahead: number;
+  child_glue: number;
   /** Levels dungeons are run at, around their level (-3 and +3: from 15 to 21 for a level 18 dungeon). */
   dungeon_from: number;
   dungeon_to: number;

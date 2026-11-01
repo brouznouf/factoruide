@@ -439,16 +439,28 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
     assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422)));
 }
 
-/// A must-have quest whose child is a repeatable quest (Need for a Cure and Finding the
-/// Antidote, GitHub #74) is planned: the child's items and hand-in are the parent's objectives.
+/// A must-have quest with a child quest (Need for a Cure and Finding the Antidote, GitHub #74):
+/// the child is a quest of its own, taken while the parent is in the log and turned in before the
+/// parent, whether the pair is put in the route together or found by the search (`child_glue`).
 #[test]
-fn a_required_quest_with_a_repeatable_child_is_planned() {
+fn a_child_quest_is_done_between_its_parent_accept_and_turn_in() {
+    use fg_route::export::StepKind::{Accept, TurnIn};
     let conn = database_of("forever");
-    let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    overrides.params = overrides.params.with_overrides(&["effort=0".to_owned()]).unwrap();
-    let mut req = request("orc", "warrior", &[RequiredQuest::Id(812)]);
-    req.from_level = 8;
-    req.to_level = 10;
-    let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
-    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(812)));
+    for glue in ["0", "0.5", "1"] {
+        let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+        overrides.params = overrides
+            .params
+            .with_overrides(&["effort=0".to_owned(), format!("child_glue={glue}")])
+            .unwrap();
+        let mut req = request("orc", "warrior", &[RequiredQuest::Id(812)]);
+        req.from_level = 8;
+        req.to_level = 10;
+        let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
+        let at = |quest: i64, kind| route.steps.iter().position(|s| s.quest == Some(quest) && s.kind == kind);
+        let (parent, child) = ((at(812, Accept), at(812, TurnIn)), (at(813, Accept), at(813, TurnIn)));
+        let (Some(accept), Some(turn_in), Some(c_accept), Some(c_turn_in)) = (parent.0, parent.1, child.0, child.1) else {
+            panic!("child_glue={glue}: both quests planned");
+        };
+        assert!(accept < c_accept && c_accept < c_turn_in && c_turn_in < turn_in, "child_glue={glue}");
+    }
 }

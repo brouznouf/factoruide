@@ -295,6 +295,11 @@ pub struct Params {
     pub excluded_dungeons: Vec<i64>,
     /// Dungeon quests are picked up when passing by, up to this many levels before the dungeon.
     pub dungeon_pickup_ahead: i64,
+    /// A child quest (taken while its parent is in the log) and its parent are put in a route
+    /// together, the child between the parent's accept and turn-in, for this share of the pairs
+    /// (drawn from the seed, the same pairs every time). 0: each is put alone, and the search
+    /// has to bring them together; 1: always together.
+    pub child_glue: f64,
     /// Levels a dungeon is run at, from its monsters' level (`model::dungeon_levels`): from
     /// `dungeon_from` to `dungeon_to` (-3 and +3: Ruins of Lordaeron's monsters at 18, run from 15
     /// to 21), never out of them. The progression profile sets them (`Progression::dungeon_window`).
@@ -578,6 +583,7 @@ impl Default for Params {
             forced_dungeon_quests: vec![],
             excluded_dungeons: vec![],
             dungeon_pickup_ahead: 8,
+            child_glue: 0.5,
             dungeon_from: -3,
             dungeon_to: 3,
             construction: Construction::Greedy,
