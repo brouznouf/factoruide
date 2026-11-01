@@ -428,7 +428,7 @@ fn movement_training_waits_for_a_nearby_trainer() {
 #[test]
 fn passage_walks_keep_the_normal_speed_even_with_dry_ground_under_them() {
     use crate::world::{PassDef, Pos, ZonePoint};
-    let conn = database();
+    let conn = database_of("classic");
     let mut p = quests_at_start(1);
     p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Passage);
     p.world.passes.clear();
