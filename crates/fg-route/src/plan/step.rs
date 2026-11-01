@@ -900,7 +900,7 @@ impl Planner<'_> {
             .filter(|&d| {
                 self.availability().dungeon_forced(d)
                     && s.dungeons & (1u128 << d) == 0
-                    && self.model.dungeons[d].min_level <= self.profile.to_level
+                    && self.model.dungeons[d].min_level < self.profile.to_level
             })
             .count();
         s.spent.missing_dungeons = dungeons as u32;

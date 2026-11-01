@@ -702,7 +702,7 @@ impl Scenario {
             (self.params.dungeon_from, self.params.dungeon_to),
             self.params.edition.rules().max_level,
         );
-        super::settle_dungeons(&mut dungeons, &quests, &self.profile, &self.params);
+        super::settle_dungeons(&mut dungeons, &quests, &self.profile);
         let mut model = bare(quests, dungeons, start, &self.params);
         if let Some((abilities, power)) = self.class.take() {
             (model.abilities, model.power) = (abilities, power);
@@ -768,7 +768,7 @@ impl Scenario {
             .iter()
             .filter_map(|id| world.taxi_nodes.iter().position(|n| n.id == *id))
             .fold(0u128, |bits, i| bits | 1u128 << i);
-        crate::job::check_dungeon_levels(&model, &self.params)?;
+        crate::job::check_dungeon_levels(&model, &self.params, &self.profile)?;
         let mut notes = Vec::new();
         crate::job::check_exclusive_choices(&model, &members)?;
         if let Some(start) = first {
