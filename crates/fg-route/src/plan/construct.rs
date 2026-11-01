@@ -716,9 +716,12 @@ impl Planner<'_> {
             .collect();
         // The parent comes first, with this quest when it hands it an item.
         let mut after = after;
+        // The first index any partner changed.
+        let touched = std::cell::Cell::new(usize::MAX);
         for &p in &parents {
             if Self::position_of(route, p, Kind::Accept).is_none() && !self.in_log_at_start(p) && self.glued(p, q) {
                 let first = self.insert_quest_linked(route, p, after, false);
+                touched.set(touched.get().min(first));
                 if route.iter().any(|s| s.is_quest() && s.index == q) {
                     return first;
                 }
@@ -745,7 +748,8 @@ impl Planner<'_> {
                 .collect::<Vec<_>>();
             for c in handed {
                 if Self::position_of(route, c, Kind::TurnIn).is_none() && self.glued(q, c) {
-                    self.insert_quest_linked(route, c, next, quest.time_limit.is_some());
+                    let first = self.insert_quest_linked(route, c, next, quest.time_limit.is_some());
+                    touched.set(touched.get().min(first));
                 }
                 if let Some(t) = Self::position_of(route, c, Kind::TurnIn) {
                     next = next.max(t + 1);
@@ -822,7 +826,9 @@ impl Planner<'_> {
                 *route = kept;
             }
         }
-        first.min(Self::position_of(route, q, Kind::TurnIn).unwrap_or(usize::MAX))
+        first
+            .min(touched.get())
+            .min(Self::position_of(route, q, Kind::TurnIn).unwrap_or(usize::MAX))
     }
 
     /// Quest `q` is in the character's log at the start.
