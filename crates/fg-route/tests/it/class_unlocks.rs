@@ -390,3 +390,38 @@ fn known_pet_power_survives_continuation() {
         );
     }
 }
+
+#[test]
+fn one_known_demon_keeps_the_shared_binding_power() {
+    for edition in Edition::ALL {
+        let conn = database_of(edition.key());
+        let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+        let mut without = overrides.clone();
+        without
+            .class_powers
+            .get_mut("warlock")
+            .unwrap()
+            .retain(|(name, _)| name != "The Binding");
+        let mut req = request("undead", "warlock");
+        req.from_level = 25;
+        req.to_level = 26;
+        for start in [
+            None,
+            Some(serde_json::from_value(serde_json::json!({"level":25,"spells":[697]})).unwrap()),
+        ] {
+            req.start = start;
+            let time = |overrides: &Overrides| {
+                let p = job::prepare(&conn, overrides, &req, &|_| {}).unwrap();
+                Planner::new(&p.model, &p.world, &p.params, &p.profile)
+                    .simulate_full(&[], None)
+                    .unwrap()
+                    .1
+                    .grinding
+            };
+            assert!(
+                (time(&without) / time(&overrides) - 1.2).abs() < 0.001,
+                "{edition:?}: the first known Binding reward grants its power once"
+            );
+        }
+    }
+}

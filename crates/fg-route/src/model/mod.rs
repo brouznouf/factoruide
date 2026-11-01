@@ -226,11 +226,17 @@ pub fn load(
             bundles[i].push(f as u32);
         }
     }
+    let own_knowledge = abilities.initial(starts.first().copied(), profile.from_level);
     let known_class_powers = profile
         .class_powers
         .iter()
         .enumerate()
-        .filter(|(_, (name, _))| known_names.contains(name))
+        .filter(|(_, (name, _))| {
+            sources
+                .rows
+                .iter()
+                .any(|q| &q.name == name && abilities.quest(q.id) & own_knowledge != 0)
+        })
         .fold(0, |bits, (k, _)| bits | (1 << k));
     Ok(Model {
         known_class_powers,
