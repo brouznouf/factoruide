@@ -355,6 +355,8 @@ pub struct Scenario {
     mobs: Vec<(At, i64, u32)>,
     teleports: Vec<(&'static str, i64, At)>,
     graveyards: Vec<At>,
+    /// Boats between two places (name, ends, seconds), both ways.
+    boats: Vec<(&'static str, At, At, f64)>,
     /// The class's spells and power as the database has them (`Scenario::of_class`).
     class: Option<(crate::abilities::Abilities, Option<crate::power::PowerModel>)>,
 }
@@ -385,6 +387,7 @@ impl Scenario {
             mobs: Vec::new(),
             teleports: Vec::new(),
             graveyards: Vec::new(),
+            boats: Vec::new(),
             class: None,
         }
     }
@@ -421,6 +424,12 @@ impl Scenario {
     /// A class spell taking the character to a place, learned at the trainer from `level`.
     pub fn teleport(mut self, name: &'static str, level: i64, zone: i64, x: f64, y: f64) -> Self {
         self.teleports.push((name, level, At { zone, x, y }));
+        self
+    }
+
+    /// A boat between two places, both ways.
+    pub fn boat(mut self, name: &'static str, from: At, to: At, seconds: f64) -> Self {
+        self.boats.push((name, from, to, seconds));
         self
     }
 
@@ -531,7 +540,20 @@ impl Scenario {
             .iter()
             .map(|&(id, name, at)| (id, name, at.zone, at.x, at.y))
             .collect();
-        let world = World::flat(&zones, &flights, self.params.flight_speed);
+        let mut world = World::flat(&zones, &flights, self.params.flight_speed);
+        let boats: Vec<crate::world::LinkDef> = self
+            .boats
+            .iter()
+            .map(|&(name, from, to, seconds)| {
+                serde_json::from_value(serde_json::json!({
+                    "name": name, "seconds": seconds,
+                    "from": {"zone": from.zone, "x": from.x, "y": from.y},
+                    "to": {"zone": to.zone, "x": to.x, "y": to.y},
+                }))
+                .unwrap_or_else(|e| panic!("{e}"))
+            })
+            .collect();
+        world.add_links(&boats, self.profile.faction, self.params.run_speed, self.params.link_wait);
         let start = Q::at(
             At {
                 zone: 1,
