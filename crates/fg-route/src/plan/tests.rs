@@ -93,6 +93,7 @@ fn at_start(mut p: Prepared, n: usize) -> Prepared {
         .collect();
     p.model.index = p.model.quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     (p.model.chain_top, p.model.unlocks, p.model.rewards) = (vec![1; n], vec![0.0; n], vec![(vec![], vec![]); n]);
+    p.model.bundles = vec![Vec::new(); n];
     p.model.initial = Initial {
         abilities: p.model.initial.abilities,
         trained: p.model.initial.trained,
