@@ -1128,11 +1128,13 @@ local function PassVisits()
     end
 end
 
---- Go to the first step not done yet (on login, route change, or the resync button).
-function Guide:Resync()
+--- Go to the first step not done yet (route change, or the resync button); `resume`: from the
+--- step the character was on (login), since steps the game cannot say are done (a kill count, a
+--- grind, a use) would otherwise stop the guide far behind.
+function Guide:Resync(resume)
     if route then
         PassVisits()
-        state.step = 1
+        if not (resume and route.steps[state.step]) then state.step = 1 end
         SkipDone()
     end
     waypointStep, pointed, detour = nil, nil, nil
@@ -1269,7 +1271,10 @@ local function SwitchProgress(name)
         state.version = back.version
     end
     -- Saved before versions were tracked: taken as the same version.
-    if state.version and state.version ~= version then state.marks = {} end
+    if state.version and state.version ~= version then
+        state.marks = {}
+        state.step = 1 -- its steps moved
+    end
     state.version = version
     state.step = state.step or 1
     state.marks = state.marks or {}
@@ -1382,7 +1387,7 @@ FG:On("PLAYER_LOGIN", function()
             C_Map.ClearUserWaypoint()
         end
     end)
-    Guide:Resync()
+    Guide:Resync(true)
     C_Timer.NewTicker(1, function()
         FG:Try("guide tick", Guide.Advance, Guide)
         FG:Try("group tick", FG.Group.Tick, FG.Group, Guide:OwnStep())

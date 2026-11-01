@@ -1092,6 +1092,7 @@ name = "fg-app"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "fg-contrib",
  "fg-library",
  "fg-route",
  "rusqlite",

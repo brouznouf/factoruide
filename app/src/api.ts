@@ -2,7 +2,8 @@
 // backend in Web Workers (crates/fg-web, see web/host.ts).
 import { invoke } from "@tauri-apps/api/core";
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
-import { download, fromBase64 } from "./web/mode";
+import { sendWebIssue } from "./web/issue";
+import { download, fromBase64, IS_WEB } from "./web/mode";
 
 /** A file the web backend made for the browser to download (the desktop app writes it itself and gives its path). */
 export interface WebFile {
@@ -602,7 +603,7 @@ export const api = {
   /** What players can check in game for the current game version, names in `locale`. */
   needHelp: (locale: string) => invoke<HelpCheck[]>("need_help", { locale }),
   /** Sends a problem report to the contribution server (rejects with "rate_limited" or the reason). */
-  sendIssue: (draft: IssueDraft) => invoke<"accepted" | "already_received">("send_issue", { draft }),
+  sendIssue: (draft: IssueDraft) => (IS_WEB ? sendWebIssue(draft) : invoke<"accepted" | "already_received">("send_issue", { draft })),
   /** Turns the automatic contributions on or off (that setting only). */
   setAutoContribute: (on: boolean) => invoke<void>("set_auto_contribute", { on }),
   /** Opens a version in the guide editor (`locale`: language of the lines and names shown). */
