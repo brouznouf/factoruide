@@ -102,6 +102,31 @@ export function StepList({ steps, cards, titles, segments, spans, quests, curren
     return { items: list, tops: starts, height: y, rowOf: rows };
   }, [segments, finalGrind]);
 
+  // Finding a quest: every step that names it is marked, and the arrows go from one to the next.
+  const [query, setQuery] = useState("");
+  const [hit, setHit] = useState(-1);
+  const found = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    const out: number[] = [];
+    if (q.length < 2) return out;
+    steps.forEach((s, i) => {
+      if (s.quest != null && String(s.quest) === q) out.push(i);
+      else if ((s.quest_name ?? s.text).toLowerCase().includes(q)) out.push(i);
+    });
+    return out;
+  }, [steps, query]);
+  const foundSet = useMemo(() => new Set(found), [found]);
+  const jump = (to: number) => {
+    if (found.length === 0) return;
+    const n = (to + found.length) % found.length;
+    setHit(n);
+    const i = found[n];
+    const el = scroller.current;
+    const k = rowOf.get(i);
+    if (el && k != null) el.scrollTop = Math.max(0, tops[k] - ZONE_H - el.clientHeight / 3);
+    onSelect(cardOfStep[i]);
+  };
+
   // The part in view, followed while scrolling and resizing.
   const measure = useCallback(() => {
     const el = scroller.current;
@@ -163,6 +188,33 @@ export function StepList({ steps, cards, titles, segments, spans, quests, curren
         )}
         <span className="muted">{steps.length}</span>
       </div>
+      <div className="sl-find">
+        <input
+          type="search"
+          value={query}
+          placeholder={t("Chercher une quête")}
+          aria-label={t("Chercher une quête")}
+          onChange={(e) => {
+            setQuery(e.target.value);
+            setHit(-1);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") jump(e.shiftKey ? hit - 1 : hit + 1);
+            e.stopPropagation();
+          }}
+        />
+        {query.trim().length >= 2 && (
+          <>
+            <span className="muted">{found.length ? `${hit + 1}/${found.length}` : t("aucune")}</span>
+            <button className="link" disabled={!found.length} onClick={() => jump(hit - 1)} aria-label={t("Étape précédente de la quête")}>
+              ▲
+            </button>
+            <button className="link" disabled={!found.length} onClick={() => jump(hit + 1)} aria-label={t("Étape suivante de la quête")}>
+              ▼
+            </button>
+          </>
+        )}
+      </div>
       <div
         className={`sl-scroll${edit ? " editing" : ""}`}
         ref={scroller}
@@ -202,6 +254,7 @@ export function StepList({ steps, cards, titles, segments, spans, quests, curren
                 spans={spans}
                 quests={quests}
                 active={c.n === current}
+                found={foundSet.has(it.i)}
                 onSelect={onSelect}
                 checked={checked?.has(c.n)}
                 onCheck={onCheck}
@@ -303,6 +356,8 @@ interface RowProps {
   spans: Spans;
   quests: Map<number, QuestInfo>;
   active: boolean;
+  /** The step names the quest looked for. */
+  found: boolean;
   onSelect: (card: number) => void;
   checked?: boolean;
   onCheck?: (card: number) => void;
@@ -341,7 +396,7 @@ function dragged(e: React.DragEvent): [number, number] | null {
  * dragged to move it, killing the mobs on the way, a grind's mobs or level, and buttons to add
  * a step after it or remove it.
  */
-function Row({ top, i, steps, card, spans, quests, active, onSelect, checked, onCheck, edit, drop, onDrop, onHover }: RowProps) {
+function Row({ top, i, steps, card, spans, quests, active, found, onSelect, checked, onCheck, edit, drop, onDrop, onHover }: RowProps) {
   const t = useT();
   const s = steps[i];
   const head = i === card.first;
@@ -359,6 +414,7 @@ function Row({ top, i, steps, card, spans, quests, active, onSelect, checked, on
     `obj-${kind}`,
     head ? "head" : "attached",
     active && "active",
+    found && "found",
     card.travel && "travel",
     isCheckpoint(s) && "checkpoint",
     edit && "edit",

@@ -3790,6 +3790,19 @@ button.link.cmp-jump {
   align-items: baseline;
   padding: 9px 12px 4px;
 }
+.sl-find {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 12px 6px;
+}
+.sl-find input {
+  flex: 1;
+  min-width: 0;
+}
+.sl-row.found {
+  box-shadow: inset 3px 0 0 var(--accent-text);
+}
 .sl-next {
   color: var(--accent-text);
 }
