@@ -29,6 +29,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - A quest item that rots is looted right before the objective using it: the Fresh Zhevra Carcass (30 minutes) just before Ishamuhale, instead of hours earlier (WoW Forever and Classic).
 - A must-have quest is planned even when its mobs are elites (Forever's Rare Books, whose books drop from Mother Fang and two other elites).
 - A quest item whose name holds a colon ("Picture Book: Fun with Elementals") is looted once, not six times.
+- Missing class unlocks keep their prerequisites; known unlocks are not repeated. Druids include Moonglade by default.
 - Guides complete must-have quests and their prerequisites, even past the target level.
 - Deadmines' Collecting Memories and Oh Brother... say they are done outside the dungeon, beside its entrance, with the dungeon's group (GitHub #82).
 - A quest started by an item lying in a camp of the other side (the Aged Envelope among the Kul Tiras marines, for the Horde) waits for a level that can face them, instead of being fetched at level 1 (GitHub #83).

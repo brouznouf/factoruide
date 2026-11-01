@@ -436,7 +436,12 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
     req.from_level = 40;
     req.to_level = 58;
     let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
-    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422)));
+    assert!(
+        route
+            .steps
+            .iter()
+            .any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422))
+    );
 }
 
 /// A must-have quest with a child quest (Need for a Cure and Finding the Antidote, GitHub #74):
@@ -456,11 +461,20 @@ fn a_child_quest_is_done_between_its_parent_accept_and_turn_in() {
         req.from_level = 8;
         req.to_level = 10;
         let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
-        let at = |quest: i64, kind| route.steps.iter().position(|s| s.quest == Some(quest) && s.kind == kind);
+        let at = |quest: i64, kind| {
+            route
+                .steps
+                .iter()
+                .position(|s| s.quest == Some(quest) && s.kind == kind)
+        };
         let (parent, child) = ((at(812, Accept), at(812, TurnIn)), (at(813, Accept), at(813, TurnIn)));
-        let (Some(accept), Some(turn_in), Some(c_accept), Some(c_turn_in)) = (parent.0, parent.1, child.0, child.1) else {
+        let (Some(accept), Some(turn_in), Some(c_accept), Some(c_turn_in)) = (parent.0, parent.1, child.0, child.1)
+        else {
             panic!("child_glue={glue}: both quests planned");
         };
-        assert!(accept < c_accept && c_accept < c_turn_in && c_turn_in < turn_in, "child_glue={glue}");
+        assert!(
+            accept < c_accept && c_accept < c_turn_in && c_turn_in < turn_in,
+            "child_glue={glue}"
+        );
     }
 }

@@ -42,23 +42,113 @@ use places::Places;
 use rusqlite::Connection;
 use rustc_hash::FxHashMap;
 use sources::Sources;
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
-pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params) -> Result<Model> {
-    let mut sources = Sources::read(conn, world, profile, params)?;
+pub fn load(
+    conn: &Connection,
+    world: &World,
+    profile: &Profile,
+    params: &Params,
+    starts: &[&crate::job::StartState],
+) -> Result<Model> {
+    let abilities = crate::abilities::Abilities::load(conn, profile)?;
+    let mut mate_abilities = Vec::new();
+    for m in &profile.mates {
+        mate_abilities.push(crate::abilities::Abilities::load(
+            conn,
+            &Profile {
+                race_id: m.race_id,
+                class_id: m.class_id,
+                class_name: m.class_name.clone(),
+                spell_weights: m.spell_weights.clone(),
+                ..profile.clone()
+            },
+        )?);
+    }
+    let mut knowledge = HashMap::<i64, (bool, bool)>::new();
+    for (i, book) in std::iter::once(&abilities).chain(&mate_abilities).enumerate() {
+        let start = starts.get(i).copied();
+        let known = book.initial(start, start.map_or(profile.from_level, |s| s.level));
+        for (quest, learned, unique) in book.reward_knowledge(known) {
+            let entry = knowledge.entry(quest).or_insert((true, true));
+            entry.0 &= learned;
+            entry.1 &= unique || start.is_some_and(|s| s.completed.contains(&crate::job::QuestId(quest)));
+        }
+    }
+    let reward_quests: HashSet<_> = knowledge.keys().copied().collect();
+    let mut known_prerequisites: HashSet<_> = knowledge
+        .iter()
+        .filter_map(|(&q, &(_, known))| known.then_some(q))
+        .collect();
+    let mut known_rewards: HashSet<_> = knowledge
+        .into_iter()
+        .filter_map(|(q, (known, _))| known.then_some(q))
+        .collect();
+    let logged: HashSet<_> = starts.iter().flat_map(|s| s.log.iter().map(|q| q.id.0)).collect();
+    let finished: HashSet<_> = starts.iter().flat_map(|s| s.completed.iter().map(|q| q.0)).collect();
+    let skip_known: HashSet<_> = known_rewards
+        .iter()
+        .copied()
+        .filter(|q| !logged.contains(q) && !finished.contains(q))
+        .collect();
+    let mut sources = Sources::read(
+        conn,
+        world,
+        profile,
+        params,
+        &skip_known,
+        &known_prerequisites,
+        &reward_quests,
+    )?;
     let (mut quests, mut skipped) = build_quests(&sources, world, profile, params);
-    required::apply(&mut quests, &sources.rows, &skipped, profile, params)?;
+    required::apply(
+        &mut quests,
+        &sources.rows,
+        &sources.class_quest_ids,
+        &skipped,
+        profile,
+        params,
+    )?;
+    if starts.is_empty() {
+        for q in quests.iter().filter(|q| q.required) {
+            known_rewards.remove(&q.id);
+            known_prerequisites.remove(&q.id);
+        }
+    }
+    let mut names_known = HashMap::<String, bool>::new();
+    for r in sources.rows.iter().filter(|r| {
+        profile.class_ids().iter().any(|c| r.of_class(*c))
+            && profile.members_of(r.races, r.classes) != 0
+            && reward_quests.contains(&r.id)
+    }) {
+        *names_known.entry(r.name.clone()).or_insert(true) &= known_rewards.contains(&r.id);
+    }
+    let known_names: HashSet<_> = names_known.into_iter().filter_map(|(n, k)| k.then_some(n)).collect();
     chains::drop_unhanded(&mut quests, &mut skipped);
     report_skipped_class_quests(&sources, &skipped);
     let places = Places::load(conn, world, &sources.entities, profile, &sources.start, params.edition)?;
     chains::narrow_class_quests_to_spells(&mut quests, params.all_class_quests);
+    for q in &mut quests {
+        if known_names.contains(&q.name) && !q.required && !q.zone_forced {
+            q.mandatory = false;
+        }
+    }
+    quests.retain(|q| {
+        !known_rewards.contains(&q.id)
+            || logged.contains(&q.id)
+            || profile.completed_quests.contains(&q.id)
+            || sources.class_quest_ids.contains(&q.id)
+            || q.required
+            || q.zone_forced
+    });
     // The quests of the dungeons run with all their quests.
     for q in &mut quests {
         let forced = |d: usize| params.forced_dungeon_quests.contains(&sources.dungeons[d].area);
         q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
     }
+
     chains::require_prerequisites(&mut quests);
-    chains::release_impossible_class_quests(&mut quests);
+    chains::release_impossible_class_quests(&mut quests, &known_prerequisites);
     for q in &mut quests {
         q.mandatory |= q.required;
     }
@@ -87,12 +177,17 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
     }
     let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     let mut teleports = places.teleports;
-    teleports.extend(places::quest_teleports(world, profile, &quests));
+    teleports.extend(places::quest_teleports(
+        world,
+        profile,
+        &quests,
+        &known_names,
+        &abilities,
+    ));
     let unlocks = chains::chain_values(&quests, &index, &chains::quest_work(&quests, params));
     let chain_top = chains::chain_tops(&quests, &index);
     let (explore, explore_by_zone) = explore::load_explore(conn, world)?;
     let farm = FarmMobs::load(conn, world, &quests)?;
-    let abilities = crate::abilities::Abilities::load(conn, profile)?;
     let power = crate::power::PowerModel::load(
         conn,
         profile.class_id,
@@ -104,16 +199,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
     )?;
     // A group's other classes: the spells each one learns (the addon of each player trains its own).
     let mut mate_spells = Vec::new();
-    for m in &profile.mates {
-        let abilities = crate::abilities::Abilities::load(
-            conn,
-            &Profile {
-                race_id: m.race_id,
-                class_id: m.class_id,
-                spell_weights: m.spell_weights.clone(),
-                ..profile.clone()
-            },
-        )?;
+    for (m, abilities) in profile.mates.iter().zip(&mate_abilities) {
         let mate = crate::power::PowerModel::load(
             conn,
             m.class_id,
@@ -121,7 +207,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
             profile.to_level.max(60),
             &m.spell_weights,
             params,
-            &abilities,
+            abilities,
         )?;
         mate_spells.push(
             mate.map(|p| p.ranks().map(|r| r.id).chain(abilities.spells()).collect())
@@ -146,7 +232,20 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
             bundles[i].push(f as u32);
         }
     }
+    let own_knowledge = abilities.initial(starts.first().copied(), profile.from_level);
+    let known_class_powers = profile
+        .class_powers
+        .iter()
+        .enumerate()
+        .filter(|(_, (name, _))| {
+            sources
+                .rows
+                .iter()
+                .any(|q| &q.name == name && abilities.quest(q.id) & own_knowledge != 0)
+        })
+        .fold(0, |bits, (k, _)| bits | (1 << k));
     Ok(Model {
+        known_class_powers,
         abilities,
         quests,
         dungeons: sources.dungeons,
@@ -171,6 +270,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         recall: places.recall,
         skipped,
         initial: Initial::default(),
+        known_class_prerequisites: known_prerequisites,
         names: Names::load(conn, profile.locale.as_deref().unwrap_or("enUS"))?,
         faction_names: faction_names(conn, params),
         explore,

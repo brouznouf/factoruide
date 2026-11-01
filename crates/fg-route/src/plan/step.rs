@@ -192,7 +192,7 @@ impl Planner<'_> {
         let abilities_before = s.abilities;
         s.trained = s.level;
         for (k, tp) in self.model.teleports.iter().enumerate() {
-            if tp.quests.is_empty() && tp.level <= s.level && tp.to.zone == trainer.zone {
+            if tp.ability == 0 && tp.level <= s.level && tp.to.zone == trainer.zone {
                 s.taught |= 1 << k;
             }
         }
@@ -315,6 +315,7 @@ impl Planner<'_> {
             self.growth().gather(s, q.starts[0].zone, q.start_kills);
         }
         s.accepted.set(i as usize, true);
+        s.abilities |= self.model.abilities.accepted(q.id);
         s.log += 1;
         s.held += u16::from(q.carried);
         if let Some(limit) = q.time_limit {
