@@ -15,7 +15,7 @@
 
 use super::farm::MobRow;
 use super::{
-    Dungeon, EntityKind, Guard, Initial, Loc, Model, Names, Objective, Profile, Quest, chains, required, sources::QuestRow,
+    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, chains, required, sources::QuestRow,
 };
 use crate::faction::Faction;
 use crate::job::{PlanRequest, Prepared, StartState};
@@ -149,7 +149,7 @@ impl Q {
             start_guard: Guard::default(),
             end_guard: Guard::default(),
             reputation: Vec::new(),
-            members: 1,
+            members: 0xFF,
         };
         Self {
             quest,
@@ -541,6 +541,24 @@ impl Scenario {
         (request.start, request.mates) = (self.start.take(), std::mem::take(&mut self.mates));
         let members = request.members(self.params.edition.rules());
         let first = members.first().copied().or(request.start.as_ref());
+        // The players: the character is the first, the others its mates.
+        if let Some(first) = first {
+            self.profile.player.clone_from(&first.name);
+            self.profile.race_id = first.race;
+            self.profile.class_id = class_id(&first.class);
+        }
+        self.profile.mates = members
+            .iter()
+            .skip(1)
+            .map(|m| Mate {
+                name: m.name.clone(),
+                race_id: m.race,
+                class_id: class_id(&m.class),
+                spell_weights: Vec::new(),
+                professions: Vec::new(),
+            })
+            .collect();
+        self.params.group_size = members.len().max(1) as i64;
         // What the character did; in a group, what every player who could do it did.
         self.profile.completed_quests = first.map(|s| s.completed.iter().map(|q| q.0).collect()).unwrap_or_default();
         if members.len() > 1 {
@@ -677,6 +695,14 @@ impl Scenario {
             .unwrap_or_else(|e| panic!("{e:#}"));
         (crate::job::Editor::from_prepared(prepared), outcome)
     }
+}
+
+/// The game's ID of a class (its file name, any case).
+fn class_id(class: &str) -> i64 {
+    const CLASSES: [&str; 11] = [
+        "WARRIOR", "PALADIN", "HUNTER", "ROGUE", "PRIEST", "DEATHKNIGHT", "SHAMAN", "MAGE", "WARLOCK", "MONK", "DRUID",
+    ];
+    CLASSES.iter().position(|c| c.eq_ignore_ascii_case(class)).map_or(1, |i| i as i64 + 1)
 }
 
 /// A character of `faction` going from level `from` to `to`.

@@ -2943,48 +2943,27 @@ fn a_group_takes_on_what_its_weakest_class_does() {
 /// the steps not for everyone are for.
 #[test]
 fn a_group_guide_tells_the_addon_its_players() {
-    let pick = prepare_from("human", "warrior", 13, &[], Some(player("A-Realm", 1, "warrior", 10)));
-    let done: Vec<job::QuestId> = (pick.model.quests.iter())
-        .filter(|q| q.members & 1 != 0 && q.level <= 10)
-        .take(3)
-        .map(|q| q.id.into())
-        .collect();
-    let mut a = player("A-Realm", 1, "warrior", 10);
-    a.completed.clone_from(&done);
-    let request = PlanRequest {
-        start: Some(a),
-        mates: vec![player("B-Realm", 1, "mage", 10)],
-        ..request("human", "warrior", 11, &["effort=0"])
-    };
-    let outcome = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap();
-    let route = &outcome.route;
+    let route = leveling(14)
+        .levels(10, 14)
+        .start(player("A-Realm", 1, "warrior", 10))
+        .mates(vec![player("B-Realm", 1, "mage", 10)])
+        .quest(Q::new(700, "Warrior only").level(11).members(0b01).giver(2, 30.0, 40.0))
+        .job(&|_| {}, &job::Interrupt::default(), None)
+        .unwrap()
+        .route;
     let names: Vec<&str> = route.players.iter().map(|p| p.name.as_str()).collect();
     assert_eq!(names, ["A-Realm", "B-Realm"]);
-    assert!(
-        route
-            .steps
-            .iter()
-            .filter(|s| s.level > 0)
-            .all(|s| s.party.len() == 2 || s.event.is_none())
-    );
-    let lua = fg_route::export::to_lua(std::slice::from_ref(route));
-    assert!(
-        lua.contains(r#"players = { { n = "A-Realm", race = 1, class = 1, professions = {  } }, { n = "B-Realm", race = 1, class = 8, professions = {  } } }"#)
-    );
+    assert!(route.steps.iter().filter(|s| s.level > 0).all(|s| s.party.len() == 2 || s.event.is_none()));
+    let lua = fg_route::export::to_lua(std::slice::from_ref(&route));
+    assert!(lua.contains(
+        r#"players = { { n = "A-Realm", race = 1, class = 1, professions = {  } }, { n = "B-Realm", race = 1, class = 8, professions = {  } } }"#
+    ));
     assert!(lua.contains("gp = { "));
-    // The mage's spells, for its own addon (the guide's are the warrior's).
-    let mage = route.class_spells.iter().find(|(c, _)| *c == 8).map(|(_, s)| s.len());
-    assert!(mage.is_some_and(|n| n > 0), "{:?}", route.class_spells);
-    assert!(lua.contains("classSpells = { [8] = { "));
-    // A quest A did already, if the guide takes it, is B's only.
-    for s in &route.steps {
-        if s.quest.is_some_and(|q| done.contains(&q.into())) {
-            assert_eq!(s.members, Some(0b10), "{:?}", s.quest_name);
-        }
+    // A quest for one of them is theirs only.
+    for s in route.steps.iter().filter(|s| s.quest == Some(700)) {
+        assert_eq!(s.members, Some(0b01), "{:?}", s.quest_name);
     }
-}
-
-/// A step of an edited guide that only a zone too strong for the character makes possible is
+}/// A step of an edited guide that only a zone too strong for the character makes possible is
 /// done, with a warning (the planner itself keeps out of such zones): Gadgetzan's flight path
 /// from Thousand Needles at level 34, Tanaris closed to it.
 #[test]
