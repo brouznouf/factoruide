@@ -416,14 +416,139 @@ impl Editor {
     /// guide's steps (a guide computed before the editor: its time may differ a little).
     pub fn steps(&self, outcome: &PlanOutcome) -> (Vec<RouteStep>, bool) {
         if outcome.explicit {
-            return (outcome.plan.clone(), false);
+            return (self.migrate_children(outcome.plan.clone()), false);
         }
         let (steps, rebuilt) = if outcome.plan.is_empty() {
             (self.read_guide(&outcome.route), true)
         } else {
             (outcome.plan.clone(), false)
         };
-        (self.expand(&steps), rebuilt)
+        (self.expand(&self.migrate_children(steps)), rebuilt)
+    }
+
+    /// A guide made when a child quest (Finding the Antidote, for Need for a Cure) was folded
+    /// into its parent's objectives: the objectives past the parent's own handed in the child
+    /// (and took its items), which is a quest of its own now. Those steps become the child's
+    /// accept, objectives and turn-in, put where the last of them was, and the parent's
+    /// objectives take the numbers they have now.
+    fn migrate_children(&self, steps: Vec<RouteStep>) -> Vec<RouteStep> {
+        let model = &self.prepared.model;
+        let in_plan: std::collections::HashSet<i64> = steps
+            .iter()
+            .filter_map(|s| match s {
+                RouteStep::Accept { quest } | RouteStep::TurnIn { quest } | RouteStep::Objective { quest, .. } => {
+                    Some(*quest)
+                }
+                _ => None,
+            })
+            .collect();
+        let planned = |id: i64| in_plan.contains(&id);
+        let mut steps = steps;
+        for parent in &model.quests {
+            // The children the guide never took as quests: folded into the parent.
+            let mut kids: Vec<&crate::model::Quest> = model
+                .quests
+                .iter()
+                .filter(|c| c.pre_held.contains(&parent.id) && !planned(c.id))
+                .collect();
+            // A child another one needs first comes first.
+            let needs = |c: &crate::model::Quest, others: &[&crate::model::Quest]| {
+                others.iter().filter(|o| c.pre_all.contains(&o.id) || c.pre_any.contains(&o.id)).count()
+            };
+            let all = kids.clone();
+            kids.sort_by_key(|c| needs(c, &all));
+            if kids.is_empty() || !planned(parent.id) {
+                continue;
+            }
+            let hands = |o: &crate::model::Objective| kids.iter().any(|c| o.handed_by.contains(&c.id));
+            // The parent's own objectives as that guide numbered them (without those a child hands over).
+            let own: Vec<u8> = (0..parent.objectives.len() as u8)
+                .filter(|&k| !hands(&parent.objectives[usize::from(k)]))
+                .collect();
+            let past = |s: &RouteStep| {
+                matches!(s, RouteStep::Objective { quest, objective, .. }
+                    if *quest == parent.id && usize::from(*objective) >= own.len())
+            };
+            let Some(last) = steps.iter().rposition(past) else { continue };
+            let mut block = Vec::new();
+            for c in &kids {
+                block.push(RouteStep::Accept { quest: c.id });
+                for k in 0..c.objectives.len() as u8 {
+                    block.push(RouteStep::Objective { quest: c.id, objective: k, farm: false, spot: None });
+                }
+                block.push(RouteStep::TurnIn { quest: c.id });
+            }
+            // What the children hand over, then done.
+            for (k, o) in parent.objectives.iter().enumerate() {
+                if hands(o) {
+                    block.push(RouteStep::Objective { quest: parent.id, objective: k as u8, farm: false, spot: None });
+                }
+            }
+            let mut out = Vec::with_capacity(steps.len() + block.len());
+            for (i, s) in steps.into_iter().enumerate() {
+                if i == last {
+                    out.extend(block.drain(..));
+                } else if past(&s) {
+                    continue;
+                } else if let RouteStep::Objective { quest, objective, farm, spot } = s {
+                    let objective = if quest == parent.id {
+                        own.get(usize::from(objective)).copied().unwrap_or(objective)
+                    } else {
+                        objective
+                    };
+                    out.push(RouteStep::Objective { quest, objective, farm, spot });
+                } else {
+                    out.push(s);
+                }
+            }
+            steps = out;
+        }
+        self.add_repeatable_prerequisites(steps)
+    }
+
+    /// A quest the guide takes whose prerequisite is a quest the guide does not do: the
+    /// guides made when repeatable quests were left out of the plan (the Paladin's Tome of
+    /// Divinity needs its first, repeatable, quest). That quest is done right before.
+    fn add_repeatable_prerequisites(&self, steps: Vec<RouteStep>) -> Vec<RouteStep> {
+        let model = &self.prepared.model;
+        let mut in_plan: std::collections::HashSet<i64> = steps
+            .iter()
+            .filter_map(|s| match s {
+                RouteStep::Accept { quest } | RouteStep::TurnIn { quest } | RouteStep::Objective { quest, .. } => {
+                    Some(*quest)
+                }
+                _ => None,
+            })
+            .collect();
+        let mut out = Vec::with_capacity(steps.len());
+        for step in steps {
+            if let RouteStep::Accept { quest } = step
+                && let Some(&i) = model.index.get(&quest)
+            {
+                let q = &model.quests[i];
+                let done = |id: &i64| {
+                    in_plan.contains(id) || model.index.get(id).is_some_and(|j| model.initial.turned.contains(j))
+                };
+                // One of several is enough: the first the guide could do.
+                let any = (!q.pre_any.is_empty() && !q.pre_any.iter().any(done))
+                    .then(|| q.pre_any.iter().find(|id| model.index.contains_key(id)).copied())
+                    .flatten();
+                for &pre in q.pre_all.iter().chain(any.as_ref()) {
+                    let Some(&j) = model.index.get(&pre) else { continue };
+                    if in_plan.contains(&pre) || model.initial.turned.contains(&j) {
+                        continue;
+                    }
+                    in_plan.insert(pre);
+                    out.push(RouteStep::Accept { quest: pre });
+                    for k in 0..model.quests[j].objectives.len() as u8 {
+                        out.push(RouteStep::Objective { quest: pre, objective: k, farm: false, spot: None });
+                    }
+                    out.push(RouteStep::TurnIn { quest: pre });
+                }
+            }
+            out.push(step);
+        }
+        out
     }
 
     /// Steps of a guide saved before each thing done was a step (the route's stops, and its
