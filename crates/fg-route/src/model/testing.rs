@@ -21,7 +21,7 @@
 
 use super::farm::MobRow;
 use super::{
-    Dungeon, EntityKind, Guard, Initial, Loc, Model, Names, Objective, Profile, Quest, chains, required,
+    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, chains, required,
     sources::QuestRow,
 };
 use crate::faction::Faction;
@@ -55,6 +55,10 @@ pub struct Obj {
     pub elite: bool,
     pub dungeon: Option<usize>,
     pub handed_by: Vec<i64>,
+    /// Objectives (numbered from 0) to do first.
+    pub after: Vec<usize>,
+    /// Seconds what the objective gets lasts (a carcass that rots).
+    pub lasts: Option<f64>,
 }
 
 impl Obj {
@@ -69,6 +73,8 @@ impl Obj {
             elite: false,
             dungeon: None,
             handed_by: Vec::new(),
+            after: Vec::new(),
+            lasts: None,
         }
     }
 
@@ -83,6 +89,8 @@ impl Obj {
             elite: false,
             dungeon: None,
             handed_by: Vec::new(),
+            after: Vec::new(),
+            lasts: None,
         }
     }
 
@@ -95,6 +103,18 @@ impl Obj {
     /// Done inside dungeon `d` (index in the scenario's dungeons).
     pub fn inside(mut self, d: usize) -> Self {
         self.dungeon = Some(d);
+        self
+    }
+
+    /// What it gets is gone after `seconds`.
+    pub fn lasts(mut self, seconds: f64) -> Self {
+        self.lasts = Some(seconds);
+        self
+    }
+
+    /// Done once objectives `k` (numbered from 0) are.
+    pub fn after(mut self, k: &[usize]) -> Self {
+        self.after = k.to_vec();
         self
     }
 
@@ -156,7 +176,7 @@ impl Q {
             start_guard: Guard::default(),
             end_guard: Guard::default(),
             reputation: Vec::new(),
-            members: 1,
+            members: 0xFF,
         };
         Self {
             quest,
@@ -165,6 +185,12 @@ impl Q {
             objectives: Vec::new(),
             excluded: false,
         }
+    }
+
+    /// Its XP was received in game: no level penalty applies to it.
+    pub fn observed(mut self) -> Self {
+        self.quest.xp_observed = true;
+        self
     }
 
     pub fn level(mut self, level: i64) -> Self {
@@ -232,6 +258,12 @@ impl Q {
     }
 
     /// Timed: seconds from taking it to turning it in.
+    /// Reputation with a faction (Faction ID) the turn-in gives.
+    pub fn reputation(mut self, faction: i64, amount: f64) -> Self {
+        self.quest.reputation.push((faction, amount));
+        self
+    }
+
     pub fn timed(mut self, seconds: f64) -> Self {
         self.quest.time_limit = Some(seconds);
         self
@@ -282,13 +314,14 @@ impl Q {
             .iter()
             .enumerate()
             .map(|(k, o)| {
+                let loc_id = 200_000 + id * 10 + k as i64;
                 let loc = Loc {
                     kind: if o.kills > 0.0 {
                         EntityKind::Npc
                     } else {
                         EntityKind::Object
                     },
-                    id: 200_000 + id * 10 + k as i64,
+                    id: loc_id,
                     ..Self::at(o.at, 0, &o.text, world)
                 };
                 Objective {
@@ -298,12 +331,21 @@ impl Q {
                     elite: o.elite,
                     dungeon: o.dungeon,
                     handed_by: o.handed_by.clone(),
+                    lasts: o.lasts,
+                    after: o.after.iter().fold(0u8, |mask, k| mask | 1u8 << k),
                     count: o.kills.max(o.uses),
                     slot: u8::try_from(k + 1).ok(),
+                    // The creatures to target: one of the objective's name.
+                    mobs: if o.kills > 0.0 {
+                        vec![(loc_id, o.text.clone())]
+                    } else {
+                        Vec::new()
+                    },
                     ..Objective::plain(loc, o.text.clone(), 0.0)
                 }
             })
             .collect();
+        super::objectives::mark_beside_givers(&self.quest.starts, &self.quest.ends, &mut self.quest.objectives);
         self.quest
     }
 }
@@ -326,6 +368,12 @@ pub struct Scenario {
     inns: Vec<(&'static str, At)>,
     /// Normal mobs anyone can farm: where, their level and how many.
     mobs: Vec<(At, i64, u32)>,
+    teleports: Vec<(&'static str, i64, At)>,
+    graveyards: Vec<At>,
+    /// Boats between two places (name, ends, seconds), both ways.
+    boats: Vec<(&'static str, At, At, f64)>,
+    /// The class's spells and power as the database has them (`Scenario::of_class`).
+    class: Option<(crate::abilities::Abilities, Option<crate::power::PowerModel>)>,
 }
 
 impl Default for Scenario {
@@ -352,13 +400,55 @@ impl Scenario {
             vendors: Vec::new(),
             inns: Vec::new(),
             mobs: Vec::new(),
+            teleports: Vec::new(),
+            graveyards: Vec::new(),
+            boats: Vec::new(),
+            class: None,
         }
+    }
+
+    /// A character of a request (its race, class, levels and settings) in a scenario with the
+    /// class's spells and power read from the database, and nothing else of it: for the tests of
+    /// what a character knows and learns.
+    pub fn of_class(
+        conn: &rusqlite::Connection,
+        overrides: &crate::job::Overrides,
+        req: &PlanRequest,
+    ) -> anyhow::Result<Self> {
+        let (profile, params) = crate::job::character(conn, overrides, req)?;
+        let abilities = crate::abilities::Abilities::load(conn, &profile)?;
+        let power = crate::power::PowerModel::load(
+            conn,
+            profile.class_id,
+            profile.race_id,
+            profile.to_level.max(60),
+            &profile.spell_weights,
+            &params,
+            &abilities,
+        )?;
+        let mut scenario = Self::new();
+        (scenario.profile, scenario.params) = (profile, params);
+        (scenario.start, scenario.mates) = (req.start.clone(), req.mates.clone());
+        scenario.class = Some((abilities, power));
+        Ok(scenario)
     }
 
     /// `count` normal mobs of `level` at a place: the character kills them on the way, or grinds
     /// there (a camp holds eight of a level).
     pub fn mobs(mut self, zone: i64, x: f64, y: f64, level: i64, count: u32) -> Self {
         self.mobs.push((At { zone, x, y }, level, count));
+        self
+    }
+
+    /// A class spell taking the character to a place, learned at the trainer from `level`.
+    pub fn teleport(mut self, name: &'static str, level: i64, zone: i64, x: f64, y: f64) -> Self {
+        self.teleports.push((name, level, At { zone, x, y }));
+        self
+    }
+
+    /// A boat between two places, both ways.
+    pub fn boat(mut self, name: &'static str, from: At, to: At, seconds: f64) -> Self {
+        self.boats.push((name, from, to, seconds));
         self
     }
 
@@ -371,6 +461,12 @@ impl Scenario {
     /// The character knows this flight path from the start.
     pub fn knows_flight(mut self, id: i64) -> Self {
         self.known_flights.push(id);
+        self
+    }
+
+    /// A spirit healer, where a character that dies respawns.
+    pub fn graveyard(mut self, zone: i64, x: f64, y: f64) -> Self {
+        self.graveyards.push(At { zone, x, y });
         self
     }
 
@@ -463,7 +559,25 @@ impl Scenario {
             .iter()
             .map(|&(id, name, at)| (id, name, at.zone, at.x, at.y))
             .collect();
-        let world = World::flat(&zones, &flights, self.params.flight_speed);
+        let mut world = World::flat(&zones, &flights, self.params.flight_speed);
+        let boats: Vec<crate::world::LinkDef> = self
+            .boats
+            .iter()
+            .map(|&(name, from, to, seconds)| {
+                serde_json::from_value(serde_json::json!({
+                    "name": name, "seconds": seconds,
+                    "from": {"zone": from.zone, "x": from.x, "y": from.y},
+                    "to": {"zone": to.zone, "x": to.x, "y": to.y},
+                }))
+                .unwrap_or_else(|e| panic!("{e}"))
+            })
+            .collect();
+        world.add_links(
+            &boats,
+            self.profile.faction,
+            self.params.run_speed,
+            self.params.link_wait,
+        );
         let start = Q::at(
             At {
                 zone: 1,
@@ -526,6 +640,31 @@ impl Scenario {
         (request.start, request.mates) = (self.start.take(), std::mem::take(&mut self.mates));
         let members = request.members(self.params.edition.rules());
         let first = members.first().copied().or(request.start.as_ref());
+        // The players: the character is the first, the others its mates.
+        if let Some(first) = first {
+            self.profile.player.clone_from(&first.name);
+            self.profile.from_level = first.level;
+            if first.race != 0 {
+                self.profile.race_id = first.race;
+            }
+            self.profile.class_id = class_id(&first.class);
+            if !first.class.is_empty() {
+                let lower = first.class.to_lowercase();
+                self.profile.class_name = lower[..1].to_uppercase() + &lower[1..];
+            }
+        }
+        self.profile.mates = members
+            .iter()
+            .skip(1)
+            .map(|m| Mate {
+                name: m.name.clone(),
+                race_id: m.race,
+                class_id: class_id(&m.class),
+                spell_weights: Vec::new(),
+                professions: Vec::new(),
+            })
+            .collect();
+        self.params.group_size = members.len().max(1) as i64;
         // What the character did; in a group, what every player who could do it did.
         self.profile.completed_quests = first
             .map(|s| s.completed.iter().map(|q| q.0).collect())
@@ -556,8 +695,18 @@ impl Scenario {
         required::apply(&mut quests, &rows, &[], &self.profile, &self.params)?;
         super::settle_quests(&mut quests, &dungeons, &self.params);
         let mut dungeons = dungeons;
+        super::dungeons::set_dungeon_levels(
+            &mut dungeons,
+            &quests,
+            &HashMap::new(),
+            (self.params.dungeon_from, self.params.dungeon_to),
+            self.params.edition.rules().max_level,
+        );
         super::settle_dungeons(&mut dungeons, &quests, &self.profile, &self.params);
         let mut model = bare(quests, dungeons, start, &self.params);
+        if let Some((abilities, power)) = self.class.take() {
+            (model.abilities, model.power) = (abilities, power);
+        }
         let (tags, by_tag) = super::FarmMobs::quest_tags(&model.quests);
         let mut rows = Vec::new();
         for &(at, level, count) in &self.mobs {
@@ -575,6 +724,23 @@ impl Scenario {
             }
         }
         model.farm = super::FarmMobs::from_rows(&world, rows, &tags, by_tag);
+        model.graveyards = self
+            .graveyards
+            .iter()
+            .enumerate()
+            .map(|(i, &at)| Q::at(at, 900_000 + i as i64, "Spirit Healer", &world))
+            .collect();
+        model.teleports = self
+            .teleports
+            .iter()
+            .enumerate()
+            .map(|(i, &(name, level, at))| super::Teleport {
+                name: name.to_owned(),
+                level,
+                quests: Vec::new(),
+                to: Q::at(at, 800_000 + i as i64, name, &world),
+            })
+            .collect();
         let place = |at: At, id: i64, name: &str| Q::at(at, id, name, &world);
         model.trainers = self
             .trainers
@@ -602,6 +768,7 @@ impl Scenario {
             .iter()
             .filter_map(|id| world.taxi_nodes.iter().position(|n| n.id == *id))
             .fold(0u128, |bits, i| bits | 1u128 << i);
+        crate::job::check_dungeon_levels(&model, &self.params)?;
         let mut notes = Vec::new();
         crate::job::check_exclusive_choices(&model, &members)?;
         if let Some(start) = first {
@@ -620,6 +787,21 @@ impl Scenario {
 }
 
 impl Scenario {
+    /// The scenario planned as a job is: with `interrupt`, `walks` and a `progress` to listen to.
+    pub fn job(
+        self,
+        progress: &(dyn Fn(&str) + Sync),
+        interrupt: &crate::job::Interrupt,
+        walks: Option<&std::sync::Arc<crate::terrain::Walks>>,
+    ) -> Result<crate::job::PlanOutcome, crate::job::JobError> {
+        let (from, to) = (self.profile.from_level, self.profile.to_level);
+        let request: PlanRequest = serde_json::from_value(serde_json::json!({
+            "race": "orc", "class": "warrior", "from_level": from, "to_level": to,
+        }))
+        .unwrap_or_else(|e| panic!("{e}"));
+        crate::job::plan_prepared(self.build(), &request, progress, interrupt, walks).map(|(outcome, _)| outcome)
+    }
+
     /// The starts a new guide would offer for the scenario (see `job::preview_starts`).
     pub fn starts(self) -> crate::job::StartPreview {
         crate::job::preview_starts_of(self.build(), &|_| {}, &crate::job::Interrupt::default(), None)
@@ -639,6 +821,27 @@ impl Scenario {
             .unwrap_or_else(|e| panic!("{e:#}"));
         (crate::job::Editor::from_prepared(prepared), outcome)
     }
+}
+
+/// The game's ID of a class (its file name, any case).
+fn class_id(class: &str) -> i64 {
+    const CLASSES: [&str; 11] = [
+        "WARRIOR",
+        "PALADIN",
+        "HUNTER",
+        "ROGUE",
+        "PRIEST",
+        "DEATHKNIGHT",
+        "SHAMAN",
+        "MAGE",
+        "WARLOCK",
+        "MONK",
+        "DRUID",
+    ];
+    CLASSES
+        .iter()
+        .position(|c| c.eq_ignore_ascii_case(class))
+        .map_or(1, |i| i as i64 + 1)
 }
 
 /// A character of `faction` going from level `from` to `to`.

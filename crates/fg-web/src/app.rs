@@ -173,6 +173,8 @@ fn open_db(edition: Edition) -> CmdResult<Connection> {
     conn.deserialize_bytes("main", bytes).map_err(err)?;
     // No folder for temporary files in the browser: sorts and temporary tables in memory.
     conn.pragma_update(None, "temp_store", "MEMORY").map_err(err)?;
+    // The same bytes at every call: what is worked out from them is kept.
+    fg_route::world::name_database(&conn, bytes.as_ptr() as u64 ^ bytes.len() as u64).map_err(err)?;
     Ok(conn)
 }
 

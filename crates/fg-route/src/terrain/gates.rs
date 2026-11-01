@@ -107,6 +107,7 @@ impl LocalAreas {
 pub const GATES_VERSION: u32 = 4;
 
 /// A tile's gates and the walks between them within it.
+#[derive(Clone)]
 pub(super) struct TileGraph {
     /// Floors of the border a straight step crosses into the next tile, sorted.
     gates: Vec<Node>,

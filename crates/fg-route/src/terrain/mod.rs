@@ -267,6 +267,7 @@ fn move_cost(moves: u32, d: usize) -> u32 {
 
 /// A tile's floors (its nodes): the first floor of each cell is node `i` (the cell's index, row
 /// by row; a cell without floor has its node never stood on), the others follow from 4096.
+#[derive(Clone)]
 struct TileNodes {
     /// Index of each cell's second floor among the nodes, less 4096 (its other floors follow),
     /// and one past the last cell's.
@@ -373,6 +374,7 @@ struct Grid {
 /// A cave (`[[cave]]` of `overrides/passes.toml`) the floors miss: the places on no large
 /// walkable area within `reach` cells of `inside` are walked to through the mouth, a floor of a
 /// large area.
+#[derive(Clone)]
 struct Cave {
     inside: (i32, i32),
     reach: i32,
@@ -400,12 +402,39 @@ pub struct CellView {
 }
 
 /// The areas of a tile's nodes: one for the whole tile, else each node's.
+#[derive(Clone)]
 enum TileAreas {
     Uniform(u32),
     Nodes(Box<[u32]>),
 }
 
 impl Grid {
+    /// A copy with the floors, their areas and the stored graphs of the gates; the walks found
+    /// since are not copied.
+    fn fork(&self) -> Self {
+        Self {
+            r0: self.r0,
+            c0: self.c0,
+            rows: self.rows,
+            cols: self.cols,
+            tile_cols: self.tile_cols,
+            tiles: self.tiles.clone(),
+            extra_base: self.extra_base.clone(),
+            extras: self.extras,
+            areas: self.areas.clone(),
+            sizes: self.sizes.clone(),
+            graphs: (self.graphs.iter())
+                .map(|g| g.get().map_or_else(std::sync::OnceLock::new, |g| g.clone().into()))
+                .collect(),
+            ends: (0..self.ends.len()).map(|_| Mutex::default()).collect(),
+            local_areas: (0..self.local_areas.len())
+                .map(|_| std::sync::OnceLock::new())
+                .collect(),
+            caves: self.caves.clone(),
+            drop_tier: self.drop_tier,
+        }
+    }
+
     /// Index of a cell's tile and its index in it, None out of the box.
     #[inline]
     fn tile(&self, r: i32, c: i32) -> Option<(usize, usize)> {
@@ -1314,8 +1343,33 @@ impl Terrain {
         terrain
     }
 
-    pub fn load(conn: &Connection, drop_tier: usize) -> rusqlite::Result<Self> {
+    /// The terrain of a database: built from its tiles the first time (about a fifth of a second
+    /// of work on every core), then a copy of what was built.
+    pub fn load(conn: &Connection, drop_tier: usize) -> anyhow::Result<Self> {
         let drop_tier = drop_tier.min(layers::FARTHER);
+        let built = crate::memo::rows(conn, "terrain", crate::memo::setting(drop_tier), || {
+            Ok(Self::read(conn, drop_tier)?)
+        })?;
+        Ok(built.fork())
+    }
+
+    /// A copy to work on with its own memory of walks, to close and join areas of: the floors and
+    /// the stored graphs of the gates, none of what is found while walking.
+    fn fork(&self) -> Self {
+        let terrain = Self {
+            id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
+            fingerprint: self.fingerprint,
+            grids: self.grids.iter().map(|(&map, grid)| (map, grid.fork())).collect(),
+            walks: Arc::new(Walks::default()),
+            used: (0..SHARDS).map(|_| Mutex::new(HashSet::new())).collect(),
+            enclosed: self.enclosed.clone(),
+            turns: (0..SHARDS).map(|_| Mutex::default()).collect(),
+        };
+        terrain.walks.bind(terrain.fingerprint);
+        terrain
+    }
+
+    fn read(conn: &Connection, drop_tier: usize) -> rusqlite::Result<Self> {
         let mut terrain = Self::empty();
         let exists: bool = conn.query_row(
             "SELECT count(*) > 0 FROM sqlite_schema WHERE name = 'client_terrain_layers'",

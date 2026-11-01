@@ -950,7 +950,7 @@ mod tests {
         assert!(still(&p), "walking around its post");
         let path: Vec<Pos> = (0..=7)
             .map(|k| Pos {
-                x: here.pos.x + 100.0 * f64::from(k),
+                x: here.pos.x - 300.0 + 100.0 * f64::from(k),
                 ..here.pos
             })
             .collect();
