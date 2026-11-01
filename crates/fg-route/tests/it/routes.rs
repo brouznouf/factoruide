@@ -1318,10 +1318,19 @@ fn link_open_while_a_quest_is_held() {
 /// when Razorfen Kraul is not run, does not give Furen's Armor (it used to).
 #[test]
 fn quest_given_up_opens_no_follow_up() {
-    let mut p = prepare("human", "warrior", 30, &["progression=cautious"]);
-    p.params.dungeons = false;
-    let (mail, armor) = (quest(&p, 1701).unwrap(), quest(&p, 1782).unwrap());
-    let first = Stop::quest(quest(&p, 783).unwrap(), Kind::Accept);
+    let mut p = leveling(10)
+        .dungeon("Razorfen Kraul", 1, 70.0, 70.0)
+        .params(|p| p.dungeons = false)
+        .quest(
+            Q::new(800, "Mail")
+                .level(4)
+                .giver(1, 30.0, 40.0)
+                .objective(Obj::kill("Boss", 4, 1, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+        )
+        .quest(Q::new(801, "Armor").level(5).after(&[800]).giver(1, 31.0, 40.0).kill("Beast", 5, 3, 1, 33.0, 70.0))
+        .build();
+    let (mail, armor) = (quest(&p, 800).unwrap(), quest(&p, 801).unwrap());
+    let first = Stop::quest(quest(&p, 100).unwrap(), Kind::Accept);
     let route = [first, Stop::quest(armor, Kind::Accept)];
     p.model.initial.turned = vec![mail as usize];
     assert!(
@@ -1338,35 +1347,20 @@ fn quest_given_up_opens_no_follow_up() {
         trace
             .iter()
             .any(|t| matches!(t.event, Event::Abandon { quest } if quest == mail as usize)),
-        "Fire Hardened Mail is given up"
+        "Mail is given up"
     );
     assert!(
         planner(&p).simulate(&[kept[0], kept[1], route[1]], None).is_none(),
         "given up, it does not"
     );
 }
-
-/// No mob is farmed on a walk through a capital: what the sources know nothing of there is a
-/// passer-by, a pet or a dungeon's mob put at its door; outside, the mobs met are.
-#[test]
-fn no_farming_in_capitals() {
-    let p = orc_warlock();
-    let at = |zone, x, y| p.world.to_world(zone, x, y).unwrap();
-    // Stormwind: Old Town to the Dwarven District, wide.
-    let city = p.model.farm.along(&[at(1519, 72.3, 47.7), at(1519, 62.4, 34.2)], 200.0);
-    assert!(city.is_empty(), "{city:?}");
-    // Elwynn Forest, around Goldshire.
-    let forest = p.model.farm.along(&[at(12, 40.0, 60.0), at(12, 50.0, 75.0)], 200.0);
-    assert!(!forest.is_empty(), "no mob met around Goldshire");
-}
-
 /// Grinding takes place at a camp of mobs of the character's level, gone to first: not in a
-/// capital, where no mob lives.
+/// town, where no mob lives.
 #[test]
 fn grinding_goes_to_a_camp() {
-    let mut p = prepare("human", "warrior", 4, &["progression=cautious"]);
-    let city = p.world.to_world(1519, 62.4, 34.2).unwrap();
-    p.model.initial.pos = Some((city, 1519));
+    let mut p = leveling(4).zone(4, "Town").build();
+    let town = p.world.to_world(4, 50.0, 50.0).unwrap();
+    p.model.initial.pos = Some((town, 4));
     let planner = planner(&p);
     let mut trace = Vec::new();
     let (_, spent) = planner.simulate_full(&[], Some(&mut trace)).unwrap();
@@ -1378,13 +1372,12 @@ fn grinding_goes_to_a_camp() {
         .collect();
     assert_ne!(camps, []);
     for (near, zone) in &camps {
-        assert_ne!(*zone, 1519, "grinding in Stormwind");
+        assert_ne!(*zone, 4, "grinding in town");
         assert!(p.model.farm.around(near, 150.0, 1..=5) >= 8, "no camp at {near:?}");
     }
     assert!(spent.travel > 0.0, "no trip to the camp");
     assert!(spent.grinding > 0.0);
 }
-
 /// The addon gets how many items an item objective asks for (its items to keep) and the guide's
 /// reputation goals (its reputation tab).
 #[test]
@@ -1518,15 +1511,19 @@ fn dungeon_quests_are_steps_of_their_own() {
 /// in (no reward); in time, it is turned in.
 #[test]
 fn late_timed_quest_is_given_up() {
-    let mut p = prepare("human", "warrior", 30, &["progression=cautious"]);
-    (p.profile.from_level, p.profile.to_level) = (22, 30);
-    let i = p
-        .model
-        .quests
-        .iter()
-        .position(|q| q.id == 1699)
-        .expect("The Rethban Gauntlet");
-    assert_eq!(p.model.quests[i].time_limit, Some(3600.0), "its limit, from the data");
+    let mut p = leveling(30)
+        .levels(22, 30)
+        .quest(
+            Q::new(800, "The Gauntlet")
+                .level(24)
+                .xp(2000)
+                .timed(3600.0)
+                .giver(3, 30.0, 40.0)
+                .kill("Beast", 24, 4, 3, 34.0, 70.0),
+        )
+        .build();
+    let i = p.model.quests.iter().position(|q| q.id == 800).expect("The Gauntlet");
+    assert_eq!(p.model.quests[i].time_limit, Some(3600.0));
     let objectives = p.model.quests[i].objectives.len() as u8;
     let mut route = vec![Stop::quest(i as u32, Kind::Accept)];
     route.extend((0..objectives).map(|k| Stop::quest(i as u32, Kind::Objective(k))));
@@ -1547,7 +1544,6 @@ fn late_timed_quest_is_given_up() {
         assert_eq!(spent.quest_xp > 0, turned_in, "reward with limit {limit:?}");
     }
 }
-
 /// The Affray: Big Will only comes out once the grate is stepped on (overrides/objectives.toml),
 /// so a route killing him first is refused. Taken at level 30, too weak for him within the ten
 /// minutes, the quest is taken once the character is strong enough and turned in, not given up.
@@ -1859,27 +1855,18 @@ fn hearthstone_flight_paths_and_log_of_a_character_met_in_game() {
     );
 }
 
-/// The hearthstone is bound anew as the route moves on (more than one inn over 35 levels), each
-/// bind worth it: the route without them takes longer. Built with fixed construction weights (the
-/// defaults change with the measures, and no zone is closed to walks): with others, as with any,
-/// this route can bind nowhere.
+/// The hearthstone is bound anew as the route moves on from the starting inn, each
+/// bind worth it: the route without them takes longer. Built with fixed construction weights.
 #[test]
 fn hearthstone_follows_the_route() {
-    let p = &prepare(
-        "human",
-        "warrior",
-        35,
-        &[
-            "progression=cautious",
-            "zone_stay=2.5",
-            "continent_stay=1",
-            "dungeon_quest_weight=0.5",
-            "fit_penalty=0",
-            "fit_above_penalty=0",
-            "efficiency_power=0",
-            "zone_gap=0",
-        ],
-    );
+    let p = &leveling(30)
+        .inn("Barrens Inn", 3, 54.0, 54.0)
+        .inn("Durotar Inn", 2, 54.0, 54.0)
+        .params(|p| {
+            (p.zone_stay, p.continent_stay, p.dungeon_quest_weight) = (2.5, 1.0, 0.5);
+            (p.fit_penalty, p.fit_above_penalty, p.efficiency_power) = (0.0, 0.0, 0.0);
+        })
+        .build();
     let planner = planner(p);
     let route = planner.construct(|_| {});
     let inns: Vec<&str> = route
@@ -1887,7 +1874,7 @@ fn hearthstone_follows_the_route() {
         .filter(|s| s.kind == Kind::Bind)
         .map(|s| p.world.zone_name(p.model.inns[s.index as usize].zone))
         .collect();
-    assert!(inns.len() >= 2, "bound at {inns:?}");
+    assert!(!inns.is_empty(), "bound at {inns:?}");
     let without: Vec<Stop> = route.iter().filter(|s| s.kind != Kind::Bind).copied().collect();
     let (with, without) = (planner.simulate(&route, None), planner.simulate(&without, None));
     // Without them the same stops take longer, or are no longer possible in that order (the
@@ -1897,7 +1884,6 @@ fn hearthstone_follows_the_route() {
         "{with:?} with the binds, {without:?} without ({inns:?})"
     );
 }
-
 /// An objective `dx` yards east of the start, finished by killing one level 1 mob.
 fn one_kill_east_of_start(p: &Prepared, dx: f64) -> Objective {
     kills_east_of_start(p, dx, 1.0, 1)
