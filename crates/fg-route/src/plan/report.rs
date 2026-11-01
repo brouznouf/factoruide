@@ -29,7 +29,28 @@ impl Planner<'_> {
             .collect()
     }
 
+    /// The forced dungeons the route does not run (as `finish` counts them, but exact).
+    fn forced_dungeons_missing(&self, route: &[Stop]) -> Vec<String> {
+        let Some((_, end)) = self.simulate_state(route, None) else {
+            return Vec::new();
+        };
+        (0..self.model.dungeons.len())
+            .filter(|&d| {
+                self.availability().dungeon_forced(d)
+                    && end.dungeons & (1u128 << d) == 0
+                    && self.model.dungeons[d].min_level <= self.profile.to_level
+            })
+            .map(|d| self.model.dungeons[d].name.clone())
+            .collect()
+    }
+
     pub fn validate_required(&self, route: &[Stop]) -> anyhow::Result<()> {
+        let dungeons = self.forced_dungeons_missing(route);
+        anyhow::ensure!(
+            dungeons.is_empty(),
+            "no route running every forced dungeon was found: {}",
+            dungeons.join(", ")
+        );
         if !self.model.quests.iter().any(|q| q.required) {
             return Ok(());
         }

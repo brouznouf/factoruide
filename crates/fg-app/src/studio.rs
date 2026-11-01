@@ -112,6 +112,41 @@ pub fn request_edition<H: Host>(host: &H, request: &PlanRequest) -> Edition {
     request.params.as_ref().map_or_else(|| host.edition(), |p| p.edition)
 }
 
+/// `text` with the name of each player (with its realm or not) replaced by its alias.
+fn hide_players(players: &[(String, String)], text: &str) -> String {
+    let mut out = text.to_owned();
+    for (name, alias) in players {
+        out = out.replace(name.as_str(), alias);
+        let short = name.split('-').next().unwrap_or(name);
+        if short.is_empty() || short == name {
+            continue;
+        }
+        let word = |c: char| c.is_alphanumeric() || c == '_';
+        let mut rest = out.as_str();
+        let mut replaced = String::with_capacity(out.len());
+        while let Some(at) = rest.find(short) {
+            let (before, after) = (&rest[..at], &rest[at + short.len()..]);
+            let alone = !before.chars().next_back().is_some_and(word) && !after.chars().next().is_some_and(word);
+            replaced.push_str(before);
+            replaced.push_str(if alone { alias } else { short });
+            rest = after;
+        }
+        replaced.push_str(rest);
+        out = replaced;
+    }
+    out
+}
+
+/// Every string of `value` through [`hide_players`].
+fn hide_players_in(players: &[(String, String)], value: &mut serde_json::Value) {
+    match value {
+        serde_json::Value::String(text) => *text = hide_players(players, text),
+        serde_json::Value::Array(items) => items.iter_mut().for_each(|v| hide_players_in(players, v)),
+        serde_json::Value::Object(map) => map.values_mut().for_each(|v| hide_players_in(players, v)),
+        _ => {}
+    }
+}
+
 impl Studio {
     // Reports -------------------------------------------------------------------------
 
@@ -129,8 +164,19 @@ impl Studio {
             request.params = Some(host.overrides(edition)?.params);
         }
         request.name = None;
+        // The players of a group, in order: "Player 1", "Player 2"... instead of their names, in
+        // the request, the plan and the texts of the steps.
+        let players: Vec<(String, String)> = (request.start.iter().chain(&request.mates))
+            .enumerate()
+            .filter(|(_, m)| !m.name.is_empty())
+            .map(|(k, m)| (m.name.clone(), format!("Player {}", k + 1)))
+            .collect();
+        let has_start = request.start.is_some();
         if let Some(start) = &mut request.start {
             start.name.clear();
+        }
+        for (k, mate) in request.mates.iter_mut().enumerate() {
+            mate.name = format!("Player {}", k + 1 + usize::from(has_start));
         }
         let route = self.render(host, host.edition(), &v.outcome.route, Some(&g.locale))?;
         let mut steps = Vec::new();
@@ -142,7 +188,10 @@ impl Studio {
                 kind: step["kind"].as_str().unwrap_or_default().to_owned(),
                 quest: step["quest"].as_u64().map(|q| q as u32),
                 objective: step["objective"].as_u64().map(|o| o as u32),
-                text: step["text"].as_str().unwrap_or_default().chars().take(500).collect(),
+                text: hide_players(&players, step["text"].as_str().unwrap_or_default())
+                    .chars()
+                    .take(500)
+                    .collect(),
                 zone: step["zone"].as_str().map(str::to_owned),
                 level: step["level"].as_u64().unwrap_or_default() as u32,
                 map: map["ui_map"]
@@ -155,7 +204,11 @@ impl Studio {
             edition,
             fg_contrib::issue::GuideReport {
                 request: serde_json::to_value(&request).map_err(|e| e.to_string())?,
-                plan: serde_json::to_value(&v.outcome.plan).map_err(|e| e.to_string())?,
+                plan: {
+                    let mut plan = serde_json::to_value(&v.outcome.plan).map_err(|e| e.to_string())?;
+                    hide_players_in(&players, &mut plan);
+                    plan
+                },
                 data: v.meta.data,
                 version: g.version,
                 edited: v.meta.edited,
@@ -550,5 +603,36 @@ impl Studio {
     /// Leaves the editor without saving.
     pub fn edit_close(&self) {
         *self.editor.locked() = None;
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn players() -> Vec<(String, String)> {
+        vec![
+            ("Mage-TestRealm".into(), "Player 1".into()),
+            ("Bob-TestRealm".into(), "Player 2".into()),
+        ]
+    }
+
+    #[test]
+    fn a_report_names_the_players_by_their_order() {
+        let text = hide_players(
+            &players(),
+            "Bob-TestRealm hands it to Mage, and to Bobcat's friend Bob.",
+        );
+        assert_eq!(text, "Player 2 hands it to Player 1, and to Bobcat's friend Player 2.");
+    }
+
+    #[test]
+    fn the_names_are_hidden_everywhere_in_a_document() {
+        let mut plan = serde_json::json!({"players": [{"name": "Mage-TestRealm"}], "notes": ["for Bob"]});
+        hide_players_in(&players(), &mut plan);
+        assert_eq!(
+            plan.to_string(),
+            r#"{"notes":["for Player 2"],"players":[{"name":"Player 1"}]}"#
+        );
     }
 }
