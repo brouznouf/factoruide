@@ -13,6 +13,8 @@ pub mod power;
 pub mod profession;
 pub mod sync;
 pub mod terrain;
+#[cfg(any(test, feature = "testing"))]
+pub use model::testing;
 pub mod world;
 pub mod xp;
 

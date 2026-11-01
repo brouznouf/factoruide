@@ -108,12 +108,6 @@ pub fn quest_choices(
     query: &str,
     locale: Option<&str>,
 ) -> Result<Vec<QuestChoice>> {
-    use rusqlite::types::Value;
-    const SHOWN: i64 = 100;
-    let words: Vec<&str> = query.split_whitespace().collect();
-    if words.is_empty() {
-        return Ok(Vec::new());
-    }
     let race_bit = overrides.races.get(race).map_or(0, |r| crate::model::race_bit(r.id));
     let class_bit: i64 = conn
         .query_row(
@@ -122,6 +116,22 @@ pub fn quest_choices(
             |r| r.get(0),
         )
         .unwrap_or(0);
+    choices(conn, (race_bit, class_bit), query, locale)
+}
+
+/// The quests of a race and class (as bits, 0: any) matching the query (see `quest_choices`).
+fn choices(
+    conn: &Connection,
+    (race_bit, class_bit): (i64, i64),
+    query: &str,
+    locale: Option<&str>,
+) -> Result<Vec<QuestChoice>> {
+    use rusqlite::types::Value;
+    const SHOWN: i64 = 100;
+    let words: Vec<&str> = query.split_whitespace().collect();
+    if words.is_empty() {
+        return Ok(Vec::new());
+    }
     let query = query.trim();
     let mut params: Vec<Value> = vec![
         Value::Text(locale.unwrap_or("").to_owned()),
@@ -227,5 +237,169 @@ mod window_tests {
         super::check_start(&p.model, &p.profile, &[]).unwrap();
         p.model.initial.accepted.clear();
         assert!(super::check_start(&p.model, &p.profile, &[]).is_err());
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::faction::Faction;
+    use crate::job::RequiredQuest;
+    use crate::model::testing::profile;
+
+    /// A database of the quests given (id, name, races mask, classes mask, status, level, zone).
+    fn db(quests: &[(i64, &str, i64, i64, &str, i64, i64)]) -> Connection {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch(
+            "CREATE TABLE m_quest(id INTEGER, name TEXT, races_mask INTEGER, classes_mask INTEGER, status TEXT,
+                                  level INTEGER, zone_or_sort INTEGER);
+             CREATE TABLE l10n(entity_type TEXT, id INTEGER, locale TEXT, name TEXT);
+             CREATE TABLE client_areatable(ID INTEGER, AreaName_lang TEXT);",
+        )
+        .unwrap();
+        for q in quests {
+            conn.execute(
+                "INSERT INTO m_quest VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7)",
+                rusqlite::params![q.0, q.1, q.2, q.3, q.4, q.5, q.6],
+            )
+            .unwrap();
+        }
+        conn
+    }
+
+    fn request(choices: Vec<RequiredQuest>) -> PlanRequest {
+        let mut r: PlanRequest = serde_json::from_value(
+            serde_json::json!({"race": "human", "class": "warrior", "from_level": 1, "to_level": 5}),
+        )
+        .unwrap();
+        r.required_quests = choices;
+        r
+    }
+
+    fn human_warrior() -> Profile {
+        Profile {
+            race_id: 1,
+            class_id: 1,
+            ..profile(Faction::Alliance, 1, 5)
+        }
+    }
+
+    const HUMAN: i64 = 1;
+    const WARRIOR: i64 = 1;
+
+    #[test]
+    fn a_must_have_quest_is_found_by_id_or_exact_name_and_once() {
+        let conn = db(&[(21, "Skirmish at Echo Ridge", 0, 0, "available", 2, 12)]);
+        let both = request(vec![
+            RequiredQuest::Id(21),
+            RequiredQuest::Name(" skirmish at echo ridge ".into()),
+        ]);
+        assert_eq!(
+            resolve(&conn, &both, &human_warrior(), &Params::default())
+                .unwrap()
+                .iter()
+                .map(|q| q.id)
+                .collect::<Vec<_>>(),
+            [21]
+        );
+    }
+
+    #[test]
+    fn an_unknown_quest_is_not_found() {
+        let conn = db(&[]);
+        let error = resolve(
+            &conn,
+            &request(vec![RequiredQuest::Id(999_999_999)]),
+            &human_warrior(),
+            &Params::default(),
+        )
+        .unwrap_err();
+        assert!(format!("{error:#}").contains("not found"), "{error:#}");
+    }
+
+    #[test]
+    fn a_quest_of_another_race_or_class_is_unavailable_to_the_character() {
+        let conn = db(&[
+            (3087, "Orc only", 1 << 1, 0, "available", 10, 0),
+            (3088, "Mage only", 0, 1 << 7, "available", 10, 0),
+        ]);
+        for id in [3087, 3088] {
+            let error = resolve(
+                &conn,
+                &request(vec![RequiredQuest::Id(id)]),
+                &human_warrior(),
+                &Params::default(),
+            )
+            .unwrap_err();
+            assert!(format!("{error:#}").contains("race or class"), "{error:#}");
+        }
+    }
+
+    #[test]
+    fn a_name_shared_by_quests_the_character_can_do_lists_their_ids() {
+        let name = "A Call to Arms: The Plaguelands!";
+        let conn = db(&[
+            (5066, name, 0, 0, "available", 50, 0),
+            (5090, name, 0, 0, "available", 50, 0),
+            (5091, name, 0, 0, "available", 50, 0),
+            (5092, name, 0, 0, "removed", 50, 0),
+        ]);
+        let error = resolve(
+            &conn,
+            &request(vec![RequiredQuest::Name(name.into())]),
+            &human_warrior(),
+            &Params::default(),
+        )
+        .unwrap_err();
+        assert!(
+            format!("{error:#}").contains("ambiguous name; choose an ID (5066, 5090, 5091)"),
+            "{error:#}"
+        );
+    }
+
+    /// Must-have quests are found by ID, level, part of their name or of their zone's, in English or
+    /// the guide's language, among those of the character's race and class.
+    #[test]
+    fn quests_are_searched_by_id_level_name_or_zone() {
+        let conn = db(&[
+            (91777, "Rare Books", 1 << (HUMAN - 1), 0, "available", 45, 1519),
+            (91778, "Rare Metals", 0, 0, "available", 30, 17),
+            (91779, "Orc Rare Books", 1 << 1, 0, "available", 20, 17),
+            (91780, "Barrens Run", 0, 0, "available", 20, 17),
+            (91781, "Gone", 0, 0, "removed", 20, 17),
+        ]);
+        conn.execute_batch(
+            "INSERT INTO client_areatable VALUES (1519, 'Stormwind City');
+             INSERT INTO client_areatable VALUES (17, 'The Barrens');
+             INSERT INTO l10n VALUES ('quest', 91777, 'frFR', 'Livres rares');",
+        )
+        .unwrap();
+        let human = (1 << (HUMAN - 1), 1 << (WARRIOR - 1));
+        let find = |who, query: &str, locale| {
+            choices(&conn, who, query, locale)
+                .unwrap()
+                .into_iter()
+                .map(|q| (q.id, q.name))
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(find(human, "91777", None)[0], (91777, "Rare Books".to_owned()));
+        assert_eq!(find(human, "rare book", None)[0].0, 91777);
+        assert_eq!(find(human, "livres", Some("frFR"))[0].0, 91777);
+        let orc = (1 << 1, 1 << (WARRIOR - 1));
+        assert!(
+            find(orc, "Rare Books", None).iter().all(|(id, _)| *id != 91777),
+            "Alliance only"
+        );
+        assert_eq!(find(human, "", None), []);
+        let level = choices(&conn, human, "45", None).unwrap();
+        assert!(!level.is_empty() && level.iter().all(|q| q.level == 45 || q.id == 45));
+        let barrens = choices(&conn, orc, "barrens 20", None).unwrap();
+        assert!(!barrens.is_empty());
+        assert!(
+            barrens
+                .iter()
+                .all(|q| q.level == 20 && q.zone.as_deref() == Some("The Barrens")),
+            "{barrens:?}"
+        );
     }
 }
