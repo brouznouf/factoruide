@@ -452,6 +452,17 @@ impl Planner<'_> {
         let mut s = self.start_state(self.planned(route));
         let mut dropped = vec![false; self.model.quests.len()];
         let mut out = Vec::with_capacity(route.len());
+        let deadlines: Vec<_> = self
+            .model
+            .quests
+            .iter()
+            .enumerate()
+            .filter_map(|(i, q)| {
+                let max = q.priority_deadline.filter(|&max| max < self.rules().max_level)?;
+                let at = route.iter().position(|s| *s == Stop::quest(i as u32, Kind::TurnIn))?;
+                Some((i, max, at))
+            })
+            .collect();
         for (pos, &stop) in route.iter().enumerate() {
             let i = stop.index as usize;
             if stop.is_quest() && dropped[i] {
@@ -470,11 +481,9 @@ impl Planner<'_> {
             // work out when that grinding would pass an unfinished quest's deadline.
             if stop.is_quest() && !self.quest(stop.index).mandatory {
                 let gate = self.gate_level(&s, stop);
-                let past_deadline = self.model.quests.iter().enumerate().any(|(i, q)| {
-                    !s.turned[i]
-                        && q.priority_deadline
-                            .is_some_and(|max| max < self.rules().max_level && gate > max)
-                });
+                let past_deadline = deadlines
+                    .iter()
+                    .any(|&(i, max, at)| !s.turned[i] && !dropped[i] && at >= pos && gate > max);
                 if past_deadline {
                     dropped[i] = true;
                     continue;
@@ -1011,6 +1020,19 @@ impl Planner<'_> {
 #[cfg(test)]
 mod deadline_tests {
     use super::*;
+
+    #[test]
+    fn an_unscheduled_deadline_does_not_drop_later_optional_work() {
+        let mut p = crate::plan::tests::quests_at_start(2);
+        p.model.quests[0].required = true;
+        p.model.quests[0].mandatory = true;
+        p.model.quests[0].priority_deadline = Some(1);
+        p.model.quests[0].completion_window.max_level = Some(1);
+        p.model.quests[1].min_level = 3;
+        let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = vec![Stop::quest(1, Kind::Accept), Stop::quest(1, Kind::TurnIn)];
+        assert_eq!(plan.settle_once(&route), route);
+    }
 
     #[test]
     fn replay_leaves_out_optional_work_that_grinds_past_a_deadline() {
