@@ -2,7 +2,7 @@
 //! hearthstone, flight paths, a zone rich in quests next door), a few routes built and lightly
 //! improved, each beginning in another zone, to show before the guide is computed.
 
-use super::{Interrupt, JobError, Overrides, PlanRequest, optimize_interruptible, prepare};
+use super::{Interrupt, JobError, Overrides, PlanRequest, Prepared, optimize_interruptible, prepare};
 use crate::export::{self, StepKind};
 use crate::plan::Planner;
 use crate::terrain::Walks;
@@ -72,7 +72,17 @@ pub fn preview_starts(
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
 ) -> Result<StartPreview, JobError> {
-    let mut prepared = prepare(conn, overrides, req, &|_| {})?;
+    let prepared = prepare(conn, overrides, req, &|_| {})?;
+    preview_starts_of(prepared, progress, interrupt, walks)
+}
+
+/// The same for what `prepare` loaded.
+pub(crate) fn preview_starts_of(
+    mut prepared: Prepared,
+    progress: &(dyn Fn(&str) + Sync),
+    interrupt: &Interrupt,
+    walks: Option<&Arc<Walks>>,
+) -> Result<StartPreview, JobError> {
     if let Some(walks) = walks {
         prepared.world.terrain.share(Arc::clone(walks));
     }
