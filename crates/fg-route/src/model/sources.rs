@@ -886,6 +886,7 @@ mod links_tests {
         // A group of a warrior and a warlock needs both branches.
         let mut group = character(Faction::Horde, ORC, WARRIOR);
         group.mates = vec![Mate {
+            class_name: "Warlock".into(),
             name: "Warlock-Realm".into(),
             race_id: ORC,
             class_id: WARLOCK,
