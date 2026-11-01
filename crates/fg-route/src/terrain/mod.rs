@@ -1299,9 +1299,9 @@ fn tile_nodes(l: &TileLayers) -> Box<TileNodes> {
 impl Terrain {
     /// The terrain of the database's floors, taking drops up to the tier `drop_tier` of
     /// `layers::DROP_HEIGHTS` (0: only the safe fall).
-    pub fn load(conn: &Connection, drop_tier: usize) -> rusqlite::Result<Self> {
-        let drop_tier = drop_tier.min(layers::FARTHER);
-        let mut terrain = Self {
+    /// A terrain without any floor: every walk is the straight line (times the detour).
+    pub fn empty() -> Self {
+        let terrain = Self {
             id: NEXT_ID.fetch_add(1, Ordering::Relaxed),
             fingerprint: 0,
             grids: FxHashMap::default(),
@@ -1310,6 +1310,13 @@ impl Terrain {
             enclosed: HashMap::new(),
             turns: (0..SHARDS).map(|_| Mutex::default()).collect(),
         };
+        terrain.walks.bind(terrain.fingerprint);
+        terrain
+    }
+
+    pub fn load(conn: &Connection, drop_tier: usize) -> rusqlite::Result<Self> {
+        let drop_tier = drop_tier.min(layers::FARTHER);
+        let mut terrain = Self::empty();
         let exists: bool = conn.query_row(
             "SELECT count(*) > 0 FROM sqlite_schema WHERE name = 'client_terrain_layers'",
             [],

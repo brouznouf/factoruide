@@ -160,3 +160,23 @@ pub(super) fn apply(
     quests.retain(|q| !incompatible.contains(&q.id) && (q.required || ordinary.contains(&q.id)));
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::faction::Faction;
+    use crate::model::testing::profile;
+
+    /// A quest the player excluded is not built: asking for it says why.
+    #[test]
+    fn a_must_have_quest_left_out_says_why() {
+        let mut quests = Vec::new();
+        let skipped = [(21, "Skirmish".to_owned(), "excluded by configuration".to_owned())];
+        let profile = Profile {
+            required_quests: vec![21],
+            ..profile(Faction::Alliance, 1, 5)
+        };
+        let error = apply(&mut quests, &[], &skipped, &profile, &Params::default()).unwrap_err();
+        assert!(format!("{error:#}").contains("excluded by configuration"), "{error:#}");
+    }
+}

@@ -21,6 +21,8 @@ mod required;
 mod rewards;
 mod selection;
 mod sources;
+#[cfg(any(test, feature = "testing"))]
+pub mod testing;
 mod types;
 
 pub(crate) use chains::{class_sort, required_by_name};
@@ -51,17 +53,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
     chains::drop_unhanded(&mut quests, &mut skipped);
     report_skipped_class_quests(&sources, &skipped);
     let places = Places::load(conn, world, &sources.entities, profile, &sources.start, params.edition)?;
-    chains::narrow_class_quests_to_spells(&mut quests, params.all_class_quests);
-    // The quests of the dungeons run with all their quests.
-    for q in &mut quests {
-        let forced = |d: usize| params.forced_dungeon_quests.contains(&sources.dungeons[d].area);
-        q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
-    }
-    chains::require_prerequisites(&mut quests);
-    chains::release_impossible_class_quests(&mut quests);
-    for q in &mut quests {
-        q.mandatory |= q.required;
-    }
+    settle_quests(&mut quests, &sources.dungeons, params);
     let loot = CommonLoot::load(conn, &mut quests)?;
     let levels = dungeon_levels(conn, &profile.dungeons)?;
     let window = (params.dungeon_from, params.dungeon_to);
@@ -72,19 +64,7 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         window,
         params.edition.rules().max_level,
     );
-    // A dungeon holding an objective of a must-have quest is run like a forced one.
-    for q in quests.iter().filter(|q| q.required) {
-        for d in q.objectives.iter().filter_map(|o| o.dungeon) {
-            sources.dungeons[d].needed = true;
-        }
-    }
-    // A forced dungeon is run whenever the route can fit it, past its levels too: they only
-    // tell when it is best to go.
-    for d in &mut sources.dungeons {
-        if d.needed || params.forced_dungeons.contains(&d.area) || params.forced_dungeon_quests.contains(&d.area) {
-            d.max_level = d.max_level.max(profile.to_level);
-        }
-    }
+    settle_dungeons(&mut sources.dungeons, &quests, profile, params);
     let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     let mut teleports = places.teleports;
     teleports.extend(places::quest_teleports(world, profile, &quests));
@@ -184,6 +164,37 @@ pub fn load(conn: &Connection, world: &World, profile: &Profile, params: &Params
         dungeon_loot,
         patrols,
     })
+}
+
+/// What follows from the quests built, without the data: the class quests that teach a spell, the
+/// quests of the dungeons run with all their quests, what a quest needs first, the class quests
+/// that cannot be done, and the must-haves as mandatory.
+pub(crate) fn settle_quests(quests: &mut [Quest], dungeons: &[Dungeon], params: &Params) {
+    chains::narrow_class_quests_to_spells(quests, params.all_class_quests);
+    for q in quests.iter_mut() {
+        let forced = |d: usize| params.forced_dungeon_quests.contains(&dungeons[d].area);
+        q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
+    }
+    chains::require_prerequisites(quests);
+    chains::release_impossible_class_quests(quests);
+    for q in quests.iter_mut() {
+        q.mandatory |= q.required;
+    }
+}
+
+/// A dungeon holding an objective of a must-have quest is run like a forced one, and a forced
+/// dungeon whenever the route can fit it, past its levels too: they only tell when it is best to go.
+pub(crate) fn settle_dungeons(dungeons: &mut [Dungeon], quests: &[Quest], profile: &Profile, params: &Params) {
+    for q in quests.iter().filter(|q| q.required) {
+        for d in q.objectives.iter().filter_map(|o| o.dungeon) {
+            dungeons[d].needed = true;
+        }
+    }
+    for d in dungeons {
+        if d.needed || params.forced_dungeons.contains(&d.area) || params.forced_dungeon_quests.contains(&d.area) {
+            d.max_level = d.max_level.max(profile.to_level);
+        }
+    }
 }
 
 /// The spirit healers the character can reach: where one dying respawns.
