@@ -107,6 +107,7 @@ local function Adapt(r)
             c.lvl, c.px = level, xp
             if s.k == "grind" and s.xp then c.xp = xp end
         end
+        if s.rxp then c.rx = s.rxp[me + 1] end
         if s.k == "train" and not own then
             local p = OwnTrainer(s, class, faction)
             c.sp, c.t = nil, L.train

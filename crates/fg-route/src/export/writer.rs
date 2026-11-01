@@ -100,7 +100,11 @@ impl StepWriter<'_> {
             Event::Stop { stop, loc, reward_xp } => {
                 let place = self.quest_stop(&mut step, *stop, loc);
                 if stop.kind == Kind::TurnIn {
-                    step.reward_xp = Some(*reward_xp);
+                    // A conservative shared estimate for older addons; current group guides use each player's award.
+                    step.reward_xp = Some(reward_xp.iter().copied().filter(|&xp| xp > 0).min().unwrap_or(0));
+                    if !self.planner.model.initial.mates.is_empty() {
+                        step.party_reward_xp = reward_xp[..=self.planner.model.initial.mates.len()].to_vec();
+                    }
                 }
                 place
             }
@@ -178,6 +182,7 @@ impl StepWriter<'_> {
             mob_level: None,
             reward: None,
             reward_xp: None,
+            party_reward_xp: Vec::new(),
             route_xp: None,
             spells: Vec::new(),
             xp: (xp > 0).then_some(xp),
@@ -296,6 +301,7 @@ impl StepWriter<'_> {
             mob_level: None,
             reward: None,
             reward_xp: None,
+            party_reward_xp: Vec::new(),
             route_xp: None,
             spells: Vec::new(),
             xp: None,

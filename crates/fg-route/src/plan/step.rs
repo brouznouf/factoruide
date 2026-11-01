@@ -324,14 +324,14 @@ impl Planner<'_> {
 
     /// Turn in quest `i`, wearing its reward items when they are upgrades. Returns the item
     /// picked among the choices.
-    pub(crate) fn turn_in(&self, s: &mut State, i: u32) -> Option<i64> {
+    pub(crate) fn turn_in(&self, s: &mut State, i: u32, rewards: &[i64; crate::job::GROUP_MAX]) -> Option<i64> {
         let q = self.quest(i);
         self.release(s, i);
         s.timers.retain(|&(q, _)| q != i);
         s.log -= 1;
         s.started.retain(|&(q, _, _)| q != i);
         s.required_left = s.required_left.saturating_sub(u32::from(q.required));
-        s.spent.quest_xp += self.growth().reward(s, i);
+        s.spent.quest_xp += self.growth().reward(s, rewards);
         s.turned.set(i as usize, true);
         self.growth().gain_power(s, i);
         if s.forced_left > 0 {
@@ -425,14 +425,18 @@ impl Planner<'_> {
         self.grind_to_gate(s, stop, spot, record);
         let loc = self.arrive(s, stop, spot, record);
         if !(Self::timed(stop.kind) && self.failed_in_time(s, stop.index, record)) {
-            let before = s.spent.quest_xp;
-            let picked = self.do_stop(s, stop, spot);
+            let rewards = if stop.kind == Kind::TurnIn {
+                self.growth().quest_rewards(s, stop.index)
+            } else {
+                [0; crate::job::GROUP_MAX]
+            };
+            let picked = self.do_stop(s, stop, spot, &rewards);
             record(
                 s,
                 Event::Stop {
                     stop,
                     loc,
-                    reward_xp: s.spent.quest_xp - before,
+                    reward_xp: rewards,
                 },
             );
             if let Some(item) = picked {
@@ -730,7 +734,13 @@ impl Planner<'_> {
     }
 
     /// What the stop itself does. Returns the reward item picked on a turn-in.
-    fn do_stop(&self, s: &mut State, stop: Stop, spot: Option<&Objective>) -> Option<i64> {
+    fn do_stop(
+        &self,
+        s: &mut State,
+        stop: Stop,
+        spot: Option<&Objective>,
+        rewards: &[i64; crate::job::GROUP_MAX],
+    ) -> Option<i64> {
         let i = stop.index as usize;
         match stop.kind {
             Kind::Accept => self.accept(s, stop.index),
@@ -738,7 +748,7 @@ impl Planner<'_> {
                 let o = spot.unwrap_or(&self.quest(stop.index).objectives[k as usize]);
                 self.complete_objective(s, stop.index, k, o);
             }
-            Kind::TurnIn => return self.turn_in(s, stop.index),
+            Kind::TurnIn => return self.turn_in(s, stop.index, rewards),
             Kind::LearnFlight => {
                 s.known |= 1u128 << i;
                 s.time += 5.0;

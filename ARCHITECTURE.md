@@ -61,8 +61,9 @@ level:
   Food adds 5% to kill XP and the bag adds 3% to kill and quest XP. The estimate adds the kill
   bonuses before applying the finite rested pool, including grinding and group catch-up.
   Pre-grinding estimates and group catch-up consume rested XP in every edition. Group kill
-  work stays fractional until the final member reward is rounded. Guide turn-ins carry the
-  reward XP actually awarded by the simulation.
+  work stays fractional until the final member reward is rounded in every edition. Turn-ins
+  carry each player's awarded XP (`party_reward_xp`, Lua `rxp`); the addon selects its own
+  reward. Older guides retain their shared `reward_xp` estimate.
   Exploration, food costs and buff refresh time are outside this estimate. Effect scopes:
   [Well Fed](https://www.wowhead.com/forever/spell=1243969/well-fed-xp-boost),
   [Well-Rested](https://www.wowhead.com/forever/spell=429959/well-rested).

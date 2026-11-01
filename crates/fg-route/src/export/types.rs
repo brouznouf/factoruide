@@ -234,10 +234,13 @@ pub struct Step {
     /// Reward to pick among the quest's choices (item ID) on a turn-in.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reward: Option<i64>,
-    /// XP a turn-in gives at the level it is planned at: a quest complete in the log counts for
-    /// the grind steps aiming at a level it is turned in before.
+    /// XP a turn-in gives at its planned level (the least positive reward in a group). Used
+    /// by older addons; current group guides also record each player's reward below.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reward_xp: Option<i64>,
+    /// Actual turn-in rewards in the guide's player order; empty in solo and older guides.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub party_reward_xp: Vec<i64>,
     /// XP the route has in `level` once the step is done: where the player should be, for the
     /// addon's XP bars.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -322,6 +325,7 @@ impl Step {
             mob_level: None,
             reward: None,
             reward_xp: None,
+            party_reward_xp: Vec::new(),
             route_xp: None,
             spells: Vec::new(),
             xp: None,

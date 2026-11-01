@@ -244,6 +244,16 @@ pub fn to_lua(routes: &[Route]) -> String {
             if let Some(xp) = s.reward_xp {
                 fields.push(format!("rx = {xp}"));
             }
+            if !s.party_reward_xp.is_empty() {
+                fields.push(format!(
+                    "rxp = {{ {} }}",
+                    s.party_reward_xp
+                        .iter()
+                        .map(ToString::to_string)
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                ));
+            }
             if !s.spells.is_empty() {
                 fields.push(format!(
                     "sp = {{ {} }}",

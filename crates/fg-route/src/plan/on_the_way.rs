@@ -384,19 +384,23 @@ impl Planner<'_> {
             if Self::timed(stop.kind) && self.failed_in_time(s, stop.index, record) {
                 continue;
             }
-            let before = s.spent.quest_xp;
+            let rewards = if stop.kind == Kind::TurnIn {
+                self.growth().quest_rewards(s, stop.index)
+            } else {
+                [0; crate::job::GROUP_MAX]
+            };
             let picked = if stop.kind == Kind::Accept {
                 self.accept(s, stop.index);
                 None
             } else {
-                self.turn_in(s, stop.index)
+                self.turn_in(s, stop.index, &rewards)
             };
             record(
                 s,
                 Event::Stop {
                     stop,
                     loc: loc.clone(),
-                    reward_xp: s.spent.quest_xp - before,
+                    reward_xp: rewards,
                 },
             );
             if let Some(item) = picked {

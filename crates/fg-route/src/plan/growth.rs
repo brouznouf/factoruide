@@ -237,24 +237,27 @@ impl<'g> Growth<'g> {
 
     /// The XP of turning in quest `i` to each member it is still for (`Initial::need`); returns
     /// the character's.
-    pub(crate) fn reward(self, s: &mut State, i: u32) -> i64 {
+    pub(crate) fn quest_rewards(self, s: &State, i: u32) -> [i64; crate::job::GROUP_MAX] {
         let q = self.quest_at(i);
         let need = self.model.initial.need(i as usize);
-        for k in 0..self.mates() {
-            if need & (1 << s.order[k + 1]) != 0 {
-                let factor = self.quest_factor(s, s.order[k + 1]);
-                let m = &mut s.mates[k];
-                Self::mate_gain(
-                    self.rules(),
-                    m,
-                    (self.quest_reward(q, m.level) as f64 * factor).round() as i64,
-                );
+        let mut rewards = [0; crate::job::GROUP_MAX];
+        for k in 0..=self.mates() {
+            let member = s.order[k];
+            if need & (1 << member) != 0 {
+                let level = if k == 0 { s.level } else { s.mates[k - 1].level };
+                rewards[usize::from(member)] =
+                    (self.quest_reward(q, level) as f64 * self.quest_factor(s, member)).round() as i64;
             }
         }
-        if need & (1 << s.order[0]) == 0 {
-            return 0;
+        rewards
+    }
+
+    /// Award the snapshot taken before the turn-in changed any player's level or buff.
+    pub(crate) fn reward(self, s: &mut State, rewards: &[i64; crate::job::GROUP_MAX]) -> i64 {
+        for k in 0..self.mates() {
+            Self::mate_gain(self.rules(), &mut s.mates[k], rewards[usize::from(s.order[k + 1])]);
         }
-        let reward = (self.quest_reward(q, s.level) as f64 * self.quest_factor(s, s.order[0])).round() as i64;
+        let reward = rewards[usize::from(s.order[0])];
         self.gain(s, reward);
         reward
     }

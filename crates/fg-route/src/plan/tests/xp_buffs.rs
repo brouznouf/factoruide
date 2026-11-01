@@ -282,3 +282,61 @@ fn fractional_kill_work_takes_every_buffed_member_to_the_level_cap() {
         "both players earn the last seven XP"
     );
 }
+
+#[test]
+fn group_exports_each_recipients_quest_reward() {
+    for own_done in [false, true] {
+        let mut p = prepared();
+        p.params.sleeping_bag = true;
+        let quest = p.model.quests[1].id;
+        p.model.quests[1].members = 3;
+        p.model.initial.need = vec![3, if own_done { 2 } else { 3 }];
+        p.model.initial.completed = Some(if own_done {
+            [SLEEPING_BAG_QUEST, quest].into()
+        } else {
+            [SLEEPING_BAG_QUEST].into()
+        });
+        p.model.initial.mates = vec![MateStart {
+            level: 3,
+            ..MateStart::default()
+        }];
+        p.profile.mates = vec![crate::model::Mate {
+            name: "Mate".into(),
+            race_id: p.profile.race_id,
+            class_id: p.profile.class_id,
+            spell_weights: vec![],
+            professions: vec![],
+        }];
+        let plan = planner(&p);
+        let edited = plan.edit(&[stop(1, Kind::Accept), stop(1, Kind::TurnIn)]);
+        assert_eq!(edited.errors(), 0);
+        let guide = crate::export::build_traced(
+            &plan,
+            &p.profile,
+            &edited.route,
+            &edited.trace,
+            edited.breakdown.total,
+            edited.breakdown,
+        );
+        let turnin = guide
+            .steps
+            .iter()
+            .find(|s| s.kind == crate::export::StepKind::TurnIn)
+            .unwrap();
+        assert_eq!(
+            turnin.party_reward_xp,
+            if own_done { vec![0, 100] } else { vec![103, 100] }
+        );
+        assert_eq!(
+            turnin.reward_xp,
+            Some(100),
+            "the shared estimate remains usable by older addons"
+        );
+        let lua = crate::export::to_lua(std::slice::from_ref(&guide));
+        assert!(lua.contains(if own_done {
+            "rxp = { 0, 100 }"
+        } else {
+            "rxp = { 103, 100 }"
+        }));
+    }
+}
