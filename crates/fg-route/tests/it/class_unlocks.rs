@@ -54,6 +54,30 @@ fn known_reward_does_not_put_its_parent_in_the_log() {
 }
 
 #[test]
+fn a_completed_child_keeps_later_class_quests_feasible() {
+    for edition in Edition::ALL {
+        let conn = database_of(edition.key());
+        let mut overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+        overrides.params.all_class_quests = true;
+        let mut req = request("orc", "warlock");
+        req.from_level = 35;
+        req.to_level = 41;
+        req.start = Some(StartState {
+            level: 35,
+            completed: vec![job::QuestId(1799), job::QuestId(4962)],
+            ..StartState::default()
+        });
+        let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let next = &p.model.quests[p.model.index[&4961]];
+        assert!(next.pre_all.contains(&4962));
+        assert!(
+            next.mandatory,
+            "{edition:?}: Cleansing of the Orb of Orahil has its prerequisite done"
+        );
+    }
+}
+
+#[test]
 fn normal_skyborne_druid_planning_completes_the_cat_chain() {
     let conn = database_of("forever");
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();

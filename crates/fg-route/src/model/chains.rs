@@ -221,7 +221,7 @@ pub(super) fn release_impossible_class_quests(quests: &mut [Quest], known: &Hash
     loop {
         let mut changed = false;
         for q in quests.iter_mut() {
-            if !doable.contains(&q.id) {
+            if !doable.contains(&q.id) || completed.contains(&q.id) {
                 continue;
             }
             let satisfied = |p: &i64| doable.contains(p) || known.contains(p);
