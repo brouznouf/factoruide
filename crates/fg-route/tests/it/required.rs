@@ -2,7 +2,7 @@
 
 use crate::common::{database_of, repo};
 use fg_route::faction::Faction;
-use fg_route::job::{self, Editor, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
+use fg_route::job::{self, Editor, LogQuest, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
 use fg_route::plan::{Kind, Planner, Stop};
 use fg_route::testing::{At, Obj, Q, Scenario};
 use fg_route::xp::Edition;
@@ -488,6 +488,45 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
     let route = planner.construct(|_| {});
     planner.validate_required(&route).unwrap();
     assert!(route.iter().any(|s| s.kind == Kind::Dungeon));
+}
+
+/// A must-have quest whose dungeon objectives are already complete in the log (GitHub #87) does
+/// not ask for the dungeon: it is only turned in.
+#[test]
+fn a_finished_required_dungeon_quest_does_not_need_the_dungeon() {
+    let p = Scenario::new()
+        .levels(55, 56)
+        .dungeon("The Temple", 1, 70.0, 50.0)
+        .start(StartState {
+            level: 55,
+            log: vec![LogQuest {
+                id: 8422.into(),
+                complete: true,
+                ..LogQuest::default()
+            }],
+            ..StartState::default()
+        })
+        .quest(
+            Q::new(8422, "Trolls of a Feather")
+                .level(52)
+                .giver(1, 40.0, 40.0)
+                .objective(
+                    Obj::kill(
+                        "Troll",
+                        50,
+                        6,
+                        At {
+                            zone: 1,
+                            x: 70.0,
+                            y: 50.0,
+                        },
+                    )
+                    .inside(0),
+                ),
+        )
+        .required(8422)
+        .build();
+    assert!(!p.model.dungeons[0].needed);
 }
 
 /// A must-have quest with a child quest (Need for a Cure and Finding the Antidote, GitHub #74):

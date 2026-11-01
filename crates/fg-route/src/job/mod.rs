@@ -340,8 +340,28 @@ pub(crate) fn start_from(
     notes: &mut Vec<String>,
 ) {
     model.initial = start.initial(model, world, params, notes);
+    release_done_dungeons(model, start);
     if !mates.is_empty() {
         group::join(model, world, start, &mates.iter().collect::<Vec<_>>(), notes);
+    }
+}
+
+/// A dungeon only needed by must-have quests the character has already turned in, or finished
+/// in its log, is not needed any more: its objectives are done.
+fn release_done_dungeons(model: &mut Model, start: &StartState) {
+    let finished =
+        |i: usize, id: i64| model.initial.turned.contains(&i) || start.log.iter().any(|l| l.id.0 == id && l.complete);
+    let mut needed = vec![false; model.dungeons.len()];
+    for (i, q) in model.quests.iter().enumerate() {
+        if !q.required || finished(i, q.id) {
+            continue;
+        }
+        for d in q.objectives.iter().filter_map(|o| o.dungeon) {
+            needed[d] = true;
+        }
+    }
+    for (d, dungeon) in model.dungeons.iter_mut().enumerate() {
+        dungeon.needed &= needed[d];
     }
 }
 

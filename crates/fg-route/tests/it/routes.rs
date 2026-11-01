@@ -1758,6 +1758,20 @@ fn a_dungeon_is_not_run_past_its_levels() {
     assert!(planner(&p).simulate(&[run], None).is_some());
 }
 
+/// A route that leaves out a forced dungeon is not valid: the player asked for it.
+#[test]
+fn a_route_without_a_forced_dungeon_is_not_valid() {
+    let p = with_deadmines(leveling(25))
+        .params(|p| p.forced_dungeons = vec![900])
+        .build();
+    let planner = planner(&p);
+    let route = planner.construct(|_| {});
+    assert!(route.iter().any(|s| s.kind == Kind::Dungeon), "the forced run");
+    planner.validate_required(&route).unwrap();
+    let error = planner.validate_required(&[]).unwrap_err().to_string();
+    assert!(error.contains("forced dungeon"), "{error}");
+}
+
 /// Where an entity of the model stands, as the addon records it.
 fn map_pos(p: &Prepared, pos: &fg_route::world::Pos, zone: i64) -> MapPos {
     let m = p.world.to_map(zone, pos).unwrap();
