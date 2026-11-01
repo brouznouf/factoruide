@@ -335,9 +335,7 @@ impl Planner<'_> {
             })
             .min();
         if let Some(deadline) = deadline {
-            candidates.retain(|c| {
-                c.stop.kind != Kind::Accept || self.quest(c.stop.index).priority_deadline == Some(deadline)
-            });
+            candidates.retain(|c| !c.stop.is_quest() || self.quest(c.stop.index).priority_deadline == Some(deadline));
         }
         // Staying in a zone only matters while it has something left to do: with few stops left
         // there, the weight of leaving it fades to nothing (`Params::zone_stay_quests`).
@@ -468,6 +466,20 @@ impl Planner<'_> {
                 break;
             }
             s.at = pos as u32;
+            // Replaying can require more grinding than construction expected. Leave optional
+            // work out when that grinding would pass an unfinished quest's deadline.
+            if stop.is_quest() && !self.quest(stop.index).mandatory {
+                let gate = self.gate_level(&s, stop);
+                let past_deadline = self.model.quests.iter().enumerate().any(|(i, q)| {
+                    !s.turned[i]
+                        && q.priority_deadline
+                            .is_some_and(|max| max < self.rules().max_level && gate > max)
+                });
+                if past_deadline {
+                    dropped[i] = true;
+                    continue;
+                }
+            }
             if stop.kind == Kind::TurnIn
                 && s.accepted[i]
                 && !s.turned[i]
@@ -999,6 +1011,48 @@ impl Planner<'_> {
 #[cfg(test)]
 mod deadline_tests {
     use super::*;
+
+    #[test]
+    fn replay_leaves_out_optional_work_that_grinds_past_a_deadline() {
+        let mut p = crate::plan::tests::quests_at_start(2);
+        p.model.quests[0].required = true;
+        p.model.quests[0].mandatory = true;
+        p.model.quests[0].priority_deadline = Some(1);
+        p.model.quests[0].completion_window.max_level = Some(1);
+        p.model.quests[1].min_level = 3;
+        let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = vec![
+            Stop::quest(1, Kind::Accept),
+            Stop::quest(1, Kind::TurnIn),
+            Stop::quest(0, Kind::Accept),
+            Stop::quest(0, Kind::TurnIn),
+        ];
+        assert!(plan.simulate(&route, None).is_none());
+        let settled = plan.settle(route);
+        assert_eq!(
+            settled,
+            vec![Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)]
+        );
+        assert!(plan.simulate(&settled, None).is_some());
+    }
+
+    #[test]
+    fn a_nearby_optional_turn_in_does_not_spend_the_deadline_level() {
+        let mut p = crate::plan::tests::quests_at_start(2);
+        p.model.quests[0].required = true;
+        p.model.quests[0].mandatory = true;
+        p.model.quests[0].priority_deadline = Some(1);
+        p.model.quests[0].completion_window.max_level = Some(1);
+        p.model.quests[0].starts[0].pos.x += 10_000.0;
+        p.model.quests[1].xp = 500;
+        p.model.initial.accepted = vec![1];
+        let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = plan.greedy();
+        assert!(plan.simulate(&route, None).is_some(), "{route:?}");
+        let required = route.iter().position(|s| *s == Stop::quest(0, Kind::TurnIn)).unwrap();
+        let optional = route.iter().position(|s| *s == Stop::quest(1, Kind::TurnIn)).unwrap();
+        assert!(required < optional, "{route:?}");
+    }
 
     #[test]
     fn priority_uses_the_highest_member_still_needing_the_deadline_quest() {
