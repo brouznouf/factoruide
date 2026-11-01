@@ -331,7 +331,7 @@ fn malformed_windows_report_the_quest_instead_of_ignoring_the_bound() {
 #[test]
 fn starting_deadlines_only_check_members_pursuing_the_quests_profession() {
     let conn = database_of("classic");
-    let req:PlanRequest = serde_json::from_value(json!({
+    let mut req:PlanRequest = serde_json::from_value(json!({
         "race":"orc","class":"warrior","from_level":45,"to_level":60,"required_class_quests":[],
         "required_quests":[{"quest":6610,"max_level":50}],
         "professions":[{"key":"cooking","target":300}],
@@ -341,4 +341,20 @@ fn starting_deadlines_only_check_members_pursuing_the_quests_profession() {
     let p = job::prepare(&conn, &overrides(Edition::Classic), &req, &|_| {}).unwrap();
     let q = p.model.index[&6610];
     assert_eq!(p.model.initial.need(q), 1, "the older non-cook is not a participant");
+    req.start.as_mut().unwrap().completed = vec![QuestId(6610)];
+    req.required_quests = serde_json::from_value(json!([{"quest":6610,"max_level":30}])).unwrap();
+    let p = job::prepare(&conn, &overrides(Edition::Classic), &req, &|_| {}).unwrap();
+    assert_eq!(
+        p.model.initial.need(p.model.index[&6610]),
+        0,
+        "all actual participants already completed it"
+    );
+    req.start.as_mut().unwrap().completed.clear();
+    req.required_quests = serde_json::from_value(json!([{"quest":6610,"max_level":50}])).unwrap();
+    req.mate_professions = vec![req.professions.clone()];
+    req.mates[0].professions = req.start.as_ref().unwrap().professions.clone();
+    let error = job::prepare(&conn, &overrides(Edition::Classic), &req, &|_| {})
+        .err()
+        .unwrap();
+    assert!(format!("{error:#}").contains("above completion level"), "{error:#}");
 }

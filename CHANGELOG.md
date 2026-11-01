@@ -23,6 +23,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- Must-have quests are kept when they turn gray.
 - Death skips (option, off by default, in the play style): up to level 10 and a half, the guide has the character die to respawn at the nearest spirit healer when that is faster (no resurrection sickness before level 11). The guide editor has them as steps ("Die here").
 - Group guides: each player levels its own professions, from its own skill: their profession quests are planned for them, the group goes to the vendor when the fullest bags are, and each player's addon follows its own profession curve.
 - A quest item that rots is looted right before the objective using it: the Fresh Zhevra Carcass (30 minutes) just before Ishamuhale, instead of hours earlier (WoW Forever and Classic).

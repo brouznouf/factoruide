@@ -970,3 +970,18 @@ fn the_player_behind_catches_up() {
 }
 
 mod abilities;
+
+#[test]
+fn an_unbounded_required_quest_stays_in_the_log_when_gray() {
+    let mut p = quests_at_start(1);
+    p.profile.from_level = 20;
+    p.profile.to_level = 21;
+    p.model.initial.accepted = vec![0];
+    for required in [false, true] {
+        p.model.quests[0].required = required;
+        let plan = planner(&p);
+        let mut state = plan.initial_state();
+        plan.abandon_hopeless(&mut state, &mut |_, _| {});
+        assert_eq!(state.accepted[0], required);
+    }
+}

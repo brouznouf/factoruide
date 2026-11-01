@@ -183,6 +183,9 @@ pub(super) fn check_start(
         let Some(max) = q.completion_window.max_level else {
             continue;
         };
+        if model.initial.turned.contains(&i) {
+            continue;
+        }
         anyhow::ensure!(
             profile.completed_quests.contains(&q.id) || model.initial.accepted.contains(&i) || q.min_level <= max,
             "required quest {} ({}): needs level {}, above the requested completion window",
@@ -211,4 +214,18 @@ pub(super) fn check_start(
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod window_tests {
+    #[test]
+    fn a_held_quest_can_finish_after_a_refresh_raises_its_effective_minimum() {
+        let mut p = crate::plan::tests::quests_at_start(1);
+        p.model.quests[0].min_level = 5;
+        p.model.quests[0].completion_window.max_level = Some(1);
+        p.model.initial.accepted = vec![0];
+        super::check_start(&p.model, &p.profile, &[]).unwrap();
+        p.model.initial.accepted.clear();
+        assert!(super::check_start(&p.model, &p.profile, &[]).is_err());
+    }
 }

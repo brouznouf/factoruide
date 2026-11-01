@@ -202,7 +202,7 @@ export interface PlanRequest {
   name?: string | null;
   params?: Params | null;
   required_class_quests?: string[] | null;
-  /** Exact quest IDs or names, optionally with inclusive turn-in levels,. Prerequisites are included; omission fails generation. */
+  /** Exact quest IDs or names, optionally with inclusive turn-in levels. Prerequisites are included; omission fails generation. */
   required_quests?: RequiredQuest[];
   professions?: ProfessionGoal[];
   /** Language of the guide texts (English where a name is not translated). */
