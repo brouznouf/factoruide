@@ -171,6 +171,8 @@ impl Q {
             mandatory: false,
             zone_forced: false,
             required: false,
+            completion_window: super::CompletionWindow::default(),
+            priority_deadline: None,
             skill: None,
             power: None,
             reward_spell: None,
@@ -621,7 +623,14 @@ impl Scenario {
                 quests.push(built);
             }
         }
-        self.profile.required_quests.clone_from(&self.required);
+        self.profile.required_quests = self
+            .required
+            .iter()
+            .map(|&id| super::QuestRequirement {
+                id,
+                window: super::CompletionWindow::default(),
+            })
+            .collect();
         // What the loader does with the quests it built.
         let rows: Vec<QuestRow> = quests
             .iter()

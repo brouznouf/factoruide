@@ -40,9 +40,11 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   to see again.
 - **Your dungeons**: force or exclude each dungeon, do the worthwhile ones in a group, take their
   quests a few levels ahead.
-- **Your quests**: search a must-have quest by name or ID (bottom of the new guide page). The guide includes its
-  prerequisites and finishes the chain, even past your target level. It cannot be saved with
-  a required quest missing.
+- **Your quests**: search a must-have quest by name or ID (bottom of the new guide page). The guide
+  includes its prerequisites and finishes the chain, even past your target level. It cannot be saved with
+  a required quest missing. Each selected quest can have an inclusive minimum and/or maximum
+  turn-in level, before reward XP; its prerequisites may be done earlier. Tight deadlines can
+  displace optional quests.
 - **Your XP buffs** (Forever): food adds 5% kill XP. Sleeping Bag adds 3% kill and quest XP
   after its quest chain is completed; enabling it includes the chain. Both buffs stay active,
   with no upkeep time; the addon warns when a buff the guide counts on is missing. Both are off by

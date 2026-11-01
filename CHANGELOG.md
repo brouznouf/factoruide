@@ -11,6 +11,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### App
 
 - Optional Forever food and Sleeping Bag XP bonuses, with the bag's quest chain included.
+- Must-have quests can have an optional minimum and maximum turn-in level.
 - The dungeons' levels are chosen with a slider above their list: from how many levels below their monsters to how many above (the progression profile sets them back to its own). Each dungeon shows the levels it will be run at, and the guide never runs it outside them.
 - A dungeon can be forced with its quests (a click more): the guide takes every quest of it the character can take, even those worth little (GitHub #46).
 - New guide: a block for the guide (name, target level) and one for each player (a recorded character, a pasted export or a new one, its level, race, class and professions); "+ Add a player" makes a group guide, up to 5 players.

@@ -36,7 +36,9 @@ pub use overrides::{Overrides, RaceDef, curve_by_level};
 pub use paths::{add_walk_paths, route_walks, walk_world};
 pub use race::{optimize, optimize_interruptible};
 pub use reputation::race_base;
-pub use request::{ClassKey, GROUP_MAX, GROUP_MIN_LEVEL, PlanOutcome, PlanRequest, Prepared, RaceKey, RequiredQuest};
+pub use request::{
+    ClassKey, GROUP_MAX, GROUP_MIN_LEVEL, PlanOutcome, PlanRequest, Prepared, QuestKey, RaceKey, RequiredQuest,
+};
 pub use required::{QuestChoice, quest_choices};
 pub use routes::{
     DATA_ADDON, GUIDE_FORMAT, POLESTAR_SOURCE_FOLDER, add_polestar_source, addon_walks, data_addon_files, guides_lua,
@@ -229,12 +231,18 @@ pub fn prepare(
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<Prepared> {
     let (mut profile, mut params) = character(conn, overrides, req)?;
-    profile.required_quests = required::resolve(conn, req, &profile)?;
+    profile.required_quests = required::resolve(conn, req, &profile, &params)?;
     if params.edition == crate::xp::Edition::Forever
         && params.sleeping_bag
-        && !profile.required_quests.contains(&crate::xp::SLEEPING_BAG_QUEST)
+        && !profile
+            .required_quests
+            .iter()
+            .any(|r| r.id == crate::xp::SLEEPING_BAG_QUEST)
     {
-        profile.required_quests.push(crate::xp::SLEEPING_BAG_QUEST);
+        profile.required_quests.push(model::QuestRequirement {
+            id: crate::xp::SLEEPING_BAG_QUEST,
+            window: model::CompletionWindow::default(),
+        });
     }
     progress("Loading the world");
     progress(r#"@progress {"phase":"prepare","step":"world"}"#);
@@ -289,6 +297,7 @@ pub fn prepare(
     } else {
         model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id));
     }
+    required::check_start(&model, &profile, &members)?;
     model.initial.abilities = model.abilities.initial(start, profile.from_level);
     model.initial.reputation = reputation::starting(conn, &params.reputation_goals, &profile, start, &mut start_notes)?;
     let mut notes = notes::model_notes(&model, &world, progress);

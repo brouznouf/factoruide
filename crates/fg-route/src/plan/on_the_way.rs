@@ -395,6 +395,9 @@ impl Planner<'_> {
             } else {
                 self.turn_in(s, stop.index, &rewards)
             };
+            if s.completion_error.is_some() {
+                return;
+            }
             record(
                 s,
                 Event::Stop {

@@ -7,6 +7,20 @@ use fg_route::job::{self, Overrides, PlanRequest};
 use rusqlite::Connection;
 use std::path::{Path, PathBuf};
 
+fn required_quests(choices: &[String]) -> Result<Vec<job::RequiredQuest>> {
+    choices
+        .iter()
+        .map(|q| {
+            if q.trim_start().starts_with('{') {
+                serde_json::from_str(q).context("required quest with completion levels")
+            } else {
+                Ok(q.parse::<i64>()
+                    .map_or_else(|_| job::RequiredQuest::Name(q.clone()), job::RequiredQuest::Id))
+            }
+        })
+        .collect()
+}
+
 pub struct RouteOptions {
     pub race: String,
     pub class: String,
@@ -65,14 +79,7 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
         name: opts.out_name.clone(),
         params: Some(params),
         required_class_quests: None,
-        required_quests: opts
-            .required_quests
-            .iter()
-            .map(|q| {
-                q.parse::<i64>()
-                    .map_or_else(|_| job::RequiredQuest::Name(q.clone()), job::RequiredQuest::Id)
-            })
-            .collect(),
+        required_quests: required_quests(&opts.required_quests)?,
         professions: opts.professions.clone(),
         locale: opts.locale.clone(),
         start: opts.start.as_deref().map(read_profile).transpose()?,
@@ -247,7 +254,7 @@ pub struct ShareOptions {
     pub to_level: i64,
     pub effort: Option<f64>,
     pub name: String,
-    /// Must-have quests, by ID or exact name.
+    /// Must-have quests, by ID, exact name or JSON completion window.
     pub required_quests: Vec<String>,
     /// Planner parameter overrides (key=value).
     pub params: Vec<String>,
@@ -279,14 +286,7 @@ pub fn share(conn: &Connection, overrides_dir: &Path, opts: &ShareOptions, out: 
         name: Some(opts.name.clone()),
         params: Some(params),
         required_class_quests: Some(options.class_quests.get(&class_name).cloned().unwrap_or_default()),
-        required_quests: opts
-            .required_quests
-            .iter()
-            .map(|q| {
-                q.parse::<i64>()
-                    .map_or_else(|_| job::RequiredQuest::Name(q.clone()), job::RequiredQuest::Id)
-            })
-            .collect(),
+        required_quests: required_quests(&opts.required_quests)?,
         professions: vec![],
         locale: Some(opts.locale.clone()),
         mates: vec![],

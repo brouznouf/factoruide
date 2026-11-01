@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { api, type CharacterInfo, type Options, type Params, type PlanRequest } from "../api";
+import { api, type CharacterInfo, type Options, type Params, type PlanRequest, type RequiredQuest } from "../api";
 import { MIN_CHOICE_LEVEL, SIMPLE_KEYS, efforts, presets, sections, type Field, type Section } from "../paramSchema";
 import { DungeonPanel, dungeonsWithoutLevels } from "./DungeonPanel";
 import { Hint } from "./Hint";
@@ -143,7 +143,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   const locale = initial?.locale ?? defaultLocale;
   const [params, setParams] = useState<Params>({ ...defaults, ...(initial?.params ?? {}) });
   const [classQuests, setClassQuests] = useState<string[] | null>(initial?.required_class_quests ?? null);
-  const [requiredQuests, setRequiredQuests] = useState<(number | string)[]>(initial?.required_quests ?? []);
+  const [requiredQuests, setRequiredQuests] = useState<RequiredQuest[]>(initial?.required_quests ?? []);
   const [newClassQuest, setNewClassQuest] = useState("");
   // The characters the addon recorded, and those pasted.
   const [characters, setCharacters] = useState<CharacterInfo[] | null>(null);

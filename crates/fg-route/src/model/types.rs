@@ -19,7 +19,7 @@ pub struct Profile {
     pub required_class_quests: Vec<String>,
     pub quest_overrides: Vec<QuestOverride>,
     /// Exact quests selected by the player.
-    pub required_quests: Vec<i64>,
+    pub required_quests: Vec<QuestRequirement>,
     /// Confirmed completions from the starting profile, never inferred from character level.
     pub completed_quests: HashSet<i64>,
     /// Class quests that make the character stronger: name and power gained.
@@ -41,6 +41,36 @@ pub struct Profile {
     pub mates: Vec<Mate>,
     /// The character's "Name-Realm" in a group guide (empty alone).
     pub player: String,
+}
+
+/// Inclusive levels when a required quest is turned in, before its XP reward.
+#[derive(Debug, Clone, Copy, Default, serde::Serialize, serde::Deserialize)]
+pub struct CompletionWindow {
+    pub min_level: Option<i64>,
+    pub max_level: Option<i64>,
+}
+
+impl CompletionWindow {
+    pub fn contains(self, level: i64) -> bool {
+        self.min_level.is_none_or(|min| level >= min) && self.max_level.is_none_or(|max| level <= max)
+    }
+}
+
+impl std::fmt::Display for CompletionWindow {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match (self.min_level, self.max_level) {
+            (Some(min), Some(max)) => write!(f, "levels {min}–{max}"),
+            (Some(min), None) => write!(f, "level {min} or later"),
+            (None, Some(max)) => write!(f, "level {max} or earlier"),
+            (None, None) => write!(f, "any level"),
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+pub struct QuestRequirement {
+    pub id: i64,
+    pub window: CompletionWindow,
 }
 
 /// Another player of a group guide.
@@ -431,6 +461,9 @@ pub struct Quest {
     pub zone_forced: bool,
     /// Explicit player requirement or a prerequisite selected to reach one.
     pub required: bool,
+    pub completion_window: CompletionWindow,
+    /// Earliest deadline of the requirements this quest helps complete.
+    pub priority_deadline: Option<i64>,
     /// Profession quest: index in `Model::professions` and skill needed to accept it.
     pub skill: Option<(usize, i64)>,
     /// Class quest making the character stronger: index in `Profile::class_powers` (quests of

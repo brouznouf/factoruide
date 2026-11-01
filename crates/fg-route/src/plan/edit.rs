@@ -327,6 +327,11 @@ impl Planner<'_> {
         self.farm_all.set(farm);
         self.apply(s, stop, Some(trace));
         self.farm_all.set(false);
+        if s.completion_error.is_some() {
+            *s = saved;
+            trace.truncate(mark);
+            return Outcome::Invalid("quest completion outside requested level range");
+        }
         if !s.time.is_finite() {
             *s = saved;
             trace.truncate(mark);
