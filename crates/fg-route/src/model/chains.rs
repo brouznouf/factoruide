@@ -216,17 +216,19 @@ pub(super) fn drop_unhanded(quests: &mut Vec<Quest>, skipped: &mut Vec<(i64, Str
 }
 
 /// A class quest whose prerequisite cannot be planned cannot be required either.
-pub(super) fn release_impossible_class_quests(quests: &mut [Quest], known: &HashSet<i64>) {
-    let mut doable: HashSet<i64> = quests.iter().map(|q| q.id).chain(known.iter().copied()).collect();
+pub(super) fn release_impossible_class_quests(quests: &mut [Quest], known: &HashSet<i64>, completed: &HashSet<i64>) {
+    let mut doable: HashSet<i64> = quests.iter().map(|q| q.id).collect();
     loop {
         let mut changed = false;
         for q in quests.iter_mut() {
             if !doable.contains(&q.id) {
                 continue;
             }
-            let blocked = q.pre_all.iter().chain(&q.pre_held).any(|p| !doable.contains(p))
+            let satisfied = |p: &i64| doable.contains(p) || known.contains(p);
+            let blocked = q.pre_all.iter().any(|p| !satisfied(p))
+                || q.pre_held.iter().any(|p| !doable.contains(p) || completed.contains(p))
                 || (!q.pre_any.is_empty()
-                    && q.pre_any.iter().filter(|p| doable.contains(p)).count() < q.pre_need.min(q.pre_any.len()));
+                    && q.pre_any.iter().filter(|p| satisfied(p)).count() < q.pre_need.min(q.pre_any.len()));
             if blocked {
                 doable.remove(&q.id);
                 changed = true;

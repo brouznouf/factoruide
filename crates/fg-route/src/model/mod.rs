@@ -148,7 +148,7 @@ pub fn load(
     }
 
     chains::require_prerequisites(&mut quests);
-    chains::release_impossible_class_quests(&mut quests, &known_prerequisites);
+    chains::release_impossible_class_quests(&mut quests, &known_prerequisites, &profile.completed_quests);
     for q in &mut quests {
         q.mandatory |= q.required;
     }
