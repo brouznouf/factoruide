@@ -9,6 +9,7 @@ use rusqlite::Connection;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+mod movement;
 mod xp_buffs;
 #[test]
 fn completion_window_is_checked_after_exploration_on_the_trip() {
@@ -47,7 +48,7 @@ fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-fn database_of(edition: &str) -> Connection {
+pub(crate) fn database_of(edition: &str) -> Connection {
     static UNPACK: Mutex<()> = Mutex::new(());
     let _guard = UNPACK.lock().unwrap();
     let (path, packed) = (

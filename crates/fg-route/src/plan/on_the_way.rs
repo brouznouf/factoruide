@@ -48,7 +48,7 @@ impl Planner<'_> {
             self.trips().fastest(s, target)
         } else {
             (
-                self.trips().walk(&s.pos, target, s.level),
+                self.trips().at(s).walk(&s.pos, target, s.level),
                 super::state::Via {
                     teleport: None,
                     death: None,
@@ -95,7 +95,7 @@ impl Planner<'_> {
         }
         // Walked to `at`, at most what is left of the trip.
         let walk_to = |s: &mut State, from: &Pos, at: &Pos, left: &mut f64| {
-            let walk = self.trips().walk(from, at, s.level).min(*left);
+            let walk = self.trips().at(s).walk(from, at, s.level).min(*left);
             spend(s, walk, false);
             *left -= walk;
         };

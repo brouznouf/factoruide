@@ -57,6 +57,14 @@ level:
   "normal", 50 for "risky"); a fall that hurts costs the time to rest the health back
   (`DROP_COST` in `terrain/mod.rs`, a full heal a minute), so the walk goes round when the way
   down saves less than that.
+  Learned Cat Form, Travel Form, Ghost Wolf and Aspect of the Cheetah are compared with walking
+  and mounts, including activation time (`overrides/movement.toml`). A bonus requires a whole
+  path on known outdoor terrain without swimming. Covered or unknown paths and group guides
+  keep the baseline estimate.
+  Few walks currently qualify. `assume_movement_talents` (on by default) adds Feral Swiftness
+  and Improved Ghost Wolf at the edition's level and rank. Acquisition follows each edition's
+  quests and trainer data. An edition's `movement.toml` can supply missing trainer levels;
+  native records take precedence. Aquatic Form travel is not modeled.
 - **Fights and loot**: kill time grows with the level difference and shrinks with the
   character's **power** (below); elites are slower (or need a group); items to loot take as many
   kills as their drop rate requires.
@@ -174,8 +182,9 @@ quest whose objectives are far out of reach is not picked up.
   the quest teaching that spell gives it, whatever its name (Piercing the Veil, the undead's
   Imp, like Vile Familiars).
 - The data (item stats, quest rewards, boss loot, trainer spells, base stats by level) comes from
-  VMaNGOS (Classic, Forever). Without it (TBC), power is the level and training follows
-  `train_every`.
+  VMaNGOS (Classic, Forever). TBC uses level-based combat power and `train_every` for
+  combat training; `overrides/tbc/movement.toml` supplies missing movement trainer levels
+  from CMaNGOS without changing the bundled database.
 
 Some content is set apart: a quest filed under a dungeon, or whose mobs, objects, giver or turn-in
 live only inside one, is done in a run of that dungeon (with dungeons on); in the guide, the run

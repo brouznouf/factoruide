@@ -32,11 +32,11 @@ impl Planner<'_> {
             }
             // On to the route's next stop when it is known, else to the quest's turn-in.
             let after = match &s.next {
-                Some(next) => self.trips().leg(&place.loc.pos, next, s.level, s.known, open).0,
+                Some(next) => self.trips().at(s).leg(&place.loc.pos, next, s.level, s.known, open).0,
                 None => q
                     .ends
                     .iter()
-                    .map(|e| self.trips().leg(&place.loc.pos, &e.pos, s.level, s.known, open).0)
+                    .map(|e| self.trips().at(s).leg(&place.loc.pos, &e.pos, s.level, s.known, open).0)
                     .fold(f64::INFINITY, f64::min),
             };
             let cost = there + after + self.trips().fastest(s, &place.loc.pos).0;

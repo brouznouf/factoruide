@@ -878,6 +878,7 @@ pub fn profile(faction: Faction, from: i64, to: i64) -> Profile {
         completed_quests: HashSet::new(),
         class_powers: Vec::new(),
         spell_weights: Vec::new(),
+        abilities: Vec::new(),
         dungeons: Vec::new(),
         quest_teleports: Vec::new(),
         objective_orders: Vec::new(),

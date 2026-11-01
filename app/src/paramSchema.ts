@@ -76,6 +76,7 @@ export const sections: Section[] = [
   {
     title: "Déplacements",
     fields: [
+      { key: "assume_movement_talents", kind: "bool", label: "Supposer les talents de déplacement appris", help: "Rapidité farouche (félin) et Loup fantôme amélioré, après déblocage des formes. Aucun talent requis pour Aspect du guépard. Bonus limité aux trajets entièrement à découvert sans nage ; la plupart des trajets gardent l'estimation normale." },
       { key: "run_speed", kind: "number", label: "Vitesse de course", help: "Vitesse à pied, sans monture (7 dans le jeu).", unit: "m/s", min: 5, max: 10, step: 0.1 },
       { key: "mount_level", kind: "number", label: "Niveau de la monture", help: "Niveau où le personnage a sa monture : les trajets au sol vont plus vite ensuite.", min: 1, max: 60, step: 1 },
       { key: "mount_bonus", kind: "number", label: "Bonus de vitesse de la monture", help: "Vitesse en plus avec la monture (60 % pour la première).", unit: "%", scale: 0.01, min: 0, max: 100, step: 5 },

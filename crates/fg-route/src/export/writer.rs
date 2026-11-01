@@ -94,6 +94,7 @@ impl StepWriter<'_> {
                 trainer,
                 since,
                 abilities,
+                ..
             } => self.train(&mut step, *trainer, *since, t.level, *abilities),
             Event::Sell { vendor } => self.sell(&mut step, *vendor),
             Event::Stop { stop, loc, .. } if !stop.is_quest() => self.visit(&mut step, *stop, loc),

@@ -50,6 +50,10 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   with no upkeep time; the addon warns when a buff the guide counts on is missing. Both are off by
   default. Rested XP remains finite, including when pre-grinding or catching up
   with a group in any supported edition.
+- **Your travel spells**: learned Cat Form, Travel Form, Ghost Wolf and Aspect of the Cheetah
+  affect walking estimates only for walks entirely outdoors without swimming; few walks currently
+  qualify. In Advanced, **Assume movement talents are learned** is on by default. Cheetah needs
+  no talent. Forms become available through the quests or trainers of your game version.
 - **Your class spells**: quest rewards and trainer visits determine which spells are known.
   Form attacks need both the form and its learned attack rank. Imported characters use their
   recorded spells and completed quests. Without a character profile, earlier class unlocks

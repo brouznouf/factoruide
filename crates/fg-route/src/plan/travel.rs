@@ -23,8 +23,10 @@ pub(crate) type FlightTables = RefCell<FxHashMap<u128, Rc<FlightTable>>>;
 type PosKey = [u64; 4];
 
 /// Trips already computed (from with mounted or not and the links opened, to, known flight
-/// paths): a replay asks the same trips again and again. 88 bytes a trip; emptied when full.
-pub(crate) type Legs = RefCell<FxHashMap<(PosKey, PosKey, u128), (f64, Hop)>>;
+/// paths): a replay asks the same trips again and again. Emptied when full.
+pub(crate) type Legs = RefCell<FxHashMap<(PosKey, PosKey, u128, u64, u64), (f64, Hop)>>;
+pub(crate) type Grounds = RefCell<FxHashMap<(PosKey, PosKey, u8), bool>>;
+
 /// What a table of 2^18 buckets holds (7/8 of them): it never grows past them.
 const LEGS_MAX: usize = (1 << 18) / 8 * 7;
 
@@ -102,6 +104,8 @@ pub(crate) struct Trips<'t> {
     pub(crate) model: &'t Model,
     pub(crate) flights: &'t FlightTables,
     pub(crate) legs: &'t Legs,
+    pub(crate) grounds: &'t Grounds,
+    pub(crate) abilities: u64,
     /// On foot only: flights, boats and teleports are steps of their own (`Planner::explicit`).
     pub(crate) explicit: bool,
     /// Walks go into the zones closed to the character (`Planner::open_walks`).
@@ -109,13 +113,68 @@ pub(crate) struct Trips<'t> {
 }
 
 impl Trips<'_> {
+    pub(crate) fn with_movement(mut self, abilities: u64) -> Self {
+        self.abilities = abilities;
+        self
+    }
+    pub(crate) fn at(mut self, state: &State) -> Self {
+        self.abilities = state.abilities;
+        self
+    }
+
+    fn travel_abilities(&self) -> u64 {
+        if self.model.initial.mates.is_empty() {
+            self.model.abilities.movement(self.abilities)
+        } else {
+            0
+        }
+    }
+
+    fn speed(&self, level: i64) -> f64 {
+        self.model.abilities.speed(self.travel_abilities(), level, self.params)
+    }
+
+    fn exposed(&self, a: &Pos, b: &Pos, closed: u8) -> bool {
+        let key = pos_key(a, false, 0)
+            .zip(pos_key(b, false, 0))
+            .map(|(a, b)| (a, b, closed));
+        if let Some(value) = key.and_then(|k| self.grounds.borrow().get(&k).copied()) {
+            return value;
+        }
+        let exposed = self.world.exposed_walk(a, b, closed);
+        if let Some(key) = key {
+            let mut cache = self.grounds.borrow_mut();
+            if cache.len() >= LEGS_MAX {
+                cache.clear();
+            }
+            cache.insert(key, exposed);
+        }
+        exposed
+    }
+
     pub(crate) fn walk(&self, a: &Pos, b: &Pos, level: i64) -> f64 {
         let closed = if self.open_walks {
             0
         } else {
             self.world.walk_level(level)
         };
-        self.world.walk_distance_at(a, b, closed) * self.params.detour / self.params.speed(level)
+        let distance = self.world.walk_distance_at(a, b, closed) * self.params.detour;
+        self.walk_time(a, b, distance, level, closed)
+    }
+
+    /// Time for a known walking distance, including a timeline's straight-line fallback.
+    pub(crate) fn walk_time(&self, a: &Pos, b: &Pos, distance: f64, level: i64, closed: u8) -> f64 {
+        if distance.is_finite()
+            && distance > 0.0
+            && self.speed(level) > self.params.speed(level)
+            && self.exposed(a, b, closed)
+        {
+            self.model
+                .abilities
+                .walk_time(distance, self.travel_abilities(), level, self.params)
+        } else {
+            distance / self.params.speed(level)
+        }
     }
 
     /// The level a trip is remembered at (`Legs`): what its time and choice depend on apart
@@ -150,13 +209,13 @@ impl Trips<'_> {
         if self.open_walks {
             return self.compute_leg(from, b, level, known, open);
         }
-        // The level only matters through the speed: mounted or not.
+        // The level affects mounts, talent ranks, closed zones and the weight of gold.
         let mounted = level >= self.params.mount_level;
         let (Some(mut a), Some(z)) = (pos_key(from, mounted, self.leg_level(level)), pos_key(b, false, 0)) else {
             return self.compute_leg(from, b, level, known, open);
         };
         a[0] |= u64::from(open) << 58;
-        let key = (a, z, known);
+        let key = (a, z, known, self.travel_abilities(), self.speed(level).to_bits());
         if let Some(&(t, hop)) = self.legs.borrow().get(&key) {
             return (t, hop.leg());
         }
@@ -179,7 +238,7 @@ impl Trips<'_> {
         if !self.explicit && !links.is_empty() && (from.continent != b.continent || walk > 240.0) {
             // A walk is never shorter than the straight line: the walks to a link and from
             // one to `b` (each once) only when they could make the trip shorter.
-            let line = |p: &Pos, q: &Pos| p.dist(q) * self.params.detour / self.params.speed(level);
+            let line = |p: &Pos, q: &Pos| p.dist(q) * self.params.detour / self.speed(level);
             let mut to_b: Vec<Option<f64>> = vec![None; links.len()];
             for (i, li) in links.iter().enumerate() {
                 if line(from, &li.from) >= best.0 {
@@ -219,7 +278,7 @@ impl Trips<'_> {
         // the next one is farther in a straight line than the third nearest walk. Walked to
         // them from `from`, from them to `b` (`landing`): not the same both ways (drops).
         let nearest = |p: &Pos, landing: bool| {
-            let line = |q: &Pos| p.dist(q) * self.params.detour / self.params.speed(level);
+            let line = |q: &Pos| p.dist(q) * self.params.detour / self.speed(level);
             let mut by_line: Vec<(usize, f64)> = (0..self.world.taxi_nodes.len())
                 .filter(|i| known & (1u128 << i) != 0)
                 .map(|i| (i, line(&self.world.taxi_nodes[i].pos)))
@@ -276,7 +335,7 @@ impl Trips<'_> {
         }
         // A flight and a boat (or a zeppelin, a portal): flown to the port, or flown on from
         // where it lands. Each tried only when the straight lines could make the trip shorter.
-        let line = |p: &Pos, q: &Pos| p.dist(q) * self.params.detour / self.params.speed(level);
+        let line = |p: &Pos, q: &Pos| p.dist(q) * self.params.detour / self.speed(level);
         let least = |v: &[(usize, f64)]| v.iter().map(|x| x.1).fold(f64::INFINITY, f64::min);
         let (from_least, b_least) = (least(&near_from), least(&near_b));
         let mut to_b: Vec<Option<f64>> = vec![None; links.len()];
@@ -323,8 +382,9 @@ impl Trips<'_> {
     /// Fastest trip from the current position, a class teleport first when learned (trained at
     /// its level) and faster. The hearthstone is a stop of its own (`Kind::Hearth`).
     pub(crate) fn fastest(&self, s: &State, b: &Pos) -> (f64, Via) {
+        let this = self.at(s);
         let open = self.open_links(s);
-        let (t, leg) = self.leg(&s.pos, b, s.level, s.known, open);
+        let (t, leg) = this.leg(&s.pos, b, s.level, s.known, open);
         let mut best = (
             t,
             Via {
@@ -345,7 +405,7 @@ impl Trips<'_> {
             {
                 continue;
             }
-            let (t, leg) = self.leg(&tp.to.pos, b, s.level, s.known, open);
+            let (t, leg) = this.leg(&tp.to.pos, b, s.level, s.known, open);
             let t = t + self.params.teleport_cast;
             if t < best.0 {
                 best = (
@@ -411,7 +471,7 @@ impl Trips<'_> {
     /// What `fastest` from `s` takes at least to any place (`TripBound::at`), without walking
     /// the terrain.
     pub(crate) fn bound(&self, s: &State) -> TripBound {
-        let per_yard = self.params.detour / self.params.speed(s.level);
+        let per_yard = self.params.detour / self.at(s).speed(s.level);
         let line = |a: &Pos, b: &Pos| a.dist(b) * per_yard;
         // Where the trip starts: here, or where a class teleport lands.
         let mut starts = vec![(s.pos, 0.0)];

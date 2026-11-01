@@ -177,6 +177,7 @@ pub struct InnInfo {
 /// What the replay keeps of the character after each step.
 struct Snapshot {
     pos: Pos,
+    abilities: u64,
     time: f64,
     level: i64,
     spent: Breakdown,
@@ -393,6 +394,7 @@ impl<'r> Replay<'r> {
                 .collect();
             snaps.push(Snapshot {
                 pos: s.pos,
+                abilities: s.abilities,
                 time: s.time,
                 level: s.level,
                 spent: s.spent,
@@ -651,7 +653,7 @@ impl<'r> Replay<'r> {
     /// The steps the replay does not find: a straight walk from where the character is to
     /// where they are done, at the start of their window.
     fn straight_walks(&self, saved: &[Step], of_saved: &[Option<usize>], windows: &[(f64, f64)], legs: &mut Vec<Leg>) {
-        let speed = |level: i64| self.planner.params.speed(level) / self.planner.params.detour;
+        let step_of = self.step_of_events();
         let mut found = legs.clone();
         found.sort_by(|a, b| a.start.total_cmp(&b.start));
         for i in (0..saved.len()).filter(|&i| of_saved[i].is_none()) {
@@ -667,7 +669,17 @@ impl<'r> Replay<'r> {
             if !apart(&a, &b) || a.continent != b.continent {
                 continue;
             }
-            let length = (a.dist(&b) / speed(saved[i].level)).min(end - start);
+            // Saved and replayed clocks can differ: use the last aligned step's state.
+            let abilities = (0..i)
+                .rev()
+                .filter_map(|k| of_saved[k])
+                .find_map(|line| self.lines[line].event)
+                .map_or(self.planner.model.initial.abilities, |event| {
+                    self.snaps[step_of[event] + 1].abilities
+                });
+            let trips = self.planner.trips().with_movement(abilities);
+            let distance = a.dist(&b) * self.planner.params.detour;
+            let length = trips.walk_time(&a, &b, distance, saved[i].level, 0).min(end - start);
             let leg = Leg {
                 mode: self.walk_mode(saved[i].level),
                 start,
@@ -919,10 +931,14 @@ impl<'r> Replay<'r> {
                     if !apart(&at, &p) {
                         push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
                     } else if !apart(&after.pos, &at) {
-                        // A detour: there and back.
+                        // Training can make the return faster; other detours retain equal halves.
+                        let outbound = match e.event {
+                            Event::Train { outbound, .. } => outbound.min(walk),
+                            _ => walk / 2.0,
+                        };
                         push(
                             out,
-                            walk / 2.0,
+                            outbound,
                             &mut t,
                             [1.0, 0.0, 0.0, 0.0],
                             Some(leg(walk_mode, &at, &p, Vec::new())),
@@ -1260,5 +1276,76 @@ fn pos_of(w: [f64; 3]) -> Pos {
         y: w[2],
         zone: 0,
         z: None,
+    }
+}
+
+#[cfg(test)]
+mod movement_tests {
+    use super::*;
+
+    #[test]
+    fn unmatched_saved_steps_use_aligned_knowledge_when_replay_times_differ() {
+        let conn = crate::plan::tests::database_of("classic");
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../overrides");
+        let o = crate::job::Overrides::load_edition(&dir, crate::xp::Edition::Classic).unwrap();
+        let req = serde_json::from_value(serde_json::json!({
+            "race":"orc", "class":"hunter", "from_level":20, "to_level":21,
+            "start":{"level":20,"spells":[]}, "required_class_quests":[]
+        }))
+        .unwrap();
+        let mut editor = Editor::open(&conn, &o, &req, None).unwrap();
+        let p = &mut editor.prepared;
+        let a = Pos {
+            continent: 1,
+            x: -100.0,
+            y: -100.0,
+            zone: 0,
+            z: None,
+        };
+        p.model.initial.pos = Some((a, 0));
+        p.model.trainers = vec![p.model.start.clone()];
+        p.model.trainers[0].pos = Pos { x: -200.0, ..a };
+        p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Dry);
+        (p.params.run_speed, p.params.detour, p.params.mount_level) = (7.0, 1.0, 40);
+        let names = Names::load(&conn, "enUS").unwrap();
+        let p = &editor.prepared;
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile).explicit();
+        let replay = Replay::run(&editor, &planner, &[Edit::Train { trainer: 0 }], &names, Lines::Events).unwrap();
+        let train = replay.lines.iter().position(|s| s.kind == StepKind::Train).unwrap();
+        let mut scaled = replay.lines[train].clone();
+        scaled.time = replay.edited.trace[scaled.event.unwrap()].time * 2.0;
+        let playback = replay.timeline(&[scaled]);
+        assert!(
+            (playback.legs[0].end - playback.legs[0].start - 2.0 * 100.0 / 7.0).abs() < 0.11,
+            "outbound keeps normal speed"
+        );
+        assert!(
+            (playback.legs[1].end - playback.legs[1].start - 2.0 * 100.0 / 9.1).abs() < 0.11,
+            "return uses Cheetah, including saved-time scaling"
+        );
+
+        assert!(replay.snaps[1].time < 800.0);
+        let mut missing = replay.lines[train].clone();
+        missing.kind = StepKind::Objective;
+        missing.world = Some(point(&a));
+        let mut before = missing.clone();
+        before.world = Some([1.0, -400.0, -100.0]);
+        let saved = [missing.clone(), before, replay.lines[train].clone(), missing];
+        let mut legs = Vec::new();
+        replay.straight_walks(
+            &saved,
+            &[None, None, Some(train), None],
+            &[(0.0, 800.0), (800.0, 900.0), (900.0, 1100.0), (1100.0, 1200.0)],
+            &mut legs,
+        );
+        assert_eq!(legs.len(), 2);
+        assert!(
+            (legs[0].end - legs[0].start - 300.0 / 7.0).abs() < 1e-6,
+            "before training: normal speed"
+        );
+        assert!(
+            (legs[1].end - legs[1].start - 300.0 / 9.1).abs() < 1e-6,
+            "after the aligned trainer step: Cheetah"
+        );
     }
 }
