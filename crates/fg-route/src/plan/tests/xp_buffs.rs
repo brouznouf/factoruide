@@ -185,6 +185,13 @@ fn bag_completion_stays_with_each_member_when_the_lowest_player_changes() {
         .find(|t| matches!(t.event, crate::plan::Event::Stop { stop, .. } if stop.kind == Kind::TurnIn))
         .unwrap();
     assert_eq!(reward.party, [(3, 165), (3, 160)]);
+    if let crate::plan::Event::Stop { reward_xp, .. } = &reward.event {
+        assert_eq!(
+            &reward_xp[..2],
+            &[103, 100],
+            "rewards retain the guide player order after the lead swaps"
+        );
+    }
 }
 
 #[test]

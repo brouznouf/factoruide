@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Group guides: quest XP counts each player's own reward, including its Sleeping Bag bonus.
+
 - The addon's separators are a bullet (•), which every client font has: the dot they used was a missing glyph in Russian (GitHub #78).
 - Death skip steps: done once back at the spirit healer.
 - A quest that needs a number of other quests done (ten library books) is offered once enough of them are.
