@@ -284,3 +284,31 @@ fn manual_guide_starts_empty_and_takes_its_steps() {
     assert_eq!(saved.plan, added);
     assert!(saved.route.quests > 0);
 }
+
+/// A guide with a quest whose child is handed in on the way (The Videre Elixir) replays in the
+/// editor as it was computed (GitHub #86).
+#[test]
+fn a_guide_with_a_child_quest_replays_in_the_editor() {
+    let conn = crate::common::database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let mut request = request_to(55);
+    request.race = "undead".into();
+    request.class = "rogue".into();
+    request.from_level = 45;
+    request.to_level = 60;
+    request.params = Some(overrides.params.with_overrides(&["effort=0".to_owned()]).unwrap());
+    let interrupt = job::Interrupt::default();
+    interrupt.stop();
+    let outcome = job::plan_interruptible(&conn, &overrides, &request, &|_| {}, &interrupt, None).unwrap();
+    let editor = Editor::open(&conn, &overrides, &request, None).unwrap();
+    let names = Names::load(&conn, "enUS").unwrap();
+    let (steps, _) = editor.steps(&outcome);
+    let report = editor.simulate(&steps, &names);
+    let broken: Vec<_> = steps
+        .iter()
+        .zip(&report.steps)
+        .filter(|(_, r)| r.status == "error")
+        .map(|(s, r)| (s, r.reason))
+        .collect();
+    assert_eq!(report.errors, 0, "{broken:?}");
+}

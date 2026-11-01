@@ -54,7 +54,8 @@ impl Requirements<'_> {
         self.some_of(&q.pre_any, q.pre_need, selected, visiting)?;
         for objective in &q.objectives {
             self.some_of(&objective.handed_by, 1, selected, visiting)?;
-            if let Some(child) = objective.child {
+            // A repeatable child is no quest of its own: its items and hand-in are the parent's.
+            if let Some(child) = objective.child.filter(|c| self.index.contains_key(c)) {
                 self.add(child, selected, visiting)?;
             }
         }

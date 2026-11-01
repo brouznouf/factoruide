@@ -244,7 +244,9 @@ impl Availability<'_> {
     /// Dungeon `d` must be run (when the route reaches its levels), with its quests or not.
     pub(crate) fn dungeon_forced(&self, d: usize) -> bool {
         let area = self.model.dungeons[d].area;
-        (self.params.forced_dungeons.contains(&area) || self.params.forced_dungeon_quests.contains(&area))
+        (self.model.dungeons[d].needed
+            || self.params.forced_dungeons.contains(&area)
+            || self.params.forced_dungeon_quests.contains(&area))
             && !self.params.excluded_dungeons.contains(&area)
     }
 
