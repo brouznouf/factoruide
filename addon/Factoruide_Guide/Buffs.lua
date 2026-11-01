@@ -31,7 +31,13 @@ function FG:CheckBuffs()
     if not (route and route.buffs) or InCombatLockdown() or UnitIsDeadOrGhost("player") then return end
     for _, key in ipairs(route.buffs) do
         local spellId = AURAS[key]
-        if spellId and Has(spellId) == false and (not warned[key] or GetTime() - warned[key] > WARN_EVERY) then
+        local available = key ~= "bag" or FG.QuestLog.IsQuestFlaggedCompleted(79976)
+        if
+            available
+            and spellId
+            and Has(spellId) == false
+            and (not warned[key] or GetTime() - warned[key] > WARN_EVERY)
+        then
             warned[key] = GetTime()
             Warn(
                 key == "food" and T("The guide counts on a food XP bonus: eat to get the Well Fed buff.")

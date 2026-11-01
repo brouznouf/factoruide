@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- WoW Forever: the Sleeping Bag XP reminder starts after its reward quest is completed.
+
 ## 0.15.0 (2026-11-01)
 
 - Two flights in a row: taking the first no longer counts the next one as done; each is done by its own take-off.
