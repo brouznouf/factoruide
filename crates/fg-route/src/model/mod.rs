@@ -30,8 +30,9 @@ pub use guard::Guards;
 pub use loot::CommonLoot;
 pub use names::Names;
 pub use types::{
-    Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Mate, MateStart, Model, Objective,
-    ObjectiveOrder, ProfessionPlan, Profile, Quest, QuestOverride, Spots, Teleport, TeleportDef, Vendor, race_bit,
+    CompletionWindow, Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Mate, MateStart, Model,
+    Objective, ObjectiveOrder, ProfessionPlan, Profile, Quest, QuestOverride, QuestRequirement, Spots, Teleport,
+    TeleportDef, Vendor, race_bit,
 };
 
 use crate::params::Params;
@@ -241,7 +242,7 @@ fn build_quests(
     let mut quests = Vec::new();
     let mut skipped = Vec::new();
     for row in &sources.rows {
-        let builder = if profile.required_quests.contains(&row.id) {
+        let builder = if profile.required_quests.iter().any(|q| q.id == row.id) {
             &asked
         } else {
             &builder

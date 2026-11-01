@@ -9,6 +9,39 @@ use rusqlite::Connection;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
+#[test]
+fn completion_window_is_checked_after_exploration_on_the_trip() {
+    let mut p = quests_at_start(1);
+    p.world.terrain = crate::terrain::Terrain::default();
+    p.params.explore_radius = 50.0;
+    p.model.initial.xp = 399;
+    p.model.initial.accepted = vec![0];
+    let q = &mut p.model.quests[0];
+    q.required = true;
+    q.completion_window.max_level = Some(1);
+    q.ends[0].pos.x += 1000.0;
+    let area = crate::model::ExploreArea {
+        zone: q.ends[0].zone,
+        level: 1,
+        pos: q.ends[0].pos,
+    };
+    p.model.explore_by_zone.insert(q.ends[0].zone, vec![0]);
+    p.model.explore.push(area);
+    let edit = super::Edit::Stop {
+        stop: Stop::quest(0, Kind::TurnIn),
+        farm: false,
+        spot: None,
+    };
+    let report = planner(&p).edit(&[edit]);
+    assert_eq!(
+        report.steps[0].outcome,
+        super::Outcome::Invalid("quest completion outside requested level range")
+    );
+    p.model.explore.clear();
+    p.model.explore_by_zone.clear();
+    assert_eq!(planner(&p).edit(&[edit]).errors(), 0);
+}
+
 fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
@@ -776,8 +809,14 @@ fn timed_quest_taken_once_strong_enough_for_its_objectives() {
     p.model.quests[0].time_limit = Some(600.0);
     let (accept, objective) = gates(&p);
     assert_eq!(accept, objective, "timed: taken at the mob's level");
+    p.model.quests[0].required = true;
+    p.model.quests[0].mandatory = true;
+    p.model.quests[0].completion_window.min_level = Some(18);
+    assert_eq!(gates(&p).0, 18, "wait for the turn-in window before starting the clock");
     let mut trace = Vec::new();
-    planner(&p).simulate(&route, Some(&mut trace)).expect("a valid route");
+    let plan = planner(&p);
+    let result = plan.simulate(&route, Some(&mut trace));
+    assert!(result.is_some(), "a valid route: {:?}", plan.diagnose(&route));
     let at = |kind: Kind| {
         trace.iter().find_map(|t| match t.event {
             super::state::Event::Stop { stop, .. } if stop.kind == kind => Some(t.level),
@@ -920,3 +959,20 @@ fn the_player_behind_catches_up() {
 }
 
 mod abilities;
+
+#[test]
+fn an_unbounded_required_quest_stays_in_the_log_when_gray() {
+    let conn = database();
+    let o = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
+    let req=serde_json::from_value(serde_json::json!({"race":"human","class":"warrior","from_level":20,"to_level":21,"required_class_quests":[],"required_quests":[783],"start":{"level":20,"log":[{"id":783,"complete":true}]}})).unwrap();
+    let p = job::prepare(&conn, &o, &req, &|_| {}).unwrap();
+    let i = p.model.index[&783];
+    assert!(
+        p.model.quests[i].required && p.model.quests[i].mandatory,
+        "model construction makes exact requirements mandatory"
+    );
+    let plan = planner(&p);
+    let mut state = plan.initial_state();
+    plan.abandon_hopeless(&mut state, &mut |_, _| {});
+    assert!(state.accepted[i]);
+}

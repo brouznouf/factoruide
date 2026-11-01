@@ -5,6 +5,9 @@
 type Entry = Partial<Record<"en" | "de" | "es" | "esMX" | "pt" | "ru" | "ko" | "zhCN" | "zhTW", string>>;
 
 export const CATALOG: Record<string, Entry> = {
+  "Niveau minimum (facultatif)": { en: "Minimum level (optional)" },
+  "Niveau maximum (facultatif)": { en: "Maximum level (optional)" },
+  "Les niveaux incluent les deux bornes et s'appliquent au rendu, avant l'XP de la récompense. Les prérequis peuvent être faits plus tôt.": { en: "Levels include both bounds and apply at turn-in, before reward XP. Prerequisites can be done earlier." },
   "Chercher une quête": { en: "Find a quest", de: "Quest suchen", es: "Buscar una misión", pt: "Procurar uma missão", ru: "Найти задание", ko: "퀘스트 찾기", zhCN: "查找任务", zhTW: "尋找任務" },
   "aucune": { en: "none", de: "keine", es: "ninguna", pt: "nenhuma", ru: "нет", ko: "없음", zhCN: "无", zhTW: "無" },
   "Étape précédente de la quête": { en: "Previous step of the quest", de: "Vorheriger Schritt der Quest", es: "Paso anterior de la misión", pt: "Passo anterior da missão", ru: "Предыдущий шаг задания", ko: "퀘스트의 이전 단계", zhCN: "该任务的上一步", zhTW: "該任務的上一步" },

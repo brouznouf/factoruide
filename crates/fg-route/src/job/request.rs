@@ -92,9 +92,53 @@ pub struct PlanRequest {
 }
 
 /// A quest ID or an exact name, resolved before planning.
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize)]
 #[serde(untagged)]
 pub enum RequiredQuest {
+    Id(i64),
+    Name(String),
+    Window {
+        quest: QuestKey,
+        #[serde(flatten)]
+        window: model::CompletionWindow,
+    },
+}
+
+impl<'de> Deserialize<'de> for RequiredQuest {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let value = serde_json::Value::deserialize(deserializer)?;
+        match value {
+            serde_json::Value::Number(n) => n
+                .as_i64()
+                .map(Self::Id)
+                .ok_or_else(|| serde::de::Error::custom("quest ID must be an integer")),
+            serde_json::Value::String(name) => Ok(Self::Name(name)),
+            value => {
+                #[derive(Deserialize)]
+                #[serde(deny_unknown_fields)]
+                struct Window {
+                    quest: QuestKey,
+                    min_level: Option<i64>,
+                    max_level: Option<i64>,
+                }
+                let label = value.get("quest").map_or_else(|| "?".to_owned(), ToString::to_string);
+                let raw: Window = serde_json::from_value(value)
+                    .map_err(|error| serde::de::Error::custom(format!("required quest {label}: {error}")))?;
+                Ok(Self::Window {
+                    quest: raw.quest,
+                    window: model::CompletionWindow {
+                        min_level: raw.min_level,
+                        max_level: raw.max_level,
+                    },
+                })
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum QuestKey {
     Id(i64),
     Name(String),
 }

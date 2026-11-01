@@ -390,6 +390,9 @@ impl Planner<'_> {
             } else {
                 self.turn_in(s, stop.index)
             };
+            if s.completion_error.is_some() {
+                return;
+            }
             record(s, Event::Stop { stop, loc: loc.clone() });
             if let Some(item) = picked {
                 record(

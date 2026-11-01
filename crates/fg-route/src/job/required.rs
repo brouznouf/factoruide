@@ -1,21 +1,48 @@
 //! Resolve must-have quest IDs and names for the character or group.
 
-use super::{PlanRequest, RequiredQuest};
-use crate::model::Profile;
+use super::{PlanRequest, QuestKey, RequiredQuest};
+use crate::model::{CompletionWindow, Profile, QuestRequirement};
+use crate::params::Params;
 use anyhow::{Result, bail};
 use rusqlite::Connection;
 
-pub(super) fn resolve(conn: &Connection, request: &PlanRequest, profile: &Profile) -> Result<Vec<i64>> {
-    let mut out = Vec::new();
+pub(super) fn resolve(
+    conn: &Connection,
+    request: &PlanRequest,
+    profile: &Profile,
+    params: &Params,
+) -> Result<Vec<QuestRequirement>> {
+    let mut out: Vec<QuestRequirement> = Vec::new();
     for choice in &request.required_quests {
         let mut stmt = conn.prepare(
             "SELECT id, coalesce(name, ''), coalesce(races_mask, 0), coalesce(classes_mask, 0)
              FROM m_quest WHERE (?1 > 0 AND id = ?1) OR (?2 != '' AND lower(name) = lower(?2) AND status = 'available') ORDER BY id",
         )?;
-        let (id, name) = match choice {
-            RequiredQuest::Id(id) => (*id, ""),
-            RequiredQuest::Name(name) => (0, name.trim()),
+        let (id, name, window) = match choice {
+            RequiredQuest::Id(id) => (*id, "", CompletionWindow::default()),
+            RequiredQuest::Name(name) => (0, name.trim(), CompletionWindow::default()),
+            RequiredQuest::Window { quest, window } => match quest {
+                QuestKey::Id(id) => (*id, "", *window),
+                QuestKey::Name(name) => (0, name.trim(), *window),
+            },
         };
+        let label = if id != 0 { id.to_string() } else { name.to_owned() };
+        anyhow::ensure!(
+            window
+                .min_level
+                .into_iter()
+                .chain(window.max_level)
+                .all(|l| (1..=params.edition.rules().max_level).contains(&l)),
+            "required quest {label:?}: completion levels must be between 1 and {}",
+            params.edition.rules().max_level
+        );
+        anyhow::ensure!(
+            window
+                .min_level
+                .zip(window.max_level)
+                .is_none_or(|(min, max)| min <= max),
+            "required quest {label:?}: minimum completion level exceeds maximum"
+        );
         let matches = stmt
             .query_map(rusqlite::params![id, name], |r| {
                 Ok((
@@ -30,10 +57,6 @@ pub(super) fn resolve(conn: &Connection, request: &PlanRequest, profile: &Profil
             .iter()
             .filter(|(_, _, races, classes)| profile.members_of(Some(*races), Some(*classes)) != 0)
             .collect();
-        let label = match choice {
-            RequiredQuest::Id(id) => id.to_string(),
-            RequiredQuest::Name(name) => name.clone(),
-        };
         let selected = match eligible.as_slice() {
             [quest] => quest.0,
             [] if matches.is_empty() => bail!("required quest {label:?}: not found in this edition's data"),
@@ -43,8 +66,21 @@ pub(super) fn resolve(conn: &Connection, request: &PlanRequest, profile: &Profil
                 eligible.iter().map(|q| q.0.to_string()).collect::<Vec<_>>().join(", ")
             ),
         };
-        if !out.contains(&selected) {
-            out.push(selected);
+        if let Some(previous) = out.iter_mut().find(|q| q.id == selected) {
+            previous.window = CompletionWindow {
+                min_level: previous.window.min_level.into_iter().chain(window.min_level).max(),
+                max_level: previous.window.max_level.into_iter().chain(window.max_level).min(),
+            };
+            anyhow::ensure!(
+                previous
+                    .window
+                    .min_level
+                    .zip(previous.window.max_level)
+                    .is_none_or(|(min, max)| min <= max),
+                "required quest {label:?}: completion windows do not overlap"
+            );
+        } else {
+            out.push(QuestRequirement { id: selected, window });
         }
     }
     Ok(out)
@@ -135,4 +171,61 @@ pub fn quest_choices(
         })
     })?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
+/// Starting deadlines use the same participation and completion masks as the simulation.
+pub(super) fn check_start(
+    model: &crate::model::Model,
+    profile: &Profile,
+    members: &[&super::StartState],
+) -> Result<()> {
+    for (i, q) in model.quests.iter().enumerate() {
+        let Some(max) = q.completion_window.max_level else {
+            continue;
+        };
+        if model.initial.turned.contains(&i) {
+            continue;
+        }
+        anyhow::ensure!(
+            profile.completed_quests.contains(&q.id) || model.initial.accepted.contains(&i) || q.min_level <= max,
+            "required quest {} ({}): needs level {}, above the requested completion window",
+            q.name,
+            q.id,
+            q.min_level
+        );
+        if members.is_empty() {
+            anyhow::ensure!(
+                profile.completed_quests.contains(&q.id) || profile.from_level <= max,
+                "required quest {} ({}): character is already above completion level {max}",
+                q.name,
+                q.id
+            );
+        } else {
+            let need = model.initial.need(i);
+            for (_, member) in members.iter().enumerate().filter(|(k, _)| need & (1 << k) != 0) {
+                anyhow::ensure!(
+                    member.level <= max,
+                    "required quest {} ({}): {} is already above completion level {max}",
+                    q.name,
+                    q.id,
+                    member.name
+                );
+            }
+        }
+    }
+    Ok(())
+}
+
+#[cfg(test)]
+mod window_tests {
+    #[test]
+    fn a_held_quest_can_finish_after_a_refresh_raises_its_effective_minimum() {
+        let mut p = crate::plan::tests::quests_at_start(1);
+        p.model.quests[0].min_level = 5;
+        p.model.quests[0].completion_window.max_level = Some(1);
+        p.model.initial.accepted = vec![0];
+        super::check_start(&p.model, &p.profile, &[]).unwrap();
+        p.model.initial.accepted.clear();
+        assert!(super::check_start(&p.model, &p.profile, &[]).is_err());
+    }
 }

@@ -325,6 +325,10 @@ impl Planner<'_> {
     /// Turn in quest `i`, wearing its reward items when they are upgrades. Returns the item
     /// picked among the choices.
     pub(crate) fn turn_in(&self, s: &mut State, i: u32) -> Option<i64> {
+        if let Some((member, level)) = self.availability().completion_error(s, i) {
+            s.completion_error = Some((i, member, level));
+            return None;
+        }
         let q = self.quest(i);
         self.release(s, i);
         s.timers.retain(|&(q, _)| q != i);
@@ -426,6 +430,9 @@ impl Planner<'_> {
         let loc = self.arrive(s, stop, spot, record);
         if !(Self::timed(stop.kind) && self.failed_in_time(s, stop.index, record)) {
             let picked = self.do_stop(s, stop, spot);
+            if s.completion_error.is_some() {
+                return;
+            }
             record(s, Event::Stop { stop, loc });
             if let Some(item) = picked {
                 record(
@@ -636,12 +643,16 @@ impl Planner<'_> {
                 let q = self.quest(stop.index);
                 let own = q.min_level.max(self.combat().guard_level(&q.start_guard, s.might()));
                 if q.time_limit.is_some() {
-                    own.max(self.timed_gate(q, s))
+                    own.max(self.timed_gate(q, s)).max(self.completion_gate(s, stop.index))
                 } else {
                     own
                 }
             }
-            Kind::TurnIn => self.combat().guard_level(&self.quest(stop.index).end_guard, s.might()),
+            Kind::TurnIn => {
+                let q = self.quest(stop.index);
+                self.completion_gate(s, stop.index)
+                    .max(self.combat().guard_level(&q.end_guard, s.might()))
+            }
             Kind::Objective(k) => self.combat().level_at(
                 self.quest(stop.index),
                 spot.unwrap_or(&self.quest(stop.index).objectives[k as usize]),
@@ -650,6 +661,14 @@ impl Planner<'_> {
             Kind::Dungeon => self.model.dungeons[i].min_level,
             _ => 0,
         }
+    }
+
+    fn completion_gate(&self, s: &State, i: u32) -> i64 {
+        let floor = self.availability().completion_floor(s, i);
+        self.quest(i)
+            .completion_window
+            .min_level
+            .map_or(0, |min| s.level + (min - floor).max(0))
     }
 
     /// Level a timed quest is taken at: the one its objectives and its turn-in need (each at its
@@ -680,6 +699,17 @@ impl Planner<'_> {
         }
         self.grind_at_camps(s, gate, record);
         self.train(s, record);
+        if (stop.kind == Kind::TurnIn || stop.kind == Kind::Accept && self.quest(stop.index).time_limit.is_some())
+            && let Some(min) = self.quest(stop.index).completion_window.min_level
+        {
+            self.keep_lowest(s);
+            // Group members gain different XP from the same kills.
+            while s.time.is_finite() && self.availability().completion_floor(s, stop.index) < min {
+                self.grind_at_camps(s, s.level + 1, record);
+                self.keep_lowest(s);
+                self.train(s, record);
+            }
+        }
     }
 
     /// Travel to the stop, picking up a flight path close to it on the way.

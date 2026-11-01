@@ -22,6 +22,11 @@ Must-have quests (`PlanRequest.required_quests`, CLI `--required-quest`) resolve
 name for the character or group. Their prerequisites stay in the model outside the usual level
 window; unsupported or conflicting choices are reported. Required quests keep a route running
 past its target level until they are complete. Generated guides and saved edits check completion.
+Entries can include `min_level` and/or `max_level`, inclusive at turn-in before reward XP:
+`--required-quest '{"quest":21,"min_level":3,"max_level":4}'`. IDs and exact names without
+bounds keep their existing meaning. Prerequisites inherit deadline priority, not the lower
+bound. Turn-ins check each member still needing the quest, including after travel; imported
+completion already satisfies the goal. Planning and edited-guide saves reject missed windows.
 
 `world.rs` gives the geography: zone coordinates converted to world coordinates, the passes
 between zones, boats, zeppelins and tram (`overrides/`), and the flight path network.

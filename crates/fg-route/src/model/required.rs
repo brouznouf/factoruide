@@ -116,18 +116,29 @@ pub(super) fn apply(
     if profile.required_quests.is_empty() {
         return Ok(());
     }
+    let roots: Vec<_> = profile.required_quests.iter().map(|r| r.id).collect();
     let required = Requirements {
         quests,
         index: quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect(),
         completed: &profile.completed_quests,
         skipped,
-        roots: &profile.required_quests,
+        roots: &roots,
     };
     let mut selected = HashSet::new();
-    for &id in &profile.required_quests {
+    let mut requests: Vec<_> = profile.required_quests.iter().collect();
+    requests.sort_by_key(|r| r.window.max_level.unwrap_or(i64::MAX));
+    let mut deadlines = HashMap::new();
+    for request in requests {
+        let id = request.id;
         required
             .add(id, &mut selected, &mut HashSet::new())
             .with_context(|| format!("cannot plan required quest {id}"))?;
+        // Shared prerequisites inherit the earliest scheduling deadline, but not a lower bound.
+        if let Some(max) = request.window.max_level {
+            for &id in &selected {
+                deadlines.entry(id).or_insert(max);
+            }
+        }
     }
     // Optional quests must not close an explicitly selected branch before it can be done.
     let incompatible: HashSet<_> = quests
@@ -143,6 +154,10 @@ pub(super) fn apply(
         .collect();
     for q in quests.iter_mut() {
         q.required = selected.contains(&q.id);
+        q.priority_deadline = deadlines.get(&q.id).copied();
+        if let Some(request) = profile.required_quests.iter().find(|r| r.id == q.id) {
+            q.completion_window = request.window;
+        }
     }
     // The ordinary window uses the source quest levels, before mob/item modeling raises a
     // quest's effective minimum level. Selecting a completed quest must not alter that window.

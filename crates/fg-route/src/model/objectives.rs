@@ -5,8 +5,8 @@ use super::builder::{QuestBuilder, Skip};
 use super::entities::{alternatives, best_cluster};
 use super::givers::Givers;
 use super::sources::{
-    ObjectiveKind, QuestRow, Role, SourceKind, asks_for_work, count_for, on_reachable, one_place,
-    parse_requirements, talks_to, tames,
+    ObjectiveKind, QuestRow, Role, SourceKind, asks_for_work, count_for, on_reachable, one_place, parse_requirements,
+    talks_to, tames,
 };
 use super::types::{EntityKind, Guard, Loc, Objective, Spots};
 use crate::world::Pos;

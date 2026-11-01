@@ -8,14 +8,24 @@ impl Planner<'_> {
     /// Exact requirements checked against what the simulation actually turned in.
     fn required_missing(&self, route: &[Stop]) -> Vec<String> {
         let Some(end) = self.end_of(route) else {
-            return vec!["route cannot be simulated".into()];
+            return vec![
+                self.diagnose(route)
+                    .map_or_else(|| "route cannot be simulated".into(), |(_, why)| why),
+            ];
         };
         self.model
             .quests
             .iter()
             .enumerate()
             .filter(|(i, q)| q.required && !end.turned.contains(i))
-            .map(|(_, q)| format!("{} ({})", q.name, q.id))
+            .map(|(_, q)| {
+                let label = format!("{} ({})", q.name, q.id);
+                if q.completion_window.min_level.is_some() || q.completion_window.max_level.is_some() {
+                    format!("{label}, completion at {}", q.completion_window)
+                } else {
+                    label
+                }
+            })
             .collect()
     }
 

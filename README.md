@@ -42,7 +42,8 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   quests a few levels ahead.
 - **Your quests**: search a must-have quest by name or ID (bottom of the new guide page). The guide includes its
   prerequisites and finishes the chain, even past your target level. It cannot be saved with
-  a required quest missing. For the Sleeping Bag in Forever, add **79976** (**This Must Be The
+  a required quest missing. Each selected quest can have an inclusive minimum and/or maximum
+  turn-in level, before reward XP; its prerequisites may be done earlier. For the Sleeping Bag in Forever, add **79976** (**This Must Be The
   Place**); its XP bonus is not simulated.
 - **Your class spells**: quest rewards and trainer visits determine which spells are known.
   Form attacks need both the form and its learned attack rank. Imported characters use their
