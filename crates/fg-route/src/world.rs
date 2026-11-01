@@ -450,7 +450,7 @@ impl World {
     /// the corner of its square in world yards; a zone is 1000 yards on a side), no flight path,
     /// passage or link, and terrain without any obstacle.
     #[cfg(any(test, feature = "testing"))]
-    pub fn flat(zones: &[(i64, &str, i64, f64, f64)]) -> Self {
+    pub fn flat(zones: &[(i64, &str, i64, f64, f64)], flight_masters: &[(i64, &str, i64, f64, f64)], flight_speed: f64) -> Self {
         let rects = zones
             .iter()
             .map(|&(id, _, continent, x, y)| {
@@ -467,7 +467,7 @@ impl World {
                 )
             })
             .collect();
-        Self {
+        let mut world = Self {
             zones: rects,
             zone_names: zones.iter().map(|&(id, name, ..)| (id, name.to_owned())).collect(),
             area_parents: HashMap::new(),
@@ -496,7 +496,30 @@ impl World {
             walk_id: NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed),
             stamp: None,
             source: None,
+        };
+        // Flight masters (id, name, zone, percent coordinates), flown between in a straight line.
+        for &(id, name, zone, x, y) in flight_masters {
+            if let Some(pos) = world.to_world(zone, x, y) {
+                world.taxi_nodes.push(TaxiNode {
+                    id,
+                    name: name.to_owned(),
+                    pos,
+                });
+            }
         }
+        let n = world.taxi_nodes.len();
+        let seconds = |a: &TaxiNode, b: &TaxiNode| a.pos.dist(&b.pos) / flight_speed;
+        world.direct = (0..n)
+            .map(|i| {
+                (0..n)
+                    .map(|j| if i == j { 0.0 } else { seconds(&world.taxi_nodes[i], &world.taxi_nodes[j]) })
+                    .collect()
+            })
+            .collect();
+        world.direct_cost = (0..n).map(|i| (0..n).map(|j| if i == j { 0.0 } else { 100.0 }).collect()).collect();
+        world.taxi_by_x = world.taxi_nodes.iter().enumerate().map(|(i, n)| (n.pos.x, i)).collect();
+        world.taxi_by_x.sort_by(|a, b| a.0.total_cmp(&b.0));
+        world
     }
 
     /// Zone (AreaTable ID) shown by a UiMap.

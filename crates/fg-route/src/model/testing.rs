@@ -13,6 +13,7 @@
 #![allow(clippy::return_self_not_must_use, reason = "builders chained by the tests, which use the result")]
 #![allow(clippy::must_use_candidate, reason = "builders chained by the tests, which use the result")]
 
+use super::farm::MobRow;
 use super::{
     Dungeon, EntityKind, Guard, Initial, Loc, Model, Names, Objective, Profile, Quest, chains, required, sources::QuestRow,
 };
@@ -306,6 +307,14 @@ pub struct Scenario {
     dungeons: Vec<(&'static str, At)>,
     start: Option<StartState>,
     mates: Vec<StartState>,
+    /// Flight masters (id, name, place), trainers, vendors and inns of the character's side.
+    flight_masters: Vec<(i64, &'static str, At)>,
+    known_flights: Vec<i64>,
+    trainers: Vec<At>,
+    vendors: Vec<At>,
+    inns: Vec<(&'static str, At)>,
+    /// Normal mobs anyone can farm: where, their level and how many.
+    mobs: Vec<(At, i64, u32)>,
 }
 
 impl Default for Scenario {
@@ -326,7 +335,50 @@ impl Scenario {
             dungeons: Vec::new(),
             start: None,
             mates: Vec::new(),
+            flight_masters: Vec::new(),
+            known_flights: Vec::new(),
+            trainers: Vec::new(),
+            vendors: Vec::new(),
+            inns: Vec::new(),
+            mobs: Vec::new(),
         }
+    }
+
+    /// `count` normal mobs of `level` at a place: the character kills them on the way, or grinds
+    /// there (a camp holds eight of a level).
+    pub fn mobs(mut self, zone: i64, x: f64, y: f64, level: i64, count: u32) -> Self {
+        self.mobs.push((At { zone, x, y }, level, count));
+        self
+    }
+
+    /// A flight master (the character knows the flight paths given to `knows_flight`).
+    pub fn flight_master(mut self, id: i64, name: &'static str, zone: i64, x: f64, y: f64) -> Self {
+        self.flight_masters.push((id, name, At { zone, x, y }));
+        self
+    }
+
+    /// The character knows this flight path from the start.
+    pub fn knows_flight(mut self, id: i64) -> Self {
+        self.known_flights.push(id);
+        self
+    }
+
+    /// A class trainer: the character trains there as it levels.
+    pub fn trainer(mut self, zone: i64, x: f64, y: f64) -> Self {
+        self.trainers.push(At { zone, x, y });
+        self
+    }
+
+    /// A vendor, where the bags' loot is sold.
+    pub fn vendor(mut self, zone: i64, x: f64, y: f64) -> Self {
+        self.vendors.push(At { zone, x, y });
+        self
+    }
+
+    /// An inn (the hearthstone binds there). The first one is where the character starts bound.
+    pub fn inn(mut self, name: &'static str, zone: i64, x: f64, y: f64) -> Self {
+        self.inns.push((name, At { zone, x, y }));
+        self
     }
 
     /// A character met in game: what it did, its log, its level (`StartState`).
@@ -395,7 +447,12 @@ impl Scenario {
             .enumerate()
             .map(|(i, &(id, name))| (id, name, CONTINENT, i as f64 * ZONE_SIDE, 0.0))
             .collect();
-        let world = World::flat(&zones);
+        let flights: Vec<(i64, &str, i64, f64, f64)> = self
+            .flight_masters
+            .iter()
+            .map(|&(id, name, at)| (id, name, at.zone, at.x, at.y))
+            .collect();
+        let world = World::flat(&zones, &flights, self.params.flight_speed);
         let start = Q::at(
             At {
                 zone: 1,
@@ -488,6 +545,35 @@ impl Scenario {
         let mut dungeons = dungeons;
         super::settle_dungeons(&mut dungeons, &quests, &self.profile, &self.params);
         let mut model = bare(quests, dungeons, start, &self.params);
+        let (tags, by_tag) = super::FarmMobs::quest_tags(&model.quests);
+        let mut rows = Vec::new();
+        for &(at, level, count) in &self.mobs {
+            for k in 0..count {
+                // Twelve yards apart (a percent is ten): one mob each, a few to a camp's cell.
+                rows.push(MobRow {
+                    zone: at.zone,
+                    x: at.x + f64::from(k % 4) * 1.2,
+                    y: at.y + f64::from(k / 4) * 1.2,
+                    min_level: level,
+                    max_level: level,
+                    npc: 700_000 + i64::from(k),
+                    z: None,
+                });
+            }
+        }
+        model.farm = super::FarmMobs::from_rows(&world, rows, &tags, by_tag);
+        let place = |at: At, id: i64, name: &str| Q::at(at, id, name, &world);
+        model.trainers = self.trainers.iter().enumerate().map(|(i, &at)| place(at, 400_000 + i as i64, "Trainer")).collect();
+        model.vendors = self.vendors.iter().enumerate().map(|(i, &at)| place(at, 500_000 + i as i64, "Vendor")).collect();
+        if !self.inns.is_empty() {
+            model.inns = self.inns.iter().enumerate().map(|(i, &(name, at))| place(at, 600_000 + i as i64, name)).collect();
+            model.start_inn = 0;
+        }
+        model.initial.known = self
+            .known_flights
+            .iter()
+            .filter_map(|id| world.taxi_nodes.iter().position(|n| n.id == *id))
+            .fold(0u128, |bits, i| bits | 1u128 << i);
         let mut notes = Vec::new();
         crate::job::check_exclusive_choices(&model, &members)?;
         if let Some(start) = first {
@@ -502,6 +588,22 @@ impl Scenario {
             model,
             notes,
         })
+    }
+}
+
+impl Scenario {
+    /// The guide of the scenario (its first routes, no optimization) and the editor on it.
+    pub fn guide(self) -> (crate::job::Editor, crate::job::PlanOutcome) {
+        let (from, to) = (self.profile.from_level, self.profile.to_level);
+        let request: PlanRequest = serde_json::from_value(serde_json::json!({
+            "race": "orc", "class": "warrior", "from_level": from, "to_level": to,
+        }))
+        .unwrap_or_else(|e| panic!("{e}"));
+        let interrupt = crate::job::Interrupt::default();
+        interrupt.stop();
+        let (outcome, prepared) = crate::job::plan_prepared(self.build(), &request, &|_| {}, &interrupt, None)
+            .unwrap_or_else(|e| panic!("{e:#}"));
+        (crate::job::Editor::from_prepared(prepared), outcome)
     }
 }
 

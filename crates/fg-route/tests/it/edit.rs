@@ -1,57 +1,56 @@
-//! The guide editor on the Classic database: a guide edited by hand is replayed like the
-//! optimizer's own routes, its impossible steps reported.
+//! The guide editor: a guide edited by hand is replayed like the optimizer's own routes, its
+//! impossible steps reported. The guides are those of a small scenario built by hand (a valley, a
+//! plain and a far barrens, a trainer, two flight masters).
 
-use crate::common::{database, repo};
-use fg_route::job::{self, Editor, Overrides, PlanOutcome, PlanRequest, RouteStep};
+use crate::common::repo;
+use fg_route::job::{Editor, Overrides, PlanOutcome, PlanRequest, RouteStep};
 use fg_route::model::Names;
+use fg_route::testing::{Q, Scenario};
 use fg_route::xp::Edition;
 use std::sync::OnceLock;
 
-fn overrides() -> Overrides {
-    Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap()
-}
-
-fn request() -> PlanRequest {
-    request_to(10)
-}
-
-fn request_to(to_level: i64) -> PlanRequest {
-    PlanRequest {
-        race: "orc".into(),
-        class: "warlock".into(),
-        from_level: 1,
-        to_level,
-        name: None,
-        params: Some(
-            overrides()
-                .params
-                .with_overrides(&["progression=cautious".to_owned()])
-                .unwrap(),
-        ),
-        required_class_quests: None,
-        required_quests: vec![],
-        professions: vec![],
-        locale: None,
-        mates: vec![],
-        mate_professions: vec![],
-        start: None,
+/// Quests in three zones side by side (a valley, a plain, a far barrens); a trainer in the valley;
+/// Orgrimmar's flight path (known) in the plain and the Crossroads' (not) in the barrens.
+fn scenario(to_level: i64) -> Scenario {
+    let mut s = Scenario::new()
+        .levels(1, to_level)
+        .zone(2, "Durotar")
+        .zone(3, "The Barrens")
+        .trainer(1, 50.0, 50.0)
+        .vendor(1, 52.0, 52.0)
+        .inn("Valley Inn", 1, 54.0, 54.0)
+        .flight_master(23, "Orgrimmar", 2, 50.0, 50.0)
+        .flight_master(25, "Crossroads", 3, 50.0, 50.0)
+        .knows_flight(23);
+    for i in 0..24_i64 {
+        let (zone, x) = match i {
+            0..=5 => (1, 20.0 + 10.0 * i as f64),
+            6..=11 => (2, 20.0 + 10.0 * (i - 6) as f64),
+            _ => (3, 20.0 + 5.0 * (i - 12) as f64),
+        };
+        let level = 1 + i;
+        // Mobs of the quest's level on the way between its giver and its objective, a camp of
+        // each level to grind at.
+        s = s.mobs(zone, x, 50.0, level, 3).mobs(1, 90.0, 90.0, level, 10);
+        s = s.quest(
+            Q::new(100 + i, &format!("Quest {i}"))
+                .level(level)
+                .xp(150 * level)
+                .giver(zone, x, 30.0)
+                .kill("Beast", level, 6, zone, x, 70.0),
+        );
     }
+    s
 }
 
-/// An orc warlock guide to 10 (its first routes, no optimization).
+/// The scenario's guide to 10 (its first routes, no optimization).
 fn guide() -> &'static PlanOutcome {
     static OUTCOME: OnceLock<PlanOutcome> = OnceLock::new();
-    OUTCOME.get_or_init(|| {
-        let interrupt = job::Interrupt::default();
-        interrupt.stop();
-        job::plan_interruptible(&database(), &overrides(), &request(), &|_| {}, &interrupt, None).unwrap()
-    })
+    OUTCOME.get_or_init(|| scenario(10).guide().1)
 }
 
 fn editor() -> (Editor, Names) {
-    let conn = database();
-    let editor = Editor::open(&conn, &overrides(), &request(), None).unwrap();
-    (editor, Names::load(&conn, "enUS").unwrap())
+    (scenario(10).guide().0, Names::default())
 }
 
 fn first(steps: &[RouteStep], pick: impl Fn(&RouteStep) -> bool) -> usize {
@@ -75,13 +74,8 @@ fn unedited_guide_keeps_its_time() {
 #[test]
 fn every_thing_done_is_a_step_of_its_own() {
     use fg_route::export::StepKind;
-    let conn = database();
-    let interrupt = job::Interrupt::default();
-    interrupt.stop();
-    let request = request_to(25);
-    let guide = job::plan_interruptible(&conn, &overrides(), &request, &|_| {}, &interrupt, None).unwrap();
-    let editor = Editor::open(&conn, &overrides(), &request, None).unwrap();
-    let names = Names::load(&conn, "enUS").unwrap();
+    let (editor, guide) = scenario(25).guide();
+    let names = Names::default();
     let (steps, _) = editor.steps(&guide);
     let count = |pick: fn(&RouteStep) -> bool| steps.iter().filter(|s| pick(s)).count();
     assert!(count(|s| matches!(s, RouteStep::Fly { .. })) > 0, "a guide to 25 flies");
@@ -254,15 +248,14 @@ fn flight_needs_known_flight_paths() {
 /// one by one in the editor, the grinding left at the end shrinks, and the guide saved has them.
 #[test]
 fn manual_guide_starts_empty_and_takes_its_steps() {
-    let conn = database();
-    let names = Names::load(&conn, "enUS").unwrap();
-    let manual = job::manual(&conn, &overrides(), &request(), None).unwrap();
+    let names = Names::default();
+    let (editor, _) = editor();
+    let manual = editor.blank_guide();
     assert!(manual.plan.is_empty() && manual.explicit);
     let route = &manual.route;
     assert_eq!((route.from_level, route.to_level, route.quests), (1, 10, 0));
     assert!(route.total_time.is_finite() && route.total_time > 0.0);
 
-    let (editor, _) = editor();
     let (steps, rebuilt) = editor.steps(&manual);
     assert!(steps.is_empty() && !rebuilt);
     let empty = editor.simulate(&steps, &names);
@@ -276,7 +269,8 @@ fn manual_guide_starts_empty_and_takes_its_steps() {
     assert_ne!(fg_route::export::polestar::source("manual", route), "");
 
     // The computed guide's first steps, added one by one: less grinding at the end.
-    let added = &guide().plan[..6];
+    let end = first(&guide().plan, |s| matches!(s, RouteStep::TurnIn { .. })) + 1;
+    let added = &guide().plan[..end];
     let report = editor.simulate(added, &names);
     assert_eq!(report.errors, 0);
     assert!(report.final_grind < empty.final_grind);
@@ -289,21 +283,21 @@ fn manual_guide_starts_empty_and_takes_its_steps() {
 /// editor as it was computed (GitHub #86).
 #[test]
 fn a_guide_with_a_child_quest_replays_in_the_editor() {
-    let conn = crate::common::database_of("forever");
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    let mut request = request_to(55);
-    request.race = "undead".into();
-    request.class = "rogue".into();
-    request.from_level = 45;
-    request.to_level = 60;
-    request.params = Some(overrides.params.with_overrides(&["effort=0".to_owned()]).unwrap());
-    let interrupt = job::Interrupt::default();
-    interrupt.stop();
-    let outcome = job::plan_interruptible(&conn, &overrides, &request, &|_| {}, &interrupt, None).unwrap();
-    let editor = Editor::open(&conn, &overrides, &request, None).unwrap();
-    let names = Names::load(&conn, "enUS").unwrap();
+    use fg_route::testing::{At, Obj};
+    let (editor, outcome) = Scenario::new()
+        .levels(45, 50)
+        .quest(
+            Q::new(3909, "The Videre Elixir")
+                .level(48)
+                .giver(1, 40.0, 40.0)
+                .objective(Obj::visit("Videre Elixir", At { zone: 1, x: 40.0, y: 40.0 }).handed_by(&[4041])),
+        )
+        .quest(Q::new(4041, "The Videre Elixir").level(48).while_in_log(&[3909]).giver(1, 60.0, 60.0).kill("Imp", 48, 4, 1, 62.0, 62.0))
+        .quest(Q::new(3912, "Meet at the Grave").level(48).after(&[3909]).giver(1, 41.0, 41.0).kill("Ghoul", 48, 4, 1, 45.0, 45.0))
+        .required(3912)
+        .guide();
     let (steps, _) = editor.steps(&outcome);
-    let report = editor.simulate(&steps, &names);
+    let report = editor.simulate(&steps, &Names::default());
     let broken: Vec<_> = steps.iter().zip(&report.steps).filter(|(_, r)| r.status == "error").map(|(s, r)| (s, r.reason)).collect();
     assert_eq!(report.errors, 0, "{broken:?}");
 }

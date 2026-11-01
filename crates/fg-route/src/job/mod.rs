@@ -128,7 +128,18 @@ pub fn plan_interruptible(
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
 ) -> Result<PlanOutcome, JobError> {
-    let mut prepared = prepare(conn, overrides, req, progress)?;
+    let prepared = prepare(conn, overrides, req, progress)?;
+    plan_prepared(prepared, req, progress, interrupt, walks).map(|(outcome, _)| outcome)
+}
+
+/// The guide of what `prepare` loaded (see `plan_interruptible`), with it back for the editor.
+pub(crate) fn plan_prepared(
+    mut prepared: Prepared,
+    req: &PlanRequest,
+    progress: &(dyn Fn(&str) + Sync),
+    interrupt: &Interrupt,
+    walks: Option<&Arc<Walks>>,
+) -> Result<(PlanOutcome, Prepared), JobError> {
     if let Some(walks) = walks {
         prepared.world.terrain.share(Arc::clone(walks));
     }
@@ -190,7 +201,7 @@ pub fn plan_interruptible(
     };
     let editor = Editor { prepared };
     editor.set_walks(&mut outcome);
-    Ok(outcome)
+    Ok((outcome, editor.prepared))
 }
 
 /// A guide of no steps, to write by hand in the guide editor: the character starts as `plan`

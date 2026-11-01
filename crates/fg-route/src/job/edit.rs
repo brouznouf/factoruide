@@ -413,6 +413,12 @@ impl Editor {
         Self { prepared }
     }
 
+    /// The empty guide of a manual guide, as `manual` makes it.
+    #[cfg(any(test, feature = "testing"))]
+    pub fn blank_guide(&self) -> PlanOutcome {
+        self.blank(Vec::new())
+    }
+
     /// The planner of the edited guides: it does only what the steps say (`Planner::explicit`).
     pub(super) fn planner(&self) -> Planner<'_> {
         let p = &self.prepared;
