@@ -61,6 +61,7 @@ impl QuestBuilder<'_> {
             start_dungeon: givers.start_dungeon,
             held: givers.held,
             carried: r.source_item.is_some_and(|i| i > 0),
+            late_unlock: false,
             mandatory: zone_forced
                 || group_class_quest
                     && (self.profile.required_class_quests.iter().any(|n| n == &r.name)

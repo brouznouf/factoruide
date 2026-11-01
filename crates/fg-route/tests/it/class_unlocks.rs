@@ -142,6 +142,8 @@ fn a_late_start_keeps_missing_class_unlock_prerequisites() {
             p.model.index.contains_key(&id),
             "missing class unlock quest {id} survives the lower level filter"
         );
+        let quest = &p.model.quests[p.model.index[&id]];
+        assert!(quest.late_unlock, "{} is weighed for waiting", quest.name);
     }
 }
 

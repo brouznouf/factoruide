@@ -143,6 +143,7 @@ export interface Params {
   gold_weight: number;
   zone_change_weight: number;
   abandon_weight: number;
+  unlock_delay_weight: number;
   profession_quest_weight: number;
   zone_stay: number;
   forced_dungeons: number[];

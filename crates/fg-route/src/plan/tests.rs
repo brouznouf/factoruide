@@ -351,6 +351,32 @@ fn a_quest_taken_and_given_up_costs_the_route() {
     assert!(given_up - left_out < 30.0, "{given_up} vs {left_out}");
 }
 
+/// A class unlock kept below the guide's levels costs `unlock_delay_weight` for each level gained
+/// before it is turned in: the same route with it done first is better by that much.
+#[test]
+fn a_late_class_unlock_costs_each_level_it_waits() {
+    let mut p = quests_at_start(2);
+    p.profile.to_level = 20;
+    // Quest 1 takes the character to level 7.
+    p.model.quests[1].xp = 11_200;
+    p.model.quests[0].late_unlock = true;
+    p.model.quests[0].level = 10;
+    let (accept, turn_in) = (|i| Stop::quest(i, Kind::Accept), |i| Stop::quest(i, Kind::TurnIn));
+    let first = [accept(0), turn_in(0), accept(1), turn_in(1)];
+    let last = [accept(1), turn_in(1), accept(0), turn_in(0)];
+    let score = |p: &Prepared, route: &[Stop]| {
+        planner(p)
+            .simulate_full(route, None)
+            .unwrap_or_else(|| panic!("{route:?}"))
+            .0
+    };
+    p.params.unlock_delay_weight = 0.0;
+    let free = score(&p, &last) - score(&p, &first);
+    p.params.unlock_delay_weight = 300.0;
+    let weighed = score(&p, &last) - score(&p, &first);
+    assert!(weighed - free > 1700.0, "{weighed} vs {free}");
+}
+
 /// A profession quest (Camping 101: its reward is the trainer's recipe, not XP) taken early and
 /// handed in once gray is not given up, and leaving it out costs `profession_quest_weight`, once
 /// for a group of exclusive alternatives (the same quest at another race's trainer).

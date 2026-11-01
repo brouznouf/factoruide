@@ -423,6 +423,10 @@ pub struct Breakdown {
     /// (`Params::bag_weight`), in seconds.
     #[serde(skip)]
     pub bag_overflow: f64,
+    /// Levels gained before each late class unlock was turned in, summed
+    /// (`Params::unlock_delay_weight`).
+    #[serde(skip)]
+    pub unlock_delay: f64,
     /// Forced dungeons the route does not run.
     #[serde(default)]
     pub missing_dungeons: u32,

@@ -51,6 +51,7 @@ impl Planner<'_> {
             + self.params.zone_change_weight * f64::from(spent.zone_changes)
             + self.params.preferred_zone_weight * spent.outside_preferred
             + self.params.abandon_weight * f64::from(spent.abandoned)
+            + self.params.unlock_delay_weight * spent.unlock_delay
             + self.params.group_sync_weight * spent.desync
     }
 

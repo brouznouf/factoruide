@@ -424,6 +424,8 @@ pub struct Quest {
     pub carried: bool,
     /// Class quests: always planned, the optimizer cannot drop them.
     pub mandatory: bool,
+    /// A class unlock kept although it is below the guide's levels (`Params::unlock_delay_weight`).
+    pub late_unlock: bool,
     /// Required because its zone is forced (`Params::forced_zones`), or as a prerequisite of
     /// such a quest: `mandatory` too, reported apart from the class quests.
     pub zone_forced: bool,

@@ -167,6 +167,7 @@ impl Q {
             start_dungeon: None,
             held: None,
             carried: false,
+            late_unlock: false,
             mandatory: false,
             zone_forced: false,
             required: false,
