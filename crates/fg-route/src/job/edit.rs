@@ -406,6 +406,13 @@ impl Editor {
         Ok(Self { prepared })
     }
 
+    /// The editor of a guide computed from what `prepared` holds (a scenario built by hand, in the
+    /// tests).
+    #[cfg(any(test, feature = "testing"))]
+    pub fn from_prepared(prepared: Prepared) -> Self {
+        Self { prepared }
+    }
+
     /// The planner of the edited guides: it does only what the steps say (`Planner::explicit`).
     pub(super) fn planner(&self) -> Planner<'_> {
         let p = &self.prepared;

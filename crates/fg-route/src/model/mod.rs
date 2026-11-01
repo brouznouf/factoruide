@@ -21,6 +21,8 @@ mod required;
 mod rewards;
 mod selection;
 mod sources;
+#[cfg(any(test, feature = "testing"))]
+pub mod testing;
 mod types;
 
 pub(crate) use chains::{class_sort, required_by_name};

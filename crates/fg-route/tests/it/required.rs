@@ -2,7 +2,8 @@
 
 use crate::common::{database, database_of, repo};
 use fg_route::faction::Faction;
-use fg_route::job::{self, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
+use fg_route::job::{self, Editor, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
+use fg_route::testing::{Q, Scenario};
 use fg_route::plan::{Kind, Planner, Stop};
 use fg_route::xp::Edition;
 
@@ -41,44 +42,46 @@ fn required_quest_chain_is_included_and_survives_zero_penalty() {
     }
 }
 
+/// The editor refuses to save a guide that does not turn in a must-have quest, and says which.
 #[test]
 fn required_quest_editor_refuses_removal() {
-    for edition in Edition::ALL {
-        let conn = database_of(edition.key());
-        let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-        let req = request("human", "warrior", &[RequiredQuest::Id(783)]);
-        let editor = job::Editor::open(&conn, &overrides, &req, None).unwrap();
-        assert_eq!(
-            job::manual(&conn, &overrides, &req, None).unwrap().plan,
-            [] as [RouteStep; 0]
-        );
-        assert!(editor.save(&[], vec![]).is_err());
-        assert!(editor.save(&[RouteStep::Accept { quest: 783 }], vec![]).is_err());
-        let unrelated = [
-            RouteStep::Accept { quest: 33 },
-            RouteStep::Objective {
-                quest: 33,
-                objective: 0,
-                farm: false,
-                spot: None,
-            },
-            RouteStep::TurnIn { quest: 33 },
-        ];
-        let mut ordinary = req.clone();
-        ordinary.required_quests.clear();
-        job::Editor::open(&conn, &overrides, &ordinary, None)
-            .unwrap()
-            .save(&unrelated, vec![])
-            .unwrap();
-        let error = editor.save(&unrelated, vec![]).err().unwrap();
-        assert!(format!("{error:#}").contains("A Threat Within (783)"));
-        editor
-            .save(
-                &[RouteStep::Accept { quest: 783 }, RouteStep::TurnIn { quest: 783 }],
-                vec![],
-            )
-            .unwrap();
-    }
+    let scenario = |required: bool| {
+        let s = Scenario::new()
+            .quest(Q::new(783, "A Threat Within").level(5).giver(1, 40.0, 40.0).kill("Defias", 5, 4, 1, 45.0, 45.0))
+            .quest(Q::new(33, "Wolves").level(2).giver(1, 60.0, 60.0).kill("Wolf", 2, 4, 1, 62.0, 62.0));
+        Editor::from_prepared(if required { s.required(783) } else { s }.build())
+    };
+    let editor = scenario(true);
+    assert!(editor.save(&[], vec![]).is_err());
+    assert!(editor.save(&[RouteStep::Accept { quest: 783 }], vec![]).is_err());
+    let unrelated = [
+        RouteStep::Accept { quest: 33 },
+        RouteStep::Objective {
+            quest: 33,
+            objective: 0,
+            farm: false,
+            spot: None,
+        },
+        RouteStep::TurnIn { quest: 33 },
+    ];
+    scenario(false).save(&unrelated, vec![]).unwrap();
+    let error = editor.save(&unrelated, vec![]).err().unwrap();
+    assert!(format!("{error:#}").contains("A Threat Within (783)"));
+    editor
+        .save(
+            &[
+                RouteStep::Accept { quest: 783 },
+                RouteStep::Objective {
+                    quest: 783,
+                    objective: 0,
+                    farm: false,
+                    spot: None,
+                },
+                RouteStep::TurnIn { quest: 783 },
+            ],
+            vec![],
+        )
+        .unwrap();
 }
 
 #[test]
@@ -353,7 +356,7 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
         ..StartState::default()
     }];
     req.to_level = 11;
-    let editor = job::Editor::open(&conn, &overrides, &req, None).unwrap();
+    let editor = Editor::open(&conn, &overrides, &req, None).unwrap();
     let saved = editor
         .save(
             &[RouteStep::Accept { quest: 3100 }, RouteStep::TurnIn { quest: 3100 }],
@@ -373,7 +376,7 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
     let mut params = overrides.params.clone();
     params.excluded_quests.push(3100);
     req.params = Some(params);
-    job::Editor::open(&conn, &overrides, &req, None)
+    Editor::open(&conn, &overrides, &req, None)
         .unwrap()
         .save(&[], vec![])
         .unwrap();

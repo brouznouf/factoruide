@@ -446,6 +446,59 @@ impl World {
         Ok(world)
     }
 
+    /// A world of flat zones, built by hand: the zones given (AreaTable ID, name, continent, and
+    /// the corner of its square in world yards; a zone is 1000 yards on a side), no flight path,
+    /// passage or link, and terrain without any obstacle.
+    #[cfg(any(test, feature = "testing"))]
+    pub fn flat(zones: &[(i64, &str, i64, f64, f64)]) -> Self {
+        let rects = zones
+            .iter()
+            .map(|&(id, _, continent, x, y)| {
+                (
+                    id,
+                    ZoneRect {
+                        ui_map: id,
+                        continent,
+                        min_x: x,
+                        max_x: x + 1000.0,
+                        min_y: y,
+                        max_y: y + 1000.0,
+                    },
+                )
+            })
+            .collect();
+        Self {
+            zones: rects,
+            zone_names: zones.iter().map(|&(id, name, ..)| (id, name.to_owned())).collect(),
+            area_parents: HashMap::new(),
+            capitals: std::collections::HashSet::new(),
+            taxi_nodes: Vec::new(),
+            direct: Vec::new(),
+            direct_cost: Vec::new(),
+            taxi_paths: HashMap::new(),
+            links: Vec::new(),
+            link_quests: Vec::new(),
+            link_chains: vec![Vec::new()],
+            passes: Vec::new(),
+            pass_dist: Vec::new(),
+            pass_next: Vec::new(),
+            pass_shortcut: Vec::new(),
+            zone_levels: FxHashMap::default(),
+            zone_gap: 0,
+            band_levels: Vec::new(),
+            pass_closed: FxHashMap::default(),
+            zone_passes: FxHashMap::default(),
+            taxi_by_x: Vec::new(),
+            terrain: crate::terrain::Terrain::empty(),
+            landmarks: Vec::new(),
+            area_passes: FxHashMap::default(),
+            area_lifts: FxHashMap::default(),
+            walk_id: NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed),
+            stamp: None,
+            source: None,
+        }
+    }
+
     /// Zone (AreaTable ID) shown by a UiMap.
     /// The map (UiMap ID) of a zone.
     pub(crate) fn ui_map_of_zone(&self, zone: i64) -> Option<i64> {
