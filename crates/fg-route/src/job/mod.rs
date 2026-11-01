@@ -235,10 +235,15 @@ pub fn prepare(
     let world = load_world(conn, overrides, &profile, &params, progress)?;
     progress("Loading quests");
     progress(r#"@progress {"phase":"prepare","step":"quests"}"#);
-    let mut model = model::load(conn, &world, &profile, &params)?;
+    let members = req.members(params.edition.rules());
+    let starts: Vec<_> = if members.is_empty() {
+        req.start.iter().collect()
+    } else {
+        members.clone()
+    };
+    let mut model = model::load(conn, &world, &profile, &params, &starts)?;
     check_dungeon_levels(&model, &params, &profile)?;
     let mut start_notes = Vec::new();
-    let members = req.members(params.edition.rules());
     check_exclusive_choices(&model, &members)?;
     // A group is planned for the member with the least XP.
     let start = members.first().copied().or(req.start.as_ref());

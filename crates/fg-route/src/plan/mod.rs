@@ -317,8 +317,15 @@ impl<'a> Planner<'a> {
             landed: Landed::No,
             planned: Rc::new(Planned::default()),
             at: 0,
-            class_bonus: 0.0,
-            powers: 0,
+            class_bonus: self
+                .profile
+                .class_powers
+                .iter()
+                .enumerate()
+                .filter(|(k, _)| self.model.known_class_powers & (1 << k) != 0)
+                .map(|(_, (_, power))| Growth::class_power_levels(*power))
+                .sum(),
+            powers: self.model.known_class_powers,
             gear: crate::power::Gear::default(),
             bonus: 0.0,
             gear_bonus: 0.0,

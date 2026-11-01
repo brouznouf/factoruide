@@ -14,6 +14,7 @@ pub struct Ability {
     pub rank: Option<i64>,
     pub requires: u64,
     quests: Vec<(i64, i64)>,
+    on_accept: bool,
 }
 
 #[derive(Default)]
@@ -64,6 +65,22 @@ impl Abilities {
             for spell in spells {
                 let i = abilities.entry(conn, &trainer, spell)?;
                 abilities.entries[i].quests.push((quest, level));
+            }
+        }
+        // Quest teleports, such as Moonglade, are learned on acceptance.
+        for def in profile
+            .quest_teleports
+            .iter()
+            .filter(|d| d.class.eq_ignore_ascii_case(&profile.class_name))
+        {
+            let i = abilities.entry(conn, &trainer, def.spell)?;
+            abilities.entries[i].on_accept = true;
+            let mut stmt = conn.prepare("SELECT id,coalesce(min_level,1) FROM m_quest WHERE status='available' AND name=?1 AND (coalesce(races_mask,0)=0 OR races_mask & ?2 != 0) AND (coalesce(classes_mask,0)=0 OR classes_mask & ?3 != 0)")?;
+            for row in stmt.query_map(
+                rusqlite::params![def.quest, profile.race_bit(), profile.class_bit()],
+                |r| Ok((r.get(0)?, r.get(1)?)),
+            )? {
+                abilities.entries[i].quests.push(row?);
             }
         }
         // Quest spells and form-dependent ranks have their own learning state.
@@ -144,6 +161,7 @@ impl Abilities {
             rank: None,
             requires: 0,
             quests: vec![],
+            on_accept: false,
         });
         Ok(self.entries.len() - 1)
     }
@@ -161,6 +179,7 @@ impl Abilities {
                         || a.quests
                             .iter()
                             .any(|(q, _)| start.completed.contains(&crate::job::QuestId(*q)))
+                        || (a.on_accept && a.quests.iter().any(|(q, _)| start.log.iter().any(|l| l.id.0 == *q)))
                 })
                 .fold(0, |mask, (i, _)| mask | 1 << i);
         }
@@ -197,6 +216,27 @@ impl Abilities {
 
     pub fn quest(&self, quest: i64) -> u64 {
         self.by_quest.get(&quest).copied().unwrap_or(0)
+    }
+
+    pub(crate) fn accepted(&self, quest: i64) -> u64 {
+        let spells = self.quest(quest);
+        self.entries
+            .iter()
+            .enumerate()
+            .filter(|(_, a)| a.on_accept)
+            .fold(0, |mask, (i, _)| mask | (spells & (1 << i)))
+    }
+
+    pub(crate) fn reward_knowledge(&self, known: u64) -> impl Iterator<Item = (i64, bool, bool)> + '_ {
+        self.by_quest.iter().map(move |(&quest, &spells)| {
+            let learned = known & spells;
+            // A shared spell proves the unlock, but not which quest branch granted it.
+            let unique =
+                self.entries.iter().enumerate().any(|(i, a)| {
+                    learned & (1 << i) != 0 && !a.on_accept && a.quests.iter().all(|(id, _)| *id == quest)
+                });
+            (quest, learned != 0, unique)
+        })
     }
 
     /// Only trainer-learned spells belong in the addon's purchase list.

@@ -110,6 +110,7 @@ instant = true
 # in VMaNGOS): the bear form quests are done there. It lands next to Dendrite Starblaze.
 [[teleport]]
 name = "Teleport: Moonglade"
+spell = 18960
 class = "druid"
 quest = "Moonglade"
 to = { zone = 493, x = 56.26, y = 32.46 }

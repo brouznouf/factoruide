@@ -41,5 +41,5 @@ required = ["The Binding", "Summon Felsteed"] # demons, mount
 power = { "Vile Familiars" = 1.4, "The Stolen Tome" = 1.4, "Beginnings" = 1.4, "The Binding" = 1.2 }
 
 [druid]
-required = ["Body and Heart", "Aquatic Form"] # bear form, aquatic form
+required = ["Body and Heart", "Aquatic Form", "Moonglade"] # forms and their teleport access
 power = { "Body and Heart" = 1.1 }             # bear form

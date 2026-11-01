@@ -657,6 +657,7 @@ impl Scenario {
             .iter()
             .skip(1)
             .map(|m| Mate {
+                class_name: m.class.clone(),
                 name: m.name.clone(),
                 race_id: m.race,
                 class_id: class_id(&m.class),
@@ -692,8 +693,14 @@ impl Scenario {
                     .profile
                     .within_levels(q.level, q.min_level, self.params.max_quest_above)
         });
-        required::apply(&mut quests, &rows, &[], &self.profile, &self.params)?;
-        super::settle_quests(&mut quests, &dungeons, &self.params);
+        required::apply(&mut quests, &rows, &HashSet::new(), &[], &self.profile, &self.params)?;
+        super::settle_quests(
+            &mut quests,
+            &dungeons,
+            &self.params,
+            &HashSet::new(),
+            &self.profile.completed_quests,
+        );
         let mut dungeons = dungeons;
         super::dungeons::set_dungeon_levels(
             &mut dungeons,
@@ -737,7 +744,7 @@ impl Scenario {
             .map(|(i, &(name, level, at))| super::Teleport {
                 name: name.to_owned(),
                 level,
-                quests: Vec::new(),
+                ability: 0,
                 to: Q::at(at, 800_000 + i as i64, name, &world),
             })
             .collect();
@@ -885,6 +892,8 @@ pub fn bare(quests: Vec<Quest>, dungeons: Vec<Dungeon>, start: Loc, params: &Par
         }
     }
     Model {
+        known_class_powers: 0,
+        known_class_prerequisites: HashSet::new(),
         abilities: crate::abilities::Abilities::default(),
         quests,
         dungeons,

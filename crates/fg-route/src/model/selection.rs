@@ -17,6 +17,7 @@ impl QuestBuilder<'_> {
         // their XP goes to those it is for).
         profile.members_of(r.races, r.classes) != 0
             && (!profile.required_quests.is_empty()
+                || self.sources.class_quest_ids.contains(&r.id)
                 || profile.within_levels(level, min_level, self.params.max_quest_above))
     }
 
