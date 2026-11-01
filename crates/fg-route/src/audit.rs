@@ -1602,6 +1602,7 @@ mod tests {
                 kills: 100.0,
                 mob_level: 30,
                 content: 0,
+                needed: false,
             });
         };
         dungeon(16544, "City of Dalaran");

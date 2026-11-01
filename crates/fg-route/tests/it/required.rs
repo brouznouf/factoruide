@@ -424,3 +424,31 @@ fn the_warlocks_gold_bloodrobe_chain_can_be_required() {
     let quest = p.model.quests.iter().find(|q| q.id == 4784).expect("planned");
     assert!(quest.mandatory);
 }
+
+/// A must-have quest whose items drop inside a dungeon (Trolls of a Feather, GitHub #73) runs the
+/// dungeon, which was not planned unless the player forced it too.
+#[test]
+fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
+    let conn = database_of("forever");
+    let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    overrides.params = overrides.params.with_overrides(&["effort=0".to_owned()]).unwrap();
+    let mut req = request("orc", "warlock", &[RequiredQuest::Id(8422)]);
+    req.from_level = 40;
+    req.to_level = 58;
+    let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
+    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422)));
+}
+
+/// A must-have quest whose child is a repeatable quest (Need for a Cure and Finding the
+/// Antidote, GitHub #74) is planned: the child's items and hand-in are the parent's objectives.
+#[test]
+fn a_required_quest_with_a_repeatable_child_is_planned() {
+    let conn = database_of("forever");
+    let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    overrides.params = overrides.params.with_overrides(&["effort=0".to_owned()]).unwrap();
+    let mut req = request("orc", "warrior", &[RequiredQuest::Id(812)]);
+    req.from_level = 8;
+    req.to_level = 10;
+    let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
+    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(812)));
+}

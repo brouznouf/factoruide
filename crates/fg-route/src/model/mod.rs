@@ -162,10 +162,16 @@ pub fn load(
         window,
         params.edition.rules().max_level,
     );
+    // A dungeon holding an objective of a must-have quest is run like a forced one.
+    for q in quests.iter().filter(|q| q.required) {
+        for d in q.objectives.iter().filter_map(|o| o.dungeon) {
+            sources.dungeons[d].needed = true;
+        }
+    }
     // A forced dungeon is run whenever the route can fit it, past its levels too: they only
     // tell when it is best to go.
     for d in &mut sources.dungeons {
-        if params.forced_dungeons.contains(&d.area) || params.forced_dungeon_quests.contains(&d.area) {
+        if d.needed || params.forced_dungeons.contains(&d.area) || params.forced_dungeon_quests.contains(&d.area) {
             d.max_level = d.max_level.max(profile.to_level);
         }
     }

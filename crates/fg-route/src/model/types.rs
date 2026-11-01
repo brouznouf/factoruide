@@ -684,6 +684,8 @@ pub struct Dungeon {
     /// Expansion of its content, for kill XP (that of its instance map: the Caverns of Time
     /// dungeons are Outland content behind a door in Tanaris).
     pub content: usize,
+    /// A must-have quest has an objective inside: the dungeon is run like a forced one.
+    pub needed: bool,
 }
 
 /// A profession the character levels: the skill it should have at each level.
