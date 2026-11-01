@@ -70,6 +70,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Addon
 
 - Group guides: quest XP counts each player's own reward, including its Sleeping Bag bonus.
+- WoW Forever: a guide made with the food or Sleeping Bag XP bonus warns when that buff is missing (out of combat, at most every ten minutes).
 - The addon's separators are a bullet (•), which every client font has: the dot they used was a missing glyph in Russian (GitHub #78).
 - Death skip steps: done once back at the spirit healer.
 - Group guides: each player follows its own profession curve.

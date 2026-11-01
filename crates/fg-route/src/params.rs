@@ -404,6 +404,18 @@ impl Params {
     pub fn builder(self) -> ParamsBuilder {
         ParamsBuilder(self)
     }
+
+    /// The XP buffs the guide counts on being active, for the addon to warn about (WoW Forever).
+    pub fn xp_buffs(&self) -> Vec<String> {
+        if self.edition != crate::xp::Edition::Forever {
+            return Vec::new();
+        }
+        [(self.food_xp, "food"), (self.sleeping_bag, "bag")]
+            .into_iter()
+            .filter(|&(on, _)| on)
+            .map(|(_, key)| key.to_owned())
+            .collect()
+    }
 }
 
 impl ParamsBuilder {

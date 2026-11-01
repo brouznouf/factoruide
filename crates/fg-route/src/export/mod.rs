@@ -312,6 +312,7 @@ fn route_of(
             }
             out
         },
+        buffs: planner.params.xp_buffs(),
         steps,
     }
 }

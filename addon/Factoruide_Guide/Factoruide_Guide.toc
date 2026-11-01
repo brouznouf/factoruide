@@ -49,6 +49,7 @@ Merchant.lua
 Gear.lua
 Talents.lua
 Safety.lua
+Buffs.lua
 Party.lua
 Timing.lua
 XpPlan.lua

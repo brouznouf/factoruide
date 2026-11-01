@@ -3198,6 +3198,53 @@ UIErrorsFrame, UnitHealth, UnitHealthMax, UnitIsDeadOrGhost = nil, nil, nil, nil
 StaticPopup_Hide = nil
 print("whole addon hide and show ok")
 
+-- XP buffs the guide counts on (WoW Forever): a warning when one is missing, not in combat, not
+-- twice within ten minutes, nothing when the game hides the aura.
+do
+    local told, auras, fighting, hidden = {}, {}, false, {}
+    UIErrorsFrame = { AddMessage = function(_, text) table.insert(told, text) end }
+    UnitIsDeadOrGhost = function() return false end
+    InCombatLockdown = function() return fighting end
+    C_UnitAuras = {
+        GetPlayerAuraBySpellID = function(id) return hidden[id] or (auras[id] and { spellId = id }) or nil end,
+    }
+    local route = FG.Guide:Route()
+    route.buffs = { "food", "bag" }
+    local savedSecret = issecretvalue
+    local savedTime = GetTime
+    local clock = 5000
+    GetTime = function() return clock end
+    fire("PLAYER_REGEN_ENABLED")
+    assert(#told == 2, "both buffs missing: " .. #told)
+    fire("UNIT_AURA", "player")
+    assert(#told == 2, "not told twice in a row")
+    clock = clock + 601
+    auras[1243969] = true
+    fire("UNIT_AURA", "player")
+    assert(#told == 3 and told[3]:find("Sleeping Bag"), "only the bag is missing, told again later")
+    clock = clock + 601
+    auras[429959] = true
+    fire("UNIT_AURA", "player")
+    assert(#told == 3, "both active: no warning")
+    clock = clock + 601
+    auras[429959] = nil
+    fighting = true
+    fire("UNIT_AURA", "player")
+    assert(#told == 3, "no warning in combat")
+    fighting = false
+    hidden[429959] = { secret = true }
+    issecretvalue = function(v) return type(v) == "table" and v.secret == true end
+    fire("UNIT_AURA", "player")
+    assert(#told == 3, "an aura the game hides is not reported missing")
+    issecretvalue, hidden[429959] = savedSecret, nil
+    route.buffs = nil
+    fire("UNIT_AURA", "player")
+    assert(#told == 3, "a guide without buffs never warns")
+    GetTime, C_UnitAuras, UIErrorsFrame, UnitIsDeadOrGhost = savedTime, nil, nil, nil
+    InCombatLockdown = function() return false end
+    print("buff warnings ok")
+end
+
 -- Classic Era (1.15) has no C_QuestLog log functions: the quest log is read through the older
 -- globals, and the guide still draws.
 local modern = {}

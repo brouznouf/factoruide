@@ -896,6 +896,7 @@ mod tests {
             players: Vec::new(),
             sync_max: None,
             class_spells: Vec::new(),
+            buffs: Vec::new(),
             steps,
         }
     }

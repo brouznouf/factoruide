@@ -1758,6 +1758,25 @@ fn a_dungeon_is_not_run_past_its_levels() {
     assert!(planner(&p).simulate(&[run], None).is_some());
 }
 
+/// A guide made with an XP buff setting tells the addon which buffs it counts on (it warns when one
+/// is missing); without them it says nothing, and only WoW Forever has them.
+#[test]
+fn a_guide_tells_the_xp_buffs_it_counts_on() {
+    use fg_route::xp::Edition;
+    let buffs = |edition: Edition, food: bool, bag: bool| {
+        let p = leveling(5)
+            .params(move |p| (p.edition, p.food_xp, p.sleeping_bag) = (edition, food, bag))
+            .build();
+        let planner = planner(&p);
+        let route = planner.construct(|_| {});
+        fg_route::export::build(&planner, &p.profile, &route).buffs
+    };
+    assert_eq!(buffs(Edition::Forever, false, false), Vec::<String>::new());
+    assert_eq!(buffs(Edition::Forever, true, false), ["food"]);
+    assert_eq!(buffs(Edition::Forever, true, true), ["food", "bag"]);
+    assert_eq!(buffs(Edition::Classic, true, true), Vec::<String>::new());
+}
+
 /// A route that leaves out a forced dungeon is not valid: the player asked for it.
 #[test]
 fn a_route_without_a_forced_dungeon_is_not_valid() {

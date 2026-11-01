@@ -72,9 +72,17 @@ pub fn to_lua(routes: &[Route]) -> String {
                     .join(", ")
             )
         };
+        let buffs = if r.buffs.is_empty() {
+            String::new()
+        } else {
+            format!(
+                " buffs = {{ {} }},",
+                r.buffs.iter().map(|b| lua_str(b)).collect::<Vec<_>>().join(", ")
+            )
+        };
         let _ = writeln!(
             out,
-            "FG.Routes[{}] = {{ race = {}, class = {}, faction = {}, locale = {}, fromLevel = {}, toLevel = {}, time = {}, levels = {{ {} }}, professions = {{ {} }}, reputations = {{ {} }}, spells = {{ {} }}, checkpoints = {{ {} }},{players} steps = {{",
+            "FG.Routes[{}] = {{ race = {}, class = {}, faction = {}, locale = {}, fromLevel = {}, toLevel = {}, time = {}, levels = {{ {} }}, professions = {{ {} }}, reputations = {{ {} }}, spells = {{ {} }}, checkpoints = {{ {} }},{players}{buffs} steps = {{",
             lua_str(&r.name),
             r.race_id,
             r.class_id,

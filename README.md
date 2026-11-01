@@ -45,7 +45,8 @@ zones to do, the level to reach before moving on from each, and where the XP is.
   a required quest missing.
 - **Your XP buffs** (Forever): food adds 5% kill XP. Sleeping Bag adds 3% kill and quest XP
   after its quest chain is completed; enabling it includes the chain. Both buffs stay active,
-  with no upkeep time. Rested XP remains finite, including when pre-grinding or catching up
+  with no upkeep time; the addon warns when a buff the guide counts on is missing. Both are off by
+  default. Rested XP remains finite, including when pre-grinding or catching up
   with a group in any supported edition.
 - **Your class spells**: quest rewards and trainer visits determine which spells are known.
   Form attacks need both the form and its learned attack rank. Imported characters use their

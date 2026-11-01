@@ -410,6 +410,10 @@ pub struct Route {
     /// The spells worth learning of the group's other classes (as `spells`): class ID, spells.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub class_spells: Vec<(i64, Vec<i64>)>,
+    /// The XP buffs the guide counts on being active (`food`, `bag`: WoW Forever): the addon warns
+    /// when one is missing.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub buffs: Vec<String>,
     pub steps: Vec<Step>,
 }
 

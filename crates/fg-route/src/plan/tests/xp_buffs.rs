@@ -308,6 +308,7 @@ fn group_exports_each_recipients_quest_reward() {
             ..MateStart::default()
         }];
         p.profile.mates = vec![crate::model::Mate {
+            class_name: p.profile.class_name.clone(),
             name: "Mate".into(),
             race_id: p.profile.race_id,
             class_id: p.profile.class_id,
