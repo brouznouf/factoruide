@@ -8,6 +8,7 @@ license.workspace = true
 
 [dependencies]
 anyhow.workspace = true
+fg-contrib = { path = "../fg-contrib", default-features = false }
 fg-library = { path = "../fg-library" }
 fg-route = { path = "../fg-route" }
 rusqlite = { version = "0.40", features = ["bundled"] }
