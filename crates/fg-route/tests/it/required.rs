@@ -207,13 +207,21 @@ fn required_quest_completed_by_one_group_member_is_still_required_by_the_other()
         .unwrap();
 }
 
-/// A guide that cannot reach a must-have quest is refused, naming it (a level 32 quest, a guide to 2).
+/// A guide that cannot finish a must-have quest is refused, naming it (a timed quest with a second
+/// to turn it in).
 #[test]
 fn required_generation_refuses_an_incomplete_chain() {
     let p = Scenario::new()
-        .levels(1, 2)
-        .quest(Q::new(79975, "Eagle's Fist").level(30).min_level(14).giver(1, 40.0, 40.0).kill("Cat", 30, 4, 1, 45.0, 45.0))
-        .quest(Q::new(79976, "This Must Be The Place").level(32).min_level(14).after(&[79975]).giver(1, 41.0, 41.0).kill("Cat", 32, 4, 1, 46.0, 46.0))
+        .levels(1, 5)
+        .quest(Q::new(79975, "Eagle's Fist").level(1).giver(1, 40.0, 40.0).kill("Cat", 1, 4, 1, 45.0, 45.0))
+        .quest(
+            Q::new(79976, "This Must Be The Place")
+                .level(2)
+                .after(&[79975])
+                .timed(1.0)
+                .giver(1, 41.0, 41.0)
+                .kill("Cat", 2, 4, 1, 46.0, 46.0),
+        )
         .required(79976)
         .build();
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
