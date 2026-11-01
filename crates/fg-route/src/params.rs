@@ -10,6 +10,8 @@ use serde::{Deserialize, Serialize};
 pub struct Params {
     /// Running speed in yards/second.
     pub run_speed: f64,
+    /// Assume Feral Swiftness and Improved Ghost Wolf are learned; forms still need unlocking.
+    pub assume_movement_talents: bool,
     /// Level at which the character gets a mount, and its speed bonus.
     pub mount_level: i64,
     pub mount_bonus: f64,
@@ -445,6 +447,7 @@ impl Default for Params {
     fn default() -> Self {
         Self {
             run_speed: 7.0,
+            assume_movement_talents: true,
             mount_level: 40,
             mount_bonus: 0.6,
             flight_speed: 30.0,

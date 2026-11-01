@@ -26,6 +26,7 @@ pub struct Profile {
     pub class_powers: Vec<(String, f64)>,
     /// Class trainer spells that count for power (see overrides/spells.toml).
     pub spell_weights: Vec<(String, crate::power::SpellWeight)>,
+    pub abilities: Vec<crate::abilities::MovementDef>,
     /// Dungeon settings (see overrides/dungeons.toml).
     pub dungeons: Vec<DungeonDef>,
     /// The class's teleports that a quest teaches (see overrides/travel.toml).

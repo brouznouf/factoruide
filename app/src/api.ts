@@ -48,6 +48,7 @@ export interface Params {
   /** The zone the route begins in (AreaTable zone), chosen on the starts' preview; 0 or unset: the planner's choice. */
   start_zone?: number;
   run_speed: number;
+  assume_movement_talents: boolean;
   mount_level: number;
   mount_bonus: number;
   flight_speed: number;

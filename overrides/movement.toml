@@ -1,0 +1,40 @@
+# Solo movement bonuses on known outdoor paths without swimming. Activation is paid per walking leg.
+# assume_movement_talents enables Feral Swiftness and Improved Ghost Wolf (default on).
+# Sources, checked 2026-10-24:
+# https://news.blizzard.com/en-us/article/24301515/world-of-warcraft-forever-class-deep-dives-hunter-and-druid
+# https://news.blizzard.com/en-gb/article/24302097/world-of-warcraft-forever-class-deep-dives-mage-and-shaman
+# https://www.wowhead.com/forever/spell=783/travel-form
+# https://www.wowhead.com/classic/spell=2645/ghost-wolf
+# https://www.wowhead.com/tbc/spell=2645/ghost-wolf (two-second base cast)
+# https://www.wowhead.com/classic/spell=5118/aspect-of-the-cheetah
+
+[[ability]]
+class = "druid"
+name = "Travel Form"
+spells = [783]
+bonus = 0.4
+activation = 0.0
+
+[[ability]]
+class = "shaman"
+name = "Ghost Wolf"
+spells = [2645]
+bonus = 0.4
+activation = 3.0
+talent = "improved_ghost_wolf"
+
+[[ability]]
+class = "hunter"
+name = "Aspect of the Cheetah"
+spells = [5118]
+bonus = 0.3
+activation = 0.0
+
+# Cat speed requires Feral Swiftness and a learned Cat Form.
+[[ability]]
+class = "druid"
+name = "Cat Form"
+spells = [768]
+bonus = 0.0
+activation = 0.0
+talent = "feral_swiftness"

@@ -5,6 +5,8 @@
 type Entry = Partial<Record<"en" | "de" | "es" | "esMX" | "pt" | "ru" | "ko" | "zhCN" | "zhTW", string>>;
 
 export const CATALOG: Record<string, Entry> = {
+  "Supposer les talents de déplacement appris": { en: "Assume movement talents are learned" },
+  "Rapidité farouche (félin) et Loup fantôme amélioré, après déblocage des formes. Aucun talent requis pour Aspect du guépard. Bonus limité aux trajets entièrement à découvert sans nage ; la plupart des trajets gardent l'estimation normale.": { en: "Feral Swiftness (Cat) and Improved Ghost Wolf, after unlocking the forms. Cheetah needs no talent. Bonuses apply only to walks entirely outdoors without swimming; most walks keep the usual estimate." },
   "Joueur {n}": { en: "Player {n}", de: "Spieler {n}", es: "Jugador {n}", pt: "Jogador {n}", ru: "Игрок {n}", ko: "플레이어 {n}", zhCN: "玩家 {n}", zhTW: "玩家 {n}" },
   "Nom du personnage en jeu (facultatif)": { en: "Character's name in game (optional)", de: "Name des Charakters im Spiel (optional)", es: "Nombre del personaje en el juego (opcional)", pt: "Nome do personagem no jogo (opcional)", ru: "Имя персонажа в игре (необязательно)", ko: "게임 속 캐릭터 이름 (선택)", zhCN: "游戏中的角色名（可选）", zhTW: "遊戲中的角色名稱（選填）" },
   "ex. Brouz-Realm": { en: "e.g. Brouz-Realm", de: "z. B. Brouz-Realm", es: "p. ej. Brouz-Realm", pt: "ex. Brouz-Realm", ru: "напр. Brouz-Realm", ko: "예: Brouz-Realm", zhCN: "例如 Brouz-Realm", zhTW: "例如 Brouz-Realm" },

@@ -177,6 +177,7 @@ pub struct InnInfo {
 /// What the replay keeps of the character after each step.
 struct Snapshot {
     pos: Pos,
+    abilities: u64,
     time: f64,
     level: i64,
     spent: Breakdown,
@@ -393,6 +394,7 @@ impl<'r> Replay<'r> {
                 .collect();
             snaps.push(Snapshot {
                 pos: s.pos,
+                abilities: s.abilities,
                 time: s.time,
                 level: s.level,
                 spent: s.spent,
@@ -651,7 +653,6 @@ impl<'r> Replay<'r> {
     /// The steps the replay does not find: a straight walk from where the character is to
     /// where they are done, at the start of their window.
     fn straight_walks(&self, saved: &[Step], of_saved: &[Option<usize>], windows: &[(f64, f64)], legs: &mut Vec<Leg>) {
-        let speed = |level: i64| self.planner.params.speed(level) / self.planner.params.detour;
         let mut found = legs.clone();
         found.sort_by(|a, b| a.start.total_cmp(&b.start));
         for i in (0..saved.len()).filter(|&i| of_saved[i].is_none()) {
@@ -667,7 +668,15 @@ impl<'r> Replay<'r> {
             if !apart(&a, &b) || a.continent != b.continent {
                 continue;
             }
-            let length = (a.dist(&b) / speed(saved[i].level)).min(end - start);
+            let abilities = self
+                .snaps
+                .iter()
+                .rev()
+                .find(|s| s.time <= start + 1e-6)
+                .map_or(self.planner.model.initial.abilities, |s| s.abilities);
+            let trips = self.planner.trips().with_movement(abilities);
+            let distance = a.dist(&b) * self.planner.params.detour;
+            let length = trips.walk_time(&a, &b, distance, saved[i].level, 0).min(end - start);
             let leg = Leg {
                 mode: self.walk_mode(saved[i].level),
                 start,

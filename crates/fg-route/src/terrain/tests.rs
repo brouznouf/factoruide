@@ -123,7 +123,7 @@ fn far_tier(fall: i32) -> Option<usize> {
 }
 
 /// Tile (32, 32) of continent 1, a floor at height 0 on each cell but where `steep` (none).
-fn flat(steep: impl Fn(usize, usize) -> bool) -> Terrain {
+pub(super) fn flat(steep: impl Fn(usize, usize) -> bool) -> Terrain {
     floors_terrain(&[(1, 32, 32)], |_, r, c| {
         let (r, c) = ((r - 32 * 64) as usize, (c - 32 * 64) as usize);
         if steep(r, c) { Vec::new() } else { vec![(0, 0)] }
@@ -687,4 +687,23 @@ fn farther_drops_follow_the_tier() {
         third > hurt && third < 0.7 * second,
         "jumped with the third: {third} vs {hurt} and {second}"
     );
+}
+
+/// A wall bends the path into several segments, then a wet strip crosses it between dry ends.
+pub(super) fn movement_ground(kind: TestGround) -> Terrain {
+    match kind {
+        TestGround::Dry => return flat(|_, _| false),
+        TestGround::Shallow => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, WET | 1 << 3)]),
+        TestGround::Covered => return floors_terrain(&[(1, 32, 32)], |_, _, _| vec![(0, 0), (20, 0)]),
+        TestGround::Unknown => return Terrain::default(),
+        TestGround::Mixed => {}
+    }
+    floors_terrain(&[(1, 32, 32)], |_, r, c| {
+        let (r, c) = (r - 32 * 64, c - 32 * 64);
+        if (20..24).contains(&r) && c < 18 {
+            vec![]
+        } else {
+            vec![(0, if (32..36).contains(&r) { WET | 3 << 3 } else { 0 })]
+        }
+    })
 }

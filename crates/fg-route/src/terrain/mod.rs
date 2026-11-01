@@ -1524,6 +1524,46 @@ impl Terrain {
         (Self::cell(p), p.z)
     }
 
+    /// Whether the whole segment stays on known outdoor terrain without swimming.
+    pub(crate) fn exposed_ground_line(&self, a: &Pos, b: &Pos) -> bool {
+        let Some(grid) = self.grids.get(&a.continent) else {
+            return false;
+        };
+        if a.continent != b.continent {
+            return false;
+        }
+        let samples = (a.dist(b) / (CELL / 2.0)).ceil() as usize;
+        for i in 0..=samples.max(1) {
+            let t = i as f64 / samples.max(1) as f64;
+            let p = Pos {
+                x: a.x + (b.x - a.x) * t,
+                y: a.y + (b.y - a.y) * t,
+                z: match (a.z, b.z) {
+                    (Some(a), Some(b)) => Some((f64::from(a) + (f64::from(b) - f64::from(a)) * t) as i16),
+                    _ => None,
+                },
+                ..*a
+            };
+            let Some(n) = self.snapped(grid, a.continent, Self::spot(&p)) else {
+                return false;
+            };
+            if n.cell() != Self::cell(&p) {
+                return false;
+            }
+            let Some((tile, local)) = grid.locate(n) else {
+                return false;
+            };
+            let Some(nodes) = grid.nodes(tile) else { return false };
+            if nodes.flags[local] & (NO_GO | SWIM) != 0
+                || nodes.kind[local] & (SURFACE | layers::UNDER | layers::MODEL) != SURFACE
+                || n.f() + 1 != grid.floors(n.r(), n.c())
+            {
+                return false;
+            }
+        }
+        true
+    }
+
     /// `Grid::snap_at` of a place of continent `map`, remembered in the thread.
     fn snapped(&self, grid: &Grid, map: i64, ((r, c), z): Spot) -> Option<Node> {
         // Most places: a single floor, in a large area (whatever their height: the floors keep
@@ -2248,3 +2288,18 @@ impl Terrain {
 
 #[cfg(test)]
 mod tests;
+
+#[cfg(test)]
+#[derive(Clone, Copy)]
+pub(crate) enum TestGround {
+    Dry,
+    Shallow,
+    Mixed,
+    Covered,
+    Unknown,
+}
+
+#[cfg(test)]
+pub(crate) fn movement_test_ground(kind: TestGround) -> Terrain {
+    tests::movement_ground(kind)
+}

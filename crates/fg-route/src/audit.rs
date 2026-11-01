@@ -508,7 +508,10 @@ const GUARD_GAP: i64 = 10;
 fn guarded_givers(world: &World, model: &Model, hostile: &[Hostile]) -> Vec<Finding> {
     let mut findings = Vec::new();
     for q in &model.quests {
-        let places = [("gives", &q.start_guard, &q.starts), ("takes back", &q.end_guard, &q.ends)];
+        let places = [
+            ("gives", &q.start_guard, &q.starts),
+            ("takes back", &q.end_guard, &q.ends),
+        ];
         for (role, guard, locs) in places {
             if guard.level < q.level.max(q.min_level) + GUARD_GAP {
                 continue;
@@ -1471,18 +1474,36 @@ mod tests {
         let mut p = quests_at_start(1);
         let at = p.model.quests[0].starts[0].pos;
         let level = p.model.quests[0].level.max(p.model.quests[0].min_level);
-        let guard = |level| Guard { level, count: 2, elite: true };
+        let guard = |level| Guard {
+            level,
+            count: 2,
+            elite: true,
+        };
         let mobs = |n: usize, level: u8| -> Vec<Hostile> {
             (0..n)
-                .map(|_| Hostile { id: 16383, name: "Flameshocker".into(), level, elite: true, pos: at })
+                .map(|_| Hostile {
+                    id: 16383,
+                    name: "Flameshocker".into(),
+                    level,
+                    elite: true,
+                    pos: at,
+                })
                 .collect()
         };
-        let found = |p: &crate::job::Prepared, mobs: &[Hostile]| guarded_givers(&p.world, &p.model, mobs).len();
+        let found = |p: &job::Prepared, mobs: &[Hostile]| guarded_givers(&p.world, &p.model, mobs).len();
         p.model.quests[0].start_guard = guard(level + GUARD_GAP);
         assert_eq!(found(&p, &mobs(2, (level + GUARD_GAP) as u8)), 1);
-        assert_eq!(found(&p, &mobs(1, (level + GUARD_GAP) as u8)), 0, "one creature is walked around");
+        assert_eq!(
+            found(&p, &mobs(1, (level + GUARD_GAP) as u8)),
+            0,
+            "one creature is walked around"
+        );
         p.model.quests[0].start_guard = guard(level + GUARD_GAP - 1);
-        assert_eq!(found(&p, &mobs(2, (level + GUARD_GAP - 1) as u8)), 0, "not far enough above");
+        assert_eq!(
+            found(&p, &mobs(2, (level + GUARD_GAP - 1) as u8)),
+            0,
+            "not far enough above"
+        );
     }
 
     /// Secure the Mountain's case: a quest left out because an objective has no place, needed

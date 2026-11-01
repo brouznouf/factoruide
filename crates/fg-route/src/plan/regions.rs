@@ -219,7 +219,7 @@ impl Planner<'_> {
         // Shared paths in a hub: standalone costs overestimate the time.
         let mut time: f64 = doable
             .iter()
-            .map(|&i| self.worth().quest_cost(i, s.level, s.bonus))
+            .map(|&i| self.worth().quest_cost(i, s.level, s.bonus, s.abilities))
             .sum::<f64>()
             * 0.6;
         // Carried quests that can progress here are almost free.
@@ -456,7 +456,7 @@ impl Planner<'_> {
                     q.min_level,
                     self.worth().quest_value(i as u32, s.level),
                     self.model.unlocks[i],
-                    self.worth().quest_cost(i as u32, s.level, s.bonus),
+                    self.worth().quest_cost(i as u32, s.level, s.bonus, s.abilities),
                     starts
                 );
             }
@@ -493,7 +493,8 @@ impl Planner<'_> {
                     root.min_level,
                     self.worth().quest_value(j as u32, root.level),
                     self.model.unlocks[j],
-                    self.worth().quest_cost(j as u32, root.level, 0.0)
+                    self.worth()
+                        .quest_cost(j as u32, root.level, 0.0, self.model.initial.abilities)
                 );
             }
         }

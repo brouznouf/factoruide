@@ -1,0 +1,9 @@
+# Trainer levels missing from the bundled TBC spell catalog; native records take precedence.
+# CMaNGOS npc_trainer_template.reqlevel:
+# https://github.com/cmangos/tbc-db/tree/da00b332f22b22441507358126e82e818131ce15
+# Release asset 674764355, SHA-256 70b373add4ab94b75abfa3485ea2435604734c04607280b9110b0d23bfe59d9a.
+[training]
+"Cat Form" = 20
+"Travel Form" = 30
+"Ghost Wolf" = 20
+"Aspect of the Cheetah" = 20

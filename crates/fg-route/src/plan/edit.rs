@@ -313,7 +313,7 @@ impl Planner<'_> {
             && stop.kind == Kind::LearnFlight
             && s.landed == Landed::No
             && s.pos.dist(&self.world.taxi_nodes[i].pos) <= self.params.flight_learn_radius)
-            .then(|| 2.0 * self.trips().walk(&s.pos, &self.world.taxi_nodes[i].pos, s.level) + 5.0)
+            .then(|| 2.0 * self.trips().at(s).walk(&s.pos, &self.world.taxi_nodes[i].pos, s.level) + 5.0)
             .filter(|d| d.is_finite());
         if let Some(detour) = detour {
             s.time += detour;
@@ -385,7 +385,7 @@ impl Planner<'_> {
         // As a trip taking the flight by itself: the walk to the flight master and the flight
         // count as flying, the walk on to the next stop ends it (`State::landed`).
         let (start, end) = (nodes[from].pos, nodes[to].pos);
-        let walk = self.trips().walk(&s.pos, &start, s.level);
+        let walk = self.trips().at(s).walk(&s.pos, &start, s.level);
         s.time += walk;
         s.spent.flights += walk;
         let seconds = time + self.params.flight_overhead;
@@ -408,7 +408,7 @@ impl Planner<'_> {
         if !ride.is_finite() {
             return Outcome::Invalid("no such crossing");
         }
-        let walk = self.trips().walk(&s.pos, &links[first].from, s.level);
+        let walk = self.trips().at(s).walk(&s.pos, &links[first].from, s.level);
         if !walk.is_finite() {
             return Outcome::Invalid("unreachable");
         }
