@@ -158,14 +158,6 @@ pub(super) fn apply(
         q.priority_deadline = deadlines.get(&q.id).copied();
         if let Some(request) = profile.required_quests.iter().find(|r| r.id == q.id) {
             q.completion_window = request.window;
-            anyhow::ensure!(
-                profile.completed_quests.contains(&q.id)
-                    || request.window.max_level.is_none_or(|max| q.min_level <= max),
-                "required quest {} ({}): needs level {}, above the requested completion window",
-                q.name,
-                q.id,
-                q.min_level
-            );
         }
     }
     // The ordinary window uses the source quest levels, before mob/item modeling raises a

@@ -821,8 +821,13 @@ fn timed_quest_taken_once_strong_enough_for_its_objectives() {
     p.model.quests[0].time_limit = Some(600.0);
     let (accept, objective) = gates(&p);
     assert_eq!(accept, objective, "timed: taken at the mob's level");
+    p.model.quests[0].required = true;
+    p.model.quests[0].completion_window.min_level = Some(18);
+    assert_eq!(gates(&p).0, 18, "wait for the turn-in window before starting the clock");
     let mut trace = Vec::new();
-    planner(&p).simulate(&route, Some(&mut trace)).expect("a valid route");
+    let plan = planner(&p);
+    let result = plan.simulate(&route, Some(&mut trace));
+    assert!(result.is_some(), "a valid route: {:?}", plan.diagnose(&route));
     let at = |kind: Kind| {
         trace.iter().find_map(|t| match t.event {
             super::state::Event::Stop { stop, .. } if stop.kind == kind => Some(t.level),

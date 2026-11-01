@@ -66,25 +66,6 @@ pub(super) fn resolve(
                 eligible.iter().map(|q| q.0.to_string()).collect::<Vec<_>>().join(", ")
             ),
         };
-        if let Some(max) = window.max_level {
-            let members = request.members(params.edition.rules());
-            if members.is_empty() {
-                anyhow::ensure!(
-                    profile.completed_quests.contains(&selected) || profile.from_level <= max,
-                    "required quest {label:?}: character is already above completion level {max}"
-                );
-            } else {
-                let (_, _, races, classes) = matches.iter().find(|q| q.0 == selected).unwrap();
-                let eligible = profile.members_of(Some(*races), Some(*classes));
-                for (_, m) in members.iter().enumerate().filter(|(k, _)| eligible & (1 << k) != 0) {
-                    anyhow::ensure!(
-                        m.completed.iter().any(|id| id.0 == selected) || m.level <= max,
-                        "required quest {label:?}: {} is already above completion level {max}",
-                        m.name
-                    );
-                }
-            }
-        }
         if let Some(previous) = out.iter_mut().find(|q| q.id == selected) {
             previous.window = CompletionWindow {
                 min_level: previous.window.min_level.into_iter().chain(window.min_level).max(),
@@ -190,4 +171,44 @@ pub fn quest_choices(
         })
     })?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
+/// Starting deadlines use the same participation and completion masks as the simulation.
+pub(super) fn check_start(
+    model: &crate::model::Model,
+    profile: &Profile,
+    members: &[&super::StartState],
+) -> Result<()> {
+    for (i, q) in model.quests.iter().enumerate() {
+        let Some(max) = q.completion_window.max_level else {
+            continue;
+        };
+        anyhow::ensure!(
+            profile.completed_quests.contains(&q.id) || model.initial.accepted.contains(&i) || q.min_level <= max,
+            "required quest {} ({}): needs level {}, above the requested completion window",
+            q.name,
+            q.id,
+            q.min_level
+        );
+        if members.is_empty() {
+            anyhow::ensure!(
+                profile.completed_quests.contains(&q.id) || profile.from_level <= max,
+                "required quest {} ({}): character is already above completion level {max}",
+                q.name,
+                q.id
+            );
+        } else {
+            let need = model.initial.need(i);
+            for (_, member) in members.iter().enumerate().filter(|(k, _)| need & (1 << k) != 0) {
+                anyhow::ensure!(
+                    member.level <= max,
+                    "required quest {} ({}): {} is already above completion level {max}",
+                    q.name,
+                    q.id,
+                    member.name
+                );
+            }
+        }
+    }
+    Ok(())
 }

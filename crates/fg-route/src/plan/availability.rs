@@ -137,6 +137,7 @@ impl Availability<'_> {
     pub(crate) fn gray_dead_end(&self, s: &State, q: &Quest, i: u32) -> bool {
         let gray = xp::Rules::gray_level(s.level);
         !q.mandatory
+            && !q.required
             && q.skill.is_none()
             && !self.missing_reputation_of(s, q)
             && !self.replaying

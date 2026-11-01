@@ -325,7 +325,9 @@ impl Planner<'_> {
             .filter_map(|c| self.quest(c.stop.index).priority_deadline)
             .min();
         if let Some(deadline) = deadline {
-            candidates.retain(|c| c.stop.is_quest() && self.quest(c.stop.index).priority_deadline == Some(deadline));
+            candidates.retain(|c| {
+                c.stop.kind != Kind::Accept || self.quest(c.stop.index).priority_deadline == Some(deadline)
+            });
         }
         // Staying in a zone only matters while it has something left to do: with few stops left
         // there, the weight of leaving it fades to nothing (`Params::zone_stay_quests`).

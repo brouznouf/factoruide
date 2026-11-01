@@ -18,7 +18,14 @@ impl Planner<'_> {
             .iter()
             .enumerate()
             .filter(|(i, q)| q.required && !end.turned.contains(i))
-            .map(|(_, q)| format!("{} ({}), completion at {}", q.name, q.id, q.completion_window))
+            .map(|(_, q)| {
+                let label = format!("{} ({})", q.name, q.id);
+                if q.completion_window.min_level.is_some() || q.completion_window.max_level.is_some() {
+                    format!("{label}, completion at {}", q.completion_window)
+                } else {
+                    label
+                }
+            })
             .collect()
     }
 

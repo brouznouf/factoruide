@@ -643,19 +643,15 @@ impl Planner<'_> {
                 let q = self.quest(stop.index);
                 let own = q.min_level.max(self.combat().guard_level(&q.start_guard, s.might()));
                 if q.time_limit.is_some() {
-                    own.max(self.timed_gate(q, s))
+                    own.max(self.timed_gate(q, s)).max(self.completion_gate(s, stop.index))
                 } else {
                     own
                 }
             }
             Kind::TurnIn => {
                 let q = self.quest(stop.index);
-                let floor = self.availability().completion_floor(s, stop.index);
-                let level = q
-                    .completion_window
-                    .min_level
-                    .map_or(0, |min| s.level + (min - floor).max(0));
-                level.max(self.combat().guard_level(&q.end_guard, s.might()))
+                self.completion_gate(s, stop.index)
+                    .max(self.combat().guard_level(&q.end_guard, s.might()))
             }
             Kind::Objective(k) => self.combat().level_at(
                 self.quest(stop.index),
@@ -665,6 +661,14 @@ impl Planner<'_> {
             Kind::Dungeon => self.model.dungeons[i].min_level,
             _ => 0,
         }
+    }
+
+    fn completion_gate(&self, s: &State, i: u32) -> i64 {
+        let floor = self.availability().completion_floor(s, i);
+        self.quest(i)
+            .completion_window
+            .min_level
+            .map_or(0, |min| s.level + (min - floor).max(0))
     }
 
     /// Level a timed quest is taken at: the one its objectives and its turn-in need (each at its
@@ -695,7 +699,7 @@ impl Planner<'_> {
         }
         self.grind_at_camps(s, gate, record);
         self.train(s, record);
-        if stop.kind == Kind::TurnIn
+        if (stop.kind == Kind::TurnIn || stop.kind == Kind::Accept && self.quest(stop.index).time_limit.is_some())
             && let Some(min) = self.quest(stop.index).completion_window.min_level
         {
             self.keep_lowest(s);

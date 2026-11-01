@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, type QuestChoice, type RequiredQuest } from "../api";
 import { useT } from "../i18n";
-import { requiredQuest, questChoice } from "../requiredQuest";
+import { requiredQuest, questChoice, withBound } from "../requiredQuest";
 
 interface Props {
   race: string;
@@ -56,11 +56,7 @@ export function RequiredQuests({ race, klass, locale, quests, onChange }: Props)
     setQuery("");
   };
   const setBound = (entry: RequiredQuest, bound: "min_level" | "max_level", value: string) => {
-    const window = typeof entry === "object" ? { ...entry } : { quest: entry };
-    if (value) window[bound] = Number(value);
-    else delete window[bound];
-    const next = window.min_level == null && window.max_level == null ? window.quest : window;
-    onChange(quests.map((q) => q === entry ? next : q));
+    onChange(quests.map((q) => q === entry ? withBound(entry, bound, value) : q));
   };
   // Nothing searched: nothing listed (the last answer is kept for the next keystroke).
   const shown = query.trim() ? found : [];
@@ -78,8 +74,8 @@ export function RequiredQuests({ race, klass, locale, quests, onChange }: Props)
             <button className="chip" title={typeof quest === "number" ? `#${quest}` : undefined} onClick={() => onChange(quests.filter((q) => q !== entry))}>
               {label(quest)} ×
             </button>
-            <label className="field quest-level"><span>{t("Niveau minimum (facultatif)")}</span><input type="number" min={1} value={window.min_level ?? ""} placeholder="—" onChange={(e) => setBound(entry, "min_level", e.target.value)} /></label>
-            <label className="field quest-level"><span>{t("Niveau maximum (facultatif)")}</span><input type="number" min={1} value={window.max_level ?? ""} placeholder="—" onChange={(e) => setBound(entry, "max_level", e.target.value)} /></label>
+            <label className="field quest-level"><span>{t("Niveau minimum (facultatif)")}</span><input type="number" min={1} step={1} value={window.min_level ?? ""} placeholder="—" onChange={(e) => setBound(entry, "min_level", e.target.value)} /></label>
+            <label className="field quest-level"><span>{t("Niveau maximum (facultatif)")}</span><input type="number" min={1} step={1} value={window.max_level ?? ""} placeholder="—" onChange={(e) => setBound(entry, "max_level", e.target.value)} /></label>
           </div>;
         })}
       </div>
