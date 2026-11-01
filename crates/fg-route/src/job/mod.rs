@@ -45,6 +45,7 @@ pub use routes::{
 pub use services::{Place, Service, places, services_lua};
 pub use start::{Bind, LogObjective, LogQuest, MapPos, QuestId, Skill, Standing, StartState};
 pub use starts::{StartOption, StartPreview, preview_starts};
+pub(crate) use starts::preview_starts_of;
 pub use timeline::{InnInfo, Leg, LegMode, NodeInfo, ObjectiveInfo, QuestInfo, StartView, Timeline, TimelineStep};
 
 use crate::export;

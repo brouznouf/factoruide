@@ -592,6 +592,12 @@ impl Scenario {
 }
 
 impl Scenario {
+    /// The starts a new guide would offer for the scenario (see `job::preview_starts`).
+    pub fn starts(self) -> crate::job::StartPreview {
+        crate::job::preview_starts_of(self.build(), &|_| {}, &crate::job::Interrupt::default(), None)
+            .unwrap_or_else(|e| panic!("{e:#}"))
+    }
+
     /// The guide of the scenario (its first routes, no optimization) and the editor on it.
     pub fn guide(self) -> (crate::job::Editor, crate::job::PlanOutcome) {
         let (from, to) = (self.profile.from_level, self.profile.to_level);
