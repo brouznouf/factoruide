@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+## 0.15.0 (2026-11-01)
+
+Forced dungeons run inside their levels, optional XP buffs and turn-in levels for must-have quests, class unlocks kept and done soon, flights followed one by one in the addon, and the fixes of your reports (GitHub #73 to #88).
+
 ### App
 
 - Optional Forever food and Sleeping Bag XP bonuses, with the bag's quest chain included.
@@ -18,6 +22,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Choose must-have quests at the bottom of the new guide page, searched among your race and class's quests by name, zone, level or ID ("barrens 20").
 - Group guides: in the desktop app too, a player who plays on another computer is added by pasting the export of their character (in game: /fg, "Export my character").
 - The web app can send a problem report from its form, like the desktop app (GitHub #80).
+- Problem reports of a group guide call the players Player 1, Player 2... instead of their characters' names (GitHub #88).
 - A search box above the guide's steps marks every step of a quest (typed by name or ID) and goes from one to the next (GitHub #79).
 - In the guide editor, a quest already in the guide says at which step ("already in the guide · step 313"); the number shows that step.
 - Advanced settings let you turn off the assumption that movement talents are learned.
@@ -64,15 +69,19 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Walks up Mount Hyjal and out of Timbermaw Hold follow Darkwhisper Gorge and the tunnel all the way instead of cutting their last corners.
 - The Affray: the grate is stepped on before Big Will is fought, and timed quests are only taken once the character is strong enough to finish them in time.
 - Mobs, NPCs and objects stand on their real floor: the kobolds inside Fargodeep Mine rather than on the hill above it, Undercity's NPCs down in the city, the watchtower's NPCs on Zephras Isle at its top.
-- Dungeons forced together are all run: the guide goes past a dungeon's levels to fit them in (the Wailing Caverns for the Alliance, with eight others forced) (GitHub #66, #71).
+- Dungeons forced together are all run, each inside its levels (GitHub #66, #71, #84).
 - Warlock quests asking for Soul Shards, Robes of Arcana or Fine Gold Thread (Components for the Enchanted Gold Bloodrobe) can be planned, and items dropped under 3% no longer keep a quest from being planned (GitHub #72, #73).
 - A trip step (flight, boat, hearthstone, teleport, death skip) shows the time its trip takes, instead of the step after it (GitHub #68).
 - Mages learn each city's teleport from its trainer: the guide teleports only to the cities where it has trained (GitHub #75).
 - WoW Forever: the Alliance warlock's The Binding looks for the voidwalker in Stormwind, not Undercity; A Pain in the Neck (Enchanting, Echo Isles) is planned with the trolls' Hexed Pendants (GitHub #69, #76).
 - WoW Forever: the library's rewards ask for ten, twenty and twenty-five different books, not every book, and the guide can take books on its way to earn them (GitHub #56).
+- A forced dungeon is run around the middle of its levels, with its quests first (Ragefire Chasm at 16, not 47). A guide that cannot run every forced dungeon is refused, and so is one that starts after a forced dungeon's levels (GitHub #84).
+- A must-have quest you already handed in, or finished in your log, no longer asks for its dungeon (GitHub #87).
+- A class unlock you lack is done soon, not late, even when its quests are gray (advanced setting "Coût d'un déblocage de classe tardif").
 
 ### Addon
 
+- Two flights in a row: taking the first no longer counts the next one as done; each is done by its own take-off.
 - Group guides: quest XP counts each player's own reward, including its Sleeping Bag bonus.
 - WoW Forever: a guide made with the food or Sleeping Bag XP bonus warns when that buff is missing (out of combat, at most every ten minutes).
 - The addon's separators are a bullet (•), which every client font has: the dot they used was a missing glyph in Russian (GitHub #78).
