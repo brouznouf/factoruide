@@ -197,10 +197,6 @@ pub struct Objective {
     /// Common loot the route's kills gather by themselves (index in `Model::loot`): only what
     /// the bags lack is gathered or bought, `extra` is the time for the whole count.
     pub stock: Option<u16>,
-    /// The child quest this objective hands in (see `LinkKind::Child`): done once it is turned in.
-    pub child: Option<i64>,
-    /// That child quest's name.
-    pub child_name: Option<String>,
     /// An item bought: the vendors selling it, the one the place is at first, then the others
     /// from the nearest.
     pub vendors: Vec<Vendor>,

@@ -42,9 +42,6 @@ impl QuestBuilder<'_> {
         if self.sources.pvp.contains(&r.id) && !self.params.pvp_quests {
             return Err("PvP (battleground) quest");
         }
-        if r.special.unwrap_or(0) & 1 != 0 {
-            return Err("repeatable");
-        }
         // A negative spell is one the character must not know yet: the spell the quest teaches
         // (Camping 101's Camp Tent), never known before taking it.
         if matches!(skill, Some(None)) || r.rep.unwrap_or(0) != 0 || r.spell.unwrap_or(0) > 0 {

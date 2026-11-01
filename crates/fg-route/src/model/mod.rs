@@ -259,11 +259,10 @@ fn build_quests(
     (quests, skipped)
 }
 
-/// Class quests the planner cannot do are worth knowing about (not the repeatable ones that only
-/// hand an item again, like the paladin's tome).
+/// Class quests the planner cannot do are worth knowing about.
 fn report_skipped_class_quests(sources: &Sources, skipped: &[(i64, String, String)]) {
     for (id, name, reason) in skipped {
-        if sources.class_quest_ids.contains(id) && !sources.repeatable.contains(id) {
+        if sources.class_quest_ids.contains(id) {
             eprintln!("  class quest skipped: {name} ({id}): {reason}");
         }
     }

@@ -57,8 +57,7 @@ impl QuestBuilder<'_> {
                 || group_class_quest
                     && (self.profile.required_class_quests.iter().any(|n| n == &r.name)
                         || self.params.all_class_quests
-                            && r.min_level.unwrap_or(1) <= self.profile.to_level
-                            && !self.sources.repeatable.contains(&r.id)),
+                            && r.min_level.unwrap_or(1) <= self.profile.to_level),
             zone_forced,
             required: false,
             skill: skill.flatten(),
@@ -144,15 +143,20 @@ impl QuestBuilder<'_> {
         (pre_all, pre_any)
     }
 
-    /// The quests to hold in the log when taking it: those giving a bag that holds an item it
-    /// asks for, unless its own starting item gives it.
+    /// The quests to hold in the log when taking it: its parent when it is a child quest, and
+    /// those giving a bag that holds an item it asks for, unless its own starting item gives it.
     fn pre_held(&self, r: &QuestRow) -> Vec<i64> {
         let own = |item: i64| {
             r.source_item.is_some_and(|s| {
                 s == item || (self.sources.item_origins.get(&item)).is_some_and(|o| o.contains(&(SourceKind::Item, s)))
             })
         };
-        let mut held: Vec<i64> = Vec::new();
+        // A child quest is offered while its parent is in the log.
+        let mut held: Vec<i64> = (self.sources.links.iter())
+            .filter(|(_, links)| links.iter().any(|(k, c)| *k == LinkKind::Child && *c == r.id))
+            .map(|(parent, _)| *parent)
+            .collect();
+        held.sort_unstable();
         for o in self.sources.objectives.get(&r.id).into_iter().flatten() {
             if o.0 != ObjectiveKind::Item {
                 continue;

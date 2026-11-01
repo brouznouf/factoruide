@@ -167,8 +167,9 @@ pub struct Step {
     /// needs (an item it uses). None in guides made before it was written.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub slot: Option<u8>,
-    /// Objective steps handing in a child quest on the way to its parent's turn-in (Distracting
-    /// Jarven for Bitter Rivals): done once that quest is turned in.
+    /// Old guides only (made before child quests were quests of their own): objective steps handing in a child quest on the way to its
+    /// parent's turn-in (Distracting Jarven for Bitter Rivals), done once that quest is turned in.
+    /// Child quests are quests of their own now; guides made so are still read.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub child: Option<i64>,
     /// That child quest's name.

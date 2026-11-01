@@ -272,7 +272,7 @@ impl QuestBuilder<'_> {
                     && *kind != EntityKind::Item
                     && let Some(loc) = self.locate(*kind, *eid, Some(&self.sources.start.pos))
                 {
-                    let pre = (!self.sources.repeatable.contains(&giver)).then_some(giver);
+                    let pre = Some(giver);
                     places.push((loc, pre));
                 }
             }

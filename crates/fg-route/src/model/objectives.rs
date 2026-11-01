@@ -5,7 +5,7 @@ use super::builder::{QuestBuilder, Skip};
 use super::entities::{alternatives, best_cluster};
 use super::givers::Givers;
 use super::sources::{
-    LinkKind, ObjectiveKind, QuestRow, Role, SourceKind, asks_for_work, count_for, on_reachable, one_place,
+    ObjectiveKind, QuestRow, Role, SourceKind, asks_for_work, count_for, on_reachable, one_place,
     parse_requirements, talks_to, tames,
 };
 use super::types::{EntityKind, Guard, Loc, Objective, Spots};
@@ -77,8 +77,6 @@ impl Objective {
             after: 0,
             handed_by: vec![],
             stock: None,
-            child: None,
-            child_name: None,
             vendors: vec![],
             auction: vec![],
             slot: None,
@@ -104,9 +102,8 @@ impl QuestBuilder<'_> {
             self.add_dungeon_givers(r, &mut objs);
             return Ok(objs);
         }
-        let children = self.children(r.id);
         // Without them the quest would look free (some recent quests are only described).
-        if rows.is_empty() && children.is_empty() && asks_for_work(r.requirements.as_deref()) {
+        if rows.is_empty() && asks_for_work(r.requirements.as_deref()) {
             return Err("objectives unknown (only described)");
         }
         if rows.is_empty() && r.catalogued_only() {
@@ -123,17 +120,6 @@ impl QuestBuilder<'_> {
             if kind == ObjectiveKind::Item && row.1.is_some() && row.1 == givers.held {
                 continue;
             }
-            // An item a child hands over (the Warsong scouts' updates): got at its hand-in, one
-            // of this quest's objectives.
-            let rewarded = |item: i64| {
-                self.sources
-                    .reward_of
-                    .get(&item)
-                    .is_some_and(|q| q.iter().any(|q| children.contains(q)))
-            };
-            if kind == ObjectiveKind::Item && row.1.is_some_and(rewarded) {
-                continue;
-            }
             if let Some(mut o) = self.objective(&quest, row)? {
                 // Mobs are killed and items got without the item; the rest uses it.
                 if lasting || !(kind == ObjectiveKind::Item || kind == ObjectiveKind::Creature && o.kills > 0.0) {
@@ -147,7 +133,6 @@ impl QuestBuilder<'_> {
                 objs.push(o);
             }
         }
-        self.add_children(&quest, &children, &mut objs);
         self.order(r.id, &mut objs);
         self.measure(r, &mut objs);
         for o in &mut objs {
@@ -174,97 +159,6 @@ impl QuestBuilder<'_> {
                     alt.after |= first;
                 }
             }
-        }
-    }
-
-    /// The quest's children handed in on its way (`LinkKind::Child`): those the sources mark
-    /// repeatable, which are never planned on their own (the others are quests of their own).
-    fn children(&self, id: i64) -> Vec<i64> {
-        let links = self.sources.links.get(&id).into_iter().flatten();
-        links
-            .filter(|(k, c)| *k == LinkKind::Child && self.sources.repeatable.contains(c))
-            .map(|(_, c)| *c)
-            .filter(|c| self.sources.rows.iter().any(|r| r.id == *c))
-            .collect()
-    }
-
-    /// Each child as objectives of the parent: the items it asks for (the Thunder Ale Jarven
-    /// wants), then its hand-in where it ends, after them and after the children it needs first.
-    /// A child that cannot be placed is left out, as before.
-    fn add_children(&self, quest: &QuestContext<'_>, children: &[i64], objs: &mut Vec<Objective>) {
-        let bits = |range: std::ops::Range<usize>| range.filter(|i| *i < 8).fold(0u8, |b, i| b | 1 << i);
-        let mut handed: Vec<(i64, usize)> = Vec::new();
-        let mut order: Vec<i64> = children.to_vec();
-        // A child another one needs first comes first.
-        order.sort_by_key(|c| {
-            let needs = |c: &i64| {
-                self.sources
-                    .links
-                    .get(c)
-                    .into_iter()
-                    .flatten()
-                    .filter(|(k, o)| matches!(k, LinkKind::PreAll | LinkKind::PreAny) && children.contains(o))
-                    .count()
-            };
-            needs(c)
-        });
-        for child in order {
-            let Some(row) = self.sources.rows.iter().find(|r| r.id == child) else {
-                continue;
-            };
-            let end = self
-                .sources
-                .relations
-                .get(&child)
-                .into_iter()
-                .flatten()
-                .find(|(role, kind, _)| *role == Role::End && matches!(kind, EntityKind::Npc | EntityKind::Object));
-            let Some(&(_, kind, id)) = end else { continue };
-            let first = objs.len();
-            // Items the parent already asks for (Seal of the Earth's runestones for Tremors of
-            // the Earth) are got once: the hand-in comes after them.
-            let mut asked = 0u8;
-            for item in self.sources.objectives.get(&child).into_iter().flatten() {
-                if item.0 != ObjectiveKind::Item {
-                    continue;
-                }
-                let got = objs[..first]
-                    .iter()
-                    .position(|o| o.loc.kind == EntityKind::Item && Some(o.loc.id) == item.1);
-                if let Some(at) = got {
-                    asked |= bits(at..at + 1);
-                } else if let Ok(Some(o)) = self.objective(quest, item.clone()) {
-                    objs.push(o);
-                }
-            }
-            let text = format!("Turn in {} to {}", row.name, self.sources.entities.name(kind, id));
-            let Ok(mut hand_in) = self.use_at(quest, kind, id, Some(text), Some(1.0)) else {
-                objs.truncate(first);
-                continue;
-            };
-            let needed = self
-                .sources
-                .links
-                .get(&child)
-                .into_iter()
-                .flatten()
-                .filter_map(|(k, o)| matches!(k, LinkKind::PreAll | LinkKind::PreAny).then_some(*o));
-            let mut after = asked | bits(first..objs.len());
-            for o in needed {
-                if let Some(&(_, at)) = handed.iter().find(|(c, _)| *c == o) {
-                    after |= bits(at..at + 1);
-                }
-            }
-            hand_in.child = Some(child);
-            hand_in.child_name = Some(row.name.clone());
-            hand_in.after = after;
-            for alt in &mut hand_in.alts {
-                alt.child = Some(child);
-                alt.child_name = Some(row.name.clone());
-                alt.after = after;
-            }
-            handed.push((child, objs.len()));
-            objs.push(hand_in);
         }
     }
 

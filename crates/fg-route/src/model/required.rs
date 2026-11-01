@@ -15,7 +15,9 @@ struct Requirements<'a> {
 
 impl Requirements<'_> {
     fn add(&self, id: i64, selected: &mut HashSet<i64>, visiting: &mut HashSet<i64>) -> Result<()> {
-        if self.completed.contains(&id) || selected.contains(&id) {
+        // A parent and its child quest need each other (the child is taken while the parent is in
+        // the log, the parent is handed the child's item): the one being added is not added again.
+        if self.completed.contains(&id) || selected.contains(&id) || visiting.contains(&id) {
             return Ok(());
         }
         visiting.insert(id);
@@ -54,10 +56,6 @@ impl Requirements<'_> {
         self.some_of(&q.pre_any, q.pre_need, selected, visiting)?;
         for objective in &q.objectives {
             self.some_of(&objective.handed_by, 1, selected, visiting)?;
-            // A repeatable child is no quest of its own: its items and hand-in are the parent's.
-            if let Some(child) = objective.child.filter(|c| self.index.contains_key(c)) {
-                self.add(child, selected, visiting)?;
-            }
         }
         visiting.remove(&id);
         selected.insert(id);
