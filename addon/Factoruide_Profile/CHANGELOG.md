@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+## 0.15.0 (2026-11-01)
+
 - Texts of the death skip steps, in every language.
 - Texts of the group guide player choice, in every language.
 - The hearthstone's inn is found whatever the game's language (the guide no longer sends you back to your starting place).

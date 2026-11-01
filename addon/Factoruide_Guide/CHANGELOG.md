@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+## 0.15.0 (2026-11-01)
+
 - Two flights in a row: taking the first no longer counts the next one as done; each is done by its own take-off.
 - Group guides: quest XP counts each player's own reward, including its Sleeping Bag bonus.
 - WoW Forever: a guide made with the food or Sleeping Bag XP bonus warns when that buff is missing (out of combat, at most every ten minutes).
