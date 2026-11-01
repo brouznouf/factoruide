@@ -50,6 +50,8 @@ pub struct Obj {
     pub handed_by: Vec<i64>,
     /// Objectives (numbered from 0) to do first.
     pub after: Vec<usize>,
+    /// Seconds what the objective gets lasts (a carcass that rots).
+    pub lasts: Option<f64>,
 }
 
 impl Obj {
@@ -65,6 +67,7 @@ impl Obj {
             dungeon: None,
             handed_by: Vec::new(),
             after: Vec::new(),
+            lasts: None,
         }
     }
 
@@ -80,6 +83,7 @@ impl Obj {
             dungeon: None,
             handed_by: Vec::new(),
             after: Vec::new(),
+            lasts: None,
         }
     }
 
@@ -92,6 +96,12 @@ impl Obj {
     /// Done inside dungeon `d` (index in the scenario's dungeons).
     pub fn inside(mut self, d: usize) -> Self {
         self.dungeon = Some(d);
+        self
+    }
+
+    /// What it gets is gone after `seconds`.
+    pub fn lasts(mut self, seconds: f64) -> Self {
+        self.lasts = Some(seconds);
         self
     }
 
@@ -310,6 +320,7 @@ impl Q {
                     elite: o.elite,
                     dungeon: o.dungeon,
                     handed_by: o.handed_by.clone(),
+                    lasts: o.lasts,
                     after: o.after.iter().fold(0u8, |mask, k| mask | 1u8 << k),
                     count: o.kills.max(o.uses),
                     slot: u8::try_from(k + 1).ok(),

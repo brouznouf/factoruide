@@ -50,14 +50,7 @@ pub(super) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
     params.group_size = 1 + mates.len() as i64;
     let class = class_name.to_lowercase();
     // The class's curve and gear dependence, or the player's own (advanced settings).
-    let power = overrides.class_power.get(&class).cloned().unwrap_or_default();
-    let points = if params.power_curve.is_empty() {
-        power.points()?
-    } else {
-        params.power_curve.clone()
-    };
-    params.class_curve = super::overrides::curve_by_level(&points, req.to_level.max(100));
-    params.gear_dependence = params.power_gear.or(power.gear).unwrap_or(1.0);
+    (params.class_curve, params.gear_dependence) = class_power(overrides, &class, &params, req.to_level.max(100))?;
     // A group takes on what its weakest class does at each level: the higher mobs, the more
     // that one misses.
     if params.power_curve.is_empty() {
@@ -186,6 +179,21 @@ fn check_group(overrides: &Overrides, req: &PlanRequest, members: &[&StartState]
     Ok(())
 }
 
+/// The power curve (by level up to `top`) and gear dependence of a class (lowercase), or the
+/// player's own (advanced settings).
+fn class_power(overrides: &Overrides, class: &str, params: &Params, top: i64) -> Result<(Vec<f64>, f64)> {
+    let power = overrides.class_power.get(class).cloned().unwrap_or_default();
+    let points = if params.power_curve.is_empty() {
+        power.points()?
+    } else {
+        params.power_curve.clone()
+    };
+    Ok((
+        super::overrides::curve_by_level(&points, top),
+        params.power_gear.or(power.gear).unwrap_or(1.0),
+    ))
+}
+
 /// Key in `races.toml` of a race ID.
 fn race_key_of(overrides: &Overrides, race_id: i64) -> Result<String> {
     (overrides.races.iter())
@@ -274,6 +282,23 @@ mod tests {
         };
         let members = req.members(overrides.params.edition.rules());
         check_group(&overrides, &req, &members).err().map(|e| e.to_string()).unwrap_or_default()
+    }
+
+    /// The class power curve and gear dependence of the advanced settings replace the class's.
+    #[test]
+    fn own_power_curve_replaces_the_class_one() {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../overrides");
+        let overrides = Overrides::load_edition(&dir, Edition::Classic).unwrap();
+        let (curve, gear) = class_power(&overrides, "warrior", &overrides.params, 100).unwrap();
+        assert!(curve[15] < 0.0 && (gear - 1.5).abs() < 1e-9);
+        let own = overrides
+            .params
+            .with_overrides(&["power_curve=[[10, 1.0], [30, 2.0]]".to_owned(), "power_gear=0.5".to_owned()])
+            .unwrap();
+        let (curve, gear) = class_power(&overrides, "warrior", &own, 100).unwrap();
+        assert!((curve[5] - 1.0).abs() < 1e-9);
+        assert!((curve[20] - 1.5).abs() < 1e-9);
+        assert!((gear - 0.5).abs() < 1e-9);
     }
 
     /// A group guide needs every player at level 10, or all in one zone, and of one faction,

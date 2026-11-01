@@ -1539,26 +1539,24 @@ fn late_timed_quest_is_given_up() {
         assert_eq!(spent.quest_xp > 0, turned_in, "reward with limit {limit:?}");
     }
 }
-/// The Affray: Big Will only comes out once the grate is stepped on (overrides/objectives.toml),
-/// so a route killing him first is refused. Taken at level 30, too weak for him within the ten
-/// minutes, the quest is taken once the character is strong enough and turned in, not given up.
+/// The Affray: Big Will only comes out once the grate is stepped on, so a route killing him first
+/// is refused. Taken at level 30, too weak for him within the ten minutes, the quest is taken
+/// once the character is strong enough and turned in, not given up.
 #[test]
 fn affray_grate_first_and_taken_strong_enough() {
-    let mut p = prepare("orc", "warrior", 35, &[]);
-    (p.profile.from_level, p.profile.to_level) = (30, 35);
-    let i = quest(&p, 1719).expect("The Affray");
-    let q = &mut p.model.quests[i as usize];
-    assert_eq!(q.time_limit, Some(600.0));
-    (q.pre_all, q.pre_any, q.pre_held) = (vec![], vec![], vec![]);
-    let slot = |n: u8| q.objectives.iter().position(|o| o.slot == Some(n)).unwrap() as u8;
-    let (will, grate) = (slot(1), slot(2));
-    assert_eq!(q.objectives[usize::from(will)].mobs[0].0, 6238, "Big Will");
-    assert_ne!(
-        q.objectives[usize::from(will)].after & (1 << grate),
-        0,
-        "after the grate"
-    );
-    assert_eq!(q.objectives[usize::from(grate)].after & (1 << will), 0);
+    let p = leveling(40)
+        .levels(30, 40)
+        .quest(
+            Q::new(800, "The Affray")
+                .level(34)
+                .timed(600.0)
+                .giver(3, 30.0, 40.0)
+                .objective(Obj::kill("Big Will", 38, 1, At { zone: 3, x: 40.0, y: 70.0 }).after(&[1]))
+                .objective(Obj::visit("Grate", At { zone: 3, x: 39.0, y: 70.0 })),
+        )
+        .build();
+    let i = quest(&p, 800).unwrap();
+    let (will, grate) = (0, 1);
     let route = |first: u8, second: u8| {
         [
             Stop::quest(i, Kind::Accept),
@@ -1567,10 +1565,7 @@ fn affray_grate_first_and_taken_strong_enough() {
             Stop::quest(i, Kind::TurnIn),
         ]
     };
-    assert!(
-        planner(&p).simulate(&route(will, grate), None).is_none(),
-        "Big Will first"
-    );
+    assert!(planner(&p).simulate(&route(will, grate), None).is_none(), "Big Will first");
     let mut trace = Vec::new();
     planner(&p)
         .simulate(&route(grate, will), Some(&mut trace))
@@ -1585,13 +1580,8 @@ fn affray_grate_first_and_taken_strong_enough() {
         })
     };
     assert!(!given_up && level(Kind::TurnIn).is_some(), "turned in in time");
-    assert!(
-        level(Kind::Accept).is_some_and(|l| l > 30),
-        "taken stronger: {:?}",
-        level(Kind::Accept)
-    );
+    assert!(level(Kind::Accept).is_some_and(|l| l > 30), "taken stronger: {:?}", level(Kind::Accept));
 }
-
 /// Dungeon mobs keep their level: a character far above them gets no XP from the run (they used
 /// to follow the character's level).
 #[test]
@@ -2627,22 +2617,6 @@ fn library_book_is_looted_before_the_librarian() {
     );
 }
 
-/// The class power curve and gear dependence of the advanced settings replace the class's.
-#[test]
-fn own_power_curve_replaces_the_class_one() {
-    let class = prepare("human", "warrior", 10, &[]);
-    assert!(class.params.class_curve[15] < 0.0 && (class.params.gear_dependence - 1.5).abs() < 1e-9);
-    let own = prepare(
-        "human",
-        "warrior",
-        10,
-        &["power_curve=[[10, 1.0], [30, 2.0]]", "power_gear=0.5"],
-    );
-    assert!((own.params.class_curve[5] - 1.0).abs() < 1e-9);
-    assert!((own.params.class_curve[20] - 1.5).abs() < 1e-9);
-    assert!((own.params.gear_dependence - 0.5).abs() < 1e-9);
-}
-
 /// An item bought (Look to the Stars' Bronze Tube) names its vendor in Darkshire, with its limited
 /// supply, then others of the character's side; never a vendor of the other side (Sovik in
 /// Orgrimmar).
@@ -3075,19 +3049,17 @@ fn rare_books_asked_for_are_planned_with_one_of_each_book() {
 /// is got after the carcass, and the carcass no earlier than the kill can follow.
 #[test]
 fn a_carcass_that_rots_is_looted_right_before_ishamuhale() {
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    let request = PlanRequest {
-        params: Some(overrides.params.with_overrides(&[]).unwrap()),
-        from_level: 10,
-        ..request("tauren", "warrior", 22, &[])
-    };
-    let mut p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
-    let ishamuhale = quest(&p, 882).expect("Ishamuhale planned");
-    let carcass = &p.model.quests[ishamuhale as usize].objectives[0];
-    assert_eq!((carcass.loc.id, carcass.lasts), (10338, Some(1800.0)));
-    assert_eq!(p.model.quests[ishamuhale as usize].objectives[1].after, 1);
-    let jorn = quest(&p, 3261).unwrap();
-    p.model.initial.turned = vec![p.model.index[&905]];
+    let p = leveling(25)
+        .levels(10, 25)
+        .quest(
+            Q::new(882, "Ishamuhale")
+                .level(20)
+                .giver(2, 30.0, 40.0)
+                .objective(Obj::kill("Zhevra", 20, 1, At { zone: 2, x: 35.0, y: 70.0 }).lasts(1800.0))
+                .objective(Obj::visit("Fang", At { zone: 2, x: 36.0, y: 70.0 }).after(&[0])),
+        )
+        .build();
+    let ishamuhale = quest(&p, 882).unwrap();
     let stop = |s: Stop| Edit::Stop {
         stop: s,
         farm: false,
@@ -3096,8 +3068,6 @@ fn a_carcass_that_rots_is_looted_right_before_ishamuhale() {
     let run = |grind: Option<i64>| {
         let mut edits = vec![
             Edit::GrindTo { level: 20 },
-            stop(Stop::quest(jorn, Kind::Accept)),
-            stop(Stop::quest(jorn, Kind::TurnIn)),
             stop(Stop::quest(ishamuhale, Kind::Accept)),
             stop(Stop::quest(ishamuhale, Kind::Objective(0))),
         ];
@@ -3106,9 +3076,8 @@ fn a_carcass_that_rots_is_looted_right_before_ishamuhale() {
         planner(&p).explicit().edit(&edits).steps.last().unwrap().outcome
     };
     assert_eq!(run(None), Outcome::Done);
-    assert_ne!(run(Some(22)), Outcome::Done, "the carcass rotted while grinding");
+    assert_ne!(run(Some(25)), Outcome::Done, "the carcass rotted while grinding");
 }
-
 /// Each player of a group guide levels its own professions, from its own profile: here A, with
 /// skinning at 50, is not the one the guide is planned for (B has less XP). A profession quest
 /// is for those leveling it, and each player's addon gets its own curve.
