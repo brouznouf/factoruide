@@ -438,3 +438,17 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
     let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
     assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(8422)));
 }
+
+/// A must-have quest whose child is a repeatable quest (Need for a Cure and Finding the
+/// Antidote, GitHub #74) is planned: the child's items and hand-in are the parent's objectives.
+#[test]
+fn a_required_quest_with_a_repeatable_child_is_planned() {
+    let conn = database_of("forever");
+    let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    overrides.params = overrides.params.with_overrides(&["effort=0".to_owned()]).unwrap();
+    let mut req = request("orc", "warrior", &[RequiredQuest::Id(812)]);
+    req.from_level = 8;
+    req.to_level = 10;
+    let route = job::plan(&conn, &overrides, &req, &|_| {}).unwrap().route;
+    assert!(route.steps.iter().any(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(812)));
+}
