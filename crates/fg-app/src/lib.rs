@@ -10,4 +10,4 @@ mod studio;
 
 pub use error::CmdError;
 pub use host::Host;
-pub use studio::{EditOpened, Studio, library, now, request_edition};
+pub use studio::{EditOpened, IssueDraft, IssueGuide, Studio, library, now, request_edition};
