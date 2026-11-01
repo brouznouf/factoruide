@@ -1010,6 +1010,41 @@ end
 assert(taken == 3, "flight to the step's node taken")
 print("auto fly ok")
 
+-- Two flights in a row: taking off on the first does not do the second; it waits for its own
+-- take-off.
+do
+    local up, savedTaxi = false, UnitOnTaxi
+    UnitOnTaxi = function() return up end
+    FG.Routes["fly-two"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 1,
+        toLevel = 60,
+        time = 1,
+        steps = {
+            { k = "fly", t = "Fly to Ironforge", e = "taxi", id = 6, n = "Ironforge", lvl = 3 },
+            { k = "fly", t = "Fly to Stormwind", e = "taxi", id = 2, n = "Stormwind", lvl = 3 },
+        },
+    }
+    useRoute("fly-two")
+    FG.Guide:Advance()
+    assert(char.guide.step == 1, "no flight yet: step " .. char.guide.step)
+    up = true
+    FG.Guide:Advance()
+    FG.Guide:Advance()
+    assert(char.guide.step == 2, "first flight taken, the second waits: step " .. char.guide.step)
+    up = false
+    FG.Guide:Advance()
+    assert(char.guide.step == 2, "landed: the second still waits, step " .. char.guide.step)
+    up = true
+    FG.Guide:Advance()
+    assert(char.guide.step == 3, "second flight taken: step " .. char.guide.step)
+    UnitOnTaxi = savedTaxi
+    useRoute("fly-test")
+    print("two flights ok")
+end
+
 -- Teleport: done once the character is there (around the city's class trainer).
 FG.Routes["teleport-test"] = {
     race = 7,
