@@ -148,6 +148,20 @@ fn quests_at_start_on_the_data_as(race: &str, class: &str, n: usize) -> Prepared
     p
 }
 
+/// The leveling scenario with a dungeon (the Deadmines, area 900) and three quests done inside it.
+fn with_deadmines(scenario: Scenario) -> Scenario {
+    let mut s = scenario.dungeon("The Deadmines", 1, 70.0, 70.0);
+    for (id, name) in [(300, "Red Silk Bandanas"), (301, "Collecting Memories"), (302, "The Defias Brotherhood")] {
+        s = s.quest(
+            Q::new(id, name)
+                .level(18)
+                .giver(1, 40.0 + id as f64 - 300.0, 40.0)
+                .objective(Obj::kill("Defias", 18, 6, At { zone: 1, x: 70.0, y: 70.0 }).inside(0)),
+        );
+    }
+    s
+}
+
 /// An objective's mobs are killed once, at its stop.
 #[test]
 fn objective_finished_on_the_way_is_not_done_twice() {
@@ -1456,12 +1470,7 @@ fn addon_knows_the_mobs_of_each_step() {
 #[test]
 fn dungeon_quests_are_steps_of_their_own() {
     use fg_route::export::StepKind;
-    let p = prepare(
-        "human",
-        "warrior",
-        25,
-        &["progression=cautious", "forced_dungeons=[1581]"],
-    );
+    let p = with_deadmines(leveling(25)).params(|p| p.forced_dungeons = vec![900]).build();
     let planner = planner(&p);
     let route = planner.construct(|_| {});
     let guide = fg_route::export::build(&planner, &p.profile, &route);
@@ -1586,13 +1595,11 @@ fn affray_grate_first_and_taken_strong_enough() {
 /// to follow the character's level).
 #[test]
 fn outleveled_dungeon_gives_no_mob_xp() {
-    let mut p = prepare("human", "warrior", 30, &["progression=cautious"]);
-    (p.profile.from_level, p.profile.to_level) = (32, 40);
-    let deadmines = p.model.dungeons.iter().position(|d| d.name == "The Deadmines").unwrap();
-    // Run that late only with levels chosen up to it.
-    p.model.dungeons[deadmines].max_level = 40;
+    let mut p = with_deadmines(leveling(40)).levels(32, 40).build();
+    // Run that late only with levels chosen up to it, its mobs around level 18.
+    (p.model.dungeons[0].min_level, p.model.dungeons[0].max_level, p.model.dungeons[0].mob_level) = (14, 40, 18);
     let run = Stop {
-        index: deadmines as u32,
+        index: 0,
         kind: Kind::Dungeon,
     };
     let (_, spent) = planner(&p).simulate_full(&[run], None).unwrap();
@@ -1603,16 +1610,18 @@ fn outleveled_dungeon_gives_no_mob_xp() {
 /// A dungeon is never run past the levels chosen for it, even when the player asked for it.
 #[test]
 fn a_dungeon_is_not_run_past_its_levels() {
-    let mut p = prepare("human", "warrior", 30, &["progression=cautious"]);
-    (p.profile.from_level, p.profile.to_level) = (32, 40);
-    let deadmines = p.model.dungeons.iter().position(|d| d.name == "The Deadmines").unwrap();
+    let mut p = with_deadmines(leveling(40)).levels(32, 40).build();
+    (p.model.dungeons[0].min_level, p.model.dungeons[0].max_level) = (14, 28);
     let run = Stop {
-        index: deadmines as u32,
+        index: 0,
         kind: Kind::Dungeon,
     };
     assert!(planner(&p).simulate(&[run], None).is_none());
-    p.params.forced_dungeons = vec![p.model.dungeons[deadmines].area];
+    p.params.forced_dungeons = vec![p.model.dungeons[0].area];
     assert!(planner(&p).simulate(&[run], None).is_none());
+    // Within them, it is run.
+    p.profile.from_level = 25;
+    assert!(planner(&p).simulate(&[run], None).is_some());
 }
 
 /// Where an entity of the model stands, as the addon records it.
@@ -3341,19 +3350,23 @@ fn a_dungeon_forced_with_its_quests_takes_them_all() {
 /// Alliance's far away Wailing Caverns was left out for the penalty of a missing dungeon.
 #[test]
 fn a_forced_dungeon_is_not_held_to_its_levels() {
-    let levels = |params: &[&str]| {
-        let p = prepare_request(&request("human", "warlock", 30, params));
-        let d = p.model.dungeons.iter().find(|d| d.area == 718).unwrap();
-        (d.min_level, d.max_level)
+    let levels = |change: fn(&mut fg_route::Params)| {
+        let p = with_deadmines(leveling(30)).params(change).build();
+        (p.model.dungeons[0].min_level, p.model.dungeons[0].max_level)
     };
-    let (min, window_end) = levels(&["dungeon_from=-1", "dungeon_to=3"]);
+    let window = |p: &mut fg_route::Params| (p.dungeon_from, p.dungeon_to) = (-1, 3);
+    let (min, window_end) = levels(window);
     assert!(window_end < 30, "{window_end}");
     assert_eq!(
-        levels(&["forced_dungeons=[718]", "dungeon_from=-1", "dungeon_to=3"]),
+        levels(|p| {
+            (p.dungeon_from, p.dungeon_to, p.forced_dungeons) = (-1, 3, vec![900]);
+        }),
         (min, 30)
     );
     assert_eq!(
-        levels(&["forced_dungeon_quests=[718]", "dungeon_from=-1", "dungeon_to=3"]),
+        levels(|p| {
+            (p.dungeon_from, p.dungeon_to, p.forced_dungeon_quests) = (-1, 3, vec![900]);
+        }),
         (min, 30)
     );
 }
