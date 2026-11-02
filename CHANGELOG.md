@@ -19,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### WoW data
 
 - WoW Forever's Hall of Thanes: Underground Map is planned (the Dark Iron Map drops from the Dark Iron Spies and Captain Beld), and Old Ironforge Incursion after it (GitHub #98).
+- WoW Forever: the warlocks' pets and the Theramore Emissaries no longer count as hostile creatures in Stormwind (they kept low-level characters from its auction house), and A Dynamite Plan asks for its 10 Rough Dynamite.
 
 ## 0.15.0 (2026-11-01)
 
