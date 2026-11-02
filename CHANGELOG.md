@@ -12,6 +12,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - WoW Forever: the Sleeping Bag XP reminder starts after its reward quest is completed.
 
+### WoW data
+
+- WoW Forever's Hall of Thanes: Underground Map is planned (the Dark Iron Map drops from the Dark Iron Spies and Captain Beld), and Old Ironforge Incursion after it (GitHub #98).
+
 ## 0.15.0 (2026-11-01)
 
 Forced dungeons run inside their levels, optional XP buffs and turn-in levels for must-have quests, class unlocks kept and done soon, flights followed one by one in the addon, and the fixes of your reports (GitHub #73 to #88).
