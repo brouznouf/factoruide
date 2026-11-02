@@ -19,8 +19,7 @@ on:
         options: [macos and linux, macos, linux]
         default: macos and linux
 
-permissions:
-  contents: write
+permissions: {}
 
 concurrency:
   group: release-${{ inputs.tag || github.ref_name }}
@@ -35,13 +34,18 @@ env:
   # The addon's page the apps link to (repository variable, once its CurseForge project exists).
   VITE_FG_ADDON_URL: ${{ vars.ADDON_URL }}
 
+# No caches in these jobs: one written by another workflow could slip into a signed build.
 jobs:
   windows:
     name: Windows installer
+    permissions:
+      contents: write
     if: github.event_name == 'push'
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+        with:
+          persist-credentials: false
       # The app version (Cargo.toml) comes from the tag; the tag message is the release notes.
       - name: Version and notes from the tag
         id: tag
@@ -57,16 +61,14 @@ jobs:
           } >> "$GITHUB_OUTPUT"
       - name: Rust toolchain (from rust-toolchain.toml)
         run: rustup toolchain install
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
+          package-manager-cache: false
       - name: Frontend dependencies
         working-directory: app
         run: npm ci
-      - uses: tauri-apps/tauri-action@v1
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # action-v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -86,6 +88,8 @@ jobs:
   # not notarized: macOS asks the player to allow the app the first time, not on updates.
   macos:
     name: macOS app (${{ matrix.arch }})
+    permissions:
+      contents: write
     needs: windows
     # Also when the Windows job is skipped (run by hand).
     if: ${{ !cancelled() && needs.windows.result != 'failure' && inputs.platforms != 'linux' }}
@@ -101,9 +105,10 @@ jobs:
           - arch: Intel
             target: x86_64-apple-darwin
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           ref: ${{ env.TAG }}
+          persist-credentials: false
       - name: Release of the tag (published)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -114,18 +119,14 @@ jobs:
         run: |
           rustup toolchain install
           rustup target add ${{ matrix.target }}
-      - uses: Swatinem/rust-cache@v2
-        with:
-          key: ${{ matrix.target }}
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
+          package-manager-cache: false
       - name: Frontend dependencies
         working-directory: app
         run: npm ci
-      - uses: tauri-apps/tauri-action@v1
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # action-v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -146,6 +147,8 @@ jobs:
   # itself; the executable alone needs the system's WebKitGTK 4.1.
   linux:
     name: Linux app (x86_64)
+    permissions:
+      contents: write
     needs: macos
     # Also when the previous jobs are skipped (run by hand).
     if: ${{ !cancelled() && needs.macos.result != 'failure' && inputs.platforms != 'macos' }}
@@ -153,9 +156,10 @@ jobs:
     env:
       TAG: ${{ inputs.tag || github.ref_name }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           ref: ${{ env.TAG }}
+          persist-credentials: false
       - name: Release of the tag (published)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -169,16 +173,14 @@ jobs:
             libxdo-dev libssl-dev patchelf file
       - name: Rust toolchain (from rust-toolchain.toml)
         run: rustup toolchain install
-      - uses: Swatinem/rust-cache@v2
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
           node-version: 22
-          cache: npm
-          cache-dependency-path: app/package-lock.json
+          package-manager-cache: false
       - name: Frontend dependencies
         working-directory: app
         run: npm ci
-      - uses: tauri-apps/tauri-action@v1
+      - uses: tauri-apps/tauri-action@1deb371b0cd8bd54025b384f1cd735e725c4060f # action-v1.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
@@ -204,15 +206,25 @@ jobs:
   addons:
     needs: windows
     if: github.event_name == 'push'
-    uses: ./.github/workflows/addons.yml
+    uses: $/.github/workflows/addons.yml
+    permissions:
+      contents: write
     with:
       tag: ${{ github.ref_name }}
-    secrets: inherit
+    secrets:
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
 
   # The web app of the tag (web.yml).
   web:
     if: github.event_name == 'push'
-    uses: ./.github/workflows/web.yml
+    uses: $/.github/workflows/web.yml
+    permissions:
+      contents: read
     with:
       tag: ${{ github.ref_name }}
-    secrets: inherit
+    secrets:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      FG_PROXY_KEY: ${{ secrets.FG_PROXY_KEY }}
+      FG_ORIGIN_HOST: ${{ secrets.FG_ORIGIN_HOST }}

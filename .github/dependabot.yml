@@ -1,30 +1,34 @@
-# Weekly dependency updates: one pull request per ecosystem for the minor and patch versions,
-# one per major version (they may need code changes). The Rust toolchain is pinned in
-# rust-toolchain.toml and bumped on purpose, not here.
+# Weekly dependency updates in two pull requests: the app's (Rust crates and npm packages
+# together, as the Tauri crates and packages move in step) and the CI's (GitHub Actions). The Rust
+# toolchain is pinned in rust-toolchain.toml and bumped on purpose, not here.
 version: 2
+
+multi-ecosystem-groups:
+  app:
+    schedule:
+      interval: weekly
+
 updates:
   - package-ecosystem: cargo
     directory: /
-    schedule:
-      interval: weekly
-    groups:
-      cargo:
-        update-types: [minor, patch]
+    patterns: ["*"]
+    multi-ecosystem-group: app
+    cooldown:
+      default-days: 7
 
-  # The Tauri packages here and their crates (app/src-tauri) must stay on the same minor version:
-  # merge the cargo and npm pull requests together.
   - package-ecosystem: npm
     directory: /app
-    schedule:
-      interval: weekly
-    groups:
-      npm:
-        update-types: [minor, patch]
+    patterns: ["*"]
+    multi-ecosystem-group: app
+    cooldown:
+      default-days: 7
 
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
     groups:
-      actions:
+      ci:
         patterns: ["*"]
+    cooldown:
+      default-days: 7

@@ -2,7 +2,7 @@
 # The last step before pushing, not run after every edit (while iterating: `cargo test --profile fast
 # -p fg-route --test it <name>`, scripts/addon-test.sh, scripts/route-compare.sh).
 # Run the CI checks locally: Rust (fmt, clippy, tests, cargo deny), frontend (tsc, quest input, oxlint, translations),
-# addon (stylua, smoke test) and shell scripts. Tools that are not installed are skipped.
+# addon (stylua, smoke test), shell scripts and the workflows (zizmor). Tools that are not installed are skipped.
 set -eu
 cd "$(dirname "$0")/.."
 has() { command -v "$1" >/dev/null 2>&1; }
@@ -18,4 +18,5 @@ npx -y @johnnymorganz/stylua-bin@2.5.2 --check addon
 scripts/addon-test.sh >/dev/null
 
 if has shellcheck; then shellcheck scripts/*.sh; else echo "skip: shellcheck"; fi
+if has zizmor; then zizmor --quiet .; else echo "skip: zizmor (cargo install zizmor)"; fi
 echo "all checks passed"

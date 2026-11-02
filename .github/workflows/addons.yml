@@ -17,6 +17,11 @@ on:
         description: The release's tag (vX.Y.Z)
         type: string
         required: true
+    secrets:
+      CF_API_KEY:
+        required: false
+      WAGO_API_TOKEN:
+        required: false
   workflow_dispatch:
     inputs:
       ref:
@@ -63,9 +68,10 @@ jobs:
       REQUIRES: ${{ (inputs.tag || inputs.relations) && matrix.requires || '' }}
       TAG: ${{ inputs.tag }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
         with:
           ref: ${{ inputs.tag || inputs.ref }}
+          persist-credentials: false
       - name: Version
         id: version
         env:
@@ -129,7 +135,7 @@ jobs:
           git add -A
           git -c user.name=Factoruide -c user.email=release@factoruide.invalid commit -q -m "$LABEL"
           git tag "$LABEL"
-      - uses: BigWigsMods/packager@v2
+      - uses: BigWigsMods/packager@e50a250f8705041e40f2fa1ddcb280a686d65aa0 # v2.6.1
         if: steps.version.outputs.publish
         env:
           CF_API_KEY: ${{ secrets.CF_API_KEY }}
@@ -146,7 +152,7 @@ jobs:
         run: gh release upload "$TAG" "$RUNNER_TEMP"/release/*.zip --clobber
       - name: Zip kept with the run
         if: steps.version.outputs.publish && !inputs.tag
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: ${{ matrix.addon }}
           path: ${{ runner.temp }}/release/*.zip
