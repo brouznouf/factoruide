@@ -99,11 +99,20 @@ impl<'a> QuestBuilder<'a> {
     /// Warsong Reports, holds the Warsong Report each scout's update asks for).
     pub(super) fn bag_quest(&self, quest: i64, item: i64) -> Option<i64> {
         let bags = self.sources.item_origins.get(&item)?;
+        // A reward package is obtained at turn-in, not while holding its quest.
         bags.iter()
             .filter(|(t, _)| *t == SourceKind::Item)
             .find_map(|(_, bag)| {
                 (self.sources.rows.iter())
-                    .find(|r| r.id != quest && r.source_item == Some(*bag))
+                    .find(|r| {
+                        r.id != quest
+                            && r.source_item == Some(*bag)
+                            && !self
+                                .sources
+                                .reward_of
+                                .get(bag)
+                                .is_some_and(|quests| quests.contains(&r.id))
+                    })
                     .map(|r| r.id)
             })
     }
