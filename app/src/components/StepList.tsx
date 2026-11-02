@@ -548,7 +548,10 @@ function lineOf(s: Step, quests: Map<number, QuestInfo>) {
   else if (s.kind === "objective" && objective) {
     kind = objective.kind;
     label = OBJECTIVE_LABELS[objective.kind];
-    text = objective.kind === "other" || !s.target ? objective.text : `${s.target.name}${objective.count > 1 ? ` ×${objective.count}` : ""}`;
+    // Inside a dungeon, the step's own text names the quest ("An Ancient Grudge: Faldrim Anvilmar"):
+    // the objective's is the database's, after the dungeon ("The Hall of Thanes: Faldrim Anvilmar").
+    if (s.inside) text = s.text;
+    else text = objective.kind === "other" || !s.target ? objective.text : `${s.target.name}${objective.count > 1 ? ` ×${objective.count}` : ""}`;
   }
   return { kind, label, text };
 }

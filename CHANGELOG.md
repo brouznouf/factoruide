@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### App
+
+- A dungeon quest with one objective inside shows its name in the guide ("An Ancient Grudge: Faldrim Anvilmar"), not the dungeon's ("The Hall of Thanes: Faldrim Anvilmar").
+
 ### Guides
 
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).

@@ -321,7 +321,7 @@ export function activityAt(route: Route, timeline: Timeline, quests: Map<number,
       return { verb: "Rend", what: quest?.name ?? s.quest_name ?? "" };
     case "objective": {
       const verb = { kill: "Tue", collect: "Récupère", use: "Utilise", talk: "Parle à", other: "Fait" }[objective?.kind ?? "other"];
-      return { verb, what: objective?.kind === "other" ? (objective.text ?? s.text) : target || s.text };
+      return { verb, what: s.inside ? s.text : objective?.kind === "other" ? (objective.text ?? s.text) : target || s.text };
     }
     case "grind":
       return { verb: "Farme", what: s.zone ?? "" };
