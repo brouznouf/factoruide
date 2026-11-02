@@ -28,6 +28,7 @@ export const sections: Section[] = [
     fields: [
       { key: "dungeons", kind: "bool", label: "Faire les donjons rentables en groupe", help: "Un donjon est fait, avec ses quêtes, quand il fait gagner du temps." },
       { key: "dungeon_pickup_ahead", kind: "number", label: "Prendre les quêtes de donjon jusqu'à N niveaux avant", help: "Prises en passant à côté du donneur, gardées jusqu'au donjon.", unit: "niveaux", min: 0, max: 20, step: 1 },
+      { key: "auction_house", kind: "bool", label: "Acheter à l'hôtel des ventes", help: "Les objets demandés par une quête que rien d'autre ne donne (faits par un métier, comme la Dynamite basique) sont achetés à l'hôtel des ventes le plus proche. Sans cela, ces quêtes sont laissées de côté." },
       { key: "allow_elite", kind: "bool", label: "Quêtes élites (groupe)", help: "Quêtes dont les objectifs sont des mobs élites hors donjon." },
       { key: "all_class_quests", kind: "bool", label: "Toutes les quêtes de classe", help: "Impose toutes les quêtes de ta classe, pas seulement celles qui donnent un sort : plus long, mais rien n'est laissé de côté." },
       { key: "solo_elite_kills", kind: "number", label: "Élites seules (en solo)", help: "Sans les quêtes élites, garde celles qui demandent au plus ce nombre de kills d'élite (Hogger, Tharil'zun, Mor'Ladim...). 0 = aucune.", min: 0, max: 5, step: 1 },

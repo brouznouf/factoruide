@@ -190,6 +190,9 @@ pub struct Params {
     /// Items no creature, object or vendor gives (made by a profession) that quests ask for:
     /// bought at the auction house (`overrides/routing.toml`).
     pub auction_items: Vec<i64>,
+    /// Buy there any other such item, quest items aside (Rough Dynamite): for players who use
+    /// the auction house.
+    pub auction_house: bool,
     /// Greedy construction: levels below the character a quest can be without penalty, and
     /// the penalty per level beyond (quests turned in late give less XP).
     pub fit_free_levels: i64,
@@ -539,6 +542,7 @@ impl Default for Params {
             elite_kill_factor: 3.0,
             approx_sources: false,
             auction_items: vec![],
+            auction_house: false,
             fit_free_levels: 2,
             fit_penalty: 0.0,
             fit_above_penalty: 0.4,

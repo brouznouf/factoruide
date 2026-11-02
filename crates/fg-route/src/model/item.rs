@@ -144,7 +144,10 @@ impl QuestBuilder<'_> {
             }
         } else if let Some(handed) = self.handed_by(quest.row.id, target, &places) {
             handed
-        } else if self.params.auction_items.contains(&target) && !self.auction_houses().is_empty() {
+        } else if (self.params.auction_items.contains(&target)
+            || self.params.auction_house && !self.sources.entities.not_sold.contains(&target))
+            && !self.auction_houses().is_empty()
+        {
             // Made by a profession: bought, from the auction house nearest the quest giver.
             let (pos, zone, auctioneers) = (self.auction_houses().into_iter())
                 .min_by(|a, b| a.0.dist(&quest.anchor).total_cmp(&b.0.dist(&quest.anchor)))

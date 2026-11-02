@@ -2870,6 +2870,32 @@ fn limited_supply_follows_the_crowd() {
     );
 }
 
+/// A crafted item a quest asks for that nothing else gives (A Dynamite Plan's Rough Dynamite,
+/// GitHub #97) is bought at the auction house for players who use it, and leaves its quest out
+/// for the others.
+#[test]
+fn a_crafted_item_is_bought_at_the_auction_house_when_chosen() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let prepared = |auction: bool| {
+        let params = [format!("auction_house={auction}")];
+        let request = PlanRequest {
+            params: Some(overrides.params.with_overrides(&params).unwrap()),
+            ..request("human", "warrior", 25, &[])
+        };
+        job::prepare(&conn, &overrides, &request, &|_| {}).unwrap()
+    };
+    assert_eq!(quest(&prepared(false), 92749), None);
+    let p = prepared(true);
+    let plan = quest(&p, 92749).expect("A Dynamite Plan is planned");
+    let buy = &p.model.quests[plan as usize].objectives[0];
+    assert!(!buy.auction.is_empty() && buy.text.starts_with("Buy"), "{}", buy.text);
+    assert_eq!(buy.count, 10.0);
+    // Nothing hostile around the Stormwind auction house: the warlocks' pets and the Theramore
+    // Emissaries do not count.
+    assert_eq!(buy.guard.count, 0);
+}
+
 /// The Great Outdoors (Forever, GitHub #35): sitting at the campfire beside the quest's giver is
 /// done in the camp at the level the quest is taken, not a level later for the quest's level;
 /// only an object beside the giver counts, never kills.

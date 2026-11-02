@@ -11,6 +11,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Guides
 
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
+- "Buy at the auction house" option (advanced settings, off by default): the items a quest asks for that nothing else gives, made by a profession like Rough Dynamite, are bought at the nearest auction house instead of leaving the quest out (GitHub #97).
 
 ### Addon
 

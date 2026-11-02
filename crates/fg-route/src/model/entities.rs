@@ -34,6 +34,9 @@ pub(super) struct Entities {
     pub(super) vendor_stock: Arc<HashMap<(i64, i64), (u32, f64)>>,
     /// Auctioneers the character can buy from (its side's, the neutral ones).
     pub(super) auctioneers: Arc<Vec<i64>>,
+    /// Items the auction house does not have: quest items, and the tokens and pets of the
+    /// miscellaneous class (Desecrated Tunic).
+    pub(super) not_sold: Arc<HashSet<i64>>,
 }
 
 impl Entities {
@@ -54,6 +57,7 @@ impl Entities {
             paths: Arc::clone(&read.paths),
             vendor_stock: Arc::clone(&read.vendor_stock),
             auctioneers: Arc::clone(&read.auctioneers),
+            not_sold: Arc::clone(&read.not_sold),
         })
     }
 
@@ -107,6 +111,11 @@ impl Entities {
         for row in stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))? {
             let (id, v) = row?;
             item.insert(id, v);
+        }
+        let mut not_sold = HashSet::new();
+        let mut stmt = conn.prepare("SELECT id FROM m_item WHERE class IN (12, 15)")?;
+        for row in stmt.query_map([], |r| r.get::<_, i64>(0))? {
+            not_sold.insert(row?);
         }
         let has = |table: &str| -> Result<bool> {
             Ok(
@@ -189,6 +198,7 @@ impl Entities {
             paths: Arc::new(paths),
             vendor_stock: Arc::new(vendor_stock),
             auctioneers: Arc::new(auctioneers),
+            not_sold: Arc::new(not_sold),
         })
     }
 
