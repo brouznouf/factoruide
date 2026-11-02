@@ -43,7 +43,7 @@ jobs:
     if: github.event_name == 'push'
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
       # The app version (Cargo.toml) comes from the tag; the tag message is the release notes.
@@ -61,7 +61,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
       - name: Rust toolchain (from rust-toolchain.toml)
         run: rustup toolchain install
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           package-manager-cache: false
@@ -105,7 +105,7 @@ jobs:
           - arch: Intel
             target: x86_64-apple-darwin
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.TAG }}
           persist-credentials: false
@@ -119,7 +119,7 @@ jobs:
         run: |
           rustup toolchain install
           rustup target add ${{ matrix.target }}
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           package-manager-cache: false
@@ -156,7 +156,7 @@ jobs:
     env:
       TAG: ${{ inputs.tag || github.ref_name }}
     steps:
-      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5.1.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ env.TAG }}
           persist-credentials: false
@@ -173,7 +173,7 @@ jobs:
             libxdo-dev libssl-dev patchelf file
       - name: Rust toolchain (from rust-toolchain.toml)
         run: rustup toolchain install
-      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 22
           package-manager-cache: false
