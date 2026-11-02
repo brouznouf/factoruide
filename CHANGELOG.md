@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### Guides
+
+- Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
+
 ### Addon
 
 - WoW Forever: the Sleeping Bag XP reminder starts after its reward quest is completed.

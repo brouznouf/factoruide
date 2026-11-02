@@ -3351,6 +3351,33 @@ fn dungeons_are_run_within_the_levels_chosen() {
     assert!(err.is_some_and(|e| e.contains("leave none")));
 }
 
+/// Dungeons run above their monsters' level keep the game's highest dungeons: their levels stop at
+/// the game's highest level instead of leaving them none (GitHub #99).
+#[test]
+fn a_window_above_the_last_level_runs_the_dungeon_at_it() {
+    let p = leveling(30)
+        .dungeon("Stratholme", 1, 70.0, 70.0)
+        .quest(
+            Q::new(300, "The Archivist").level(60).giver(1, 40.0, 40.0).objective(
+                Obj::kill(
+                    "Archivist",
+                    60,
+                    1,
+                    At {
+                        zone: 1,
+                        x: 70.0,
+                        y: 70.0,
+                    },
+                )
+                .inside(0),
+            ),
+        )
+        .params(|p| (p.dungeon_from, p.dungeon_to) = (2, 4))
+        .build();
+    let d = &p.model.dungeons[0];
+    assert_eq!((d.min_level, d.max_level), (60, 60));
+}
+
 /// A quest filed under a dungeon whose starting item no source places (Forever's Crest of
 /// Lordaeron, from an object of Ruins of Lordaeron, GitHub #61) is started during the run.
 #[test]

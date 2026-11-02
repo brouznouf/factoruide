@@ -268,7 +268,9 @@ pub(super) fn set_dungeon_levels(
         }
         own.sort_unstable();
         dungeon.mob_level = levels.get(&dungeon.area).copied().unwrap_or(own[own.len() / 2]);
-        dungeon.min_level = (dungeon.mob_level + window.0).max(1);
+        // A window above the game's levels is run at its highest one (a level-60 dungeon at 60 when
+        // dungeons are run above their monsters' level).
+        dungeon.min_level = (dungeon.mob_level + window.0).clamp(1, max_level);
         dungeon.max_level = (dungeon.mob_level + window.1).min(max_level);
         if dungeon.minutes == 0.0 {
             dungeon.minutes = (40.0 + dungeon.mob_level as f64).clamp(50.0, 120.0);

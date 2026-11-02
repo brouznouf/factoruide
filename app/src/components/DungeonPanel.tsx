@@ -21,9 +21,9 @@ interface Props {
 }
 
 /** The levels a dungeon of level `level` is run at: from `from` to `to` around it, within the
- * game's levels (null: none). */
+ * game's levels, at the highest one when the window is above them (null: none). */
 export function dungeonLevels(level: number, from: number, to: number, maxLevel: number): [number, number] | null {
-  const [low, high] = [Math.max(1, level + from), Math.min(maxLevel, level + to)];
+  const [low, high] = [Math.min(maxLevel, Math.max(1, level + from)), Math.min(maxLevel, level + to)];
   return low <= high ? [low, high] : null;
 }
 
