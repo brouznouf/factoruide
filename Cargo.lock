@@ -1113,7 +1113,7 @@ dependencies = [
  "base64 0.23.1",
  "criterion",
  "fg-route",
- "miniz_oxide 0.8.9",
+ "miniz_oxide 0.9.1",
  "proptest",
  "rand",
  "rusqlite",
