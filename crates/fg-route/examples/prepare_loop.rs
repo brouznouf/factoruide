@@ -12,7 +12,7 @@ fn main() {
     let rounds: usize = args.next().and_then(|n| n.parse().ok()).unwrap_or(10);
     let edition = args.next().unwrap_or_else(|| "forever".into());
     let repo = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
-    let conn = Connection::open(repo.join(format!("data/{edition}.sqlite"))).unwrap();
+    let mut conn = Connection::open(repo.join(format!("data/{edition}.sqlite"))).unwrap();
     let overrides = Overrides::load_edition(&repo.join("overrides"), Edition::Forever).unwrap();
     let request: PlanRequest = serde_json::from_value(serde_json::json!({
         "race": "skyborne_horde", "class": "druid", "from_level": 40, "to_level": 41,
@@ -25,7 +25,7 @@ fn main() {
         SLOW.store(slow, std::sync::atomic::Ordering::Relaxed);
         conn.trace_v2(
             rusqlite::trace::TraceEventCodes::SQLITE_TRACE_PROFILE,
-            Some(|event| {
+            Some(|event: rusqlite::trace::TraceEvent<'_>| {
                 if let rusqlite::trace::TraceEvent::Profile(statement, took) = event
                     && took.as_millis() >= u128::from(SLOW.load(std::sync::atomic::Ordering::Relaxed))
                 {
@@ -37,7 +37,8 @@ fn main() {
                     );
                 }
             }),
-        );
+        )
+        .unwrap();
     }
     for _ in 0..rounds {
         let started = std::time::Instant::now();
