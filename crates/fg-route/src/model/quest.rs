@@ -181,7 +181,7 @@ impl QuestBuilder<'_> {
         held
     }
 
-    fn links(&self, id: i64, kind: LinkKind) -> Vec<i64> {
+    pub(super) fn links(&self, id: i64, kind: LinkKind) -> Vec<i64> {
         self.sources
             .links
             .get(&id)

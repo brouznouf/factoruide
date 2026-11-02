@@ -3,7 +3,7 @@
 
 use super::builder::{QuestBuilder, Skip};
 use super::entities::best_cluster;
-use super::sources::{ObjectiveKind, QuestRow, Role, SourceKind};
+use super::sources::{LinkKind, ObjectiveKind, QuestRow, Role, SourceKind};
 use super::types::{EntityKind, Loc, Spots};
 
 pub(super) struct Givers {
@@ -257,7 +257,14 @@ impl QuestBuilder<'_> {
             .find_map(|(_, kind, id)| self.locate(*kind, *id, Some(&self.sources.start.pos)))
     }
 
+    /// Quests handing out the item are prerequisites, except one exclusive with this quest: taking
+    /// it closes this one (Another Power Source? hands the Power Source of Tanaris Field Sampling
+    /// again, for those who lost it).
     fn item_rewarded(&self, quest: i64, item: i64) -> ItemStart {
+        let closes = |giver: i64| {
+            self.links(quest, LinkKind::Exclusive).contains(&giver)
+                || self.links(giver, LinkKind::Exclusive).contains(&quest)
+        };
         let mut places = Vec::new();
         for &giver in self
             .sources
@@ -265,7 +272,7 @@ impl QuestBuilder<'_> {
             .get(&item)
             .into_iter()
             .flatten()
-            .filter(|g| **g != quest)
+            .filter(|g| **g != quest && !closes(**g))
         {
             for (role, kind, eid) in self.sources.relations.get(&giver).into_iter().flatten() {
                 if *role == Role::End

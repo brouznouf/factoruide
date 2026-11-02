@@ -331,6 +331,16 @@ fn item_start_waits_for_its_mob() {
     assert!(p.model.quests[owatanka as usize].min_level >= 21);
 }
 
+/// The item starting Tanaris Field Sampling is handed again by Another Power Source?, a quest
+/// that closes it: not a prerequisite.
+#[test]
+fn a_quest_exclusive_with_the_one_handing_the_start_item_is_not_a_prerequisite() {
+    static PREPARED: OnceLock<Prepared> = OnceLock::new();
+    let p = PREPARED.get_or_init(|| prepare("orc", "warlock", 50, &["progression=cautious"]));
+    let sampling = &p.model.quests[quest(p, 654).unwrap() as usize];
+    assert!(!sampling.pre_all.contains(&841) && !sampling.pre_any.contains(&841));
+}
+
 /// The accept step of a quest started by an item a mob drops names that mob, and gives it to the
 /// addon's target macro: the place alone shows nothing to loot.
 #[test]
