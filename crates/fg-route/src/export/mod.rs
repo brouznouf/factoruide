@@ -135,12 +135,20 @@ pub fn build_traced(
                     s.kind == StepKind::Accept
                         && (planner.model.quests.iter()).any(|q| Some(q.id) == s.quest && q.start_dungeon == Some(d))
                 };
+                // Wherever the search put it: nothing else of the quest happens before the run (its
+                // objective is in it), so it moves there (Hall of Thanes' Treaty of Understanding,
+                // taken at the entrance levels earlier).
                 let mut looted = Vec::new();
-                while steps.last().is_some_and(from_boss) {
-                    let mut accept = steps.pop().expect("the loop checked the last step");
-                    xps.pop();
-                    (accept.time, accept.level, accept.inside) = (entered, level, true);
-                    looted.insert(0, accept);
+                let mut k = 0;
+                while k < steps.len() {
+                    if from_boss(&steps[k]) && !steps[k + 1..].iter().any(|s| s.quest == steps[k].quest) {
+                        let mut accept = steps.remove(k);
+                        xps.remove(k);
+                        (accept.time, accept.level, accept.inside) = (entered, level, true);
+                        looted.push(accept);
+                    } else {
+                        k += 1;
+                    }
                 }
                 steps.push(step);
                 xps.push(xp);

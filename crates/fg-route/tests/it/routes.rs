@@ -3421,6 +3421,22 @@ fn a_dungeon_quest_started_by_an_unplaced_item_starts_in_the_run() {
     }
 }
 
+/// Forever's The Treaty of Understanding starts from an item found in an object inside the Hall of
+/// Thanes, which no source places: started during the run, and its run is part of the quest.
+#[test]
+fn a_quest_started_by_an_object_inside_a_dungeon_starts_in_the_run() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let request = PlanRequest {
+        params: Some(overrides.params.with_overrides(&[]).unwrap()),
+        ..request("dwarf", "warrior", 30, &[])
+    };
+    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let thanes = p.model.dungeons.iter().position(|d| d.area == 16919).unwrap();
+    let q = &p.model.quests[quest(&p, 98423).expect("The Treaty of Understanding planned") as usize];
+    assert_eq!(q.start_dungeon, Some(thanes));
+    assert!(q.objectives.iter().any(|o| o.dungeon == Some(thanes)));
+}
+
 /// Forever's Rare Books (GitHub #59): its books drop from elites, left out of a solo guide, but
 /// a quest the player asks for is planned with its elites; a book whose name holds a colon is
 /// one book, not the default count.

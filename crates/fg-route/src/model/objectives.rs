@@ -603,12 +603,18 @@ impl QuestBuilder<'_> {
     fn add_dungeon_givers(&self, r: &QuestRow, objs: &mut Vec<Objective>) {
         for (role, kind, id) in self.sources.relations.get(&r.id).into_iter().flatten() {
             let (kind, id) = if *kind == EntityKind::Item {
-                // An item starting it dropped by a boss inside (Unending Torment's Abominable Head).
-                let boss = (self.sources.item_origins.get(id).into_iter().flatten()).find(|(t, n)| {
-                    *role == Role::Start && *t == SourceKind::Npc && self.dungeon_of(EntityKind::Npc, *n).is_some()
+                // An item starting it dropped by a boss inside (Unending Torment's Abominable Head),
+                // or found in an object there (Hall of Thanes' Treaty of Understanding).
+                let inside = (self.sources.item_origins.get(id).into_iter().flatten()).find_map(|(t, n)| {
+                    let kind = match t {
+                        SourceKind::Npc => EntityKind::Npc,
+                        SourceKind::Object => EntityKind::Object,
+                        _ => return None,
+                    };
+                    (*role == Role::Start && self.dungeon_of(kind, *n).is_some()).then_some((kind, *n))
                 });
-                match boss {
-                    Some((_, n)) => (EntityKind::Npc, *n),
+                match inside {
+                    Some(at) => at,
                     None => continue,
                 }
             } else {

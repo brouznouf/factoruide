@@ -157,11 +157,14 @@ impl QuestBuilder<'_> {
             .filter(|(t, _)| *t == SourceKind::Object)
             .flat_map(|(_, o)| entities.points(world, EntityKind::Object, *o))
             .collect();
-        // A boss's drop: looted during the run, with the group (the quest needs it,
-        // `add_dungeon_givers`).
+        // A boss's drop, or an object's inside (Hall of Thanes' Treaty of Understanding): looted
+        // during the run, with the group (the quest needs it, `add_dungeon_givers`).
         let boss = sources.iter().find_map(|(t, n)| {
             (*t == SourceKind::Npc).then(|| self.dungeon_of(EntityKind::Npc, *n).map(|d| (*n, d)))?
         });
+        let found_inside = sources
+            .iter()
+            .find_map(|(t, o)| (*t == SourceKind::Object).then(|| self.dungeon_of(EntityKind::Object, *o))?);
         let in_run = |d: usize, mob: Option<(i64, String)>| ItemStart::Looted {
             at: Loc {
                 kind: EntityKind::Item,
@@ -176,6 +179,9 @@ impl QuestBuilder<'_> {
         };
         if let Some((npc, d)) = boss {
             return in_run(d, Some((npc, entities.name(EntityKind::Npc, npc))));
+        }
+        if let Some(d) = found_inside.filter(|_| objects.is_empty()) {
+            return in_run(d, None);
         }
         let rank = |n: &i64| entities.npc.get(n).map_or(0, |e| e.3);
         let droppers: Vec<Dropper> = sources
