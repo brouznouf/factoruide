@@ -1025,11 +1025,24 @@ fn gathering_next_to_kills_overlaps_them() {
     }
     p.model.initial.accepted = vec![0, 1];
     let route = [Stop::quest(0, Kind::Objective(0)), Stop::quest(1, Kind::Objective(0))];
-    let fighting = |p: &Prepared| planner(p).simulate_full(&route, None).unwrap().1.fighting;
+    let fighting = |p: &Prepared| fighting_turned_in(p, &route);
     let together = fighting(&p);
     p.params.gather_overlap = 0.0;
     let apart = fighting(&p);
     assert!(together < apart, "{together:.0} s together, {apart:.0} s apart");
+}
+
+/// The fighting of `route` with each quest whose objective it does turned in at its end: a quest
+/// left in the log is grinding, not fighting.
+fn fighting_turned_in(p: &Prepared, route: &[Stop]) -> f64 {
+    let mut full = route.to_vec();
+    full.extend(
+        route
+            .iter()
+            .filter(|s| s.kind == Kind::Objective(0))
+            .map(|s| Stop::quest(s.index, Kind::TurnIn)),
+    );
+    planner(p).simulate_full(&full, None).unwrap().1.fighting
 }
 
 /// Common loot a quest asks for by the stack (cloth for a donation) comes from the route's kills
@@ -1051,7 +1064,7 @@ fn common_loot_comes_from_the_kills_before() {
     p.model.initial.accepted = vec![0, 1];
     // The kills' XP must not end the route before the cloth.
     p.profile.to_level = 10;
-    let fighting = |route: &[Stop]| planner(&p).simulate_full(route, None).unwrap().1.fighting;
+    let fighting = |route: &[Stop]| fighting_turned_in(&p, route);
     let (kill, gather) = (Stop::quest(0, Kind::Objective(0)), Stop::quest(1, Kind::Objective(0)));
     let first = fighting(&[gather, kill]);
     let after = fighting(&[kill, gather]);

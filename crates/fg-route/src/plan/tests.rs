@@ -283,7 +283,7 @@ fn objective_started_counts_its_share_at_another_place() {
 fn gathering_next_to_kills_saves_time_when_consecutive() {
     let p = camp_of_two_objectives();
     let planner = planner(&p);
-    let fighting = |route: &[Stop]| planner.simulate_full(route, None).unwrap().1.fighting;
+    let fighting = |route: &[Stop]| fighting_with_turn_ins(&planner, route);
     let (kill, gather) = (Stop::quest(0, Kind::Objective(0)), Stop::quest(1, Kind::Objective(0)));
     let (k, g) = (fighting(&[kill]), fighting(&[gather]));
     let saved = g.min(k * p.params.gather_overlap);
@@ -293,6 +293,19 @@ fn gathering_next_to_kills_saves_time_when_consecutive() {
     // Another stop between them (a quest taken at the start).
     let apart = fighting(&[kill, Stop::quest(2, Kind::Accept), gather]);
     assert!((apart - (k + g)).abs() < 1e-6, "{apart} with a stop between");
+}
+
+/// The fighting of `route` with the quests whose objective it does turned in at its end: a quest
+/// left in the log is grinding (`Planner::count_unfinished_as_grind`), not fighting.
+fn fighting_with_turn_ins(planner: &Planner<'_>, route: &[Stop]) -> f64 {
+    let mut full = route.to_vec();
+    full.extend(
+        route
+            .iter()
+            .filter(|s| s.kind == Kind::Objective(0))
+            .map(|s| Stop::quest(s.index, Kind::TurnIn)),
+    );
+    planner.simulate_full(&full, None).unwrap().1.fighting
 }
 
 /// Kill and gathering objectives at a camp 100 yards east of the start, for quests 0 and 1 (in
@@ -355,7 +368,7 @@ fn objectives_at_one_place_are_brought_together() {
     let apart = vec![kill, accept, gather];
     let together = planner.route_together(apart.clone());
     assert_eq!(together, vec![kill, gather, accept]);
-    let fighting = |route: &[Stop]| planner.simulate_full(route, None).unwrap().1.fighting;
+    let fighting = |route: &[Stop]| fighting_with_turn_ins(&planner, route);
     assert!(fighting(&together) < fighting(&apart) - 1.0);
 }
 
@@ -1134,4 +1147,32 @@ fn a_route_with_another_version_still_tries_new_quests() {
         .filter(|_| planner.swap_version(&mut route.clone(), &run, &mut rng).is_some())
         .count();
     assert!((50..=250).contains(&swaps), "{swaps} swaps of 1000 tries");
+}
+
+/// A quest the route took and never turned in is grinding in all but name: the time of its
+/// objectives is counted as grinding, not as the fighting of a quest; turned in, it stays fighting.
+#[test]
+fn a_quest_never_turned_in_counts_as_grinding() {
+    use crate::testing::{Q, Scenario};
+    let p = Scenario::new()
+        .levels(1, 3)
+        .quest(
+            Q::new(1, "Kills")
+                .level(1)
+                .xp(50)
+                .giver(1, 40.0, 40.0)
+                .kill("Boar", 1, 10, 1, 45.0, 45.0),
+        )
+        .build();
+    let planner = planner(&p);
+    let (accept, objective, turn_in) = (
+        Stop::quest(0, Kind::Accept),
+        Stop::quest(0, Kind::Objective(0)),
+        Stop::quest(0, Kind::TurnIn),
+    );
+    let (_, done) = planner.simulate_full(&[accept, objective, turn_in], None).unwrap();
+    let (_, left) = planner.simulate_full(&[accept, objective], None).unwrap();
+    assert!(done.fighting > 1.0, "turned in: the quest's fighting {done:?}");
+    assert!(left.fighting < 1.0, "never turned in: grinding {left:?}");
+    assert!(left.grinding > done.grinding, "{} vs {}", left.grinding, done.grinding);
 }

@@ -964,6 +964,7 @@ impl Planner<'_> {
             .count();
         s.spent.missing_dungeons = dungeons as u32;
         s.spent.reputation_missing = self.reputation_missing(s);
+        self.count_unfinished_as_grind(s);
         s.spent.total = s.time;
         // Optimizer score: grinding and flights weigh more than their real time, gold spent on
         // flights and missing goals cost.
@@ -972,6 +973,31 @@ impl Planner<'_> {
             + (missing + zone + dungeons + self.reputation_goals_unmet(s)) as f64 * self.params.mandatory_penalty
             + s.spent.reputation_missing * self.params.reputation_weight
             + f64::from(s.spent.missing_profession_quests) * self.params.profession_quest_weight
+    }
+
+    /// A quest the route took and never turned in is grinding in all but name (kills for XP, no
+    /// reward): the time its done objectives took counts as grinding, in the optimizer's score and
+    /// against the grind cap, instead of as a quest's fighting.
+    fn count_unfinished_as_grind(&self, s: &mut State) {
+        let mut work = 0.0;
+        for i in s.accepted.and_not(&s.turned) {
+            let q = &self.model.quests[i];
+            for (k, o) in q.objectives.iter().enumerate().take(8) {
+                if s.objectives[i] & (1 << k) != 0 {
+                    work += o.kills * self.params.kill_time(q.level, 0.0, o.mob_level)
+                        + o.uses * self.params.object_time
+                        + o.extra;
+                }
+            }
+        }
+        let work = work.min(s.spent.fighting.max(0.0));
+        if work <= 0.0 {
+            return;
+        }
+        let allowed = (self.params.grind_cap * s.time - s.spent.grinding).max(0.0);
+        s.spent.fighting -= work;
+        s.spent.grinding += work;
+        s.spent.grind_over += (work - allowed).max(0.0);
     }
 
     /// Quests of the leveled professions the route does not turn in, though the profession's
