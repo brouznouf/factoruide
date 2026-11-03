@@ -341,5 +341,5 @@ rewards = [{ item = 2074, count = 1, choice = true }, { item = 2089, count = 1, 
 
 [[row]]
 table = "dungeon"
-values = { area = 1581, name = "The Deadmines", alt_areas = "[10029]", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "questie" }
+values = { area = 1581, name = "The Deadmines", alt_areas = "[10029]", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "fixture" }
 

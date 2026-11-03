@@ -438,9 +438,9 @@ rewards = [{ item = 279876, count = 1, choice = true }, { item = 279877, count =
 
 [[row]]
 table = "dungeon"
-values = { area = 16611, name = "Ruins of Lordaeron", alt_areas = "null", entrance_zone = 1497, entrance_x = 72.48, entrance_y = 11.33, source = "questie" }
+values = { area = 16611, name = "Ruins of Lordaeron", alt_areas = "null", entrance_zone = 1497, entrance_x = 72.48, entrance_y = 11.33, source = "fixture" }
 
 [[row]]
 table = "dungeon"
-values = { area = 16919, name = "The Hall of Thanes", alt_areas = "null", entrance_zone = 1537, entrance_x = 27.63, entrance_y = 47.83, source = "questie" }
+values = { area = 16919, name = "The Hall of Thanes", alt_areas = "null", entrance_zone = 1537, entrance_x = 27.63, entrance_y = 47.83, source = "fixture" }
 

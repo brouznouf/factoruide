@@ -142,7 +142,7 @@ objectives = [
 
 [[row]]
 table = "dungeon"
-values = { area = 16544, name = "City of Dalaran", alt_areas = "null", entrance_zone = 36, entrance_x = 8.46, entrance_y = 59.21, source = "questie" }
+values = { area = 16544, name = "City of Dalaran", alt_areas = "null", entrance_zone = 36, entrance_x = 8.46, entrance_y = 59.21, source = "fixture" }
 
 [[row]]
 table = "dungeon_entrance"

@@ -3,19 +3,19 @@
 
 [[row]]
 table = "dungeon"
-values = { area = 1477, name = "The Temple of Atal'Hakkar", alt_areas = "[1417]", entrance_zone = 8, entrance_x = 69.9, entrance_y = 53.5, source = "questie" }
+values = { area = 1477, name = "The Temple of Atal'Hakkar", alt_areas = "[1417]", entrance_zone = 8, entrance_x = 69.9, entrance_y = 53.5, source = "fixture" }
 
 [[row]]
 table = "dungeon"
-values = { area = 1581, name = "The Deadmines", alt_areas = "[10029]", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "questie" }
+values = { area = 1581, name = "The Deadmines", alt_areas = "[10029]", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "fixture" }
 
 [[row]]
 table = "dungeon"
-values = { area = 1583, name = "Blackrock Spire", alt_areas = "[10003,10004,10005,10006,10007]", entrance_zone = 51, entrance_x = 34.8, entrance_y = 85.3, source = "questie" }
+values = { area = 1583, name = "Blackrock Spire", alt_areas = "[10003,10004,10005,10006,10007]", entrance_zone = 51, entrance_x = 34.8, entrance_y = 85.3, source = "fixture" }
 
 [[row]]
 table = "dungeon"
-values = { area = 1584, name = "Blackrock Depths", alt_areas = "[1585]", entrance_zone = 51, entrance_x = 34.8, entrance_y = 85.3, source = "questie" }
+values = { area = 1584, name = "Blackrock Depths", alt_areas = "[1585]", entrance_zone = 51, entrance_x = 34.8, entrance_y = 85.3, source = "fixture" }
 [[npc]]
 id = 234
 name = "Gryan Stoutmantle"

@@ -41,6 +41,8 @@ insert into client_talent select * from r.client_talent;
 insert into m_npc select * from r.m_npc where id in ($npcs);
 insert into m_spawn select * from r.m_spawn where entity_type = 'npc' and entity_id in ($npcs);
 detach r;
+update m_npc set sources = 'fixture';
+update m_spawn set sources = 'fixture';
 vacuum;
 SQL
     zstd -19 -q -f "$tmp/base.sqlite" -o "$out/base-$edition.sqlite.zst"
