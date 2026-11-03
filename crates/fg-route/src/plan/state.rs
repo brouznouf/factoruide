@@ -107,6 +107,14 @@ pub enum Event {
         since: i64,
         abilities: u64,
     },
+    /// Profession training: `ranks` (a bit each, apprentice first) of `Model::professions[profession]`
+    /// learned at `Model::profession_trainers[trainer]`. `outbound` as for `Train`.
+    ProfTrain {
+        profession: usize,
+        trainer: usize,
+        outbound: f64,
+        ranks: u8,
+    },
     /// The bags' loot sold at a vendor (`Model::vendors`).
     Sell {
         vendor: usize,
@@ -275,6 +283,9 @@ pub(crate) struct State {
     /// The class teleports learned (bit per `Model::teleports`): each at the trainer of its city.
     pub(crate) taught: u16,
     pub(crate) abilities: u64,
+    /// The ranks learned of each profession of `Model::professions` (a bit each, apprentice
+    /// first; see `Planner::train_professions`).
+    pub(crate) ranks: [u8; crate::profession::PROFESSIONS.len()],
     pub(crate) dungeons: u128,
     pub(crate) accepted: Flags,
     /// Quests out of play: turned in, or given up (those are also in `dropped`).

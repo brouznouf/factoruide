@@ -63,11 +63,17 @@ pub(crate) fn camp_index(model: &Model, radius: f64) -> CampIndex {
 const TIMED_SHARE: f64 = 0.75;
 
 impl Planner<'_> {
+    /// Training after a step: the class, then the professions.
+    pub(crate) fn train(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) {
+        self.train_class(s, record);
+        self.train_professions(s, record);
+    }
+
     /// Class training: on the way when a trainer is close, or a dedicated trip when late.
     /// With class spell data, training is due when the spells the trainer sells make fights
     /// `train_min_gain` faster, late at `train_trip_gain`; else every `train_every` levels
     /// (and for the other classes of a group).
-    pub(crate) fn train(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) {
+    fn train_class(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) {
         // Nothing left to fight for once at the target level (the guide ends there).
         if self.model.trainers.is_empty() || self.explicit || s.level >= self.profile.to_level {
             return;

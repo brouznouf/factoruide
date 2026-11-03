@@ -16,7 +16,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - A quest started by an item found in a dungeon's object is planned with the run and taken in it: WoW Forever's The Treaty of Understanding, from the Hall of Thanes.
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
-- "Profession trainer stops" option (advanced settings, off by default): with professions, the guide stops at the trainer to learn each profession and, before the skill reaches the cap of its rank, the next rank. Only at trainers the route already passes, so no detour and no time added; a rank whose trainer the route does not pass has no stop (GitHub #106).
+- "Profession trainer stops" option (advanced settings, off by default): with professions, the route goes to the trainer to learn each profession and, before the skill reaches the cap of its rank, each next rank. A trainer near the route is a detour, a far one a trip, both counted in the route's time; a rank no trainer teaches has no stop (GitHub #106).
 - "Buy at the auction house" option (advanced settings, off by default): the items a quest asks for that nothing else gives, made by a profession like Rough Dynamite, are bought at the nearest auction house instead of leaving the quest out (GitHub #97).
 
 ### Addon

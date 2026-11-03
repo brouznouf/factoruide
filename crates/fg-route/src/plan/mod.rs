@@ -35,6 +35,7 @@ mod hearth;
 mod moves;
 mod on_the_way;
 mod places;
+mod profession_trainers;
 mod regions;
 mod report;
 mod search;
@@ -56,6 +57,7 @@ pub use evaluate::End;
 pub use follow::{Followed, Want};
 pub(crate) use on_the_way::segment_dist;
 pub use places::Places;
+pub(crate) use profession_trainers::RANKS;
 pub use regions::Group;
 pub use search::Effort;
 pub use share::{Exchange, Member};
@@ -306,6 +308,7 @@ impl<'a> Planner<'a> {
                 0
             },
             abilities: init.abilities,
+            ranks: Default::default(),
             dungeons: 0,
             accepted: Flags::new(n),
             turned: Flags::new(n),

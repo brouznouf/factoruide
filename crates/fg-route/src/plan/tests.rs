@@ -10,6 +10,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 
 mod movement;
+mod profession_trainers;
 mod xp_buffs;
 #[test]
 fn completion_window_is_checked_after_exploration_on_the_trip() {

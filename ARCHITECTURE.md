@@ -90,13 +90,15 @@ level:
   `farm_share` (80%) of the mobs met are killed, fewer on a crowded server (the other players
   take their share, as at an objective's spot); the mobs of the log's quests are left to their
   objectives, which count them where they are done.
-  Professions add no time: only their quests are planned, once the skill curve reaches them
-  (optional in the guide). Their reward is the profession's, not XP: they are kept once gray,
-  and each one left out costs `profession_quest_weight`. With `profession_trainers` (off by default)
-  the guide, once built, gets a stop at the trainer of each profession and rank (`export/profession_trainers.rs`):
-  after the step that already passes a trainer teaching it, between the level the rank needs and
-  the point the curve passes the cap of the rank before. No detour and no time: a rank whose trainer
-  the route does not pass has no stop.
+  By default professions add no time or steps: only their quests are planned, once the skill curve reaches
+  them (optional in the guide). Their reward is the profession's, not XP: they are kept once gray,
+  and each one left out costs `profession_quest_weight`. With `profession_trainers` (off by
+  default) the planner also visits the trainers (`plan/profession_trainers.rs`, called after every
+  step with the class training): a trainer within `train_radius` teaches each rank the character can
+  learn (level and skill the rank asks) as a detour; a farther one is a trip, once the curve passes
+  the cap of the rank before. The time counts in the route, the visit is a `profession` step, and
+  the state (`State::ranks`) remembers the ranks learned. A rank no trainer teaches gets no
+  visit. A guide edited by hand has none (the editor plans no trainer).
 - **Every action is a step**: each take, objective and turn-in of a quest is a stop of the route,
   done at that stop and nowhere else (no quest taken in passing at another stop, no objective
   finished on the way), so that each one can be moved or removed in the guide editor. What doing

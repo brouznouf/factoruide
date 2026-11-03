@@ -333,6 +333,7 @@ impl Planner<'_> {
                     && s.trained == old.trained
                     && s.taught == old.taught
                     && s.abilities == old.abilities
+                    && s.ranks == old.ranks
                     && s.dungeons == old.dungeons
                     && s.abandon_check == old.abandon_check
                     && s.accepted == old.accepted
