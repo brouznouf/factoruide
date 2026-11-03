@@ -617,7 +617,7 @@ fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
 #[test]
 fn pet_quest_comes_early() {
     let request = request("orc", "warlock", 30, &["progression=cautious", "effort=0"]);
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let route = job::plan(&fixture(&["classic_services", "classic_routes", "classic_orc_warlock", "classic_valley"]), &overrides(), &request, &|_| {}).unwrap().route;
     let at = route
         .steps
         .iter()
