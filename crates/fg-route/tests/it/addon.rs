@@ -1,7 +1,8 @@
 //! What the addon gets besides the guides' steps, on the Classic database: the walks between
 //! steps (for the compass) and the places that serve the player.
 
-use crate::common::{database, repo};
+use crate::common::repo;
+use fg_route::fixture::Fixture;
 use fg_route::Route;
 use fg_route::faction::Faction;
 use fg_route::job::{self, Overrides, Service};
@@ -88,8 +89,8 @@ fn no_walk_after_a_boat_nor_to_a_step_along_the_way() {
 /// named in the guide's language; the NPCs left unused by the game's makers are not.
 #[test]
 fn places_of_services() {
-    let conn = database();
-    let world = world(Faction::Alliance);
+    let conn = Fixture::new(Edition::Classic).file("classic_places").open();
+    let world = &crate::common::bare_world(Edition::Classic, Faction::Alliance);
     let places = job::places(&conn, world, Edition::Classic, &Names::load(&conn, "frFR").unwrap()).unwrap();
     let find = |name: &str| places.iter().filter(|p| p.name == name).collect::<Vec<_>>();
     let mage = find("Marryk Nurribit");
@@ -111,7 +112,7 @@ fn places_of_services() {
 /// the newest it follows (Import.lua): a guide made for a newer addon asks to update it.
 #[test]
 fn each_guide_carries_its_format() {
-    let conn = database();
+    let conn = Fixture::new(Edition::Classic).open();
     let mut other = route(&[("accept", 30.87, 66.2)]);
     other.name = "other".into();
     let lua = job::guides_lua(
@@ -153,7 +154,7 @@ fn a_long_walk_follows_the_ground_between_gates() {
 /// The flight path of a town counts as learned once quests were done there; no quest done, none.
 #[test]
 fn quests_done_in_a_town_give_its_flight_path() {
-    let conn = database();
+    let conn = Fixture::new(Edition::Classic).file("classic_stormwind_quests").open();
     let in_stormwind: Vec<job::QuestId> = conn
         .prepare(
             "SELECT DISTINCT r.quest_id FROM m_quest_relation r JOIN m_spawn s
@@ -184,7 +185,7 @@ fn quests_done_in_a_town_give_its_flight_path() {
 /// The capital cities are not starts to choose: every route passes through them.
 #[test]
 fn capitals_are_known_from_the_area_flags() {
-    let world = world(Faction::Alliance);
+    let world = &crate::common::bare_world(Edition::Classic, Faction::Alliance);
     for capital in [1519, 1537, 1657, 1637, 1497, 1638] {
         assert!(world.is_capital(capital), "{}", world.zone_name(capital));
     }

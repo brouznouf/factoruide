@@ -1,0 +1,47 @@
+# The places of Coldridge Valley and Ironforge: its mage trainer, innkeeper, the gryphon master, a mailbox; and an NPC left
+# unused by the game's makers.
+
+[[npc]]
+id = 944
+name = "Marryk Nurribit"
+subname = "Mage Trainer"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 28.71, y = 66.37 }]
+
+[[npc]]
+id = 295
+name = "Innkeeper Farley"
+subname = "Innkeeper"
+level = 30
+npc_flags = 135
+friendly_to = "A"
+at = [{ zone = 12, x = 43.77, y = 65.8 }]
+
+[[npc]]
+id = 523
+name = "Thor"
+subname = "Gryphon Master"
+level = 55
+npc_flags = 11
+friendly_to = "A"
+at = [{ zone = 40, x = 56.55, y = 52.64 }]
+
+[[npc]]
+id = 67
+name = "[UNUSED] Marlon Darnik"
+subname = "Grocer"
+level = 5
+npc_flags = 0
+friendly_to = "A"
+at = []
+
+[[object]]
+id = 32349
+name = "Mailbox"
+at = [{ zone = 1537, x = 20.96, y = 52.41 }]
+
+[[row]]
+table = "l10n"
+values = { entity_type = "npc", locale = "frFR", id = 295, name = "Aubergiste Farley" }

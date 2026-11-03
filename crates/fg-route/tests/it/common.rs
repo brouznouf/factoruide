@@ -85,3 +85,10 @@ pub fn world(edition: fg_route::xp::Edition, faction: fg_route::faction::Faction
     worlds.push((key, world));
     world
 }
+
+/// The walking world of an edition for a faction on a database without terrain: its zones, passes
+/// and capitals (the game's constants of the base), for the tests that do not walk.
+pub fn bare_world(edition: fg_route::xp::Edition, faction: fg_route::faction::Faction) -> fg_route::world::World {
+    let overrides = fg_route::job::Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+    fg_route::job::game_world(&fg_route::fixture::Fixture::new(edition).open(), &overrides, faction, 0).unwrap()
+}
