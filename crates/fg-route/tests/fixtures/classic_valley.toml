@@ -1,0 +1,178 @@
+# Valley of Trials: the first quests of the Orc start.
+
+[[npc]]
+id = 3143
+name = "Gornek"
+level = 5
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 14, x = 42.06, y = 68.33, z = 41 }]
+
+[[npc]]
+id = 3153
+name = "Frang"
+level = 11
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 14, x = 42.89, y = 69.44, z = 39 }]
+
+[[npc]]
+id = 3154
+name = "Jen'shan"
+level = 8
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 14, x = 42.84, y = 69.33, z = 38 }]
+
+[[npc]]
+id = 3155
+name = "Rwag"
+level = 8
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 14, x = 41.28, y = 68.0, z = 41 }]
+
+[[npc]]
+id = 3157
+name = "Shikrik"
+level = 10
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 14, x = 42.39, y = 69.0, z = 38 }]
+
+[[npc]]
+id = 3707
+name = "Ken'jai"
+level = 10
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 14, x = 42.36, y = 68.81, z = 38 }]
+
+[[npc]]
+id = 5884
+name = "Mai'ah"
+level = 10
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 14, x = 42.51, y = 69.04, z = 38 }]
+
+[[quest]]
+id = 2383
+name = "Simple Parchment"
+level = 1
+races_mask = 2
+classes_mask = 1
+zone = -81
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3153 }]
+objectives = []
+
+[[quest]]
+id = 3065
+name = "Simple Tablet"
+level = 1
+races_mask = 128
+classes_mask = 1
+zone = -81
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3153 }]
+objectives = []
+
+[[quest]]
+id = 3082
+name = "Etched Tablet"
+level = 1
+races_mask = 128
+classes_mask = 4
+zone = -261
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3154 }]
+objectives = []
+
+[[quest]]
+id = 3083
+name = "Encrypted Tablet"
+level = 1
+races_mask = 128
+classes_mask = 8
+zone = -162
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3155 }]
+objectives = []
+
+[[quest]]
+id = 3084
+name = "Rune-Inscribed Tablet"
+level = 1
+races_mask = 128
+classes_mask = 64
+zone = -82
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3157 }]
+objectives = []
+
+[[quest]]
+id = 3085
+name = "Hallowed Tablet"
+level = 1
+races_mask = 128
+classes_mask = 16
+zone = -262
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3707 }]
+objectives = []
+
+[[quest]]
+id = 3086
+name = "Glyphic Tablet"
+level = 1
+races_mask = 128
+classes_mask = 128
+zone = -161
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 5884 }]
+objectives = []
+
+[[quest]]
+id = 3087
+name = "Etched Parchment"
+level = 1
+races_mask = 2
+classes_mask = 4
+zone = -261
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3154 }]
+objectives = []
+
+[[quest]]
+id = 3088
+name = "Encrypted Parchment"
+level = 1
+races_mask = 2
+classes_mask = 8
+zone = -162
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3155 }]
+objectives = []
+
+[[quest]]
+id = 3089
+name = "Rune-Inscribed Parchment"
+level = 1
+races_mask = 2
+classes_mask = 64
+zone = -82
+xp = 40
+starts = [{ npc = 3143 }]
+ends = [{ npc = 3157 }]
+objectives = []
+
