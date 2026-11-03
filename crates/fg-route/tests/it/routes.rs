@@ -1,6 +1,6 @@
 //! Planner behavior on the Classic database: reproductions of the problems met on real guides.
 
-use crate::common::{database_of, leveling, leveling_of, repo};
+use crate::common::{database as real_database, database_of, leveling, leveling_of, repo};
 use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, StartState};
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
@@ -77,6 +77,15 @@ fn prepare_request(request: &PlanRequest) -> Prepared {
 /// The Classic database of these tests: the quests they name (`tests/fixtures/`).
 fn database() -> Connection {
     fixture(&["classic_svens_revenge", "classic_services", "classic_dungeons", "classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
+}
+
+/// `prepare_from` on the whole Classic data, for the tests of the terrain (a fixture has none).
+fn prepare_from_real(race: &str, class: &str, to_level: i64, params: &[&str], start: Option<StartState>) -> Prepared {
+    let request = PlanRequest {
+        start,
+        ..request(race, class, to_level, params)
+    };
+    job::prepare(&real_database(), &overrides(), &request, &|_| {}).unwrap()
 }
 
 /// A Classic database of the fixtures' files (`tests/fixtures/<name>.toml`).
@@ -738,14 +747,14 @@ fn job_saves_its_walks() {
     interrupt.stop();
     let request = request("orc", "warlock", 12, &["effort=100"]);
     let first =
-        job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
+        job::plan_interruptible(&real_database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
     let memory = first.walks.clone().expect("a memory with the outcome");
     assert!(!memory.is_empty());
     let saved = job::PlanOutcome::from_json(&serde_json::to_string(&first).unwrap()).unwrap();
     assert_eq!(saved.walks.as_ref(), Some(&memory));
     let known = walks.len();
     let again =
-        job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
+        job::plan_interruptible(&real_database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
     assert_eq!(walks.len(), known, "paths searched again");
     assert_eq!(again.walks.map(|m| m.len()), Some(memory.len()));
 }
@@ -3133,7 +3142,7 @@ fn a_reward_package_cannot_supply_ingredients_while_its_quest_is_held() {
 /// Mine's kobolds, Goldtooth and the area to scout are in the mine, not on the hill over it.
 #[test]
 fn fargodeep_mine_is_under_the_hill() {
-    let p = human_warrior();
+    let p = &prepare_from_real("human", "warrior", 30, &["progression=cautious"], None);
     let mut checked = 0;
     for name in [
         "The Fargodeep Mine",
@@ -3234,7 +3243,7 @@ fn a_group_guide_tells_the_addon_its_players() {
 #[test]
 fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     use fg_route::plan::{Edit, Outcome};
-    let probe = prepare_from("human", "warrior", 40, &["progression=cautious"], None);
+    let probe = prepare_from_real("human", "warrior", 40, &["progression=cautious"], None);
     let needles = 400;
     let zherin = probe.world.to_world(needles, 81.63, 77.95).unwrap();
     let start = StartState {
@@ -3247,7 +3256,7 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
         position: Some(map_pos(&probe, &zherin, needles)),
         ..StartState::default()
     };
-    let p = prepare_from("human", "warrior", 40, &["progression=cautious"], Some(start));
+    let p = prepare_from_real("human", "warrior", 40, &["progression=cautious"], Some(start));
     let node = p
         .world
         .taxi_nodes
@@ -3274,7 +3283,7 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     assert!(edited.steps[0].warning.is_some());
     assert_eq!(edited.errors(), 0);
     // Once the character is strong enough, nothing to warn of.
-    let strong = prepare_from(
+    let strong = prepare_from_real(
         "human",
         "warrior",
         45,

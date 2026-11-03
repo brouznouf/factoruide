@@ -314,16 +314,29 @@ impl Fixture {
     }
 
     pub fn try_open(self) -> Result<Connection> {
-        let bytes = base(self.edition);
+        // The database of the same files is built once: the next ones are copies of it.
+        static BUILT: std::sync::Mutex<BTreeMap<String, std::sync::Arc<Vec<u8>>>> = std::sync::Mutex::new(BTreeMap::new());
+        let key = format!("{}\n{}", self.edition.key(), self.files.iter().map(|(n, t)| format!("{n}\n{t}")).collect::<String>());
+        let cached = BUILT.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&key).cloned();
         let mut conn = Connection::open_in_memory()?;
-        conn.deserialize_read_exact(rusqlite::MAIN_DB, &mut &bytes[..], bytes.len(), false)?;
-        for (name, text) in &self.files {
-            let file: File = toml::from_str(text).with_context(|| format!("fixture {name}"))?;
-            insert(&conn, &file).with_context(|| format!("fixture {name}"))?;
+        if let Some(bytes) = cached {
+            conn.deserialize_read_exact(rusqlite::MAIN_DB, &mut &bytes[..], bytes.len(), false)?;
+        } else {
+            let bytes = base(self.edition);
+            conn.deserialize_read_exact(rusqlite::MAIN_DB, &mut &bytes[..], bytes.len(), false)?;
+            for (name, text) in &self.files {
+                let file: File = toml::from_str(text).with_context(|| format!("fixture {name}"))?;
+                insert(&conn, &file).with_context(|| format!("fixture {name}"))?;
+            }
+            let data = conn.serialize(rusqlite::MAIN_DB)?.to_vec();
+            BUILT
+                .lock()
+                .unwrap_or_else(std::sync::PoisonError::into_inner)
+                .insert(key, std::sync::Arc::new(data));
         }
         // `FG_TRACE=1` prints every statement the code under test runs on it.
         if std::env::var_os("FG_TRACE").is_some() {
-            conn.trace_v2(
+            let _ = conn.trace_v2(
                 rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT,
                 Some(|event: rusqlite::trace::TraceEvent<'_>| {
                     if let rusqlite::trace::TraceEvent::Stmt(_, sql) = event {
