@@ -999,79 +999,93 @@ at = [{ zone = 17, x = 63.37, y = 59.34 }, { zone = 17, x = 63.92, y = 58.79 }, 
 id = 80
 name = "Soft Fur-lined Shoes"
 level = 5
+class = 4
 
 [[item]]
 id = 750
 name = "Tough Wolf Meat"
 level = 1
+class = 12
 drops = [{ npc = 69, chance = 0.8 }, { npc = 299, chance = 0.8 }, { npc = 704, chance = 0.8 }]
 
 [[item]]
 id = 772
 name = "Large Candle"
 level = 1
+class = 12
 drops = [{ npc = 40, chance = 0.66 }, { npc = 327, chance = 0.66 }, { npc = 475, chance = 0.66 }]
 
 [[item]]
 id = 915
 name = "Red Silk Bandana"
 level = 1
+class = 12
 drops = [{ npc = 594, chance = 0.22855875 }, { npc = 619, chance = 0.22855875 }, { npc = 824, chance = 0.22855875 }]
 
 [[item]]
 id = 1015
 name = "Lean Wolf Flank"
 level = 19
+class = 7
 drops = [{ npc = 1258, chance = 0.409518 }, { npc = 628, chance = 0.40944899999999995 }, { npc = 923, chance = 0.402754 }]
 
 [[item]]
 id = 1017
 name = "Seasoned Wolf Kabob"
 level = 25
+class = 0
 drops = [{ object = 180685, chance = 0.1 }]
 
 [[item]]
 id = 1129
 name = "Ghoul Fang"
 level = 1
+class = 12
 drops = [{ npc = 3, chance = 0.34477375000000005 }, { npc = 210, chance = 0.34477375000000005 }, { npc = 570, chance = 0.34477375000000005 }]
 
 [[item]]
 id = 1130
 name = "Vial of Spider Venom"
 level = 1
+class = 12
 drops = [{ npc = 217, chance = 0.19304624999999997 }, { npc = 539, chance = 0.19304624999999997 }, { npc = 569, chance = 0.19304624999999997 }]
 
 [[item]]
 id = 1131
 name = "Totem of Infliction"
 level = 25
+class = 4
 
 [[item]]
 id = 1260
 name = "Tharil'zun's Head"
 level = 1
+class = 12
 drops = [{ npc = 486, chance = 1.0 }]
 
 [[item]]
 id = 1276
 name = "Fire Hardened Buckler"
 level = 27
+class = 4
 
 [[item]]
 id = 1327
 name = "Wiley's Note"
 level = 1
+class = 12
 
 [[item]]
 id = 1353
 name = "Shaw's Report"
 level = 1
+class = 12
 
 [[item]]
 id = 1357
 name = "Captain Sander's Treasure Map"
 level = 10
+class = 12
 start_quest = 136
 drops = [{ npc = 126, chance = 0.0075 }, { npc = 127, chance = 0.0075 }, { npc = 171, chance = 0.0075 }]
 
@@ -1079,127 +1093,150 @@ drops = [{ npc = 126, chance = 0.0075 }, { npc = 127, chance = 0.0075 }, { npc =
 id = 1381
 name = "A Mysterious Message"
 level = 1
+class = 12
 drops = [{ npc = 550, chance = 1.0 }]
 
 [[item]]
 id = 1434
 name = "Glowing Wax Stick"
 level = 7
+class = 0
 
 [[item]]
 id = 1875
 name = "Thistlenettle's Badge"
 level = 1
+class = 12
 drops = [{ npc = 626, chance = 1.0 }]
 
 [[item]]
 id = 1893
 name = "Miner's Revenge"
 level = 20
+class = 2
 
 [[item]]
 id = 1894
 name = "Miners' Union Card"
 level = 1
+class = 12
 drops = [{ npc = 623, chance = 1.0 }, { npc = 624, chance = 1.0 }, { npc = 625, chance = 1.0 }]
 
 [[item]]
 id = 1922
 name = "Supplies for Sven"
 level = 1
+class = 12
 
 [[item]]
 id = 2036
 name = "Dusty Mining Gloves"
 level = 18
+class = 4
 
 [[item]]
 id = 2037
 name = "Tunneler's Boots"
 level = 18
+class = 4
 
 [[item]]
 id = 2074
 name = "Solid Shortblade"
 level = 18
+class = 2
 
 [[item]]
 id = 2089
 name = "Scrimshaw Dagger"
 level = 18
+class = 2
 
 [[item]]
 id = 2318
 name = "Light Leather"
 level = 10
+class = 7
 drops = [{ npc = 15127, chance = 1.0 }, { npc = 2274, chance = 0.571429 }, { npc = 2098, chance = 0.15 }]
 
 [[item]]
 id = 2378
 name = "Skeleton Finger"
 level = 1
+class = 12
 drops = [{ npc = 200, chance = 0.5072300000000001 }, { npc = 2454, chance = 0.5072300000000001 }]
 
 [[item]]
 id = 2548
 name = "Barrel of Barleybrew Scalder"
 level = 1
+class = 12
 
 [[item]]
 id = 2562
 name = "Bouquet of Scarlet Begonias"
 level = 23
+class = 4
 
 [[item]]
 id = 2637
 name = "Ironband's Progress Report"
 level = 1
+class = 12
 
 [[item]]
 id = 2665
 name = "Stormwind Seasoning Herbs"
 level = 1
+class = 5
 drops = [{ vendor = 1303 }]
 
 [[item]]
 id = 2686
 name = "Thunder Ale"
 level = 1
+class = 0
 drops = [{ npc = 1247 }, { npc = 1682 }, { npc = 7744 }, { vendor = 1247 }, { vendor = 1682 }, { vendor = 7744 }]
 
 [[item]]
 id = 2701
 name = "Recipe: Seasoned Wolf Kabob"
 level = 25
+class = 9
 drops = [{ vendor = 340 }]
 
 [[item]]
 id = 3014
 name = "Battleworn Axe"
 level = 1
+class = 12
 drops = [{ npc = 440, chance = 0.45 }, { npc = 485, chance = 0.45 }, { npc = 437, chance = 0.4 }]
 
 [[item]]
 id = 3217
 name = "Foreman Belt"
 level = 15
+class = 4
 
 [[item]]
 id = 3631
 name = "Bellygrub's Tusk"
 level = 1
+class = 12
 drops = [{ npc = 345, chance = 1.0 }]
 
 [[item]]
 id = 4371
 name = "Bronze Tube"
 level = 21
+class = 7
 drops = [{ item = 6352 }, { vendor = 1448 }, { vendor = 1694 }, { vendor = 2682 }]
 
 [[item]]
 id = 4881
 name = "Aged Envelope"
 level = 1
+class = 12
 start_quest = 830
 drops = [{ object = 3239, chance = 1.0 }]
 
@@ -1207,37 +1244,44 @@ drops = [{ object = 3239, chance = 1.0 }]
 id = 4883
 name = "Admiral Proudmoore's Orders"
 level = 1
+class = 12
 
 [[item]]
 id = 4914
 name = "Battleworn Leather Gloves"
 level = 5
+class = 4
 
 [[item]]
 id = 4915
 name = "Soft Wool Boots"
 level = 5
+class = 4
 
 [[item]]
 id = 4925
 name = "Primitive Hand Blade"
 level = 5
+class = 2
 
 [[item]]
 id = 4962
 name = "Double-layered Gloves"
 level = 8
+class = 4
 
 [[item]]
 id = 5166
 name = "Webwood Venom Sac"
 level = 1
+class = 12
 drops = [{ npc = 1986, chance = 0.4369175 }, { npc = 1987, chance = 0.4369175 }]
 
 [[item]]
 id = 5179
 name = "Moss-twined Heart"
 level = 5
+class = 12
 start_quest = 927
 drops = [{ npc = 3535, chance = 1.0 }]
 
@@ -1245,174 +1289,207 @@ drops = [{ npc = 3535, chance = 1.0 }]
 id = 5217
 name = "Tainted Heart"
 level = 1
+class = 12
 
 [[item]]
 id = 5218
 name = "Cleansed Timberling Heart"
 level = 1
+class = 12
 
 [[item]]
 id = 5385
 name = "Crawler Leg"
 level = 1
+class = 12
 drops = [{ npc = 2236, chance = 1.0 }, { npc = 2231, chance = 0.51038875 }, { npc = 2232, chance = 0.51038875 }]
 
 [[item]]
 id = 5392
 name = "Thistlewood Dagger"
 level = 5
+class = 2
 
 [[item]]
 id = 5393
 name = "Thistlewood Staff"
 level = 5
+class = 2
 
 [[item]]
 id = 5394
 name = "Archery Training Gloves"
 level = 5
+class = 4
 
 [[item]]
 id = 5586
 name = "Thistlewood Blade"
 level = 5
+class = 2
 
 [[item]]
 id = 5778
 name = "Primitive Walking Stick"
 level = 5
+class = 2
 
 [[item]]
 id = 5936
 name = "Animal Skin Belt"
 level = 8
+class = 4
 
 [[item]]
 id = 6070
 name = "Wolfskin Bracers"
 level = 5
+class = 4
 
 [[item]]
 id = 6093
 name = "Orc Crusher"
 level = 27
+class = 2
 
 [[item]]
 id = 6094
 name = "Piercing Axe"
 level = 18
+class = 2
 
 [[item]]
 id = 6188
 name = "Mud Stompers"
 level = 15
+class = 4
 
 [[item]]
 id = 6281
 name = "Rattlecage Skull"
 level = 1
+class = 12
 drops = [{ npc = 1890, chance = 0.8 }]
 
 [[item]]
 id = 6352
 name = "Waterlogged Crate"
 level = 25
+class = 15
 
 [[item]]
 id = 6487
 name = "Vile Familiar Head"
 level = 1
+class = 12
 drops = [{ npc = 3101, chance = 0.8 }]
 
 [[item]]
 id = 8048
 name = "Emerald Dreamcatcher"
 level = 1
+class = 0
 drops = [{ object = 126158, chance = 1.0 }]
 
 [[item]]
 id = 8049
 name = "Gnarlpine Necklace"
 level = 1
+class = 12
 drops = [{ npc = 7234, chance = 1.0 }]
 
 [[item]]
 id = 8050
 name = "Tallonkai's Jewel"
 level = 1
+class = 12
 drops = [{ item = 8049 }]
 
 [[item]]
 id = 9545
 name = "Simple Sigil"
 level = 1
+class = 12
 
 [[item]]
 id = 10544
 name = "Thistlewood Maul"
 level = 5
+class = 2
 
 [[item]]
 id = 11187
 name = "Stemleaf Bracers"
 level = 5
+class = 4
 
 [[item]]
 id = 15208
 name = "Cenarion Moondust"
 level = 1
+class = 12
 
 [[item]]
 id = 15710
 name = "Cenarion Lunardust"
 level = 1
+class = 12
 
 [[item]]
 id = 15885
 name = "Pendant of the Sea Lion"
 level = 1
+class = 12
 drops = [{ object = 15885 }]
 
 [[item]]
 id = 16114
 name = "Foreman's Blackjack"
 level = 1
+class = 12
 
 [[item]]
 id = 16604
 name = "Moon Robes of Elune"
 level = 5
+class = 4
 
 [[item]]
 id = 16608
 name = "Aquarius Belt"
 level = 16
+class = 4
 
 [[item]]
 id = 16746
 name = "Warsong Report"
 level = 1
+class = 12
 drops = [{ item = 16783 }]
 
 [[item]]
 id = 16763
 name = "Warsong Runner Update"
 level = 1
+class = 12
 
 [[item]]
 id = 16764
 name = "Warsong Scout Update"
 level = 1
+class = 12
 
 [[item]]
 id = 16765
 name = "Warsong Outrider Update"
 level = 1
+class = 12
 
 [[item]]
 id = 16783
 name = "Bundle of Reports"
 level = 1
+class = 12
 
 [[vendor]]
 npc = 1448

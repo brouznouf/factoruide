@@ -42,18 +42,21 @@ at = [{ zone = 493, x = 74.4, y = 65.4 }, { zone = 493, x = 74.4, y = 65.5 }, { 
 id = 280502
 name = "Relic of the Fang"
 level = 1
+class = 12
 drops = [{ object = 672821, chance = 0.1 }]
 
 [[item]]
 id = 280679
 name = "Relic of the Claw"
 level = 1
+class = 12
 drops = [{ object = 673093, chance = 0.1 }]
 
 [[item]]
 id = 280680
 name = "Relic of the Silent Shadow"
 level = 1
+class = 12
 drops = [{ object = 673094, chance = 0.1 }]
 
 [[quest]]

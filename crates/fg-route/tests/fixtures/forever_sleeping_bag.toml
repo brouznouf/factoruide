@@ -49,16 +49,19 @@ at = [{ zone = 406, x = 39.62, y = 49.86 }]
 id = 211527
 name = "Cozy Sleeping Bag"
 level = 40
+class = 15
 
 [[item]]
 id = 216619
 name = "Student Fodder"
 level = 33
+class = 0
 
 [[item]]
 id = 221498
 name = "Old Toolbox"
 level = 35
+class = 1
 
 [[quest]]
 id = 79007

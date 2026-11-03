@@ -1,0 +1,1787 @@
+# Innkeepers, class trainers and auctioneers of the capitals: where a teleport lands, a hearthstone returns, an item is bought.
+
+[[npc]]
+id = 376
+name = "High Priestess Laurena"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 38.4, y = 26.2 }, { zone = 1519, x = 38.8, y = 26.4 }, { zone = 1519, x = 49.53, y = 44.6 }]
+
+[[npc]]
+id = 461
+name = "Demisette Cloyce"
+subname = "Warlock Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 39.24, y = 84.96 }]
+
+[[npc]]
+id = 914
+name = "Ander Germaine"
+subname = "Warrior Trainer"
+level = 60
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 80.19, y = 61.26 }]
+
+[[npc]]
+id = 918
+name = "Osborne the Night Man"
+subname = "Rogue Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 77.43, y = 65.31 }]
+
+[[npc]]
+id = 928
+name = "Lord Grayson Shadowbreaker"
+subname = "Paladin Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 48.43, y = 50.22 }, { zone = 1519, x = 48.46, y = 50.19 }, { zone = 1519, x = 48.87, y = 49.64 }]
+
+[[npc]]
+id = 1292
+name = "Maris Granger"
+subname = "Skinning Trainer"
+level = 35
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 72.14, y = 62.21 }]
+
+[[npc]]
+id = 1901
+name = "Kelstrum Stonebreaker"
+subname = "Warrior Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 66.97, y = 90.15 }]
+
+[[npc]]
+id = 2327
+name = "Shaina Fuller"
+subname = "First Aid Trainer"
+level = 35
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 53.0, y = 44.68 }]
+
+[[npc]]
+id = 2485
+name = "Larimaine Purdue"
+subname = "Portal Trainer"
+level = 50
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 50.39, y = 85.99 }]
+
+[[npc]]
+id = 2489
+name = "Milstaff Stormeye"
+subname = "Portal Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 25.5, y = 7.07 }]
+
+[[npc]]
+id = 2492
+name = "Lexington Mortaim"
+subname = "Portal Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 84.19, y = 15.58 }]
+
+[[npc]]
+id = 2798
+name = "Pand Stonebinder"
+subname = "First Aid Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 29.69, y = 21.18 }]
+
+[[npc]]
+id = 2879
+name = "Karrina Mekenda"
+subname = "Pet Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 67.32, y = 36.81 }]
+
+[[npc]]
+id = 3001
+name = "Brek Stonehoof"
+subname = "Mining Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 34.37, y = 57.9 }]
+
+[[npc]]
+id = 3013
+name = "Komin Winterhoof"
+subname = "Herbalism Trainer"
+level = 35
+npc_flags = 16
+friendly_to = "H"
+at = [{ zone = 1638, x = 49.95, y = 40.41 }]
+
+[[npc]]
+id = 3026
+name = "Aska Mistrunner"
+subname = "Cooking Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 50.72, y = 53.11 }]
+
+[[npc]]
+id = 3028
+name = "Kah Mistrunner"
+subname = "Fishing Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 56.13, y = 46.38 }]
+
+[[npc]]
+id = 3030
+name = "Siln Skychaser"
+subname = "Shaman Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 22.82, y = 21.11 }]
+
+[[npc]]
+id = 3031
+name = "Tigor Skychaser"
+subname = "Shaman Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 23.64, y = 18.79 }]
+
+[[npc]]
+id = 3032
+name = "Beram Skychaser"
+subname = "Shaman Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 21.99, y = 18.8 }]
+
+[[npc]]
+id = 3033
+name = "Turak Runetotem"
+subname = "Druid Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 76.48, y = 27.22 }]
+
+[[npc]]
+id = 3034
+name = "Sheal Runetotem"
+subname = "Druid Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 77.14, y = 27.02 }]
+
+[[npc]]
+id = 3036
+name = "Kym Wildmane"
+subname = "Druid Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 77.15, y = 29.82 }]
+
+[[npc]]
+id = 3038
+name = "Kary Thunderhorn"
+subname = "Hunter Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 58.49, y = 88.33 }]
+
+[[npc]]
+id = 3039
+name = "Holt Thunderhorn"
+subname = "Hunter Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 57.3, y = 89.79 }]
+
+[[npc]]
+id = 3040
+name = "Urek Thunderhorn"
+subname = "Hunter Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 59.13, y = 86.87 }]
+
+[[npc]]
+id = 3041
+name = "Torm Ragetotem"
+subname = "Warrior Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 57.24, y = 87.37 }]
+
+[[npc]]
+id = 3042
+name = "Sark Ragetotem"
+subname = "Warrior Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 56.99, y = 89.51 }]
+
+[[npc]]
+id = 3043
+name = "Ker Ragetotem"
+subname = "Warrior Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 57.58, y = 85.5 }]
+
+[[npc]]
+id = 3044
+name = "Miles Welsh"
+subname = "Priest Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 25.32, y = 15.27 }]
+
+[[npc]]
+id = 3045
+name = "Malakai Cross"
+subname = "Priest Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 24.56, y = 22.57 }]
+
+[[npc]]
+id = 3046
+name = "Father Cobb"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 25.64, y = 20.7 }]
+
+[[npc]]
+id = 3047
+name = "Archmage Shymm"
+subname = "Mage Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 22.76, y = 14.53 }]
+
+[[npc]]
+id = 3048
+name = "Ursyn Ghull"
+subname = "Mage Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 25.7, y = 14.19 }]
+
+[[npc]]
+id = 3049
+name = "Thurston Xane"
+subname = "Mage Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 25.18, y = 20.96 }]
+
+[[npc]]
+id = 3324
+name = "Grol'dar"
+subname = "Warlock Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 47.98, y = 45.93 }]
+
+[[npc]]
+id = 3325
+name = "Mirket"
+subname = "Warlock Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 48.62, y = 46.95 }]
+
+[[npc]]
+id = 3326
+name = "Zevrost"
+subname = "Warlock Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 48.47, y = 45.43 }]
+
+[[npc]]
+id = 3327
+name = "Gest"
+subname = "Rogue Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 42.69, y = 51.48 }]
+
+[[npc]]
+id = 3328
+name = "Ormok"
+subname = "Rogue Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 43.9, y = 54.63 }]
+
+[[npc]]
+id = 3332
+name = "Lumak"
+subname = "Fishing Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 69.8, y = 29.21 }]
+
+[[npc]]
+id = 3344
+name = "Kardris Dreamseeker"
+subname = "Shaman Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 38.8, y = 36.37 }]
+
+[[npc]]
+id = 3352
+name = "Ormak Grimshot"
+subname = "Hunter Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 66.05, y = 18.53 }]
+
+[[npc]]
+id = 3353
+name = "Grezz Ragefist"
+subname = "Warrior Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 79.79, y = 31.42 }]
+
+[[npc]]
+id = 3354
+name = "Sorek"
+subname = "Warrior Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 80.39, y = 32.38 }]
+
+[[npc]]
+id = 3357
+name = "Makaru"
+subname = "Mining Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 73.12, y = 26.08 }]
+
+[[npc]]
+id = 3373
+name = "Arnok"
+subname = "First Aid Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 34.18, y = 84.58 }]
+
+[[npc]]
+id = 3399
+name = "Zamja"
+subname = "Cooking Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 57.4, y = 53.96 }]
+
+[[npc]]
+id = 3401
+name = "Shenthul"
+subname = "Rogue Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 43.05, y = 53.74 }]
+
+[[npc]]
+id = 3403
+name = "Sian'tsu"
+subname = "Shaman Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 37.84, y = 36.45 }]
+
+[[npc]]
+id = 3404
+name = "Jandi"
+subname = "Herbalism Trainer"
+level = 35
+npc_flags = 16
+friendly_to = "H"
+at = [{ zone = 1637, x = 55.62, y = 39.46 }]
+
+[[npc]]
+id = 3406
+name = "Xor'juul"
+subname = "Hunter Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 67.24, y = 20.2 }]
+
+[[npc]]
+id = 3407
+name = "Sian'dur"
+subname = "Hunter Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 67.96, y = 17.8 }]
+
+[[npc]]
+id = 3408
+name = "Zel'mak"
+subname = "Warrior Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 80.38, y = 29.5 }]
+
+[[npc]]
+id = 4087
+name = "Arias'ta Bladesinger"
+subname = "Warrior Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 58.71, y = 34.9 }]
+
+[[npc]]
+id = 4089
+name = "Sildanair"
+subname = "Warrior Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 61.78, y = 42.22 }]
+
+[[npc]]
+id = 4090
+name = "Astarii Starseeker"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 38.33, y = 80.95 }]
+
+[[npc]]
+id = 4091
+name = "Jandria"
+subname = "Priest Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 37.89, y = 82.74 }]
+
+[[npc]]
+id = 4092
+name = "Lariia"
+subname = "Priest Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 40.35, y = 88.68 }]
+
+[[npc]]
+id = 4138
+name = "Jeen'ra Nightrunner"
+subname = "Hunter Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 39.72, y = 5.39 }]
+
+[[npc]]
+id = 4146
+name = "Jocaste"
+subname = "Hunter Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 40.38, y = 8.55 }]
+
+[[npc]]
+id = 4156
+name = "Astaia"
+subname = "Fishing Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 47.89, y = 56.65 }]
+
+[[npc]]
+id = 4163
+name = "Syurna"
+subname = "Rogue Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 36.99, y = 21.91 }]
+
+[[npc]]
+id = 4165
+name = "Elissa Dumas"
+subname = "Portal Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 40.6, y = 82.13 }]
+
+[[npc]]
+id = 4204
+name = "Firodren Mooncaller"
+subname = "Herbalism Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 47.95, y = 68.03 }]
+
+[[npc]]
+id = 4205
+name = "Dorion"
+subname = "Hunter Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 42.21, y = 7.27 }]
+
+[[npc]]
+id = 4210
+name = "Alegorn"
+subname = "Cooking Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 49.03, y = 21.24 }]
+
+[[npc]]
+id = 4211
+name = "Dannelor"
+subname = "First Aid Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 51.71, y = 12.22 }]
+
+[[npc]]
+id = 4214
+name = "Erion Shadewhisper"
+subname = "Rogue Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 34.52, y = 25.93 }]
+
+[[npc]]
+id = 4215
+name = "Anishar"
+subname = "Rogue Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 37.92, y = 20.92 }]
+
+[[npc]]
+id = 4217
+name = "Mathrengyl Bearwalker"
+subname = "Druid Trainer"
+level = 60
+npc_flags = 23
+friendly_to = "A"
+at = [{ zone = 1657, x = 35.37, y = 8.4 }]
+
+[[npc]]
+id = 4218
+name = "Denatharion"
+subname = "Druid Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 34.77, y = 7.37 }]
+
+[[npc]]
+id = 4219
+name = "Fylerian Nightwing"
+subname = "Druid Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 33.51, y = 8.35 }]
+
+[[npc]]
+id = 4254
+name = "Geofram Bouldertoe"
+subname = "Mining Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 50.0, y = 26.29 }]
+
+[[npc]]
+id = 4552
+name = "Eunice Burch"
+subname = "Cooking Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 62.14, y = 44.91 }]
+
+[[npc]]
+id = 4563
+name = "Kaal Soulreaper"
+subname = "Warlock Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 86.21, y = 15.93 }]
+
+[[npc]]
+id = 4564
+name = "Luther Pickman"
+subname = "Warlock Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 86.43, y = 15.25 }]
+
+[[npc]]
+id = 4565
+name = "Richard Kerwin"
+subname = "Warlock Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 88.91, y = 15.86 }]
+
+[[npc]]
+id = 4566
+name = "Kaelystia Hatebringer"
+subname = "Mage Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 85.02, y = 14.02 }]
+
+[[npc]]
+id = 4567
+name = "Pierce Shackleton"
+subname = "Mage Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 85.45, y = 13.51 }]
+
+[[npc]]
+id = 4568
+name = "Anastasia Hartwell"
+subname = "Mage Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 85.14, y = 10.03 }]
+
+[[npc]]
+id = 4573
+name = "Armand Cromwell"
+subname = "Fishing Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 80.7, y = 31.26 }]
+
+[[npc]]
+id = 4582
+name = "Carolyn Ward"
+subname = "Rogue Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 83.86, y = 72.07 }]
+
+[[npc]]
+id = 4583
+name = "Miles Dexter"
+subname = "Rogue Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 85.21, y = 71.57 }]
+
+[[npc]]
+id = 4584
+name = "Gregory Charles"
+subname = "Rogue Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 84.88, y = 73.53 }]
+
+[[npc]]
+id = 4591
+name = "Mary Edras"
+subname = "First Aid Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 73.16, y = 55.15 }]
+
+[[npc]]
+id = 4593
+name = "Christoph Walker"
+subname = "Warrior Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 46.93, y = 15.23 }]
+
+[[npc]]
+id = 4594
+name = "Angela Curthas"
+subname = "Warrior Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 48.32, y = 15.96 }]
+
+[[npc]]
+id = 4595
+name = "Baltus Fowler"
+subname = "Warrior Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 47.4, y = 17.29 }]
+
+[[npc]]
+id = 4598
+name = "Brom Killian"
+subname = "Mining Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 56.03, y = 37.45 }]
+
+[[npc]]
+id = 4606
+name = "Aelthalyste"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 49.26, y = 17.12 }]
+
+[[npc]]
+id = 4607
+name = "Father Lankester"
+subname = "Priest Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 49.14, y = 14.61 }]
+
+[[npc]]
+id = 4608
+name = "Father Lazarus"
+subname = "Priest Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 47.57, y = 18.9 }]
+
+[[npc]]
+id = 4614
+name = "Martha Alliestar"
+subname = "Herbalism Trainer"
+level = 35
+npc_flags = 16
+friendly_to = "H"
+at = [{ zone = 1497, x = 54.0, y = 49.55 }]
+
+[[npc]]
+id = 5111
+name = "Innkeeper Firebrew"
+subname = "Innkeeper"
+level = 30
+npc_flags = 135
+friendly_to = "A"
+at = [{ zone = 1537, x = 18.15, y = 51.45 }]
+
+[[npc]]
+id = 5113
+name = "Kelv Sternhammer"
+subname = "Warrior Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 70.34, y = 90.65 }]
+
+[[npc]]
+id = 5114
+name = "Bilban Tosslespanner"
+subname = "Warrior Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 65.9, y = 88.41 }]
+
+[[npc]]
+id = 5115
+name = "Daera Brightspear"
+subname = "Hunter Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 70.97, y = 89.8 }]
+
+[[npc]]
+id = 5116
+name = "Olmin Burningbeard"
+subname = "Hunter Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 70.89, y = 83.61 }]
+
+[[npc]]
+id = 5117
+name = "Regnus Thundergranite"
+subname = "Hunter Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 69.87, y = 82.9 }]
+
+[[npc]]
+id = 5137
+name = "Reyna Stonebranch"
+subname = "Herbalism Trainer"
+level = 35
+npc_flags = 16
+friendly_to = "A"
+at = [{ zone = 1537, x = 55.9, y = 59.13 }]
+
+[[npc]]
+id = 5141
+name = "Theodrus Frostbeard"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 24.08, y = 8.41 }]
+
+[[npc]]
+id = 5142
+name = "Braenna Flintcrag"
+subname = "Priest Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 24.42, y = 9.17 }]
+
+[[npc]]
+id = 5143
+name = "Toldren Deepiron"
+subname = "Priest Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 25.21, y = 10.76 }]
+
+[[npc]]
+id = 5144
+name = "Bink"
+subname = "Mage Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 27.25, y = 8.3 }]
+
+[[npc]]
+id = 5145
+name = "Juli Stormkettle"
+subname = "Mage Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 26.3, y = 6.77 }]
+
+[[npc]]
+id = 5146
+name = "Nittlebur Sparkfizzle"
+subname = "Mage Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 25.93, y = 6.17 }]
+
+[[npc]]
+id = 5147
+name = "Valgar Highforge"
+subname = "Paladin Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 23.7, y = 5.1 }]
+
+[[npc]]
+id = 5148
+name = "Beldruk Doombrow"
+subname = "Paladin Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 24.55, y = 4.47 }]
+
+[[npc]]
+id = 5149
+name = "Brandur Ironhammer"
+subname = "Paladin Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 23.13, y = 6.14 }]
+
+[[npc]]
+id = 5150
+name = "Nissa Firestone"
+subname = "First Aid Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 55.09, y = 58.26 }]
+
+[[npc]]
+id = 5159
+name = "Daryl Riknussun"
+subname = "Cooking Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 60.08, y = 36.43 }]
+
+[[npc]]
+id = 5161
+name = "Grimnur Stonebrand"
+subname = "Fishing Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 48.07, y = 6.91 }]
+
+[[npc]]
+id = 5165
+name = "Hulfdan Blackbeard"
+subname = "Rogue Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 51.96, y = 14.84 }]
+
+[[npc]]
+id = 5166
+name = "Ormyr Flinteye"
+subname = "Rogue Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 52.89, y = 15.01 }]
+
+[[npc]]
+id = 5167
+name = "Fenthwick"
+subname = "Rogue Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 51.5, y = 15.33 }]
+
+[[npc]]
+id = 5171
+name = "Thistleheart"
+subname = "Warlock Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 51.09, y = 6.61 }]
+
+[[npc]]
+id = 5172
+name = "Briarthorn"
+subname = "Warlock Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 50.35, y = 5.66 }]
+
+[[npc]]
+id = 5173
+name = "Alexander Calder"
+subname = "Warlock Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 50.08, y = 7.45 }]
+
+[[npc]]
+id = 5479
+name = "Wu Shen"
+subname = "Warrior Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 80.55, y = 59.87 }, { zone = 1519, x = 80.67, y = 59.75 }]
+
+[[npc]]
+id = 5480
+name = "Ilsa Corbin"
+subname = "Warrior Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 80.41, y = 59.8 }, { zone = 1519, x = 80.69, y = 59.71 }]
+
+[[npc]]
+id = 5482
+name = "Stephen Ryback"
+subname = "Cooking Trainer"
+level = 35
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 78.17, y = 53.1 }]
+
+[[npc]]
+id = 5484
+name = "Brother Benjamin"
+subname = "Priest Trainer"
+level = 40
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 52.28, y = 47.65 }]
+
+[[npc]]
+id = 5489
+name = "Brother Joshua"
+subname = "Priest Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 38.4, y = 26.6 }, { zone = 1519, x = 38.8, y = 26.4 }, { zone = 1519, x = 49.5, y = 45.21 }]
+
+[[npc]]
+id = 5491
+name = "Arthur the Faithful"
+subname = "Paladin Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 49.61, y = 49.84 }]
+
+[[npc]]
+id = 5493
+name = "Arnold Leland"
+subname = "Fishing Trainer"
+level = 35
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 54.99, y = 69.65 }]
+
+[[npc]]
+id = 5495
+name = "Ursula Deline"
+subname = "Warlock Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 26.2, y = 77.4 }, { zone = 1519, x = 26.8, y = 77.0 }, { zone = 1519, x = 39.89, y = 84.19 }]
+
+[[npc]]
+id = 5496
+name = "Sandahl"
+subname = "Warlock Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 39.66, y = 85.74 }]
+
+[[npc]]
+id = 5497
+name = "Jennea Cannon"
+subname = "Mage Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 49.56, y = 85.8 }]
+
+[[npc]]
+id = 5498
+name = "Elsharin"
+subname = "Mage Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 48.21, y = 87.22 }]
+
+[[npc]]
+id = 5502
+name = "Shylamiir"
+subname = "Herbalism Trainer"
+level = 35
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 31.5, y = 62.61 }]
+
+[[npc]]
+id = 5504
+name = "Sheldras Moontree"
+subname = "Druid Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 35.84, y = 67.38 }]
+
+[[npc]]
+id = 5505
+name = "Theridran"
+subname = "Druid Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 36.11, y = 64.39 }]
+
+[[npc]]
+id = 5506
+name = "Maldryn"
+subname = "Druid Trainer"
+level = 40
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 34.44, y = 65.18 }]
+
+[[npc]]
+id = 5513
+name = "Gelman Stonehand"
+subname = "Mining Trainer"
+level = 35
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 59.25, y = 37.83 }]
+
+[[npc]]
+id = 5515
+name = "Einris Brightspear"
+subname = "Hunter Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 67.35, y = 36.25 }]
+
+[[npc]]
+id = 5516
+name = "Ulfir Ironbeard"
+subname = "Hunter Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 67.59, y = 35.78 }]
+
+[[npc]]
+id = 5517
+name = "Thorfin Stoneshield"
+subname = "Hunter Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 68.0, y = 35.99 }]
+
+[[npc]]
+id = 5520
+name = "Spackle Thornberry"
+subname = "Demon Trainer"
+level = 40
+npc_flags = 7
+friendly_to = "A"
+at = [{ zone = 1519, x = 39.53, y = 84.53 }]
+
+[[npc]]
+id = 5566
+name = "Tannysa"
+subname = "Herbalism Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 44.4, y = 77.8 }, { zone = 1519, x = 44.8, y = 77.0 }, { zone = 1519, x = 54.29, y = 84.1 }]
+
+[[npc]]
+id = 5753
+name = "Martha Strain"
+subname = "Demon Trainer"
+level = 20
+npc_flags = 5
+friendly_to = "H"
+at = [{ zone = 1497, x = 85.7, y = 16.08 }]
+
+[[npc]]
+id = 5815
+name = "Kurgul"
+subname = "Demon Trainer"
+level = 45
+npc_flags = 7
+friendly_to = "H"
+at = [{ zone = 1637, x = 47.52, y = 46.72 }]
+
+[[npc]]
+id = 5882
+name = "Pephredo"
+subname = "Mage Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 38.35, y = 85.56 }]
+
+[[npc]]
+id = 5883
+name = "Enyo"
+subname = "Mage Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 38.78, y = 85.67 }]
+
+[[npc]]
+id = 5885
+name = "Deino"
+subname = "Mage Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 38.45, y = 86.13 }]
+
+[[npc]]
+id = 5957
+name = "Birgitte Cranston"
+subname = "Portal Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 22.5, y = 16.91 }]
+
+[[npc]]
+id = 5958
+name = "Thuul"
+subname = "Portal Trainer"
+level = 45
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 38.68, y = 85.41 }]
+
+[[npc]]
+id = 6014
+name = "X'yera"
+subname = "Priest Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 36.01, y = 87.73 }]
+
+[[npc]]
+id = 6018
+name = "Ur'kyo"
+subname = "Priest Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 35.59, y = 87.82 }]
+
+[[npc]]
+id = 6291
+name = "Balthus Stoneflayer"
+subname = "Skinning Trainer"
+level = 35
+npc_flags = 16
+friendly_to = "A"
+at = [{ zone = 1537, x = 39.86, y = 32.5 }]
+
+[[npc]]
+id = 6292
+name = "Eladriel"
+subname = "Skinning Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 64.14, y = 22.26 }]
+
+[[npc]]
+id = 6382
+name = "Jubahl Corpseseeker"
+subname = "Demon Trainer"
+level = 60
+npc_flags = 7
+friendly_to = "A"
+at = [{ zone = 1537, x = 52.7, y = 6.08 }]
+
+[[npc]]
+id = 6735
+name = "Innkeeper Saelienne"
+subname = "Innkeeper"
+level = 30
+npc_flags = 135
+friendly_to = "A"
+at = [{ zone = 1657, x = 67.42, y = 15.65 }]
+
+[[npc]]
+id = 6740
+name = "Innkeeper Allison"
+subname = "Innkeeper"
+level = 30
+npc_flags = 135
+friendly_to = "A"
+at = [{ zone = 1519, x = 60.29, y = 74.95 }, { zone = 1519, x = 60.34, y = 75.08 }, { zone = 1519, x = 60.39, y = 75.27 }]
+
+[[npc]]
+id = 6741
+name = "Innkeeper Norman"
+subname = "Innkeeper"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 1497, x = 67.74, y = 37.89 }]
+
+[[npc]]
+id = 6746
+name = "Innkeeper Pala"
+subname = "Innkeeper"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 1638, x = 45.81, y = 64.71 }]
+
+[[npc]]
+id = 6929
+name = "Innkeeper Gryshka"
+subname = "Innkeeper"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 1637, x = 54.1, y = 68.41 }]
+
+[[npc]]
+id = 7087
+name = "Killian Hagey"
+subname = "Skinning Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 70.16, y = 59.18 }]
+
+[[npc]]
+id = 7088
+name = "Thuwd"
+subname = "Skinning Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 63.36, y = 45.42 }]
+
+[[npc]]
+id = 7089
+name = "Mooranta"
+subname = "Skinning Trainer"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 44.44, y = 43.15 }]
+
+[[npc]]
+id = 7311
+name = "Uthel'nay"
+subname = "Mage Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 39.16, y = 86.27 }]
+
+[[npc]]
+id = 7312
+name = "Dink"
+subname = "Mage Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 27.16, y = 8.57 }]
+
+[[npc]]
+id = 7315
+name = "Darnath Bladesinger"
+subname = "Warrior Trainer"
+level = 55
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 58.94, y = 35.35 }]
+
+[[npc]]
+id = 8665
+name = "Shylenai"
+subname = "Owl Trainer"
+level = 30
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 1657, x = 69.64, y = 45.9 }]
+
+[[npc]]
+id = 8669
+name = "Auctioneer Tolon"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 56.37, y = 51.82 }]
+
+[[npc]]
+id = 8670
+name = "Auctioneer Chilton"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1519, x = 60.85, y = 71.52 }]
+
+[[npc]]
+id = 8671
+name = "Auctioneer Buckler"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1537, x = 23.77, y = 71.79 }]
+
+[[npc]]
+id = 8672
+name = "Auctioneer Leeka"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 67.55, y = 52.42 }]
+
+[[npc]]
+id = 8673
+name = "Auctioneer Thathung"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1637, x = 55.9, y = 62.71 }]
+
+[[npc]]
+id = 8674
+name = "Auctioneer Stampi"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1638, x = 40.41, y = 51.77 }]
+
+[[npc]]
+id = 8719
+name = "Auctioneer Fitch"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1519, x = 53.4, y = 59.4 }, { zone = 1519, x = 53.6, y = 60.4 }, { zone = 1519, x = 61.18, y = 71.28 }]
+
+[[npc]]
+id = 8720
+name = "Auctioneer Redmuse"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1537, x = 24.16, y = 74.67 }]
+
+[[npc]]
+id = 8721
+name = "Auctioneer Epitwee"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 64.42, y = 52.41 }]
+
+[[npc]]
+id = 8722
+name = "Auctioneer Gullem"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1638, x = 38.9, y = 50.19 }]
+
+[[npc]]
+id = 8723
+name = "Auctioneer Golothas"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 56.24, y = 54.04 }]
+
+[[npc]]
+id = 8724
+name = "Auctioneer Wabang"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1637, x = 55.84, y = 64.81 }]
+
+[[npc]]
+id = 9856
+name = "Auctioneer Grimful"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1637, x = 55.25, y = 61.79 }]
+
+[[npc]]
+id = 9859
+name = "Auctioneer Lympkin"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1537, x = 25.81, y = 75.55 }]
+
+[[npc]]
+id = 10086
+name = "Hesuwa Thunderhorn"
+subname = "Pet Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 54.09, y = 83.99 }]
+
+[[npc]]
+id = 10088
+name = "Xao'tsu"
+subname = "Pet Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 66.32, y = 14.81 }]
+
+[[npc]]
+id = 10089
+name = "Silvaria"
+subname = "Pet Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 42.47, y = 9.17 }]
+
+[[npc]]
+id = 10090
+name = "Belia Thundergranite"
+subname = "Pet Trainer"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 70.86, y = 85.83 }]
+
+[[npc]]
+id = 11044
+name = "Doctor Martin Felben"
+subname = "Journeyman Alchemist Trainer"
+level = 25
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 46.61, y = 74.09 }]
+
+[[npc]]
+id = 11397
+name = "Nara Meideros"
+subname = "Priest Trainer"
+level = 30
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 20.2, y = 50.8 }, { zone = 1519, x = 20.8, y = 50.2 }, { zone = 1519, x = 35.68, y = 63.18 }]
+
+[[npc]]
+id = 11401
+name = "Priestess Alathea"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1657, x = 39.52, y = 81.2 }]
+
+[[npc]]
+id = 11406
+name = "High Priest Rohan"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 24.73, y = 8.16 }]
+
+[[npc]]
+id = 13283
+name = "Lord Tony Romano"
+subname = "Rogue Trainer"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 80.28, y = 68.58 }]
+
+[[npc]]
+id = 13417
+name = "Sagorne Creststrider"
+subname = "Shaman Trainer"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 38.66, y = 35.92 }]
+
+[[npc]]
+id = 15659
+name = "Auctioneer Jaxon"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1519, x = 53.4, y = 59.6 }, { zone = 1519, x = 53.6, y = 59.4 }, { zone = 1519, x = 61.16, y = 70.68 }]
+
+[[npc]]
+id = 15675
+name = "Auctioneer Stockton"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 71.42, y = 46.69 }]
+
+[[npc]]
+id = 15676
+name = "Auctioneer Yarly"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 71.51, y = 41.9 }]
+
+[[npc]]
+id = 15678
+name = "Auctioneer Silva'las"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 57.31, y = 53.56 }]
+
+[[npc]]
+id = 15679
+name = "Auctioneer Cazarez"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 55.59, y = 52.45 }]
+
+[[npc]]
+id = 15682
+name = "Auctioneer Cain"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 67.65, y = 35.9 }]
+
+[[npc]]
+id = 15683
+name = "Auctioneer Naxxremis"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 64.4, y = 35.81 }]
+
+[[npc]]
+id = 15684
+name = "Auctioneer Tricket"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 60.49, y = 41.75 }]
+
+[[npc]]
+id = 15686
+name = "Auctioneer Rhyker"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 60.47, y = 46.44 }]
+
+[[npc]]
+id = 246344
+name = "Alodan the Hopeful"
+subname = "Paladin Trainer"
+level = 30
+npc_flags = 16
+friendly_to = "H"
+at = [{ zone = 1638, x = 22.62, y = 19.91 }, { zone = 1638, x = 23.91, y = 15.44 }, { zone = 1638, x = 25.32, y = 14.65 }]
+
+[[npc]]
+id = 258098
+name = "Eldrun Stormbreaker"
+subname = "Shaman Trainer"
+level = 5
+npc_flags = 16
+friendly_to = "A"
+at = [{ zone = 1537, x = 47.1, y = 13.79 }]
+
+[[npc]]
+id = 258785
+name = "High Priestess Mims"
+subname = "Priest Trainer"
+level = 60
+npc_flags = 16
+friendly_to = "A"
+at = [{ zone = 1537, x = 24.59, y = 10.0 }]
+
+[[npc]]
+id = 260093
+name = "Garen Largo"
+subname = "Paladin Trainer"
+level = 20
+npc_flags = 16
+friendly_to = "H"
+at = [{ zone = 1497, x = 47.45, y = 15.08 }, { zone = 1497, x = 48.35, y = 14.27 }, { zone = 1497, x = 50.37, y = 13.77 }]

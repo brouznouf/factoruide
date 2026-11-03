@@ -75,30 +75,35 @@ at = [{ zone = 36, x = 59.4, y = 46.4 }, { zone = 36, x = 60.0, y = 45.4 }, { zo
 id = 6265
 name = "Soul Shard"
 level = 10
+class = 5
 drops = [{ vendor = 17078 }]
 
 [[item]]
 id = 6989
 name = "Vial of Hatefury Blood"
 level = 1
+class = 12
 drops = [{ npc = 4670, chance = 0.8 }, { npc = 4671, chance = 0.8 }, { npc = 4672, chance = 0.8 }]
 
 [[item]]
 id = 6990
 name = "Lesser Infernal Stone"
 level = 1
+class = 12
 drops = [{ npc = 4676, chance = 1.0 }, { npc = 11937, chance = 1.0 }]
 
 [[item]]
 id = 6991
 name = "Smoldering Coal"
 level = 1
+class = 12
 drops = [{ npc = 2760, chance = 0.8 }, { npc = 217305, chance = 0.002928 }]
 
 [[item]]
 id = 12293
 name = "Fine Gold Thread"
 level = 1
+class = 12
 drops = [{ npc = 2670 }]
 
 [[quest]]

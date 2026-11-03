@@ -1,0 +1,32 @@
+# A Dynamite Plan (92749): its Rough Dynamite is crafted, bought at the auction house.
+
+[[npc]]
+id = 11026
+name = "Sprite Jumpsprocket"
+level = 24
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 61.88, y = 30.56, z = 96 }]
+
+[[item]]
+id = 4358
+name = "Rough Dynamite"
+level = 10
+class = 0
+
+[[quest]]
+id = 92749
+name = "A Dynamite Plan"
+level = 16
+min_level = 9
+races_mask = 4294967373
+zone = 40
+xp = 580
+objectives_text = "Obtain 10 Coarse Dynamite from crafting, trading, or the auction house, then return to Sprite Jumpsprocket in the Dwarven District of Stormwind."
+requirements = "[\"Coarse Dynamite x 10\"]"
+starts = [{ npc = 11026 }]
+ends = [{ npc = 11026 }]
+objectives = [
+  { item = 4358, amount = 10 },
+]
+

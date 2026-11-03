@@ -1,0 +1,125 @@
+# Quests that start inside a dungeon: the Crest of Lordaeron (Ruins of Lordaeron) and The Treaty of Understanding (Hall of Thanes).
+
+[[npc]]
+id = 2784
+name = "King Magni Bronzebeard"
+level = 63
+rank = 3
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1537, x = 39.09, y = 56.2, z = 506 }]
+
+[[npc]]
+id = 14450
+name = "Orphan Matron Nightingale"
+level = 10
+npc_flags = 7
+friendly_to = "A"
+at = [{ zone = 1519, x = 56.07, y = 53.79, z = 97 }, { zone = 1519, x = 56.26, y = 54.23, z = 97 }, { zone = 1519, x = 56.31, y = 53.99, z = 97 }, { zone = 1519, x = 56.43, y = 55.32 }]
+
+[[npc]]
+id = 15991
+name = "Lady Dena Kennedy"
+level = 60
+rank = 1
+friendly_to = "A"
+at = [{ zone = 1519, x = 68.0, y = 29.0 }, { zone = 1519, x = 68.4, y = 30.2 }, { zone = 1519, x = 69.0, y = 28.6, z = 122 }, { zone = 1519, x = 69.2, y = 30.8 }, { zone = 1519, x = 70.2, y = 29.8 }]
+
+[[object]]
+id = 673474
+name = "Treaty of Understanding"
+at = [{ zone = 16919, x = -1.0, y = -1.0 }]
+
+[[item]]
+id = 251270
+name = "Blood-Stained Parchment"
+level = 1
+class = 12
+start_quest = 92415
+
+[[item]]
+id = 251520
+name = "Last Scrawlings of Edward Heartweaver"
+level = 5
+class = 12
+start_quest = 92415
+
+[[item]]
+id = 251522
+name = "Blood-Stained Letter"
+level = 1
+class = 12
+
+[[item]]
+id = 268579
+name = "Crest of Lordaeron"
+level = 1
+class = 15
+start_quest = 95189
+drops = [{ object = 614679 }]
+
+[[item]]
+id = 280567
+name = "Small Sack of Gems"
+level = 1
+class = 0
+
+[[item]]
+id = 281030
+name = "Treaty of Understanding"
+level = 1
+class = 12
+start_quest = 98423
+drops = [{ object = 673474 }]
+
+[[quest]]
+id = 95189
+name = "Crest of Lordaeron"
+level = 22
+min_level = 16
+races_mask = 4294967373
+zone = 16611
+xp = 2600
+source_item = 268579
+objectives_text = "Return the Crest of Lordaeron to Lady Dena Kennedy in Stormwind City."
+starts = [{ item = 268579 }]
+ends = [{ npc = 15991 }]
+objectives = []
+rewards = [{ item = 280567, count = 1, choice = true }]
+
+[[quest]]
+id = 92415
+name = "Remember That I Love You"
+level = 22
+min_level = 15
+races_mask = 4294967373
+zone = 16611
+xp = 2600
+source_item = 251522
+objectives_text = "Bring the Blood-Stained Letter to Orphan Matron Nightingale in Stormwind City."
+starts = [{ item = 251270 }, { item = 251520 }]
+ends = [{ npc = 14450 }]
+objectives = []
+
+[[quest]]
+id = 98423
+name = "The Treaty of Understanding"
+level = 16
+min_level = 9
+races_mask = 4294967373
+zone = 1
+xp = 1150
+source_item = 281030
+objectives_text = "Deliver the Treaty of Understanding to Magni Bronzebeard in Ironforge."
+starts = [{ item = 281030 }]
+ends = [{ npc = 2784 }]
+objectives = []
+
+[[row]]
+table = "dungeon"
+values = { area = 16611, name = "Ruins of Lordaeron", alt_areas = "null", entrance_zone = 1497, entrance_x = 72.48, entrance_y = 11.33, source = "questie" }
+
+[[row]]
+table = "dungeon"
+values = { area = 16919, name = "The Hall of Thanes", alt_areas = "null", entrance_zone = 1537, entrance_x = 27.63, entrance_y = 47.83, source = "questie" }
+

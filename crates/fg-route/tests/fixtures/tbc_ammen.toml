@@ -104,33 +104,39 @@ at = [{ zone = 3524, x = 68.67, y = 55.11, z = 48 }, { zone = 3524, x = 69.83, y
 id = 22889
 name = "Vial of Moth Blood"
 level = 1
+class = 12
 drops = [{ npc = 16520, chance = 0.8 }]
 
 [[item]]
 id = 22934
 name = "Lasher Sample"
 level = 1
+class = 12
 drops = [{ npc = 16517, chance = 1.0 }, { npc = 13738, chance = 0.6430159999999999 }, { npc = 11790, chance = 0.227988 }]
 
 [[item]]
 id = 23389
 name = "Empty Draenei Supply Pouch"
 level = 5
+class = 1
 
 [[item]]
 id = 24129
 name = "Salvaged Leather Belt"
 level = 5
+class = 4
 
 [[item]]
 id = 24130
 name = "Worn Slippers"
 level = 5
+class = 4
 
 [[item]]
 id = 24131
 name = "Slightly Rusted Bracers"
 level = 5
+class = 4
 
 [[quest]]
 id = 9279

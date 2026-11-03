@@ -76,7 +76,7 @@ fn prepare_request(request: &PlanRequest) -> Prepared {
 
 /// The Classic database of these tests: the quests they name (`tests/fixtures/`).
 fn database() -> Connection {
-    fixture(&["classic_svens_revenge", "classic_services", "classic_dungeons", "classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
+    fixture(&["classic_svens_revenge", "classic_services", "classic_dungeons", "classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
 }
 
 /// `prepare_from` on the whole Classic data, for the tests of the terrain (a fixture has none).
@@ -2899,7 +2899,7 @@ fn limited_supply_follows_the_crowd() {
 /// for the others.
 #[test]
 fn a_crafted_item_is_bought_at_the_auction_house_when_chosen() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_services").file("forever_dynamite_plan").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let prepared = |auction: bool| {
         let params = [format!("auction_house={auction}")];
@@ -3434,7 +3434,7 @@ fn a_dungeon_quest_started_by_an_unplaced_item_starts_in_the_run() {
         params: Some(overrides.params.with_overrides(&[]).unwrap()),
         ..request("human", "warrior", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_dungeon_starts").open(), &overrides, &request, &|_| {}).unwrap();
     let ruins = p.model.dungeons.iter().position(|d| d.area == 16611).unwrap();
     for id in [95189, 92415] {
         let q = &p.model.quests[quest(&p, id).unwrap_or_else(|| panic!("{id} planned")) as usize];
@@ -3451,7 +3451,7 @@ fn a_quest_started_by_an_object_inside_a_dungeon_starts_in_the_run() {
         params: Some(overrides.params.with_overrides(&[]).unwrap()),
         ..request("dwarf", "warrior", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_dungeon_starts").open(), &overrides, &request, &|_| {}).unwrap();
     let thanes = p.model.dungeons.iter().position(|d| d.area == 16919).unwrap();
     let q = &p.model.quests[quest(&p, 98423).expect("The Treaty of Understanding planned") as usize];
     assert_eq!(q.start_dungeon, Some(thanes));

@@ -42,6 +42,7 @@ at = [{ zone = 1537, x = 70.77, y = 90.27, z = 510 }]
 id = 6799
 name = "Vejrek's Head"
 level = 1
+class = 12
 drops = [{ npc = 6113, chance = 1.0 }]
 
 [[quest]]

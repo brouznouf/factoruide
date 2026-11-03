@@ -201,144 +201,171 @@ at = [{ zone = 1585, x = -1.0, y = -1.0 }]
 id = 1490
 name = "Guardian Talisman"
 level = 50
+class = 4
 
 [[item]]
 id = 1875
 name = "Thistlenettle's Badge"
 level = 1
+class = 12
 drops = [{ npc = 626, chance = 1.0 }]
 
 [[item]]
 id = 1893
 name = "Miner's Revenge"
 level = 20
+class = 2
 
 [[item]]
 id = 1894
 name = "Miners' Union Card"
 level = 1
+class = 12
 drops = [{ npc = 623, chance = 1.0 }, { npc = 624, chance = 1.0 }, { npc = 625, chance = 1.0 }]
 
 [[item]]
 id = 2036
 name = "Dusty Mining Gloves"
 level = 18
+class = 4
 
 [[item]]
 id = 2037
 name = "Tunneler's Boots"
 level = 18
+class = 4
 
 [[item]]
 id = 2041
 name = "Tunic of Westfall"
 level = 24
+class = 4
 
 [[item]]
 id = 2042
 name = "Staff of Westfall"
 level = 24
+class = 2
 
 [[item]]
 id = 3637
 name = "Head of VanCleef"
 level = 1
+class = 12
 drops = [{ npc = 639, chance = 1.0 }]
 
 [[item]]
 id = 6087
 name = "Chausses of Westfall"
 level = 24
+class = 4
 
 [[item]]
 id = 6181
 name = "Fetish of Hakkar"
 level = 1
+class = 12
 drops = [{ npc = 5243, chance = 0.32749125 }, { npc = 5256, chance = 0.32749125 }, { npc = 5259, chance = 0.32749125 }]
 
 [[item]]
 id = 6212
 name = "Head of Jammal'an"
 level = 1
+class = 12
 drops = [{ npc = 5710, chance = 1.0 }]
 
 [[item]]
 id = 6288
 name = "Atal'ai Tablet"
 level = 1
+class = 12
 drops = [{ object = 37099, chance = 1.0 }]
 
 [[item]]
 id = 10999
 name = "Ironfel"
 level = 1
+class = 12
 drops = [{ npc = 9056, chance = 1.0 }]
 
 [[item]]
 id = 11000
 name = "Shadowforge Key"
 level = 1
+class = 13
 
 [[item]]
 id = 11123
 name = "Rainstrider Leggings"
 level = 55
+class = 4
 
 [[item]]
 id = 11124
 name = "Helm of Exile"
 level = 55
+class = 4
 
 [[item]]
 id = 11126
 name = "Tablet of Kurniya"
 level = 1
+class = 12
 drops = [{ npc = 9017, chance = 1.0 }]
 
 [[item]]
 id = 12112
 name = "Crypt Demon Bracers"
 level = 56
+class = 4
 
 [[item]]
 id = 12113
 name = "Sunborne Cape"
 level = 56
+class = 4
 
 [[item]]
 id = 12114
 name = "Nightfall Gloves"
 level = 56
+class = 4
 
 [[item]]
 id = 12115
 name = "Stalwart Clutch"
 level = 56
+class = 4
 
 [[item]]
 id = 12263
 name = "Caged Worg Pup"
 level = 1
+class = 12
 
 [[item]]
 id = 12264
 name = "Worg Carrier"
 level = 59
+class = 15
 
 [[item]]
 id = 15824
 name = "Astoria Robes"
 level = 59
+class = 4
 
 [[item]]
 id = 15825
 name = "Traphook Jerkin"
 level = 59
+class = 4
 
 [[item]]
 id = 15827
 name = "Jadescale Breastplate"
 level = 59
+class = 4
 
 [[quest]]
 id = 166

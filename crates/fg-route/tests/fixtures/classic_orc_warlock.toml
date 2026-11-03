@@ -708,46 +708,54 @@ at = [{ zone = 85, x = 54.73, y = 38.98 }, { zone = 85, x = 54.83, y = 42.52 }, 
 id = 159
 name = "Refreshing Spring Water"
 level = 5
+class = 0
 drops = [{ npc = 3577, chance = 1.0 }, { object = 3658, chance = 1.0 }, { object = 2843, chance = 0.36 }, { vendor = 982 }, { vendor = 1149 }, { vendor = 2115 }]
 
 [[item]]
 id = 1382
 name = "Rock Mace"
 level = 5
+class = 2
 drops = [{ npc = 10478, chance = 0.0002 }]
 
 [[item]]
 id = 1383
 name = "Stone Tomahawk"
 level = 5
+class = 2
 
 [[item]]
 id = 2137
 name = "Whittling Knife"
 level = 5
+class = 2
 
 [[item]]
 id = 2320
 name = "Coarse Thread"
 level = 5
+class = 7
 drops = [{ vendor = 989 }, { vendor = 1148 }, { vendor = 2118 }]
 
 [[item]]
 id = 2833
 name = "The Lich's Spellbook"
 level = 1
+class = 12
 drops = [{ object = 1165, chance = 1.0 }]
 
 [[item]]
 id = 2834
 name = "Embalming Ichor"
 level = 1
+class = 12
 drops = [{ npc = 1553, chance = 0.00030900000000000003 }]
 
 [[item]]
 id = 2839
 name = "A Letter to Yvette"
 level = 4
+class = 12
 start_quest = 361
 drops = [{ npc = 1520, chance = 0.03 }, { npc = 1522, chance = 0.03 }, { npc = 1523, chance = 0.03 }]
 
@@ -755,137 +763,161 @@ drops = [{ npc = 1520, chance = 0.03 }, { npc = 1522, chance = 0.03 }, { npc = 1
 id = 2846
 name = "Tirisfal Pumpkin"
 level = 1
+class = 12
 drops = [{ object = 375, chance = 1.0 }]
 
 [[item]]
 id = 2855
 name = "Putrid Claw"
 level = 1
+class = 12
 drops = [{ npc = 1525, chance = 0.33 }, { npc = 1526, chance = 0.33 }]
 
 [[item]]
 id = 2858
 name = "Darkhound Blood"
 level = 1
+class = 12
 drops = [{ npc = 1547, chance = 0.35 }, { npc = 1548, chance = 0.35 }, { npc = 1549, chance = 0.35 }]
 
 [[item]]
 id = 2875
 name = "Scarlet Insignia Ring"
 level = 1
+class = 12
 drops = [{ npc = 1535, chance = 0.4 }, { npc = 1536, chance = 0.4 }, { npc = 1537, chance = 0.4 }]
 
 [[item]]
 id = 2876
 name = "Duskbat Pelt"
 level = 1
+class = 12
 drops = [{ npc = 1553, chance = 0.33 }]
 
 [[item]]
 id = 3162
 name = "Notched Rib"
 level = 1
+class = 12
 drops = [{ npc = 1520, chance = 0.4 }, { npc = 1523, chance = 0.4 }]
 
 [[item]]
 id = 3163
 name = "Blackened Skull"
 level = 1
+class = 12
 drops = [{ npc = 1522, chance = 0.4 }]
 
 [[item]]
 id = 3382
 name = "Weak Troll's Blood Potion"
 level = 8
+class = 0
 
 [[item]]
 id = 3435
 name = "Zombie Skin Bracers"
 level = 8
+class = 4
 
 [[item]]
 id = 3437
 name = "Clasped Belt"
 level = 8
+class = 4
 
 [[item]]
 id = 3439
 name = "Zombie Skin Boots"
 level = 8
+class = 4
 
 [[item]]
 id = 3447
 name = "Cryptwalker Boots"
 level = 8
+class = 4
 
 [[item]]
 id = 3833
 name = "Adept's Cloak"
 level = 8
+class = 4
 
 [[item]]
 id = 3834
 name = "Sturdy Cloth Trousers"
 level = 8
+class = 4
 
 [[item]]
 id = 4540
 name = "Tough Hunk of Bread"
 level = 5
+class = 0
 drops = [{ object = 2843, chance = 0.19 }, { npc = 708, chance = 0.0002 }, { npc = 1501, chance = 0.0002 }, { vendor = 2115 }, { vendor = 2832 }, { vendor = 3708 }]
 
 [[item]]
 id = 4703
 name = "Broken Tools"
 level = 1
+class = 12
 drops = [{ object = 17190 }]
 
 [[item]]
 id = 4751
 name = "Windfury Talon"
 level = 1
+class = 12
 drops = [{ npc = 2962, chance = 0.64640875 }, { npc = 2963, chance = 0.64640875 }]
 
 [[item]]
 id = 4755
 name = "Water Pitcher"
 level = 1
+class = 12
 drops = [{ object = 337, chance = 1.0 }, { object = 2907, chance = 1.0 }]
 
 [[item]]
 id = 4769
 name = "Trophy Swoop Quill"
 level = 1
+class = 12
 drops = [{ npc = 2969, chance = 1.0 }, { npc = 2970, chance = 1.0 }, { npc = 2971, chance = 1.0 }]
 
 [[item]]
 id = 4770
 name = "Bristleback Belt"
 level = 1
+class = 12
 drops = [{ npc = 2952, chance = 0.6 }, { npc = 2953, chance = 0.6 }]
 
 [[item]]
 id = 4808
 name = "Well Stone"
 level = 1
+class = 12
 drops = [{ object = 2910, chance = 1.0 }]
 
 [[item]]
 id = 4809
 name = "Ambercorn"
 level = 1
+class = 12
 drops = [{ object = 2912, chance = 1.0 }]
 
 [[item]]
 id = 4870
 name = "Canvas Scraps"
 level = 1
+class = 12
 drops = [{ npc = 3100, chance = 0.000909 }, { npc = 3106, chance = 0.0007539999999999999 }]
 
 [[item]]
 id = 4881
 name = "Aged Envelope"
 level = 1
+class = 12
 start_quest = 830
 drops = [{ object = 3239, chance = 1.0 }]
 
@@ -893,48 +925,57 @@ drops = [{ object = 3239, chance = 1.0 }]
 id = 4887
 name = "Intact Makrura Eye"
 level = 1
+class = 12
 drops = [{ npc = 3103, chance = 0.7831212500000001 }, { npc = 3104, chance = 0.7831212500000001 }, { npc = 3105, chance = 0.7831212500000001 }]
 
 [[item]]
 id = 4888
 name = "Crawler Mucus"
 level = 1
+class = 12
 drops = [{ npc = 3106, chance = 0.6559550000000001 }, { npc = 3107, chance = 0.6559550000000001 }, { npc = 3108, chance = 0.6559550000000001 }]
 
 [[item]]
 id = 4906
 name = "Rainwalker Boots"
 level = 7
+class = 4
 
 [[item]]
 id = 4941
 name = "Really Sticky Glue"
 level = 10
+class = 0
 
 [[item]]
 id = 4958
 name = "Sun-beaten Cloak"
 level = 8
+class = 4
 
 [[item]]
 id = 4960
 name = "Flash Pellet"
 level = 7
+class = 6
 
 [[item]]
 id = 4969
 name = "Fortified Bindings"
 level = 10
+class = 4
 
 [[item]]
 id = 4970
 name = "Rough-hewn Kodo Leggings"
 level = 9
+class = 4
 
 [[item]]
 id = 5102
 name = "Owatanka's Tailspike"
 level = 10
+class = 12
 start_quest = 884
 drops = [{ npc = 3473, chance = 1.0 }]
 
@@ -942,78 +983,92 @@ drops = [{ npc = 3473, chance = 1.0 }]
 id = 5776
 name = "Elder's Cane"
 level = 5
+class = 2
 
 [[item]]
 id = 5777
 name = "Brave's Axe"
 level = 5
+class = 2
 
 [[item]]
 id = 5939
 name = "Sewing Gloves"
 level = 8
+class = 4
 
 [[item]]
 id = 6063
 name = "Cold Steel Gauntlets"
 level = 8
+class = 4
 
 [[item]]
 id = 8483
 name = "Wastewander Water Pouch"
 level = 1
+class = 15
 drops = [{ npc = 5617, chance = 0.530592 }, { npc = 5616, chance = 0.517714 }, { npc = 5618, chance = 0.517093 }]
 
 [[item]]
 id = 8523
 name = "Field Testing Kit"
 level = 1
+class = 12
 drops = [{ npc = 7683 }, { vendor = 7683 }]
 
 [[item]]
 id = 8524
 name = "Model 4711-FTZ Power Source"
 level = 1
+class = 12
 start_quest = 654
 
 [[item]]
 id = 9438
 name = "Acceptable Scorpid Sample"
 level = 1
+class = 12
 drops = [{ npc = 9990, chance = 0.3 }]
 
 [[item]]
 id = 9440
 name = "Acceptable Basilisk Sample"
 level = 1
+class = 12
 drops = [{ npc = 9990, chance = 0.3 }]
 
 [[item]]
 id = 9441
 name = "Acceptable Hyena Sample"
 level = 1
+class = 12
 drops = [{ npc = 9990, chance = 0.3 }]
 
 [[item]]
 id = 11845
 name = "Handmade Leather Bag"
 level = 1
+class = 1
 
 [[item]]
 id = 12299
 name = "Netted Gloves"
 level = 8
+class = 4
 
 [[item]]
 id = 12737
 name = "Gloom Weed"
 level = 1
+class = 12
 drops = [{ object = 175566, chance = 1.0 }]
 
 [[item]]
 id = 13702
 name = "Doom Weed"
 level = 1
+class = 12
 drops = [{ object = 176753, chance = 1.0 }]
 
 [[quest]]

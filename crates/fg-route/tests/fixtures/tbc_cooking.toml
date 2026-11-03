@@ -119,41 +119,48 @@ at = [{ zone = 490, x = 58, y = 54 }]
 id = 7973
 name = "Big-mouth Clam"
 level = 40
+class = 7
 drops = [{ npc = 4388, chance = 0.0023 }, { npc = 6352, chance = 0.0021 }, { npc = 13896, chance = 0.0019 }]
 
 [[item]]
 id = 7974
 name = "Zesty Clam Meat"
 level = 45
+class = 7
 drops = [{ item = 7973 }]
 
 [[item]]
 id = 8932
 name = "Alterac Swiss"
 level = 55
+class = 0
 drops = [{ npc = 10583, chance = 0.137428 }, { npc = 6510, chance = 0.0002 }, { npc = 6511, chance = 0.0002 }, { vendor = 6746 }, { vendor = 11106 }, { vendor = 11116 }]
 
 [[item]]
 id = 11315
 name = "Bloodpetal Sprout"
 level = 1
+class = 12
 drops = [{ npc = 6509, chance = 1.0 }, { npc = 6510, chance = 1.0 }, { npc = 6511, chance = 1.0 }]
 
 [[item]]
 id = 12207
 name = "Giant Egg"
 level = 45
+class = 7
 drops = [{ npc = 14343, chance = 0.413793 }, { npc = 7456, chance = 0.405898 }, { npc = 7099, chance = 0.404762 }]
 
 [[item]]
 id = 15699
 name = "Small Brown-wrapped Package"
 level = 1
+class = 15
 
 [[item]]
 id = 16971
 name = "Clamlette Surprise"
 level = 45
+class = 0
 
 [[quest]]
 id = 6610

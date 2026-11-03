@@ -199,6 +199,9 @@ struct Item {
     name: Option<String>,
     #[serde(default = "one")]
     level: i64,
+    /// The game's item class (12 quest items, 15 miscellaneous: not sold at the auction house); 0
+    /// when not given, 12 for an item that starts a quest.
+    class: Option<i64>,
     /// The quest it starts.
     start_quest: Option<i64>,
     #[serde(default)]
@@ -417,7 +420,7 @@ fn insert(conn: &Connection, file: &File) -> Result<()> {
                 i.id,
                 text(&i.name, || format!("Item {}", i.id)),
                 i.level,
-                if i.start_quest.is_some() { 12 } else { 15 },
+                i.class.unwrap_or(if i.start_quest.is_some() { 12 } else { 0 }),
                 i.start_quest,
                 if i.start_quest.is_some() { 2048 } else { 0 },
             ],

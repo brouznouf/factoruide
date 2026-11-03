@@ -8,7 +8,8 @@ fn zz_dbg() {
     let edition = match ed.as_str() { "tbc" => Edition::Tbc, "forever" => Edition::Forever, _ => Edition::Classic };
     let conn = files.split(',').fold(Fixture::new(edition), |f, n| f.file(n)).open();
     let o = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-    let req: PlanRequest = serde_json::from_value(serde_json::json!({"race":race,"class":class,"from_level":1,"to_level":to.parse::<i64>().unwrap()})).unwrap();
+    let mut req: PlanRequest = serde_json::from_value(serde_json::json!({"race":race,"class":class,"from_level":1,"to_level":to.parse::<i64>().unwrap()})).unwrap();
+    if let Ok(ps) = std::env::var("PARAMS") { let v: Vec<String> = ps.split(',').map(String::from).collect(); req.params = Some(o.params.with_overrides(&v).unwrap()); }
     let p = job::prepare(&conn, &o, &req, &|_| {}).unwrap();
     for n in &p.notes { eprintln!("N {n}"); }
     eprintln!("quests {}", p.model.quests.len());

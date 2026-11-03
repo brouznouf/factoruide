@@ -93,16 +93,19 @@ at = [{ zone = 16593, x = 43.68, y = 24.1, z = 1021 }]
 id = 257280
 name = "Vuldren Hide Bracers"
 level = 5
+class = 4
 
 [[item]]
 id = 257281
 name = "Fur-Lined Shoes"
 level = 5
+class = 4
 
 [[item]]
 id = 264908
 name = "Ancient Heirloom"
 level = 1
+class = 4
 
 [[quest]]
 id = 92460

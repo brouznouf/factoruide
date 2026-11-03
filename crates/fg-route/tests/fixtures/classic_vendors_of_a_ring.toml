@@ -139,12 +139,14 @@ at = [{ zone = 46, x = 66.06, y = 21.95, z = 165 }]
 id = 4371
 name = "Bronze Tube"
 level = 21
+class = 7
 drops = [{ npc = 6231, chance = 0.007252 }, { item = 6352 }, { vendor = 1448 }, { vendor = 1694 }, { vendor = 2682 }, { vendor = 2683 }, { vendor = 2684 }, { vendor = 2685 }, { vendor = 2687 }, { vendor = 2688 }, { vendor = 3133 }, { vendor = 4587 }, { vendor = 5175 }, { vendor = 5519 }, { vendor = 6777 }, { vendor = 8679 }, { vendor = 9544 }]
 
 [[item]]
 id = 6352
 name = "Waterlogged Crate"
 level = 25
+class = 15
 
 [[vendor]]
 npc = 1448

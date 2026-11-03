@@ -93,6 +93,7 @@ at = [{ zone = 14, x = 59.26, y = 57.65 }]
 id = 4881
 name = "Aged Envelope"
 level = 1
+class = 12
 start_quest = 830
 drops = [{ object = 3239, chance = 1.0 }]
 

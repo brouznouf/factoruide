@@ -41,23 +41,27 @@ at = [{ zone = 14, x = 35.4, y = 53.0 }, { zone = 14, x = 35.4, y = 54.6 }, { zo
 id = 4886
 name = "Venomtail Poison Sac"
 level = 1
+class = 12
 drops = [{ npc = 3127, chance = 0.4 }, { npc = 3226, chance = 0.4 }, { npc = 5823, chance = 0.4 }]
 
 [[item]]
 id = 4904
 name = "Venomtail Antidote"
 level = 1
+class = 12
 drops = [{ npc = 3189 }]
 
 [[item]]
 id = 4929
 name = "Light Scorpid Armor"
 level = 9
+class = 4
 
 [[item]]
 id = 4937
 name = "Charging Buckler"
 level = 9
+class = 4
 
 [[quest]]
 id = 812

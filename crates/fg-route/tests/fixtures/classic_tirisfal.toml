@@ -389,179 +389,212 @@ at = [{ zone = 85, x = 31.17, y = 65.08 }]
 id = 159
 name = "Refreshing Spring Water"
 level = 5
+class = 0
 drops = [{ npc = 3577, chance = 1.0 }, { object = 3658, chance = 1.0 }, { object = 2843, chance = 0.36 }, { vendor = 982 }, { vendor = 1149 }, { vendor = 2115 }]
 
 [[item]]
 id = 2173
 name = "Old Leather Belt"
 level = 5
+class = 4
 
 [[item]]
 id = 2855
 name = "Putrid Claw"
 level = 1
+class = 12
 drops = [{ npc = 1525, chance = 0.33 }, { npc = 1526, chance = 0.33 }]
 
 [[item]]
 id = 2858
 name = "Darkhound Blood"
 level = 1
+class = 12
 drops = [{ npc = 1547, chance = 0.35 }, { npc = 1548, chance = 0.35 }, { npc = 1549, chance = 0.35 }]
 
 [[item]]
 id = 2885
 name = "Scarlet Crusade Documents"
 level = 1
+class = 12
 drops = [{ npc = 1667, chance = 1.0 }]
 
 [[item]]
 id = 3264
 name = "Duskbat Wing"
 level = 1
+class = 12
 drops = [{ npc = 1512, chance = 0.75 }, { npc = 1513, chance = 0.75 }, { npc = 1553, chance = 0.001348 }]
 
 [[item]]
 id = 3265
 name = "Scavenger Paw"
 level = 1
+class = 12
 drops = [{ npc = 1508, chance = 0.75 }, { npc = 1509, chance = 0.75 }]
 
 [[item]]
 id = 3266
 name = "Scarlet Armband"
 level = 1
+class = 12
 drops = [{ npc = 1506, chance = 0.8 }, { npc = 1507, chance = 0.8 }, { npc = 1667, chance = 0.8 }]
 
 [[item]]
 id = 3267
 name = "Forsaken Shortsword"
 level = 5
+class = 2
 
 [[item]]
 id = 3268
 name = "Forsaken Dagger"
 level = 5
+class = 2
 
 [[item]]
 id = 3269
 name = "Forsaken Maul"
 level = 5
+class = 2
 
 [[item]]
 id = 3270
 name = "Flax Vest"
 level = 5
+class = 4
 
 [[item]]
 id = 3272
 name = "Zombie Skin Leggings"
 level = 5
+class = 4
 
 [[item]]
 id = 3273
 name = "Rugged Mail Vest"
 level = 5
+class = 4
 
 [[item]]
 id = 3274
 name = "Flax Boots"
 level = 5
+class = 4
 
 [[item]]
 id = 3275
 name = "Flax Gloves"
 level = 5
+class = 4
 
 [[item]]
 id = 3276
 name = "Deathguard Buckler"
 level = 5
+class = 4
 
 [[item]]
 id = 3277
 name = "Executor Staff"
 level = 5
+class = 2
 drops = [{ vendor = 3539 }]
 
 [[item]]
 id = 3382
 name = "Weak Troll's Blood Potion"
 level = 8
+class = 0
 
 [[item]]
 id = 4604
 name = "Forest Mushroom Cap"
 level = 5
+class = 0
 drops = [{ npc = 1501, chance = 0.132721 }, { npc = 1890, chance = 0.13166 }, { npc = 1502, chance = 0.13165100000000002 }, { vendor = 3544 }, { vendor = 3547 }, { vendor = 4554 }]
 
 [[item]]
 id = 5779
 name = "Forsaken Bastard Sword"
 level = 5
+class = 2
 
 [[item]]
 id = 6060
 name = "Flax Bracers"
 level = 5
+class = 4
 
 [[item]]
 id = 6281
 name = "Rattlecage Skull"
 level = 1
+class = 12
 drops = [{ npc = 1890, chance = 0.8 }]
 
 [[item]]
 id = 11127
 name = "Scavenged Goods"
 level = 1
+class = 12
 drops = [{ object = 164662, chance = 1.0 }]
 
 [[item]]
 id = 11847
 name = "Battered Cloak"
 level = 5
+class = 4
 
 [[item]]
 id = 11848
 name = "Flax Belt"
 level = 5
+class = 4
 
 [[item]]
 id = 11849
 name = "Rustmetal Bracers"
 level = 5
+class = 4
 
 [[item]]
 id = 11850
 name = "Short Duskbat Cape"
 level = 5
+class = 4
 
 [[item]]
 id = 11851
 name = "Scavenger Tunic"
 level = 5
+class = 4
 
 [[item]]
 id = 11852
 name = "Roamer's Leggings"
 level = 5
+class = 4
 
 [[item]]
 id = 12737
 name = "Gloom Weed"
 level = 1
+class = 12
 drops = [{ object = 175566, chance = 1.0 }]
 
 [[item]]
 id = 13702
 name = "Doom Weed"
 level = 1
+class = 12
 drops = [{ object = 176753, chance = 1.0 }]
 
 [[item]]
 id = 16607
 name = "Acolyte's Sacrificial Robes"
 level = 5
+class = 4
 
 [[quest]]
 id = 363

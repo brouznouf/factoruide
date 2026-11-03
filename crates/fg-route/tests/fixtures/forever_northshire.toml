@@ -178,75 +178,89 @@ at = [{ zone = 1, x = 25.92, y = 51.03 }, { zone = 1, x = 26.54, y = 36.55 }, { 
 id = 80
 name = "Soft Fur-lined Shoes"
 level = 5
+class = 4
 
 [[item]]
 id = 159
 name = "Refreshing Spring Water"
 level = 5
+class = 0
 drops = [{ npc = 3577, chance = 1.0 }, { npc = 3662, chance = 1.0 }, { object = 3658, chance = 1.0 }]
 
 [[item]]
 id = 750
 name = "Tough Wolf Meat"
 level = 1
+class = 12
 drops = [{ npc = 69, chance = 0.8 }, { npc = 299, chance = 0.8 }, { npc = 704, chance = 0.8 }]
 
 [[item]]
 id = 752
 name = "Red Burlap Bandana"
 level = 1
+class = 12
 drops = [{ npc = 38, chance = 0.7607142857142857 }, { npc = 246263 }]
 
 [[item]]
 id = 1159
 name = "Militia Quarterstaff"
 level = 5
+class = 2
 
 [[item]]
 id = 1161
 name = "Militia Shortsword"
 level = 5
+class = 2
 
 [[item]]
 id = 2186
 name = "Outfitter Belt"
 level = 5
+class = 4
 
 [[item]]
 id = 2224
 name = "Militia Dagger"
 level = 5
+class = 2
 
 [[item]]
 id = 2691
 name = "Outfitter Boots"
 level = 5
+class = 4
 
 [[item]]
 id = 4536
 name = "Shiny Red Apple"
 level = 5
+class = 0
 drops = [{ npc = 1934, chance = 0.30981000000000003 }, { npc = 1936, chance = 0.25136600000000003 }, { object = 2843, chance = 0.19 }]
 
 [[item]]
 id = 5579
 name = "Militia Warhammer"
 level = 5
+class = 2
 
 [[item]]
 id = 5580
 name = "Militia Hammer"
 level = 5
+class = 2
 
 [[item]]
 id = 6070
 name = "Wolfskin Bracers"
 level = 5
+class = 4
 
 [[item]]
 id = 11192
 name = "Outfitter Gloves"
 level = 5
+class = 4
 
 [[quest]]
 id = 783

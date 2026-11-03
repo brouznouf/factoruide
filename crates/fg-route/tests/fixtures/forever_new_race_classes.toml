@@ -296,113 +296,133 @@ at = [{ zone = 148, x = 42.37, y = 52.54 }, { zone = 148, x = 42.58, y = 52.37 }
 id = 2449
 name = "Earthroot"
 level = 5
+class = 7
 drops = [{ npc = 2091, chance = 1.0 }, { object = 1619, chance = 1.0 }, { object = 3726, chance = 1.0 }]
 
 [[item]]
 id = 2589
 name = "Linen Cloth"
 level = 5
+class = 7
 drops = [{ npc = 1245, chance = 1.0 }, { npc = 1414, chance = 1.0 }, { npc = 1949, chance = 1.0 }]
 
 [[item]]
 id = 6535
 name = "Tablet of Verga"
 level = 1
+class = 12
 drops = [{ object = 58595, chance = 1.0 }]
 
 [[item]]
 id = 7247
 name = "Chest of Containment Coffers"
 level = 1
+class = 12
 drops = [{ object = 105174, chance = 1.0 }]
 
 [[item]]
 id = 7249
 name = "Charged Rift Gem"
 level = 1
+class = 12
 drops = [{ object = 271, chance = 1.0 }]
 
 [[item]]
 id = 7266
 name = "Ur's Treatise on Shadow Magic"
 level = 1
+class = 0
 drops = [{ object = 103628, chance = 1.0 }]
 
 [[item]]
 id = 7267
 name = "Pristine Spider Silk"
 level = 1
+class = 12
 drops = [{ npc = 930, chance = 0.8 }, { npc = 949, chance = 0.8 }]
 
 [[item]]
 id = 7268
 name = "Xavian Water Sample"
 level = 1
+class = 12
 drops = [{ object = 174797, chance = 0.1 }]
 
 [[item]]
 id = 7270
 name = "Laughing Sister's Hair"
 level = 1
+class = 12
 drops = [{ npc = 4054, chance = 1.0 }]
 
 [[item]]
 id = 7292
 name = "Filled Containment Coffer"
 level = 1
+class = 12
 drops = [{ object = 103574, chance = 1.0 }]
 
 [[item]]
 id = 7308
 name = "Cantation of Manifestation"
 level = 1
+class = 12
 drops = [{ object = 105175, chance = 1.0 }]
 
 [[item]]
 id = 7509
 name = "Manaweave Robe"
 level = 20
+class = 4
 
 [[item]]
 id = 7510
 name = "Lesser Spellfire Robes"
 level = 20
+class = 4
 
 [[item]]
 id = 7511
 name = "Astral Knot Robe"
 level = 31
+class = 4
 
 [[item]]
 id = 7512
 name = "Nether-lace Robe"
 level = 31
+class = 4
 
 [[item]]
 id = 9515
 name = "Nether-lace Tunic"
 level = 31
+class = 4
 
 [[item]]
 id = 9516
 name = "Astral Knot Blouse"
 level = 31
+class = 4
 
 [[item]]
 id = 15851
 name = "Lunar Fungus"
 level = 1
+class = 12
 drops = [{ object = 177750, chance = 1.0 }]
 
 [[item]]
 id = 15866
 name = "Veildust Medicine Bag"
 level = 15
+class = 4
 
 [[item]]
 id = 16608
 name = "Aquarius Belt"
 level = 16
+class = 4
 
 [[quest]]
 id = 1943

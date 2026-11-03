@@ -1,4 +1,4 @@
-# Innkeepers and class trainers of the capitals: where a teleport lands and a hearthstone returns.
+# Innkeepers, class trainers and auctioneers of the capitals: where a teleport lands, a hearthstone returns, an item is bought.
 
 [[npc]]
 id = 376
@@ -1486,6 +1486,118 @@ friendly_to = "A"
 at = [{ zone = 1657, x = 69.64, y = 45.9 }]
 
 [[npc]]
+id = 8669
+name = "Auctioneer Tolon"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 56.37, y = 51.82 }]
+
+[[npc]]
+id = 8670
+name = "Auctioneer Chilton"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1519, x = 53.21, y = 60.85 }]
+
+[[npc]]
+id = 8671
+name = "Auctioneer Buckler"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1537, x = 23.77, y = 71.79 }]
+
+[[npc]]
+id = 8672
+name = "Auctioneer Leeka"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 67.55, y = 52.42 }]
+
+[[npc]]
+id = 8673
+name = "Auctioneer Thathung"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1637, x = 55.9, y = 62.71 }]
+
+[[npc]]
+id = 8674
+name = "Auctioneer Stampi"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1638, x = 40.41, y = 51.77 }]
+
+[[npc]]
+id = 8719
+name = "Auctioneer Fitch"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1519, x = 53.64, y = 60.54 }]
+
+[[npc]]
+id = 8720
+name = "Auctioneer Redmuse"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1537, x = 24.16, y = 74.67 }]
+
+[[npc]]
+id = 8721
+name = "Auctioneer Epitwee"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 64.42, y = 52.41 }]
+
+[[npc]]
+id = 8722
+name = "Auctioneer Gullem"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1638, x = 38.9, y = 50.19 }]
+
+[[npc]]
+id = 8723
+name = "Auctioneer Golothas"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 56.24, y = 54.04 }]
+
+[[npc]]
+id = 8724
+name = "Auctioneer Wabang"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1637, x = 55.84, y = 64.81 }]
+
+[[npc]]
+id = 9856
+name = "Auctioneer Grimful"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1637, x = 55.25, y = 61.79 }]
+
+[[npc]]
+id = 9859
+name = "Auctioneer Lympkin"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1537, x = 25.81, y = 75.55 }]
+
+[[npc]]
 id = 10086
 name = "Hesuwa Thunderhorn"
 subname = "Pet Trainer"
@@ -1558,6 +1670,24 @@ friendly_to = "A"
 at = [{ zone = 1537, x = 24.73, y = 8.16 }]
 
 [[npc]]
+id = 12777
+name = "Captain Dirgehammer"
+subname = "Armor Quartermaster"
+level = 55
+npc_flags = 4224
+friendly_to = "AH"
+at = [{ zone = 1519, x = 72.79, y = 53.99 }]
+
+[[npc]]
+id = 12782
+name = "Captain O'Neal"
+subname = "Weapons Quartermaster"
+level = 55
+npc_flags = 4224
+friendly_to = "AH"
+at = [{ zone = 1519, x = 72.79, y = 53.99 }]
+
+[[npc]]
 id = 13283
 name = "Lord Tony Romano"
 subname = "Rogue Trainer"
@@ -1574,3 +1704,75 @@ level = 50
 npc_flags = 19
 friendly_to = "H"
 at = [{ zone = 1637, x = 38.66, y = 35.92 }]
+
+[[npc]]
+id = 15659
+name = "Auctioneer Jaxon"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1519, x = 53.61, y = 59.76 }]
+
+[[npc]]
+id = 15675
+name = "Auctioneer Stockton"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 71.42, y = 46.69 }]
+
+[[npc]]
+id = 15676
+name = "Auctioneer Yarly"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 71.51, y = 41.9 }]
+
+[[npc]]
+id = 15678
+name = "Auctioneer Silva'las"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 57.31, y = 53.56 }]
+
+[[npc]]
+id = 15679
+name = "Auctioneer Cazarez"
+level = 50
+npc_flags = 4096
+friendly_to = "A"
+at = [{ zone = 1657, x = 55.59, y = 52.45 }]
+
+[[npc]]
+id = 15682
+name = "Auctioneer Cain"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 67.65, y = 35.9 }]
+
+[[npc]]
+id = 15683
+name = "Auctioneer Naxxremis"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 64.4, y = 35.81 }]
+
+[[npc]]
+id = 15684
+name = "Auctioneer Tricket"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 60.49, y = 41.75 }]
+
+[[npc]]
+id = 15686
+name = "Auctioneer Rhyker"
+level = 50
+npc_flags = 4096
+friendly_to = "H"
+at = [{ zone = 1497, x = 60.47, y = 46.44 }]

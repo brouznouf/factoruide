@@ -20,11 +20,13 @@ at = [{ zone = 14, x = 44.03, y = 76.2, z = 73 }, { zone = 215, x = 53.89, y = 8
 id = 5175
 name = "Earth Totem"
 level = 4
+class = 5
 
 [[item]]
 id = 6635
 name = "Earth Sapta"
 level = 1
+class = 12
 
 [[quest]]
 id = 1521

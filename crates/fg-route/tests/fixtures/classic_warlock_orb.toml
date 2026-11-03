@@ -64,23 +64,27 @@ at = [{ zone = 15, x = 45.79, y = 56.97 }]
 id = 7291
 name = "Infernal Orb"
 level = 1
+class = 12
 drops = [{ npc = 4668, chance = 0.55 }]
 
 [[item]]
 id = 12642
 name = "Cleansed Infernal Orb"
 level = 1
+class = 12
 
 [[item]]
 id = 12648
 name = "Imprisoned Felhound Spirit"
 level = 1
+class = 12
 drops = [{ npc = 4678, chance = 0.1 }]
 
 [[item]]
 id = 12649
 name = "Imprisoned Infernal Spirit"
 level = 1
+class = 12
 drops = [{ npc = 4676, chance = 0.1 }]
 
 [[quest]]

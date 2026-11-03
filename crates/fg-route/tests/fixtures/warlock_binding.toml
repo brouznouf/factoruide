@@ -27,6 +27,7 @@ at = [{ zone = 1497, x = 86.7, y = 27.1 }, { zone = 1519, x = 25.1, y = 77.4 }, 
 id = 22243
 name = "Small Soul Pouch"
 level = 20
+class = 1
 
 [[quest]]
 id = 1471

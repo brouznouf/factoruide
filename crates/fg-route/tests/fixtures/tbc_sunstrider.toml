@@ -171,114 +171,135 @@ at = [{ zone = 3430, x = 40.4, y = 43.34 }, { zone = 3430, x = 40.62, y = 39.98 
 id = 159
 name = "Refreshing Spring Water"
 level = 5
+class = 0
 drops = [{ npc = 3577, chance = 1.0 }, { npc = 3662, chance = 1.0 }, { object = 3658, chance = 1.0 }]
 
 [[item]]
 id = 4536
 name = "Shiny Red Apple"
 level = 5
+class = 0
 drops = [{ object = 3719, chance = 0.4 }, { npc = 1934, chance = 0.3098 }, { npc = 1936, chance = 0.2514 }]
 
 [[item]]
 id = 20470
 name = "Solanian's Scrying Orb"
 level = 1
+class = 0
 drops = [{ object = 180510, chance = 1.0 }]
 
 [[item]]
 id = 20471
 name = "Scroll of Scourge Magic"
 level = 1
+class = 0
 drops = [{ object = 180511, chance = 1.0 }]
 
 [[item]]
 id = 20472
 name = "Solanian's Journal"
 level = 1
+class = 0
 drops = [{ object = 180512, chance = 1.0 }]
 
 [[item]]
 id = 20482
 name = "Arcane Sliver"
 level = 1
+class = 12
 drops = [{ npc = 15273, chance = 0.30308500000000005 }, { npc = 15274, chance = 0.30308500000000005 }, { npc = 15294, chance = 0.30308500000000005 }]
 
 [[item]]
 id = 20743
 name = "Unstable Mana Crystal"
 level = 1
+class = 12
 drops = [{ object = 180600, chance = 1.0 }]
 
 [[item]]
 id = 20799
 name = "Felendren's Head"
 level = 1
+class = 12
 drops = [{ npc = 15367, chance = 1.0 }]
 
 [[item]]
 id = 20835
 name = "Sunstrider Sword"
 level = 5
+class = 2
 
 [[item]]
 id = 20836
 name = "Sunstrider Dagger"
 level = 5
+class = 2
 
 [[item]]
 id = 20837
 name = "Sunstrider Axe"
 level = 5
+class = 2
 
 [[item]]
 id = 20838
 name = "Sunstrider Bow"
 level = 5
+class = 2
 
 [[item]]
 id = 20839
 name = "Sunstrider Staff"
 level = 5
+class = 2
 
 [[item]]
 id = 20840
 name = "Sunstrider Mace"
 level = 5
+class = 2
 
 [[item]]
 id = 20841
 name = "Sunstrider Shield"
 level = 5
+class = 4
 
 [[item]]
 id = 20991
 name = "Daylight Cloak"
 level = 5
+class = 4
 
 [[item]]
 id = 20995
 name = "Well Watcher Gloves"
 level = 5
+class = 4
 
 [[item]]
 id = 20996
 name = "Sunspire Cord"
 level = 5
+class = 4
 
 [[item]]
 id = 20999
 name = "Green Chain Gauntlets"
 level = 5
+class = 4
 
 [[item]]
 id = 21000
 name = "Vigorous Bracers"
 level = 5
+class = 4
 
 [[item]]
 id = 21001
 name = "Striding Pants"
 level = 5
+class = 4
 
 [[quest]]
 id = 8327
