@@ -203,6 +203,16 @@ pub struct Loc {
     pub name: String,
 }
 
+/// A trainer of a profession.
+#[derive(Debug, Clone)]
+pub struct ProfessionTrainer {
+    /// The profession's skill line.
+    pub line: i64,
+    /// The highest skill cap its title says it teaches (75, 150, 225 or 300).
+    pub cap: i64,
+    pub loc: Loc,
+}
+
 #[derive(Debug, Clone)]
 pub struct Objective {
     pub loc: Loc,
@@ -541,6 +551,8 @@ pub struct Model {
     pub chain_top: Vec<i64>,
     /// Class trainers and innkeepers the character can use.
     pub trainers: Vec<Loc>,
+    /// Profession trainers the character can use, loaded only for `Params::profession_trainers`.
+    pub profession_trainers: Vec<ProfessionTrainer>,
     pub inns: Vec<Loc>,
     /// Vendors friendly to the character: the bags' loot is sold there.
     pub vendors: Vec<Loc>,

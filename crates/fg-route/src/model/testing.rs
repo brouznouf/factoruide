@@ -1008,6 +1008,7 @@ pub fn bare(quests: Vec<Quest>, dungeons: Vec<Dungeon>, start: Loc, params: &Par
         unlocks,
         chain_top,
         trainers: Vec::new(),
+        profession_trainers: Vec::new(),
         inns: vec![start],
         vendors: Vec::new(),
         start_inn: 0,
