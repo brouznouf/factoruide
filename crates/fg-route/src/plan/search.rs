@@ -355,16 +355,27 @@ impl Planner<'_> {
             .filter(|&q| seen.insert(q))
             .collect();
         let (mut best, mut score, mut changed) = (route.to_vec(), score, false);
-        for q in unfinished {
-            let candidate: Vec<Stop> = best
-                .iter()
-                .copied()
-                .filter(|s| !(s.is_quest() && s.index == q))
-                .collect();
-            if let Some(cost) = self.simulate(&candidate, None)
-                && cost <= score + 1e-6
-            {
-                (best, score, changed) = (candidate, cost, true);
+        // A quest that cannot go alone (a parent whose child quest is taken while it is in the
+        // log) is tried again once the quests after it have gone.
+        let mut left = unfinished;
+        while !left.is_empty() {
+            let before = left.len();
+            left.retain(|&q| {
+                let candidate: Vec<Stop> = best
+                    .iter()
+                    .copied()
+                    .filter(|s| !(s.is_quest() && s.index == q))
+                    .collect();
+                match self.simulate(&candidate, None) {
+                    Some(cost) if cost <= score + 1e-6 => {
+                        (best, score, changed) = (candidate, cost, true);
+                        false
+                    }
+                    _ => true,
+                }
+            });
+            if left.len() == before {
+                break;
             }
         }
         changed.then_some(best)

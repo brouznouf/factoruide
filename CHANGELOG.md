@@ -14,6 +14,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- A quest and its child quest that the guide takes but never hands in (A Sample of Slime..., The Videre Elixir) are both left out of the guide, instead of the parent staying (GitHub #117).
 - A quest started by an item found in a dungeon's object is planned with the run and taken in it: WoW Forever's The Treaty of Understanding, from the Hall of Thanes.
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
 - "Buy at the auction house" option (advanced settings, off by default): the items a quest asks for that nothing else gives, made by a profession like Rough Dynamite, are bought at the nearest auction house instead of leaving the quest out (GitHub #97).

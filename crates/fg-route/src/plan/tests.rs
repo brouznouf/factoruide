@@ -1015,3 +1015,32 @@ fn an_unbounded_required_quest_stays_in_the_log_when_gray() {
     plan.abandon_hopeless(&mut state, &mut |_, _| {});
     assert!(state.accepted[i]);
 }
+
+/// A child quest is taken while its parent is in the log: dropping the parent alone leaves a
+/// route that cannot be played. Both go when neither is handed in.
+#[test]
+fn an_unfinished_parent_goes_with_its_unfinished_child() {
+    let mut p = quests_at_start(3);
+    let parent_id = p.model.quests[0].id;
+    p.model.quests[1].pre_held = vec![parent_id];
+    p.model.quests[2].xp = 1000;
+    p.model.quests[2].xp_observed = true;
+    let planner = planner(&p);
+    let route = vec![
+        Stop::quest(0, Kind::Accept),
+        Stop::quest(1, Kind::Accept),
+        Stop::quest(2, Kind::Accept),
+        Stop::quest(2, Kind::TurnIn),
+        Stop::quest(0, Kind::TurnIn),
+        Stop::quest(1, Kind::TurnIn),
+    ];
+    let score = planner.simulate(&route, None).expect("the route is valid");
+    // The target level is reached with quest 2: the hand-ins of the parent and the child come
+    // after it, so they are not done.
+    let dropped = planner.drop_unfinished(&route, score).expect("something to drop");
+    let left: Vec<u32> = dropped.iter().filter(|s| s.is_quest()).map(|s| s.index).collect();
+    assert!(
+        left.iter().all(|&q| q == 2),
+        "quests taken and never handed in are dropped, parent and child: {left:?}"
+    );
+}
