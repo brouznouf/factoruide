@@ -33,6 +33,12 @@ pub fn database_of(edition: &str) -> Connection {
 /// Quests in three zones side by side (a valley, a plain, a far barrens); a trainer in the valley;
 /// Orgrimmar's flight path (known) in the plain and the Crossroads' (not) in the barrens.
 pub fn leveling(to_level: i64) -> Scenario {
+    leveling_of(to_level, 30)
+}
+
+/// `leveling` with only its first `quests` quests: a search over fewer stops, for the tests of
+/// what a search does rather than of the world.
+pub fn leveling_of(to_level: i64, quests: i64) -> Scenario {
     let mut s = Scenario::new()
         .levels(1, to_level)
         .zone(2, "Durotar")
@@ -43,7 +49,7 @@ pub fn leveling(to_level: i64) -> Scenario {
         .flight_master(23, "Orgrimmar", 2, 50.0, 50.0)
         .flight_master(25, "Crossroads", 3, 50.0, 50.0)
         .knows_flight(23);
-    for i in 0..30_i64 {
+    for i in 0..quests {
         let (zone, x) = match i {
             0..=5 => (1, 20.0 + 10.0 * i as f64),
             6..=11 => (2, 20.0 + 10.0 * (i - 6) as f64),

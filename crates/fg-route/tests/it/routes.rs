@@ -1,6 +1,6 @@
 //! Planner behavior on the Classic database: reproductions of the problems met on real guides.
 
-use crate::common::{database, database_of, leveling, repo};
+use crate::common::{database, database_of, leveling, leveling_of, repo};
 use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, StartState};
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
@@ -770,9 +770,9 @@ fn panicking_search_ends_the_job() {
 #[test]
 fn the_tournament_repeats_its_guide() {
     let scenario = || {
-        leveling(12).params(|p| {
+        leveling_of(6, 8).params(|p| {
             (p.threads, p.candidates, p.final_routes) = (4, 8, 2);
-            (p.qualify_tries, p.round_tries, p.final_tries, p.share_every) = (0.5, 1.0, 3.0, 50);
+            (p.qualify_tries, p.qualify_min_tries, p.round_tries, p.final_tries, p.share_every) = (0.5, 1.0, 0.5, 1.0, 50);
         })
     };
     let interrupt = job::Interrupt::default();
@@ -833,7 +833,7 @@ fn improved_route_stays_valid() {
     let p = generic();
     let planner = planner(p).verified();
     let route = planner.construct(|_| {});
-    let improved = planner.improve(route, std::time::Duration::from_secs(2), |_| {}, |_, _, _| {});
+    let improved = planner.improve(route, std::time::Duration::from_millis(60), |_| {}, |_, _, _| {});
     assert!(
         planner.simulate(&improved, None).is_some(),
         "{:?}",
@@ -3204,8 +3204,9 @@ fn a_group_takes_on_what_its_weakest_class_does() {
 /// the steps not for everyone are for.
 #[test]
 fn a_group_guide_tells_the_addon_its_players() {
-    let route = leveling(14)
+    let route = leveling_of(14, 16)
         .levels(10, 14)
+        .params(|p| p.effort = 0.0)
         .start(player("A-Realm", 1, "warrior", 10))
         .mates(vec![player("B-Realm", 1, "mage", 10)])
         .quest(Q::new(700, "Warrior only").level(11).members(0b01).giver(2, 30.0, 40.0))
@@ -3582,7 +3583,7 @@ fn new_characters_level_together_from_the_start() {
         mate_professions: vec![vec![]],
         ..request("orc", "warrior", 4, &["effort=0"])
     };
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let route = job::plan(&fixture(&["classic_valley"]), &overrides(), &request, &|_| {}).unwrap().route;
     let names: Vec<&str> = route.players.iter().map(|p| p.name.as_str()).collect();
     assert_eq!(names, ["Player 1", "Player 2"]);
     assert!(
