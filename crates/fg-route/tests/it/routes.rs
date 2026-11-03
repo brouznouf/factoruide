@@ -74,6 +74,20 @@ fn prepare_request(request: &PlanRequest) -> Prepared {
     job::prepare(&database(), &overrides(), request, &|_| {}).unwrap()
 }
 
+/// A Classic database of the fixtures' files (`tests/fixtures/<name>.toml`).
+fn fixture(files: &[&str]) -> Connection {
+    files.iter().fold(Fixture::new(Edition::Classic), |f, name| f.file(name)).open()
+}
+
+/// `prepare_from` on a database of fixtures.
+fn prepare_in(conn: &Connection, race: &str, class: &str, to_level: i64, params: &[&str], start: Option<StartState>) -> Prepared {
+    let request = PlanRequest {
+        start,
+        ..request(race, class, to_level, params)
+    };
+    job::prepare(conn, &overrides(), &request, &|_| {}).unwrap()
+}
+
 /// Orc warlock to 30, cautious: shared by the tests below.
 fn orc_warlock() -> &'static Prepared {
     static PREPARED: OnceLock<Prepared> = OnceLock::new();
