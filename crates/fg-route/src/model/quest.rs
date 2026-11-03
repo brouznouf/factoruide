@@ -76,6 +76,7 @@ impl QuestBuilder<'_> {
                 .flatten()
                 .map(|k| (k as u8, self.profile.class_powers[k].1)),
             reward_spell: r.reward_spell,
+            reward_items: Vec::new(),
             start_guard,
             end_guard,
             reputation: r

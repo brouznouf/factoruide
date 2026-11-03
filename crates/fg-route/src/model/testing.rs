@@ -131,6 +131,7 @@ pub struct Q {
     quest: Quest,
     giver: At,
     turn_in: At,
+    ender: Option<i64>,
     objectives: Vec<Obj>,
     excluded: bool,
 }
@@ -176,6 +177,7 @@ impl Q {
             skill: None,
             power: None,
             reward_spell: None,
+            reward_items: Vec::new(),
             start_guard: Guard::default(),
             end_guard: Guard::default(),
             reputation: Vec::new(),
@@ -185,6 +187,7 @@ impl Q {
             quest,
             giver: here,
             turn_in: here,
+            ender: None,
             objectives: Vec::new(),
             excluded: false,
         }
@@ -224,6 +227,24 @@ impl Q {
 
     pub fn turn_in_at(mut self, zone: i64, x: f64, y: f64) -> Self {
         self.turn_in = At { zone, x, y };
+        self
+    }
+
+    /// Turned in to this NPC (else one of its own).
+    pub fn ended_by(mut self, npc: i64) -> Self {
+        self.ender = Some(npc);
+        self
+    }
+
+    /// Its turn-in teaches this spell.
+    pub fn teaches(mut self, spell: i64) -> Self {
+        self.quest.reward_spell = Some(spell);
+        self
+    }
+
+    /// Its turn-in gives these items.
+    pub fn rewards(mut self, items: &[i64]) -> Self {
+        self.quest.reward_items = items.to_vec();
         self
     }
 
@@ -311,7 +332,8 @@ impl Q {
     fn finish(mut self, world: &World) -> Quest {
         let id = self.quest.id;
         self.quest.starts = vec![Self::at(self.giver, 100_000 + id, "Giver", world)];
-        self.quest.ends = vec![Self::at(self.turn_in, 100_000 + id, "Giver", world)];
+        let ender = self.ender.unwrap_or(100_000 + id);
+        self.quest.ends = vec![Self::at(self.turn_in, ender, "Giver", world)];
         self.quest.objectives = self
             .objectives
             .iter()

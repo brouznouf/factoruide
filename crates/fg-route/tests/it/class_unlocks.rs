@@ -3,6 +3,7 @@
 use crate::common::{database, database_of, repo};
 use fg_route::job::{self, Overrides, PlanRequest, StartState};
 use fg_route::plan::{Edit, Kind, Outcome, Planner, Stop};
+use fg_route::testing::{Q, Scenario};
 use fg_route::xp::Edition;
 
 fn request(race: &str, class: &str) -> PlanRequest {
@@ -491,5 +492,135 @@ fn one_known_demon_keeps_the_shared_binding_power() {
                 "{edition:?}: the first known Binding reward grants its power once"
             );
         }
+    }
+}
+
+/// A character with two chains of one required class quest name, side by side: 1 then 2, and 3
+/// then 4 then 5, what each gives set by the caller. `scenario` adds to it.
+fn two_versions(
+    first: impl Fn(Q) -> Q,
+    second: impl Fn(Q) -> Q,
+    scenario: impl Fn(Scenario) -> Scenario,
+) -> job::Prepared {
+    let step = |id, before: &[i64]| {
+        Q::new(id, "Call of Air")
+            .mandatory()
+            .xp(100)
+            .after_any(before)
+            .giver(1, 40.0 + id as f64, 40.0)
+    };
+    scenario(
+        Scenario::new()
+            .levels(1, 3)
+            .quest(step(1, &[]))
+            .quest(first(step(2, &[1])))
+            .quest(step(3, &[]))
+            .quest(step(4, &[3]))
+            .quest(second(step(5, &[4]))),
+    )
+    .build()
+}
+
+fn exclusive_of(p: &job::Prepared, id: i64) -> Vec<i64> {
+    let mut with = p.model.quests[p.model.index[&id]].exclusive.clone();
+    with.sort_unstable();
+    with
+}
+
+/// Chains of one name giving the same thing are one requirement: the route does one of them
+/// (Call of Fire's Searing Totem, 2984 to 1527 or 97243 to 97257), and that one is not missing.
+#[test]
+fn class_quest_chains_giving_the_same_spell_are_one_requirement() {
+    let p = two_versions(|q| q.teaches(9), |q| q.teaches(9), |s| s);
+    assert_eq!(exclusive_of(&p, 1), [3, 4, 5]);
+    assert_eq!(exclusive_of(&p, 5), [1, 2]);
+    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let route = planner.construct(|_| {});
+    let turned = |id: i64| {
+        let i = p.model.index[&id] as u32;
+        route.iter().any(|s| s.kind == Kind::TurnIn && s.index == i)
+    };
+    assert!(turned(2) != turned(5), "one chain only: {route:?}");
+    assert_eq!(planner.missing_class_quests(&route), Vec::<String>::new());
+}
+
+/// The same item is the same requirement too, whatever else the chains give (a choice of two).
+#[test]
+fn class_quest_chains_giving_the_same_item_are_one_requirement() {
+    let p = two_versions(|q| q.rewards(&[5178]), |q| q.rewards(&[5178, 263_412]), |s| s);
+    assert_eq!(exclusive_of(&p, 1), [3, 4, 5]);
+}
+
+/// The Binding: one name, a demon each. Each is a requirement of its own.
+#[test]
+fn class_quest_chains_giving_other_spells_or_items_stay_required() {
+    let spells = two_versions(|q| q.teaches(697), |q| q.teaches(712), |s| s);
+    let items = two_versions(|q| q.rewards(&[22_243]), |q| q.rewards(&[22_244]), |s| s);
+    for p in [spells, items] {
+        assert_eq!(exclusive_of(&p, 1), Vec::<i64>::new());
+        assert_eq!(exclusive_of(&p, 5), Vec::<i64>::new());
+        assert!(p.model.quests.iter().all(|q| q.mandatory));
+    }
+}
+
+/// Call of Air 96136 has no reward in the data: a chain with nothing known about its reward is
+/// the same requirement as one of its name turned in to the same NPC (Prate Cloudseer), not as
+/// one turned in to someone else.
+#[test]
+fn a_class_quest_chain_with_no_known_reward_goes_by_who_ends_it() {
+    let same = two_versions(|q| q.rewards(&[5178]).ended_by(5905), |q| q.ended_by(5905), |s| s);
+    assert_eq!(exclusive_of(&same, 1), [3, 4, 5]);
+    let other = two_versions(|q| q.rewards(&[5178]).ended_by(5905), |q| q.ended_by(6000), |s| s);
+    assert_eq!(exclusive_of(&other, 1), Vec::<i64>::new());
+}
+
+/// A version the player asked for is the one done: the other is not required, and does not close it.
+#[test]
+fn a_must_have_version_of_a_class_quest_replaces_the_others() {
+    let p = two_versions(|q| q.teaches(9), |q| q.teaches(9), |s| s.required(5));
+    let mandatory = |id: i64| p.model.quests[p.model.index[&id]].mandatory;
+    assert!(!mandatory(1) && !mandatory(2));
+    assert!(mandatory(3) && mandatory(5));
+    assert_eq!(exclusive_of(&p, 5), Vec::<i64>::new());
+}
+
+/// In a group, a version only one player can take is no substitute for the one everyone can.
+#[test]
+fn versions_of_a_class_quest_for_other_players_stay_required() {
+    let p = two_versions(|q| q.teaches(9).members(0b01), |q| q.teaches(9).members(0b11), |s| s);
+    assert_eq!(exclusive_of(&p, 5), Vec::<i64>::new());
+}
+
+/// A chain that cannot be finished is no alternative: the other stays required.
+#[test]
+fn a_class_quest_chain_that_cannot_be_finished_closes_nothing() {
+    let p = two_versions(|q| q.teaches(9).after(&[999]), |q| q.teaches(9), |s| s);
+    assert_eq!(exclusive_of(&p, 3), Vec::<i64>::new());
+    assert!(p.model.quests[p.model.index[&5]].mandatory);
+}
+
+/// The real versions: the Skyborne shaman's two Call of Fire chains and its Call of Air, and the
+/// human priest's Divine Grace. The Binding's demons stay apart.
+#[test]
+fn same_name_class_quests_in_the_real_data() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let prepared = |race: &str, class: &str, to_level| {
+        let mut req = request(race, class);
+        req.required_class_quests = None;
+        req.to_level = to_level;
+        job::prepare(&conn, &overrides, &req, &|_| {}).unwrap()
+    };
+    let linked = |p: &job::Prepared, a: i64, b: i64| exclusive_of(p, a).contains(&b) && exclusive_of(p, b).contains(&a);
+    let shaman = prepared("skyborne_horde", "shaman", 60);
+    assert!(linked(&shaman, 1527, 97257), "Call of Fire: the same Searing Totem");
+    assert!(linked(&shaman, 2984, 97243), "from the start of each chain");
+    assert!(linked(&shaman, 1532, 96136), "Call of Air: 96136 has no reward row");
+    assert!(linked(&shaman, 1531, 96136), "Call of Air");
+    let priest = prepared("human", "priest", 20);
+    assert!(linked(&priest, 94773, 94774), "Divine Grace");
+    let warlock = prepared("orc", "warlock", 40);
+    for (a, b) in [(1504, 1513), (1504, 65597), (1513, 65597), (1513, 1795)] {
+        assert!(!linked(&warlock, a, b), "The Binding: {a} and {b} are other demons");
     }
 }

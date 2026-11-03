@@ -472,6 +472,8 @@ pub struct Quest {
     pub power: Option<(u8, f64)>,
     /// The spell its turn-in teaches (a pet, a totem...).
     pub reward_spell: Option<i64>,
+    /// The items its turn-in gives (`m_quest_reward`, offered as a choice or not).
+    pub reward_items: Vec<i64>,
     /// Hostile mobs around its givers and its turn-ins (the hardest of them).
     pub start_guard: Guard,
     pub end_guard: Guard,
