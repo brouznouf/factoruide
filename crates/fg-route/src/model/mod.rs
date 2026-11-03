@@ -289,12 +289,14 @@ pub(crate) fn settle_quests(
     completed: &HashSet<i64>,
 ) {
     chains::narrow_class_quests_to_spells(quests, params.all_class_quests);
+    let versions = chains::class_quest_versions(quests, params.all_class_quests);
     for q in quests.iter_mut() {
         let forced = |d: usize| params.forced_dungeon_quests.contains(&dungeons[d].area);
         q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
     }
     chains::require_prerequisites(quests);
     chains::release_impossible_class_quests(quests, known, completed);
+    chains::settle_class_quest_versions(quests, &versions);
     for q in quests.iter_mut() {
         q.mandatory |= q.required;
     }
@@ -382,6 +384,12 @@ fn build_quests(
             Ok(Some(quest)) => quests.push(quest),
             Ok(None) => {}
             Err(reason) => skipped.push((row.id, row.name.clone(), reason.to_owned())),
+        }
+    }
+    let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+    for (&item, givers) in &sources.reward_of {
+        for i in givers.iter().filter_map(|q| index.get(q)) {
+            quests[*i].reward_items.push(item);
         }
     }
     (quests, skipped)

@@ -3,7 +3,8 @@
 # and the steps leading to them). The class quests the data says teach a spell
 # (`m_quest.reward_spell`: Path of Defense, Poisons, Divine Grace...) are required too, after
 # these; the app lists both and the player can take some out. Other class quests are optional:
-# planned only when worth the time, like normal quests.
+# planned only when worth the time, like normal quests. Chains of one name giving the same spell
+# or item (two Call of Fire for one Searing Totem) are one requirement: the route does one of them.
 #
 # `power`: class quests that make the character stronger (a pet, a form), by quest name, with
 # the power gained when turned in: fights take `1 / power` of their time afterwards (1.25 = 25%
