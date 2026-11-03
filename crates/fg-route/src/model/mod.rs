@@ -22,6 +22,8 @@ mod rewards;
 mod selection;
 mod sources;
 #[cfg(any(test, feature = "testing"))]
+pub mod fixture;
+#[cfg(any(test, feature = "testing"))]
 pub mod testing;
 mod types;
 

@@ -21,7 +21,7 @@ zstd = "0.14"
 
 [features]
 # Small worlds and models built by hand, for tests (`fg_route::testing`).
-testing = []
+testing = ["rusqlite/serialize"]
 
 [lints]
 workspace = true
