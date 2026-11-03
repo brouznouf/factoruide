@@ -1,0 +1,29 @@
+# Ragefire Chasm, a dungeon of the levels 13 to 19 (a quest filed under it), and a quest of level 45.
+
+[[dungeon]]
+area = 2437
+name = "Ragefire Chasm"
+at = { zone = 1637, x = 52.6, y = 49.0 }
+
+[[npc]]
+id = 9001
+name = "Quest Giver"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 1637, x = 40.0, y = 40.0 }]
+
+[[quest]]
+id = 9001
+name = "A Quest of Orgrimmar"
+level = 45
+min_level = 40
+giver = 9001
+
+# Filed under the dungeon: its level is the quests' median.
+[[quest]]
+id = 9002
+name = "Inside Ragefire"
+level = 16
+min_level = 13
+zone = 2437
+giver = 9001

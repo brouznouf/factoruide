@@ -1,6 +1,7 @@
 //! Explicit quest requirements through request resolution, model construction and guide saving.
 
 use crate::common::{database_of, repo};
+use fg_route::fixture::Fixture;
 use fg_route::faction::Faction;
 use fg_route::job::{self, Editor, LogQuest, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
 use fg_route::plan::{Kind, Planner, Stop};
@@ -172,7 +173,7 @@ fn required_quests_continue_after_target_level() {
 
 #[test]
 fn required_sleeping_bag_route_exports_the_factions_chain_by_id_or_name() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_sleeping_bag").open();
     let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     overrides.params.dungeons = false;
     for (race, class, choice, starter, unavailable) in [
@@ -447,7 +448,7 @@ fn required_class_quest_can_belong_to_a_higher_xp_group_member() {
 /// at Xizk, whose repeatable quest has nothing to do.
 #[test]
 fn the_warlocks_gold_bloodrobe_chain_can_be_required() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_bloodrobe").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let mut req = request("human", "warlock", &[RequiredQuest::Id(4784)]);
     req.to_level = 60;
@@ -460,7 +461,7 @@ fn the_warlocks_gold_bloodrobe_chain_can_be_required() {
 /// which dungeon (GitHub #84): it could not be run.
 #[test]
 fn a_forced_dungeon_below_the_guides_levels_is_refused() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_ragefire").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let mut req = request("orc", "warrior", &[]);
     (req.from_level, req.to_level) = (40, 60);
@@ -609,7 +610,7 @@ fn a_child_quest_is_done_between_its_parent_accept_and_turn_in() {
 
 #[test]
 fn sleeping_bag_option_requires_the_chain_and_recognizes_imported_completion() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_sleeping_bag").open();
     let mut overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     overrides.params.sleeping_bag = true;
     for (race, class, starter, other) in [
@@ -633,7 +634,7 @@ fn sleeping_bag_option_requires_the_chain_and_recognizes_imported_completion() {
         assert!(imported.model.quests.iter().all(|q| !q.required));
     }
     for edition in [Edition::Classic, Edition::Tbc] {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).open();
         let mut other = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         other.params.sleeping_bag = true;
         let p = job::prepare(&conn, &other, &request("human", "warrior", &[]), &|_| {}).unwrap();
@@ -644,7 +645,7 @@ fn sleeping_bag_option_requires_the_chain_and_recognizes_imported_completion() {
 
 #[test]
 fn sleeping_bag_option_preserves_an_explicit_completion_window() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_sleeping_bag").open();
     let o = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let req = serde_json::from_value(serde_json::json!({
         "race":"human","class":"warrior","from_level":1,"to_level":60,
@@ -668,7 +669,7 @@ fn sleeping_bag_option_preserves_an_explicit_completion_window() {
 /// Night Elf's.
 #[test]
 fn class_quests_are_open_to_the_races_new_to_a_class() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_new_race_classes").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let pairs: [(&str, &str, &[i64]); 4] = [
         ("orc", "mage", &[1943, 1944, 1945, 1946, 1959, 1960, 1962]),

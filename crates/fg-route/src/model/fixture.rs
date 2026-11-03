@@ -161,12 +161,29 @@ struct Quest {
     status: Option<String>,
 }
 
+/// Where an item comes from: dropped by an NPC, an object or an item, or sold by a vendor (its
+/// stock is a `[[vendor]]`).
 #[derive(Debug, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Drop {
-    #[serde(flatten)]
-    from: Ent,
-    chance: f64,
+    npc: Option<i64>,
+    object: Option<i64>,
+    item: Option<i64>,
+    vendor: Option<i64>,
+    /// Missing: the sources give none.
+    chance: Option<f64>,
+}
+
+impl Drop {
+    fn from(&self) -> Result<(&'static str, i64)> {
+        match (self.npc, self.object, self.item, self.vendor) {
+            (Some(id), None, None, None) => Ok(("npc", id)),
+            (None, Some(id), None, None) => Ok(("object", id)),
+            (None, None, Some(id), None) => Ok(("item", id)),
+            (None, None, None, Some(id)) => Ok(("vendor", id)),
+            _ => bail!("a source names one of npc, object, item, vendor"),
+        }
+    }
 }
 
 #[derive(Debug, Deserialize)]
@@ -381,7 +398,7 @@ fn insert(conn: &Connection, file: &File) -> Result<()> {
             ],
         )?;
         for d in &i.drops {
-            let (kind, from) = d.from.kind()?;
+            let (kind, from) = d.from()?;
             conn.execute(
                 "INSERT INTO m_item_source (item_id, from_type, from_id, chance, sources) VALUES (?1, ?2, ?3, ?4, 'fixture')",
                 params![i.id, kind, from, d.chance],
