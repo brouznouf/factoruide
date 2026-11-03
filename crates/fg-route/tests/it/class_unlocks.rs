@@ -1,6 +1,7 @@
 //! Class chains through normal planning and recorded character starts.
 
 use crate::common::{database, database_of, repo};
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Overrides, PlanRequest, StartState};
 use fg_route::plan::{Edit, Kind, Outcome, Planner, Stop};
 use fg_route::xp::Edition;
@@ -149,7 +150,7 @@ fn a_late_start_keeps_missing_class_unlock_prerequisites() {
 
 #[test]
 fn a_synthetic_midlevel_preset_does_not_return_for_earlier_class_unlocks() {
-    let conn = database();
+    let conn = Fixture::new(Edition::Classic).file("classic_druid").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let mut req = request("nightelf", "druid");
     req.from_level = 50;

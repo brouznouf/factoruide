@@ -305,10 +305,15 @@ impl<'p> Live<'p> {
     fn watch(&self, searcher: &Searcher<'_>) {
         let viewer = Planner::new(searcher.model, searcher.world, searcher.params, searcher.profile);
         let mut last_route = Instant::now();
+        let mut last = Instant::now();
+        // Short sleeps, so that a short tournament does not wait for the next report to end.
         while !self.done.load(Ordering::Relaxed) {
-            std::thread::sleep(Duration::from_millis(300));
-            self.report();
-            self.report_route(&mut last_route, &viewer);
+            std::thread::sleep(Duration::from_millis(5));
+            if last.elapsed() >= Duration::from_millis(300) {
+                last = Instant::now();
+                self.report();
+                self.report_route(&mut last_route, &viewer);
+            }
         }
     }
 

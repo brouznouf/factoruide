@@ -14,6 +14,7 @@ for edition in classic tbc forever; do
     tmp=$(mktemp -d)
     sqlite3 "$db" .schema | sqlite3 "$tmp/base.sqlite"
     npcs=$(cat overrides/races.toml "overrides/$edition/races.toml" 2>/dev/null | sed -n 's/^start_npc *= *\([0-9][0-9]*\).*/\1/p' | sort -u | paste -sd, -)
+    spells=$(cat overrides/*.toml "overrides/$edition"/*.toml | grep -v '^ *#' | grep -oE '[0-9]{3,6}' | sort -un | paste -sd, -)
     sqlite3 "$tmp/base.sqlite" <<SQL
 attach '$db' as r;
 insert into client_chrclasses select * from r.client_chrclasses;
@@ -30,6 +31,8 @@ insert into client_taxinodes select * from r.client_taxinodes;
 insert into client_taxipath select * from r.client_taxipath;
 insert into m_player_stats select * from r.m_player_stats;
 insert into m_class_spell select * from r.m_class_spell;
+insert into client_spellname select * from r.client_spellname where ID in (select spell_id from m_class_spell union select reward_spell from r.m_quest where reward_spell > 0 union select SpellID from r.client_talent union select value from json_each('[$spells]'));
+insert into client_talent select * from r.client_talent;
 insert into m_npc select * from r.m_npc where id in ($npcs);
 insert into m_spawn select * from r.m_spawn where entity_type = 'npc' and entity_id in ($npcs);
 detach r;

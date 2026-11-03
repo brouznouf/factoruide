@@ -418,7 +418,13 @@ fn links(conn: &Connection, profile: &Profile) -> Result<HashMap<i64, Vec<(LinkK
             .push((kind, other, profile.members_of(races, classes) != 0));
     }
     let mut scope = conn.prepare("SELECT races_mask,classes_mask FROM m_quest WHERE id=?1")?;
+    let mut known = conn.prepare("SELECT 1 FROM m_quest WHERE id=?1")?;
     for correction in &profile.quest_overrides {
+        // A correction of a quest the database does not have (a database of a few quests, in
+        // tests) has nothing to correct.
+        if !known.exists([correction.id])? {
+            continue;
+        }
         for (kind, required) in [
             (LinkKind::PreAll, &correction.pre_all),
             (LinkKind::PreAny, &correction.pre_any),
@@ -427,7 +433,9 @@ fn links(conn: &Connection, profile: &Profile) -> Result<HashMap<i64, Vec<(LinkK
             let alternatives = links.entry(correction.id).or_default();
             alternatives.retain(|(existing, _, _)| *existing != kind);
             for id in required {
-                let (races, classes) = scope.query_row([id], |r| Ok((r.get(0)?, r.get(1)?)))?;
+                let (races, classes) = scope
+                    .query_row([id], |r| Ok((r.get(0)?, r.get(1)?)))
+                    .with_context(|| format!("the correction of quest {} requires quest {id}, which the database does not have", correction.id))?;
                 alternatives.push((kind, *id, profile.members_of(races, classes) != 0));
             }
         }

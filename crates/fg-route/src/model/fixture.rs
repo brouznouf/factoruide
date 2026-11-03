@@ -298,6 +298,18 @@ impl Fixture {
             let file: File = toml::from_str(text).with_context(|| format!("fixture {name}"))?;
             insert(&conn, &file).with_context(|| format!("fixture {name}"))?;
         }
+        // `FG_TRACE=1` prints every statement the code under test runs on it.
+        if std::env::var_os("FG_TRACE").is_some() {
+            conn.trace_v2(
+                rusqlite::trace::TraceEventCodes::SQLITE_TRACE_STMT,
+                Some(|event: rusqlite::trace::TraceEvent<'_>| {
+                    if let rusqlite::trace::TraceEvent::Stmt(_, sql) = event {
+                        let line: String = sql.split_whitespace().collect::<Vec<_>>().join(" ");
+                        eprintln!("SQL {}", line.chars().take(200).collect::<String>());
+                    }
+                }),
+            );
+        }
         Ok(conn)
     }
 }
@@ -322,6 +334,10 @@ fn spawn(conn: &Connection, kind: &str, id: i64, at: &At, respawn: Option<f64>) 
 
 fn insert(conn: &Connection, file: &File) -> Result<()> {
     for n in &file.npc {
+        // The races' start NPCs are in the base already: their declaration changes nothing.
+        if conn.query_row("SELECT count(*) FROM m_npc WHERE id = ?1", [n.id], |r| r.get::<_, i64>(0))? > 0 {
+            continue;
+        }
         conn.execute(
             "INSERT INTO m_npc (id, name, subname, min_level, max_level, rank, zone_id, faction_id, friendly_to, npc_flags, sources) \
              VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, 'fixture')",
