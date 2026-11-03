@@ -5,7 +5,7 @@
 use super::phrase::{Arg, Phrase};
 use super::types::{MapPointOut, Step, StepKind, Target, TargetKind};
 use crate::model::{EntityKind, Loc, Objective, Spots};
-use crate::plan::{Event, Kind, Planner, Stop, Timed};
+use crate::plan::{Event, Kind, Planner, RANKS, Stop, Timed};
 use crate::world::{MapPoint, Pos};
 use std::collections::HashSet;
 
@@ -96,6 +96,12 @@ impl StepWriter<'_> {
                 abilities,
                 ..
             } => self.train(&mut step, *trainer, *since, t.level, *abilities),
+            Event::ProfTrain {
+                profession,
+                trainer,
+                ranks,
+                ..
+            } => self.profession_train(&mut step, *profession, *trainer, *ranks),
             Event::Sell { vendor } => self.sell(&mut step, *vendor),
             Event::Stop { stop, loc, .. } if !stop.is_quest() => self.visit(&mut step, *stop, loc),
             Event::Stop { stop, loc, reward_xp } => {
@@ -646,6 +652,34 @@ impl StepWriter<'_> {
             id: npc.id,
             name: npc.name.clone(),
         });
+        self.place(&npc.pos, Some(npc.zone))
+    }
+
+    /// Profession training: learn the profession, or its next rank (`ranks`: a bit each).
+    fn profession_train(&self, step: &mut Step, profession: usize, trainer: usize, ranks: u8) -> Place {
+        let model = self.planner.model;
+        let (plan, npc) = (&model.professions[profession], &model.profession_trainers[trainer].loc);
+        step.kind = StepKind::Profession;
+        step.line = Some(crate::profession::skill_line(&plan.key));
+        let top = (RANKS.iter().enumerate()).rev().find(|(r, _)| ranks & 1 << r != 0);
+        step.skill = top.map(|(_, rank)| rank.cap);
+        step.say.push(
+            Phrase::new(if ranks & 1 != 0 {
+                "profession.learn"
+            } else {
+                "profession.rank"
+            })
+            .arg("profession", Arg::Profession(plan.key.clone(), plan.name.clone()))
+            .arg("who", Arg::Npc(npc.id, npc.name.clone())),
+        );
+        step.target = Some(Target {
+            kind: TargetKind::Npc,
+            id: npc.id,
+            name: npc.name.clone(),
+        });
+        // The players of a group guide having the profession (a bit each).
+        let everyone = ((1u16 << (1 + self.planner.profile.mates.len())) - 1) as u8;
+        step.members = (plan.members != everyone).then_some(plan.members);
         self.place(&npc.pos, Some(npc.zone))
     }
 

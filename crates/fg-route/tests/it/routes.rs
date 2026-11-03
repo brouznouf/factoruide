@@ -3177,9 +3177,9 @@ fn camping_101_is_a_profession_quest_after_the_great_outdoors() {
     assert!(quest(&p, 97935).is_none(), "Camping 101: Mining without Mining");
 }
 
-/// Profession trainer stops (GitHub #106): with `profession_trainers` the guide stops at the trainers
-/// of the professions the route passes, to learn each profession and its next rank; by default it
-/// has none, and the stops never change the time of the route.
+/// Profession trainer stops (GitHub #106): with `profession_trainers` the planner goes to the
+/// trainers to learn each profession and its next ranks, and the trips are part of the route's time;
+/// by default there are none.
 #[test]
 fn profession_trainer_stops_are_off_unless_chosen() {
     let goal = |key: &str| fg_route::profession::ProfessionGoal {
@@ -3205,14 +3205,14 @@ fn profession_trainer_stops_are_off_unless_chosen() {
     assert!(stops(&off).is_empty(), "off by default");
     let on = plan(&["profession_trainers=true"]);
     let found = stops(&on);
-    assert!(!found.is_empty(), "stops at the trainers the route passes");
-    assert_eq!(
-        on.steps.len(),
-        off.steps.len() + found.len(),
-        "only the stops are added"
-    );
-    assert_eq!(on.total_time, off.total_time, "no time added");
     let lines: Vec<i64> = on.professions.iter().map(|p| p.skill_line).collect();
+    for line in &lines {
+        assert!(
+            found.iter().any(|s| s.line == Some(*line) && s.skill == Some(75)),
+            "{line}: the profession is learned at its trainer"
+        );
+    }
+    assert!(on.total_time > off.total_time, "the trips take time");
     for s in &found {
         let line = s.line.expect("the profession's skill line");
         assert!(lines.contains(&line), "{}: a profession of the guide", s.text);

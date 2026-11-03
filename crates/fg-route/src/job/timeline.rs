@@ -920,9 +920,12 @@ impl<'r> Replay<'r> {
                         push(out, e.time - t, &mut t, [0.0, 0.0, 1.0, 0.0], None);
                     }
                 }
-                Event::Train { .. } | Event::Sell { .. } => {
+                Event::Train { .. } | Event::ProfTrain { .. } | Event::Sell { .. } => {
                     let (p, train) = match e.event {
                         Event::Train { trainer, .. } => (model.trainers[trainer].pos, d(|b| b.training)),
+                        Event::ProfTrain { trainer, .. } => {
+                            (model.profession_trainers[trainer].loc.pos, d(|b| b.training))
+                        }
                         Event::Sell { vendor } => (model.vendors[vendor].pos, d(|b| b.overhead)),
                         _ => unreachable!(),
                     };
@@ -933,7 +936,7 @@ impl<'r> Replay<'r> {
                     } else if !apart(&after.pos, &at) {
                         // Training can make the return faster; other detours retain equal halves.
                         let outbound = match e.event {
-                            Event::Train { outbound, .. } => outbound.min(walk),
+                            Event::Train { outbound, .. } | Event::ProfTrain { outbound, .. } => outbound.min(walk),
                             _ => walk / 2.0,
                         };
                         push(
