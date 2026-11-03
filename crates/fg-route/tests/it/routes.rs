@@ -1107,7 +1107,7 @@ fn item_used_by_an_objective_is_got_first() {
 /// sea to Auberdine, the portal and the boat do. Darnassus is walked to from Dolanaar.
 #[test]
 fn rut_theran_is_left_by_portal_or_boat() {
-    let w = crate::common::world(Edition::Classic, fg_route::faction::Faction::Alliance);
+    let w = &crate::common::terrain_world(Edition::Classic, fg_route::faction::Faction::Alliance, &["classic_rutheran_terrain"]);
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let (village, dolanaar) = (at(141, 55.5, 90.0), at(141, 55.6, 59.8));
     assert!(w.walk_distance(&village, &dolanaar).is_infinite());
@@ -1122,16 +1122,30 @@ fn rut_theran_is_left_by_portal_or_boat() {
     assert!(portal.seconds < 30.0, "a portal is taken at once");
 }
 
-/// The walking world of each edition for a faction (`job::walk_world`).
-fn walk_worlds(faction: fg_route::faction::Faction) -> Vec<(&'static str, &'static fg_route::world::World)> {
-    [
-        ("forever", Edition::Forever),
-        ("classic", Edition::Classic),
-        ("tbc", Edition::Tbc),
-    ]
-    .into_iter()
-    .map(|(name, edition)| (name, crate::common::world(edition, faction)))
-    .collect()
+/// The walking world of an edition for a faction on the ground of a fixture (`<edition>_<ground>_terrain`).
+fn walk_world(edition: Edition, faction: fg_route::faction::Faction, ground: &str) -> fg_route::world::World {
+    crate::common::terrain_world(edition, faction, &[&format!("{}_{ground}_terrain", edition.key())])
+}
+
+/// A test of each edition: `$test` takes the edition and its walking world.
+macro_rules! in_each_edition {
+    ($name:ident, $test:ident, $faction:ident, $ground:literal) => {
+        mod $name {
+            use super::*;
+            #[test]
+            fn classic() {
+                $test("classic", &walk_world(Edition::Classic, fg_route::faction::Faction::$faction, $ground));
+            }
+            #[test]
+            fn tbc() {
+                $test("tbc", &walk_world(Edition::Tbc, fg_route::faction::Faction::$faction, $ground));
+            }
+            #[test]
+            fn forever() {
+                $test("forever", &walk_world(Edition::Forever, fg_route::faction::Faction::$faction, $ground));
+            }
+        }
+    };
 }
 
 /// The least distance (yards) from a point to a walk drawn (`World::walk_path`), its segments.
@@ -1155,9 +1169,8 @@ fn distance_to_path(path: &[fg_route::world::Pos], p: &fg_route::world::Pos) -> 
 /// plain (the floors hold the road, and no way over the ridges), never a straight line over the
 /// ridges, even to the plain just behind its north wall (GitHub #43). Walks inside it do not
 /// take the road.
-#[test]
-fn valley_of_trials_is_left_by_its_road() {
-    for (edition, w) in walk_worlds(fg_route::faction::Faction::Horde) {
+fn valley_of_trials_is_left_by_its_road_of(edition: &str, w: &fg_route::world::World) {
+    {
         let at = |x, y| w.to_world(14, x, y).unwrap();
         let (north_end, behind) = (at(44.5, 56.5), at(42.0, 50.5));
         let (gornek, razor_hill) = (at(42.1, 68.4), at(51.9, 43.5));
@@ -1184,6 +1197,7 @@ fn valley_of_trials_is_left_by_its_road() {
         );
     }
 }
+in_each_edition!(valley_of_trials_is_left_by_its_road, valley_of_trials_is_left_by_its_road_of, Horde, "valley");
 
 /// How near a walk drawn goes by a passage's point when it takes the road or the tunnel there
 /// (yards): its turns are cells, or the tiles' gates on a long walk.
@@ -1192,9 +1206,8 @@ const ROAD: f64 = 120.0;
 /// Burning Blade Coven opens on Valley of Trials: Yarrog Baneshadow, deep inside under the
 /// ridge (nearer the plain behind it than the valley), is walked to from the valley through the
 /// cave's mouth (the floors hold the cave), and from Razor Hill by the valley's road.
-#[test]
-fn burning_blade_coven_is_reached_from_the_valley() {
-    for (edition, w) in walk_worlds(fg_route::faction::Faction::Horde) {
+fn burning_blade_coven_is_reached_from_the_valley_of(edition: &str, w: &fg_route::world::World) {
+    {
         let at = |x, y| w.to_world(14, x, y).unwrap();
         let (yarrog, zureetha, razor_hill) = (at(42.7, 53.0), at(42.8, 69.0), at(51.9, 43.5));
         let (mouth, road) = (at(45.3, 56.4), at(47.4, 67.7));
@@ -1209,11 +1222,11 @@ fn burning_blade_coven_is_reached_from_the_valley() {
         assert!(near < ROAD, "{edition}: {near} yd from the mouth, {inside:?}");
     }
 }
+in_each_edition!(burning_blade_coven_is_reached_from_the_valley, burning_blade_coven_is_reached_from_the_valley_of, Horde, "valley");
 
 /// Coldridge Valley is left by Coldridge Pass, the tunnel to Kharanos, in every edition.
-#[test]
-fn coldridge_valley_is_left_by_its_tunnel() {
-    for (edition, w) in walk_worlds(fg_route::faction::Faction::Alliance) {
+fn coldridge_valley_is_left_by_its_tunnel_of(edition: &str, w: &fg_route::world::World) {
+    {
         let at = |x, y| w.to_world(1, x, y).unwrap();
         // Every cell walked over (the turns are the tiles' gates of a long walk).
         let (a, b) = (at(29.0, 66.0), at(46.0, 52.0));
@@ -1225,6 +1238,7 @@ fn coldridge_valley_is_left_by_its_tunnel() {
         assert!(w.walk_distance(&a, &b) < 2.0 * a.dist(&b), "{edition}: no way round");
     }
 }
+in_each_edition!(coldridge_valley_is_left_by_its_tunnel, coldridge_valley_is_left_by_its_tunnel_of, Alliance, "coldridge");
 
 /// WoW Forever's Mount Hyjal is walled by cliffs: walks up from Felwood or Winterspring take
 /// Darkwhisper Gorge, even from Felwood just below its western rim.

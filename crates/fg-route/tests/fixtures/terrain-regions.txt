@@ -1,10 +1,12 @@
 # The tiles of the terrain pack (scripts/test-terrain.sh): edition, map, tile_x from-to, tile_y from-to.
 # A fixture takes the part it needs with a [[terrain]] section (the same ranges).
-classic 0 24 30 26 34
-classic 1 28 35 35 45
-classic 0 39 45 28 37
-classic 0 46 51 29 35
-classic 1 39 44 32 41
-classic 1 43 51 32 45
-classic 1 26 32 25 35
-classic 1 28 41 27 46
+classic 0 26 34 24 30
+classic 1 25 46 26 41
+classic 1 37 42 29 35
+classic 0 29 34 40 45
+classic 1 25 33 11 21
+classic 1 38 40 42 46
+tbc 1 37 42 29 35
+tbc 0 29 34 40 45
+forever 1 37 42 29 35
+forever 0 29 34 40 45

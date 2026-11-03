@@ -2,5 +2,5 @@
 
 [[terrain]]
 map = 0
-tile_x = [24, 30]
-tile_y = [26, 34]
+tile_x = [26, 34]
+tile_y = [24, 30]
