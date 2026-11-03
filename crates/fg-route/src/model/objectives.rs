@@ -390,11 +390,14 @@ impl QuestBuilder<'_> {
             .iter()
             .flat_map(|id| entities.points(self.world, EntityKind::Npc, *id))
             .collect();
-        // A creature found nowhere is summoned where the quest's extra objectives are done.
-        if points.is_empty() {
-            points = (quest.row.extra_objects.iter())
-                .flat_map(|id| entities.points(self.world, EntityKind::Object, *id))
-                .collect();
+        // A creature found nowhere, or only in other zones, is summoned where the quest's extra
+        // objectives are done: The Binding's demon at the quest's own circle, whichever city's
+        // the data has seen it at.
+        let objects: Vec<_> = (quest.row.extra_objects.iter())
+            .flat_map(|id| entities.points(self.world, EntityKind::Object, *id))
+            .collect();
+        if !objects.is_empty() && !points.iter().any(|p| objects.iter().any(|o| o.1 == p.1)) {
+            points = objects;
         }
         let needed = amount.or_else(|| count_for(&quest.requirements, &name)).unwrap_or(
             if one_place(&points) && !quest.row.numbered {

@@ -799,3 +799,43 @@ fn a_prerequisite_something_else_needs_is_not_closed_with_a_version() {
     assert_eq!(exclusive_of(&p, 3), vec![2]);
     assert_eq!(exclusive_of(&p, 1), Vec::<i64>::new());
 }
+
+/// Every warlock's demon quests: the demon is fought at the quest's own summoning circle, not in
+/// another city where the data has seen the same demon.
+#[test]
+fn a_summoned_demon_is_fought_at_the_circle_of_its_quest() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let mut stmt = conn
+        .prepare(
+            "SELECT q.id, s.zone_id
+             FROM m_quest q, json_each(q.extra, '$.extra_objectives') e, json_each(e.value, '$.\"5\"') t, m_spawn s
+             WHERE q.classes_mask = 256 AND json_extract(t.value, '$[0]') = 'object'
+               AND s.entity_type = 'object' AND s.entity_id = json_extract(t.value, '$[1]')",
+        )
+        .unwrap();
+    let circles: Vec<(i64, i64)> = stmt
+        .query_map([], |r| Ok((r.get(0)?, r.get(1)?)))
+        .unwrap()
+        .map(Result::unwrap)
+        .collect();
+    assert!(circles.len() >= 10, "{circles:?}");
+    let mut checked = 0;
+    for race in ["orc", "undead", "troll", "human", "gnome"] {
+        let mut req = request(race, "warlock");
+        req.required_class_quests = None;
+        req.to_level = 60;
+        let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        for &(id, zone) in &circles {
+            let Some(&i) = p.model.index.get(&id) else { continue };
+            let at: Vec<i64> = p.model.quests[i].objectives.iter().map(|o| o.loc.zone).collect();
+            assert!(
+                !at.is_empty() && at.iter().all(|z| *z == zone),
+                "{race} {id}: {at:?}, circle in {zone}"
+            );
+            checked += 1;
+        }
+    }
+    assert!(checked >= 10, "{checked}");
+    println!("{checked} demon quests checked");
+}
