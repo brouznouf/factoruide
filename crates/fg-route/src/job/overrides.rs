@@ -16,6 +16,11 @@ pub struct RaceDef {
     /// Flight paths a new character knows (TaxiNodes IDs): the game gives the capital's.
     #[serde(default)]
     pub start_flights: Vec<i64>,
+    /// Classes (lowercase) whose new character pays its level 1 spell with the starting gear
+    /// sold at the start's vendor: the guide opens with that sale and the training. Only those
+    /// starts a guide of the game's own players is known to do it at.
+    #[serde(default)]
+    pub start_training: Vec<String>,
 }
 
 /// Everything configurable on disk in `overrides/`.
@@ -163,6 +168,14 @@ impl Overrides {
         (self.races.values())
             .find(|r| r.id == race_id)
             .map_or(&[], |r| &r.start_flights)
+    }
+
+    /// Whether a new character of this race and class (lowercase) trains its level 1 spell at the
+    /// start of the guide (`RaceDef::start_training`).
+    pub fn trains_at_start(&self, race_id: i64, class: &str) -> bool {
+        (self.races.values())
+            .find(|r| r.id == race_id)
+            .is_some_and(|r| r.start_training.iter().any(|c| c == class))
     }
 
     pub fn load(dir: &Path) -> Result<Self> {

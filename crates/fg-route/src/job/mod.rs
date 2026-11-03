@@ -296,6 +296,16 @@ pub fn prepare(
         ));
     } else {
         model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id));
+        // Nothing trained yet: the level 1 spell is learned after selling the starting gear.
+        if profile.from_level == 1
+            && overrides.trains_at_start(profile.race_id, &profile.class_name.to_lowercase())
+            && model
+                .power
+                .as_ref()
+                .is_some_and(crate::power::PowerModel::has_level_1_training)
+        {
+            model.initial.trained = Some(0);
+        }
     }
     required::check_start(&model, &profile, &members)?;
     model.initial.abilities = model.abilities.initial(start, profile.from_level);

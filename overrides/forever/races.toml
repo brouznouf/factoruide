@@ -10,3 +10,30 @@ start_npc = 251362 # Ailee Farheart, Zephras Isle (to verify in game)
 id = 96
 faction = "Horde"
 start_npc = 251362 # Ailee Farheart, Zephras Isle
+
+# Classes whose new character sells its starting gear at the start's vendor and trains the level 1
+# spell right away (`start_training`; 10 copper: the sale pays it). Only the starts where
+# RestedXP's WoW Forever guides do the same are listed: the game files do not say what the
+# starting gear sells for, so nothing is assumed for the others (Shadowglen's guide tells the
+# warrior to save up for Battle Shout). Warrior: Battle Shout; shaman: Rockbiter Weapon;
+# warlock: Immolate; mage: Arcane Intellect.
+[human] # Northshire
+start_training = ["warrior"]
+
+[dwarf] # Coldridge Valley
+start_training = ["warrior", "shaman", "warlock"]
+
+[gnome] # Coldridge Valley
+start_training = ["warrior", "shaman", "warlock"]
+
+[orc] # Valley of Trials, Durotar
+start_training = ["warrior", "shaman", "warlock"]
+
+[troll] # Valley of Trials, Durotar
+start_training = ["warrior", "shaman", "warlock"]
+
+[tauren] # Camp Narache, Mulgore
+start_training = ["warrior", "shaman"]
+
+[undead] # Deathknell, Tirisfal Glades
+start_training = ["warrior", "warlock", "mage"]

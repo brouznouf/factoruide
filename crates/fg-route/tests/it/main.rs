@@ -11,4 +11,5 @@ mod draft;
 mod edit;
 mod required;
 mod routes;
+mod start_training;
 mod timeline;

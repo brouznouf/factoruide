@@ -14,6 +14,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- A new character opens its guide by selling the starting gear and training the level 1 spell, where WoW Forever's RestedXP guides do (GitHub #105): Battle Shout (warriors), Rockbiter Weapon (shamans), Immolate (warlocks) and Arcane Intellect (mages), at the start's vendor and trainer. The stops take about a minute, counted in the guide's time.
 - A quest started by an item found in a dungeon's object is planned with the run and taken in it: WoW Forever's The Treaty of Understanding, from the Hall of Thanes.
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
 - "Buy at the auction house" option (advanced settings, off by default): the items a quest asks for that nothing else gives, made by a profession like Rough Dynamite, are bought at the nearest auction house instead of leaving the quest out (GitHub #97).

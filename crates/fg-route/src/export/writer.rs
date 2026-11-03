@@ -96,7 +96,7 @@ impl StepWriter<'_> {
                 abilities,
                 ..
             } => self.train(&mut step, *trainer, *since, t.level, *abilities),
-            Event::Sell { vendor } => self.sell(&mut step, *vendor),
+            Event::Sell { vendor } => self.sell(&mut step, *vendor, t.level),
             Event::Stop { stop, loc, .. } if !stop.is_quest() => self.visit(&mut step, *stop, loc),
             Event::Stop { stop, loc, reward_xp } => {
                 let place = self.quest_stop(&mut step, *stop, loc);
@@ -635,12 +635,15 @@ impl StepWriter<'_> {
         self.place(&tp.to.pos, Some(tp.to.zone))
     }
 
-    /// The bags' loot sold at a vendor.
-    fn sell(&self, step: &mut Step, vendor: usize) -> Place {
+    /// The bags' loot sold at a vendor; at level 1 of a character that pays its first spell with
+    /// the starting gear (`RaceDef::start_training`), that gear too.
+    fn sell(&self, step: &mut Step, vendor: usize, level: i64) -> Place {
         let npc = &self.planner.model.vendors[vendor];
         step.kind = StepKind::Sell;
-        step.say
-            .push(Phrase::new("sell").arg("who", Arg::Npc(npc.id, npc.name.clone())));
+        let starting = level <= 1 && self.planner.model.initial.trained == Some(0);
+        step.say.push(
+            Phrase::new(if starting { "sell.start" } else { "sell" }).arg("who", Arg::Npc(npc.id, npc.name.clone())),
+        );
         step.target = Some(Target {
             kind: TargetKind::Npc,
             id: npc.id,

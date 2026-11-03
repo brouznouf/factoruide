@@ -99,6 +99,11 @@ impl Planner<'_> {
                 - 1.0;
             due |= gain >= self.params.train_min_gain && gain > 0.0;
         }
+        // A new character that has trained nothing yet (`RaceDef::start_training`) opens the guide
+        // with its level 1 spell, bought with what its starting gear sells for: only with the
+        // trainer and the vendor close, never a trip.
+        let first = s.trained == 0 && s.level == 1;
+        due |= first;
         if !due {
             return;
         }
@@ -124,7 +129,25 @@ impl Planner<'_> {
         } else {
             return;
         };
+        if first && !self.sell_starting_gear(s, record) {
+            return;
+        }
         self.train_at(s, i, record);
+    }
+
+    /// Sell the starting gear and the loot at the vendor closest to the character, within
+    /// `train_radius` as the trainer is: it pays the first spell. False when there is no such
+    /// vendor, and the training waits (the character could not pay).
+    fn sell_starting_gear(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) -> bool {
+        let vendor = (self.model.vendors.iter().enumerate())
+            .map(|(i, v)| (i, s.pos.dist(&v.pos)))
+            .filter(|(_, d)| *d <= self.params.train_radius)
+            .min_by(|a, b| a.1.total_cmp(&b.1));
+        let Some((i, _)) = vendor else {
+            return false;
+        };
+        self.sell_at(s, i, record);
+        true
     }
 
     /// Sell the bags' loot at a vendor within `sell_radius` once it fills half the room left

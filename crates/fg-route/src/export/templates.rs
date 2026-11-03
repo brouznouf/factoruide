@@ -674,6 +674,20 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
         ],
     ),
     (
+        "sell.start",
+        [
+            "Sell your starting gear and any loot to {who}",
+            "Vendre votre équipement de départ et le butin à {who}",
+            "Startausrüstung und Beute bei {who} verkaufen",
+            "Vender el equipo inicial y el botín a {who}",
+            "Vender o equipamento inicial e o saque para {who}",
+            "Продать стартовое снаряжение и добычу ({who})",
+            "{who}에게 시작 장비와 전리품 판매",
+            "向{who}出售初始装备和战利品",
+            "向{who}出售初始裝備和戰利品",
+        ],
+    ),
+    (
         "train.spells",
         [
             "Train with {who}: {spells}",

@@ -96,6 +96,13 @@ pub struct Rank {
     cast_time: f64,
 }
 
+impl Rank {
+    /// A level 1 spell the class starts with, no trainer needed (it costs nothing).
+    fn comes_free(&self) -> bool {
+        self.level <= 1 && self.cost == 0
+    }
+}
+
 /// A spell family that counts (overrides/spells.toml), its ranks by level.
 #[derive(Debug, Clone)]
 struct Family {
@@ -783,6 +790,12 @@ impl PowerModel {
             - 1.0
     }
 
+    /// Whether a class spell that counts is learned from the trainer at level 1 for a price (the
+    /// others of level 1 come free with the class).
+    pub fn has_level_1_training(&self) -> bool {
+        (self.families.iter().flat_map(|f| f.list.iter())).any(|r| r.level <= 1 && r.cost > 0)
+    }
+
     /// Whether the data has class spells (else training follows `train_every`).
     pub(crate) fn has_spells(&self) -> bool {
         !self.families.is_empty() || !self.gated.is_empty()
@@ -801,7 +814,7 @@ impl PowerModel {
             .families
             .iter()
             .flat_map(|f| f.list.iter())
-            .filter(|r| r.level > trained && r.level <= level)
+            .filter(|r| r.level > trained && r.level <= level && !r.comes_free())
             .collect();
         out.sort_by(|a, b| a.level.cmp(&b.level).then(a.name.cmp(&b.name)));
         out
@@ -908,7 +921,13 @@ fn family_factor(f: &Family, known: Option<&Rank>, level: i64) -> f64 {
 fn spell_factor(families: &[Family], trained: i64, level: i64) -> f64 {
     families
         .iter()
-        .map(|f| family_factor(f, f.list.iter().rev().find(|r| r.level <= trained), level))
+        .map(|f| {
+            family_factor(
+                f,
+                f.list.iter().rev().find(|r| r.level <= trained || r.comes_free()),
+                level,
+            )
+        })
         .product()
 }
 
@@ -954,11 +973,41 @@ mod tests {
     }
 
     #[test]
+    fn a_new_character_knows_the_free_level_1_spells_and_lacks_the_paid_ones() {
+        let family = |cost| {
+            vec![Family {
+                weight: 0.4,
+                ranks: false,
+                list: vec![Rank { cost, ..rank(1, 10.0) }],
+                ids: vec![],
+                requires: 0,
+                bits: vec![],
+            }]
+        };
+        assert!(
+            (spell_factor(&family(0), 0, 1) - 1.0).abs() < 1e-9,
+            "Heroic Strike comes with the class"
+        );
+        assert!(
+            (spell_factor(&family(10), 0, 1) - 0.6).abs() < 1e-9,
+            "Battle Shout is trained"
+        );
+        assert!((spell_factor(&family(10), 1, 1) - 1.0).abs() < 1e-9, "once trained");
+    }
+
+    #[test]
     fn spells_behind_lose_their_share() {
         let families = vec![Family {
             weight: 0.4,
             ranks: true,
-            list: vec![rank(1, 10.0), rank(10, 40.0)],
+            // Rank 1 is paid for: a free level 1 spell is known from the start.
+            list: vec![
+                Rank {
+                    cost: 10,
+                    ..rank(1, 10.0)
+                },
+                rank(10, 40.0),
+            ],
             ids: vec![],
             requires: 0,
             bits: vec![],
