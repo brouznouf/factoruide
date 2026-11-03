@@ -1,0 +1,7 @@
+# Classic Era-only corrections (format: ../quests.toml).
+
+[[quest]]
+# Darnassus: In Search of Thaelrid has no race restriction in the sources, but Dawnwatcher
+# Shaedlass gives it in Darnassus, out of the Horde's reach (`fg audit`, check islands).
+id = 1198
+races_mask = 77 # the Alliance

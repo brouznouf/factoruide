@@ -1,0 +1,20 @@
+# Forever's dungeons entered by a door for each faction.
+
+# City of Dalaran: the Horde goes down the sewer tunnel at the west edge of the Alterac
+# Mountains; the Alliance enters from its own quarter, by the pipe of Cantrips & Crows at the
+# north end of the ruined streets, a few steps from Archmage Celindra and Archmage Modera (the
+# mobs of the dungeon's quests start right south of it). The Alliance door is a player's report,
+# placed by the quest givers and the mobs: not checked in game.
+[[dungeon_entrance]]
+area = 16544
+faction = "Horde"
+zone = 36
+x = 8.46
+y = 59.21
+
+[[dungeon_entrance]]
+area = 16544
+faction = "Alliance"
+zone = 36
+x = 14.7
+y = 63.0

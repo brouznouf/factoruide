@@ -1,0 +1,134 @@
+# Manual corrections applied on top of every source by `fgd build`.
+# They win over every source and in-game observations.
+# Files here apply to every edition; overrides/<edition>/*.toml (forever, classic, tbc) only to
+# that edition's database.
+#
+# [[quest]]
+# id = 1234
+# status = "removed"            # available | removed | incomplete
+# reason = "Removed in Forever, NPC gone"
+# name = "Corrected name"
+# level = 12
+# min_level = 8
+# races_mask = 64               # bit (raceID - 1); Skyborne = 2^32 / 2^33
+# classes_mask = 4              # bit (classID - 1): warrior 1, paladin 2, hunter 4, rogue 8...
+# zone_or_sort = 1              # zone (AreaTable ID), or a category (-304 Cooking)
+# required_skill_id = 0         # skill needed to be offered it (185 Cooking; 0: none)
+# starts = [{ type = "npc", id = 123 }]
+# ends = [{ type = "object", id = 456 }]
+# remove_starts = [{ type = "npc", id = 789 }]
+# pre_all = [100, 101]           # every quest required
+# pre_any = [102]                # one of them required
+# exclusive = [103]             # cannot both be done (both directions)
+# reward_spell = 7328           # the spell it teaches (Redemption): a class quest teaching a
+#                               # spell is required in the class's guides
+# time_limit = 600              # timed quest: seconds from taking it to turn it in
+#                               # (0: not timed), over the sources'
+# objectives = [{ type = "creature", id = 6177, amount = 1 }]   # replace the sources' (creature,
+#                               # object or item; talk: a creature healed or talked to, not
+#                               # killed; text: what the step says)
+# objectives = [{ type = "trigger", text = "Fill the waterskin", at = { zone = 44, x = 73.7, y = 61.6 } }]
+#                               # a place to reach (an item used there, a potion drunk)
+#
+# [[spawn]]                     # a place no source knows (added to theirs)
+# type = "npc"                  # npc | object
+# id = 1234
+# zone = 17                     # AreaTable ID of the zone
+# x = 42.0                      # percent coordinates
+# y = 60.9
+#
+# [[height]]                    # the height of a place no server data knows (yards: the floor it
+# type = "npc"                  # stands on where several lie over each other, a tower's top),
+# id = 1234                     # for the place of the entity at these coordinates (`fgd
+# zone = 17                     # terrain-layers-cells` prints the floors' heights)
+# x = 42.0
+# y = 60.9
+# z = 120.0
+#
+# [[npc]]                       # an NPC's side, over the sources'
+# id = 1234
+# friendly_to = "AH"            # A | H | AH: the sides it talks to
+
+[[spawn]]
+# Body and Heart (druid bear form): Lunaclaw Spirit is summoned at the Moonkin Stones and
+# known to no source, so the quest was left out (GitHub #8). The Alliance's stone in Darkshore,
+# the Horde's between Mulgore and the Barrens (the Moonkin Stone object's places).
+type = "npc"
+id = 12144
+zone = 148
+x = 43.5
+y = 45.97
+
+[[spawn]]
+type = "npc"
+id = 12144
+zone = 17
+x = 42.0
+y = 60.87
+
+# Quests whose chain was lost (fg audit broken-chains, 2026-10-17).
+
+[[quest]]
+# Jail Break!: an escort inside Blackrock Depths; the sources' trigger has no place (-1, -1). Done
+# by running the dungeon (Marshal Windsor, its first step).
+id = 4322
+objectives = [{ type = "talk", id = 9023, text = "Jail Break!: free Marshal Windsor and his friends in Blackrock Depths" }]
+
+[[spawn]]
+# Overmaster Pyron guards the quarry inside Blackrock Mountain, outside the instance. The only place
+# kept was on the continent map (zone 10074, unusable), which hid the Searing Gorge one.
+type = "npc"
+id = 9026
+zone = 51
+x = 25.0
+y = 76.0
+
+[[spawn]]
+# Hive'Regal Glyphed Crystal (Glyph Chasing, 8309): deep in Hive'Regal, past the bottom edge of the
+# Silithus map (-8323.1, 726.4); the only place kept was on the Kalimdor map (zone 10073).
+type = "object"
+id = 180453
+zone = 1377
+x = 52.0
+y = 101.8
+
+[[quest]]
+# Finding the Source: the thermometer is used at the hottest spot, nothing is clicked there (the step
+# said "Use Fire Plume Ridge Hot Spot").
+id = 974
+objectives = [{ type = "object", id = 148503, amount = 1, text = "Use Krakle's Thermometer at the hottest spot of Fire Plume Ridge" }]
+
+[[quest]]
+# The Blackwood Corrupted: the Talisman lies in Xabraxxis' Demon Bag, and Xabraxxis only comes
+# once the Filled Cleansing Bowl (with the fruit, nut and grain samples) is set by the northern
+# camp's bonfire. As an object objective it comes after the bowl and the samples (the step looted
+# the Talisman before two of the samples and never said to use the bowl).
+id = 4763
+objectives = [{ type = "object", id = 177624, amount = 1, text = "Use the Filled Cleansing Bowl at the bonfire, kill Xabraxxis and loot the Talisman of Corruption" }]
+
+[[quest]]
+# Distracting Jarven: Jarven is offered his ale once the guarded barrel was tried (Guarded
+# Thunderbrew Barrel, the other child of Bitter Rivals): the barrel first, then Jarven.
+id = 308
+pre_all = [403]
+
+# The Warsong Reports: the three updates are the rewards of Warsong Runner Update, Warsong
+# Outrider Update and Warsong Scout Update; the scouts sell nothing (the sources list them as
+# vendors of the item they hand over).
+[[quest]]
+# Locked Away: the cabinet key drops from Farmer Dalson, whom the outhouse summons when its quest
+# (5059) is handed in (a quest end script; he has no spawn of his own).
+id = 5060
+pre_all = [5059]
+
+[[item]]
+id = 16763
+remove_sources = [{ type = "vendor", id = 12863 }]
+
+[[item]]
+id = 16764
+remove_sources = [{ type = "vendor", id = 12862 }]
+
+[[item]]
+id = 16765
+remove_sources = [{ type = "vendor", id = 12864 }]

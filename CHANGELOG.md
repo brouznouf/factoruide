@@ -15,6 +15,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Guides
 
 - "On the way: buy ... at the auction house" comes before the flight, boat or zeppelin that leaves the city, not after it (GitHub #115).
+- WoW Forever: the Orc mage takes the Undercity mage quests (Investigate the Alchemist Shop, Spellfire Robes, Speak with Deino...), the Troll warlock the Voidwalker's Creature of the Void and The Binding, and the High Order Skyborne mage and druid the Human, Gnome and Night Elf quests of their sides, instead of leaving them out of the guide (GitHub #111, #114).
 - A quest started by an item found in a dungeon's object is planned with the run and taken in it: WoW Forever's The Treaty of Understanding, from the Hall of Thanes.
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
 - "Buy at the auction house" option (advanced settings, off by default): the items a quest asks for that nothing else gives, made by a profession like Rough Dynamite, are bought at the nearest auction house instead of leaving the quest out (GitHub #97).

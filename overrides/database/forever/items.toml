@@ -1,0 +1,94 @@
+# Items new to Forever: no server data has their stats, so the planner would count the quests
+# giving them for nothing. Their tooltips (stats as shown in game).
+
+# Library rewards: ten books (Friend of the Library) ...
+[[item_stats]]
+# Scholarly Pendant
+id = 277203
+quality = 2
+slot = 2
+class = 4
+sta = 3
+spi = 2
+
+[[item_stats]]
+# Erudite's Amulet
+id = 277204
+quality = 2
+slot = 2
+class = 4
+agi = 2
+sta = 3
+
+# ... twenty books (Greater Friend of the Library, level 20) ...
+[[item_stats]]
+# Field Researcher's Loop
+id = 281634
+quality = 3
+slot = 11
+class = 4
+agi = 7
+sta = 7
+
+[[item_stats]]
+# Philanthropist's Ring
+id = 281635
+quality = 3
+slot = 11
+class = 4
+int = 5
+sp = 10
+heal = 10
+
+# ... twenty-five books (the second Greater Friend of the Library). The quest's rewards are
+# missing from the sources.
+[[item_stats]]
+# Truthseeker's Bow
+id = 277254
+quality = 3
+slot = 15
+class = 2
+subclass = 2
+required_level = 40
+agi = 7
+sta = 3
+dps = 23.75
+speed = 2.8
+
+[[item_stats]]
+# Crest of Elucidation
+id = 277258
+quality = 3
+slot = 14
+class = 4
+subclass = 6
+required_level = 40
+armor = 158
+spi = 12
+heal = 11
+sp = 4
+
+[[item_stats]]
+# Researcher's Night Light
+id = 277260
+quality = 3
+slot = 23
+class = 4
+required_level = 40
+sta = 12
+sp = 7
+
+[[quest_reward]]
+quest = 82208
+item = 277254
+choice = true
+
+[[quest_reward]]
+quest = 82208
+item = 277258
+choice = true
+
+[[quest_reward]]
+quest = 82208
+item = 277260
+choice = true

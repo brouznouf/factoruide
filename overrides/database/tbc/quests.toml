@@ -1,0 +1,83 @@
+# TBC Anniversary-only corrections (format: ../quests.toml).
+
+[[quest]]
+# Darnassus: In Search of Thaelrid has no race restriction in the sources, but Dawnwatcher
+# Shaedlass gives it in Darnassus, out of the Horde's reach (`fg audit`, check islands).
+id = 1198
+races_mask = 1101 # the Alliance (draenei included)
+
+# The blood elf and draenei class quests teaching a spell, which no source records (the quests'
+# "You will learn"; only the 1.12 ones are known): required in their class's guides (the
+# undead paladin's Redemption was missing on Forever, GitHub #12).
+[[quest]]
+id = 9600 # Redemption (draenei paladin)
+reward_spell = 7328
+
+[[quest]]
+id = 9685 # Redeeming the Dead (blood elf paladin): Redemption
+reward_spell = 7328
+
+[[quest]]
+id = 9673 # Beast Training (blood elf hunter): pet training
+reward_spell = 5149
+
+[[quest]]
+id = 9675 # Beast Training (draenei hunter): pet training
+reward_spell = 5149
+
+[[quest]]
+id = 9619 # The Rune of Summoning (blood elf warlock): Summon Voidwalker
+reward_spell = 697
+
+[[quest]]
+# Mission: Possible But Not Probable: the TBC sources give no amounts, so Gallywix's elite drop
+# counted as 6 and left the quest out, Hinott's Assistance (Poisons) with it (the 1.12 amounts).
+id = 2478
+objectives = [
+  { type = "creature", id = 7310, amount = 2 },
+  { type = "creature", id = 7307, amount = 2 },
+  { type = "creature", id = 7308, amount = 2 },
+  { type = "item", id = 8074, amount = 1 },
+  { type = "item", id = 8072, amount = 1 },
+  { type = "item", id = 8073, amount = 1 },
+]
+
+[[quest]]
+# Prisoner of the Bladespire: the Wyvern Cage Key (elite Bladespire ogres) was only in the text,
+# so no step got it (`fg audit`, check source-items).
+id = 10724
+objectives = [
+  { type = "item", id = 31755, amount = 1 },
+  { type = "talk", id = 22268, amount = 1, text = "Free Leokk with Spirit's Whistle" },
+]
+
+[[quest]]
+# Imbuing the Headpiece: the Energized Headpiece is the Unfinished Headpiece used next to Gul'dan
+# at the Altar of Damnation (Gul'dan, npc 17008, stands at 43.0, 44.9); nothing drops it.
+id = 10782
+objectives = [
+  { type = "trigger", text = "Use the Unfinished Headpiece near Gul'dan at the Altar of Damnation", at = { zone = 3520, x = 43.0, y = 44.9 } },
+]
+
+[[spawn]]
+# Veneratus the Many (Ar'tor's Charge, 10540): appears around Illidari Point while walking with the
+# Spirit Hunter; no source places him (its place on the map: 28.4-31.8, 55.8-58.6).
+type = "npc"
+id = 20427
+zone = 3520
+x = 30.0
+y = 57.0
+
+[[spawn]]
+# Lurking Shark (Nat's Bargain, 11209): comes at the shipwreck once the Fish Paste is smeared on.
+type = "npc"
+id = 23928
+zone = 15
+x = 56.4
+y = 62.4
+
+[[quest]]
+# Bloodmyst Isle: The Kessel Run is timed (15 minutes), which no TBC source records
+# (only the 1.12 quests' limits are known).
+id = 9663
+time_limit = 900
