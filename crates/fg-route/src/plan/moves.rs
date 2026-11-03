@@ -56,7 +56,8 @@ impl Planner<'_> {
     /// The version of a must-have quest in the route swapped for another (Undercity's voidwalker
     /// for Orgrimmar's): no other move can, a must-have quest staying and the other closed. Each
     /// quest of the new one goes where the route passes nearest, from the level it needs. Draws
-    /// nothing without another version, half the time else: the route may need a new quest more.
+    /// nothing without another version, one time in eight else: it shares its slot with adding a
+    /// new quest, which a route needs far more often.
     pub(crate) fn swap_version(&self, route: &mut Vec<Stop>, run: &Run, rng: &mut SmallRng) -> Option<Change> {
         let in_route = |route: &[Stop], i: u32| route.iter().any(|s| s.is_quest() && s.index == i);
         let others = |i: u32| {
@@ -70,7 +71,7 @@ impl Planner<'_> {
             .flat_map(|s| others(s.index).map(|other| (s.index, other)))
             .filter(|&(_, other)| !in_route(route, other))
             .collect();
-        if picks.is_empty() || !rng.random_bool(0.5) {
+        if picks.is_empty() || !rng.random_bool(0.125) {
             return None;
         }
         let (old, new) = picks[rng.random_range(0..picks.len())];

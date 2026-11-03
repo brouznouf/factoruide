@@ -1099,3 +1099,19 @@ fn a_class_quest_with_one_version_has_nothing_to_swap() {
     assert_eq!(route.len(), 2);
     assert_eq!(rng.random::<u64>(), same.random::<u64>());
 }
+
+/// The move shares its slot with adding a new quest, the only one: a character with versions
+/// still gets most of those tries, for the whole search.
+#[test]
+fn a_route_with_another_version_still_tries_new_quests() {
+    use rand::SeedableRng;
+    let p = far_and_near_versions();
+    let planner = planner(&p);
+    let route = far_version_route();
+    let run = planner.run(&route).unwrap();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(1);
+    let swaps = (0..1000)
+        .filter(|_| planner.swap_version(&mut route.clone(), &run, &mut rng).is_some())
+        .count();
+    assert!((50..=250).contains(&swaps), "{swaps} swaps of 1000 tries");
+}
