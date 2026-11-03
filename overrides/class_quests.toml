@@ -1,45 +1,30 @@
-# Class quests the route must include (by quest name; every race variant and the
-# prerequisites of the chain are included; where quests of the name teach a spell, only those
-# and the steps leading to them). The class quests the data says teach a spell
-# (`m_quest.reward_spell`: Path of Defense, Poisons, Divine Grace...) are required too, after
-# these; the app lists both and the player can take some out. Other class quests are optional:
-# planned only when worth the time, like normal quests.
+# Class quests give the character power when turned in. The class quests the route must do come
+# from the database (`m_class_requirement`: one per class spell, one per start zone's letter to the
+# class trainer, those of overrides/database): the app lists them and the player takes some out.
 #
-# `power`: class quests that make the character stronger (a pet, a form), by quest name, with
-# the power gained when turned in: fights take `1 / power` of their time afterwards (1.25 = 25%
-# faster). It counts as levels of power like gear (1.4 = 3.2 levels), so the route goes for
-# these quests early. Several quests of the same name count once; where they teach a spell,
-# the quests teaching it give the power, whatever their name.
+# `power`: class requirements that make the character stronger (a pet, a form), by requirement
+# name, with the power gained when the quest is turned in: fights take `1 / power` of their time
+# afterwards (1.25 = 25% faster). It counts as levels of power like gear (1.4 = 3.2 levels), so the
+# route goes for these quests early. The quest of a requirement the character can take gives it.
 
 [warrior]
-# Item rewards only (Bartleby, Elura, Weapons of Elunite...): none required by default.
-required = []
 
 [paladin]
-required = ["The Tome of Divinity"] # Redemption
 
 [hunter]
-required = ["Taming the Beast", "Training the Beast"] # pet
-power = { "Training the Beast" = 1.3 }                # pet
+power = { "Beast Training" = 1.3 } # pet
 
 [rogue]
-required = []
 
 [priest]
-required = []
 
 [shaman]
-required = ["Call of Earth", "Call of Fire", "Call of Water", "Call of Air"] # totems
 
 [mage]
-required = []
 
 [warlock]
-required = ["The Binding", "Summon Felsteed"] # demons, mount
-# Imp (Horde, human, dwarf and gnome quests: nearly doubles the damage early on), Voidwalker
-# (the first "The Binding").
-power = { "Vile Familiars" = 1.4, "The Stolen Tome" = 1.4, "Beginnings" = 1.4, "The Binding" = 1.2 }
+# Imp (Horde, human, dwarf and gnome quests: nearly doubles the damage early on), Voidwalker.
+power = { "Summon Imp" = 1.4, "Summon Voidwalker" = 1.2 }
 
 [druid]
-required = ["Body and Heart", "Aquatic Form", "Moonglade"] # forms and their teleport access
-power = { "Body and Heart" = 1.1 }             # bear form
+power = { "Bear Form" = 1.1 } # bear form

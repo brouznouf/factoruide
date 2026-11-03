@@ -64,7 +64,11 @@ impl QuestBuilder<'_> {
             late_unlock: false,
             mandatory: zone_forced
                 || group_class_quest
-                    && (self.profile.required_class_quests.iter().any(|n| n == &r.name)
+                    && (self
+                        .profile
+                        .class_requirements
+                        .iter()
+                        .any(|c| c.selected && c.quests.contains(&r.id))
                         || self.params.all_class_quests && r.min_level.unwrap_or(1) <= self.profile.to_level),
             zone_forced,
             required: false,
@@ -72,10 +76,18 @@ impl QuestBuilder<'_> {
             priority_deadline: None,
             skill: skill.flatten(),
             power: class_quest
-                .then(|| self.profile.class_powers.iter().position(|(n, _)| n == &r.name))
+                .then(|| {
+                    let requirement = (self.profile.class_requirements.iter())
+                        .find(|c| c.class_id == self.profile.class_id && c.quests.contains(&r.id))?;
+                    self.profile
+                        .class_powers
+                        .iter()
+                        .position(|(n, _)| *n == requirement.name)
+                })
                 .flatten()
                 .map(|k| (k as u8, self.profile.class_powers[k].1)),
             reward_spell: r.reward_spell,
+            reward_items: Vec::new(),
             start_guard,
             end_guard,
             reputation: r

@@ -1,6 +1,6 @@
 //! Quest chains: what finishing a quest unlocks, and the top of each chain.
 
-use super::types::Quest;
+use super::types::{ClassRequirement, Quest};
 use crate::params::Params;
 use rustc_hash::FxHashMap;
 use std::collections::{HashMap, HashSet};
@@ -108,59 +108,118 @@ pub(super) fn chain_tops(quests: &[Quest], index: &FxHashMap<i64, usize>) -> Vec
     (0..quests.len()).map(|i| top(i, &next, quests, &mut memo, 0)).collect()
 }
 
-/// Names of quests some version of which teaches a spell (a pet, a totem...).
-fn spell_quest_names(quests: &[Quest]) -> HashSet<&str> {
-    quests
-        .iter()
-        .filter(|q| q.reward_spell.is_some())
-        .map(|q| q.name.as_str())
-        .collect()
+/// A version of a class requirement: its last quest, with what leads to it when it is chosen.
+#[derive(Clone)]
+pub(super) struct ClassChain {
+    /// Index of its last quest, the one the requirement names.
+    last: usize,
 }
 
-/// The quests a required name designates: where quests of that name teach a spell (the spell is
-/// what is required), those and the steps of the name leading to them (Summon Felsteed's
-/// letters before the quest teaching it); else every quest of the name.
-pub(crate) fn required_by_name(quests: &[Quest]) -> HashSet<i64> {
-    let names = spell_quest_names(quests);
-    let by_id: HashMap<i64, &Quest> = quests.iter().map(|q| (q.id, q)).collect();
-    let mut keep: HashSet<i64> = quests
-        .iter()
-        .filter(|q| q.reward_spell.is_some() || !names.contains(q.name.as_str()))
-        .map(|q| q.id)
-        .collect();
-    let mut stack: Vec<&Quest> = quests.iter().filter(|q| q.reward_spell.is_some()).collect();
-    while let Some(q) = stack.pop() {
-        for p in q.pre_all.iter().chain(&q.pre_any).filter_map(|id| by_id.get(id)) {
-            if p.name == q.name && keep.insert(p.id) {
-                stack.push(p);
+impl ClassChain {
+    /// It with the must-have quests leading only to it: taking another version closes those too,
+    /// or they would stay to do for nothing. A quest something else needs is not one of them.
+    fn with_own_prerequisites(&self, quests: &[Quest]) -> Vec<usize> {
+        let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+        let needed = |q: &Quest| -> Vec<i64> {
+            let only_one = q.pre_any.iter().filter(|_| q.pre_any.len() == 1);
+            q.pre_all.iter().chain(only_one).chain(&q.pre_held).copied().collect()
+        };
+        let mut path = vec![self.last];
+        let mut k = 0;
+        while k < path.len() {
+            for id in needed(&quests[path[k]]) {
+                let Some(&j) = index.get(&id) else { continue };
+                let elsewhere = (quests.iter().enumerate()).any(|(f, q)| {
+                    let needs = |p: &i64| *p == id;
+                    q.mandatory
+                        && !path.contains(&f)
+                        && q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held).any(needs)
+                });
+                if quests[j].mandatory && !path.contains(&j) && !elsewhere {
+                    path.push(j);
+                }
+            }
+            k += 1;
+        }
+        path
+    }
+
+    /// The players of a group who can take it.
+    fn members(&self, quests: &[Quest]) -> u8 {
+        quests[self.last].members
+    }
+}
+
+/// Versions of a class quest: the quests of one requirement (`Profile::class_requirements`: the
+/// quests teaching the same spell, or those the overrides list) that the character can take.
+/// The Skyborne shaman can take two Call of Fire chains for one Searing Totem.
+pub(super) fn class_quest_versions(
+    quests: &[Quest],
+    requirements: &[ClassRequirement],
+    all_required: bool,
+) -> Vec<(ClassChain, ClassChain)> {
+    let mut versions = Vec::new();
+    if all_required {
+        return versions;
+    }
+    let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+    for requirement in requirements.iter().filter(|c| c.selected) {
+        let chains: Vec<ClassChain> = requirement
+            .quests
+            .iter()
+            .filter_map(|id| index.get(id))
+            .map(|&last| ClassChain { last })
+            .collect();
+        for (k, a) in chains.iter().enumerate() {
+            for b in &chains[k + 1..] {
+                if a.members(quests) == b.members(quests) {
+                    versions.push((a.clone(), b.clone()));
+                }
             }
         }
     }
-    keep
+    versions
 }
 
-/// Class quests are required by name (class_quests.toml, the app's list) and give their power
-/// by name. Where quests of that name teach a spell, the spell is what counts: only those and
-/// the steps leading to them stay required (`required_by_name`), only those give the power, and
-/// a quest teaching a spell a power quest teaches gives its power. The second Vile Familiars
-/// (talk to Zureetha Fargaze in Durotar, after the orc's Imp) teaches nothing: the undead
-/// warlock, whose Piercing the Veil teaches the Imp, has no reason to go there.
-pub(super) fn narrow_class_quests_to_spells(quests: &mut [Quest], all_required: bool) {
-    let keep = required_by_name(quests);
-    let names: HashSet<String> = spell_quest_names(quests).into_iter().map(str::to_owned).collect();
-    let mut powers: HashMap<i64, (u8, f64)> = HashMap::new();
-    for q in quests.iter() {
-        if let (Some(spell), Some(power)) = (q.reward_spell, q.power) {
-            powers.entry(spell).or_insert(power);
+/// One requirement for all the versions of a class quest: the route does one, the others closed
+/// once it is taken (not doing them counts as done, see `Availability::alternative_done`), route
+/// building and the search (`swap_version`) choosing. One the player asked for, or in a zone they
+/// forced, is the one done. A version with a step that cannot be planned is no alternative:
+/// nothing changes.
+pub(super) fn settle_class_quest_versions(quests: &mut [Quest], versions: &[(ClassChain, ClassChain)]) {
+    let release = |quests: &mut [Quest], chain: &ClassChain| {
+        for i in chain.with_own_prerequisites(quests) {
+            quests[i].mandatory = false;
         }
-    }
-    for q in quests.iter_mut() {
-        if let Some(spell) = q.reward_spell {
-            q.power = q.power.or_else(|| powers.get(&spell).copied());
-        } else if names.contains(&q.name) {
-            q.power = None;
-            if !all_required && !keep.contains(&q.id) {
-                q.mandatory &= q.zone_forced;
+    };
+    let doable = |c: &ClassChain, quests: &[Quest]| quests[c.last].mandatory;
+    let open: Vec<_> = (versions.iter())
+        .filter(|(a, b)| doable(a, quests) && doable(b, quests))
+        .collect();
+    for (a, b) in open {
+        let asked = |c: &ClassChain, quests: &[Quest]| {
+            c.with_own_prerequisites(quests)
+                .iter()
+                .any(|&i| quests[i].required || quests[i].zone_forced)
+        };
+        match (asked(a, quests), asked(b, quests)) {
+            (true, true) => {}
+            (true, false) => release(quests, b),
+            (false, true) => release(quests, a),
+            (false, false) => {
+                let (path_a, path_b) = (a.with_own_prerequisites(quests), b.with_own_prerequisites(quests));
+                let close = |quests: &mut [Quest], path: &[usize], others: &[usize]| {
+                    let ids: Vec<i64> = others.iter().map(|&i| quests[i].id).collect();
+                    for &i in path {
+                        for id in &ids {
+                            if !quests[i].exclusive.contains(id) {
+                                quests[i].exclusive.push(*id);
+                            }
+                        }
+                    }
+                };
+                close(quests, &path_a, &path_b);
+                close(quests, &path_b, &path_a);
             }
         }
     }

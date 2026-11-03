@@ -49,8 +49,100 @@ impl Planner<'_> {
             20 => self.move_zone_stay(route, rng),
             21 | 22 => self.gather_zone_visits(route, rng),
             23 | 24 => self.relocate_objective(route, run, rng),
-            _ => self.add_unused_quest(route, rng),
+            _ => (self.swap_version(route, run, rng)).or_else(|| self.add_unused_quest(route, rng)),
         }
+    }
+
+    /// The version of a must-have quest in the route swapped for another (Undercity's voidwalker
+    /// for Orgrimmar's): no other move can, a must-have quest staying and the other closed. Each
+    /// quest of the new one goes where the route passes nearest, from the level it needs. Draws
+    /// nothing without another version, one time in eight else: it shares its slot with adding a
+    /// new quest, which a route needs far more often.
+    pub(crate) fn swap_version(&self, route: &mut Vec<Stop>, run: &Run, rng: &mut SmallRng) -> Option<Change> {
+        let in_route = |route: &[Stop], i: u32| route.iter().any(|s| s.is_quest() && s.index == i);
+        let others = |i: u32| {
+            (self.quest(i).exclusive.iter())
+                .filter_map(|id| self.model.index.get(id))
+                .map(|&j| j as u32)
+                .filter(|&j| self.quest(j).mandatory)
+        };
+        let picks: Vec<(u32, u32)> = (route.iter())
+            .filter(|s| s.kind == Kind::Accept && self.quest(s.index).mandatory)
+            .flat_map(|s| others(s.index).map(|other| (s.index, other)))
+            .filter(|&(_, other)| !in_route(route, other))
+            .collect();
+        if picks.is_empty() || !rng.random_bool(0.125) {
+            return None;
+        }
+        let (old, new) = picks[rng.random_range(0..picks.len())];
+        // The quests of `from`'s version that `takes` allows, walking its prerequisites and followers.
+        let version = |from: u32, takes: &dyn Fn(u32, &[u32]) -> bool| {
+            let mut quests = vec![from];
+            let mut k = 0;
+            while k < quests.len() {
+                let i = quests[k];
+                let q = self.quest(i);
+                let before = (q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held))
+                    .filter_map(|id| self.model.index.get(id))
+                    .map(|&j| j as u32);
+                let next: Vec<u32> = before
+                    .chain(self.availability().followers[i as usize].iter().copied())
+                    .filter(|&j| others(j).next().is_some())
+                    .collect();
+                for j in next {
+                    if !quests.contains(&j) && takes(j, &quests) {
+                        quests.push(j);
+                    }
+                }
+                k += 1;
+            }
+            quests
+        };
+        let mut gone = version(old, &|j, _| in_route(route, j));
+        // A breadcrumb to the old version leads nowhere now.
+        let breadcrumbs: Vec<u32> = (route.iter())
+            .filter(|s| s.kind == Kind::Accept && !self.quest(s.index).mandatory)
+            .map(|s| s.index)
+            .filter(|&i| {
+                let target = self
+                    .quest(i)
+                    .breadcrumb_for
+                    .as_ref()
+                    .and_then(|id| self.model.index.get(id));
+                target.is_some_and(|&t| gone.contains(&(t as u32)))
+            })
+            .collect();
+        gone.extend(breadcrumbs);
+        let is_gone = |s: &Stop| s.is_quest() && gone.contains(&s.index);
+        let first_gone = route.iter().position(is_gone)?;
+        let depth = self.chain_depths();
+        // Of the choices a quest leaves (Call of Earth 1517 or 1520 after 1516), the first.
+        let closed = |a: u32, b: u32| self.quest(a).exclusive.contains(&self.quest(b).id);
+        let mut added = version(new, &|j, taken| !taken.iter().any(|&k| closed(j, k) || closed(k, j)));
+        added.sort_by_key(|&i| depth[i as usize]);
+        // Where each new quest's level is reached, in the route without the old version.
+        let at_level: Vec<usize> = (added.iter())
+            .map(|&i| {
+                let at = (run.states.iter())
+                    .position(|st| st.level >= self.quest(i).min_level)
+                    .unwrap_or(route.len())
+                    .min(route.len());
+                route[..at].iter().filter(|s| !is_gone(s)).count()
+            })
+            .collect();
+        route.retain(|s| !is_gone(s));
+        let mut first = first_gone;
+        for (&q, &level) in added.iter().zip(&at_level) {
+            let quest = self.quest(q);
+            let after_prerequisites = (quest.pre_all.iter().chain(&quest.pre_any).chain(&quest.pre_held))
+                .filter_map(|id| self.model.index.get(id))
+                .filter_map(|&p| Self::position_of(route, p as u32, Kind::TurnIn))
+                .map(|at| at + 1)
+                .max()
+                .unwrap_or(0);
+            first = first.min(self.insert_quest_after(route, q, level.max(after_prerequisites)));
+        }
+        Some(Change::edited(first, route.len()))
     }
 
     /// A stop moved, mostly nearby.

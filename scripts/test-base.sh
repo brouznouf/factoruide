@@ -36,6 +36,8 @@ insert into client_taxipath select * from r.client_taxipath;
 insert into client_taxipathnode select * from r.client_taxipathnode;
 insert into m_player_stats select * from r.m_player_stats;
 insert into m_class_spell select * from r.m_class_spell;
+insert into m_class_requirement select * from r.m_class_requirement;
+insert into m_class_requirement_quest select * from r.m_class_requirement_quest;
 insert into client_spellname select * from r.client_spellname where ID in (select spell_id from m_class_spell union select reward_spell from r.m_quest where reward_spell > 0 union select SpellID from r.client_talent union select value from json_each('[$spells]'));
 insert into client_talent select * from r.client_talent;
 insert into m_npc select * from r.m_npc where id in ($npcs);

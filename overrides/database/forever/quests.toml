@@ -166,7 +166,7 @@ classes_mask = 64
 
 [[quest]]
 id = 94495
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 
 [[quest]]
@@ -174,32 +174,32 @@ classes_mask = 64
 # source knows (Warcraft Tavern's dwarf shaman totem guide). Wetlands (approx): the base of the
 # falls below Hervdana's cave, "where the fresh meets the brackish".
 id = 94497
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 objectives = [{ type = "trigger", text = "Fill the Unfilled Brown Waterskin at the base of the falls", at = { zone = 11, x = 65.7, y = 76.4 } }]
 
 [[quest]]
 id = 94499
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 objectives = [{ type = "trigger", text = "Fill the Unfilled Red Waterskin at Stonewatch Falls", at = { zone = 44, x = 73.7, y = 61.6 } }]
 
 [[quest]]
 id = 94500
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 objectives = [{ type = "trigger", text = "Fill the Unfilled Blue Waterskin in the waters of Astranaar", at = { zone = 331, x = 37.0, y = 51.6 } }]
 
 [[quest]]
 id = 94501
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 
 [[quest]]
 # Westfall, Stendel's Pond: drinking the Water Sapta summons the Corrupt Minor Manifestation of
 # Water, which drops the bracers; the sources only know Silverpine's (the Horde's chain).
 id = 94502
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 objectives = [{ type = "trigger", text = "Drink the Water Sapta at Stendel's Pond and defeat the Corrupt Minor Manifestation of Water for its bracers", at = { zone = 40, x = 47.5, y = 60.4 } }]
 
@@ -208,14 +208,14 @@ objectives = [{ type = "trigger", text = "Drink the Water Sapta at Stendel's Pon
 # Horde's chain), the planner would send the dwarf there. Forever's 258661 has its name and no
 # place: put at the pond.
 id = 94503
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 ends = [{ type = "npc", id = 258661 }]
 remove_ends = [{ type = "npc", id = 5895 }]
 
 [[quest]]
 id = 94505
-races_mask = 4
+races_mask = 68
 classes_mask = 64
 starts = [{ type = "npc", id = 258661 }]
 remove_starts = [{ type = "npc", id = 5895 }]
@@ -241,18 +241,22 @@ ends = [{ type = "npc", id = 257446 }]
 # Elwynn: the pet quests of Josephine Carson, hunter trainer, for any Alliance hunter (quest
 # caches).
 id = 94792
+races_mask = 4294967308
 classes_mask = 4
 
 [[quest]]
 id = 94793
+races_mask = 4294967304
 classes_mask = 4
 
 [[quest]]
 id = 94863
+races_mask = 4294967308
 classes_mask = 4
 
 [[quest]]
 id = 94864
+races_mask = 4294967308
 classes_mask = 4
 
 [[quest]]
@@ -1229,27 +1233,27 @@ chance = 0.0011
 # orcs' and trolls', Seer Ravenfeather's (Mulgore) the tauren's (issue #33).
 [[quest]]
 id = 1516
-races_mask = 130
+races_mask = 162
 
 [[quest]]
 id = 1517
-races_mask = 130
+races_mask = 162
 
 [[quest]]
 id = 1518
-races_mask = 130
+races_mask = 162
 
 [[quest]]
 id = 1519
-races_mask = 32
+races_mask = 34
 
 [[quest]]
 id = 1520
-races_mask = 32
+races_mask = 162
 
 [[quest]]
 id = 1521
-races_mask = 32
+races_mask = 162
 # --- Dungeon quest XP, givers seen on Forever's quest pages, library books (data wave 2) ---
 
 # Dungeon quests: Forever's own XP, received in game after the build that halved the dungeon
@@ -1590,6 +1594,7 @@ time_limit = 600
 # Call of Earth (dwarf shaman, third step): given by the Minor Manifestation of Earth, only taken
 # back by Teo Hammerstorm (the quest page).
 id = 94375
+races_mask = 4294967300
 remove_starts = [{ type = "npc", id = 257446 }]
 
 [[quest]]
@@ -1790,17 +1795,6 @@ id = 1962
 races_mask = 146
 
 [[quest]]
-# Troll warlock: Creature of the Void and The Binding (the voidwalker) are open to the Troll as to
-# the Orc; the Undead keep their own (GitHub #111, #114).
-id = 1501
-races_mask = 130
-
-[[quest]]
-# (as above)
-id = 1504
-races_mask = 130
-
-[[quest]]
 # High Order Skyborne mage: the Human and Gnome mage chain (Mana Surge / Astral Knot / Manaweave
 # quests) is open to the High Order Skyborne (GitHub #114).
 id = 1860
@@ -1902,3 +1896,269 @@ chance = 0.084
 item = 274268
 npcs = [6124]
 chance = 0.128
+
+# Races of the class quests of the chains the route requires (`m_class_requirement`), as the quests'
+# pages list them (checked 2026-11-03): the old races only, the Skyborne bits stay as they were.
+# The sources give every race of a side to most class quests.
+
+[[quest]]
+id = 63 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 96 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 100 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 220 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 364 # The Mindless Ones: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 1470 # Piercing the Veil: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1471 # The Binding: Orc,Undead
+races_mask = 18
+
+[[quest]]
+id = 1472 # Devourer of Souls: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 1473 # Creature of the Void: Orc,Undead
+races_mask = 18
+
+[[quest]]
+id = 1474 # The Binding: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1476 # Hearts of the Pure: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1485 # Vile Familiars: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 1501 # Creature of the Void: Orc,Undead,Troll
+races_mask = 146
+
+[[quest]]
+id = 1504 # The Binding: Orc,Undead,Troll
+races_mask = 146
+
+[[quest]]
+id = 1507 # Devourer of Souls: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 1508 # Blind Cazul: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 1509 # News of Dogran: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 1510 # News of Dogran: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 1511 # Ken'zigla's Draught: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1512 # Love's Gift: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1513 # The Binding: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1515 # Dogran's Captivity: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1524 # Call of Fire: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1525 # Call of Fire: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1526 # Call of Fire: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1527 # Call of Fire: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1530 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1534 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1535 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1536 # Call of Water: Orc,Tauren,Troll
+races_mask = 8589934754
+
+[[quest]]
+id = 1598 # The Stolen Tome: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1599 # Beginnings: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1688 # Surena Caledon: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1689 # The Binding: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1716 # Devourer of Souls: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1738 # Heartswood: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1739 # The Binding: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1758 # Tome of the Cabal: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1801 # Tome of the Cabal: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1802 # Tome of the Cabal: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1803 # Tome of the Cabal: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 1804 # Tome of the Cabal: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 1805 # Tome of the Cabal: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 2458 # Deep Cover: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 2460 # The Shattered Salute: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 2478 # Mission: Possible But Not Probable: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 2479 # Hinott's Assistance: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 2480 # Hinott's Assistance: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 3631 # Summon Felsteed: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 4487 # Summon Felsteed: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 4488 # Summon Felsteed: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 4489 # Summon Felsteed: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 5638 # Desperate Prayer: Dwarf
+races_mask = 4
+
+[[quest]]
+id = 5640 # Desperate Prayer: Dwarf
+races_mask = 4
+
+[[quest]]
+id = 6081 # Training the Beast: Orc,Undead,Troll
+races_mask = 146
+
+[[quest]]
+id = 65593 # Hearts of the Lovers: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 65601 # Love Hurts: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 65602 # What Is Love?: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 65603 # The Binding: Human,Gnome
+races_mask = 4294967361
+
+[[quest]]
+id = 65604 # The Binding: Orc,Undead
+races_mask = 8589934610
+
+[[quest]]
+id = 65610 # Wish You Were Here: Orc,Undead,Troll
+races_mask = 8589934738
+
+[[quest]]
+id = 94373 # Call of Earth: Dwarf
+races_mask = 4294967300
+
+[[quest]]
+id = 94374 # Call of Earth: Dwarf
+races_mask = 4294967300
+
+[[class_requirement]]
+class = "druid"
+name = "Moonglade"
+quests = [5921, 5922, 94913, 94914]
+
+[[class_requirement]]
+class = "shaman"
+name = "Call of Air"
+quests = [1531, 1532, 94789, 96136]

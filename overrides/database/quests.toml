@@ -132,3 +132,14 @@ remove_sources = [{ type = "vendor", id = 12862 }]
 [[item]]
 id = 16765
 remove_sources = [{ type = "vendor", id = 12864 }]
+
+# Class quests teaching no spell, in every edition: the requirement is the quest.
+[[class_requirement]]
+class = "druid"
+name = "Moonglade"
+quests = [5921, 5922]
+
+[[class_requirement]]
+class = "shaman"
+name = "Call of Air"
+quests = [1531, 1532]

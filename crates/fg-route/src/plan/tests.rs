@@ -1035,3 +1035,103 @@ fn an_unbounded_required_quest_stays_in_the_log_when_gray() {
     plan.abandon_hopeless(&mut state, &mut |_, _| {});
     assert!(state.accepted[i]);
 }
+
+/// Two versions of a must-have class quest, of two steps each: taking one closes the other. The
+/// first is far away, the second at the start.
+fn far_and_near_versions() -> Prepared {
+    let mut p = quests_at_start(4);
+    p.world.terrain = crate::terrain::Terrain::default();
+    let ids: Vec<i64> = p.model.quests.iter().map(|q| q.id).collect();
+    for q in &mut p.model.quests {
+        q.mandatory = true;
+    }
+    p.model.quests[1].pre_all = vec![ids[0]];
+    p.model.quests[3].pre_all = vec![ids[2]];
+    for i in 0..2 {
+        p.model.quests[i].exclusive = vec![ids[2], ids[3]];
+        p.model.quests[i + 2].exclusive = vec![ids[0], ids[1]];
+        p.model.quests[i].starts[0].pos.x += 5000.0;
+        p.model.quests[i].ends[0].pos.x += 5000.0;
+    }
+    p
+}
+
+fn far_version_route() -> Vec<Stop> {
+    vec![
+        Stop::quest(0, Kind::Accept),
+        Stop::quest(0, Kind::TurnIn),
+        Stop::quest(1, Kind::Accept),
+        Stop::quest(1, Kind::TurnIn),
+    ]
+}
+
+/// No other move can change the version: a must-have quest stays, and the other is closed.
+#[test]
+fn the_other_version_of_a_class_quest_replaces_the_one_in_the_route() {
+    use rand::SeedableRng;
+    let p = far_and_near_versions();
+    let planner = planner(&p);
+    let mut route = far_version_route();
+    let run = planner.run(&route).unwrap();
+    let mut changed = None;
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(1);
+    for _ in 0..64 {
+        changed = changed.or_else(|| planner.swap_version(&mut route, &run, &mut rng));
+    }
+    let change = changed.expect("the other version is open");
+    assert_eq!(change.first, 0);
+    let quests: Vec<u32> = route.iter().map(|s| s.index).collect();
+    assert!(quests.iter().all(|&q| q >= 2), "the old version is gone: {quests:?}");
+    assert_eq!(route.len(), 4, "the whole new version: {quests:?}");
+    let (with, spent) = planner.simulate_full(&route, None).unwrap();
+    assert_eq!(spent.missing_class_quests, 0);
+    assert!(with < run.total, "{with} vs {}", run.total);
+}
+
+#[test]
+fn the_search_changes_to_the_better_version_of_a_class_quest() {
+    let p = far_and_near_versions();
+    let route = planner(&p).improve_while(
+        far_version_route(),
+        super::Effort::Tries(4000),
+        || true,
+        |_| {},
+        |_, _, _| {},
+    );
+    let quests: Vec<u32> = route.iter().filter(|s| s.is_quest()).map(|s| s.index).collect();
+    assert!(quests.contains(&2) && quests.contains(&3), "{quests:?}");
+    assert!(!quests.contains(&0) && !quests.contains(&1), "{quests:?}");
+}
+
+/// A quest with no other version: the move does nothing, and draws nothing (routes of every
+/// other character stay the same).
+#[test]
+fn a_class_quest_with_one_version_has_nothing_to_swap() {
+    use rand::{RngExt, SeedableRng};
+    let mut p = quests_at_start(2);
+    p.model.quests[0].mandatory = true;
+    let planner = planner(&p);
+    let mut route = vec![Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)];
+    let run = planner.run(&route).unwrap();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(1);
+    let mut same = rand::rngs::SmallRng::seed_from_u64(1);
+    assert!(planner.swap_version(&mut route, &run, &mut rng).is_none());
+    assert_eq!(route.len(), 2);
+    assert_eq!(rng.random::<u64>(), same.random::<u64>());
+}
+
+/// The move shares its slot with adding a new quest, the only one: a character with versions
+/// still gets most of those tries, for the whole search.
+#[test]
+fn a_route_with_another_version_still_tries_new_quests() {
+    use rand::SeedableRng;
+    let p = far_and_near_versions();
+    let planner = planner(&p);
+    let route = far_version_route();
+    let run = planner.run(&route).unwrap();
+    let mut rng = rand::rngs::SmallRng::seed_from_u64(1);
+    let swaps = (0..1000)
+        .filter(|_| planner.swap_version(&mut route.clone(), &run, &mut rng).is_some())
+        .count();
+    assert!((50..=250).contains(&swaps), "{swaps} swaps of 1000 tries");
+}
