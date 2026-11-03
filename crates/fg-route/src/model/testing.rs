@@ -21,7 +21,7 @@
 
 use super::farm::MobRow;
 use super::{
-    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, chains, required,
+    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, Vendor, chains, required,
     sources::QuestRow,
 };
 use crate::faction::Faction;
@@ -59,6 +59,9 @@ pub struct Obj {
     pub after: Vec<usize>,
     /// Seconds what the objective gets lasts (a carcass that rots).
     pub lasts: Option<f64>,
+    /// An item bought: the auction house it can be bought at too (the vendor is `at`; its
+    /// supply is limited).
+    pub auction: Option<At>,
 }
 
 impl Obj {
@@ -75,6 +78,7 @@ impl Obj {
             handed_by: Vec::new(),
             after: Vec::new(),
             lasts: None,
+            auction: None,
         }
     }
 
@@ -91,7 +95,23 @@ impl Obj {
             handed_by: Vec::new(),
             after: Vec::new(),
             lasts: None,
+            auction: None,
         }
+    }
+
+    /// Buy `count` of an item of limited supply at a vendor at `at`, or at an auction house at
+    /// `auction`.
+    pub fn bought(name: &str, count: u32, at: At, auction: At) -> Self {
+        Self {
+            auction: Some(auction),
+            ..Self::visit(&format!("Buy {name}"), at)
+        }
+        .counting(count)
+    }
+
+    fn counting(mut self, count: u32) -> Self {
+        self.uses = f64::from(count);
+        self
     }
 
     /// Elite creatures.
@@ -321,13 +341,39 @@ impl Q {
                 let loc = Loc {
                     kind: if o.kills > 0.0 {
                         EntityKind::Npc
+                    } else if o.auction.is_some() {
+                        EntityKind::Item
                     } else {
                         EntityKind::Object
                     },
                     id: loc_id,
                     ..Self::at(o.at, 0, &o.text, world)
                 };
+                let (vendors, alts, auction, item) = match o.auction {
+                    Some(auction) => {
+                        let vendor = Vendor {
+                            id: loc_id,
+                            name: "Vendor".to_owned(),
+                            zone: loc.zone,
+                            zone_name: String::new(),
+                            pos: loc.pos,
+                            stock: Some((5, 3600.0)),
+                        };
+                        let house = Self::at(auction, loc_id + 1, "Auction House", world);
+                        let alt = Objective {
+                            vendors: vec![vendor.clone()],
+                            auction: vec![(house.id, house.name.clone())],
+                            ..Objective::plain(house, o.text.clone(), 0.0)
+                        };
+                        (vec![vendor], vec![alt], Vec::new(), true)
+                    }
+                    None => (Vec::new(), Vec::new(), Vec::new(), false),
+                };
                 Objective {
+                    vendors,
+                    alts,
+                    auction,
+                    item,
                     kills: o.kills,
                     mob_level: o.mob_level,
                     uses: o.uses,
