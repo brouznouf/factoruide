@@ -460,10 +460,10 @@ fn known_pet_power_survives_continuation() {
     }
 }
 
-#[test]
-fn one_known_demon_keeps_the_shared_binding_power() {
-    for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+/// The warlock's class power and its spells come with the base: no quest needed.
+fn one_known_demon_keeps_the_shared_binding_power(edition: Edition) {
+    {
+        let conn = Fixture::new(edition).file("warlock_binding").open();
         let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         let mut without = overrides.clone();
         without
@@ -493,4 +493,19 @@ fn one_known_demon_keeps_the_shared_binding_power() {
             );
         }
     }
+}
+
+#[test]
+fn classic_one_known_demon_keeps_the_shared_binding_power() {
+    one_known_demon_keeps_the_shared_binding_power(Edition::Classic);
+}
+
+#[test]
+fn tbc_one_known_demon_keeps_the_shared_binding_power() {
+    one_known_demon_keeps_the_shared_binding_power(Edition::Tbc);
+}
+
+#[test]
+fn forever_one_known_demon_keeps_the_shared_binding_power() {
+    one_known_demon_keeps_the_shared_binding_power(Edition::Forever);
 }
