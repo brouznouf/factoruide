@@ -143,3 +143,10 @@ quests = [5921, 5922]
 class = "shaman"
 name = "Call of Air"
 quests = [1531, 1532]
+
+# Cure Poison: its chain (Lessons Anew to Power over Poison) only teaches that spell, and takes
+# a long detour for it. Listed, not in a guide by default: the player adds it.
+[[class_requirement]]
+class = "druid"
+spell = 8946
+default = false

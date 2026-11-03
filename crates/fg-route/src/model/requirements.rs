@@ -76,14 +76,15 @@ pub fn select(mut all: Vec<ClassRequirement>, names: &[String]) -> Vec<ClassRequ
     all
 }
 
-/// The names of the requirements a class has by default: those of its quests from level
-/// `endgame` on are endgame (an epic mount, Inferno, Ritual of Doom: raids and elite dungeons).
+/// The names of the requirements a class has by default: not those the overrides leave to the
+/// player (`default = false`), nor those of its quests from level `endgame` on, which are endgame
+/// (an epic mount, Inferno, Ritual of Doom: raids and elite dungeons).
 pub fn defaults(conn: &Connection, class_id: i64, endgame: i64) -> Result<Vec<String>> {
     if !exists(conn)? {
         return Ok(Vec::new());
     }
     let mut stmt = conn.prepare(
-        "SELECT name FROM m_class_requirement WHERE class_id = ?1 AND coalesce(min_level, 1) < ?2
+        "SELECT name FROM m_class_requirement WHERE class_id = ?1 AND coalesce(min_level, 1) < ?2 AND by_default != 0
          ORDER BY coalesce(min_level, 1), name",
     )?;
     let names = stmt

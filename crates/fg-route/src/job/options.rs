@@ -376,20 +376,22 @@ mod tests {
     use super::*;
 
     /// The class requirements the database has are required by default, the endgame ones (their
-    /// quests from level 50 on) not; the configured ones come first.
+    /// quests from level 50 on) and those the overrides leave to the player not; the configured
+    /// ones come first.
     #[test]
     fn class_requirements_are_required_by_default_unless_endgame() {
         let conn = Connection::open_in_memory().unwrap();
         conn.execute_batch(
             "CREATE TABLE client_chrclasses (ID, Filename);
              INSERT INTO client_chrclasses VALUES (2, 'PALADIN'), (3, 'HUNTER');
-             CREATE TABLE m_class_requirement (id, class_id, name, spell_id, max_level, min_level, source);
+             CREATE TABLE m_class_requirement (id, class_id, name, spell_id, max_level, min_level, by_default, source);
              INSERT INTO m_class_requirement VALUES
-               (1, 2, 'Redemption', 7328, NULL, 12, 'data'),
-               (2, 2, 'Summon Warhorse', 13819, NULL, 40, 'data'),
-               (3, 2, 'Summon Charger', 23214, NULL, 60, 'data'),
-               (4, 2, 'Encrypted Sigil', NULL, NULL, 1, 'data'),
-               (5, 3, 'Tame Beast', 1515, NULL, 10, 'data');",
+               (1, 2, 'Redemption', 7328, NULL, 12, 1, 'data'),
+               (2, 2, 'Summon Warhorse', 13819, NULL, 40, 1, 'data'),
+               (3, 2, 'Summon Charger', 23214, NULL, 60, 1, 'data'),
+               (4, 2, 'Encrypted Sigil', NULL, NULL, 1, 1, 'data'),
+               (5, 3, 'Tame Beast', 1515, NULL, 10, 1, 'data'),
+               (6, 3, 'Beast Lore', NULL, NULL, 10, 0, 'manual');",
         )
         .unwrap();
         let mut overrides = Overrides::default();
