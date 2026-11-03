@@ -376,6 +376,9 @@ fn insert(conn: &Connection, file: &File) -> Result<()> {
         }
     }
     for o in &file.object {
+        if conn.query_row("SELECT count(*) FROM m_object WHERE id = ?1", [o.id], |r| r.get::<_, i64>(0))? > 0 {
+            continue;
+        }
         conn.execute(
             "INSERT INTO m_object (id, name, zone_id, faction_id, sources) VALUES (?1, ?2, ?3, 0, 'fixture')",
             params![o.id, text(&o.name, || format!("Object {}", o.id)), o.at.first().map(|a| a.zone)],
@@ -385,6 +388,9 @@ fn insert(conn: &Connection, file: &File) -> Result<()> {
         }
     }
     for i in &file.item {
+        if conn.query_row("SELECT count(*) FROM m_item WHERE id = ?1", [i.id], |r| r.get::<_, i64>(0))? > 0 {
+            continue;
+        }
         conn.execute(
             "INSERT INTO m_item (id, name, item_level, required_level, class, subclass, start_quest, flags, sources) \
              VALUES (?1, ?2, ?3, ?3, ?4, 0, ?5, ?6, 'fixture')",
@@ -408,7 +414,7 @@ fn insert(conn: &Connection, file: &File) -> Result<()> {
     for v in &file.vendor {
         for s in &v.items {
             conn.execute(
-                "INSERT INTO m_vendor_stock (npc_id, item_id, max_count, restock) VALUES (?1, ?2, ?3, ?4)",
+                "INSERT OR IGNORE INTO m_vendor_stock (npc_id, item_id, max_count, restock) VALUES (?1, ?2, ?3, ?4)",
                 params![v.npc, s.item, s.count, s.restock],
             )?;
         }
@@ -420,6 +426,10 @@ fn insert(conn: &Connection, file: &File) -> Result<()> {
         )?;
     }
     for q in &file.quest {
+        // Declared by an earlier file: the first one counts.
+        if conn.query_row("SELECT count(*) FROM m_quest WHERE id = ?1", [q.id], |r| r.get::<_, i64>(0))? > 0 {
+            continue;
+        }
         quest(conn, q)?;
     }
     for r in &file.row {

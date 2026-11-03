@@ -1,6 +1,6 @@
 //! Planner behavior on the Classic database: reproductions of the problems met on real guides.
 
-use crate::common::{database, database_of, leveling, leveling_of, repo};
+use crate::common::{database_of, leveling, leveling_of, repo};
 use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, StartState};
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
@@ -72,6 +72,11 @@ fn request(race: &str, class: &str, to_level: i64, params: &[&str]) -> PlanReque
 
 fn prepare_request(request: &PlanRequest) -> Prepared {
     job::prepare(&database(), &overrides(), request, &|_| {}).unwrap()
+}
+
+/// The Classic database of these tests: the quests they name (`tests/fixtures/`).
+fn database() -> Connection {
+    fixture(&["classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
 }
 
 /// A Classic database of the fixtures' files (`tests/fixtures/<name>.toml`).
@@ -3108,9 +3113,7 @@ fn clamlette_surprise_buys_swiss_without_the_optional_reward_package() {
 
 #[test]
 fn a_reward_package_cannot_supply_ingredients_while_its_quest_is_held() {
-    let path = std::env::temp_dir().join(format!("fg-reward-container-{}.sqlite", std::process::id()));
-    database().execute("VACUUM INTO ?1", [path.to_str().unwrap()]).unwrap();
-    let conn = Connection::open(&path).unwrap();
+    let conn = fixture(&["classic_cooking"]);
     conn.execute_batch(
         "DELETE FROM m_item_source WHERE item_id = 8932 AND NOT (from_type = 'item' AND from_id = 15699);",
     )
@@ -3129,8 +3132,6 @@ fn a_reward_package_cannot_supply_ingredients_while_its_quest_is_held() {
         format!("{error:#}").contains("objective item source unknown"),
         "{error:#}"
     );
-    drop(conn);
-    std::fs::remove_file(path).unwrap();
 }
 
 /// Places of known height stand on their floor where several lie over each other: Fargodeep
