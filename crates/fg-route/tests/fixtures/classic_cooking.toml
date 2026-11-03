@@ -1,0 +1,120 @@
+# Clamlette Surprise (6610) asks for a Cooking line and items from mobs, a clam and a vendor.
+
+[[npc]]
+id = 466
+name = "General Marcus Jonathan"
+level = 60
+rank = 1
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 63.97, y = 75.32, z = 97 }]
+
+[[npc]]
+id = 2929
+name = "Savage Owlbeast"
+level = 46
+max_level = 47
+at = [{ zone = 47, x = 51.4, y = 45.6 }, { zone = 47, x = 51.4, y = 47.0 }, { zone = 47, x = 51.4, y = 49.4 }, { zone = 47, x = 51.4, y = 54.2 }]
+
+[[npc]]
+id = 6351
+name = "Storm Bay Oracle"
+level = 54
+max_level = 55
+at = [{ zone = 16, x = 47.0, y = 92.21, z = -14 }, { zone = 16, x = 48.27, y = 91.97, z = -15 }, { zone = 16, x = 50.72, y = 94.1, z = -6 }, { zone = 16, x = 55.31, y = 95.32, z = -12 }]
+
+[[npc]]
+id = 6370
+name = "Makrinni Scrabbler"
+level = 52
+max_level = 53
+at = [{ zone = 16, x = 53.72, y = 41.44, z = -14 }, { zone = 16, x = 55.17, y = 40.09, z = -6 }, { zone = 16, x = 70.5, y = 35.14, z = -11 }, { zone = 16, x = 71.19, y = 38.09, z = -14 }]
+
+[[npc]]
+id = 6371
+name = "Storm Bay Warrior"
+level = 51
+max_level = 52
+at = [{ zone = 16, x = 46.93, y = 14.78, z = -21 }, { zone = 16, x = 53.55, y = 39.88, z = -9 }, { zone = 16, x = 55.9, y = 39.0, z = -5 }, { zone = 16, x = 58.64, y = 8.73, z = -19 }]
+
+[[npc]]
+id = 7450
+name = "Ragged Owlbeast"
+level = 53
+max_level = 55
+at = [{ zone = 618, x = 28.57, y = 48.28, z = 575 }, { zone = 618, x = 28.99, y = 45.03, z = 574 }, { zone = 618, x = 33.02, y = 39.33, z = 533 }, { zone = 618, x = 33.4, y = 39.67, z = 537 }]
+
+[[npc]]
+id = 7808
+name = "Marauding Owlbeast"
+level = 46
+at = [{ zone = 47, x = 58.76, y = 51.05 }]
+
+[[npc]]
+id = 8125
+name = "Dirge Quikcleave"
+level = 43
+npc_flags = 7
+friendly_to = "AH"
+at = [{ zone = 440, x = 52.63, y = 28.11, z = 9 }]
+
+[[npc]]
+id = 14401
+name = "Master Elemental Shaper Krixix"
+level = 60
+rank = 1
+at = [{ zone = 2677, x = -1.0, y = -1.0 }]
+
+[[object]]
+id = 176224
+name = "Supply Crate"
+at = [{ zone = 2017, x = -1.0, y = -1.0 }]
+
+[[item]]
+id = 7973
+name = "Big-mouth Clam"
+level = 40
+drops = [{ npc = 6370, chance = 0.83 }, { npc = 6371, chance = 0.83 }, { npc = 6351, chance = 0.82 }]
+
+[[item]]
+id = 7974
+name = "Zesty Clam Meat"
+level = 45
+drops = [{ item = 7973 }]
+
+[[item]]
+id = 8932
+name = "Alterac Swiss"
+level = 55
+drops = [{ npc = 14401, chance = 1.0 }, { object = 176224, chance = 0.932 }, { npc = 466, chance = 0.714286 }]
+
+[[item]]
+id = 12207
+name = "Giant Egg"
+level = 45
+drops = [{ npc = 7808, chance = 0.573517 }, { npc = 2929, chance = 0.538094 }, { npc = 7450, chance = 0.5096620000000001 }]
+
+[[item]]
+id = 16971
+name = "Clamlette Surprise"
+level = 45
+
+[[quest]]
+id = 6610
+name = "Clamlette Surprise"
+level = 45
+min_level = 35
+zone = -304
+xp = 3900
+reward_spell = 18260
+required_skill = 185
+quest_flags = 8
+starts = [{ npc = 8125 }]
+ends = [{ npc = 8125 }]
+objectives = [
+  { item = 12207, amount = 12 },
+  { item = 7974, amount = 10 },
+  { item = 8932, amount = 20 },
+]
+rewards = [{ item = 16971, count = 20 }]
+
