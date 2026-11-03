@@ -76,7 +76,7 @@ fn prepare_request(request: &PlanRequest) -> Prepared {
 
 /// The Classic database of these tests: the quests they name (`tests/fixtures/`).
 fn database() -> Connection {
-    fixture(&["classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
+    fixture(&["classic_dungeons", "classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
 }
 
 /// A Classic database of the fixtures' files (`tests/fixtures/<name>.toml`).
@@ -2728,10 +2728,7 @@ fn druid_bear_form_through_moonglade() {
 /// spawn inside removed.
 #[test]
 fn dungeons_with_quests_filed_under_them() {
-    let path = std::env::temp_dir().join(format!("fg-dungeons-{}.sqlite", std::process::id()));
-    let _ = std::fs::remove_file(&path);
-    database().execute("VACUUM INTO ?1", [path.to_str().unwrap()]).unwrap();
-    let conn = Connection::open(&path).unwrap();
+    let conn = fixture(&["classic_dungeons"]);
     conn.execute(
         "DELETE FROM m_spawn WHERE zone_id IN (SELECT area FROM dungeon WHERE name = 'The Deadmines'
            UNION SELECT j.value FROM dungeon, json_each(coalesce(alt_areas, '[]')) j WHERE name = 'The Deadmines')",
@@ -2739,8 +2736,6 @@ fn dungeons_with_quests_filed_under_them() {
     )
     .unwrap();
     let options = job::options(&conn, &overrides()).unwrap();
-    drop(conn);
-    std::fs::remove_file(&path).ok();
     assert!(options.dungeons.iter().any(|d| d.name == "The Deadmines"));
 }
 
