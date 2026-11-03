@@ -6,9 +6,12 @@ fn quest_choices_and_completion_windows_reach_the_planner() {
     let repo = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..");
     let temp = std::env::temp_dir().join(format!("factoruide-required-cli-{}", std::process::id()));
     std::fs::create_dir_all(&temp).unwrap();
-    let data = zstd::decode_all(std::fs::File::open(repo.join("data/classic.sqlite.zst")).unwrap()).unwrap();
+    // The Human's first quests, in a database of their own.
+    let mut world = fg_route::fixture::Fixture::new(fg_route::xp::Edition::Classic)
+        .file("classic_northshire")
+        .open();
     let database = temp.join("classic.sqlite");
-    std::fs::write(&database, data).unwrap();
+    std::fs::write(&database, world.serialize(rusqlite::MAIN_DB).unwrap().to_vec()).unwrap();
     // Each selected quest conflicts with a user exclusion in turn: dropping either CLI
     // option would lose that quest's error. The second option is a real exact quest name.
     for subcommand in ["route", "share"] {

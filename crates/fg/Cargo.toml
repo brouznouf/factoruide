@@ -18,5 +18,10 @@ rusqlite = { version = "0.41", features = ["bundled", "fallible_uint"] }
 serde_json = "1"
 zstd = "0.14"
 
+[dev-dependencies]
+# The tests run the program on a small world declared in fg-route's fixture files.
+fg-route = { path = "../fg-route", features = ["testing"] }
+rusqlite = { version = "0.41", features = ["bundled", "serialize"] }
+
 [lints]
 workspace = true
