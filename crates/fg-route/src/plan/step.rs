@@ -701,6 +701,9 @@ impl Planner<'_> {
     }
 
     fn completion_gate(&self, s: &State, i: u32) -> i64 {
+        if (self.availability().replaying || self.explicit) && self.quest(i).implicit_window {
+            return 0;
+        }
         let floor = self.availability().completion_floor(s, i);
         self.quest(i)
             .completion_window

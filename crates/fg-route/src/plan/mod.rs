@@ -422,6 +422,7 @@ impl<'a> Planner<'a> {
             params: self.params,
             profile: self.profile,
             replaying: self.mode == Mode::Replay,
+            explicit: self.explicit,
             followers: &self.followers,
         }
     }

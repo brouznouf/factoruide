@@ -151,11 +151,11 @@ fn required_quests_continue_after_target_level() {
         .quest(
             Q::new(783, "A Threat Within")
                 .level(5)
-                .xp(100_000)
+                .xp(1_500)
                 .giver(1, 40.0, 40.0)
                 .kill("Defias", 5, 4, 1, 45.0, 45.0),
         )
-        .quest(Q::new(7, "Kobolds").xp(100_000).giver(1, 60.0, 60.0))
+        .quest(Q::new(7, "Kobolds").xp(1_500).giver(1, 60.0, 60.0))
         .required(783)
         .build();
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
@@ -697,4 +697,37 @@ fn class_quests_are_open_to_the_races_new_to_a_class() {
             }
         }
     }
+}
+
+/// A must-have quest with no window of its own is done while the game shows it yellow (orange for
+/// a risky character) or green: not before, not once it is gray; a quest already gray at the start
+/// has no limit. A window the player set stays as it is.
+#[test]
+fn a_must_have_quest_is_done_while_it_is_not_too_hard_nor_gray() {
+    let window = |progression: Option<&str>, level: i64, from: i64| {
+        let s = Scenario::new()
+            .levels(from, 40)
+            .params(|p| {
+                if progression == Some("risky") {
+                    p.progression = fg_route::params::Progression::Risky;
+                }
+            })
+            .quest(
+                Q::new(1, "Quest")
+                    .level(level)
+                    .giver(1, 40.0, 40.0)
+                    .kill("Mob", level, 2, 1, 45.0, 45.0),
+            );
+        let p = s.required(1).build();
+        let w = p.model.quests[0].completion_window;
+        (w.min_level, w.max_level)
+    };
+    // Yellow from two levels below, gray from level 18 (a quest of level 12).
+    assert_eq!(window(None, 12, 1), (Some(10), Some(17)));
+    // Orange from four levels below for a risky character.
+    assert_eq!(window(Some("risky"), 12, 1), (Some(8), Some(17)));
+    // Already in the window at the start: no minimum.
+    assert_eq!(window(None, 12, 11), (None, Some(17)));
+    // Already gray at the start: nothing to ask.
+    assert_eq!(window(None, 12, 20), (None, None));
 }

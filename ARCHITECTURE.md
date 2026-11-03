@@ -173,21 +173,27 @@ quest whose objectives are far out of reach is not picked up.
   level are assumed known, independently of quest selection; this does not mark quests completed.
   Saved characters retain learned ranks. `overrides/forever/quests.toml` lists Cat Form's starter
   attacks. Choosing which quests a route must complete is separate from this ability state.
-- **Required class quests**: those of `overrides/class_quests.toml` and every class quest the data
-  says teaches a spell (`m_quest.reward_spell`), by name; the app lists them, the player can take
-  some out. Where quests of a name teach a spell, the spell is what is required: those quests and
-  the steps of the name leading to them, not a later quest of the same name (the orc's second
-  Vile Familiars, in Durotar, is not the undead warlock's). A quest the route takes and gives up
-  costs it `abandon_weight`.
+- **Required class quests** are class requirements, built by the database (`m_class_requirement`):
+  one per spell the class's quests teach (`m_quest.reward_spell`), a start zone's letter to the
+  class trainer, and those the overrides add (`[[class_requirement]]` in `overrides/database`:
+  Moonglade, Call of Air). Its quests are its versions, the last quest of each chain (a step
+  listing the same spell is not one): the route does one of those the character can take and the
+  others are closed (`chains::settle_class_quest_versions`; the search can change version,
+  `swap_version`). The app lists the requirements by name, the player can take some out; guides
+  saved with quest names still select the requirements having a quest of that name. A requirement
+  is a must-have quest: unless its window says otherwise it is done while the game shows the
+  quest yellow (orange when the progression is risky) or green, never before nor once it is gray,
+  and the route is refused otherwise (`default_completion_windows`; a guide replayed or edited is
+  not refused for it). A quest the route takes and gives up costs it `abandon_weight`.
   Missing unlocks keep their earlier prerequisites; known rewards avoid repeating unlocks.
   A spell proves a prerequisite only when one eligible quest grants it on completion. Shared
   rewards need recorded quest history. Moonglade teaches its teleport on acceptance, so its
   turn-in still gates the next quest. Group knowledge requires every eligible member; explicit
   must-have quests still need completion.
-- **Class quests** giving a pet or a form (`overrides/class_quests.toml`) add levels of power
-  too (a 1.4 times faster fight is 3.2 levels), and count like an upgrade when choosing quests;
-  the quest teaching that spell gives it, whatever its name (Piercing the Veil, the undead's
-  Imp, like Vile Familiars).
+- **Class quests** giving a pet or a form (`overrides/class_quests.toml`, by requirement name) add
+  levels of power too (a 1.4 times faster fight is 3.2 levels), and count like an upgrade when
+  choosing quests; the quests of the requirement give it (Piercing the Veil, the undead's Imp, like
+  Vile Familiars).
 - The data (item stats, quest rewards, boss loot, trainer spells, base stats by level) comes from
   VMaNGOS (Classic, Forever). TBC uses level-based combat power and `train_every` for
   combat training; `overrides/tbc/movement.toml` supplies missing movement trainer levels

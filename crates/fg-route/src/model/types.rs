@@ -485,6 +485,9 @@ pub struct Quest {
     /// Explicit player requirement or a prerequisite selected to reach one.
     pub required: bool,
     pub completion_window: CompletionWindow,
+    /// The window is the default one (`default_completion_windows`), not the player's: a guide
+    /// replayed as it is (an older one, the editor's) is not refused for it.
+    pub implicit_window: bool,
     /// Earliest deadline of the requirements this quest helps complete.
     pub priority_deadline: Option<i64>,
     /// Profession quest: index in `Model::professions` and skill needed to accept it.

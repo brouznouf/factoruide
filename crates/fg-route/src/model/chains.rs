@@ -1,6 +1,6 @@
 //! Quest chains: what finishing a quest unlocks, and the top of each chain.
 
-use super::types::{ClassRequirement, Quest};
+use super::types::{ClassRequirement, CompletionWindow, Profile, Quest};
 use crate::params::Params;
 use rustc_hash::FxHashMap;
 use std::collections::{HashMap, HashSet};
@@ -177,8 +177,49 @@ pub(super) fn class_quest_versions(
                 }
             }
         }
+        // A quest asking for one of several others (the warlock's mount: one of the two letters)
+        // has them as versions of its own.
+        for chain in &chains {
+            let alternatives: Vec<ClassChain> = (alternatives_of(&quests[chain.last]).iter())
+                .filter_map(|id| index.get(id))
+                .map(|&last| ClassChain { last })
+                .collect();
+            for (k, a) in alternatives.iter().enumerate() {
+                for b in &alternatives[k + 1..] {
+                    if a.members(quests) == b.members(quests) {
+                        versions.push((a.clone(), b.clone()));
+                    }
+                }
+            }
+        }
     }
     versions
+}
+
+/// The quests a quest asks one of (`pre_any` of several, one needed).
+fn alternatives_of(q: &Quest) -> &[i64] {
+    if q.pre_any.len() > 1 && q.pre_need <= 1 {
+        &q.pre_any
+    } else {
+        &[]
+    }
+}
+
+/// A class requirement's quest asking for one of several others needs one of them: they are
+/// required, and the route does one (`class_quest_versions`).
+pub(super) fn require_alternatives(quests: &mut [Quest], requirements: &[ClassRequirement]) {
+    let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+    let wanted: HashSet<i64> = (requirements.iter().filter(|c| c.selected))
+        .flat_map(|c| c.quests.iter().copied())
+        .filter_map(|id| index.get(&id))
+        .filter(|&&i| quests[i].mandatory)
+        .flat_map(|&i| alternatives_of(&quests[i]).to_vec())
+        .collect();
+    for id in wanted {
+        if let Some(&i) = index.get(&id) {
+            quests[i].mandatory = true;
+        }
+    }
 }
 
 /// One requirement for all the versions of a class quest: the route does one, the others closed
@@ -221,6 +262,67 @@ pub(super) fn settle_class_quest_versions(quests: &mut [Quest], versions: &[(Cla
                 close(quests, &path_a, &path_b);
                 close(quests, &path_b, &path_a);
             }
+        }
+    }
+}
+
+/// The levels a must-have quest is done at when its window says nothing: while the game shows it
+/// yellow (orange when the progression is risky) or green, not before (too hard) nor once it is
+/// gray (no XP). A must-have is a quest the player asked for or a class requirement; a quest
+/// already gray when the guide starts has no limit, nothing could be done about it.
+pub(super) fn default_completion_windows(quests: &mut [Quest], profile: &Profile, params: &Params) {
+    let above = match params.progression {
+        crate::params::Progression::Risky => 4,
+        _ => 2,
+    };
+    let required_by_class: HashSet<i64> = (profile.class_requirements.iter())
+        .filter(|c| c.selected)
+        .flat_map(|c| c.quests.iter().copied())
+        .collect();
+    for q in quests.iter_mut() {
+        let must_have = q.mandatory && (q.required || required_by_class.contains(&q.id));
+        if !must_have || q.completion_window.min_level.is_some() || q.completion_window.max_level.is_some() {
+            continue;
+        }
+        let gray_from = (q.level..=q.level + 40).find(|&l| crate::xp::Rules::gray_level(l) >= q.level);
+        // A quest that cannot be taken before it is gray (its level under its minimum) has no limit.
+        let max = gray_from
+            .map(|l| l - 1)
+            .filter(|&m| m >= profile.from_level && m >= q.min_level);
+        let min = (q.level - above).max(1);
+        q.completion_window = CompletionWindow {
+            min_level: Some(min).filter(|&m| m > profile.from_level),
+            max_level: max,
+        };
+        q.implicit_window = true;
+    }
+    // The route goes for them before the level they turn gray: the quest and what leads to it get
+    // the deadline, the earliest of those sharing a prerequisite winning.
+    let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+    let mut due: Vec<(i64, usize)> = (quests.iter().enumerate())
+        .filter(|(_, q)| q.implicit_window)
+        .filter_map(|(i, q)| Some((q.completion_window.max_level?, i)))
+        .collect();
+    due.sort_unstable();
+    for (max, i) in due {
+        let mut stack = vec![i];
+        let mut seen = HashSet::new();
+        while let Some(k) = stack.pop() {
+            if !seen.insert(k) {
+                continue;
+            }
+            if quests[k].priority_deadline.is_none_or(|d| d > max) {
+                quests[k].priority_deadline = Some(max);
+            }
+            let q = &quests[k];
+            let only_one = q.pre_any.iter().filter(|_| q.pre_any.len() == 1);
+            let needed: Vec<i64> = q.pre_all.iter().chain(only_one).chain(&q.pre_held).copied().collect();
+            stack.extend(
+                needed
+                    .iter()
+                    .filter_map(|id| index.get(id))
+                    .filter(|&&j| quests[j].mandatory),
+            );
         }
     }
 }

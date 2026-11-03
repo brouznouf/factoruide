@@ -584,7 +584,8 @@ fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
     assert_eq!(objective(214).loc.kind, EntityKind::Dungeon);
 }
 
-/// The warlock's imp is taken first: it makes every fight that follows easier.
+/// The warlock's imp is taken first (Piercing the Veil or Vile Familiars, one is done): it makes
+/// every fight that follows easier.
 #[test]
 fn pet_quest_comes_early() {
     let request = request("orc", "warlock", 30, &["progression=cautious", "effort=0"]);
@@ -592,7 +593,7 @@ fn pet_quest_comes_early() {
     let at = route
         .steps
         .iter()
-        .position(|s| s.kind == fg_route::export::StepKind::TurnIn && s.quest == Some(1485))
+        .position(|s| s.kind == fg_route::export::StepKind::TurnIn && matches!(s.quest, Some(1470 | 1485)))
         .unwrap();
     assert!(at < 60, "imp turned in at step {at}");
 }

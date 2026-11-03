@@ -676,7 +676,7 @@ fn every_horde_shaman_can_take_each_version_of_call_of_earth() {
 /// A forced zone wants its quests: the version there is the one done.
 #[test]
 fn a_version_of_a_class_quest_in_a_forced_zone_replaces_the_others() {
-    let p = two_versions(|q| q.zone_forced(), |q| q, one_requirement);
+    let p = two_versions(Q::zone_forced, |q| q, one_requirement);
     let mandatory = |id: i64| p.model.quests[p.model.index[&id]].mandatory;
     assert!(mandatory(1) && mandatory(2), "the version in the zone");
     assert!(!mandatory(3) && !mandatory(4) && !mandatory(5), "the other");

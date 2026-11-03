@@ -47,13 +47,19 @@ pub(crate) struct Availability<'v> {
     pub(crate) profile: &'v Profile,
     /// Replaying an imposed route: gray quests are taken as it says.
     pub(crate) replaying: bool,
+    /// Doing only what an imposed route says (the guide editor).
+    pub(crate) explicit: bool,
     pub(crate) followers: &'v [Vec<u32>],
 }
 
 impl Availability<'_> {
     /// Only members still needing the quest must meet its completion window.
     pub(crate) fn completion_error(&self, s: &State, i: u32) -> Option<(u8, i64)> {
-        let window = self.quest_at(i).completion_window;
+        let quest = self.quest_at(i);
+        if (self.replaying || self.explicit) && quest.implicit_window {
+            return None;
+        }
+        let window = quest.completion_window;
         self.completion_members(s, i)
             .find(|&(_, level)| !window.contains(level))
     }

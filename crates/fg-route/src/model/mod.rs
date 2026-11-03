@@ -150,14 +150,7 @@ pub fn load(
         q.late_unlock = sources.class_quest_ids.contains(&q.id)
             && !profile.within_levels(q.level, q.min_level, params.max_quest_above);
     }
-    settle_quests(
-        &mut quests,
-        &sources.dungeons,
-        params,
-        &known_prerequisites,
-        &profile.completed_quests,
-        &profile.class_requirements,
-    );
+    settle_quests(&mut quests, &sources.dungeons, params, &known_prerequisites, profile);
     let loot = CommonLoot::load(conn, &mut quests)?;
     let levels = dungeon_levels(conn, &profile.dungeons)?;
     let window = (params.dungeon_from, params.dungeon_to);
@@ -289,20 +282,22 @@ pub(crate) fn settle_quests(
     dungeons: &[Dungeon],
     params: &Params,
     known: &HashSet<i64>,
-    completed: &HashSet<i64>,
-    requirements: &[ClassRequirement],
+    profile: &Profile,
 ) {
+    let (completed, requirements) = (&profile.completed_quests, &profile.class_requirements);
     let versions = chains::class_quest_versions(quests, requirements, params.all_class_quests);
     for q in quests.iter_mut() {
         let forced = |d: usize| params.forced_dungeon_quests.contains(&dungeons[d].area);
         q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
     }
+    chains::require_alternatives(quests, requirements);
     chains::require_prerequisites(quests);
     chains::release_impossible_class_quests(quests, known, completed);
     chains::settle_class_quest_versions(quests, &versions);
     for q in quests.iter_mut() {
         q.mandatory |= q.required;
     }
+    chains::default_completion_windows(quests, profile, params);
 }
 
 /// A dungeon holding an objective of a must-have quest is run like a forced one, and past its

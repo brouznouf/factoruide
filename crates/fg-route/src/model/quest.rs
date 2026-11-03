@@ -73,6 +73,7 @@ impl QuestBuilder<'_> {
             zone_forced,
             required: false,
             completion_window: CompletionWindow::default(),
+            implicit_window: false,
             priority_deadline: None,
             skill: skill.flatten(),
             power: class_quest

@@ -193,6 +193,7 @@ impl Q {
             zone_forced: false,
             required: false,
             completion_window: super::CompletionWindow::default(),
+            implicit_window: false,
             priority_deadline: None,
             skill: None,
             power: None,
@@ -795,14 +796,7 @@ impl Scenario {
                     .within_levels(q.level, q.min_level, self.params.max_quest_above)
         });
         required::apply(&mut quests, &rows, &HashSet::new(), &[], &self.profile, &self.params)?;
-        super::settle_quests(
-            &mut quests,
-            &dungeons,
-            &self.params,
-            &HashSet::new(),
-            &self.profile.completed_quests,
-            &self.profile.class_requirements,
-        );
+        super::settle_quests(&mut quests, &dungeons, &self.params, &HashSet::new(), &self.profile);
         let mut dungeons = dungeons;
         super::dungeons::set_dungeon_levels(
             &mut dungeons,
