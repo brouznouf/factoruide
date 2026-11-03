@@ -747,14 +747,14 @@ fn job_saves_its_walks() {
     interrupt.stop();
     let request = request("orc", "warlock", 12, &["effort=100"]);
     let first =
-        job::plan_interruptible(&real_database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
+        job::plan_interruptible(&fixture(&["classic_durotar_terrain", "classic_orc_warlock", "classic_valley"]), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
     let memory = first.walks.clone().expect("a memory with the outcome");
     assert!(!memory.is_empty());
     let saved = job::PlanOutcome::from_json(&serde_json::to_string(&first).unwrap()).unwrap();
     assert_eq!(saved.walks.as_ref(), Some(&memory));
     let known = walks.len();
     let again =
-        job::plan_interruptible(&real_database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
+        job::plan_interruptible(&fixture(&["classic_durotar_terrain", "classic_orc_warlock", "classic_valley"]), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
     assert_eq!(walks.len(), known, "paths searched again");
     assert_eq!(again.walks.map(|m| m.len()), Some(memory.len()));
 }
@@ -1050,7 +1050,7 @@ fn flight_paths_are_flight_masters() {
 /// their own zone (a city's own map in a city), and towns are named.
 #[test]
 fn flight_paths_are_in_their_zone() {
-    let world = crate::common::world(Edition::Classic, fg_route::faction::Faction::Horde);
+    let world = &crate::common::terrain_world(Edition::Classic, fg_route::faction::Faction::Horde, &["classic_flight_masters_terrain"]);
     let zone_of = |town: &str| {
         let n = world.taxi_nodes.iter().find(|n| n.name.starts_with(town)).unwrap();
         world.zone_name(n.pos.zone).to_owned()
@@ -3156,7 +3156,8 @@ fn a_reward_package_cannot_supply_ingredients_while_its_quest_is_held() {
 /// Mine's kobolds, Goldtooth and the area to scout are in the mine, not on the hill over it.
 #[test]
 fn fargodeep_mine_is_under_the_hill() {
-    let p = &prepare_from_real("human", "warrior", 30, &["progression=cautious"], None);
+    let conn = fixture(&["classic_elwynn_terrain", "classic_routes"]);
+    let p = &prepare_in(&conn, "human", "warrior", 30, &["progression=cautious"], None);
     let mut checked = 0;
     for name in [
         "The Fargodeep Mine",
@@ -3257,7 +3258,8 @@ fn a_group_guide_tells_the_addon_its_players() {
 #[test]
 fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     use fg_route::plan::{Edit, Outcome};
-    let probe = prepare_from_real("human", "warrior", 40, &["progression=cautious"], None);
+    let conn = fixture(&["classic_needles_terrain", "classic_needles_tanaris"]);
+    let probe = prepare_in(&conn, "human", "warrior", 40, &["progression=cautious"], None);
     let needles = 400;
     let zherin = probe.world.to_world(needles, 81.63, 77.95).unwrap();
     let start = StartState {
@@ -3270,7 +3272,7 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
         position: Some(map_pos(&probe, &zherin, needles)),
         ..StartState::default()
     };
-    let p = prepare_from_real("human", "warrior", 40, &["progression=cautious"], Some(start));
+    let p = prepare_in(&conn, "human", "warrior", 40, &["progression=cautious"], Some(start));
     let node = p
         .world
         .taxi_nodes
@@ -3297,7 +3299,7 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     assert!(edited.steps[0].warning.is_some());
     assert_eq!(edited.errors(), 0);
     // Once the character is strong enough, nothing to warn of.
-    let strong = prepare_from_real(
+    let strong = prepare_in(&conn, 
         "human",
         "warrior",
         45,

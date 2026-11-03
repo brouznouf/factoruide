@@ -12,3 +12,7 @@ forever 1 37 42 29 35
 forever 0 29 34 40 45
 classic 1 35 45 28 35
 classic 0 29 35 46 51
+classic 1 38 40 32 34
+classic 1 39 41 27 29
+classic 1 30 32 33 35
+classic 1 35 37 31 33
