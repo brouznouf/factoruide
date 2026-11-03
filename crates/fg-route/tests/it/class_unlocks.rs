@@ -88,6 +88,9 @@ fn normal_skyborne_druid_planning_completes_the_cat_chain() {
     let mut req = request("skyborne_horde", "druid");
     req.to_level = 30;
     req.required_class_quests = None;
+    // The fixture's world is thin: its character is level 27 when it gets to the form quest, a
+    // level past the window a class requirement has by default (18 to 26).
+    req.required_quests = vec![serde_json::from_value(serde_json::json!({"quest": 98362, "max_level": 30})).unwrap()];
     let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
     let mut params = p.params;
     params.effort = 0.0;

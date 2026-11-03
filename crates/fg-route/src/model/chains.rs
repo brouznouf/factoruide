@@ -280,7 +280,8 @@ pub(super) fn default_completion_windows(quests: &mut [Quest], profile: &Profile
         .flat_map(|c| c.quests.iter().copied())
         .collect();
     for q in quests.iter_mut() {
-        let must_have = q.mandatory && (q.required || required_by_class.contains(&q.id));
+        let asked = profile.required_quests.iter().any(|r| r.id == q.id);
+        let must_have = q.mandatory && (asked || required_by_class.contains(&q.id));
         if !must_have || q.completion_window.min_level.is_some() || q.completion_window.max_level.is_some() {
             continue;
         }
