@@ -76,7 +76,7 @@ fn prepare_request(request: &PlanRequest) -> Prepared {
 
 /// The Classic database of these tests: the quests they name (`tests/fixtures/`).
 fn database() -> Connection {
-    fixture(&["classic_services", "classic_dungeons", "classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
+    fixture(&["classic_svens_revenge", "classic_services", "classic_dungeons", "classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
 }
 
 /// A Classic database of the fixtures' files (`tests/fixtures/<name>.toml`).
@@ -96,7 +96,7 @@ fn prepare_in(conn: &Connection, race: &str, class: &str, to_level: i64, params:
 /// Orc warlock to 30, cautious: shared by the tests below.
 fn orc_warlock() -> &'static Prepared {
     static PREPARED: OnceLock<Prepared> = OnceLock::new();
-    PREPARED.get_or_init(|| prepare_in(&fixture(&["classic_orc_warlock"]), "orc", "warlock", 30, &["progression=cautious"], None))
+    PREPARED.get_or_init(|| prepare_in(&database(), "orc", "warlock", 30, &["progression=cautious"], None))
 }
 
 fn human_warrior() -> &'static Prepared {
@@ -356,7 +356,7 @@ fn item_start_waits_for_its_mob() {
 #[test]
 fn a_quest_exclusive_with_the_one_handing_the_start_item_is_not_a_prerequisite() {
     static PREPARED: OnceLock<Prepared> = OnceLock::new();
-    let p = PREPARED.get_or_init(|| prepare_in(&fixture(&["classic_orc_warlock"]), "orc", "warlock", 50, &["progression=cautious"], None));
+    let p = PREPARED.get_or_init(|| prepare_in(&database(), "orc", "warlock", 50, &["progression=cautious"], None));
     let sampling = &p.model.quests[quest(p, 654).unwrap() as usize];
     assert!(!sampling.pre_all.contains(&841) && !sampling.pre_any.contains(&841));
 }

@@ -664,6 +664,14 @@ friendly_to = "H"
 at = [{ zone = 1637, x = 48.47, y = 45.43, z = -15 }]
 
 [[npc]]
+id = 3429
+name = "Thork"
+level = 42
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 17, x = 51.5, y = 30.87, z = 104 }]
+
+[[npc]]
 id = 3535
 name = "Blackmoss the Fetid"
 level = 13
@@ -820,6 +828,14 @@ friendly_to = "A"
 at = [{ zone = 47, x = 14.15, y = 41.57 }]
 
 [[npc]]
+id = 8582
+name = "Kadrak"
+level = 31
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 17, x = 48.12, y = 5.42, z = 108 }]
+
+[[npc]]
 id = 10176
 name = "Kaltunk"
 level = 20
@@ -859,6 +875,14 @@ friendly_to = "AH"
 at = [{ zone = 493, x = 56.21, y = 30.64, z = 525 }]
 
 [[npc]]
+id = 11821
+name = "Darn Talongrip"
+level = 30
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 406, x = 73.25, y = 94.89, z = 10 }]
+
+[[npc]]
 id = 11956
 name = "Great Bear Spirit"
 level = 60
@@ -880,6 +904,30 @@ name = "Sentinel Shaya"
 level = 7
 friendly_to = "A"
 at = [{ zone = 141, x = 57.24, y = 63.51, z = 1285 }]
+
+[[npc]]
+id = 12862
+name = "Warsong Scout"
+level = 28
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 331, x = 71.05, y = 68.36, z = 88 }]
+
+[[npc]]
+id = 12863
+name = "Warsong Runner"
+level = 29
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 331, x = 12.22, y = 34.22, z = 5 }]
+
+[[npc]]
+id = 12864
+name = "Warsong Outrider"
+level = 30
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 331, x = 81.83, y = 53.51 }]
 
 [[npc]]
 id = 15127
@@ -1339,6 +1387,32 @@ level = 5
 id = 16608
 name = "Aquarius Belt"
 level = 16
+
+[[item]]
+id = 16746
+name = "Warsong Report"
+level = 1
+drops = [{ item = 16783 }]
+
+[[item]]
+id = 16763
+name = "Warsong Runner Update"
+level = 1
+
+[[item]]
+id = 16764
+name = "Warsong Scout Update"
+level = 1
+
+[[item]]
+id = 16765
+name = "Warsong Outrider Update"
+level = 1
+
+[[item]]
+id = 16783
+name = "Bundle of Reports"
+level = 1
 
 [[vendor]]
 npc = 1448
@@ -2595,4 +2669,104 @@ pre_any = [5932]
 objectives = [
   { creature = 12144, amount = 1 },
 ]
+
+[[quest]]
+id = 6541
+name = "Report to Kadrak"
+level = 19
+min_level = 17
+races_mask = 178
+zone = 17
+xp = 145
+quest_flags = 8
+extra = "{\"disabled_by_quest\":6542}"
+objectives_text = "Report to Kadrak at the watch tower in northern Barrens."
+starts = [{ npc = 3429 }]
+ends = [{ npc = 8582 }]
+exclusive = [6542]
+objectives = []
+
+[[quest]]
+id = 6542
+name = "Report to Kadrak"
+level = 19
+min_level = 17
+races_mask = 178
+zone = 406
+xp = 145
+quest_flags = 8
+extra = "{\"disabled_by_quest\":6541}"
+objectives_text = "Report to Kadrak at the watch tower in northern Barrens."
+starts = [{ npc = 11821 }]
+ends = [{ npc = 8582 }]
+exclusive = [6541]
+objectives = []
+
+[[quest]]
+id = 6543
+name = "The Warsong Reports"
+level = 19
+min_level = 17
+races_mask = 178
+zone = 17
+xp = 1800
+source_item = 16783
+extra = "{\"required_source_items\":[16746]}"
+objectives_text = "Open the Bundle of Reports. Take the Warsong Reports to the Warsong Scout, Warsong Runner, and Warsong Outrider. Bring back the updates they give you to Kadrak at the northern watch tower in the barrens."
+starts = [{ npc = 8582 }]
+ends = [{ npc = 8582 }]
+child = [6545, 6546, 6547]
+objectives = [
+  { item = 16764, amount = 1 },
+  { item = 16763, amount = 1 },
+  { item = 16765, amount = 1 },
+]
+
+[[quest]]
+id = 6545
+name = "Warsong Runner Update"
+level = 19
+min_level = 17
+races_mask = 178
+zone = 331
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 12863 }]
+ends = [{ npc = 12863 }]
+objectives = [
+  { item = 16746, amount = 1 },
+]
+rewards = [{ item = 16763, count = 1 }]
+
+[[quest]]
+id = 6546
+name = "Warsong Outrider Update"
+level = 25
+min_level = 17
+races_mask = 178
+zone = 331
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 12864 }]
+ends = [{ npc = 12864 }]
+objectives = [
+  { item = 16746, amount = 1 },
+]
+rewards = [{ item = 16765, count = 1 }]
+
+[[quest]]
+id = 6547
+name = "Warsong Scout Update"
+level = 21
+min_level = 17
+races_mask = 178
+zone = 331
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 12862 }]
+ends = [{ npc = 12862 }]
+objectives = [
+  { item = 16746, amount = 1 },
+]
+rewards = [{ item = 16764, count = 1 }]
 
