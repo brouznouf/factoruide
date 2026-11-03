@@ -167,7 +167,9 @@ pub(super) fn narrow_class_quests_to_spells(quests: &mut [Quest], all_required: 
 }
 
 /// A chain of a class quest required by name: the quests of the name linked to each other, by
-/// a prerequisite, a breadcrumb or as exclusive ones.
+/// a prerequisite or a breadcrumb. Exclusive ones are other versions, not one chain (the data
+/// links only some steps of Call of Earth's, none of the Skyborne's last two), and so are the
+/// choices of a quest needing any of several (Call of Earth 1517 after 1516 or 1519).
 #[derive(Clone)]
 pub(super) struct ClassChain {
     quests: Vec<usize>,
@@ -217,14 +219,60 @@ impl ClassChain {
         !ends(self).is_disjoint(&ends(other))
     }
 
+    /// The same spell, whatever the names (Defensive Stance by The Skybreaker Bulwark or Bartleby's Mug).
+    fn teaches_the_same(&self, other: &Self, quests: &[Quest]) -> bool {
+        let spells = |c: &Self| -> BTreeSet<i64> { c.quests.iter().filter_map(|&i| quests[i].reward_spell).collect() };
+        let a = spells(self);
+        !a.is_empty() && a == spells(other)
+    }
+
+    /// It leads to `other`, even as one of several choices (Returning Home to Stars of Elune,
+    /// which both list its spell): two steps of a path, not versions.
+    fn leads_to(&self, other: &Self, quests: &[Quest]) -> bool {
+        (self.quests.iter()).any(|&i| {
+            (other.quests.iter()).any(|&j| {
+                let (q, to) = (&quests[i], &quests[j]);
+                let needs = |id: &i64| *id == q.id;
+                to.pre_all.iter().chain(&to.pre_any).chain(&to.pre_held).any(needs)
+            })
+        })
+    }
+
+    /// It with the must-have quests leading only to it: taking another version closes those too,
+    /// or they would stay to do for nothing. A quest something else needs is not one of them.
+    fn with_own_prerequisites(&self, quests: &[Quest]) -> Vec<usize> {
+        let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+        let needed = |q: &Quest| -> Vec<i64> {
+            let only_one = q.pre_any.iter().filter(|_| q.pre_any.len() == 1);
+            q.pre_all.iter().chain(only_one).chain(&q.pre_held).copied().collect()
+        };
+        let mut path = self.quests.clone();
+        let mut k = 0;
+        while k < path.len() {
+            for id in needed(&quests[path[k]]) {
+                let Some(&j) = index.get(&id) else { continue };
+                let elsewhere = (quests.iter().enumerate()).any(|(f, q)| {
+                    let needs = |p: &i64| *p == id;
+                    q.mandatory
+                        && !path.contains(&f)
+                        && q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held).any(needs)
+                });
+                if quests[j].mandatory && !path.contains(&j) && !elsewhere {
+                    path.push(j);
+                }
+            }
+            k += 1;
+        }
+        path
+    }
+
     /// The players of a group who can take all of it.
     fn members(&self, quests: &[Quest]) -> u8 {
         self.quests.iter().fold(u8::MAX, |m, &i| m & quests[i].members)
     }
 }
 
-/// The chains of the class quests required by name, a player having forced none of their zones
-/// (who then wants all the quests there).
+/// The chains of the class quests required by name.
 fn class_chains(quests: &[Quest]) -> Vec<ClassChain> {
     fn root(parent: &mut [usize], mut i: usize) -> usize {
         while parent[i] != i {
@@ -236,9 +284,8 @@ fn class_chains(quests: &[Quest]) -> Vec<ClassChain> {
     let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     let mut parent: Vec<usize> = (0..quests.len()).collect();
     for (i, q) in quests.iter().enumerate() {
-        let linked = (q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held))
-            .chain(&q.exclusive)
-            .chain(&q.breadcrumb_for);
+        let only_one = q.pre_any.as_slice().iter().filter(|_| q.pre_any.len() == 1);
+        let linked = (q.pre_all.iter().chain(only_one).chain(&q.pre_held)).chain(&q.breadcrumb_for);
         for &j in linked.filter_map(|id| index.get(id)) {
             if quests[j].name == q.name {
                 let (a, b) = (root(&mut parent, i), root(&mut parent, j));
@@ -252,7 +299,6 @@ fn class_chains(quests: &[Quest]) -> Vec<ClassChain> {
     }
     chains
         .into_values()
-        .filter(|chain| !chain.iter().any(|&i| quests[i].zone_forced))
         .map(|quests_of_chain| ClassChain {
             by_name: (quests_of_chain.iter().copied())
                 .filter(|&i| quests[i].mandatory)
@@ -263,27 +309,24 @@ fn class_chains(quests: &[Quest]) -> Vec<ClassChain> {
         .collect()
 }
 
-/// Versions of a class quest: chains of one required name giving the same thing, for the same
-/// players. The Skyborne shaman can take two Call of Fire chains for one Searing Totem. Each
-/// demon of The Binding is another spell: those stay required. Read from the quests required by
-/// name, before their prerequisites join them.
+/// Versions of a class quest: chains of one required name giving the same thing, or of any names
+/// teaching the same spell, for the same players. The Skyborne shaman can take two Call of Fire
+/// chains for one Searing Totem. Each demon of The Binding is another spell: those stay required.
+/// Read from the quests required by name, before their prerequisites join them.
 pub(super) fn class_quest_versions(quests: &[Quest], all_required: bool) -> Vec<(ClassChain, ClassChain)> {
     let mut versions = Vec::new();
     if all_required {
         return versions;
     }
-    let mut chains = class_chains(quests);
-    while let Some(chain) = chains.pop() {
-        let (same, rest): (Vec<_>, Vec<_>) = chains.into_iter().partition(|other| {
-            quests[other.quests[0]].name == quests[chain.quests[0]].name
-                && other.members(quests) == chain.members(quests)
-                && chain.gives_the_same(other, quests)
-        });
-        chains = rest;
-        let mut group = vec![chain];
-        group.extend(same);
-        while let Some(a) = group.pop() {
-            for b in &group {
+    let chains = class_chains(quests);
+    for (k, a) in chains.iter().enumerate() {
+        for b in &chains[k + 1..] {
+            let same_name = quests[a.quests[0]].name == quests[b.quests[0]].name;
+            if a.members(quests) == b.members(quests)
+                && !a.leads_to(b, quests)
+                && !b.leads_to(a, quests)
+                && (same_name && a.gives_the_same(b, quests) || a.teaches_the_same(b, quests))
+            {
                 versions.push((a.clone(), b.clone()));
             }
         }
@@ -292,29 +335,41 @@ pub(super) fn class_quest_versions(quests: &[Quest], all_required: bool) -> Vec<
 }
 
 /// One requirement for all the versions of a class quest: the route does one, the others closed
-/// to it (not doing them counts as done, see `Availability::alternative_done`), the search
-/// choosing. One the player asked for is the one done. A version with a step that cannot be
-/// planned is no alternative: nothing changes.
+/// once it is taken (not doing them counts as done, see `Availability::alternative_done`), route
+/// building and the search (`swap_version`) choosing. One the player asked for, or in a zone they
+/// forced, is the one done. A version with a step that cannot be planned is no alternative:
+/// nothing changes.
 pub(super) fn settle_class_quest_versions(quests: &mut [Quest], versions: &[(ClassChain, ClassChain)]) {
+    let release = |quests: &mut [Quest], chain: &ClassChain| {
+        for i in chain.with_own_prerequisites(quests) {
+            quests[i].mandatory = false;
+        }
+    };
     let doable = |c: &ClassChain, quests: &[Quest]| c.by_name.iter().all(|&i| quests[i].mandatory);
     let open: Vec<_> = (versions.iter())
         .filter(|(a, b)| doable(a, quests) && doable(b, quests))
         .collect();
     for (a, b) in open {
-        let asked = |c: &ClassChain, quests: &[Quest]| c.quests.iter().any(|&i| quests[i].required);
+        let asked =
+            |c: &ClassChain, quests: &[Quest]| c.quests.iter().any(|&i| quests[i].required || quests[i].zone_forced);
         match (asked(a, quests), asked(b, quests)) {
             (true, true) => {}
-            (true, false) => b.by_name.iter().for_each(|&i| quests[i].mandatory = false),
-            (false, true) => a.by_name.iter().for_each(|&i| quests[i].mandatory = false),
+            (true, false) => release(quests, b),
+            (false, true) => release(quests, a),
             (false, false) => {
-                let ids = |c: &ClassChain| c.quests.iter().map(|&i| quests[i].id).collect::<Vec<_>>();
-                let (of_a, of_b) = (ids(a), ids(b));
-                for &i in &a.quests {
-                    quests[i].exclusive.extend(&of_b);
-                }
-                for &i in &b.quests {
-                    quests[i].exclusive.extend(&of_a);
-                }
+                let (path_a, path_b) = (a.with_own_prerequisites(quests), b.with_own_prerequisites(quests));
+                let close = |quests: &mut [Quest], path: &[usize], others: &[usize]| {
+                    let ids: Vec<i64> = others.iter().map(|&i| quests[i].id).collect();
+                    for &i in path {
+                        for id in &ids {
+                            if !quests[i].exclusive.contains(id) {
+                                quests[i].exclusive.push(*id);
+                            }
+                        }
+                    }
+                };
+                close(quests, &path_a, &path_b);
+                close(quests, &path_b, &path_a);
             }
         }
     }
