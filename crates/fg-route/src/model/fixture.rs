@@ -100,6 +100,8 @@ struct Objective {
     object: Option<i64>,
     talk: Option<i64>,
     trigger: Option<String>,
+    /// The step's words, when the quest has its own.
+    text: Option<String>,
     at: Option<At>,
     amount: Option<i64>,
 }
@@ -542,7 +544,7 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
         });
         conn.execute(
             "INSERT INTO m_quest_objective (quest_id, idx, type, target_id, amount, text, extra, source) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'fixture')",
-            params![q.id, idx as i64 + 1, kind, target, o.amount, o.trigger, extra],
+            params![q.id, idx as i64 + 1, kind, target, o.amount, o.text.as_ref().or(o.trigger.as_ref()), extra],
         )?;
     }
     for r in &q.rewards {

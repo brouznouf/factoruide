@@ -598,7 +598,7 @@ fn an_item_lying_in_a_camp_of_the_other_side_is_guarded() {
 /// group, at that place; Red Silk Bandanas also drops inside and stays a dungeon objective.
 #[test]
 fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_services").file("forever_deadmines_quarry").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let p = job::prepare(&conn, &overrides, &request("human", "warrior", 24, &[]), &|_| {}).unwrap();
     let objective = |id| &p.model.quests[quest(&p, id).unwrap() as usize].objectives[0];
@@ -2991,7 +2991,7 @@ fn great_outdoors_campfires_are_beside_their_giver() {
         ),
         ..request("human", "warrior", 20, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_great_outdoors").open(), &overrides, &request, &|_| {}).unwrap();
     let q = &p.model.quests[quest(&p, 95998).unwrap() as usize];
     let o = &q.objectives[0];
     assert!(o.text.starts_with("Sit by the Basic Campfire"), "{}", o.text);
@@ -3015,7 +3015,7 @@ fn camping_101_is_a_profession_quest_after_the_great_outdoors() {
         professions: vec![goal("skinning"), goal("leatherworking")],
         ..request("tauren", "druid", 20, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_great_outdoors").open(), &overrides, &request, &|_| {}).unwrap();
     // Camping 101: Skinning and Leatherworking at Kaga Wildhoof.
     for id in [97936, 97934] {
         let i = quest(&p, id).unwrap_or_else(|| panic!("Camping 101 {id} planned"));
@@ -3329,7 +3329,7 @@ fn ruins_of_lordaeron_is_run_at_the_games_levels() {
         ),
         ..request("undead", "warrior", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_dungeon_starts").open(), &overrides, &request, &|_| {}).unwrap();
     let ruins = p
         .model
         .dungeons
@@ -3338,7 +3338,7 @@ fn ruins_of_lordaeron_is_run_at_the_games_levels() {
         .expect("Ruins of Lordaeron");
     assert_eq!((ruins.mob_level, ruins.min_level, ruins.max_level), (18, 15, 21));
     // The app shows the same level.
-    let options = job::options(&database_of("forever"), &overrides).unwrap();
+    let options = job::options(&Fixture::new(Edition::Forever).file("forever_services").file("forever_dungeon_starts").open(), &overrides).unwrap();
     let listed = options.dungeons.iter().find(|d| d.id == 16611).unwrap();
     assert_eq!(listed.level, Some(18));
 }
