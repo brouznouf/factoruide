@@ -1,0 +1,6 @@
+# The ground of Teldrassil and the sea to Darkshore.
+
+[[terrain]]
+map = 1
+tile_x = [25, 33]
+tile_y = [11, 21]

@@ -1,0 +1,111 @@
+# Two zones of different strength (32 places of mobs each: a zone has the level of its mobs from 30):
+# quests of the Thousand Needles (levels 25 to 35) and of Tanaris (levels 45 to 50), whose flight path
+# is then closed to a character of level 34.
+
+[[npc]]
+id = 9101
+name = "Needles Giver"
+level = 30
+friendly_to = "AH"
+at = [{ zone = 400, x = 81.0, y = 78.0 }]
+
+[[npc]]
+id = 9102
+name = "Needles Beast"
+level = 30
+at = [
+  { zone = 400, x = 70.0, y = 70.0 },
+  { zone = 400, x = 70.8, y = 70.0 },
+  { zone = 400, x = 71.6, y = 70.0 },
+  { zone = 400, x = 72.4, y = 70.0 },
+  { zone = 400, x = 73.2, y = 70.0 },
+  { zone = 400, x = 74.0, y = 70.0 },
+  { zone = 400, x = 74.8, y = 70.0 },
+  { zone = 400, x = 75.6, y = 70.0 },
+  { zone = 400, x = 70.0, y = 70.8 },
+  { zone = 400, x = 70.8, y = 70.8 },
+  { zone = 400, x = 71.6, y = 70.8 },
+  { zone = 400, x = 72.4, y = 70.8 },
+  { zone = 400, x = 73.2, y = 70.8 },
+  { zone = 400, x = 74.0, y = 70.8 },
+  { zone = 400, x = 74.8, y = 70.8 },
+  { zone = 400, x = 75.6, y = 70.8 },
+  { zone = 400, x = 70.0, y = 71.6 },
+  { zone = 400, x = 70.8, y = 71.6 },
+  { zone = 400, x = 71.6, y = 71.6 },
+  { zone = 400, x = 72.4, y = 71.6 },
+  { zone = 400, x = 73.2, y = 71.6 },
+  { zone = 400, x = 74.0, y = 71.6 },
+  { zone = 400, x = 74.8, y = 71.6 },
+  { zone = 400, x = 75.6, y = 71.6 },
+  { zone = 400, x = 70.0, y = 72.4 },
+  { zone = 400, x = 70.8, y = 72.4 },
+  { zone = 400, x = 71.6, y = 72.4 },
+  { zone = 400, x = 72.4, y = 72.4 },
+  { zone = 400, x = 73.2, y = 72.4 },
+  { zone = 400, x = 74.0, y = 72.4 },
+  { zone = 400, x = 74.8, y = 72.4 },
+  { zone = 400, x = 75.6, y = 72.4 },
+]
+
+[[npc]]
+id = 9103
+name = "Tanaris Giver"
+level = 48
+friendly_to = "AH"
+at = [{ zone = 440, x = 52.0, y = 28.0 }]
+
+[[npc]]
+id = 9104
+name = "Tanaris Beast"
+level = 48
+at = [
+  { zone = 440, x = 55.0, y = 30.0 },
+  { zone = 440, x = 55.8, y = 30.0 },
+  { zone = 440, x = 56.6, y = 30.0 },
+  { zone = 440, x = 57.4, y = 30.0 },
+  { zone = 440, x = 58.2, y = 30.0 },
+  { zone = 440, x = 59.0, y = 30.0 },
+  { zone = 440, x = 59.8, y = 30.0 },
+  { zone = 440, x = 60.6, y = 30.0 },
+  { zone = 440, x = 55.0, y = 30.8 },
+  { zone = 440, x = 55.8, y = 30.8 },
+  { zone = 440, x = 56.6, y = 30.8 },
+  { zone = 440, x = 57.4, y = 30.8 },
+  { zone = 440, x = 58.2, y = 30.8 },
+  { zone = 440, x = 59.0, y = 30.8 },
+  { zone = 440, x = 59.8, y = 30.8 },
+  { zone = 440, x = 60.6, y = 30.8 },
+  { zone = 440, x = 55.0, y = 31.6 },
+  { zone = 440, x = 55.8, y = 31.6 },
+  { zone = 440, x = 56.6, y = 31.6 },
+  { zone = 440, x = 57.4, y = 31.6 },
+  { zone = 440, x = 58.2, y = 31.6 },
+  { zone = 440, x = 59.0, y = 31.6 },
+  { zone = 440, x = 59.8, y = 31.6 },
+  { zone = 440, x = 60.6, y = 31.6 },
+  { zone = 440, x = 55.0, y = 32.4 },
+  { zone = 440, x = 55.8, y = 32.4 },
+  { zone = 440, x = 56.6, y = 32.4 },
+  { zone = 440, x = 57.4, y = 32.4 },
+  { zone = 440, x = 58.2, y = 32.4 },
+  { zone = 440, x = 59.0, y = 32.4 },
+  { zone = 440, x = 59.8, y = 32.4 },
+  { zone = 440, x = 60.6, y = 32.4 },
+]
+
+[[quest]]
+id = 9101
+name = "Beasts of the Needles"
+level = 30
+min_level = 25
+giver = 9101
+objectives = [{ creature = 9102, amount = 8 }]
+
+[[quest]]
+id = 9103
+name = "Beasts of Tanaris"
+level = 48
+min_level = 45
+giver = 9103
+objectives = [{ creature = 9104, amount = 8 }]

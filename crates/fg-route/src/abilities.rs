@@ -26,6 +26,7 @@ pub struct MovementDef {
     pub trained_at: Option<i64>,
 }
 
+#[derive(Clone)]
 pub struct Ability {
     pub name: String,
     /// Spells actually granted, rather than higher ranks that merely prove the ability is known.
@@ -39,13 +40,14 @@ pub struct Ability {
     travel: Option<Travel>,
 }
 
+#[derive(Clone)]
 struct Travel {
     bonus: f64,
     activation: f64,
     talent: Option<MovementTalent>,
 }
 
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct Abilities {
     pub entries: Vec<Ability>,
     by_quest: HashMap<i64, u64>,

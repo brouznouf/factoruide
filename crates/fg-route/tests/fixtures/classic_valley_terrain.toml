@@ -1,0 +1,6 @@
+# The ground of the Valley of Trials and Durotar's plain beside it.
+
+[[terrain]]
+map = 1
+tile_x = [37, 42]
+tile_y = [29, 35]

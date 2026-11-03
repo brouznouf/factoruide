@@ -1,0 +1,775 @@
+# Class quests that Forever opens to races new to a class (Orc mage, Troll warlock, Skyborne mage and druid).
+
+[[npc]]
+id = 328
+name = "Zaldimar Wefhellt"
+level = 13
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 12, x = 43.25, y = 66.19, z = 64 }]
+
+[[npc]]
+id = 930
+name = "Black Widow Hatchling"
+level = 20
+max_level = 25
+at = [{ zone = 10, x = 26.23, y = 52.29, z = 39 }, { zone = 10, x = 26.39, y = 47.0, z = 32 }, { zone = 10, x = 26.73, y = 52.04, z = 40 }, { zone = 10, x = 26.86, y = 50.25, z = 37 }]
+
+[[npc]]
+id = 949
+name = "Carrion Recluse"
+level = 25
+max_level = 26
+at = [{ zone = 10, x = 16.96, y = 39.6, z = 45 }, { zone = 10, x = 18.14, y = 43.68, z = 32 }, { zone = 10, x = 18.92, y = 42.11, z = 36 }, { zone = 10, x = 20.41, y = 45.08 }]
+
+[[npc]]
+id = 1228
+name = "Magis Sparkmantle"
+level = 10
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 47.5, y = 52.08, z = 404 }]
+
+[[npc]]
+id = 1245
+name = "Kogan Forgestone"
+level = 8
+max_level = 10
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 45.32, y = 51.75, z = 397 }]
+
+[[npc]]
+id = 1309
+name = "Wynne Larson"
+level = 30
+npc_flags = 16391
+friendly_to = "A"
+at = [{ zone = 1519, x = 51.84, y = 83.51, z = 110 }]
+
+[[npc]]
+id = 1414
+name = "Lisan Pierce"
+level = 25
+friendly_to = "A"
+at = [{ zone = 1519, x = 38.2, y = 79.6 }, { zone = 1519, x = 38.6, y = 78.2 }, { zone = 1519, x = 39.0, y = 79.6 }, { zone = 1519, x = 39.6, y = 79.0 }]
+
+[[npc]]
+id = 1949
+name = "Servant of Azora"
+level = 8
+max_level = 9
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 64.0, y = 69.59, z = 63 }, { zone = 12, x = 64.41, y = 69.94, z = 99 }, { zone = 12, x = 64.44, y = 68.4, z = 62 }, { zone = 12, x = 64.6, y = 69.78, z = 90 }]
+
+[[npc]]
+id = 2091
+name = "Chieftain Nek'rosh"
+level = 32
+rank = 1
+at = [{ zone = 11, x = 53.51, y = 54.67, z = 52 }]
+
+[[npc]]
+id = 2128
+name = "Cain Firesong"
+level = 14
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 85, x = 61.97, y = 52.47, z = 41 }]
+
+[[npc]]
+id = 3049
+name = "Thurston Xane"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 25.18, y = 20.96, z = 102 }]
+
+[[npc]]
+id = 3484
+name = "Kil'hala"
+level = 25
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 17, x = 52.2, y = 31.7, z = 96 }]
+
+[[npc]]
+id = 3702
+name = "Alanndarian Nightsong"
+level = 18
+max_level = 22
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 148, x = 37.69, y = 40.66, z = 9 }]
+
+[[npc]]
+id = 4054
+name = "Laughing Sister"
+level = 24
+max_level = 25
+friendly_to = "A"
+at = [{ zone = 331, x = 58.05, y = 58.43, z = 142 }, { zone = 331, x = 58.07, y = 56.01, z = 144 }, { zone = 331, x = 58.43, y = 57.97, z = 135 }, { zone = 331, x = 58.56, y = 54.31, z = 156 }]
+
+[[npc]]
+id = 4217
+name = "Mathrengyl Bearwalker"
+level = 60
+npc_flags = 23
+friendly_to = "A"
+at = [{ zone = 1657, x = 35.37, y = 8.4, z = 1340 }]
+
+[[npc]]
+id = 4568
+name = "Anastasia Hartwell"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 85.14, y = 10.03, z = -47 }]
+
+[[npc]]
+id = 4576
+name = "Josef Gregorian"
+level = 45
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 70.76, y = 30.69, z = -62 }]
+
+[[npc]]
+id = 5497
+name = "Jennea Cannon"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 49.56, y = 85.8, z = 30 }]
+
+[[npc]]
+id = 5676
+name = "Summoned Voidwalker"
+level = 10
+friendly_to = "AH"
+at = [{ zone = 1497, x = 85.9, y = 27.7 }, { zone = 1497, x = 86.4, y = 27.3 }, { zone = 1497, x = 86.6, y = 26.4 }, { zone = 1519, x = 25.2, y = 77.4 }]
+
+[[npc]]
+id = 5694
+name = "High Sorcerer Andromath"
+level = 62
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 48.71, y = 87.62, z = 149 }]
+
+[[npc]]
+id = 5875
+name = "Gan'rul Bloodeye"
+level = 40
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 1637, x = 48.25, y = 45.28, z = -15 }]
+
+[[npc]]
+id = 5880
+name = "Un'Thuwa"
+level = 14
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 14, x = 56.31, y = 75.11, z = 21 }]
+
+[[npc]]
+id = 5885
+name = "Deino"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 38.45, y = 86.13, z = 43 }]
+
+[[npc]]
+id = 7311
+name = "Uthel'nay"
+level = 40
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 39.16, y = 86.27, z = 43 }]
+
+[[npc]]
+id = 7312
+name = "Dink"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 27.16, y = 8.57, z = 501 }]
+
+[[npc]]
+id = 11048
+name = "Victor Ward"
+level = 24
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 70.08, y = 29.83, z = -62 }]
+
+[[npc]]
+id = 11049
+name = "Rhiannon Davis"
+level = 32
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 70.04, y = 30.56, z = -62 }]
+
+[[npc]]
+id = 11799
+name = "Tajarri"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 493, x = 36.52, y = 40.1, z = 469 }]
+
+[[npc]]
+id = 11802
+name = "Dendrite Starblaze"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 493, x = 56.21, y = 30.64, z = 525 }]
+
+[[npc]]
+id = 12298
+name = "Sickly Deer"
+level = 5
+friendly_to = "AH"
+at = [{ zone = 148, x = 34.57, y = 87.25, z = 26 }, { zone = 148, x = 35.17, y = 89.26, z = 35 }, { zone = 148, x = 36.19, y = 81.94, z = 27 }, { zone = 148, x = 37.06, y = 91.2, z = 59 }]
+
+[[object]]
+id = 271
+name = "Miners' League Crates"
+at = [{ zone = 38, x = 34.21, y = 26.49 }, { zone = 38, x = 34.8, y = 26.73 }, { zone = 38, x = 34.9, y = 23.44 }]
+
+[[object]]
+id = 1619
+name = "Earthroot"
+at = [{ zone = 1, x = 34.14, y = 59.94 }, { zone = 1, x = 35.48, y = 57.52 }, { zone = 1, x = 36.98, y = 61.56 }]
+
+[[object]]
+id = 3726
+name = "Earthroot"
+at = [{ zone = 17, x = 39.12, y = 30.73 }, { zone = 17, x = 39.64, y = 14.21 }, { zone = 17, x = 39.84, y = 12.38 }]
+
+[[object]]
+id = 15885
+name = "Shrine Of Remulos"
+at = [{ zone = 493, x = 36.0, y = 41.42 }]
+
+[[object]]
+id = 58595
+name = "Burning Blade Stash"
+at = [{ zone = 14, x = 51.62, y = 9.76 }]
+
+[[object]]
+id = 103574
+name = "Filled Containment Coffer"
+at = []
+
+[[object]]
+id = 103628
+name = "Ur's Treatise on Shadow Magic"
+at = [{ zone = 44, x = 73.77, y = 47.61 }]
+
+[[object]]
+id = 105174
+name = "Chest of Containment Coffers"
+at = [{ zone = 1497, x = 85.48, y = 9.9 }, { zone = 1497, x = 85.53, y = 10.03 }, { zone = 1497, x = 85.58, y = 9.95 }]
+
+[[object]]
+id = 105175
+name = "Cantation of Manifestation"
+at = [{ zone = 1497, x = 85.65, y = 10.18 }, { zone = 1497, x = 85.7, y = 10.11 }, { zone = 1497, x = 85.78, y = 10.05 }]
+
+[[object]]
+id = 174797
+name = "Xavian Waterfall"
+at = [{ zone = 331, x = 76.29, y = 41.49 }]
+
+[[object]]
+id = 177750
+name = "Lunar Fungal Bloom"
+at = [{ zone = 148, x = 42.37, y = 52.54 }, { zone = 148, x = 42.58, y = 52.37 }, { zone = 148, x = 43.21, y = 45.77 }]
+
+[[item]]
+id = 2449
+name = "Earthroot"
+level = 5
+class = 7
+drops = [{ npc = 2091, chance = 1.0 }, { object = 1619, chance = 1.0 }, { object = 3726, chance = 1.0 }]
+
+[[item]]
+id = 2589
+name = "Linen Cloth"
+level = 5
+class = 7
+drops = [{ npc = 1245, chance = 1.0 }, { npc = 1414, chance = 1.0 }, { npc = 1949, chance = 1.0 }]
+
+[[item]]
+id = 6535
+name = "Tablet of Verga"
+level = 1
+class = 12
+drops = [{ object = 58595, chance = 1.0 }]
+
+[[item]]
+id = 7247
+name = "Chest of Containment Coffers"
+level = 1
+class = 12
+drops = [{ object = 105174, chance = 1.0 }]
+
+[[item]]
+id = 7249
+name = "Charged Rift Gem"
+level = 1
+class = 12
+drops = [{ object = 271, chance = 1.0 }]
+
+[[item]]
+id = 7266
+name = "Ur's Treatise on Shadow Magic"
+level = 1
+class = 0
+drops = [{ object = 103628, chance = 1.0 }]
+
+[[item]]
+id = 7267
+name = "Pristine Spider Silk"
+level = 1
+class = 12
+drops = [{ npc = 930, chance = 0.8 }, { npc = 949, chance = 0.8 }]
+
+[[item]]
+id = 7268
+name = "Xavian Water Sample"
+level = 1
+class = 12
+drops = [{ object = 174797, chance = 0.1 }]
+
+[[item]]
+id = 7270
+name = "Laughing Sister's Hair"
+level = 1
+class = 12
+drops = [{ npc = 4054, chance = 1.0 }]
+
+[[item]]
+id = 7292
+name = "Filled Containment Coffer"
+level = 1
+class = 12
+drops = [{ object = 103574, chance = 1.0 }]
+
+[[item]]
+id = 7308
+name = "Cantation of Manifestation"
+level = 1
+class = 12
+drops = [{ object = 105175, chance = 1.0 }]
+
+[[item]]
+id = 7509
+name = "Manaweave Robe"
+level = 20
+class = 4
+
+[[item]]
+id = 7510
+name = "Lesser Spellfire Robes"
+level = 20
+class = 4
+
+[[item]]
+id = 7511
+name = "Astral Knot Robe"
+level = 31
+class = 4
+
+[[item]]
+id = 7512
+name = "Nether-lace Robe"
+level = 31
+class = 4
+
+[[item]]
+id = 9515
+name = "Nether-lace Tunic"
+level = 31
+class = 4
+
+[[item]]
+id = 9516
+name = "Astral Knot Blouse"
+level = 31
+class = 4
+
+[[item]]
+id = 15851
+name = "Lunar Fungus"
+level = 1
+class = 12
+drops = [{ object = 177750, chance = 1.0 }]
+
+[[item]]
+id = 15866
+name = "Veildust Medicine Bag"
+level = 15
+class = 4
+
+[[item]]
+id = 16608
+name = "Aquarius Belt"
+level = 16
+class = 4
+
+[[quest]]
+id = 1943
+name = "Speak with Deino"
+level = 26
+min_level = 26
+races_mask = 146
+classes_mask = 128
+zone = -161
+xp = 210
+quest_flags = 8
+starts = [{ npc = 4568 }]
+ends = [{ npc = 5885 }]
+objectives = []
+
+[[quest]]
+id = 1944
+name = "Waters of Xavian"
+level = 26
+min_level = 26
+races_mask = 146
+classes_mask = 128
+zone = -161
+xp = 2100
+starts = [{ npc = 5885 }]
+ends = [{ npc = 5885 }]
+objectives = [
+  { item = 7268, amount = 1 },
+]
+
+[[quest]]
+id = 1945
+name = "Laughing Sisters"
+level = 26
+min_level = 26
+races_mask = 146
+classes_mask = 128
+zone = -161
+xp = 1600
+quest_flags = 8
+starts = [{ npc = 5885 }]
+ends = [{ npc = 3484 }]
+pre_any = [1944]
+objectives = [
+  { item = 7270, amount = 12 },
+]
+
+[[quest]]
+id = 1946
+name = "Nether-lace Garment"
+level = 26
+min_level = 26
+races_mask = 146
+classes_mask = 128
+zone = -161
+xp = 2100
+quest_flags = 8
+starts = [{ npc = 3484 }]
+ends = [{ npc = 3484 }]
+pre_any = [1945]
+objectives = []
+rewards = [{ item = 7512, count = 1, choice = true }, { item = 9515, count = 1, choice = true }]
+
+[[quest]]
+id = 1959
+name = "Report to Anastasia"
+level = 15
+min_level = 15
+races_mask = 146
+classes_mask = 128
+zone = -161
+xp = 105
+quest_flags = 8
+starts = [{ npc = 2128 }, { npc = 3049 }, { npc = 5880 }, { npc = 7311 }]
+ends = [{ npc = 4568 }]
+objectives = []
+
+[[quest]]
+id = 1960
+name = "Investigate the Alchemist Shop"
+level = 16
+min_level = 15
+races_mask = 146
+classes_mask = 128
+zone = -161
+xp = 1150
+starts = [{ npc = 4568 }]
+ends = [{ npc = 4568 }]
+objectives = [
+  { item = 7292, amount = 3 },
+  { item = 7247, amount = 1 },
+  { item = 7308, amount = 1 },
+]
+
+[[quest]]
+id = 1962
+name = "Spellfire Robes"
+level = 15
+min_level = 15
+races_mask = 146
+classes_mask = 128
+zone = -161
+xp = 1050
+quest_flags = 8
+starts = [{ npc = 4576 }, { npc = 11048 }, { npc = 11049 }]
+ends = [{ npc = 4576 }, { npc = 11048 }, { npc = 11049 }]
+objectives = []
+rewards = [{ item = 7510, count = 1 }]
+
+[[quest]]
+id = 1501
+name = "Creature of the Void"
+level = 11
+min_level = 10
+races_mask = 130
+classes_mask = 256
+zone = -61
+xp = 880
+quest_flags = 8
+starts = [{ npc = 5875 }]
+ends = [{ npc = 5875 }]
+objectives = [
+  { item = 6535, amount = 1 },
+]
+
+[[quest]]
+id = 1504
+name = "The Binding"
+level = 11
+min_level = 10
+races_mask = 130
+classes_mask = 256
+zone = -61
+xp = 660
+reward_spell = 697
+starts = [{ npc = 5875 }]
+ends = [{ npc = 5875 }]
+pre_any = [1501]
+objectives = [
+  { creature = 5676, amount = 1 },
+]
+
+[[quest]]
+id = 1860
+name = "Speak with Jennea"
+level = 10
+min_level = 10
+races_mask = 4294967361
+classes_mask = 128
+zone = -161
+xp = 420
+quest_flags = 8
+starts = [{ npc = 328 }]
+ends = [{ npc = 5497 }]
+objectives = []
+
+[[quest]]
+id = 1919
+name = "Report to Jennea"
+level = 15
+min_level = 15
+races_mask = 4294967361
+classes_mask = 128
+zone = -161
+xp = 105
+quest_flags = 8
+starts = [{ npc = 328 }, { npc = 1228 }, { npc = 7312 }]
+ends = [{ npc = 5497 }]
+objectives = []
+
+[[quest]]
+id = 1921
+name = "Gathering Materials"
+level = 15
+min_level = 15
+races_mask = 4294967361
+classes_mask = 128
+zone = -161
+xp = 800
+quest_flags = 8
+starts = [{ npc = 5497 }]
+ends = [{ npc = 1309 }]
+objectives = [
+  { item = 2589, amount = 10 },
+  { item = 7249, amount = 6 },
+]
+
+[[quest]]
+id = 1938
+name = "Ur's Treatise on Shadow Magic"
+level = 28
+min_level = 26
+races_mask = 4294967361
+classes_mask = 128
+zone = -161
+xp = 2300
+quest_flags = 8
+starts = [{ npc = 5694 }]
+ends = [{ npc = 5694 }]
+objectives = [
+  { item = 7266, amount = 1 },
+]
+
+[[quest]]
+id = 1940
+name = "Pristine Spider Silk"
+level = 26
+min_level = 26
+races_mask = 4294967361
+classes_mask = 128
+zone = -161
+xp = 1600
+quest_flags = 8
+starts = [{ npc = 5694 }]
+ends = [{ npc = 1309 }]
+pre_any = [1938]
+objectives = [
+  { item = 7267, amount = 8 },
+]
+
+[[quest]]
+id = 1941
+name = "Manaweave Robe"
+level = 15
+min_level = 15
+races_mask = 4294967361
+classes_mask = 128
+zone = -161
+xp = 1050
+quest_flags = 8
+starts = [{ npc = 1309 }]
+ends = [{ npc = 1309 }]
+pre_any = [1921]
+objectives = []
+rewards = [{ item = 7509, count = 1 }]
+
+[[quest]]
+id = 1942
+name = "Astral Knot Garment"
+level = 26
+min_level = 26
+races_mask = 4294967361
+classes_mask = 128
+zone = -161
+xp = 2100
+quest_flags = 8
+starts = [{ npc = 1309 }]
+ends = [{ npc = 1309 }]
+pre_any = [1940]
+objectives = []
+rewards = [{ item = 7511, count = 1, choice = true }, { item = 9516, count = 1, choice = true }]
+
+[[quest]]
+id = 26
+name = "A Lesson to Learn"
+level = 16
+min_level = 16
+races_mask = 4294967304
+classes_mask = 1024
+zone = -263
+xp = 115
+quest_flags = 8
+starts = [{ npc = 4217 }]
+ends = [{ npc = 11802 }]
+objectives = []
+
+[[quest]]
+id = 29
+name = "Trial of the Lake"
+level = 16
+min_level = 16
+races_mask = 4294967304
+classes_mask = 1024
+zone = -263
+xp = 880
+time_limit = 1800
+quest_flags = 10
+special_flags = 2
+starts = [{ npc = 11802 }]
+ends = [{ npc = 11799 }]
+pre_any = [26]
+objectives = [
+  { object = 15885, amount = 1 },
+]
+
+[[quest]]
+id = 5061
+name = "Aquatic Form"
+level = 16
+min_level = 16
+races_mask = 4294967304
+classes_mask = 1024
+zone = -263
+xp = 1150
+reward_spell = 1066
+starts = [{ npc = 11802 }]
+ends = [{ npc = 4217 }]
+objectives = []
+rewards = [{ item = 16608, count = 1 }]
+
+[[quest]]
+id = 6123
+name = "Gathering the Cure"
+level = 14
+min_level = 14
+races_mask = 4294967304
+classes_mask = 1024
+zone = -263
+xp = 740
+quest_flags = 8
+starts = [{ npc = 3702 }]
+ends = [{ npc = 3702 }]
+objectives = [
+  { item = 2449, amount = 5 },
+  { item = 15851, amount = 12 },
+]
+
+[[quest]]
+id = 6124
+name = "Curing the Sick"
+level = 14
+min_level = 14
+races_mask = 4294967304
+classes_mask = 1024
+zone = -263
+xp = 740
+starts = [{ npc = 3702 }]
+ends = [{ npc = 11802 }]
+pre_any = [6123]
+objectives = [
+  { creature = 12298, amount = 1 },
+]
+rewards = [{ item = 15866, count = 1 }]
+
+[[quest]]
+id = 6125
+name = "Power over Poison"
+level = 14
+min_level = 14
+races_mask = 4294967304
+classes_mask = 1024
+zone = -263
+xp = 980
+reward_spell = 8946
+quest_flags = 8
+starts = [{ npc = 11802 }]
+ends = [{ npc = 4217 }]
+pre_any = [6124]
+objectives = []
+

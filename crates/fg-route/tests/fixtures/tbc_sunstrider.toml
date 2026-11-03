@@ -1,0 +1,458 @@
+# Sunstrider Isle: the first quests of the Blood Elf paladin.
+
+[[npc]]
+id = 1934
+name = "Tirisfal Farmer"
+level = 6
+max_level = 7
+at = [{ zone = 85, x = 34.63, y = 50.67, z = 33 }, { zone = 85, x = 35.78, y = 50.68, z = 34 }, { zone = 85, x = 36.54, y = 51.8, z = 34 }, { zone = 85, x = 37.49, y = 51.63, z = 34 }]
+
+[[npc]]
+id = 1936
+name = "Farmer Solliden"
+level = 8
+rank = 4
+at = [{ zone = 85, x = 34.07, y = 52.11, z = 33 }, { zone = 85, x = 34.83, y = 49.3, z = 33 }, { zone = 85, x = 35.06, y = 50.82, z = 33 }, { zone = 85, x = 36.61, y = 51.14, z = 33 }]
+
+[[npc]]
+id = 3577
+name = "Dalaran Brewmaster"
+level = 15
+max_level = 16
+npc_flags = 640
+friendly_to = "AH"
+at = [{ zone = 130, x = 62.61, y = 65.05, z = 64 }]
+
+[[npc]]
+id = 3662
+name = "Delmanis the Hated"
+level = 17
+at = [{ zone = 148, x = 56.84, y = 27.51, z = 67 }]
+
+[[npc]]
+id = 15271
+name = "Tender"
+level = 2
+max_level = 3
+at = [{ zone = 3430, x = 27.73, y = 18.13, z = 8 }, { zone = 3430, x = 28.73, y = 18.28, z = 31 }, { zone = 3430, x = 29.67, y = 20.71, z = 48 }, { zone = 3430, x = 29.83, y = 24.32, z = 10 }]
+
+[[npc]]
+id = 15273
+name = "Arcane Wraith"
+level = 3
+max_level = 4
+at = [{ zone = 3430, x = 29.86, y = 26.99, z = 64 }, { zone = 3430, x = 30.05, y = 26.24, z = 64 }, { zone = 3430, x = 30.16, y = 29.04, z = 64 }, { zone = 3430, x = 30.18, y = 25.21, z = 39 }]
+
+[[npc]]
+id = 15274
+name = "Mana Wyrm"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 3430, x = 33.58, y = 20.06, z = 32 }, { zone = 3430, x = 33.79, y = 19.07, z = 35 }, { zone = 3430, x = 33.94, y = 20.31, z = 32 }, { zone = 3430, x = 33.99, y = 19.45, z = 32 }]
+
+[[npc]]
+id = 15278
+name = "Magistrix Erona"
+level = 5
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 3430, x = 38.18, y = 20.79, z = 36 }, { zone = 3430, x = 38.2, y = 20.86, z = 36 }, { zone = 3430, x = 38.21, y = 20.83, z = 36 }]
+
+[[npc]]
+id = 15281
+name = "Lanthan Perilon"
+level = 5
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 3430, x = 35.37, y = 22.52, z = 27 }]
+
+[[npc]]
+id = 15294
+name = "Feral Tender"
+level = 3
+at = [{ zone = 3430, x = 27.06, y = 17.71, z = 1 }, { zone = 3430, x = 27.23, y = 17.3, z = 1 }, { zone = 3430, x = 27.28, y = 17.66, z = 2 }, { zone = 3430, x = 28.11, y = 17.17, z = 3 }]
+
+[[npc]]
+id = 15295
+name = "Well Watcher Solanian"
+level = 30
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 3430, x = 38.76, y = 19.36, z = 52 }]
+
+[[npc]]
+id = 15296
+name = "Arcanist Ithanas"
+level = 6
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 3430, x = 38.27, y = 19.13, z = 36 }]
+
+[[npc]]
+id = 15297
+name = "Arcanist Helion"
+level = 6
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 3430, x = 37.18, y = 18.94, z = 36 }]
+
+[[npc]]
+id = 15298
+name = "Tainted Arcane Wraith"
+level = 4
+at = [{ zone = 3430, x = 30.55, y = 26.97, z = 110 }, { zone = 3430, x = 30.94, y = 27.72, z = 110 }, { zone = 3430, x = 31.25, y = 26.91, z = 64 }, { zone = 3430, x = 31.42, y = 29.18, z = 42 }]
+
+[[npc]]
+id = 15301
+name = "Outrunner Alarion"
+level = 5
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 3430, x = 40.42, y = 32.21, z = 1 }]
+
+[[npc]]
+id = 15367
+name = "Felendren the Banished"
+level = 5
+at = [{ zone = 3430, x = 30.84, y = 27.13, z = 110 }]
+
+[[npc]]
+id = 15403
+name = "Aeldon Sunbrand"
+level = 30
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 3430, x = 48.17, y = 46.0, z = 19 }]
+
+[[npc]]
+id = 15433
+name = "Innkeeper Delaniel"
+level = 30
+npc_flags = 66179
+friendly_to = "H"
+at = [{ zone = 3430, x = 48.16, y = 47.66, z = 17 }]
+
+[[object]]
+id = 3658
+name = "Water Barrel"
+at = [{ zone = 1, x = 25.92, y = 51.03 }, { zone = 1, x = 26.54, y = 36.55 }, { zone = 1, x = 27.54, y = 36.45 }]
+
+[[object]]
+id = 3719
+name = "Food Crate"
+at = [{ zone = 1, x = 25.92, y = 51.03 }, { zone = 1, x = 26.54, y = 36.55 }, { zone = 1, x = 27.54, y = 36.45 }]
+
+[[object]]
+id = 180510
+name = "Solanian's Scrying Orb"
+at = [{ zone = 3430, x = 35.14, y = 28.89 }]
+
+[[object]]
+id = 180511
+name = "Scroll of Scourge Magic"
+at = [{ zone = 3430, x = 31.33, y = 22.74 }]
+
+[[object]]
+id = 180512
+name = "Solanian's Journal"
+at = [{ zone = 3430, x = 37.7, y = 24.91 }]
+
+[[object]]
+id = 180516
+name = "Shrine of Dath'Remar"
+at = [{ zone = 3430, x = 29.61, y = 19.37 }]
+
+[[object]]
+id = 180600
+name = "Unstable Mana Crystal Crate"
+at = [{ zone = 3430, x = 40.4, y = 43.34 }, { zone = 3430, x = 40.62, y = 39.98 }, { zone = 3430, x = 40.76, y = 45.71 }]
+
+[[item]]
+id = 159
+name = "Refreshing Spring Water"
+level = 5
+class = 0
+drops = [{ npc = 3577, chance = 1.0 }, { npc = 3662, chance = 1.0 }, { object = 3658, chance = 1.0 }]
+
+[[item]]
+id = 4536
+name = "Shiny Red Apple"
+level = 5
+class = 0
+drops = [{ object = 3719, chance = 0.4 }, { npc = 1934, chance = 0.3098 }, { npc = 1936, chance = 0.2514 }]
+
+[[item]]
+id = 20470
+name = "Solanian's Scrying Orb"
+level = 1
+class = 0
+drops = [{ object = 180510, chance = 1.0 }]
+
+[[item]]
+id = 20471
+name = "Scroll of Scourge Magic"
+level = 1
+class = 0
+drops = [{ object = 180511, chance = 1.0 }]
+
+[[item]]
+id = 20472
+name = "Solanian's Journal"
+level = 1
+class = 0
+drops = [{ object = 180512, chance = 1.0 }]
+
+[[item]]
+id = 20482
+name = "Arcane Sliver"
+level = 1
+class = 12
+drops = [{ npc = 15273, chance = 0.30308500000000005 }, { npc = 15274, chance = 0.30308500000000005 }, { npc = 15294, chance = 0.30308500000000005 }]
+
+[[item]]
+id = 20743
+name = "Unstable Mana Crystal"
+level = 1
+class = 12
+drops = [{ object = 180600, chance = 1.0 }]
+
+[[item]]
+id = 20799
+name = "Felendren's Head"
+level = 1
+class = 12
+drops = [{ npc = 15367, chance = 1.0 }]
+
+[[item]]
+id = 20835
+name = "Sunstrider Sword"
+level = 5
+class = 2
+
+[[item]]
+id = 20836
+name = "Sunstrider Dagger"
+level = 5
+class = 2
+
+[[item]]
+id = 20837
+name = "Sunstrider Axe"
+level = 5
+class = 2
+
+[[item]]
+id = 20838
+name = "Sunstrider Bow"
+level = 5
+class = 2
+
+[[item]]
+id = 20839
+name = "Sunstrider Staff"
+level = 5
+class = 2
+
+[[item]]
+id = 20840
+name = "Sunstrider Mace"
+level = 5
+class = 2
+
+[[item]]
+id = 20841
+name = "Sunstrider Shield"
+level = 5
+class = 4
+
+[[item]]
+id = 20991
+name = "Daylight Cloak"
+level = 5
+class = 4
+
+[[item]]
+id = 20995
+name = "Well Watcher Gloves"
+level = 5
+class = 4
+
+[[item]]
+id = 20996
+name = "Sunspire Cord"
+level = 5
+class = 4
+
+[[item]]
+id = 20999
+name = "Green Chain Gauntlets"
+level = 5
+class = 4
+
+[[item]]
+id = 21000
+name = "Vigorous Bracers"
+level = 5
+class = 4
+
+[[item]]
+id = 21001
+name = "Striding Pants"
+level = 5
+class = 4
+
+[[quest]]
+id = 8327
+name = "Report to Lanthan Perilon"
+level = 3
+races_mask = 512
+zone = 3431
+xp = 25
+quest_flags = 136
+starts = [{ npc = 15278 }]
+ends = [{ npc = 15281 }]
+objectives = []
+
+[[quest]]
+id = 8346
+name = "Thirst Unending"
+level = 3
+min_level = 2
+races_mask = 512
+zone = 3431
+xp = 250
+quest_flags = 136
+starts = [{ npc = 15297 }]
+ends = [{ npc = 15297 }]
+objectives = [
+  { creature = 15274, amount = 1 },
+]
+rewards = [{ item = 20999, count = 1, choice = true }, { item = 21000, count = 1, choice = true }, { item = 21001, count = 1, choice = true }]
+
+[[quest]]
+id = 8330
+name = "Solanian's Belongings"
+level = 4
+min_level = 2
+races_mask = 512
+zone = 3431
+xp = 360
+quest_flags = 128
+starts = [{ npc = 15295 }]
+ends = [{ npc = 15295 }]
+objectives = [
+  { item = 20470, amount = 1 },
+  { item = 20471, amount = 1 },
+  { item = 20472, amount = 1 },
+]
+rewards = [{ item = 20995, count = 1, choice = true }, { item = 20996, count = 1, choice = true }]
+
+[[quest]]
+id = 8334
+name = "Aggression"
+level = 4
+races_mask = 512
+zone = 3431
+xp = 360
+quest_flags = 136
+starts = [{ npc = 15281 }]
+ends = [{ npc = 15281 }]
+objectives = [
+  { creature = 15271, amount = 7 },
+  { creature = 15294, amount = 7 },
+]
+rewards = [{ item = 20835, count = 1, choice = true }, { item = 20836, count = 1, choice = true }, { item = 20837, count = 1, choice = true }, { item = 20839, count = 1, choice = true }, { item = 20840, count = 1, choice = true }]
+
+[[quest]]
+id = 8336
+name = "A Fistful of Slivers"
+level = 4
+min_level = 2
+races_mask = 512
+zone = 3431
+xp = 355
+quest_flags = 128
+starts = [{ npc = 15296 }]
+ends = [{ npc = 15296 }]
+objectives = [
+  { item = 20482, amount = 1 },
+]
+rewards = [{ item = 20991, count = 1, choice = true }]
+
+[[quest]]
+id = 8345
+name = "The Shrine of Dath'Remar"
+level = 4
+min_level = 2
+races_mask = 512
+zone = 3431
+xp = 360
+quest_flags = 136
+starts = [{ npc = 15295 }]
+ends = [{ npc = 15295 }]
+objectives = [
+  { object = 180516, amount = 1 },
+]
+
+[[quest]]
+id = 8335
+name = "Felendren the Banished"
+level = 5
+min_level = 3
+races_mask = 512
+zone = 3431
+xp = 560
+quest_flags = 136
+starts = [{ npc = 15281 }]
+ends = [{ npc = 15281 }]
+pre_any = [8334]
+objectives = [
+  { creature = 15273, amount = 1 },
+  { creature = 15298, amount = 1 },
+  { item = 20799, amount = 1 },
+]
+rewards = [{ item = 20838, count = 1, choice = true }, { item = 20841, count = 1, choice = true }]
+
+[[quest]]
+id = 8347
+name = "Aiding the Outrunners"
+level = 5
+min_level = 3
+races_mask = 512
+zone = 3431
+xp = 45
+quest_flags = 128
+starts = [{ npc = 15281 }]
+ends = [{ npc = 15301 }]
+pre_any = [8335]
+objectives = []
+
+[[quest]]
+id = 8350
+name = "Completing the Delivery"
+level = 5
+min_level = 4
+races_mask = 690
+zone = 3431
+xp = 110
+quest_flags = 128
+starts = [{ npc = 15301 }]
+ends = [{ npc = 15433 }]
+objectives = []
+rewards = [{ item = 159, count = 1, choice = true }, { item = 4536, count = 1, choice = true }]
+
+[[quest]]
+id = 8463
+name = "Unstable Mana Crystals"
+level = 5
+min_level = 4
+races_mask = 690
+zone = 3430
+xp = 450
+quest_flags = 136
+starts = [{ npc = 15403 }]
+ends = [{ npc = 15403 }]
+objectives = [
+  { item = 20743, amount = 1 },
+]
+

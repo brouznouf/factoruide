@@ -1,0 +1,93 @@
+# The dwarf warrior's Defensive Stance quests: Vejrek and Bartleby's Mug both grant it.
+
+[[npc]]
+id = 294
+name = "Marshal Haggard"
+level = 20
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 84.61, y = 69.38, z = 54 }]
+
+[[npc]]
+id = 6089
+name = "Harry Burlguard"
+level = 50
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 74.26, y = 37.25, z = 103 }]
+
+[[npc]]
+id = 6090
+name = "Bartleby"
+level = 10
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 73.78, y = 36.33, z = 103 }]
+
+[[npc]]
+id = 6113
+name = "Vejrek"
+level = 11
+at = [{ zone = 1, x = 27.83, y = 57.96, z = 427 }]
+
+[[npc]]
+id = 6114
+name = "Muren Stormpike"
+level = 50
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1537, x = 70.77, y = 90.27, z = 510 }]
+
+[[item]]
+id = 6799
+name = "Vejrek's Head"
+level = 1
+class = 12
+drops = [{ npc = 6113, chance = 1.0 }]
+
+[[quest]]
+id = 1678
+name = "Vejrek"
+level = 11
+min_level = 10
+races_mask = 77
+classes_mask = 1
+zone = -81
+xp = 1100
+reward_spell = 71
+quest_flags = 8
+starts = [{ npc = 6114 }]
+ends = [{ npc = 6114 }]
+objectives = [
+  { item = 6799, amount = 1 },
+]
+
+[[quest]]
+id = 1665
+name = "Bartleby's Mug"
+level = 10
+min_level = 10
+races_mask = 77
+classes_mask = 1
+zone = -81
+xp = 420
+reward_spell = 71
+starts = [{ npc = 6090 }]
+ends = [{ npc = 6089 }]
+objectives = []
+
+[[quest]]
+id = 1666
+name = "Marshal Haggard"
+level = 10
+min_level = 10
+races_mask = 77
+classes_mask = 1
+zone = -81
+xp = 420
+quest_flags = 8
+starts = [{ npc = 6089 }]
+ends = [{ npc = 294 }]
+pre_any = [1665]
+objectives = []
+

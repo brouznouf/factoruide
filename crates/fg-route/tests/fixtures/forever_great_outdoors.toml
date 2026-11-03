@@ -1,0 +1,1739 @@
+# The Great Outdoors (95998, 96605) and Camping 101 of Skinning, Leatherworking and Mining (97936, 97934, 97935).
+
+[[npc]]
+id = 6
+name = "Kobold Vermin"
+level = 1
+max_level = 2
+at = [{ zone = 12, x = 46.93, y = 35.67, z = 90 }, { zone = 12, x = 47.22, y = 36.0, z = 86 }, { zone = 12, x = 47.57, y = 36.37, z = 83 }, { zone = 12, x = 47.58, y = 35.94, z = 83 }, { zone = 12, x = 47.62, y = 35.75, z = 84 }, { zone = 12, x = 47.65, y = 36.91, z = 84 }, { zone = 12, x = 47.67, y = 34.92, z = 86 }, { zone = 12, x = 47.86, y = 36.26, z = 83 }, { zone = 12, x = 47.95, y = 35.4, z = 83 }, { zone = 12, x = 48.1, y = 36.96, z = 83 }, { zone = 12, x = 48.37, y = 36.59, z = 82 }, { zone = 12, x = 48.52, y = 36.13, z = 81 }]
+
+[[npc]]
+id = 80
+name = "Kobold Laborer"
+level = 3
+max_level = 4
+at = [{ zone = 12, x = 47.42, y = 30.06, z = 87 }, { zone = 12, x = 47.5, y = 30.29, z = 87 }, { zone = 12, x = 47.79, y = 31.64, z = 92 }, { zone = 12, x = 47.81, y = 31.09, z = 91 }, { zone = 12, x = 48.04, y = 30.28, z = 87 }, { zone = 12, x = 48.21, y = 28.59, z = 88 }, { zone = 12, x = 48.35, y = 29.87, z = 86 }, { zone = 12, x = 48.37, y = 29.25, z = 88 }, { zone = 12, x = 48.37, y = 30.27, z = 87 }, { zone = 12, x = 48.47, y = 28.05, z = 90 }, { zone = 12, x = 48.5, y = 26.62, z = 89 }, { zone = 12, x = 48.59, y = 27.34, z = 90 }]
+
+[[npc]]
+id = 151
+name = "Brog Hamfist"
+level = 10
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 12, x = 43.96, y = 65.92, z = 57 }]
+
+[[npc]]
+id = 152
+name = "Brother Danil"
+level = 5
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 12, x = 47.49, y = 41.56, z = 82 }]
+
+[[npc]]
+id = 197
+name = "Marshal McBride"
+level = 20
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 12, x = 48.18, y = 42.1 }, { zone = 12, x = 48.78, y = 41.71, z = 82 }, { zone = 12, x = 48.92, y = 41.61, z = 82 }]
+
+[[npc]]
+id = 227
+name = "Mabel Solaj"
+level = 26
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 10, x = 74.03, y = 45.23 }, { zone = 10, x = 74.21, y = 44.81 }]
+
+[[npc]]
+id = 257
+name = "Kobold Worker"
+level = 3
+at = [{ zone = 12, x = 46.27, y = 32.79, z = 90 }, { zone = 12, x = 46.3, y = 32.2, z = 91 }, { zone = 12, x = 46.55, y = 32.47, z = 90 }, { zone = 12, x = 46.84, y = 33.43, z = 90 }, { zone = 12, x = 47.07, y = 33.66, z = 88 }, { zone = 12, x = 47.17, y = 35.12, z = 88 }, { zone = 12, x = 47.22, y = 32.64, z = 90 }, { zone = 12, x = 47.25, y = 36.78, z = 83 }, { zone = 12, x = 47.35, y = 32.27, z = 89 }, { zone = 12, x = 47.36, y = 33.18, z = 89 }, { zone = 12, x = 47.4, y = 33.97, z = 86 }, { zone = 12, x = 47.45, y = 35.78, z = 84 }]
+
+[[npc]]
+id = 472
+name = "Fedfennel"
+level = 12
+rank = 4
+at = [{ zone = 12, x = 66.48, y = 40.89, z = 69 }, { zone = 12, x = 67.94, y = 39.57, z = 72 }, { zone = 12, x = 68.13, y = 44.87, z = 70 }, { zone = 12, x = 69.12, y = 38.86, z = 76 }, { zone = 12, x = 71.2, y = 43.0 }, { zone = 12, x = 71.4, y = 42.0 }]
+
+[[npc]]
+id = 706
+name = "Frostmane Troll Whelp"
+level = 3
+max_level = 4
+at = [{ zone = 1, x = 20.21, y = 75.89, z = 391 }, { zone = 1, x = 20.39, y = 77.17, z = 391 }, { zone = 1, x = 20.78, y = 75.93, z = 387 }, { zone = 1, x = 20.83, y = 76.63, z = 386 }, { zone = 1, x = 20.84, y = 76.26, z = 386 }, { zone = 1, x = 21.0, y = 75.33, z = 386 }, { zone = 1, x = 21.03, y = 76.44, z = 386 }, { zone = 1, x = 21.29, y = 76.03, z = 387 }, { zone = 1, x = 21.39, y = 77.96, z = 390 }, { zone = 1, x = 21.42, y = 76.97, z = 391 }, { zone = 1, x = 22.09, y = 78.84, z = 394 }, { zone = 1, x = 22.31, y = 78.12, z = 392 }]
+
+[[npc]]
+id = 786
+name = "Grelin Whitebeard"
+level = 5
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 1, x = 24.98, y = 75.67, z = 386 }, { zone = 1, x = 25.04, y = 75.69, z = 386 }, { zone = 1, x = 25.06, y = 75.69, z = 386 }, { zone = 1, x = 25.08, y = 75.71, z = 386 }]
+
+[[npc]]
+id = 808
+name = "Grik'nir the Cold"
+level = 5
+at = [{ zone = 1, x = 30.48, y = 80.15, z = 370 }]
+
+[[npc]]
+id = 823
+name = "Deputy Willem"
+level = 1
+max_level = 18
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 47.83, y = 43.75 }, { zone = 12, x = 47.94, y = 42.95, z = 83 }, { zone = 12, x = 48.01, y = 42.87, z = 83 }, { zone = 12, x = 48.17, y = 42.94, z = 83 }]
+
+[[npc]]
+id = 1504
+name = "Young Night Web Spider"
+level = 2
+max_level = 3
+friendly_to = "AH"
+at = [{ zone = 85, x = 26.83, y = 56.16, z = 114 }, { zone = 85, x = 27.05, y = 56.63, z = 106 }, { zone = 85, x = 27.1, y = 59.18, z = 104 }, { zone = 85, x = 27.39, y = 57.95, z = 105 }, { zone = 85, x = 27.41, y = 55.93, z = 112 }, { zone = 85, x = 27.53, y = 58.86, z = 92 }, { zone = 85, x = 27.71, y = 59.6, z = 98 }, { zone = 85, x = 27.76, y = 56.98, z = 93 }, { zone = 85, x = 27.89, y = 55.17, z = 106 }, { zone = 85, x = 27.94, y = 60.46, z = 106 }, { zone = 85, x = 28.1, y = 59.16, z = 87 }, { zone = 85, x = 28.16, y = 59.83, z = 102 }]
+
+[[npc]]
+id = 1505
+name = "Night Web Spider"
+level = 3
+max_level = 4
+at = [{ zone = 85, x = 23.16, y = 59.64, z = 100 }, { zone = 85, x = 23.26, y = 59.94, z = 100 }, { zone = 85, x = 23.41, y = 58.93, z = 101 }, { zone = 85, x = 23.48, y = 59.11, z = 101 }, { zone = 85, x = 23.48, y = 60.25, z = 100 }, { zone = 85, x = 23.56, y = 58.3, z = 102 }, { zone = 85, x = 23.74, y = 58.43, z = 97 }, { zone = 85, x = 23.97, y = 58.43, z = 99 }, { zone = 85, x = 23.97, y = 60.61, z = 103 }, { zone = 85, x = 24.18, y = 60.73, z = 104 }, { zone = 85, x = 24.48, y = 59.71, z = 108 }, { zone = 85, x = 24.48, y = 60.64, z = 105 }]
+
+[[npc]]
+id = 1506
+name = "Scarlet Convert"
+level = 3
+at = [{ zone = 85, x = 35.94, y = 68.59, z = 95 }, { zone = 85, x = 36.25, y = 67.16, z = 79 }, { zone = 85, x = 36.47, y = 68.37, z = 92 }, { zone = 85, x = 36.47, y = 69.43, z = 99 }, { zone = 85, x = 36.59, y = 65.58, z = 76 }, { zone = 85, x = 36.66, y = 68.63, z = 90 }, { zone = 85, x = 36.86, y = 69.95, z = 104 }, { zone = 85, x = 36.88, y = 63.01, z = 68 }, { zone = 85, x = 36.92, y = 66.42, z = 74 }, { zone = 85, x = 36.96, y = 70.87, z = 119 }, { zone = 85, x = 37.0, y = 65.2, z = 70 }, { zone = 85, x = 37.01, y = 67.28, z = 84 }]
+
+[[npc]]
+id = 1507
+name = "Scarlet Initiate"
+level = 3
+max_level = 4
+at = [{ zone = 85, x = 35.94, y = 68.59, z = 95 }, { zone = 85, x = 36.25, y = 67.16, z = 79 }, { zone = 85, x = 36.47, y = 68.37, z = 92 }, { zone = 85, x = 36.47, y = 69.43, z = 99 }, { zone = 85, x = 36.59, y = 65.58, z = 76 }, { zone = 85, x = 36.66, y = 68.63, z = 90 }, { zone = 85, x = 36.86, y = 69.95, z = 104 }, { zone = 85, x = 36.88, y = 63.01, z = 68 }, { zone = 85, x = 36.92, y = 66.42, z = 74 }, { zone = 85, x = 36.96, y = 70.87, z = 119 }, { zone = 85, x = 37.0, y = 65.2, z = 70 }, { zone = 85, x = 37.01, y = 67.28, z = 84 }]
+
+[[npc]]
+id = 1508
+name = "Young Scavenger"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 85, x = 28.85, y = 64.68, z = 95 }, { zone = 85, x = 28.93, y = 68.22, z = 119 }, { zone = 85, x = 29.4, y = 65.67, z = 94 }, { zone = 85, x = 29.42, y = 67.23, z = 106 }, { zone = 85, x = 29.47, y = 61.88, z = 80 }, { zone = 85, x = 30.09, y = 62.92, z = 78 }, { zone = 85, x = 30.15, y = 63.98, z = 83 }, { zone = 85, x = 30.77, y = 60.78, z = 73 }, { zone = 85, x = 30.91, y = 62.15, z = 79 }, { zone = 85, x = 31.04, y = 55.61, z = 86 }, { zone = 85, x = 31.44, y = 58.43, z = 71 }, { zone = 85, x = 31.9, y = 59.63, z = 71 }]
+
+[[npc]]
+id = 1509
+name = "Ragged Scavenger"
+level = 2
+max_level = 3
+friendly_to = "AH"
+at = [{ zone = 85, x = 34.47, y = 56.83, z = 67 }, { zone = 85, x = 34.56, y = 62.55, z = 80 }, { zone = 85, x = 34.56, y = 65.18, z = 84 }, { zone = 85, x = 34.57, y = 58.86, z = 67 }, { zone = 85, x = 35.07, y = 57.41, z = 63 }, { zone = 85, x = 35.6, y = 65.78, z = 81 }, { zone = 85, x = 35.66, y = 57.25, z = 62 }, { zone = 85, x = 35.68, y = 59.48, z = 65 }, { zone = 85, x = 35.7, y = 59.41, z = 65 }, { zone = 85, x = 35.7, y = 62.32, z = 68 }, { zone = 85, x = 35.9, y = 55.99, z = 71 }, { zone = 85, x = 36.5, y = 63.58, z = 69 }]
+
+[[npc]]
+id = 1512
+name = "Duskbat"
+level = 1
+max_level = 2
+friendly_to = "AH"
+at = [{ zone = 85, x = 27.78, y = 63.56, z = 117 }, { zone = 85, x = 27.85, y = 67.42, z = 133 }, { zone = 85, x = 27.9, y = 64.82, z = 117 }, { zone = 85, x = 28.3, y = 63.63, z = 95 }, { zone = 85, x = 28.32, y = 63.92, z = 96 }, { zone = 85, x = 28.37, y = 62.56, z = 114 }, { zone = 85, x = 28.61, y = 69.07, z = 140 }, { zone = 85, x = 29.03, y = 67.83, z = 114 }, { zone = 85, x = 29.14, y = 66.71, z = 103 }, { zone = 85, x = 29.3, y = 69.17, z = 127 }, { zone = 85, x = 29.37, y = 72.48, z = 149 }, { zone = 85, x = 29.46, y = 61.04, z = 79 }]
+
+[[npc]]
+id = 1513
+name = "Mangy Duskbat"
+level = 3
+max_level = 4
+friendly_to = "AH"
+at = [{ zone = 85, x = 33.91, y = 61.73, z = 86 }, { zone = 85, x = 34.05, y = 57.34, z = 68 }, { zone = 85, x = 34.08, y = 65.37, z = 88 }, { zone = 85, x = 34.43, y = 59.56, z = 68 }, { zone = 85, x = 34.89, y = 66.77, z = 86 }, { zone = 85, x = 34.93, y = 61.38, z = 72 }, { zone = 85, x = 35.1, y = 66.2, z = 80 }, { zone = 85, x = 35.13, y = 58.97, z = 67 }, { zone = 85, x = 35.18, y = 56.74, z = 67 }, { zone = 85, x = 35.23, y = 64.69, z = 75 }, { zone = 85, x = 35.41, y = 62.98, z = 68 }, { zone = 85, x = 35.62, y = 58.26, z = 62 }]
+
+[[npc]]
+id = 1570
+name = "Executor Arren"
+level = 5
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 32.15, y = 66.01, z = 95 }]
+
+[[npc]]
+id = 1660
+name = "Scarlet Bodyguard"
+level = 8
+at = [{ zone = 85, x = 79.44, y = 25.12, z = 127 }, { zone = 85, x = 79.46, y = 25.25, z = 127 }]
+
+[[npc]]
+id = 1661
+name = "Novice Elreth"
+level = 3
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 30.86, y = 66.05, z = 97 }]
+
+[[npc]]
+id = 1667
+name = "Meven Korgal"
+level = 5
+at = [{ zone = 85, x = 36.57, y = 68.54, z = 93 }]
+
+[[npc]]
+id = 1890
+name = "Rattlecage Skeleton"
+level = 2
+max_level = 3
+friendly_to = "AH"
+at = [{ zone = 85, x = 31.02, y = 60.8, z = 73 }, { zone = 85, x = 31.49, y = 60.3, z = 72 }, { zone = 85, x = 31.92, y = 61.66, z = 83 }, { zone = 85, x = 31.98, y = 61.04, z = 80 }, { zone = 85, x = 32.05, y = 60.09, z = 74 }, { zone = 85, x = 32.2, y = 61.74, z = 80 }, { zone = 85, x = 32.21, y = 59.25, z = 74 }, { zone = 85, x = 32.7, y = 61.3 }, { zone = 85, x = 32.74, y = 60.47, z = 79 }, { zone = 85, x = 32.91, y = 61.62, z = 87 }, { zone = 85, x = 32.98, y = 63.0, z = 90 }, { zone = 85, x = 33.06, y = 59.64, z = 78 }]
+
+[[npc]]
+id = 1911
+name = "Deeb"
+level = 12
+rank = 4
+at = [{ zone = 85, x = 57.4, y = 28.2 }, { zone = 85, x = 58.0, y = 29.6 }, { zone = 85, x = 58.6, y = 28.6 }, { zone = 85, x = 58.8, y = 27.2 }, { zone = 85, x = 59.6, y = 27.0 }, { zone = 85, x = 59.6, y = 28.6 }, { zone = 85, x = 63.29, y = 27.48, z = 0 }]
+
+[[npc]]
+id = 1965
+name = "Mountaineer Thalos"
+level = 15
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 33.48, y = 71.84, z = 428 }]
+
+[[npc]]
+id = 1986
+name = "Webwood Spider"
+level = 3
+max_level = 4
+at = [{ zone = 141, x = 55.52, y = 27.59, z = 1337 }, { zone = 141, x = 55.54, y = 27.65, z = 1337 }, { zone = 141, x = 55.69, y = 28.47, z = 1337 }, { zone = 141, x = 55.71, y = 25.14, z = 1335 }, { zone = 141, x = 55.72, y = 28.44, z = 1337 }, { zone = 141, x = 55.73, y = 25.22, z = 1335 }, { zone = 141, x = 55.77, y = 27.5, z = 1338 }, { zone = 141, x = 55.81, y = 27.22, z = 1339 }, { zone = 141, x = 55.85, y = 27.25, z = 1339 }, { zone = 141, x = 55.88, y = 27.09, z = 1339 }, { zone = 141, x = 55.94, y = 29.02, z = 1335 }, { zone = 141, x = 55.95, y = 26.2, z = 1327 }]
+
+[[npc]]
+id = 1987
+name = "Webwood Creeper UNUSED"
+level = 3
+max_level = 4
+at = []
+
+[[npc]]
+id = 2082
+name = "Gilshalan Windwalker"
+level = 9
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 141, x = 57.81, y = 41.65, z = 1319 }]
+
+[[npc]]
+id = 2952
+name = "Bristleback Quilboar"
+level = 3
+max_level = 4
+at = [{ zone = 215, x = 55.25, y = 81.37, z = 93 }, { zone = 215, x = 55.75, y = 81.41, z = 92 }, { zone = 215, x = 55.76, y = 78.56, z = 56 }, { zone = 215, x = 55.86, y = 79.77, z = 58 }, { zone = 215, x = 56.09, y = 78.38, z = 54 }, { zone = 215, x = 56.44, y = 83.92, z = 93 }, { zone = 215, x = 56.5, y = 83.31, z = 51 }, { zone = 215, x = 56.52, y = 78.5, z = 55 }, { zone = 215, x = 56.54, y = 78.72, z = 55 }, { zone = 215, x = 56.68, y = 79.52, z = 57 }, { zone = 215, x = 56.8, y = 77.44, z = 54 }, { zone = 215, x = 56.85, y = 79.26, z = 56 }]
+
+[[npc]]
+id = 2953
+name = "Bristleback Shaman"
+level = 3
+max_level = 4
+at = [{ zone = 215, x = 56.61, y = 78.3, z = 55 }, { zone = 215, x = 56.7, y = 76.14, z = 57 }, { zone = 215, x = 57.06, y = 76.0, z = 56 }, { zone = 215, x = 57.17, y = 76.64, z = 55 }, { zone = 215, x = 58.41, y = 76.65, z = 89 }, { zone = 215, x = 58.55, y = 76.46, z = 89 }, { zone = 215, x = 59.83, y = 82.33, z = 86 }, { zone = 215, x = 60.14, y = 76.82, z = 70 }, { zone = 215, x = 60.28, y = 79.8, z = 67 }, { zone = 215, x = 60.33, y = 80.85, z = 79 }, { zone = 215, x = 61.05, y = 78.16, z = 72 }, { zone = 215, x = 61.28, y = 78.76, z = 72 }]
+
+[[npc]]
+id = 2981
+name = "Chief Hawkwind"
+level = 36
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 215, x = 43.89, y = 76.66, z = 55 }]
+
+[[npc]]
+id = 2982
+name = "Seer Graytongue"
+level = 8
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 42.54, y = 90.13, z = 103 }]
+
+[[npc]]
+id = 2991
+name = "Greatmother Hawkwind"
+level = 9
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 48.77, y = 80.92, z = 27 }]
+
+[[npc]]
+id = 3001
+name = "Brek Stonehoof"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 34.37, y = 57.9, z = 134 }]
+
+[[npc]]
+id = 3069
+name = "Chaw Stronghide"
+level = 23
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 215, x = 44.94, y = 61.46, z = -9 }]
+
+[[npc]]
+id = 3101
+name = "Vile Familiar"
+level = 3
+max_level = 4
+at = [{ zone = 14, x = 42.65, y = 54.63, z = 55 }, { zone = 14, x = 42.75, y = 52.7, z = 62 }, { zone = 14, x = 42.76, y = 52.71, z = 62 }, { zone = 14, x = 42.81, y = 52.53, z = 64 }, { zone = 14, x = 42.99, y = 53.56, z = 54 }, { zone = 14, x = 43.18, y = 54.71 }, { zone = 14, x = 43.22, y = 54.32, z = 54 }, { zone = 14, x = 43.26, y = 54.1, z = 54 }, { zone = 14, x = 43.3, y = 57.67 }, { zone = 14, x = 43.45, y = 55.54, z = 61 }, { zone = 14, x = 43.57, y = 53.47, z = 52 }, { zone = 14, x = 43.68, y = 57.24 }]
+
+[[npc]]
+id = 3145
+name = "Zureetha Fargaze"
+level = 12
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 14, x = 42.62, y = 68.63 }, { zone = 14, x = 42.75, y = 68.98, z = 38 }, { zone = 14, x = 42.82, y = 69.08, z = 38 }, { zone = 14, x = 42.82, y = 69.09, z = 38 }, { zone = 14, x = 42.83, y = 69.04, z = 38 }, { zone = 14, x = 42.85, y = 69.07, z = 38 }, { zone = 14, x = 42.85, y = 69.15, z = 38 }, { zone = 14, x = 42.87, y = 69.09, z = 38 }, { zone = 14, x = 42.88, y = 69.1, z = 38 }]
+
+[[npc]]
+id = 3183
+name = "Yarrog Baneshadow"
+level = 5
+at = [{ zone = 14, x = 42.71, y = 52.95, z = 62 }, { zone = 14, x = 42.86, y = 53.32 }, { zone = 14, x = 42.99, y = 53.77 }, { zone = 14, x = 43.12, y = 55.24 }, { zone = 14, x = 43.26, y = 54.1 }]
+
+[[npc]]
+id = 3514
+name = "Tenaron Stormgrip"
+level = 10
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 141, x = 59.06, y = 39.45, z = 1397 }]
+
+[[npc]]
+id = 3539
+name = "Ott"
+level = 32
+npc_flags = 16388
+friendly_to = "H"
+at = [{ zone = 267, x = 60.43, y = 26.18, z = 57 }]
+
+[[npc]]
+id = 3577
+name = "Dalaran Brewmaster"
+level = 15
+max_level = 16
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 130, x = 62.61, y = 65.05, z = 64 }]
+
+[[npc]]
+id = 5667
+name = "Venya Marthand"
+level = 10
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 30.98, y = 66.41, z = 97 }]
+
+[[npc]]
+id = 5765
+name = "Ruzan"
+level = 10
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 14, x = 42.52, y = 68.74, z = 38 }, { zone = 14, x = 42.58, y = 68.89, z = 38 }, { zone = 14, x = 42.58, y = 68.91, z = 38 }, { zone = 14, x = 42.59, y = 69.0, z = 38 }, { zone = 14, x = 42.6, y = 68.94, z = 38 }, { zone = 14, x = 42.61, y = 68.94, z = 38 }, { zone = 14, x = 42.62, y = 68.95, z = 38 }, { zone = 14, x = 42.63, y = 68.96, z = 38 }, { zone = 14, x = 42.64, y = 68.94, z = 38 }, { zone = 14, x = 42.67, y = 68.84, z = 38 }, { zone = 14, x = 42.7, y = 68.73 }, { zone = 14, x = 42.81, y = 69.04 }]
+
+[[npc]]
+id = 6290
+name = "Yonn Deepcut"
+level = 8
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 215, x = 44.97, y = 61.4, z = -9 }]
+
+[[npc]]
+id = 10478
+name = "Splintered Skeleton"
+level = 59
+max_level = 60
+rank = 1
+at = [{ zone = 2057, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 249363
+name = "Yala Windwatcher"
+level = 5
+friendly_to = "AH"
+at = [{ zone = 16593, x = 47.25, y = 21.98 }]
+
+[[npc]]
+id = 250873
+name = "Juvenile Vuldren"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 16593, x = 41.13, y = 28.27 }, { zone = 16593, x = 41.55, y = 26.47 }, { zone = 16593, x = 41.88, y = 28.31 }, { zone = 16593, x = 42.46, y = 27.8 }, { zone = 16593, x = 43.21, y = 26.57 }, { zone = 16593, x = 43.23, y = 27.38 }, { zone = 16593, x = 43.29, y = 24.69 }, { zone = 16593, x = 43.43, y = 22.63 }, { zone = 16593, x = 43.43, y = 27.86 }, { zone = 16593, x = 43.47, y = 25.42 }, { zone = 16593, x = 43.49, y = 21.31 }, { zone = 16593, x = 43.51, y = 25.96 }]
+
+[[npc]]
+id = 250937
+name = "Ursera Scavenger"
+level = 4
+at = [{ zone = 16593, x = 35.52, y = 26.22 }, { zone = 16593, x = 35.62, y = 24.23 }, { zone = 16593, x = 35.7, y = 25.15 }, { zone = 16593, x = 35.9, y = 23.27 }, { zone = 16593, x = 36.0, y = 26.38 }, { zone = 16593, x = 36.08, y = 25.75 }, { zone = 16593, x = 36.42, y = 22.74 }, { zone = 16593, x = 36.68, y = 23.93 }, { zone = 16593, x = 37.07, y = 24.37 }, { zone = 16593, x = 37.4, y = 25.33 }, { zone = 16593, x = 37.47, y = 24.74 }, { zone = 16593, x = 37.56, y = 23.82 }]
+
+[[npc]]
+id = 251115
+name = "Urs'anah"
+level = 5
+at = [{ zone = 16593, x = 35.65, y = 26.07 }]
+
+[[npc]]
+id = 251143
+name = "Roiling Winds"
+level = 2
+max_level = 3
+at = [{ zone = 16593, x = 44.59, y = 21.54 }, { zone = 16593, x = 44.97, y = 20.45 }, { zone = 16593, x = 45.14, y = 19.83 }, { zone = 16593, x = 45.38, y = 19.29 }, { zone = 16593, x = 45.46, y = 20.61 }, { zone = 16593, x = 45.64, y = 22.32 }, { zone = 16593, x = 46.0, y = 19.16 }, { zone = 16593, x = 46.51, y = 18.1 }, { zone = 16593, x = 46.51, y = 18.66 }, { zone = 16593, x = 46.68, y = 19.44 }, { zone = 16593, x = 46.75, y = 20.09 }, { zone = 16593, x = 46.86, y = 20.81 }]
+
+[[npc]]
+id = 251160
+name = "Al'Aketh Convert"
+level = 2
+max_level = 3
+at = [{ zone = 16593, x = 45.41, y = 19.38 }, { zone = 16593, x = 45.83, y = 18.97 }, { zone = 16593, x = 46.41, y = 18.58 }, { zone = 16593, x = 46.5, y = 19.15 }, { zone = 16593, x = 46.57, y = 17.98 }, { zone = 16593, x = 46.73, y = 19.62 }, { zone = 16593, x = 46.78, y = 20.32 }, { zone = 16593, x = 46.94, y = 20.83 }, { zone = 16593, x = 47.18, y = 18.31 }, { zone = 16593, x = 47.19, y = 21.63 }, { zone = 16593, x = 47.26, y = 18.89 }, { zone = 16593, x = 47.54, y = 20.43 }]
+
+[[npc]]
+id = 251361
+name = "Rorian the Dayseeker"
+level = 20
+friendly_to = "AH"
+at = [{ zone = 16593, x = 42.05, y = 23.49 }]
+
+[[npc]]
+id = 251362
+name = "Ailee Farheart"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 16593, x = 42.81, y = 23.37 }]
+
+[[npc]]
+id = 251366
+name = "Aetheen of the Gales"
+level = 10
+friendly_to = "AH"
+at = [{ zone = 16593, x = 42.76, y = 23.66 }]
+
+[[npc]]
+id = 263399
+name = "Sam Sarsaparilla"
+level = 20
+friendly_to = "A"
+at = [{ zone = 12, x = 44.9, y = 63.36 }]
+
+[[npc]]
+id = 263664
+name = "Raan Wildwind"
+level = 12
+friendly_to = "AH"
+at = [{ zone = 16593, x = 41.66, y = 44.8 }]
+
+[[npc]]
+id = 265809
+name = "Brakk"
+level = 12
+friendly_to = "H"
+at = [{ zone = 14, x = 51.65, y = 48.76 }, { zone = 14, x = 51.98, y = 47.27 }, { zone = 14, x = 52.03, y = 47.37 }, { zone = 14, x = 52.04, y = 47.38 }, { zone = 14, x = 52.04, y = 47.48 }, { zone = 14, x = 52.06, y = 47.28 }, { zone = 14, x = 52.18, y = 47.14 }]
+
+[[npc]]
+id = 265810
+name = "Kaga Wildhoof"
+level = 12
+friendly_to = "H"
+at = [{ zone = 215, x = 46.16, y = 67.3 }]
+
+[[npc]]
+id = 265811
+name = "Lyreena Duskblade"
+level = 12
+friendly_to = "A"
+at = [{ zone = 141, x = 57.58, y = 56.64 }]
+
+[[npc]]
+id = 265812
+name = "Eleanor Shackleton"
+level = 12
+friendly_to = "H"
+at = [{ zone = 85, x = 57.28, y = 55.49 }]
+
+[[npc]]
+id = 265813
+name = "Eric Brighthammer"
+level = 12
+friendly_to = "A"
+at = [{ zone = 1, x = 46.7, y = 53.94 }]
+
+[[object]]
+id = 337
+name = "Water Pitcher"
+at = []
+
+[[object]]
+id = 2843
+name = "Battered Chest"
+at = [{ zone = 1, x = 20.66, y = 76.74 }, { zone = 1, x = 22.61, y = 80.11 }, { zone = 1, x = 22.62, y = 80.51 }]
+
+[[object]]
+id = 2907
+name = "Water Pitcher"
+at = [{ zone = 215, x = 48.91, y = 81.17 }, { zone = 215, x = 48.93, y = 81.1 }, { zone = 215, x = 49.04, y = 81.09 }]
+
+[[object]]
+id = 3658
+name = "Water Barrel"
+at = [{ zone = 1, x = 25.92, y = 51.03 }, { zone = 1, x = 26.54, y = 36.55 }, { zone = 1, x = 27.54, y = 36.45 }]
+
+[[object]]
+id = 4406
+name = "Webwood Eggs"
+at = [{ zone = 141, x = 56.67, y = 26.46 }, { zone = 141, x = 56.72, y = 26.51 }, { zone = 141, x = 56.79, y = 26.57 }]
+
+[[object]]
+id = 19549
+name = "Shadowglen Moonwell"
+at = [{ zone = 141, x = 59.95, y = 33.05 }]
+
+[[object]]
+id = 106318
+name = "Battered Chest"
+at = [{ zone = 1, x = 23.25, y = 54.26 }, { zone = 1, x = 23.45, y = 52.47 }, { zone = 1, x = 26.02, y = 51.14 }]
+
+[[object]]
+id = 460003
+name = "Basic Campfire"
+at = [{ zone = 1, x = 46.68, y = 53.84 }, { zone = 12, x = 44.94, y = 63.2 }, { zone = 14, x = 52.09, y = 47.39 }]
+
+[[object]]
+id = 654846
+name = "Lost Journal"
+at = [{ zone = 141, x = 59.07, y = 39.55 }]
+
+[[object]]
+id = 654925
+name = "Lost Journal"
+at = [{ zone = 14, x = 42.76, y = 69.17 }, { zone = 14, x = 42.79, y = 69.12 }]
+
+[[item]]
+id = 118
+name = "Minor Healing Potion"
+level = 5
+class = 0
+drops = [{ object = 106318, chance = 0.25 }, { npc = 1911, chance = 0.057 }, { npc = 472, chance = 0.054545 }]
+
+[[item]]
+id = 159
+name = "Refreshing Spring Water"
+level = 5
+class = 0
+drops = [{ npc = 3577, chance = 1.0 }, { object = 3658, chance = 1.0 }, { object = 2843, chance = 0.36 }, { vendor = 151 }, { vendor = 152 }, { vendor = 227 }]
+
+[[item]]
+id = 961
+name = "Healing Herb"
+level = 5
+class = 0
+
+[[item]]
+id = 1382
+name = "Rock Mace"
+level = 5
+class = 2
+drops = [{ npc = 10478, chance = 0.0002 }]
+
+[[item]]
+id = 1383
+name = "Stone Tomahawk"
+level = 5
+class = 2
+
+[[item]]
+id = 2004
+name = "Grelin Whitebeard's Journal"
+level = 1
+class = 12
+drops = [{ npc = 808, chance = 1.0 }]
+
+[[item]]
+id = 2047
+name = "Anvilmar Hand Axe"
+level = 5
+class = 2
+
+[[item]]
+id = 2048
+name = "Anvilmar Hammer"
+level = 5
+class = 2
+
+[[item]]
+id = 2137
+name = "Whittling Knife"
+level = 5
+class = 2
+
+[[item]]
+id = 2173
+name = "Old Leather Belt"
+level = 5
+class = 4
+
+[[item]]
+id = 2186
+name = "Outfitter Belt"
+level = 5
+class = 4
+
+[[item]]
+id = 2195
+name = "Anvilmar Knife"
+level = 5
+class = 2
+
+[[item]]
+id = 2619
+name = "Grelin's Report"
+level = 1
+class = 12
+
+[[item]]
+id = 2691
+name = "Outfitter Boots"
+level = 5
+class = 4
+
+[[item]]
+id = 2885
+name = "Scarlet Crusade Documents"
+level = 1
+class = 12
+drops = [{ npc = 1667, chance = 1.0 }]
+
+[[item]]
+id = 3264
+name = "Duskbat Wing"
+level = 1
+class = 12
+drops = [{ npc = 1512, chance = 0.75 }, { npc = 1513, chance = 0.75 }, { npc = 1660, chance = 0.003552 }]
+
+[[item]]
+id = 3265
+name = "Scavenger Paw"
+level = 1
+class = 12
+drops = [{ npc = 1508, chance = 0.75 }, { npc = 1509, chance = 0.75 }]
+
+[[item]]
+id = 3266
+name = "Scarlet Armband"
+level = 1
+class = 12
+drops = [{ npc = 1506, chance = 0.8 }, { npc = 1507, chance = 0.8 }, { npc = 1667, chance = 0.8 }]
+
+[[item]]
+id = 3267
+name = "Forsaken Shortsword"
+level = 5
+class = 2
+
+[[item]]
+id = 3268
+name = "Forsaken Dagger"
+level = 5
+class = 2
+
+[[item]]
+id = 3269
+name = "Forsaken Maul"
+level = 5
+class = 2
+
+[[item]]
+id = 3270
+name = "Flax Vest"
+level = 5
+class = 4
+
+[[item]]
+id = 3272
+name = "Zombie Skin Leggings"
+level = 5
+class = 4
+
+[[item]]
+id = 3273
+name = "Rugged Mail Vest"
+level = 5
+class = 4
+
+[[item]]
+id = 3276
+name = "Deathguard Buckler"
+level = 5
+class = 4
+
+[[item]]
+id = 3277
+name = "Executor Staff"
+level = 5
+class = 2
+drops = [{ vendor = 3539 }]
+
+[[item]]
+id = 4755
+name = "Water Pitcher"
+level = 1
+class = 12
+drops = [{ object = 337, chance = 1.0 }, { object = 2907, chance = 1.0 }]
+
+[[item]]
+id = 4770
+name = "Bristleback Belt"
+level = 1
+class = 12
+drops = [{ npc = 2952, chance = 0.6 }, { npc = 2953, chance = 0.6 }]
+
+[[item]]
+id = 4859
+name = "Burning Blade Medallion"
+level = 1
+class = 12
+drops = [{ npc = 3183, chance = 1.0 }]
+
+[[item]]
+id = 4907
+name = "Woodland Tunic"
+level = 5
+class = 4
+
+[[item]]
+id = 4921
+name = "Dust-covered Leggings"
+level = 5
+class = 4
+
+[[item]]
+id = 4922
+name = "Jagged Chain Vest"
+level = 5
+class = 4
+
+[[item]]
+id = 4923
+name = "Primitive Hatchet"
+level = 5
+class = 2
+
+[[item]]
+id = 4924
+name = "Primitive Club"
+level = 5
+class = 2
+
+[[item]]
+id = 4925
+name = "Primitive Hand Blade"
+level = 5
+class = 2
+
+[[item]]
+id = 5166
+name = "Webwood Venom Sac"
+level = 1
+class = 12
+drops = [{ npc = 1986, chance = 0.4369175 }, { npc = 1987, chance = 0.4369175 }]
+
+[[item]]
+id = 5167
+name = "Webwood Egg"
+level = 1
+class = 12
+drops = [{ object = 4406, chance = 1.0 }]
+
+[[item]]
+id = 5184
+name = "Filled Crystal Phial"
+level = 1
+class = 12
+drops = [{ object = 19549 }]
+
+[[item]]
+id = 5185
+name = "Crystal Phial"
+level = 1
+class = 12
+
+[[item]]
+id = 5392
+name = "Thistlewood Dagger"
+level = 5
+class = 2
+
+[[item]]
+id = 5393
+name = "Thistlewood Staff"
+level = 5
+class = 2
+
+[[item]]
+id = 5395
+name = "Woodland Shield"
+level = 5
+class = 4
+
+[[item]]
+id = 5581
+name = "Smooth Walking Staff"
+level = 5
+class = 2
+
+[[item]]
+id = 5586
+name = "Thistlewood Blade"
+level = 5
+class = 2
+
+[[item]]
+id = 5761
+name = "Anvilmar Sledge"
+level = 5
+class = 2
+
+[[item]]
+id = 5776
+name = "Elder's Cane"
+level = 5
+class = 2
+
+[[item]]
+id = 5777
+name = "Brave's Axe"
+level = 5
+class = 2
+
+[[item]]
+id = 5778
+name = "Primitive Walking Stick"
+level = 5
+class = 2
+
+[[item]]
+id = 5779
+name = "Forsaken Bastard Sword"
+level = 5
+class = 2
+
+[[item]]
+id = 6060
+name = "Flax Bracers"
+level = 5
+class = 4
+
+[[item]]
+id = 6176
+name = "Dwarven Kite Shield"
+level = 5
+class = 4
+
+[[item]]
+id = 6281
+name = "Rattlecage Skull"
+level = 1
+class = 12
+drops = [{ npc = 1890, chance = 0.8 }]
+
+[[item]]
+id = 6487
+name = "Vile Familiar Head"
+level = 1
+class = 12
+drops = [{ npc = 3101, chance = 0.8 }]
+
+[[item]]
+id = 6713
+name = "Ripped Pants"
+level = 5
+class = 4
+
+[[item]]
+id = 10544
+name = "Thistlewood Maul"
+level = 5
+class = 2
+
+[[item]]
+id = 11189
+name = "Woodland Robes"
+level = 5
+class = 4
+
+[[item]]
+id = 11192
+name = "Outfitter Gloves"
+level = 5
+class = 4
+
+[[item]]
+id = 247840
+name = "Mining for Dummies"
+level = 1
+class = 0
+
+[[item]]
+id = 247841
+name = "Wild Harvest"
+level = 1
+class = 0
+
+[[item]]
+id = 247846
+name = "Pelt Collecting for Beginners"
+level = 1
+class = 0
+
+[[item]]
+id = 252665
+name = "Head of Urs'anah"
+level = 1
+class = 12
+drops = [{ npc = 251115 }]
+
+[[item]]
+id = 257276
+name = "Peacekeeper's Pickhammer"
+level = 5
+class = 2
+
+[[item]]
+id = 257280
+name = "Vuldren Hide Bracers"
+level = 5
+class = 4
+
+[[item]]
+id = 257281
+name = "Fur-Lined Shoes"
+level = 5
+class = 4
+
+[[item]]
+id = 257282
+name = "Novice's Quarterstaff"
+level = 5
+class = 2
+
+[[item]]
+id = 257283
+name = "Scout Ranger's Dagger"
+level = 5
+class = 2
+
+[[item]]
+id = 258882
+name = "Worn Greatsword"
+level = 5
+class = 2
+
+[[item]]
+id = 264908
+name = "Ancient Heirloom"
+level = 1
+class = 4
+
+[[item]]
+id = 273879
+name = "Refined Shortbow"
+level = 5
+class = 2
+
+[[item]]
+id = 275019
+name = "Supply Bundle"
+level = 1
+class = 12
+
+[[item]]
+id = 275022
+name = "Lost Journal"
+level = 1
+class = 12
+
+[[quest]]
+id = 7
+name = "Kobold Camp Cleanup"
+level = 2
+races_mask = 4294967373
+zone = 9
+xp = 170
+quest_flags = 8
+objectives_text = "Kill 10 Kobold Vermin, then return to Marshal McBride."
+requirements = "[\"Kobold Vermin x 10\"]"
+starts = [{ npc = 197 }]
+ends = [{ npc = 197 }]
+pre_any = [783]
+objectives = [
+  { creature = 6, amount = 10 },
+]
+
+[[quest]]
+id = 15
+name = "Investigate Echo Ridge"
+level = 3
+races_mask = 4294967373
+zone = 9
+xp = 250
+quest_flags = 8
+objectives_text = "Kill 10 Kobold Workers, then report back to Marshal McBride."
+requirements = "[\"Kobold Worker x 10\"]"
+starts = [{ npc = 197 }]
+ends = [{ npc = 197 }]
+pre_any = [7]
+objectives = [
+  { creature = 257, amount = 10 },
+]
+
+[[quest]]
+id = 21
+name = "Skirmish at Echo Ridge"
+level = 5
+races_mask = 4294967373
+zone = 9
+xp = 450
+quest_flags = 8
+objectives_text = "Kill 12 Kobold Laborers, then return to Marshal McBride at Northshire Abbey."
+requirements = "[\"Kobold Laborer x 12\"]"
+starts = [{ npc = 197 }]
+ends = [{ npc = 197 }]
+pre_any = [15]
+objectives = [
+  { creature = 80, amount = 12 },
+]
+rewards = [{ item = 2186, count = 1, choice = true }, { item = 2691, count = 1, choice = true }, { item = 11192, count = 1, choice = true }]
+
+[[quest]]
+id = 182
+name = "The Troll Cave"
+level = 4
+races_mask = 4294967373
+zone = 132
+xp = 360
+quest_flags = 8
+objectives_text = "Grelin Whitebeard would like you to kill 14 Frostmane Troll Whelps."
+requirements = "[\"Frostmane Troll Whelp x 14\"]"
+starts = [{ npc = 786 }]
+ends = [{ npc = 786 }]
+objectives = [
+  { creature = 706, amount = 14 },
+]
+rewards = [{ item = 961, count = 3 }, { item = 2047, count = 1, choice = true }, { item = 2048, count = 1, choice = true }, { item = 2195, count = 1, choice = true }, { item = 5761, count = 1, choice = true }]
+
+[[quest]]
+id = 218
+name = "The Stolen Journal"
+level = 5
+races_mask = 4294967373
+zone = 132
+xp = 550
+quest_flags = 8
+objectives_text = "Grelin Whitebeard wants you to kill Grik'nir the Cold, and retrieve his journal."
+requirements = "[\"Grelin Whitebeard's Journal\"]"
+starts = [{ npc = 786 }]
+ends = [{ npc = 786 }]
+pre_any = [182]
+objectives = [
+  { item = 2004, amount = 1 },
+]
+rewards = [{ item = 5581, count = 1, choice = true }, { item = 6176, count = 1, choice = true }]
+
+[[quest]]
+id = 282
+name = "Senir's Observations"
+level = 5
+races_mask = 4294967373
+zone = 132
+xp = 340
+source_item = 2619
+objectives_text = "Speak with Mountaineer Thalos."
+starts = [{ npc = 786 }]
+ends = [{ npc = 1965 }]
+pre_any = [218]
+objectives = []
+
+[[quest]]
+id = 376
+name = "The Damned"
+level = 2
+min_level = 2
+races_mask = 8589934770
+zone = 154
+xp = 170
+quest_flags = 8
+objectives_text = "Novice Elreth requires 6 Scavenger Paws and 6 Duskbat Wings."
+requirements = "[\"Scavenger Paw x 6\",\"Duskbat Wing x 6\"]"
+starts = [{ npc = 1661 }]
+ends = [{ npc = 1661 }]
+objectives = [
+  { item = 3265, amount = 6 },
+  { item = 3264, amount = 6 },
+]
+rewards = [{ item = 2173, count = 1, choice = true }, { item = 6060, count = 1, choice = true }]
+
+[[quest]]
+id = 380
+name = "Night Web's Hollow"
+level = 4
+min_level = 2
+races_mask = 8589934770
+zone = 154
+xp = 360
+quest_flags = 8
+objectives_text = "Executor Arren wants you to kill 10 Young Night Web Spiders and 8 Night Web Spiders."
+requirements = "[\"Young Night Web Spider x 10\",\"Night Web Spider x 8\"]"
+starts = [{ npc = 1570 }]
+ends = [{ npc = 1570 }]
+pre_any = [376]
+objectives = [
+  { creature = 1504, amount = 10 },
+  { creature = 1505, amount = 8 },
+]
+rewards = [{ item = 3270, count = 1, choice = true }, { item = 3272, count = 1, choice = true }, { item = 3273, count = 1, choice = true }]
+
+[[quest]]
+id = 381
+name = "The Scarlet Crusade"
+level = 4
+min_level = 2
+races_mask = 8589934770
+zone = 154
+xp = 360
+quest_flags = 8
+objectives_text = "Bring Executor Arren 12 Scarlet Armbands from Scarlet Converts and Scarlet Initiates."
+requirements = "[\"Scarlet Armband x 12\"]"
+starts = [{ npc = 1570 }]
+ends = [{ npc = 1570 }]
+pre_any = [380]
+objectives = [
+  { item = 3266, amount = 12 },
+]
+rewards = [{ item = 159, count = 5 }, { item = 3267, count = 1, choice = true }, { item = 3268, count = 1, choice = true }, { item = 3269, count = 1, choice = true }, { item = 5779, count = 1, choice = true }]
+
+[[quest]]
+id = 382
+name = "The Red Messenger"
+level = 5
+min_level = 2
+races_mask = 8589934770
+zone = 154
+xp = 670
+quest_flags = 8
+objectives_text = "Kill Meven Korgal, the messenger, at the Crusader camp, then return any information you find to Executor Arren."
+requirements = "[\"Scarlet Crusade Documents\"]"
+starts = [{ npc = 1570 }]
+ends = [{ npc = 1570 }]
+pre_any = [381]
+objectives = [
+  { item = 2885, amount = 1 },
+]
+rewards = [{ item = 3276, count = 1, choice = true }, { item = 3277, count = 1, choice = true }]
+
+[[quest]]
+id = 752
+name = "A Humble Task"
+level = 2
+races_mask = 8589934770
+zone = 220
+xp = 85
+quest_flags = 8
+objectives_text = "Chief Hawkwind wants you to search for his mother near the water well to the southeast of Camp Narache."
+starts = [{ npc = 2981 }]
+ends = [{ npc = 2991 }]
+objectives = []
+rewards = [{ item = 247840, count = 1, choice = true }, { item = 247841, count = 1, choice = true }, { item = 247846, count = 1, choice = true }]
+
+[[quest]]
+id = 753
+name = "A Humble Task"
+level = 3
+races_mask = 8589934770
+zone = 220
+xp = 250
+objectives_text = "Take a Water Pitcher from the water well.\n\nReturn the pitcher to Chief Hawkwind in Camp Narache which is northwest from the water well."
+requirements = "[\"Water Pitcher\"]"
+starts = [{ npc = 2991 }]
+ends = [{ npc = 2981 }]
+objectives = [
+  { item = 4755, amount = 1 },
+]
+
+[[quest]]
+id = 755
+name = "Rites of the Earthmother"
+level = 3
+races_mask = 8589934770
+zone = 220
+xp = 250
+quest_flags = 8
+objectives_text = "Travel to Seer Graytongue who lives in the hills directly south of Camp Narache."
+starts = [{ npc = 2981 }]
+ends = [{ npc = 2982 }]
+pre_any = [753]
+objectives = []
+
+[[quest]]
+id = 757
+name = "Rite of Strength"
+level = 4
+races_mask = 8589934770
+zone = 220
+xp = 445
+quest_flags = 8
+objectives_text = "Kill Bristlebacks in Brambleblade Ravine and bring 12 Bristleback Belts to Chief Hawkwind in Camp Narache."
+requirements = "[\"Bristleback Belt x 12\"]"
+starts = [{ npc = 2982 }]
+ends = [{ npc = 2981 }]
+pre_any = [755]
+objectives = [
+  { item = 4770, amount = 12 },
+]
+rewards = [{ item = 1382, count = 1, choice = true }, { item = 1383, count = 1, choice = true }, { item = 2137, count = 1, choice = true }, { item = 5776, count = 1, choice = true }, { item = 5777, count = 1, choice = true }]
+
+[[quest]]
+id = 783
+name = "A Threat Within"
+level = 1
+races_mask = 4294967373
+zone = 9
+xp = 40
+quest_flags = 8
+objectives_text = "Speak with Marshal McBride."
+starts = [{ npc = 823 }]
+ends = [{ npc = 197 }]
+objectives = []
+
+[[quest]]
+id = 792
+name = "Vile Familiars"
+level = 4
+min_level = 2
+races_mask = 8589934770
+classes_mask = 1247
+zone = 363
+xp = 450
+quest_flags = 8
+objectives_text = "Kill 12 Vile Familiars.\n\nReturn to Zureetha Fargaze outside the Den."
+requirements = "[\"Vile Familiar x 12\"]"
+starts = [{ npc = 3145 }]
+ends = [{ npc = 3145 }]
+objectives = [
+  { creature = 3101, amount = 12 },
+]
+rewards = [{ item = 4923, count = 1, choice = true }, { item = 4924, count = 1, choice = true }, { item = 4925, count = 1, choice = true }, { item = 5778, count = 1, choice = true }]
+
+[[quest]]
+id = 794
+name = "Burning Blade Medallion"
+level = 5
+races_mask = 8589934770
+zone = 363
+xp = 675
+quest_flags = 8
+objectives_text = "Bring the Burning Blade Medallion to Zureetha Fargaze, outside The Den."
+requirements = "[\"Burning Blade Medallion\"]"
+starts = [{ npc = 3145 }]
+ends = [{ npc = 3145 }]
+pre_any = [792, 1499]
+objectives = [
+  { item = 4859, amount = 1 },
+]
+rewards = [{ item = 118, count = 1 }, { item = 4921, count = 1, choice = true }, { item = 4922, count = 1, choice = true }, { item = 6713, count = 1, choice = true }]
+
+[[quest]]
+id = 916
+name = "Webwood Venom"
+level = 4
+min_level = 3
+races_mask = 4294967373
+zone = 188
+xp = 355
+quest_flags = 8
+objectives_text = "Bring 10 Webwood Venom Sacs to Gilshalan Windwalker at Aldrassil."
+requirements = "[\"Webwood Venom Sac x 10\"]"
+starts = [{ npc = 2082 }]
+ends = [{ npc = 2082 }]
+objectives = [
+  { item = 5166, amount = 10 },
+]
+rewards = [{ item = 5392, count = 1, choice = true }, { item = 5393, count = 1, choice = true }, { item = 5586, count = 1, choice = true }, { item = 10544, count = 1, choice = true }]
+
+[[quest]]
+id = 917
+name = "Webwood Egg"
+level = 5
+races_mask = 4294967373
+zone = 188
+xp = 560
+quest_flags = 8
+objectives_text = "Bring a Webwood Egg to Gilshalan in Aldrassil."
+requirements = "[\"Webwood Egg\"]"
+starts = [{ npc = 2082 }]
+ends = [{ npc = 2082 }]
+pre_any = [916]
+objectives = [
+  { item = 5167, amount = 1 },
+]
+rewards = [{ item = 4907, count = 1, choice = true }, { item = 5395, count = 1, choice = true }, { item = 11189, count = 1, choice = true }]
+
+[[quest]]
+id = 920
+name = "Tenaron's Summons"
+level = 5
+races_mask = 4294967373
+zone = 188
+xp = 45
+quest_flags = 8
+objectives_text = "Speak with Tenaron Stormgrip atop Aldrassil in Shadowglen."
+starts = [{ npc = 2082 }]
+ends = [{ npc = 3514 }]
+pre_any = [917]
+objectives = []
+
+[[quest]]
+id = 921
+name = "Crown of the Earth"
+level = 5
+races_mask = 4294967373
+zone = 188
+xp = 335
+source_item = 5185
+objectives_text = "Fill the Crystal Phial and bring it back to Tenaron Stormgrip atop Aldrassil."
+requirements = "[\"Filled Crystal Phial\"]"
+starts = [{ npc = 3514 }]
+ends = [{ npc = 3514 }]
+pre_any = [920]
+objectives = [
+  { item = 5184, amount = 1 },
+]
+
+[[quest]]
+id = 1470
+name = "Piercing the Veil"
+level = 3
+races_mask = 8589934770
+classes_mask = 256
+zone = -61
+xp = 190
+reward_spell = 688
+quest_flags = 8
+objectives_text = "Bring Venya Marthand 3 Rattlecage Skulls."
+requirements = "[\"Rattlecage Skull x 3\"]"
+starts = [{ npc = 5667 }]
+ends = [{ npc = 5667 }]
+exclusive = [1485]
+objectives = [
+  { item = 6281, amount = 3 },
+]
+
+[[quest]]
+id = 1485
+name = "Vile Familiars"
+level = 4
+races_mask = 8589934770
+classes_mask = 256
+zone = -61
+xp = 360
+reward_spell = 688
+quest_flags = 8
+objectives_text = "Bring 6 Vile Familiar Heads to Ruzan."
+requirements = "[\"Vile Familiar Head x 6\"]"
+starts = [{ npc = 5765 }]
+ends = [{ npc = 5765 }]
+exclusive = [1470]
+objectives = [
+  { item = 6487, amount = 6 },
+]
+
+[[quest]]
+id = 1499
+name = "Vile Familiars"
+level = 4
+races_mask = 8589934770
+classes_mask = 256
+zone = -61
+xp = 35
+quest_flags = 8
+objectives_text = "Speak with Zureetha Fargaze."
+starts = [{ npc = 5765 }]
+ends = [{ npc = 3145 }]
+pre_any = [1470, 1485]
+objectives = []
+rewards = [{ item = 4925, count = 1, choice = true }, { item = 5778, count = 1, choice = true }]
+
+[[quest]]
+id = 92460
+name = "Coming of Age"
+level = 1
+zone = 16593
+xp = 40
+objectives_text = "Speak with Rorian the Dayseeker in Thendal Grove."
+starts = [{ npc = 251362 }]
+ends = [{ npc = 251361 }]
+objectives = []
+rewards = [{ item = 264908, count = 1, choice = true }]
+
+[[quest]]
+id = 92461
+name = "Harmony in Balance"
+level = 1
+zone = 16593
+xp = 80
+objectives_text = "Slay 8 Vuldren Juveniles in Thendal Grove."
+requirements = "[\"Juvenile Vuldren x 8\"]"
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251361 }]
+pre_all = [92460]
+pre_any = [92460]
+objectives = [
+  { creature = 250873 },
+]
+rewards = [{ item = 257280, count = 1, choice = true }, { item = 257281, count = 1, choice = true }]
+
+[[quest]]
+id = 92464
+name = "Elemental Unrest"
+level = 3
+min_level = 2
+zone = 16593
+xp = 25
+extra = "{\"available_until_completed\":92465}"
+objectives_text = "Speak to the Yala Windwatcher in Thendal Grove."
+requirements = "[\"Learn more about the agitated winds.\"]"
+starts = [{ npc = 251361 }]
+ends = [{ npc = 249363 }]
+pre_any = [92461]
+objectives = [
+  { talk = 249363, amount = 1, text = "Learn more about the agitated winds from Yala Windwatcher" },
+]
+
+[[quest]]
+id = 92465
+name = "Agitators"
+level = 3
+min_level = 2
+zone = 16593
+xp = 250
+objectives_text = "Slay 6 Roiling Winds and 7 Al'Aketh Converts in Thendal Grove."
+requirements = "[\"Al'Aketh Convert x 7\",\"Roiling Winds destroyed x 6\"]"
+starts = [{ npc = 249363 }]
+ends = [{ npc = 249363 }]
+pre_all = [92464]
+objectives = [
+  { creature = 251160 },
+  { creature = 251143 },
+]
+
+[[quest]]
+id = 92470
+name = "Foul Matriarch"
+level = 5
+min_level = 2
+zone = 16593
+xp = 560
+objectives_text = "Slay 8 Ursera Scavengers and collect the head of the den mother, Urs'anah in Thendal Grove."
+requirements = "[\"Ursera Scavenger x 8\",\"Head of Urs'anah\"]"
+starts = [{ npc = 251366 }]
+ends = [{ npc = 251366 }]
+pre_any = [92471]
+objectives = [
+  { creature = 250937 },
+  { item = 252665 },
+]
+rewards = [{ item = 257276, count = 1, choice = true }, { item = 257282, count = 1, choice = true }, { item = 257283, count = 1, choice = true }, { item = 258882, count = 1, choice = true }, { item = 273879, count = 1, choice = true }]
+
+[[quest]]
+id = 92471
+name = "Aetheen of the Gales"
+level = 4
+min_level = 4
+zone = 16593
+xp = 35
+objectives_text = "Speak with Aetheen of the Gales in Thendal Grove."
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251366 }]
+pre_all = [92465]
+objectives = []
+
+[[quest]]
+id = 95998
+name = "The Great Outdoors"
+level = 6
+min_level = 4
+races_mask = 4294967373
+zone = -666
+xp = 410
+objectives_text = "Sit near Sam's Basic Campfire by typing /sit in the chat window and wait until you receive the Boosted Rest buff."
+starts = [{ npc = 263399 }]
+ends = [{ npc = 263399 }]
+exclusive = [96101, 96604, 96605, 96606, 96607, 96608]
+objectives = [
+  { object = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" },
+]
+
+[[quest]]
+id = 96101
+name = "The Great Outdoors"
+level = 6
+min_level = 4
+zone = -666
+xp = 405
+objectives_text = "Sit near Raan's Basic Campfire by typing /sit in the chat window and wait until you receive the Boosted Rest buff."
+starts = [{ npc = 263664 }]
+ends = [{ npc = 263664 }]
+exclusive = [95998, 96604, 96605, 96606, 96607, 96608]
+objectives = [
+  { object = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" },
+]
+
+[[quest]]
+id = 96604
+name = "The Great Outdoors"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 410
+objectives_text = "Sit near Brakk's Basic Campfire by typing /sit in the chat window and wait until you receive the Boosted Rest buff."
+starts = [{ npc = 265809 }]
+ends = [{ npc = 265809 }]
+exclusive = [95998, 96101, 96605, 96606, 96607, 96608]
+objectives = [
+  { object = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" },
+]
+
+[[quest]]
+id = 96605
+name = "The Great Outdoors"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 405
+objectives_text = "Sit near Kaga's Basic Campfire by typing /sit in the chat window and wait until you receive the Boosted Rest buff."
+starts = [{ npc = 265810 }]
+ends = [{ npc = 265810 }]
+exclusive = [95998, 96101, 96604, 96606, 96607, 96608]
+objectives = [
+  { object = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" },
+]
+
+[[quest]]
+id = 96606
+name = "The Great Outdoors"
+level = 6
+min_level = 4
+races_mask = 4294967373
+zone = -666
+xp = 405
+objectives_text = "Sit near Lyreena's Basic Campfire by typing /sit in the chat window and wait until you receive the Boosted Rest buff."
+starts = [{ npc = 265811 }]
+ends = [{ npc = 265811 }]
+exclusive = [95998, 96101, 96604, 96605, 96607, 96608]
+objectives = [
+  { object = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" },
+]
+
+[[quest]]
+id = 96607
+name = "The Great Outdoors"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 405
+objectives_text = "Sit near Eleanor's Basic Campfire by typing /sit in the chat window and wait until you receive the Boosted Rest buff."
+starts = [{ npc = 265812 }]
+ends = [{ npc = 265812 }]
+exclusive = [95998, 96101, 96604, 96605, 96606, 96608]
+objectives = [
+  { object = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" },
+]
+
+[[quest]]
+id = 96608
+name = "The Great Outdoors"
+level = 6
+min_level = 4
+races_mask = 4294967373
+zone = -666
+xp = 410
+objectives_text = "Sit near Eric's Basic Campfire by typing /sit in the chat window and wait until you receive the Boosted Rest buff."
+starts = [{ npc = 265813 }]
+ends = [{ npc = 265813 }]
+exclusive = [95998, 96101, 96604, 96605, 96606, 96607]
+objectives = [
+  { object = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" },
+]
+
+[[quest]]
+id = 96627
+name = "The Adventurer"
+level = 6
+min_level = 4
+races_mask = 4294967373
+zone = -666
+xp = 410
+objectives_text = "Speak to Sam Sarsparilla near Goldshire."
+starts = [{ npc = 197 }]
+ends = [{ npc = 263399 }]
+pre_any = [21]
+exclusive = [96628, 96630, 96638, 96652, 96656, 96659]
+objectives = []
+
+[[quest]]
+id = 96628
+name = "The Adventurer"
+level = 6
+min_level = 4
+races_mask = 4294967373
+zone = -666
+xp = 410
+source_item = 275019
+objectives_text = "Deliver the Supply Bundle to Eric Brighthammer near Kharanos."
+starts = [{ npc = 1965 }]
+ends = [{ npc = 265813 }]
+pre_any = [282]
+exclusive = [96627, 96630, 96638, 96652, 96656, 96659]
+objectives = []
+
+[[quest]]
+id = 96630
+name = "The Adventurer"
+level = 6
+min_level = 4
+races_mask = 4294967373
+zone = -666
+xp = 405
+source_item = 275022
+objectives_text = "Bring the journal to Lyreena Duskblade near Dolanaar."
+starts = [{ object = 654846 }]
+ends = [{ npc = 265811 }]
+pre_any = [921]
+exclusive = [96627, 96628, 96638, 96652, 96656, 96659]
+objectives = []
+
+[[quest]]
+id = 96638
+name = "The Adventurer"
+level = 6
+min_level = 4
+zone = -666
+xp = 405
+objectives_text = "Speak to Raan Wildwind near Shen'dar Village."
+starts = [{ npc = 251366 }]
+ends = [{ npc = 263664 }]
+pre_any = [92470]
+exclusive = [96627, 96628, 96630, 96652, 96656, 96659]
+objectives = []
+
+[[quest]]
+id = 96652
+name = "The Adventurer"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 410
+source_item = 275022
+objectives_text = "Bring the journal to Brakk near Razor Hill."
+starts = [{ object = 654925 }]
+ends = [{ npc = 265809 }]
+pre_any = [794]
+exclusive = [96627, 96628, 96630, 96638, 96656, 96659]
+objectives = []
+
+[[quest]]
+id = 96656
+name = "The Adventurer"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 405
+objectives_text = "Speak to Eleanor Shackleton near Brill."
+starts = [{ npc = 1570 }]
+ends = [{ npc = 265812 }]
+pre_any = [382]
+exclusive = [96627, 96628, 96630, 96638, 96652, 96659]
+objectives = []
+
+[[quest]]
+id = 96659
+name = "The Adventurer"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 405
+source_item = 275019
+objectives_text = "Deliver the Supply Bundle to Kaga Wildhoof near Bloodhoof Village."
+starts = [{ npc = 2981 }]
+ends = [{ npc = 265810 }]
+pre_any = [757]
+exclusive = [96627, 96628, 96630, 96638, 96652, 96656]
+objectives = []
+
+[[quest]]
+id = 97934
+name = "Camping 101: Leatherworking"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 270
+reward_spell = 1229432
+required_skill = 165
+required_spell = -1229432
+objectives_text = "Speak with Chaw Stronghide in Bloodhoof Village to learn to craft a camping item for your profession once you have shown proficiency in your skill."
+starts = [{ npc = 265810 }]
+ends = [{ npc = 3069 }]
+pre_any = [95998, 96101, 96604, 96605, 96606, 96607, 96608]
+objectives = [
+  { creature = 3069 },
+]
+
+[[quest]]
+id = 97935
+name = "Camping 101: Mining"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 270
+reward_spell = 1230161
+required_skill = 186
+required_spell = -1230161
+objectives_text = "Speak with Brek Stonehoof in Thunder Bluff to learn to craft a camping item for your profession once you have shown proficiency in your skill."
+starts = [{ npc = 265810 }]
+ends = [{ npc = 3001 }]
+pre_any = [95998, 96101, 96604, 96605, 96606, 96607, 96608]
+objectives = [
+  { creature = 3001 },
+]
+
+[[quest]]
+id = 97936
+name = "Camping 101: Skinning"
+level = 6
+min_level = 4
+races_mask = 8589934770
+zone = -666
+xp = 270
+reward_spell = 1229517
+required_skill = 393
+required_spell = -1229517
+objectives_text = "Speak with Yonn Deepcut in Bloodhoof Village to learn to craft a camping item for your profession once you have shown proficiency in your skill."
+starts = [{ npc = 265810 }]
+ends = [{ npc = 6290 }]
+pre_any = [95998, 96101, 96604, 96605, 96606, 96607, 96608]
+objectives = [
+  { creature = 6290 },
+]
+

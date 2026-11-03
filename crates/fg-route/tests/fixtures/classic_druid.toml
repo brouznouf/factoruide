@@ -1,0 +1,199 @@
+# The druid's class chain in Classic (Night Elf side): Moonglade, Great Bear Spirit, Body and Heart
+# (Bear Form), Aquatic Form; and a quest of level 50 to plan.
+
+[[npc]]
+id = 1984
+name = "Young Thistle Boar"
+level = 1
+max_level = 2
+friendly_to = "AH"
+at = [{ zone = 141, x = 55.07, y = 43.42, z = 1336 }, { zone = 141, x = 55.49, y = 42.26, z = 1328 }, { zone = 141, x = 55.54, y = 43.44, z = 1332 }, { zone = 141, x = 55.6, y = 41.92, z = 1326 }]
+
+[[npc]]
+id = 2031
+name = "Young Nightsaber"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 141, x = 56.62, y = 44.52, z = 1330 }, { zone = 141, x = 57.86, y = 38.95, z = 1314 }, { zone = 141, x = 57.87, y = 44.69, z = 1333 }, { zone = 141, x = 58.39, y = 46.73, z = 1344 }]
+
+[[npc]]
+id = 2079
+name = "Conservator Ilthalaine"
+level = 4
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 141, x = 58.69, y = 44.27, z = 1326 }]
+
+[[npc]]
+id = 4217
+name = "Mathrengyl Bearwalker"
+level = 60
+npc_flags = 23
+friendly_to = "A"
+at = [{ zone = 1657, x = 35.37, y = 8.4, z = 1340 }]
+
+[[npc]]
+id = 11802
+name = "Dendrite Starblaze"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 493, x = 56.21, y = 30.64, z = 525 }]
+
+[[npc]]
+id = 11956
+name = "Great Bear Spirit"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 493, x = 39.11, y = 27.5, z = 497 }]
+
+[[npc]]
+id = 12144
+name = "Lunaclaw Spirit"
+level = 13
+npc_flags = 1
+friendly_to = "AH"
+at = [{ zone = 17, x = 42.0, y = 60.87 }, { zone = 148, x = 43.5, y = 45.97 }]
+
+[[item]]
+id = 5394
+name = "Archery Training Gloves"
+level = 5
+class = 4
+
+[[item]]
+id = 11187
+name = "Stemleaf Bracers"
+level = 5
+class = 4
+
+[[item]]
+id = 16608
+name = "Aquarius Belt"
+level = 16
+class = 4
+
+[[quest]]
+id = 456
+name = "The Balance of Nature"
+level = 2
+races_mask = 77
+zone = 188
+xp = 170
+next = 457
+quest_flags = 8
+starts = [{ npc = 2079 }]
+ends = [{ npc = 2079 }]
+objectives = [
+  { creature = 2031, amount = 7 },
+  { creature = 1984, amount = 4 },
+]
+rewards = [{ item = 5394, count = 1, choice = true }, { item = 11187, count = 1, choice = true }]
+
+[[quest]]
+id = 5921
+name = "Moonglade"
+level = 10
+min_level = 10
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 210
+next = 5929
+starts = [{ npc = 4217 }]
+ends = [{ npc = 11802 }]
+objectives = []
+
+[[quest]]
+id = 5929
+name = "Great Bear Spirit"
+level = 10
+min_level = 10
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 420
+next = 5931
+quest_flags = 10
+special_flags = 2
+starts = [{ npc = 11802 }]
+ends = [{ npc = 11802 }]
+pre_any = [5921]
+objectives = [
+  { creature = 11956, amount = 1 },
+]
+
+[[quest]]
+id = 6001
+name = "Body and Heart"
+level = 10
+min_level = 10
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 850
+reward_spell = 5487
+source_item = 15208
+quest_flags = 2
+special_flags = 2
+starts = [{ npc = 4217 }]
+ends = [{ npc = 4217 }]
+pre_any = [5931]
+objectives = [
+  { creature = 12144, amount = 1 },
+]
+
+[[quest]]
+id = 5931
+name = "Back to Darnassus"
+level = 10
+min_level = 10
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 85
+next = 6001
+quest_flags = 8
+starts = [{ npc = 11802 }]
+ends = [{ npc = 4217 }]
+pre_any = [5929]
+objectives = []
+
+[[quest]]
+id = 5061
+name = "Aquatic Form"
+level = 16
+min_level = 16
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 1150
+reward_spell = 1066
+source_item = 15885
+starts = [{ npc = 11802 }]
+ends = [{ npc = 4217 }]
+objectives = []
+rewards = [{ item = 16608, count = 1 }]
+
+
+[[npc]]
+id = 9001
+name = "Quest Giver"
+level = 50
+friendly_to = "AH"
+at = [{ zone = 493, x = 50.0, y = 40.0 }]
+
+[[npc]]
+id = 9002
+name = "Wildling"
+level = 50
+at = [{ zone = 493, x = 52.0, y = 45.0 }, { zone = 493, x = 53.0, y = 46.0 }]
+
+[[quest]]
+id = 9001
+name = "Wildlings of the Glade"
+level = 50
+min_level = 45
+giver = 9001
+objectives = [{ creature = 9002, amount = 8 }]

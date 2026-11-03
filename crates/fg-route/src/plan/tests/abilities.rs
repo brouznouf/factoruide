@@ -2,20 +2,6 @@
 
 use super::*;
 
-/// The character of a request with its class's spells and power from the database, and one quest.
-fn class_prepared(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> Prepared {
-    use crate::testing::{Q, Scenario};
-    let level = req.from_level.max(1);
-    let mut scenario = Scenario::of_class(conn, overrides, req)
-        .unwrap()
-        .quest(Q::new(900, "Quest").level(level).min_level(level));
-    // The quests the character did.
-    for done in req.start.iter().flat_map(|s| &s.completed) {
-        scenario = scenario.quest(Q::new(done.0, "Done").level(level).min_level(level));
-    }
-    scenario.build()
-}
-
 /// A form unlocked late (the druid's cat and bear forms by their quests) credits no attack rank
 /// trained before it, whatever the rank (a test each, so that they run side by side).
 fn late_form_unlock(family: &str, rank: i64, quest_id: i64) {

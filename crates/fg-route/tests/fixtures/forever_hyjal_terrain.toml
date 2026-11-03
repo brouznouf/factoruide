@@ -1,0 +1,6 @@
+# The ground of Mount Hyjal, Felwood and Winterspring beside it.
+
+[[terrain]]
+map = 1
+tile_x = [32, 42]
+tile_y = [17, 25]

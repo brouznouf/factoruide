@@ -1,0 +1,152 @@
+# The sleeping bag chain of Forever: one starter per faction, then the shared quests.
+
+[[object]]
+id = 406918
+name = "Messenger Bag"
+at = [{ zone = 45, x = 22.48, y = 24.19 }]
+
+[[object]]
+id = 415106
+name = "Burned-Out Remains"
+at = [{ zone = 17, x = 46.35, y = 73.89 }]
+
+[[object]]
+id = 415107
+name = "Burned-Out Remains"
+at = [{ zone = 40, x = 37.41, y = 50.7 }]
+
+[[object]]
+id = 417072
+name = "Nailed Plank"
+at = [{ zone = 17, x = 46.37, y = 73.79 }]
+
+[[object]]
+id = 424005
+name = "Pocket Litter"
+at = [{ zone = 406, x = 40.76, y = 52.57 }]
+
+[[object]]
+id = 424006
+name = "Hastily Rolled-Up Satchel"
+at = [{ zone = 45, x = 22.47, y = 24.2 }]
+
+[[object]]
+id = 424007
+name = "Carved Figurine"
+at = [{ zone = 38, x = 49.44, y = 12.87 }]
+
+[[object]]
+id = 424010
+name = "Nailed Plank"
+at = [{ zone = 40, x = 37.43, y = 50.85 }]
+
+[[object]]
+id = 424012
+name = "Mound of Dirt"
+at = [{ zone = 406, x = 39.62, y = 49.86 }]
+
+[[item]]
+id = 211527
+name = "Cozy Sleeping Bag"
+level = 40
+class = 15
+
+[[item]]
+id = 216619
+name = "Student Fodder"
+level = 33
+class = 0
+
+[[item]]
+id = 221498
+name = "Old Toolbox"
+level = 35
+class = 1
+
+[[quest]]
+id = 79007
+name = "... and that note you found"
+level = 22
+min_level = 14
+races_mask = 8589934770
+zone = 17
+xp = 1750
+starts = [{ object = 415106 }]
+ends = [{ object = 415107 }, { object = 424010 }]
+objectives = []
+
+[[quest]]
+id = 79008
+name = "... and that note you found"
+level = 22
+min_level = 14
+races_mask = 4294967373
+zone = 40
+xp = 1750
+starts = [{ object = 415107 }]
+ends = [{ object = 415106 }, { object = 417072 }]
+objectives = []
+
+[[quest]]
+id = 79192
+name = "Stepping Stones"
+level = 24
+min_level = 14
+zone = 17
+xp = 1950
+starts = [{ object = 415106 }, { object = 415107 }, { object = 417072 }, { object = 424010 }]
+ends = [{ object = 424005 }]
+pre_all = [79007, 79008]
+objectives = []
+rewards = [{ item = 221498, count = 1, choice = true }]
+
+[[quest]]
+id = 79975
+name = "Eagle's Fist"
+level = 32
+min_level = 14
+zone = 146
+xp = 2550
+starts = [{ object = 424007 }]
+ends = [{ object = 406918 }]
+pre_any = [79974]
+objectives = []
+
+[[quest]]
+id = 79976
+name = "This Must Be The Place"
+level = 32
+min_level = 14
+zone = 293
+xp = 1950
+starts = [{ object = 406918 }]
+ends = [{ object = 424006 }]
+pre_any = [79975]
+objectives = []
+rewards = [{ item = 211527, count = 1, choice = true }, { item = 216619, count = 1, choice = true }]
+
+[[quest]]
+id = 79980
+name = "Scramble"
+level = 24
+min_level = 14
+zone = 406
+xp = 195
+starts = [{ object = 424005 }]
+ends = [{ object = 424012 }]
+pre_any = [79192]
+objectives = []
+rewards = [{ item = 216619, count = 1, choice = true }]
+
+[[quest]]
+id = 79974
+name = "Wet Job"
+level = 32
+min_level = 14
+zone = 406
+xp = 2550
+starts = [{ object = 424012 }]
+ends = [{ object = 424007 }]
+pre_any = [79980]
+objectives = []
+

@@ -1,6 +1,7 @@
 //! Class chains through normal planning and recorded character starts.
 
-use crate::common::{database, database_of, repo};
+use crate::common::{database_of, repo};
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Overrides, PlanRequest, StartState};
 use fg_route::plan::{Edit, Kind, Outcome, Planner, Stop};
 use fg_route::testing::{Q, Scenario};
@@ -17,7 +18,7 @@ fn request(race: &str, class: &str) -> PlanRequest {
 #[test]
 fn known_reward_does_not_put_its_parent_in_the_log() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).file("classic_shaman").open();
         let mut overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         overrides.params.all_class_quests = true;
         for (held, completed) in [(false, false), (true, false), (false, true)] {
@@ -59,7 +60,7 @@ fn known_reward_does_not_put_its_parent_in_the_log() {
 // 4962, which Cleansing of the Orb of Orahil (4961) requires.
 fn a_completed_child_keeps_later_class_quests_feasible() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).file("classic_warlock_orb").open();
         let mut overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         overrides.params.all_class_quests = true;
         let mut req = request("orc", "warlock");
@@ -82,7 +83,7 @@ fn a_completed_child_keeps_later_class_quests_feasible() {
 
 #[test]
 fn normal_skyborne_druid_planning_completes_the_cat_chain() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_druid").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let mut req = request("skyborne_horde", "druid");
     req.to_level = 30;
@@ -127,7 +128,7 @@ fn normal_skyborne_druid_planning_completes_the_cat_chain() {
 
 #[test]
 fn a_late_start_keeps_missing_class_unlock_prerequisites() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_druid").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let mut req = request("skyborne_horde", "druid");
     req.from_level = 40;
@@ -150,7 +151,7 @@ fn a_late_start_keeps_missing_class_unlock_prerequisites() {
 
 #[test]
 fn a_synthetic_midlevel_preset_does_not_return_for_earlier_class_unlocks() {
-    let conn = database();
+    let conn = Fixture::new(Edition::Classic).file("classic_druid").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let mut req = request("nightelf", "druid");
     req.from_level = 50;
@@ -214,7 +215,7 @@ fn a_synthetic_midlevel_preset_does_not_return_for_earlier_class_unlocks() {
 #[test]
 fn moonglade_teaches_teleport_before_completing_its_quest() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).file("classic_druid").open();
         let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         let mut req = request("nightelf", "druid");
         req.to_level = 11;
@@ -293,7 +294,7 @@ fn moonglade_teaches_teleport_before_completing_its_quest() {
 
 #[test]
 fn an_unambiguous_reward_allows_its_ordinary_successor() {
-    let conn = database();
+    let conn = Fixture::new(Edition::Classic).file("classic_hunter").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let mut req = request("dwarf", "hunter");
     req.to_level = 11;
@@ -319,7 +320,7 @@ fn an_unambiguous_reward_allows_its_ordinary_successor() {
 #[test]
 fn a_shared_reward_does_not_open_another_quest_branch() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).file("classic_warrior").open();
         let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         for (completed, available) in [(1678, false), (1665, true)] {
             let mut req = request("dwarf", "warrior");
@@ -349,7 +350,7 @@ fn a_shared_reward_does_not_open_another_quest_branch() {
 
 #[test]
 fn known_class_rewards_require_every_eligible_group_member() {
-    let conn = database();
+    let conn = Fixture::new(Edition::Classic).file("classic_druid").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let mut req: PlanRequest = serde_json::from_value(serde_json::json!({
         "race":"human", "class":"mage", "from_level":30, "to_level":31,
@@ -391,7 +392,7 @@ fn known_class_rewards_require_every_eligible_group_member() {
 
 #[test]
 fn recorded_spells_do_not_complete_an_explicit_quest_requirement() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_druid").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let req:PlanRequest=serde_json::from_value(serde_json::json!({"race":"skyborne_horde","class":"druid","from_level":20,"to_level":21,"required_class_quests":[],"required_quests":[98362],"start":{"level":20,"spells":[768]}})).unwrap();
     let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
@@ -405,7 +406,7 @@ fn recorded_spells_do_not_complete_an_explicit_quest_requirement() {
 #[test]
 fn known_rewards_keep_imported_log_quests() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).file("classic_warrior").open();
         let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         let mut req = request("dwarf", "warrior");
         req.from_level = 11;
@@ -433,7 +434,7 @@ fn known_rewards_keep_imported_log_quests() {
 
 #[test]
 fn known_pet_power_survives_continuation() {
-    let conn = database();
+    let conn = Fixture::new(Edition::Classic).file("classic_hunter").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let mut req = request("dwarf", "hunter");
     req.from_level = 11;
@@ -460,10 +461,10 @@ fn known_pet_power_survives_continuation() {
     }
 }
 
-#[test]
-fn one_known_demon_keeps_the_shared_binding_power() {
-    for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+/// The warlock's class power and its spells come with the base: no quest needed.
+fn one_known_demon_keeps_the_shared_binding_power(edition: Edition) {
+    {
+        let conn = Fixture::new(edition).file("warlock_binding").open();
         let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         let mut without = overrides.clone();
         without
@@ -493,6 +494,21 @@ fn one_known_demon_keeps_the_shared_binding_power() {
             );
         }
     }
+}
+
+#[test]
+fn classic_one_known_demon_keeps_the_shared_binding_power() {
+    one_known_demon_keeps_the_shared_binding_power(Edition::Classic);
+}
+
+#[test]
+fn tbc_one_known_demon_keeps_the_shared_binding_power() {
+    one_known_demon_keeps_the_shared_binding_power(Edition::Tbc);
+}
+
+#[test]
+fn forever_one_known_demon_keeps_the_shared_binding_power() {
+    one_known_demon_keeps_the_shared_binding_power(Edition::Forever);
 }
 
 /// A character with two chains of one class quest, side by side: 1 then 2, and 3 then 4 then 5,

@@ -1,0 +1,6 @@
+# The ground between Stonetalon Mountains and the Barrens (Ziz Fizziks to Ratchet): a long walk around the mountains.
+
+[[terrain]]
+map = 1
+tile_x = [25, 46]
+tile_y = [26, 41]

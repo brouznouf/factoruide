@@ -1,0 +1,557 @@
+# Dungeons the game files in different ways: the Deadmines (quests filed under it, spawns inside), and Blackrock Depths,
+# Blackrock Spire and the Sunken Temple (filed under the continent, found through their instance map).
+
+[[row]]
+table = "dungeon"
+values = { area = 1477, name = "The Temple of Atal'Hakkar", alt_areas = "[1417]", entrance_zone = 8, entrance_x = 69.9, entrance_y = 53.5, source = "fixture" }
+
+[[row]]
+table = "dungeon"
+values = { area = 1581, name = "The Deadmines", alt_areas = "[10029]", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "fixture" }
+
+[[row]]
+table = "dungeon"
+values = { area = 1583, name = "Blackrock Spire", alt_areas = "[10003,10004,10005,10006,10007]", entrance_zone = 51, entrance_x = 34.8, entrance_y = 85.3, source = "fixture" }
+
+[[row]]
+table = "dungeon"
+values = { area = 1584, name = "Blackrock Depths", alt_areas = "[1585]", entrance_zone = 51, entrance_x = 34.8, entrance_y = 85.3, source = "fixture" }
+[[npc]]
+id = 234
+name = "Gryan Stoutmantle"
+level = 35
+rank = 1
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 40, x = 56.33, y = 47.52, z = 61 }]
+
+[[npc]]
+id = 623
+name = "Skeletal Miner"
+level = 17
+max_level = 18
+rank = 1
+at = [{ zone = 40, x = 40.69, y = 82.29, z = 36 }, { zone = 40, x = 40.71, y = 81.81, z = 36 }, { zone = 40, x = 40.74, y = 81.2, z = 34 }, { zone = 40, x = 40.86, y = 80.81, z = 37 }, { zone = 40, x = 41.22, y = 83.21, z = 34 }, { zone = 40, x = 41.37, y = 83.19, z = 34 }, { zone = 40, x = 41.52, y = 81.35, z = 36 }, { zone = 40, x = 41.61, y = 81.67, z = 37 }, { zone = 40, x = 42.15, y = 81.36 }]
+
+[[npc]]
+id = 624
+name = "Undead Excavator"
+level = 17
+max_level = 18
+rank = 1
+at = [{ zone = 40, x = 40.56, y = 80.91 }, { zone = 40, x = 40.8, y = 82.58 }, { zone = 40, x = 40.87, y = 81.47 }, { zone = 40, x = 42.04, y = 82.48 }, { zone = 40, x = 42.14, y = 82.98 }]
+
+[[npc]]
+id = 625
+name = "Undead Dynamiter"
+level = 17
+max_level = 18
+rank = 1
+at = [{ zone = 40, x = 41.0, y = 82.74 }, { zone = 40, x = 41.08, y = 80.96 }, { zone = 40, x = 41.55, y = 82.54 }, { zone = 40, x = 41.74, y = 83.26 }, { zone = 40, x = 41.85, y = 81.44 }, { zone = 40, x = 42.44, y = 83.31 }]
+
+[[npc]]
+id = 626
+name = "Foreman Thistlenettle"
+level = 20
+rank = 1
+at = [{ zone = 40, x = 42.22, y = 82.61, z = 29 }]
+
+[[npc]]
+id = 639
+name = "Edwin VanCleef"
+level = 21
+rank = 2
+at = [{ zone = 1581, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 656
+name = "Wilder Thistlenettle"
+level = 20
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 65.44, y = 21.17, z = 100 }]
+
+[[npc]]
+id = 1443
+name = "Fel'zerul"
+level = 60
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 8, x = 47.93, y = 54.78, z = 40 }]
+
+[[npc]]
+id = 5243
+name = "Cursed Atal'ai"
+level = 45
+max_level = 46
+rank = 1
+at = [{ zone = 8, x = 73.08, y = 47.42, z = -99 }, { zone = 8, x = 74.43, y = 48.36, z = -99 }, { zone = 8, x = 75.46, y = 47.61, z = -99 }, { zone = 8, x = 76.64, y = 50.99, z = -83 }, { zone = 8, x = 78.06, y = 44.0, z = -76 }, { zone = 8, x = 79.35, y = 44.72, z = -76 }, { zone = 8, x = 80.88, y = 45.37, z = -76 }]
+
+[[npc]]
+id = 5256
+name = "Atal'ai Warrior"
+level = 48
+max_level = 49
+rank = 1
+at = [{ zone = 1477, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 5259
+name = "Atal'ai Witch Doctor"
+level = 48
+max_level = 50
+rank = 1
+at = [{ zone = 1477, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 5384
+name = "Brohann Caskbelly"
+level = 40
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 64.33, y = 20.63, z = 101 }]
+
+[[npc]]
+id = 5598
+name = "Atal'ai Exile"
+level = 45
+npc_flags = 2
+friendly_to = "AH"
+at = [{ zone = 47, x = 33.75, y = 75.21, z = 97 }]
+
+[[npc]]
+id = 5710
+name = "Jammal'an the Prophet"
+level = 54
+rank = 1
+at = [{ zone = 1477, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 8888
+name = "Franclorn Forgewright"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 46, x = 28.96, y = 28.93, z = 253 }]
+
+[[npc]]
+id = 9017
+name = "Lord Incendius"
+level = 55
+rank = 1
+at = [{ zone = 1585, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 9056
+name = "Fineous Darkvire"
+level = 54
+rank = 1
+at = [{ zone = 1585, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 9081
+name = "Galamav the Marksman"
+level = 58
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 3, x = 5.96, y = 47.73, z = 279 }]
+
+[[npc]]
+id = 9084
+name = "Thunderheart"
+level = 52
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 3, x = 3.33, y = 48.26, z = 244 }]
+
+[[npc]]
+id = 9562
+name = "Helendis Riverhorn"
+level = 55
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 46, x = 85.82, y = 68.95, z = 194 }]
+
+[[npc]]
+id = 10220
+name = "Halycon"
+level = 59
+rank = 1
+at = [{ zone = 1583, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 10260
+name = "Kibler"
+level = 56
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 46, x = 65.89, y = 21.92, z = 165 }]
+
+[[object]]
+id = 37099
+name = "Atal'ai Tablet"
+at = [{ zone = 8, x = 70.55, y = 44.53 }, { zone = 8, x = 71.0, y = 46.89 }, { zone = 8, x = 72.09, y = 45.22 }]
+
+[[object]]
+id = 164689
+name = "Monument of Franclorn Forgewright"
+at = [{ zone = 1585, x = -1.0, y = -1.0 }]
+
+[[item]]
+id = 1490
+name = "Guardian Talisman"
+level = 50
+class = 4
+
+[[item]]
+id = 1875
+name = "Thistlenettle's Badge"
+level = 1
+class = 12
+drops = [{ npc = 626, chance = 1.0 }]
+
+[[item]]
+id = 1893
+name = "Miner's Revenge"
+level = 20
+class = 2
+
+[[item]]
+id = 1894
+name = "Miners' Union Card"
+level = 1
+class = 12
+drops = [{ npc = 623, chance = 1.0 }, { npc = 624, chance = 1.0 }, { npc = 625, chance = 1.0 }]
+
+[[item]]
+id = 2036
+name = "Dusty Mining Gloves"
+level = 18
+class = 4
+
+[[item]]
+id = 2037
+name = "Tunneler's Boots"
+level = 18
+class = 4
+
+[[item]]
+id = 2041
+name = "Tunic of Westfall"
+level = 24
+class = 4
+
+[[item]]
+id = 2042
+name = "Staff of Westfall"
+level = 24
+class = 2
+
+[[item]]
+id = 3637
+name = "Head of VanCleef"
+level = 1
+class = 12
+drops = [{ npc = 639, chance = 1.0 }]
+
+[[item]]
+id = 6087
+name = "Chausses of Westfall"
+level = 24
+class = 4
+
+[[item]]
+id = 6181
+name = "Fetish of Hakkar"
+level = 1
+class = 12
+drops = [{ npc = 5243, chance = 0.32749125 }, { npc = 5256, chance = 0.32749125 }, { npc = 5259, chance = 0.32749125 }]
+
+[[item]]
+id = 6212
+name = "Head of Jammal'an"
+level = 1
+class = 12
+drops = [{ npc = 5710, chance = 1.0 }]
+
+[[item]]
+id = 6288
+name = "Atal'ai Tablet"
+level = 1
+class = 12
+drops = [{ object = 37099, chance = 1.0 }]
+
+[[item]]
+id = 10999
+name = "Ironfel"
+level = 1
+class = 12
+drops = [{ npc = 9056, chance = 1.0 }]
+
+[[item]]
+id = 11000
+name = "Shadowforge Key"
+level = 1
+class = 13
+
+[[item]]
+id = 11123
+name = "Rainstrider Leggings"
+level = 55
+class = 4
+
+[[item]]
+id = 11124
+name = "Helm of Exile"
+level = 55
+class = 4
+
+[[item]]
+id = 11126
+name = "Tablet of Kurniya"
+level = 1
+class = 12
+drops = [{ npc = 9017, chance = 1.0 }]
+
+[[item]]
+id = 12112
+name = "Crypt Demon Bracers"
+level = 56
+class = 4
+
+[[item]]
+id = 12113
+name = "Sunborne Cape"
+level = 56
+class = 4
+
+[[item]]
+id = 12114
+name = "Nightfall Gloves"
+level = 56
+class = 4
+
+[[item]]
+id = 12115
+name = "Stalwart Clutch"
+level = 56
+class = 4
+
+[[item]]
+id = 12263
+name = "Caged Worg Pup"
+level = 1
+class = 12
+
+[[item]]
+id = 12264
+name = "Worg Carrier"
+level = 59
+class = 15
+
+[[item]]
+id = 15824
+name = "Astoria Robes"
+level = 59
+class = 4
+
+[[item]]
+id = 15825
+name = "Traphook Jerkin"
+level = 59
+class = 4
+
+[[item]]
+id = 15827
+name = "Jadescale Breastplate"
+level = 59
+class = 4
+
+[[quest]]
+id = 166
+name = "The Defias Brotherhood"
+level = 22
+min_level = 14
+races_mask = 77
+zone = 1581
+xp = 2600
+quest_flags = 8
+starts = [{ npc = 234 }]
+ends = [{ npc = 234 }]
+objectives = [
+  { item = 3637, amount = 1 },
+]
+rewards = [{ item = 2041, count = 1, choice = true }, { item = 2042, count = 1, choice = true }, { item = 6087, count = 1, choice = true }]
+
+[[quest]]
+id = 167
+name = "Oh Brother. . ."
+level = 20
+min_level = 15
+races_mask = 77
+zone = 1581
+xp = 1550
+quest_flags = 8
+starts = [{ npc = 656 }]
+ends = [{ npc = 656 }]
+objectives = [
+  { item = 1875, amount = 1 },
+]
+rewards = [{ item = 1893, count = 1 }]
+
+[[quest]]
+id = 168
+name = "Collecting Memories"
+level = 18
+min_level = 14
+races_mask = 77
+zone = 1581
+xp = 1350
+quest_flags = 8
+starts = [{ npc = 656 }]
+ends = [{ npc = 656 }]
+objectives = [
+  { item = 1894, amount = 4 },
+]
+rewards = [{ item = 2036, count = 1, choice = true }, { item = 2037, count = 1, choice = true }]
+
+[[quest]]
+id = 4701
+name = "Put Her Down"
+level = 59
+min_level = 55
+races_mask = 77
+zone = 1583
+xp = 6400
+quest_flags = 8
+starts = [{ npc = 9562 }]
+ends = [{ npc = 9562 }]
+objectives = [
+  { creature = 10220, amount = 1 },
+]
+rewards = [{ item = 15824, count = 1, choice = true }, { item = 15825, count = 1, choice = true }, { item = 15827, count = 1, choice = true }]
+
+[[quest]]
+id = 4724
+name = "The Pack Mistress"
+level = 59
+min_level = 55
+races_mask = 178
+zone = 1583
+xp = 6400
+quest_flags = 8
+starts = [{ npc = 9081 }]
+ends = [{ npc = 9081 }]
+objectives = [
+  { creature = 10220, amount = 1 },
+]
+rewards = [{ item = 15824, count = 1, choice = true }, { item = 15825, count = 1, choice = true }, { item = 15827, count = 1, choice = true }]
+
+[[quest]]
+id = 4729
+name = "Kibler's Exotic Pets"
+level = 59
+min_level = 55
+zone = 1583
+xp = 6400
+extra = "{\"extra_objectives\":[{\"2\":3,\"3\":\"Use the Empty Worg Pup Cage to capture it.\",\"4\":0,\"5\":[[\"monster\",10221]]}]}"
+starts = [{ npc = 10260 }]
+ends = [{ npc = 10260 }]
+objectives = [
+  { item = 12263, amount = 1 },
+]
+rewards = [{ item = 12264, count = 1 }]
+
+[[quest]]
+id = 3801
+name = "Dark Iron Legacy"
+level = 52
+min_level = 48
+zone = 1584
+xp = 510
+quest_flags = 8
+special_flags = 2
+starts = [{ npc = 8888 }]
+ends = [{ npc = 8888 }]
+objectives = []
+
+[[quest]]
+id = 3802
+name = "Dark Iron Legacy"
+level = 52
+min_level = 48
+zone = 1584
+xp = 5100
+quest_flags = 8
+starts = [{ npc = 8888 }]
+ends = [{ object = 164689 }]
+pre_any = [3801]
+objectives = [
+  { item = 10999, amount = 1 },
+]
+rewards = [{ item = 11000, count = 1 }]
+
+[[quest]]
+id = 3907
+name = "Disharmony of Fire"
+level = 56
+min_level = 48
+races_mask = 178
+zone = 1584
+xp = 7300
+quest_flags = 8
+starts = [{ npc = 9084 }]
+ends = [{ npc = 9084 }]
+objectives = [
+  { creature = 9017, amount = 1 },
+  { item = 11126, amount = 1 },
+]
+rewards = [{ item = 12112, count = 1, choice = true }, { item = 12113, count = 1, choice = true }, { item = 12114, count = 1, choice = true }, { item = 12115, count = 1, choice = true }]
+
+[[quest]]
+id = 1445
+name = "The Temple of Atal'Hakkar"
+level = 50
+min_level = 38
+races_mask = 178
+zone = 1417
+xp = 5900
+quest_flags = 8
+starts = [{ npc = 1443 }]
+ends = [{ npc = 1443 }]
+objectives = [
+  { item = 6181, amount = 20 },
+]
+rewards = [{ item = 1490, count = 1 }]
+
+[[quest]]
+id = 1446
+name = "Jammal'an the Prophet"
+level = 53
+min_level = 38
+zone = 1417
+xp = 6550
+quest_flags = 8
+starts = [{ npc = 5598 }]
+ends = [{ npc = 5598 }]
+objectives = [
+  { item = 6212, amount = 1 },
+]
+rewards = [{ item = 11123, count = 1, choice = true }, { item = 11124, count = 1, choice = true }]
+
+[[quest]]
+id = 1475
+name = "Into The Temple of Atal'Hakkar"
+level = 50
+min_level = 41
+races_mask = 77
+zone = 1417
+xp = 7100
+quest_flags = 8
+starts = [{ npc = 5384 }]
+ends = [{ npc = 5384 }]
+objectives = [
+  { item = 6288, amount = 10 },
+]
+rewards = [{ item = 1490, count = 1 }]
+

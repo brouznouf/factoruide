@@ -1,6 +1,7 @@
 //! Planner behavior on the Classic database: reproductions of the problems met on real guides.
 
-use crate::common::{database, database_of, leveling, repo};
+use crate::common::{leveling, leveling_of, repo};
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, StartState};
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
@@ -73,10 +74,51 @@ fn prepare_request(request: &PlanRequest) -> Prepared {
     job::prepare(&database(), &overrides(), request, &|_| {}).unwrap()
 }
 
+/// The Classic database of these tests: the quests they name (`tests/fixtures/`).
+fn database() -> Connection {
+    fixture(&[
+        "classic_svens_revenge",
+        "classic_services",
+        "classic_dungeons",
+        "classic_tirisfal",
+        "classic_aged_envelope",
+        "classic_cutting_teeth_in_french_and_german",
+        "classic_vendors_of_a_ring",
+        "classic_routes",
+        "classic_orc_warlock",
+        "classic_valley",
+        "classic_northshire",
+    ])
+}
+
+/// A Classic database of the fixtures' files (`tests/fixtures/<name>.toml`).
+fn fixture(files: &[&str]) -> Connection {
+    files
+        .iter()
+        .fold(Fixture::new(Edition::Classic), |f, name| f.file(name))
+        .open()
+}
+
+/// `prepare_from` on a database of fixtures.
+fn prepare_in(
+    conn: &Connection,
+    race: &str,
+    class: &str,
+    to_level: i64,
+    params: &[&str],
+    start: Option<StartState>,
+) -> Prepared {
+    let request = PlanRequest {
+        start,
+        ..request(race, class, to_level, params)
+    };
+    job::prepare(conn, &overrides(), &request, &|_| {}).unwrap()
+}
+
 /// Orc warlock to 30, cautious: shared by the tests below.
 fn orc_warlock() -> &'static Prepared {
     static PREPARED: OnceLock<Prepared> = OnceLock::new();
-    PREPARED.get_or_init(|| prepare("orc", "warlock", 30, &["progression=cautious"]))
+    PREPARED.get_or_init(|| prepare_in(&database(), "orc", "warlock", 30, &["progression=cautious"], None))
 }
 
 fn human_warrior() -> &'static Prepared {
@@ -336,7 +378,7 @@ fn item_start_waits_for_its_mob() {
 #[test]
 fn a_quest_exclusive_with_the_one_handing_the_start_item_is_not_a_prerequisite() {
     static PREPARED: OnceLock<Prepared> = OnceLock::new();
-    let p = PREPARED.get_or_init(|| prepare("orc", "warlock", 50, &["progression=cautious"]));
+    let p = PREPARED.get_or_init(|| prepare_in(&database(), "orc", "warlock", 50, &["progression=cautious"], None));
     let sampling = &p.model.quests[quest(p, 654).unwrap() as usize];
     assert!(!sampling.pre_all.contains(&841) && !sampling.pre_any.contains(&841));
 }
@@ -569,7 +611,10 @@ fn an_item_lying_in_a_camp_of_the_other_side_is_guarded() {
 /// group, at that place; Red Silk Bandanas also drops inside and stays a dungeon objective.
 #[test]
 fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever)
+        .file("forever_services")
+        .file("forever_deadmines_quarry")
+        .open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let p = job::prepare(&conn, &overrides, &request("human", "warrior", 24, &[]), &|_| {}).unwrap();
     let objective = |id| &p.model.quests[quest(&p, id).unwrap() as usize].objectives[0];
@@ -589,7 +634,19 @@ fn quests_of_a_dungeon_done_beside_its_entrance_keep_their_place() {
 #[test]
 fn pet_quest_comes_early() {
     let request = request("orc", "warlock", 30, &["progression=cautious", "effort=0"]);
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let route = job::plan(
+        &fixture(&[
+            "classic_services",
+            "classic_routes",
+            "classic_orc_warlock",
+            "classic_valley",
+        ]),
+        &overrides(),
+        &request,
+        &|_| {},
+    )
+    .unwrap()
+    .route;
     let at = route
         .steps
         .iter()
@@ -718,15 +775,29 @@ fn job_saves_its_walks() {
     let interrupt = job::Interrupt::default();
     interrupt.stop();
     let request = request("orc", "warlock", 12, &["effort=100"]);
-    let first =
-        job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
+    let first = job::plan_interruptible(
+        &fixture(&["classic_durotar_terrain", "classic_orc_warlock", "classic_valley"]),
+        &overrides(),
+        &request,
+        &|_| {},
+        &interrupt,
+        Some(&walks),
+    )
+    .unwrap();
     let memory = first.walks.clone().expect("a memory with the outcome");
     assert!(!memory.is_empty());
     let saved = job::PlanOutcome::from_json(&serde_json::to_string(&first).unwrap()).unwrap();
     assert_eq!(saved.walks.as_ref(), Some(&memory));
     let known = walks.len();
-    let again =
-        job::plan_interruptible(&database(), &overrides(), &request, &|_| {}, &interrupt, Some(&walks)).unwrap();
+    let again = job::plan_interruptible(
+        &fixture(&["classic_durotar_terrain", "classic_orc_warlock", "classic_valley"]),
+        &overrides(),
+        &request,
+        &|_| {},
+        &interrupt,
+        Some(&walks),
+    )
+    .unwrap();
     assert_eq!(walks.len(), known, "paths searched again");
     assert_eq!(again.walks.map(|m| m.len()), Some(memory.len()));
 }
@@ -756,9 +827,15 @@ fn panicking_search_ends_the_job() {
 #[test]
 fn the_tournament_repeats_its_guide() {
     let scenario = || {
-        leveling(12).params(|p| {
+        leveling_of(6, 8).params(|p| {
             (p.threads, p.candidates, p.final_routes) = (4, 8, 2);
-            (p.qualify_tries, p.round_tries, p.final_tries, p.share_every) = (0.5, 1.0, 3.0, 50);
+            (
+                p.qualify_tries,
+                p.qualify_min_tries,
+                p.round_tries,
+                p.final_tries,
+                p.share_every,
+            ) = (0.5, 1.0, 0.5, 1.0, 50);
         })
     };
     let interrupt = job::Interrupt::default();
@@ -819,7 +896,7 @@ fn improved_route_stays_valid() {
     let p = generic();
     let planner = planner(p).verified();
     let route = planner.construct(|_| {});
-    let improved = planner.improve(route, std::time::Duration::from_secs(2), |_| {}, |_, _, _| {});
+    let improved = planner.improve(route, std::time::Duration::from_millis(60), |_| {}, |_, _, _| {});
     assert!(
         planner.simulate(&improved, None).is_some(),
         "{:?}",
@@ -1010,7 +1087,7 @@ fn checkpoints_wait_for_their_level() {
 /// those shown to the other faction only.
 #[test]
 fn flight_paths_are_flight_masters() {
-    let world = crate::common::world(Edition::Classic, fg_route::faction::Faction::Horde);
+    let world = &crate::common::bare_world(Edition::Classic, fg_route::faction::Faction::Horde);
     let has = |name: &str| world.taxi_nodes.iter().any(|n| n.name.starts_with(name));
     assert!(has("Ratchet") && has("Crossroads") && has("Hammerfall"));
     assert!(!has("Quest Path"), "a shaman quest's flight");
@@ -1022,7 +1099,11 @@ fn flight_paths_are_flight_masters() {
 /// their own zone (a city's own map in a city), and towns are named.
 #[test]
 fn flight_paths_are_in_their_zone() {
-    let world = crate::common::world(Edition::Classic, fg_route::faction::Faction::Horde);
+    let world = &crate::common::terrain_world(
+        Edition::Classic,
+        fg_route::faction::Faction::Horde,
+        &["classic_flight_masters_terrain"],
+    );
     let zone_of = |town: &str| {
         let n = world.taxi_nodes.iter().find(|n| n.name.starts_with(town)).unwrap();
         world.zone_name(n.pos.zone).to_owned()
@@ -1079,7 +1160,11 @@ fn item_used_by_an_objective_is_got_first() {
 /// sea to Auberdine, the portal and the boat do. Darnassus is walked to from Dolanaar.
 #[test]
 fn rut_theran_is_left_by_portal_or_boat() {
-    let w = crate::common::world(Edition::Classic, fg_route::faction::Faction::Alliance);
+    let w = &crate::common::terrain_world(
+        Edition::Classic,
+        fg_route::faction::Faction::Alliance,
+        &["classic_rutheran_terrain"],
+    );
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let (village, dolanaar) = (at(141, 55.5, 90.0), at(141, 55.6, 59.8));
     assert!(w.walk_distance(&village, &dolanaar).is_infinite());
@@ -1094,16 +1179,39 @@ fn rut_theran_is_left_by_portal_or_boat() {
     assert!(portal.seconds < 30.0, "a portal is taken at once");
 }
 
-/// The walking world of each edition for a faction (`job::walk_world`).
-fn walk_worlds(faction: fg_route::faction::Faction) -> Vec<(&'static str, &'static fg_route::world::World)> {
-    [
-        ("forever", Edition::Forever),
-        ("classic", Edition::Classic),
-        ("tbc", Edition::Tbc),
-    ]
-    .into_iter()
-    .map(|(name, edition)| (name, crate::common::world(edition, faction)))
-    .collect()
+/// The walking world of an edition for a faction on the ground of a fixture (`<edition>_<ground>_terrain`).
+fn walk_world(edition: Edition, faction: fg_route::faction::Faction, ground: &str) -> fg_route::world::World {
+    crate::common::terrain_world(edition, faction, &[&format!("{}_{ground}_terrain", edition.key())])
+}
+
+/// A test of each edition: `$test` takes the edition and its walking world.
+macro_rules! in_each_edition {
+    ($name:ident, $test:ident, $faction:ident, $ground:literal) => {
+        mod $name {
+            use super::*;
+            #[test]
+            fn classic() {
+                $test(
+                    "classic",
+                    &walk_world(Edition::Classic, fg_route::faction::Faction::$faction, $ground),
+                );
+            }
+            #[test]
+            fn tbc() {
+                $test(
+                    "tbc",
+                    &walk_world(Edition::Tbc, fg_route::faction::Faction::$faction, $ground),
+                );
+            }
+            #[test]
+            fn forever() {
+                $test(
+                    "forever",
+                    &walk_world(Edition::Forever, fg_route::faction::Faction::$faction, $ground),
+                );
+            }
+        }
+    };
 }
 
 /// The least distance (yards) from a point to a walk drawn (`World::walk_path`), its segments.
@@ -1127,9 +1235,8 @@ fn distance_to_path(path: &[fg_route::world::Pos], p: &fg_route::world::Pos) -> 
 /// plain (the floors hold the road, and no way over the ridges), never a straight line over the
 /// ridges, even to the plain just behind its north wall (GitHub #43). Walks inside it do not
 /// take the road.
-#[test]
-fn valley_of_trials_is_left_by_its_road() {
-    for (edition, w) in walk_worlds(fg_route::faction::Faction::Horde) {
+fn valley_of_trials_is_left_by_its_road_of(edition: &str, w: &fg_route::world::World) {
+    {
         let at = |x, y| w.to_world(14, x, y).unwrap();
         let (north_end, behind) = (at(44.5, 56.5), at(42.0, 50.5));
         let (gornek, razor_hill) = (at(42.1, 68.4), at(51.9, 43.5));
@@ -1156,6 +1263,12 @@ fn valley_of_trials_is_left_by_its_road() {
         );
     }
 }
+in_each_edition!(
+    valley_of_trials_is_left_by_its_road,
+    valley_of_trials_is_left_by_its_road_of,
+    Horde,
+    "valley"
+);
 
 /// How near a walk drawn goes by a passage's point when it takes the road or the tunnel there
 /// (yards): its turns are cells, or the tiles' gates on a long walk.
@@ -1164,9 +1277,8 @@ const ROAD: f64 = 120.0;
 /// Burning Blade Coven opens on Valley of Trials: Yarrog Baneshadow, deep inside under the
 /// ridge (nearer the plain behind it than the valley), is walked to from the valley through the
 /// cave's mouth (the floors hold the cave), and from Razor Hill by the valley's road.
-#[test]
-fn burning_blade_coven_is_reached_from_the_valley() {
-    for (edition, w) in walk_worlds(fg_route::faction::Faction::Horde) {
+fn burning_blade_coven_is_reached_from_the_valley_of(edition: &str, w: &fg_route::world::World) {
+    {
         let at = |x, y| w.to_world(14, x, y).unwrap();
         let (yarrog, zureetha, razor_hill) = (at(42.7, 53.0), at(42.8, 69.0), at(51.9, 43.5));
         let (mouth, road) = (at(45.3, 56.4), at(47.4, 67.7));
@@ -1181,11 +1293,16 @@ fn burning_blade_coven_is_reached_from_the_valley() {
         assert!(near < ROAD, "{edition}: {near} yd from the mouth, {inside:?}");
     }
 }
+in_each_edition!(
+    burning_blade_coven_is_reached_from_the_valley,
+    burning_blade_coven_is_reached_from_the_valley_of,
+    Horde,
+    "valley"
+);
 
 /// Coldridge Valley is left by Coldridge Pass, the tunnel to Kharanos, in every edition.
-#[test]
-fn coldridge_valley_is_left_by_its_tunnel() {
-    for (edition, w) in walk_worlds(fg_route::faction::Faction::Alliance) {
+fn coldridge_valley_is_left_by_its_tunnel_of(edition: &str, w: &fg_route::world::World) {
+    {
         let at = |x, y| w.to_world(1, x, y).unwrap();
         // Every cell walked over (the turns are the tiles' gates of a long walk).
         let (a, b) = (at(29.0, 66.0), at(46.0, 52.0));
@@ -1197,12 +1314,22 @@ fn coldridge_valley_is_left_by_its_tunnel() {
         assert!(w.walk_distance(&a, &b) < 2.0 * a.dist(&b), "{edition}: no way round");
     }
 }
+in_each_edition!(
+    coldridge_valley_is_left_by_its_tunnel,
+    coldridge_valley_is_left_by_its_tunnel_of,
+    Alliance,
+    "coldridge"
+);
 
 /// WoW Forever's Mount Hyjal is walled by cliffs: walks up from Felwood or Winterspring take
 /// Darkwhisper Gorge, even from Felwood just below its western rim.
 #[test]
 fn mount_hyjal_is_reached_by_darkwhisper_gorge() {
-    let w = crate::common::world(Edition::Forever, fg_route::faction::Faction::Horde);
+    let w = &crate::common::terrain_world(
+        Edition::Forever,
+        fg_route::faction::Faction::Horde,
+        &["forever_hyjal_terrain"],
+    );
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let gorge = at(618, 56.5, 71.6);
     let (west, foothills) = (at(616, 12.8, 52.4), at(616, 55.1, 82.6));
@@ -2709,10 +2836,7 @@ fn druid_bear_form_through_moonglade() {
 /// spawn inside removed.
 #[test]
 fn dungeons_with_quests_filed_under_them() {
-    let path = std::env::temp_dir().join(format!("fg-dungeons-{}.sqlite", std::process::id()));
-    let _ = std::fs::remove_file(&path);
-    database().execute("VACUUM INTO ?1", [path.to_str().unwrap()]).unwrap();
-    let conn = Connection::open(&path).unwrap();
+    let conn = fixture(&["classic_dungeons"]);
     conn.execute(
         "DELETE FROM m_spawn WHERE zone_id IN (SELECT area FROM dungeon WHERE name = 'The Deadmines'
            UNION SELECT j.value FROM dungeon, json_each(coalesce(alt_areas, '[]')) j WHERE name = 'The Deadmines')",
@@ -2720,8 +2844,6 @@ fn dungeons_with_quests_filed_under_them() {
     )
     .unwrap();
     let options = job::options(&conn, &overrides()).unwrap();
-    drop(conn);
-    std::fs::remove_file(&path).ok();
     assert!(options.dungeons.iter().any(|d| d.name == "The Deadmines"));
 }
 
@@ -2746,7 +2868,16 @@ fn city_of_dalaran_has_a_door_for_each_faction() {
             params: Some(overrides.params.with_overrides(&[]).unwrap()),
             ..request(race, "mage", 40, &[])
         };
-        let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+        let p = job::prepare(
+            &Fixture::new(Edition::Forever)
+                .file("forever_services")
+                .file("forever_dalaran")
+                .open(),
+            &overrides,
+            &request,
+            &|_| {},
+        )
+        .unwrap();
         let dalaran = p
             .model
             .dungeons
@@ -2776,7 +2907,16 @@ fn library_book_is_looted_before_the_librarian() {
         params: Some(overrides.params.with_overrides(&["zone_gap=0".to_owned()]).unwrap()),
         ..request("human", "mage", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_library_book")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     let digest = quest(&p, 78127).expect("The Dalaran Digest planned");
     let q = &p.model.quests[digest as usize];
     assert_eq!(q.held, Some(209844), "offered for The Dalaran Digest, Vol. 23");
@@ -2876,7 +3016,10 @@ fn limited_supply_follows_the_crowd() {
 /// for the others.
 #[test]
 fn a_crafted_item_is_bought_at_the_auction_house_when_chosen() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever)
+        .file("forever_services")
+        .file("forever_dynamite_plan")
+        .open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let prepared = |auction: bool| {
         let params = [format!("auction_house={auction}")];
@@ -2968,7 +3111,16 @@ fn great_outdoors_campfires_are_beside_their_giver() {
         ),
         ..request("human", "warrior", 20, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_great_outdoors")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     let q = &p.model.quests[quest(&p, 95998).unwrap() as usize];
     let o = &q.objectives[0];
     assert!(o.text.starts_with("Sit by the Basic Campfire"), "{}", o.text);
@@ -2992,7 +3144,16 @@ fn camping_101_is_a_profession_quest_after_the_great_outdoors() {
         professions: vec![goal("skinning"), goal("leatherworking")],
         ..request("tauren", "druid", 20, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_great_outdoors")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     // Camping 101: Skinning and Leatherworking at Kaga Wildhoof.
     for id in [97936, 97934] {
         let i = quest(&p, id).unwrap_or_else(|| panic!("Camping 101 {id} planned"));
@@ -3038,7 +3199,7 @@ fn items_a_child_hands_over_are_got_at_its_hand_in() {
 #[test]
 fn clamlette_surprise_buys_swiss_without_the_optional_reward_package() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).file(&format!("{}_cooking", edition.key())).open();
         let mut o = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         o.params.excluded_quests.push(5150);
         let req: PlanRequest = serde_json::from_value(serde_json::json!({
@@ -3094,9 +3255,7 @@ fn clamlette_surprise_buys_swiss_without_the_optional_reward_package() {
 
 #[test]
 fn a_reward_package_cannot_supply_ingredients_while_its_quest_is_held() {
-    let path = std::env::temp_dir().join(format!("fg-reward-container-{}.sqlite", std::process::id()));
-    database().execute("VACUUM INTO ?1", [path.to_str().unwrap()]).unwrap();
-    let conn = Connection::open(&path).unwrap();
+    let conn = fixture(&["classic_cooking"]);
     conn.execute_batch(
         "DELETE FROM m_item_source WHERE item_id = 8932 AND NOT (from_type = 'item' AND from_id = 15699);",
     )
@@ -3115,15 +3274,14 @@ fn a_reward_package_cannot_supply_ingredients_while_its_quest_is_held() {
         format!("{error:#}").contains("objective item source unknown"),
         "{error:#}"
     );
-    drop(conn);
-    std::fs::remove_file(path).unwrap();
 }
 
 /// Places of known height stand on their floor where several lie over each other: Fargodeep
 /// Mine's kobolds, Goldtooth and the area to scout are in the mine, not on the hill over it.
 #[test]
 fn fargodeep_mine_is_under_the_hill() {
-    let p = human_warrior();
+    let conn = fixture(&["classic_elwynn_terrain", "classic_routes"]);
+    let p = &prepare_in(&conn, "human", "warrior", 30, &["progression=cautious"], None);
     let mut checked = 0;
     for name in [
         "The Fargodeep Mine",
@@ -3156,7 +3314,16 @@ fn zephras_watchtower_is_climbed() {
         params: Some(overrides.params.with_overrides(&[]).unwrap()),
         ..request("skyborne", "mage", 5, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_zephras_terrain")
+            .file("forever_anchors_of_zephras")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     let q = &p.model.quests[quest(&p, 94414).expect("The Anchors of Zephras planned") as usize];
     let halaan = &q.starts[0].pos;
     assert_eq!(halaan.z, Some(1020));
@@ -3190,8 +3357,9 @@ fn a_group_takes_on_what_its_weakest_class_does() {
 /// the steps not for everyone are for.
 #[test]
 fn a_group_guide_tells_the_addon_its_players() {
-    let route = leveling(14)
+    let route = leveling_of(14, 16)
         .levels(10, 14)
+        .params(|p| p.effort = 0.0)
         .start(player("A-Realm", 1, "warrior", 10))
         .mates(vec![player("B-Realm", 1, "mage", 10)])
         .quest(Q::new(700, "Warrior only").level(11).members(0b01).giver(2, 30.0, 40.0))
@@ -3223,7 +3391,8 @@ fn a_group_guide_tells_the_addon_its_players() {
 #[test]
 fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     use fg_route::plan::{Edit, Outcome};
-    let probe = prepare_from("human", "warrior", 40, &["progression=cautious"], None);
+    let conn = fixture(&["classic_needles_terrain", "classic_needles_tanaris"]);
+    let probe = prepare_in(&conn, "human", "warrior", 40, &["progression=cautious"], None);
     let needles = 400;
     let zherin = probe.world.to_world(needles, 81.63, 77.95).unwrap();
     let start = StartState {
@@ -3236,7 +3405,7 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
         position: Some(map_pos(&probe, &zherin, needles)),
         ..StartState::default()
     };
-    let p = prepare_from("human", "warrior", 40, &["progression=cautious"], Some(start));
+    let p = prepare_in(&conn, "human", "warrior", 40, &["progression=cautious"], Some(start));
     let node = p
         .world
         .taxi_nodes
@@ -3263,7 +3432,8 @@ fn an_edited_step_may_walk_into_a_closed_zone_with_a_warning() {
     assert!(edited.steps[0].warning.is_some());
     assert_eq!(edited.errors(), 0);
     // Once the character is strong enough, nothing to warn of.
-    let strong = prepare_from(
+    let strong = prepare_in(
+        &conn,
         "human",
         "warrior",
         45,
@@ -3309,7 +3479,16 @@ fn ruins_of_lordaeron_is_run_at_the_games_levels() {
         ),
         ..request("undead", "warrior", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_dungeon_starts")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     let ruins = p
         .model
         .dungeons
@@ -3318,7 +3497,14 @@ fn ruins_of_lordaeron_is_run_at_the_games_levels() {
         .expect("Ruins of Lordaeron");
     assert_eq!((ruins.mob_level, ruins.min_level, ruins.max_level), (18, 15, 21));
     // The app shows the same level.
-    let options = job::options(&database_of("forever"), &overrides).unwrap();
+    let options = job::options(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_dungeon_starts")
+            .open(),
+        &overrides,
+    )
+    .unwrap();
     let listed = options.dungeons.iter().find(|d| d.id == 16611).unwrap();
     assert_eq!(listed.level, Some(18));
 }
@@ -3414,7 +3600,16 @@ fn a_dungeon_quest_started_by_an_unplaced_item_starts_in_the_run() {
         params: Some(overrides.params.with_overrides(&[]).unwrap()),
         ..request("human", "warrior", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_dungeon_starts")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     let ruins = p.model.dungeons.iter().position(|d| d.area == 16611).unwrap();
     for id in [95189, 92415] {
         let q = &p.model.quests[quest(&p, id).unwrap_or_else(|| panic!("{id} planned")) as usize];
@@ -3431,7 +3626,16 @@ fn a_quest_started_by_an_object_inside_a_dungeon_starts_in_the_run() {
         params: Some(overrides.params.with_overrides(&[]).unwrap()),
         ..request("dwarf", "warrior", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_dungeon_starts")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     let thanes = p.model.dungeons.iter().position(|d| d.area == 16919).unwrap();
     let q = &p.model.quests[quest(&p, 98423).expect("The Treaty of Understanding planned") as usize];
     assert_eq!(q.start_dungeon, Some(thanes));
@@ -3449,7 +3653,16 @@ fn rare_books_asked_for_are_planned_with_one_of_each_book() {
         required_quests: vec![job::RequiredQuest::Id(91777)],
         ..request("human", "warrior", 12, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_rare_books")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
     let counts = |id: i64| {
         let q = &p.model.quests[quest(&p, id).unwrap_or_else(|| panic!("{id} planned")) as usize];
         q.objectives.iter().map(|o| (o.loc.id, o.count)).collect::<Vec<_>>()
@@ -3568,7 +3781,9 @@ fn new_characters_level_together_from_the_start() {
         mate_professions: vec![vec![]],
         ..request("orc", "warrior", 4, &["effort=0"])
     };
-    let route = job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route;
+    let route = job::plan(&fixture(&["classic_valley"]), &overrides(), &request, &|_| {})
+        .unwrap()
+        .route;
     let names: Vec<&str> = route.players.iter().map(|p| p.name.as_str()).collect();
     assert_eq!(names, ["Player 1", "Player 2"]);
     assert!(

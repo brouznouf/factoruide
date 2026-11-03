@@ -1,0 +1,110 @@
+# The Aged Envelope (830) lies in a camp of Kul Tiras marines, who like only the Alliance.
+
+[[npc]]
+id = 3099
+name = "Dire Mottled Boar"
+level = 6
+max_level = 7
+friendly_to = "AH"
+at = [{ zone = 14, x = 38.11, y = 35.87, z = 19 }, { zone = 14, x = 38.62, y = 44.95, z = 41 }, { zone = 14, x = 38.93, y = 47.06, z = 49 }, { zone = 14, x = 38.96, y = 37.84, z = 23 }, { zone = 14, x = 39.4, y = 36.54, z = 24 }, { zone = 14, x = 39.96, y = 47.75, z = 52 }, { zone = 14, x = 40.0, y = 47.37, z = 51 }, { zone = 14, x = 40.21, y = 48.99, z = 58 }, { zone = 14, x = 40.45, y = 32.76, z = 12 }, { zone = 14, x = 40.67, y = 40.66, z = 33 }, { zone = 14, x = 40.69, y = 50.77, z = 68 }, { zone = 14, x = 40.77, y = 44.86, z = 41 }]
+
+[[npc]]
+id = 3103
+name = "Makrura Clacker"
+level = 6
+max_level = 7
+at = [{ zone = 14, x = 51.41, y = 84.88, z = -9 }, { zone = 14, x = 52.68, y = 84.9, z = -9 }, { zone = 14, x = 57.34, y = 80.02, z = -6 }, { zone = 14, x = 58.96, y = 82.14, z = -3 }, { zone = 14, x = 59.06, y = 87.64, z = -5 }, { zone = 14, x = 59.15, y = 91.5, z = -3 }, { zone = 14, x = 59.54, y = 86.96 }, { zone = 14, x = 59.69, y = 72.41, z = -1 }, { zone = 14, x = 60.92, y = 96.33, z = -3 }, { zone = 14, x = 61.04, y = 77.34, z = -2 }, { zone = 14, x = 61.06, y = 72.51, z = -6 }, { zone = 14, x = 61.56, y = 42.98, z = -14 }]
+
+[[npc]]
+id = 3104
+name = "Makrura Shellhide"
+level = 6
+max_level = 7
+at = [{ zone = 14, x = 53.89, y = 84.83, z = -10 }, { zone = 14, x = 55.08, y = 82.85, z = -12 }, { zone = 14, x = 58.2, y = 85.15, z = -11 }, { zone = 14, x = 60.22, y = 75.74, z = -6 }, { zone = 14, x = 60.28, y = 73.5, z = -8 }, { zone = 14, x = 60.31, y = 71.58, z = -3 }, { zone = 14, x = 60.91, y = 40.44, z = -8 }, { zone = 14, x = 61.02, y = 84.65, z = -7 }, { zone = 14, x = 61.07, y = 42.55, z = -6 }, { zone = 14, x = 61.44, y = 44.81, z = -14 }, { zone = 14, x = 61.45, y = 69.7, z = -10 }, { zone = 14, x = 61.47, y = 54.35, z = -1 }]
+
+[[npc]]
+id = 3106
+name = "Pygmy Surf Crawler"
+level = 5
+max_level = 6
+friendly_to = "AH"
+at = [{ zone = 14, x = 51.53, y = 84.03, z = -5 }, { zone = 14, x = 52.13, y = 83.97, z = -7 }, { zone = 14, x = 52.22, y = 83.11, z = 1 }, { zone = 14, x = 52.7, y = 83.04, z = 2 }, { zone = 14, x = 53.43, y = 82.95, z = 3 }, { zone = 14, x = 53.92, y = 83.01, z = 0 }, { zone = 14, x = 54.04, y = 82.18, z = 5 }, { zone = 14, x = 54.5, y = 82.97, z = -5 }, { zone = 14, x = 54.63, y = 82.0, z = 3 }, { zone = 14, x = 54.67, y = 83.95, z = -10 }, { zone = 14, x = 55.21, y = 81.75, z = -3 }, { zone = 14, x = 55.37, y = 79.94, z = 2 }]
+
+[[npc]]
+id = 3125
+name = "Clattering Scorpid"
+level = 5
+max_level = 6
+at = [{ zone = 14, x = 49.46, y = 74.67, z = 51 }, { zone = 14, x = 49.55, y = 72.9, z = 50 }, { zone = 14, x = 50.09, y = 73.47, z = 45 }, { zone = 14, x = 50.14, y = 71.89, z = 41 }, { zone = 14, x = 50.23, y = 75.36, z = 45 }, { zone = 14, x = 50.61, y = 74.91, z = 42 }, { zone = 14, x = 50.82, y = 72.5, z = 41 }, { zone = 14, x = 50.93, y = 70.61, z = 38 }, { zone = 14, x = 50.97, y = 54.22, z = 34 }, { zone = 14, x = 51.88, y = 73.46, z = 33 }, { zone = 14, x = 51.95, y = 54.74, z = 28 }, { zone = 14, x = 52.05, y = 73.61, z = 31 }]
+
+[[npc]]
+id = 3128
+name = "Kul Tiras Sailor"
+level = 5
+max_level = 6
+friendly_to = "A"
+at = [{ zone = 14, x = 55.72, y = 57.54, z = 27 }, { zone = 14, x = 55.88, y = 51.84, z = 17 }, { zone = 14, x = 55.92, y = 59.05, z = 27 }, { zone = 14, x = 55.95, y = 53.78, z = 18 }, { zone = 14, x = 56.36, y = 56.47, z = 21 }, { zone = 14, x = 56.41, y = 58.48, z = 23 }, { zone = 14, x = 56.61, y = 52.97, z = 21 }, { zone = 14, x = 56.66, y = 54.94, z = 20 }, { zone = 14, x = 56.72, y = 52.76, z = 21 }, { zone = 14, x = 56.72, y = 53.14, z = 21 }, { zone = 14, x = 57.11, y = 53.12, z = 20 }, { zone = 14, x = 57.11, y = 57.24, z = 22 }]
+
+[[npc]]
+id = 3129
+name = "Kul Tiras Marine"
+level = 6
+max_level = 7
+friendly_to = "A"
+at = [{ zone = 14, x = 59.56, y = 57.85 }, { zone = 14, x = 58.86, y = 57.95 }, { zone = 14, x = 59.46, y = 57.15 }, { zone = 14, x = 59.06, y = 57.35 }, { zone = 14, x = 59.86, y = 57.65 }, { zone = 14, x = 59.26, y = 58.25 }]
+
+[[npc]]
+id = 3139
+name = "Gar'Thok"
+level = 10
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 14, x = 51.95, y = 43.5, z = 18 }]
+
+[[npc]]
+id = 3192
+name = "Lieutenant Benedict"
+level = 8
+friendly_to = "A"
+at = [{ zone = 14, x = 59.72, y = 58.27, z = 43 }]
+
+[[npc]]
+id = 5809
+name = "Watch Commander Zalaphil"
+level = 9
+rank = 4
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 14, x = 59.23, y = 58.52, z = 41 }, { zone = 14, x = 59.93, y = 59.02, z = 24 }]
+
+[[npc]]
+id = 6145
+name = "School of Fish"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 14, x = 57.7, y = 9.79, z = -24 }, { zone = 14, x = 58.22, y = 81.03, z = -10 }, { zone = 14, x = 60.03, y = 77.74, z = -7 }, { zone = 14, x = 60.72, y = 14.43, z = -12 }, { zone = 14, x = 61.22, y = 48.11, z = -14 }, { zone = 14, x = 61.27, y = 44.21, z = -13 }, { zone = 14, x = 61.57, y = 20.71, z = -6 }, { zone = 14, x = 61.72, y = 39.03, z = -18 }, { zone = 14, x = 61.95, y = 75.22, z = -20 }, { zone = 14, x = 62.18, y = 70.39, z = -13 }, { zone = 14, x = 62.19, y = 49.92, z = -17 }, { zone = 14, x = 62.77, y = 47.25, z = -10 }]
+
+[[object]]
+id = 3239
+name = "Benedict's Chest"
+at = [{ zone = 14, x = 59.26, y = 57.65 }]
+
+[[item]]
+id = 4881
+name = "Aged Envelope"
+level = 1
+class = 12
+start_quest = 830
+drops = [{ object = 3239, chance = 1.0 }]
+
+[[quest]]
+id = 830
+name = "The Admiral's Orders"
+level = 7
+races_mask = 178
+zone = 14
+xp = 630
+starts = [{ item = 4881 }]
+ends = [{ npc = 3139 }]
+objectives = []
+

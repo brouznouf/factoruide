@@ -1,0 +1,22 @@
+# The ground around the flight masters of Ratchet, Orgrimmar, Thunder Bluff and the Crossroads: the zone
+# a flight path is placed in comes from the map's cells.
+
+[[terrain]]
+map = 1
+tile_x = [38, 40]
+tile_y = [32, 34]
+
+[[terrain]]
+map = 1
+tile_x = [39, 41]
+tile_y = [27, 29]
+
+[[terrain]]
+map = 1
+tile_x = [30, 32]
+tile_y = [33, 35]
+
+[[terrain]]
+map = 1
+tile_x = [35, 37]
+tile_y = [31, 33]

@@ -130,6 +130,12 @@ fn write_settings(settings: Settings) -> CmdResult<()> {
 /// The databases fetched so far, unpacked (kept for good: each connection reads them in place).
 static DATABASES: LazyLock<Mutex<HashMap<Edition, &'static [u8]>>> = LazyLock::new(Mutex::default);
 
+/// Forget the databases fetched (tests serve different worlds of an edition one after the other).
+#[cfg(test)]
+pub(crate) fn forget_databases() {
+    DATABASES.locked().clear();
+}
+
 /// An edition's database, fetched and unpacked the first time (`data/<edition>.sqlite.zst`).
 fn database(edition: Edition) -> CmdResult<&'static [u8]> {
     let mut dbs = DATABASES.locked();

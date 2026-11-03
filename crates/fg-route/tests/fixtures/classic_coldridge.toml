@@ -1,0 +1,1131 @@
+# Coldridge Valley: the Dwarf's first quests.
+
+[[npc]]
+id = 69
+name = "Timber Wolf"
+level = 2
+friendly_to = "AH"
+at = [{ zone = 12, x = 45.2, y = 35.15, z = 93 }, { zone = 12, x = 45.69, y = 34.96, z = 92 }, { zone = 12, x = 45.91, y = 40.31, z = 86 }, { zone = 12, x = 46.15, y = 35.53, z = 92 }, { zone = 12, x = 46.25, y = 36.73, z = 90 }, { zone = 12, x = 46.34, y = 34.42, z = 92 }, { zone = 12, x = 46.66, y = 39.39, z = 83 }, { zone = 12, x = 46.96, y = 34.46, z = 88 }, { zone = 12, x = 47.77, y = 37.63 }, { zone = 12, x = 48.15, y = 34.91, z = 84 }, { zone = 12, x = 48.51, y = 33.67, z = 86 }, { zone = 12, x = 49.34, y = 47.49, z = 77 }]
+
+[[npc]]
+id = 119
+name = "Longsnout"
+level = 10
+max_level = 11
+friendly_to = "AH"
+at = [{ zone = 12, x = 24.28, y = 82.66 }, { zone = 12, x = 24.33, y = 83.75, z = 35 }, { zone = 12, x = 24.56, y = 88.49 }, { zone = 12, x = 24.65, y = 86.95, z = 32 }, { zone = 12, x = 24.97, y = 85.8 }, { zone = 12, x = 25.01, y = 84.77 }, { zone = 12, x = 25.48, y = 82.24, z = 40 }, { zone = 12, x = 25.7, y = 79.76, z = 36 }, { zone = 12, x = 26.42, y = 82.31 }]
+
+[[npc]]
+id = 151
+name = "Brog Hamfist"
+level = 10
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 12, x = 43.96, y = 65.92, z = 57 }]
+
+[[npc]]
+id = 152
+name = "Brother Danil"
+level = 5
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 12, x = 47.49, y = 41.56, z = 82 }]
+
+[[npc]]
+id = 227
+name = "Mabel Solaj"
+level = 26
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 10, x = 74.21, y = 44.81 }]
+
+[[npc]]
+id = 299
+name = "Young Wolf"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 12, x = 41.55, y = 58.29, z = 69 }, { zone = 12, x = 42.61, y = 60.99, z = 61 }, { zone = 12, x = 42.72, y = 62.81, z = 60 }, { zone = 12, x = 42.81, y = 62.26, z = 60 }, { zone = 12, x = 42.9, y = 55.38, z = 75 }, { zone = 12, x = 44.53, y = 58.34, z = 69 }, { zone = 12, x = 44.83, y = 57.55, z = 72 }, { zone = 12, x = 45.23, y = 37.64 }, { zone = 12, x = 45.34, y = 41.11 }, { zone = 12, x = 45.34, y = 42.61, z = 91 }, { zone = 12, x = 45.38, y = 55.41, z = 74 }, { zone = 12, x = 45.53, y = 39.09, z = 87 }]
+
+[[npc]]
+id = 460
+name = "Alamar Grimm"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 28.65, y = 66.14, z = 399 }]
+
+[[npc]]
+id = 658
+name = "Sten Stoutarm"
+level = 5
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 1, x = 29.93, y = 71.2, z = 384 }]
+
+[[npc]]
+id = 704
+name = "Ragged Timber Wolf"
+level = 2
+friendly_to = "AH"
+at = [{ zone = 1, x = 23.22, y = 77.69, z = 387 }, { zone = 1, x = 23.26, y = 78.74, z = 387 }, { zone = 1, x = 24.01, y = 79.74, z = 388 }, { zone = 1, x = 24.84, y = 78.22, z = 386 }, { zone = 1, x = 25.5, y = 79.51, z = 388 }, { zone = 1, x = 25.96, y = 75.3, z = 386 }, { zone = 1, x = 26.8, y = 75.08, z = 382 }, { zone = 1, x = 26.88, y = 76.22, z = 380 }, { zone = 1, x = 26.89, y = 78.02, z = 384 }, { zone = 1, x = 27.41, y = 75.39, z = 377 }, { zone = 1, x = 27.66, y = 77.03, z = 381 }, { zone = 1, x = 27.96, y = 76.08, z = 377 }]
+
+[[npc]]
+id = 706
+name = "Frostmane Troll Whelp"
+level = 3
+max_level = 4
+at = [{ zone = 1, x = 20.21, y = 75.89, z = 394 }, { zone = 1, x = 20.39, y = 77.17, z = 391 }, { zone = 1, x = 20.78, y = 75.93, z = 388 }, { zone = 1, x = 20.83, y = 76.63, z = 386 }, { zone = 1, x = 20.84, y = 76.26, z = 386 }, { zone = 1, x = 21.0, y = 75.33, z = 386 }, { zone = 1, x = 21.03, y = 76.44, z = 386 }, { zone = 1, x = 21.29, y = 76.03, z = 388 }, { zone = 1, x = 21.39, y = 77.96, z = 389 }, { zone = 1, x = 21.42, y = 76.97, z = 391 }, { zone = 1, x = 22.09, y = 78.84, z = 394 }, { zone = 1, x = 22.31, y = 78.12, z = 390 }]
+
+[[npc]]
+id = 707
+name = "Rockjaw Trogg"
+level = 1
+max_level = 2
+friendly_to = "AH"
+at = [{ zone = 1, x = 19.42, y = 74.44, z = 415 }, { zone = 1, x = 20.12, y = 73.23, z = 396 }, { zone = 1, x = 21.8, y = 73.37, z = 385 }, { zone = 1, x = 21.82, y = 72.42, z = 387 }, { zone = 1, x = 22.75, y = 76.27, z = 386 }, { zone = 1, x = 23.04, y = 73.71, z = 386 }, { zone = 1, x = 23.21, y = 78.39, z = 387 }, { zone = 1, x = 23.83, y = 73.48, z = 388 }, { zone = 1, x = 24.12, y = 77.29, z = 388 }, { zone = 1, x = 24.31, y = 71.0, z = 393 }, { zone = 1, x = 28.84, y = 76.47, z = 381 }, { zone = 1, x = 28.86, y = 77.64, z = 389 }]
+
+[[npc]]
+id = 708
+name = "Small Crag Boar"
+level = 3
+friendly_to = "AH"
+at = [{ zone = 1, x = 19.47, y = 75.15, z = 409 }, { zone = 1, x = 19.75, y = 76.42, z = 395 }, { zone = 1, x = 19.86, y = 73.42, z = 403 }, { zone = 1, x = 19.9, y = 72.29, z = 400 }, { zone = 1, x = 20.06, y = 73.32, z = 398 }, { zone = 1, x = 20.09, y = 71.08, z = 418 }, { zone = 1, x = 20.14, y = 71.37, z = 413 }, { zone = 1, x = 20.21, y = 74.51, z = 398 }, { zone = 1, x = 20.38, y = 74.24, z = 391 }, { zone = 1, x = 20.66, y = 73.3, z = 388 }, { zone = 1, x = 20.69, y = 69.18, z = 394 }, { zone = 1, x = 20.7, y = 70.28, z = 391 }]
+
+[[npc]]
+id = 713
+name = "Balir Frosthammer"
+level = 5
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 29.71, y = 71.25, z = 383 }]
+
+[[npc]]
+id = 714
+name = "Talin Keeneye"
+level = 5
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 22.6, y = 71.43, z = 385 }]
+
+[[npc]]
+id = 724
+name = "Burly Rockjaw Trogg"
+level = 2
+friendly_to = "AH"
+at = [{ zone = 1, x = 19.42, y = 72.24, z = 418 }, { zone = 1, x = 19.99, y = 75.41, z = 397 }, { zone = 1, x = 20.01, y = 77.52, z = 407 }, { zone = 1, x = 20.24, y = 71.51, z = 409 }, { zone = 1, x = 20.61, y = 70.45, z = 396 }, { zone = 1, x = 20.78, y = 72.12, z = 387 }, { zone = 1, x = 20.81, y = 74.3 }, { zone = 1, x = 21.19, y = 71.78, z = 387 }, { zone = 1, x = 21.32, y = 77.31 }, { zone = 1, x = 21.36, y = 75.37, z = 389 }, { zone = 1, x = 21.44, y = 74.68, z = 387 }, { zone = 1, x = 21.45, y = 73.32, z = 387 }]
+
+[[npc]]
+id = 786
+name = "Grelin Whitebeard"
+level = 5
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 1, x = 25.08, y = 75.71, z = 386 }]
+
+[[npc]]
+id = 808
+name = "Grik'nir the Cold"
+level = 5
+at = [{ zone = 1, x = 30.48, y = 80.15, z = 371 }]
+
+[[npc]]
+id = 836
+name = "Durnan Furcutter"
+level = 5
+npc_flags = 16391
+friendly_to = "A"
+at = [{ zone = 1, x = 28.77, y = 66.37, z = 393 }]
+
+[[npc]]
+id = 837
+name = "Branstock Khalder"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 28.6, y = 66.39, z = 393 }]
+
+[[npc]]
+id = 895
+name = "Thorgas Grimson"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 29.18, y = 67.45, z = 396 }]
+
+[[npc]]
+id = 912
+name = "Thran Khorman"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 28.83, y = 67.24, z = 396 }]
+
+[[npc]]
+id = 916
+name = "Solm Hargrin"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 28.37, y = 67.51, z = 396 }]
+
+[[npc]]
+id = 926
+name = "Bromos Grummner"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 28.83, y = 68.33, z = 396 }]
+
+[[npc]]
+id = 944
+name = "Marryk Nurribit"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 28.71, y = 66.37, z = 393 }]
+
+[[npc]]
+id = 946
+name = "Frostmane Novice"
+level = 3
+max_level = 4
+at = [{ zone = 1, x = 28.69, y = 83.14, z = 390 }, { zone = 1, x = 28.99, y = 82.57, z = 390 }, { zone = 1, x = 29.05, y = 81.17, z = 397 }, { zone = 1, x = 29.38, y = 81.06, z = 372 }, { zone = 1, x = 30.1, y = 82.38, z = 387 }, { zone = 1, x = 30.23, y = 80.27, z = 373 }, { zone = 1, x = 30.41, y = 80.87, z = 382 }, { zone = 1, x = 30.48, y = 79.54, z = 372 }]
+
+[[npc]]
+id = 1128
+name = "Young Black Bear"
+level = 5
+max_level = 6
+at = [{ zone = 1, x = 30.37, y = 55.63, z = 387 }, { zone = 1, x = 30.76, y = 57.22, z = 382 }, { zone = 1, x = 32.34, y = 56.05, z = 368 }, { zone = 1, x = 32.47, y = 57.87, z = 372 }, { zone = 1, x = 34.44, y = 59.5, z = 382 }, { zone = 1, x = 35.54, y = 60.0, z = 358 }, { zone = 1, x = 38.67, y = 61.09, z = 368 }, { zone = 1, x = 38.85, y = 61.96, z = 372 }, { zone = 1, x = 39.05, y = 60.52, z = 360 }, { zone = 1, x = 39.62, y = 59.06, z = 353 }, { zone = 1, x = 39.86, y = 60.86, z = 364 }, { zone = 1, x = 40.47, y = 60.81, z = 360 }]
+
+[[npc]]
+id = 1129
+name = "Black Bear"
+level = 6
+at = [{ zone = 1, x = 65.43, y = 12.89, z = 391 }]
+
+[[npc]]
+id = 1190
+name = "Mountain Boar"
+level = 10
+max_level = 11
+friendly_to = "AH"
+at = [{ zone = 38, x = 24.27, y = 21.43, z = 335 }, { zone = 38, x = 25.27, y = 13.89, z = 326 }, { zone = 38, x = 27.25, y = 39.1, z = 339 }, { zone = 38, x = 27.74, y = 26.64, z = 322 }, { zone = 38, x = 28.62, y = 23.23, z = 328 }, { zone = 38, x = 29.13, y = 32.8, z = 325 }, { zone = 38, x = 29.91, y = 36.48, z = 330 }, { zone = 38, x = 29.91, y = 46.84, z = 346 }, { zone = 38, x = 30.53, y = 15.36, z = 326 }, { zone = 38, x = 30.6, y = 16.56, z = 322 }, { zone = 38, x = 31.82, y = 24.1, z = 332 }, { zone = 38, x = 32.92, y = 35.1, z = 333 }]
+
+[[npc]]
+id = 1192
+name = "Elder Mountain Boar"
+level = 16
+max_level = 17
+friendly_to = "AH"
+at = [{ zone = 38, x = 60.0, y = 37.89, z = 304 }, { zone = 38, x = 60.21, y = 33.91, z = 302 }, { zone = 38, x = 60.35, y = 36.22, z = 305 }, { zone = 38, x = 61.18, y = 39.62, z = 304 }, { zone = 38, x = 61.33, y = 41.4, z = 304 }, { zone = 38, x = 62.38, y = 38.38, z = 308 }, { zone = 38, x = 62.98, y = 39.95, z = 313 }, { zone = 38, x = 63.2, y = 35.1, z = 311 }, { zone = 38, x = 64.94, y = 38.83, z = 318 }, { zone = 38, x = 65.37, y = 41.94, z = 319 }, { zone = 38, x = 66.14, y = 38.31, z = 327 }, { zone = 38, x = 66.33, y = 40.12, z = 321 }]
+
+[[npc]]
+id = 1196
+name = "Ice Claw Bear"
+level = 7
+max_level = 8
+at = [{ zone = 1, x = 25.32, y = 55.76, z = 393 }, { zone = 1, x = 25.5, y = 46.37, z = 387 }, { zone = 1, x = 25.98, y = 55.19, z = 388 }, { zone = 1, x = 26.7, y = 56.19, z = 395 }, { zone = 1, x = 26.88, y = 46.91, z = 385 }, { zone = 1, x = 27.62, y = 47.63, z = 385 }, { zone = 1, x = 28.05, y = 43.1, z = 389 }, { zone = 1, x = 28.05, y = 54.51, z = 386 }, { zone = 1, x = 28.1, y = 52.24, z = 381 }, { zone = 1, x = 28.34, y = 47.54, z = 391 }, { zone = 1, x = 29.06, y = 42.68, z = 395 }, { zone = 1, x = 29.3, y = 41.51, z = 397 }]
+
+[[npc]]
+id = 1226
+name = "Maxan Anvol"
+level = 10
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 47.34, y = 52.19, z = 400 }]
+
+[[npc]]
+id = 1243
+name = "Hegnar Rumbleshot"
+level = 9
+npc_flags = 7
+friendly_to = "A"
+at = [{ zone = 1, x = 40.68, y = 65.13, z = 407 }]
+
+[[npc]]
+id = 1252
+name = "Senir Whitebeard"
+level = 8
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 46.73, y = 53.83, z = 397 }]
+
+[[npc]]
+id = 1375
+name = "Marleth Barleybrew"
+level = 12
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 30.19, y = 45.53, z = 394 }]
+
+[[npc]]
+id = 1376
+name = "Beldin Steelgrill"
+level = 12
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 50.44, y = 49.09, z = 394 }]
+
+[[npc]]
+id = 1378
+name = "Pilot Bellowfiz"
+level = 18
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 49.43, y = 48.41, z = 394 }]
+
+[[npc]]
+id = 1464
+name = "Innkeeper Helbrek"
+level = 30
+npc_flags = 135
+friendly_to = "A"
+at = [{ zone = 11, x = 10.7, y = 60.95, z = 10 }]
+
+[[npc]]
+id = 1694
+name = "Loslor Rudge"
+level = 10
+npc_flags = 7
+friendly_to = "A"
+at = [{ zone = 1, x = 50.08, y = 49.42, z = 395 }]
+
+[[npc]]
+id = 1872
+name = "Tharek Blackstone"
+level = 12
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 46.02, y = 51.68, z = 402 }]
+
+[[npc]]
+id = 1965
+name = "Mountaineer Thalos"
+level = 15
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 33.48, y = 71.84, z = 428 }]
+
+[[npc]]
+id = 2365
+name = "Bront Coldcleave"
+level = 39
+npc_flags = 6
+friendly_to = "A"
+at = [{ zone = 267, x = 48.75, y = 57.2, z = 17 }]
+
+[[npc]]
+id = 2814
+name = "Narj Deepslice"
+level = 39
+npc_flags = 6
+friendly_to = "A"
+at = [{ zone = 45, x = 45.54, y = 47.61, z = 22 }]
+
+[[npc]]
+id = 3577
+name = "Dalaran Brewmaster"
+level = 15
+max_level = 16
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 130, x = 62.61, y = 65.05, z = 64 }]
+
+[[npc]]
+id = 6782
+name = "Hands Springsprocket"
+level = 10
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 1, x = 33.85, y = 72.24, z = 432 }]
+
+[[npc]]
+id = 6806
+name = "Tannok Frosthammer"
+level = 10
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 47.22, y = 52.19, z = 400 }]
+
+[[npc]]
+id = 8416
+name = "Felix Whindlebolt"
+level = 2
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 1, x = 28.55, y = 67.64, z = 396 }]
+
+[[npc]]
+id = 12427
+name = "Mountaineer Dolf"
+level = 7
+friendly_to = "A"
+at = [{ zone = 1, x = 45.81, y = 54.57, z = 394 }]
+
+[[npc]]
+id = 12738
+name = "Nori Pridedrift"
+level = 5
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1, x = 24.98, y = 75.96, z = 386 }]
+
+[[object]]
+id = 270
+name = "Unguarded Thunder Ale Barrel"
+at = [{ zone = 1, x = 47.72, y = 52.7 }]
+
+[[object]]
+id = 2843
+name = "Battered Chest"
+at = [{ zone = 1, x = 20.66, y = 76.74 }, { zone = 1, x = 22.61, y = 80.11 }, { zone = 1, x = 22.62, y = 80.51 }]
+
+[[object]]
+id = 3658
+name = "Water Barrel"
+at = [{ zone = 1, x = 25.92, y = 51.03 }, { zone = 1, x = 26.54, y = 36.55 }, { zone = 1, x = 27.54, y = 36.45 }]
+
+[[object]]
+id = 148499
+name = "Felix's Box"
+at = [{ zone = 1, x = 20.88, y = 76.07 }]
+
+[[object]]
+id = 176785
+name = "Ammo Crate"
+at = [{ zone = 1, x = 44.13, y = 56.95 }]
+
+[[object]]
+id = 178084
+name = "Felix's Chest"
+at = [{ zone = 1, x = 22.78, y = 80.0 }]
+
+[[object]]
+id = 178085
+name = "Felix's Bucket of Bolts"
+at = [{ zone = 1, x = 26.33, y = 79.28 }]
+
+[[item]]
+id = 61
+name = "Dwarven Leather Pants"
+level = 5
+class = 4
+
+[[item]]
+id = 79
+name = "Dwarven Cloth Britches"
+level = 5
+class = 4
+
+[[item]]
+id = 117
+name = "Tough Jerky"
+level = 5
+class = 0
+drops = [{ object = 2843, chance = 0.19 }, { npc = 708, chance = 0.17130099999999998 }, { npc = 707, chance = 0.137623 }, { vendor = 1464 }, { vendor = 2365 }, { vendor = 2814 }]
+
+[[item]]
+id = 159
+name = "Refreshing Spring Water"
+level = 5
+class = 0
+drops = [{ npc = 3577, chance = 1.0 }, { object = 3658, chance = 1.0 }, { object = 2843, chance = 0.36 }, { vendor = 151 }, { vendor = 152 }, { vendor = 227 }]
+
+[[item]]
+id = 719
+name = "Rabbit Handler Gloves"
+level = 5
+class = 4
+
+[[item]]
+id = 750
+name = "Tough Wolf Meat"
+level = 1
+class = 12
+drops = [{ npc = 69, chance = 0.8 }, { npc = 299, chance = 0.8 }, { npc = 704, chance = 0.8 }]
+
+[[item]]
+id = 769
+name = "Chunk of Boar Meat"
+level = 5
+class = 7
+drops = [{ npc = 119, chance = 0.76767 }, { npc = 1190, chance = 0.753267 }, { npc = 1192, chance = 0.74323 }]
+
+[[item]]
+id = 961
+name = "Healing Herb"
+level = 5
+class = 0
+
+[[item]]
+id = 2004
+name = "Grelin Whitebeard's Journal"
+level = 1
+class = 12
+drops = [{ npc = 808, chance = 1.0 }]
+
+[[item]]
+id = 2047
+name = "Anvilmar Hand Axe"
+level = 5
+class = 2
+
+[[item]]
+id = 2048
+name = "Anvilmar Hammer"
+level = 5
+class = 2
+
+[[item]]
+id = 2172
+name = "Rustic Belt"
+level = 5
+class = 4
+
+[[item]]
+id = 2187
+name = "A Stack of Letters"
+level = 1
+class = 12
+
+[[item]]
+id = 2188
+name = "A Letter to Grelin Whitebeard"
+level = 1
+class = 12
+
+[[item]]
+id = 2195
+name = "Anvilmar Knife"
+level = 5
+class = 2
+
+[[item]]
+id = 2547
+name = "Boar Handler Gloves"
+level = 5
+class = 4
+
+[[item]]
+id = 2548
+name = "Barrel of Barleybrew Scalder"
+level = 1
+class = 12
+
+[[item]]
+id = 2619
+name = "Grelin's Report"
+level = 1
+class = 12
+
+[[item]]
+id = 2999
+name = "Steelgrill's Tools"
+level = 1
+class = 12
+
+[[item]]
+id = 5581
+name = "Smooth Walking Staff"
+level = 5
+class = 2
+
+[[item]]
+id = 5761
+name = "Anvilmar Sledge"
+level = 5
+class = 2
+
+[[item]]
+id = 6171
+name = "Wolf Handler Gloves"
+level = 5
+class = 4
+
+[[item]]
+id = 6173
+name = "Snow Boots"
+level = 5
+class = 4
+
+[[item]]
+id = 6176
+name = "Dwarven Kite Shield"
+level = 5
+class = 4
+
+[[item]]
+id = 6185
+name = "Bear Shawl"
+level = 5
+class = 4
+
+[[item]]
+id = 6753
+name = "Feather Charm"
+level = 1
+class = 12
+drops = [{ npc = 946, chance = 0.8 }]
+
+[[item]]
+id = 6952
+name = "Thick Bear Fur"
+level = 1
+class = 12
+drops = [{ npc = 1128, chance = 0.33558125 }, { npc = 1129, chance = 0.33558125 }, { npc = 1196, chance = 0.33558125 }]
+
+[[item]]
+id = 7646
+name = "Crate of Inn Supplies"
+level = 1
+class = 12
+
+[[item]]
+id = 9543
+name = "Simple Rune"
+level = 1
+class = 12
+
+[[item]]
+id = 9544
+name = "Simple Memorandum"
+level = 1
+class = 12
+
+[[item]]
+id = 9550
+name = "Encrypted Rune"
+level = 1
+class = 12
+
+[[item]]
+id = 9556
+name = "Hallowed Rune"
+level = 1
+class = 12
+
+[[item]]
+id = 9558
+name = "Encrypted Memorandum"
+level = 1
+class = 12
+
+[[item]]
+id = 9563
+name = "Consecrated Rune"
+level = 1
+class = 12
+
+[[item]]
+id = 9566
+name = "Etched Rune"
+level = 1
+class = 12
+
+[[item]]
+id = 9573
+name = "Glyphic Memorandum"
+level = 1
+class = 12
+
+[[item]]
+id = 9577
+name = "Tainted Memorandum"
+level = 1
+class = 12
+
+[[item]]
+id = 10438
+name = "Felix's Box"
+level = 1
+class = 12
+drops = [{ object = 148499, chance = 1.0 }]
+
+[[item]]
+id = 10439
+name = "Durnan's Scalding Mornbrew"
+level = 1
+class = 12
+
+[[item]]
+id = 10440
+name = "Nori's Mug"
+level = 1
+class = 12
+
+[[item]]
+id = 13850
+name = "Rumbleshot's Ammo"
+level = 1
+class = 12
+drops = [{ object = 176785, chance = 1.0 }]
+
+[[item]]
+id = 16313
+name = "Felix's Chest"
+level = 1
+class = 12
+drops = [{ object = 178084, chance = 1.0 }]
+
+[[item]]
+id = 16314
+name = "Felix's Bucket of Bolts"
+level = 1
+class = 12
+drops = [{ object = 178085, chance = 1.0 }]
+
+[[item]]
+id = 16605
+name = "Friar's Robes of the Light"
+level = 5
+class = 4
+
+[[quest]]
+id = 179
+name = "Dwarven Outfitters"
+level = 1
+races_mask = 77
+zone = 132
+xp = 80
+quest_flags = 8
+objectives_text = "Sten Stoutarm voudrait 8 Morceaux de Viande de loup coriace."
+starts = [{ npc = 658 }]
+ends = [{ npc = 658 }]
+objectives = [
+  { item = 750, amount = 8 },
+]
+rewards = [{ item = 719, count = 1, choice = true }, { item = 2547, count = 1, choice = true }, { item = 6171, count = 1, choice = true }]
+
+[[quest]]
+id = 3106
+name = "Simple Rune"
+level = 1
+races_mask = 4
+classes_mask = 1
+zone = -81
+xp = 40
+source_item = 9543
+objectives_text = "Read the Simple Rune and speak to Thran Khorman in Coldridge Valley."
+starts = [{ npc = 658 }]
+ends = [{ npc = 912 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3107
+name = "Consecrated Rune"
+level = 1
+races_mask = 4
+classes_mask = 2
+zone = -141
+xp = 40
+source_item = 9563
+objectives_text = "Lire la Rune consacr\u00e9e, et parler \u00e0 Bromos Grummner, dans la Vall\u00e9e des Frig\u00e8res."
+starts = [{ npc = 658 }]
+ends = [{ npc = 926 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3108
+name = "Etched Rune"
+level = 1
+races_mask = 4
+classes_mask = 4
+zone = -261
+xp = 40
+source_item = 9566
+objectives_text = "Read the Etched Rune and speak to Thorgas Grimson in Coldridge Valley."
+starts = [{ npc = 658 }]
+ends = [{ npc = 895 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3109
+name = "Encrypted Rune"
+level = 1
+races_mask = 4
+classes_mask = 8
+zone = -162
+xp = 40
+source_item = 9550
+objectives_text = "Read the Encrypted Rune and speak to Solm Hargrin in Coldridge Valley."
+starts = [{ npc = 658 }]
+ends = [{ npc = 916 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3110
+name = "Hallowed Rune"
+level = 1
+races_mask = 4
+classes_mask = 16
+zone = -262
+xp = 40
+source_item = 9556
+objectives_text = "Read the Hallowed Rune and speak to Branstock Khalder in Anvilmar."
+starts = [{ npc = 658 }]
+ends = [{ npc = 837 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3112
+name = "Simple Memorandum"
+level = 1
+races_mask = 64
+classes_mask = 1
+zone = -81
+xp = 40
+source_item = 9544
+objectives_text = "Read the Simple Memorandum and speak to Thran Khorman in Coldridge Valley."
+starts = [{ npc = 658 }]
+ends = [{ npc = 912 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3113
+name = "Encrypted Memorandum"
+level = 1
+races_mask = 64
+classes_mask = 8
+zone = -162
+xp = 40
+source_item = 9558
+objectives_text = "Read the Encrypted Memorandum and speak to Solm Hargrin in Coldridge Valley."
+starts = [{ npc = 658 }]
+ends = [{ npc = 916 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3114
+name = "Glyphic Memorandum"
+level = 1
+races_mask = 64
+classes_mask = 128
+zone = -161
+xp = 40
+source_item = 9573
+objectives_text = "Lire la Note de service glyph\u00e9e, et parler \u00e0 Marryk Nurribit, dans Anvilmar, au-dessus de la Vall\u00e9e des Frig\u00e8res."
+starts = [{ npc = 658 }]
+ends = [{ npc = 944 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3115
+name = "Tainted Memorandum"
+level = 1
+races_mask = 64
+classes_mask = 256
+zone = -61
+xp = 40
+source_item = 9577
+objectives_text = "Read the Tainted Memorandum and speak to Alamar Grimm inside Anvilmar above Coldridge Valley."
+starts = [{ npc = 658 }]
+ends = [{ npc = 460 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 170
+name = "A New Threat"
+level = 2
+races_mask = 77
+zone = 132
+xp = 170
+quest_flags = 8
+objectives_text = "Balir Frosthammer veut que vous tuiez 6 Troggs M\u00e2cheroc et 6 Troggs M\u00e2cheroc forcen\u00e9s."
+starts = [{ npc = 713 }]
+ends = [{ npc = 713 }]
+pre_any = [179]
+objectives = [
+  { creature = 707, amount = 6 },
+  { creature = 724, amount = 6 },
+]
+rewards = [{ item = 2172, count = 1, choice = true }, { item = 6173, count = 1, choice = true }, { item = 6185, count = 1, choice = true }]
+
+[[quest]]
+id = 183
+name = "The Boar Hunter"
+level = 3
+races_mask = 77
+zone = 132
+xp = 250
+quest_flags = 8
+objectives_text = "Talin Keeneye aimerait que vous tuiez 12 Petits sangliers des rochers."
+starts = [{ npc = 714 }]
+ends = [{ npc = 714 }]
+objectives = [
+  { creature = 708, amount = 12 },
+]
+rewards = [{ item = 61, count = 1, choice = true }, { item = 79, count = 1, choice = true }]
+
+[[quest]]
+id = 233
+name = "Coldridge Valley Mail Delivery"
+level = 3
+races_mask = 77
+zone = 132
+xp = 190
+source_item = 2187
+objectives_text = "Apporter la pile de lettres \u00e0 Talin Keeneye."
+starts = [{ npc = 658 }]
+ends = [{ npc = 714 }]
+pre_any = [179]
+objectives = []
+
+[[quest]]
+id = 3361
+name = "A Refugee's Quandary"
+level = 3
+min_level = 3
+races_mask = 77
+zone = 132
+xp = 250
+quest_flags = 8
+objectives_text = "Apporter la Bo\u00eete de Felix, le Coffre de Felix et le Seau de boulons de Felix \u00e0 Felix Whindlebolt, \u00e0 Anvilmar."
+starts = [{ npc = 8416 }]
+ends = [{ npc = 8416 }]
+objectives = [
+  { item = 10438, amount = 1 },
+  { item = 16313, amount = 1 },
+  { item = 16314, amount = 1 },
+]
+
+[[quest]]
+id = 182
+name = "The Troll Cave"
+level = 4
+races_mask = 77
+zone = 132
+xp = 360
+quest_flags = 8
+objectives_text = "Grelin Whitebeard aimerait que vous tuiez 14 Jeunes trolls Frostmane."
+starts = [{ npc = 786 }]
+ends = [{ npc = 786 }]
+objectives = [
+  { creature = 706, amount = 14 },
+]
+rewards = [{ item = 961, count = 3 }, { item = 2047, count = 1, choice = true }, { item = 2048, count = 1, choice = true }, { item = 2195, count = 1, choice = true }, { item = 5761, count = 1, choice = true }]
+
+[[quest]]
+id = 234
+name = "Coldridge Valley Mail Delivery"
+level = 4
+races_mask = 77
+zone = 132
+xp = 270
+source_item = 2188
+objectives_text = "Remettre la lettre \u00e0 Grelin Whitebeard."
+starts = [{ npc = 714 }]
+ends = [{ npc = 786 }]
+pre_any = [233]
+objectives = []
+
+[[quest]]
+id = 1599
+name = "Beginnings"
+level = 4
+races_mask = 77
+classes_mask = 256
+zone = -61
+xp = 355
+reward_spell = 688
+quest_flags = 8
+objectives_text = "Bring 3 Feather Charms to Alamar Grimm in Anvilmar."
+starts = [{ npc = 460 }]
+ends = [{ npc = 460 }]
+objectives = [
+  { item = 6753, amount = 3 },
+]
+
+[[quest]]
+id = 5625
+name = "Garments of the Light"
+level = 4
+min_level = 5
+races_mask = 4
+classes_mask = 16
+zone = -262
+xp = 270
+quest_flags = 8
+objectives_text = "Find Mountaineer Dolf and heal his wounds using Lesser Heal (Rank 2). Afterwards, grant him Power Word: Fortitude and then return to Maxan Anvol in Kharanos."
+starts = [{ npc = 1226 }]
+ends = [{ npc = 1226 }]
+objectives = [
+  { creature = 12427, amount = 1 },
+]
+rewards = [{ item = 16605, count = 1 }]
+
+[[quest]]
+id = 5626
+name = "In Favor of the Light"
+level = 4
+min_level = 5
+races_mask = 4
+classes_mask = 16
+zone = -262
+xp = 90
+quest_flags = 8
+objectives_text = "Speak to Maxan Anvol in Dun Morogh."
+starts = [{ npc = 837 }]
+ends = [{ npc = 1226 }]
+objectives = []
+
+[[quest]]
+id = 218
+name = "The Stolen Journal"
+level = 5
+races_mask = 77
+zone = 132
+xp = 550
+quest_flags = 8
+objectives_text = "Grelin Whitebeard veut que vous tuiez Grik'nir le Froid et que vous lui rapportiez son journal."
+starts = [{ npc = 786 }]
+ends = [{ npc = 786 }]
+pre_any = [182]
+objectives = [
+  { item = 2004, amount = 1 },
+]
+rewards = [{ item = 5581, count = 1, choice = true }, { item = 6176, count = 1, choice = true }]
+
+[[quest]]
+id = 282
+name = "Senir's Observations"
+level = 5
+races_mask = 77
+zone = 132
+xp = 340
+source_item = 2619
+objectives_text = "Aller voir le Montagnard Thalos."
+starts = [{ npc = 786 }]
+ends = [{ npc = 1965 }]
+pre_any = [218]
+objectives = []
+
+[[quest]]
+id = 400
+name = "Tools for Steelgrill"
+level = 5
+min_level = 2
+races_mask = 77
+zone = 1
+xp = 110
+source_item = 2999
+objectives_text = "Rapporter les outils de SteelGrill \u00e0 Beldin Steelgrill."
+starts = [{ npc = 1872 }]
+ends = [{ npc = 1376 }]
+objectives = []
+
+[[quest]]
+id = 420
+name = "Senir's Observations"
+level = 5
+races_mask = 77
+zone = 132
+xp = 340
+source_item = 2619
+objectives_text = "Apporter le rapport de Grelin \u00e0 Senir Whitebeard \u00e0 Kharanos."
+starts = [{ npc = 1965 }]
+ends = [{ npc = 1252 }]
+pre_any = [282]
+objectives = []
+
+[[quest]]
+id = 2160
+name = "Supplies to Tannok"
+level = 5
+races_mask = 77
+zone = 1
+xp = 110
+source_item = 7646
+objectives_text = "Livrer la Caisse de ravitaillement \u00e0 l'auberge de Tannok Frosthammer \u00e0 Kharanos."
+starts = [{ npc = 6782 }]
+ends = [{ npc = 6806 }]
+objectives = []
+rewards = [{ item = 117, count = 5, choice = true }, { item = 159, count = 5, choice = true }]
+
+[[quest]]
+id = 3364
+name = "Scalding Mornbrew Delivery"
+level = 5
+min_level = 4
+races_mask = 77
+zone = 132
+xp = 230
+time_limit = 300
+source_item = 10439
+extra = "{\"time_limit\":300}"
+objectives_text = "Apporter un Th\u00e9 br\u00fblant \u00e0 Durnan Furcutter, dans Anvilmar, dans les cinq minutes imparties avant qu'il ne refroidisse !"
+starts = [{ npc = 12738 }]
+ends = [{ npc = 836 }]
+objectives = []
+
+[[quest]]
+id = 3365
+name = "Bring Back the Mug"
+level = 5
+min_level = 4
+races_mask = 77
+zone = 132
+xp = 450
+source_item = 10440
+objectives_text = "Apporter la Chope de Nori \u00e0 Nori Pridedrift."
+starts = [{ npc = 836 }]
+ends = [{ npc = 12738 }]
+pre_any = [3364]
+objectives = []
+
+[[quest]]
+id = 310
+name = "Bitter Rivals"
+level = 6
+min_level = 2
+races_mask = 77
+zone = 1
+xp = 140
+source_item = 2548
+objectives_text = "Aller au sous-sol de la distillerie Thunderbrew \u00e0 Kharanos et remplacer un Tonneau de Thunder Ale par un Tonneau de Barleybrew Scalder."
+starts = [{ npc = 1375 }]
+ends = [{ object = 270 }]
+objectives = []
+
+[[quest]]
+id = 317
+name = "Stocking Jetsteam"
+level = 6
+min_level = 2
+races_mask = 77
+zone = 1
+xp = 675
+quest_flags = 8
+objectives_text = "R\u00e9unir 4 morceaux de Viande de sanglier et 2 Fourrures d'ours \u00e9paisses et les livrer au pilote Bellowfiz au d\u00e9p\u00f4t de Steelgrill."
+starts = [{ npc = 1378 }]
+ends = [{ npc = 1378 }]
+objectives = [
+  { item = 769, amount = 4 },
+  { item = 6952, amount = 2 },
+]
+
+[[quest]]
+id = 5541
+name = "Ammo for Rumbleshot"
+level = 6
+min_level = 5
+races_mask = 77
+zone = 1
+xp = 550
+quest_flags = 8
+objectives_text = "Apporter les Munitions de Rumbleshot \u00e0 Hegnar Rumbleshot \u00e0 Dun Morogh."
+starts = [{ npc = 1694 }]
+ends = [{ npc = 1243 }]
+objectives = [
+  { item = 13850, amount = 1 },
+]
+

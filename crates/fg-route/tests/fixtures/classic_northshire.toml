@@ -1,0 +1,441 @@
+# Northshire Valley: the Human warrior's first quests (A Threat Within is 783; Kobold Camp Cleanup 7; Wolves Across the Border 33).
+
+[[npc]]
+id = 6
+name = "Kobold Vermin"
+level = 1
+max_level = 2
+at = [{ zone = 12, x = 46.93, y = 35.67, z = 90 }, { zone = 12, x = 47.22, y = 36.0, z = 87 }, { zone = 12, x = 47.57, y = 36.37, z = 83 }, { zone = 12, x = 47.58, y = 35.94, z = 83 }]
+
+[[npc]]
+id = 38
+name = "Defias Thug"
+level = 3
+max_level = 4
+at = [{ zone = 12, x = 51.06, y = 49.25, z = 73 }, { zone = 12, x = 51.37, y = 50.86, z = 76 }, { zone = 12, x = 51.38, y = 49.26, z = 74 }, { zone = 12, x = 51.82, y = 47.4, z = 74 }]
+
+[[npc]]
+id = 69
+name = "Timber Wolf"
+level = 2
+friendly_to = "AH"
+at = [{ zone = 12, x = 45.2, y = 35.15, z = 93 }, { zone = 12, x = 45.69, y = 34.96, z = 92 }, { zone = 12, x = 45.91, y = 40.31, z = 86 }, { zone = 12, x = 46.15, y = 35.53, z = 92 }]
+
+[[npc]]
+id = 80
+name = "Kobold Laborer"
+level = 3
+max_level = 4
+at = [{ zone = 12, x = 47.42, y = 30.06, z = 87 }, { zone = 12, x = 47.5, y = 30.29, z = 87 }, { zone = 12, x = 47.79, y = 31.64, z = 93 }, { zone = 12, x = 47.81, y = 31.09, z = 91 }]
+
+[[npc]]
+id = 196
+name = "Eagan Peltskinner"
+level = 3
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 48.94, y = 40.16, z = 81 }]
+
+[[npc]]
+id = 197
+name = "Marshal McBride"
+level = 20
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 12, x = 48.92, y = 41.61, z = 82 }]
+
+[[npc]]
+id = 198
+name = "Khelden Bremen"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 12, x = 49.66, y = 39.4, z = 89 }]
+
+[[npc]]
+id = 255
+name = "Gerard Tiller"
+level = 6
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 43.1, y = 85.5, z = 33 }]
+
+[[npc]]
+id = 257
+name = "Kobold Worker"
+level = 3
+at = [{ zone = 12, x = 46.27, y = 32.79, z = 90 }, { zone = 12, x = 46.3, y = 32.2, z = 91 }, { zone = 12, x = 46.55, y = 32.47, z = 90 }, { zone = 12, x = 46.84, y = 33.43, z = 90 }]
+
+[[npc]]
+id = 299
+name = "Young Wolf"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 12, x = 41.55, y = 58.29, z = 69 }, { zone = 12, x = 42.61, y = 60.99, z = 61 }, { zone = 12, x = 42.72, y = 62.81, z = 60 }, { zone = 12, x = 42.81, y = 62.26, z = 60 }]
+
+[[npc]]
+id = 375
+name = "Priestess Anetta"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 12, x = 49.81, y = 39.49, z = 82 }]
+
+[[npc]]
+id = 459
+name = "Drusilla La Salle"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 12, x = 49.87, y = 42.65, z = 81 }]
+
+[[npc]]
+id = 704
+name = "Ragged Timber Wolf"
+level = 2
+friendly_to = "AH"
+at = [{ zone = 1, x = 23.22, y = 77.69, z = 387 }, { zone = 1, x = 23.26, y = 78.74, z = 387 }, { zone = 1, x = 24.01, y = 79.74, z = 388 }, { zone = 1, x = 24.84, y = 78.22, z = 386 }]
+
+[[npc]]
+id = 823
+name = "Deputy Willem"
+level = 18
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 48.17, y = 42.94, z = 83 }]
+
+[[npc]]
+id = 911
+name = "Llane Beshere"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 12, x = 50.24, y = 42.29, z = 82 }]
+
+[[npc]]
+id = 915
+name = "Jorik Kerridan"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 12, x = 50.31, y = 39.92, z = 81 }]
+
+[[npc]]
+id = 925
+name = "Brother Sammuel"
+level = 5
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 12, x = 50.43, y = 42.12, z = 82 }]
+
+[[npc]]
+id = 1934
+name = "Tirisfal Farmer"
+level = 6
+max_level = 7
+at = [{ zone = 85, x = 34.63, y = 50.67, z = 33 }, { zone = 85, x = 35.78, y = 50.68, z = 34 }, { zone = 85, x = 36.54, y = 51.8, z = 34 }, { zone = 85, x = 37.49, y = 51.63 }]
+
+[[npc]]
+id = 1936
+name = "Farmer Solliden"
+level = 8
+rank = 4
+at = [{ zone = 85, x = 34.07, y = 52.11 }, { zone = 85, x = 37.09, y = 49.46 }, { zone = 85, x = 38.03, y = 52.21 }, { zone = 85, x = 38.04, y = 49.61, z = 34 }]
+
+[[npc]]
+id = 3577
+name = "Dalaran Brewmaster"
+level = 15
+max_level = 16
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 130, x = 62.61, y = 65.05, z = 64 }]
+
+[[npc]]
+id = 3662
+name = "Delmanis the Hated"
+level = 17
+at = [{ zone = 148, x = 56.84, y = 27.51, z = 67 }]
+
+[[object]]
+id = 2843
+name = "Battered Chest"
+at = [{ zone = 1, x = 20.66, y = 76.74 }, { zone = 1, x = 22.61, y = 80.11 }, { zone = 1, x = 22.62, y = 80.51 }]
+
+[[object]]
+id = 3658
+name = "Water Barrel"
+at = [{ zone = 1, x = 25.92, y = 51.03 }, { zone = 1, x = 26.54, y = 36.55 }, { zone = 1, x = 27.54, y = 36.45 }]
+
+[[item]]
+id = 80
+name = "Soft Fur-lined Shoes"
+level = 5
+class = 4
+
+[[item]]
+id = 159
+name = "Refreshing Spring Water"
+level = 5
+class = 0
+drops = [{ npc = 3577, chance = 1.0 }, { npc = 3662, chance = 1.0 }, { object = 3658, chance = 1.0 }]
+
+[[item]]
+id = 750
+name = "Tough Wolf Meat"
+level = 1
+class = 12
+drops = [{ npc = 69, chance = 0.8 }, { npc = 299, chance = 0.8 }, { npc = 704, chance = 0.8 }]
+
+[[item]]
+id = 752
+name = "Red Burlap Bandana"
+level = 1
+class = 12
+drops = [{ npc = 38, chance = 0.7168874999999999 }]
+
+[[item]]
+id = 1159
+name = "Militia Quarterstaff"
+level = 5
+class = 2
+
+[[item]]
+id = 1161
+name = "Militia Shortsword"
+level = 5
+class = 2
+
+[[item]]
+id = 2186
+name = "Outfitter Belt"
+level = 5
+class = 4
+
+[[item]]
+id = 2224
+name = "Militia Dagger"
+level = 5
+class = 2
+
+[[item]]
+id = 2691
+name = "Outfitter Boots"
+level = 5
+class = 4
+
+[[item]]
+id = 4536
+name = "Shiny Red Apple"
+level = 5
+class = 0
+drops = [{ npc = 1934, chance = 0.30981000000000003 }, { npc = 1936, chance = 0.25136600000000003 }, { object = 2843, chance = 0.19 }]
+
+[[item]]
+id = 5579
+name = "Militia Warhammer"
+level = 5
+class = 2
+
+[[item]]
+id = 5580
+name = "Militia Hammer"
+level = 5
+class = 2
+
+[[item]]
+id = 6070
+name = "Wolfskin Bracers"
+level = 5
+class = 4
+
+[[item]]
+id = 11192
+name = "Outfitter Gloves"
+level = 5
+class = 4
+
+[[quest]]
+id = 783
+name = "A Threat Within"
+level = 1
+races_mask = 77
+zone = 9
+xp = 40
+quest_flags = 8
+starts = [{ npc = 823 }]
+ends = [{ npc = 197 }]
+objectives = []
+
+[[quest]]
+id = 7
+name = "Kobold Camp Cleanup"
+level = 2
+races_mask = 77
+zone = 9
+xp = 170
+quest_flags = 8
+starts = [{ npc = 197 }]
+ends = [{ npc = 197 }]
+pre_any = [783]
+objectives = [
+  { creature = 6, amount = 10 },
+]
+
+[[quest]]
+id = 21
+name = "Skirmish at Echo Ridge"
+level = 5
+races_mask = 77
+zone = 9
+xp = 450
+quest_flags = 8
+starts = [{ npc = 197 }]
+ends = [{ npc = 197 }]
+pre_any = [15]
+objectives = [
+  { creature = 80, amount = 12 },
+]
+rewards = [{ item = 2186, count = 1, choice = true }, { item = 2691, count = 1, choice = true }, { item = 11192, count = 1, choice = true }]
+
+[[quest]]
+id = 33
+name = "Wolves Across the Border"
+level = 2
+races_mask = 77
+zone = 9
+xp = 170
+quest_flags = 8
+starts = [{ npc = 196 }]
+ends = [{ npc = 196 }]
+objectives = [
+  { item = 750, amount = 8 },
+]
+rewards = [{ item = 80, count = 1, choice = true }, { item = 6070, count = 1, choice = true }]
+
+[[quest]]
+id = 18
+name = "Brotherhood of Thieves"
+level = 4
+min_level = 2
+races_mask = 77
+zone = 9
+xp = 360
+quest_flags = 8
+starts = [{ npc = 823 }]
+ends = [{ npc = 823 }]
+pre_any = [783]
+objectives = [
+  { item = 752, amount = 12 },
+]
+rewards = [{ item = 1159, count = 1, choice = true }, { item = 1161, count = 1, choice = true }, { item = 2224, count = 1, choice = true }, { item = 5579, count = 1, choice = true }, { item = 5580, count = 1, choice = true }]
+
+[[quest]]
+id = 15
+name = "Investigate Echo Ridge"
+level = 3
+races_mask = 77
+zone = 9
+xp = 250
+quest_flags = 8
+starts = [{ npc = 197 }]
+ends = [{ npc = 197 }]
+pre_any = [7]
+objectives = [
+  { creature = 257, amount = 10 },
+]
+
+[[quest]]
+id = 16
+name = "Give Gerard a Drink"
+level = 1
+races_mask = 77
+zone = 12
+xp = 0
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 255 }]
+ends = [{ npc = 255 }]
+objectives = [
+  { item = 159, amount = 1 },
+]
+rewards = [{ item = 4536, count = 1 }]
+
+[[quest]]
+id = 3100
+name = "Simple Letter"
+level = 1
+races_mask = 1
+classes_mask = 1
+zone = -81
+xp = 40
+starts = [{ npc = 197 }]
+ends = [{ npc = 911 }]
+pre_any = [7]
+objectives = []
+
+[[quest]]
+id = 3101
+name = "Consecrated Letter"
+level = 1
+races_mask = 1
+classes_mask = 2
+zone = -141
+xp = 40
+starts = [{ npc = 197 }]
+ends = [{ npc = 925 }]
+pre_any = [7]
+objectives = []
+
+[[quest]]
+id = 3102
+name = "Encrypted Letter"
+level = 1
+races_mask = 1
+classes_mask = 8
+zone = -162
+xp = 40
+starts = [{ npc = 197 }]
+ends = [{ npc = 915 }]
+pre_any = [7]
+objectives = []
+
+[[quest]]
+id = 3103
+name = "Hallowed Letter"
+level = 1
+races_mask = 1
+classes_mask = 16
+zone = -262
+xp = 40
+starts = [{ npc = 197 }]
+ends = [{ npc = 375 }]
+pre_any = [7]
+objectives = []
+
+[[quest]]
+id = 3104
+name = "Glyphic Letter"
+level = 1
+races_mask = 1
+classes_mask = 128
+zone = -161
+xp = 40
+starts = [{ npc = 197 }]
+ends = [{ npc = 198 }]
+pre_any = [7]
+objectives = []
+
+[[quest]]
+id = 3105
+name = "Tainted Letter"
+level = 1
+races_mask = 1
+classes_mask = 256
+zone = -61
+xp = 40
+starts = [{ npc = 197 }]
+ends = [{ npc = 459 }]
+pre_any = [7]
+objectives = []
+

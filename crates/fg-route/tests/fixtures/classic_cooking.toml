@@ -1,0 +1,216 @@
+# Clamlette Surprise (6610): a Cooking line, items from mobs, a clam and a vendor; 5150 is its optional reward package.
+
+[[npc]]
+id = 4388
+name = "Young Murk Thresher"
+level = 40
+max_level = 41
+friendly_to = "AH"
+at = [{ zone = 490, x = 32, y = 41 }]
+
+[[npc]]
+id = 6352
+name = "Coralshell Lurker"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 34, y = 42 }]
+
+[[npc]]
+id = 6369
+name = "Coralshell Tortoise"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 36, y = 43 }]
+
+[[npc]]
+id = 6560
+name = "Stone Guardian"
+level = 60
+max_level = 61
+rank = 1
+friendly_to = "AH"
+at = [{ zone = 490, x = 38, y = 44 }]
+
+[[npc]]
+id = 6746
+name = "Innkeeper Pala"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 490, x = 40, y = 45 }]
+
+[[npc]]
+id = 7097
+name = "Ironbeak Owl"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 42, y = 46 }]
+
+[[npc]]
+id = 7099
+name = "Ironbeak Hunter"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 44, y = 47 }]
+
+[[npc]]
+id = 7456
+name = "Winterspring Screecher"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 46, y = 48 }]
+
+[[npc]]
+id = 8125
+name = "Dirge Quikcleave"
+level = 43
+npc_flags = 7
+friendly_to = "AH"
+at = [{ zone = 440, x = 52.63, y = 28.11, z = 9 }]
+
+[[npc]]
+id = 9118
+name = "Larion"
+level = 51
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 490, x = 48, y = 49 }]
+
+[[npc]]
+id = 9274
+name = "Dadanga"
+level = 45
+npc_flags = 2
+friendly_to = "AH"
+at = [{ zone = 490, x = 50, y = 50 }]
+
+[[npc]]
+id = 10583
+name = "Gryfe"
+level = 55
+rank = 1
+npc_flags = 11
+friendly_to = "AH"
+at = [{ zone = 490, x = 52, y = 51 }]
+
+[[npc]]
+id = 11106
+name = "Innkeeper Sikewa"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 490, x = 54, y = 52 }]
+
+[[npc]]
+id = 11116
+name = "Innkeeper Abeqwa"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 490, x = 56, y = 53 }]
+
+[[npc]]
+id = 14527
+name = "Simone the Inconspicuous"
+level = 60
+rank = 1
+npc_flags = 1
+friendly_to = "AH"
+at = [{ zone = 490, x = 58, y = 54 }]
+
+[[npc]]
+id = 15540
+name = "Windcaller Kaldon"
+level = 60
+rank = 1
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 490, x = 60, y = 55 }]
+
+[[object]]
+id = 164958
+name = "Bloodpetal Sprout"
+at = [{ zone = 490, x = 62, y = 56 }]
+
+[[item]]
+id = 7973
+name = "Big-mouth Clam"
+level = 40
+class = 15
+drops = [{ npc = 4388, chance = 0.41 }, { npc = 6369, chance = 0.41 }, { npc = 6352, chance = 0.38 }]
+
+[[item]]
+id = 7974
+name = "Zesty Clam Meat"
+level = 45
+class = 7
+drops = [{ item = 7973 }]
+
+[[item]]
+id = 8932
+name = "Alterac Swiss"
+level = 55
+class = 0
+drops = [{ npc = 15540, chance = 0.5 }, { npc = 9118, chance = 0.2 }, { npc = 10583, chance = 0.139486 }, { vendor = 6746 }, { vendor = 11106 }, { vendor = 11116 }]
+
+[[item]]
+id = 11315
+name = "Bloodpetal Sprout"
+level = 1
+class = 12
+drops = [{ object = 164958, chance = 1.0 }, { npc = 14527, chance = 0.283898 }, { npc = 6560, chance = 0.011926 }]
+
+[[item]]
+id = 12207
+name = "Giant Egg"
+level = 45
+class = 7
+drops = [{ npc = 7456, chance = 0.40827399999999997 }, { npc = 7099, chance = 0.40404 }, { npc = 7097, chance = 0.400314 }]
+
+[[item]]
+id = 15699
+name = "Small Brown-wrapped Package"
+level = 1
+class = 15
+
+[[item]]
+id = 16971
+name = "Clamlette Surprise"
+level = 45
+class = 0
+
+[[quest]]
+id = 6610
+name = "Clamlette Surprise"
+level = 45
+min_level = 35
+zone = -304
+xp = 3900
+reward_spell = 18260
+required_skill = 185
+quest_flags = 8
+starts = [{ npc = 8125 }]
+ends = [{ npc = 8125 }]
+objectives = [
+  { item = 12207, amount = 12 },
+  { item = 7974, amount = 10 },
+  { item = 8932, amount = 20 },
+]
+rewards = [{ item = 16971, count = 20 }]
+
+[[quest]]
+id = 5150
+name = "Dadanga is Hungry!"
+level = 55
+min_level = 47
+zone = 490
+xp = 0
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 9274 }]
+ends = [{ npc = 9274 }]
+objectives = [
+  { item = 11315, amount = 15 },
+]
+rewards = [{ item = 15699, count = 1 }]
+

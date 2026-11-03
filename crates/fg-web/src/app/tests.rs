@@ -18,18 +18,39 @@ fn call(cmd: &str, args: &serde_json::Value) -> Result<serde_json::Value, String
 /// The page's files are shared: one test using them at a time.
 static STORE: Mutex<()> = Mutex::new(());
 
+/// The file the site serves as `path`, replaced.
+fn set_file(path: String, bytes: Vec<u8>) {
+    let mut files = FILES.lock().unwrap();
+    files.retain(|(p, _)| *p != path);
+    files.push((path, bytes));
+    forget_databases();
+}
+
 /// An edition's database served as the site serves it.
 fn serve(edition: &str) {
     let path = format!("data/{edition}.sqlite.zst");
-    let mut files = FILES.lock().unwrap();
-    if !files.iter().any(|(p, _)| *p == path) {
-        let db = format!("{}/../../{path}", env!("CARGO_MANIFEST_DIR"));
-        files.push((path, std::fs::read(db).unwrap()));
-    }
+    let db = format!("{}/../../{path}", env!("CARGO_MANIFEST_DIR"));
+    set_file(path, std::fs::read(db).unwrap());
+}
+
+/// A small world of an edition (the fixtures' files of fg-route) served as its database.
+fn serve_fixture(edition: Edition, files: &[&str]) {
+    let mut conn = files
+        .iter()
+        .fold(fg_route::fixture::Fixture::new(edition), |f, name| f.file(name))
+        .open();
+    let bytes = conn.serialize(rusqlite::MAIN_DB).unwrap().to_vec();
+    set_file(
+        format!("data/{}.sqlite.zst", edition.key()),
+        zstd::encode_all(&bytes[..], 1).unwrap(),
+    );
 }
 
 fn serve_classic() {
-    serve("classic");
+    serve_fixture(
+        Edition::Classic,
+        &["classic_services", "classic_coldridge", "classic_map_index"],
+    );
 }
 
 /// What `/fg export` gives for a dwarf warrior.
@@ -279,6 +300,7 @@ fn a_guide_created_by_hand_starts_empty_from_the_character() {
 #[test]
 fn the_exports_of_released_addons_are_read() {
     let _store = STORE.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+    serve_fixture(Edition::Forever, &[]);
     let dir = concat!(env!("CARGO_MANIFEST_DIR"), "/tests/profiles");
     let mut files: Vec<_> = std::fs::read_dir(dir)
         .unwrap()
@@ -373,11 +395,16 @@ fn the_example_guide_opens_in_every_view() {
 #[test]
 fn calls_reading_the_game_data_at_the_same_time_all_answer() {
     let _store = STORE.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-    serve("forever");
+    serve_fixture(Edition::Forever, &["forever_services", "forever_zephras"]);
     store::clear();
     call("set_edition", &serde_json::json!({ "edition": "forever" })).unwrap();
-    let file = include_str!("../../../../app/src/assets/example-guide.fgguide");
-    let meta = call("import_guide", &serde_json::json!({ "content": file })).unwrap();
+    let mut request: serde_json::Value =
+        serde_json::from_str(r#"{"race":"skyborne","class":"mage","from_level":1,"to_level":5,"name":"Concurrent"}"#)
+            .unwrap();
+    let mut params = serde_json::to_value(overrides(Edition::Forever).unwrap().params).unwrap();
+    params["effort"] = 0.0.into();
+    request["params"] = params;
+    let meta = call("plan_route", &serde_json::json!({ "request": request })).unwrap();
     let guide = meta["guide"].as_str().unwrap().to_owned();
     let _ = REPLIES.lock().unwrap().drain(..);
 
@@ -425,7 +452,7 @@ fn calls_reading_the_game_data_at_the_same_time_all_answer() {
             answers.len(),
             calls.len()
         );
-        std::thread::sleep(std::time::Duration::from_millis(50));
+        std::thread::sleep(std::time::Duration::from_millis(2));
     };
     for (id, answer) in answers {
         let (cmd, _) = &calls[(id - first_id) as usize];

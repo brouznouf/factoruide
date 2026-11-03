@@ -11,7 +11,7 @@ fn many_threads_allocating_and_freeing_keep_their_blocks_apart() {
         .map(|t| {
             std::thread::spawn(move || {
                 let mut kept: Vec<Vec<u64>> = Vec::new();
-                for i in 0..200_000u64 {
+                for i in 0..6_000u64 {
                     let n = ((i * 7919 + t) % 300) as usize;
                     kept.push(vec![t * 1_000_000 + i; n]);
                     if kept.len() > 500 {

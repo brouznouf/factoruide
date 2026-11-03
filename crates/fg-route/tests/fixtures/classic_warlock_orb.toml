@@ -1,0 +1,152 @@
+# The warlock's exclusive children of 1799 and the quest that requires one of them.
+
+[[npc]]
+id = 4668
+name = "Burning Blade Summoner"
+level = 38
+max_level = 39
+at = [{ zone = 405, x = 49.59, y = 77.24, z = 63 }, { zone = 405, x = 50.29, y = 72.34, z = 63 }, { zone = 405, x = 51.5, y = 81.89, z = 69 }, { zone = 405, x = 53.14, y = 80.22, z = 65 }]
+
+[[npc]]
+id = 4676
+name = "Lesser Infernal"
+level = 36
+max_level = 37
+at = [{ zone = 405, x = 48.89, y = 77.0, z = 62 }, { zone = 405, x = 49.36, y = 77.96, z = 65 }, { zone = 405, x = 50.46, y = 73.68, z = 62 }, { zone = 405, x = 50.83, y = 70.2, z = 61 }]
+
+[[npc]]
+id = 4678
+name = "Mana Eater"
+level = 37
+max_level = 38
+at = [{ zone = 405, x = 51.4, y = 67.98, z = 61 }, { zone = 405, x = 52.91, y = 68.14, z = 62 }]
+
+[[npc]]
+id = 6252
+name = "Acolyte Magaz"
+level = 20
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 17, x = 62.56, y = 35.23, z = 42 }]
+
+[[npc]]
+id = 6254
+name = "Acolyte Wytula"
+level = 20
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 17, x = 62.64, y = 35.3, z = 43 }]
+
+[[npc]]
+id = 6266
+name = "Menara Voidrender"
+level = 50
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 17, x = 62.51, y = 35.45, z = 41 }]
+
+[[npc]]
+id = 6546
+name = "Tabetha"
+level = 62
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 15, x = 46.06, y = 57.09, z = 39 }]
+
+[[npc]]
+id = 6549
+name = "Demon of the Orb"
+level = 40
+rank = 1
+at = [{ zone = 15, x = 45.79, y = 56.97 }]
+
+[[item]]
+id = 7291
+name = "Infernal Orb"
+level = 1
+class = 12
+drops = [{ npc = 4668, chance = 0.55 }]
+
+[[item]]
+id = 12642
+name = "Cleansed Infernal Orb"
+level = 1
+class = 12
+
+[[item]]
+id = 12648
+name = "Imprisoned Felhound Spirit"
+level = 1
+class = 12
+drops = [{ npc = 4678, chance = 0.1 }]
+
+[[item]]
+id = 12649
+name = "Imprisoned Infernal Spirit"
+level = 1
+class = 12
+drops = [{ npc = 4676, chance = 0.1 }]
+
+[[quest]]
+id = 1799
+name = "Fragments of the Orb of Orahil"
+level = 40
+min_level = 35
+classes_mask = 256
+zone = -61
+xp = 3150
+quest_flags = 8
+starts = [{ npc = 6266 }]
+ends = [{ npc = 6546 }]
+child = [4962, 4963]
+objectives = [
+  { item = 7291, amount = 1 },
+]
+
+[[quest]]
+id = 4962
+name = "Shard of a Felhound"
+level = 40
+min_level = 35
+classes_mask = 256
+zone = -61
+xp = 2350
+starts = [{ npc = 6254 }]
+ends = [{ npc = 6266 }]
+exclusive = [4963]
+objectives = [
+  { item = 12648, amount = 1 },
+]
+
+[[quest]]
+id = 4963
+name = "Shard of an Infernal"
+level = 40
+min_level = 35
+classes_mask = 256
+zone = -61
+xp = 2350
+starts = [{ npc = 6252 }]
+ends = [{ npc = 6266 }]
+exclusive = [4962]
+objectives = [
+  { item = 12649, amount = 1 },
+]
+
+[[quest]]
+id = 4961
+name = "Cleansing of the Orb of Orahil"
+level = 40
+min_level = 35
+classes_mask = 256
+zone = -61
+xp = 2350
+time_limit = 180
+starts = [{ npc = 6546 }]
+ends = [{ npc = 6546 }]
+pre_all = [1799, 4962]
+objectives = [
+  { creature = 6549, amount = 1 },
+]
+rewards = [{ item = 12642, count = 1 }]
+

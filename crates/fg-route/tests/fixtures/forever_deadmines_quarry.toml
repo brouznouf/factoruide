@@ -1,0 +1,345 @@
+# The Deadmines' Collecting Memories (167) and Oh Brother... (168), Red Silk Bandanas (214): items from elites in the quarry beside the entrance.
+
+[[npc]]
+id = 234
+name = "Gryan Stoutmantle"
+level = 35
+rank = 1
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 40, x = 56.33, y = 47.52, z = 61 }]
+
+[[npc]]
+id = 266
+name = "Wiley the Black"
+level = 26
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 44, x = 21.39, y = 45.35, z = 71 }]
+
+[[npc]]
+id = 332
+name = "Master Mathias Shaw"
+level = 62
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 1519, x = 78.31, y = 70.74, z = 110 }]
+
+[[npc]]
+id = 467
+name = "The Defias Traitor"
+level = 15
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 40, x = 55.68, y = 47.5, z = 55 }]
+
+[[npc]]
+id = 550
+name = "Defias Messenger"
+level = 14
+max_level = 15
+at = [{ zone = 40, x = 45.1, y = 69.33, z = 43 }]
+
+[[npc]]
+id = 594
+name = "Defias Henchman"
+level = 15
+max_level = 16
+rank = 1
+at = [{ zone = 40, x = 41.84, y = 78.44, z = 33 }, { zone = 40, x = 42.2, y = 74.49, z = 20 }, { zone = 40, x = 42.88, y = 72.6, z = 30 }, { zone = 40, x = 43.82, y = 77.02, z = 15 }, { zone = 40, x = 43.94, y = 73.51, z = 33 }]
+
+[[npc]]
+id = 619
+name = "Defias Conjurer"
+level = 15
+max_level = 16
+rank = 1
+at = [{ zone = 40, x = 40.49, y = 78.25, z = 33 }, { zone = 40, x = 41.69, y = 76.08, z = 21 }, { zone = 40, x = 43.7, y = 74.32, z = 34 }]
+
+[[npc]]
+id = 623
+name = "Skeletal Miner"
+level = 17
+max_level = 18
+rank = 1
+at = [{ zone = 40, x = 40.69, y = 82.29, z = 36 }, { zone = 40, x = 40.71, y = 81.81, z = 36 }, { zone = 40, x = 40.74, y = 81.2, z = 34 }, { zone = 40, x = 40.86, y = 80.81, z = 37 }, { zone = 40, x = 41.22, y = 83.21, z = 34 }, { zone = 40, x = 41.37, y = 83.19, z = 34 }, { zone = 40, x = 41.52, y = 81.35, z = 36 }, { zone = 40, x = 41.61, y = 81.67, z = 37 }, { zone = 40, x = 42.15, y = 81.36 }]
+
+[[npc]]
+id = 624
+name = "Undead Excavator"
+level = 17
+max_level = 18
+rank = 1
+at = [{ zone = 40, x = 40.56, y = 80.91 }, { zone = 40, x = 40.8, y = 82.58 }, { zone = 40, x = 40.87, y = 81.47 }, { zone = 40, x = 42.04, y = 82.48 }, { zone = 40, x = 42.14, y = 82.98 }]
+
+[[npc]]
+id = 625
+name = "Undead Dynamiter"
+level = 17
+max_level = 18
+rank = 1
+at = [{ zone = 40, x = 41.0, y = 82.74 }, { zone = 40, x = 41.08, y = 80.96 }, { zone = 40, x = 41.55, y = 82.54 }, { zone = 40, x = 41.74, y = 83.26 }, { zone = 40, x = 41.85, y = 81.44 }, { zone = 40, x = 42.44, y = 83.31 }]
+
+[[npc]]
+id = 626
+name = "Foreman Thistlenettle"
+level = 20
+rank = 1
+at = [{ zone = 40, x = 42.22, y = 82.61, z = 29 }]
+
+[[npc]]
+id = 656
+name = "Wilder Thistlenettle"
+level = 20
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 70.31, y = 40.82, z = 100 }]
+
+[[npc]]
+id = 820
+name = "Scout Riell"
+level = 30
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 40, x = 56.67, y = 47.35, z = 96 }]
+
+[[npc]]
+id = 1725
+name = "Defias Watchman"
+level = 16
+max_level = 18
+rank = 1
+at = [{ zone = 40, x = 39.19, y = 79.01, z = 28 }, { zone = 40, x = 39.6, y = 77.55, z = 28 }, { zone = 40, x = 39.95, y = 78.48, z = 33 }, { zone = 40, x = 39.97, y = 77.95, z = 33 }, { zone = 40, x = 42.29, y = 79.9, z = 29 }, { zone = 40, x = 42.36, y = 79.69, z = 29 }, { zone = 40, x = 42.49, y = 80.4, z = 38 }, { zone = 1581, x = -1.0, y = -1.0 }]
+
+[[item]]
+id = 915
+name = "Red Silk Bandana"
+level = 1
+class = 12
+drops = [{ npc = 1725, chance = 0.22855875 }, { npc = 594, chance = 0.22855875 }, { npc = 619, chance = 0.22855875 }]
+
+[[item]]
+id = 1327
+name = "Wiley's Note"
+level = 1
+class = 12
+
+[[item]]
+id = 1353
+name = "Shaw's Report"
+level = 1
+class = 12
+
+[[item]]
+id = 1381
+name = "A Mysterious Message"
+level = 1
+class = 12
+drops = [{ npc = 550, chance = 1.0 }]
+
+[[item]]
+id = 1875
+name = "Thistlenettle's Badge"
+level = 1
+class = 12
+drops = [{ npc = 626, chance = 1.0 }]
+
+[[item]]
+id = 1893
+name = "Miner's Revenge"
+level = 20
+class = 2
+
+[[item]]
+id = 1894
+name = "Miners' Union Card"
+level = 1
+class = 12
+drops = [{ npc = 623, chance = 1.0 }, { npc = 624, chance = 1.0 }, { npc = 625, chance = 1.0 }]
+
+[[item]]
+id = 2036
+name = "Dusty Mining Gloves"
+level = 18
+class = 4
+
+[[item]]
+id = 2037
+name = "Tunneler's Boots"
+level = 18
+class = 4
+
+[[item]]
+id = 2074
+name = "Solid Shortblade"
+level = 19
+class = 2
+
+[[item]]
+id = 2089
+name = "Scrimshaw Dagger"
+level = 19
+class = 2
+
+[[item]]
+id = 6094
+name = "Piercing Axe"
+level = 19
+class = 2
+
+[[quest]]
+id = 65
+name = "The Defias Brotherhood"
+level = 18
+min_level = 14
+races_mask = 4294967373
+zone = 40
+xp = 1350
+quest_flags = 8
+objectives_text = "Gryan Stoutmantle wants you to talk to Wiley in Lakeshire."
+starts = [{ npc = 234 }]
+ends = [{ npc = 266 }]
+objectives = []
+
+[[quest]]
+id = 132
+name = "The Defias Brotherhood"
+level = 18
+min_level = 14
+races_mask = 4294967373
+zone = 40
+xp = 680
+source_item = 1327
+objectives_text = "Take Wiley's Note to Gryan Stoutmantle in Westfall."
+starts = [{ npc = 266 }]
+ends = [{ npc = 234 }]
+pre_any = [65]
+objectives = []
+
+[[quest]]
+id = 135
+name = "The Defias Brotherhood"
+level = 18
+min_level = 14
+races_mask = 4294967373
+zone = 40
+xp = 680
+source_item = 1327
+objectives_text = "Take Wiley's Note to Mathias Shaw in Stormwind."
+starts = [{ npc = 234 }]
+ends = [{ npc = 332 }]
+pre_any = [132]
+objectives = []
+
+[[quest]]
+id = 141
+name = "The Defias Brotherhood"
+level = 18
+min_level = 14
+races_mask = 4294967373
+zone = 40
+xp = 340
+source_item = 1353
+objectives_text = "Take Shaw's report to Gryan Stoutmantle in Westfall."
+starts = [{ npc = 332 }]
+ends = [{ npc = 234 }]
+pre_any = [135]
+objectives = []
+
+[[quest]]
+id = 142
+name = "The Defias Brotherhood"
+level = 18
+min_level = 14
+races_mask = 4294967373
+zone = 40
+xp = 1350
+quest_flags = 8
+objectives_text = "Track down the Defias Messenger in Westfall and bring his message to Stoutmantle."
+requirements = "[\"A Mysterious Message\"]"
+starts = [{ npc = 234 }]
+ends = [{ npc = 234 }]
+pre_any = [141]
+objectives = [
+  { item = 1381, amount = 1 },
+]
+
+[[quest]]
+id = 155
+name = "The Defias Brotherhood"
+level = 18
+min_level = 14
+races_mask = 4294967373
+zone = 40
+xp = 1700
+quest_flags = 2
+special_flags = 2
+extra = "{\"trigger_end\":[\"Escort The Defias Traitor to discover where VanCleef is hiding\",{\"40\":[[42.55,71.53]]}]}"
+objectives_text = "Escort the Defias Traitor to the secret hideout of the Defias Brotherhood.  Once the Defias Traitor shows you where VanCleef and his men are hiding out, return to Gryan Stoutmantle with the information."
+requirements = "[\"Escort The Defias Traitor to discover where VanCleef is hiding\"]"
+starts = [{ npc = 467 }]
+ends = [{ npc = 234 }]
+pre_any = [142]
+objectives = [
+  { trigger = "Escort The Defias Traitor to discover where VanCleef is hiding", at = { zone = 40, x = 42.55, y = 71.53 } },
+]
+
+[[quest]]
+id = 167
+name = "Oh Brother..."
+level = 20
+min_level = 15
+races_mask = 4294967373
+zone = 1581
+xp = 1550
+quest_flags = 8
+objectives_text = "Bring Foreman Thistlenettle's Explorers' League Badge to Wilder Thistlenettle in Stormwind."
+requirements = "[\"Thistlenettle's Badge\"]"
+starts = [{ npc = 656 }]
+ends = [{ npc = 656 }]
+objectives = [
+  { item = 1875, amount = 1 },
+]
+rewards = [{ item = 1893, count = 1 }]
+
+[[quest]]
+id = 168
+name = "Collecting Memories"
+level = 18
+min_level = 14
+races_mask = 4294967373
+zone = 1581
+xp = 1350
+quest_flags = 8
+objectives_text = "Retrieve 4 Miners' Union Cards and return them to Wilder Thistlenettle in Stormwind."
+requirements = "[\"Miners' Union Card x 4\"]"
+starts = [{ npc = 656 }]
+ends = [{ npc = 656 }]
+objectives = [
+  { item = 1894, amount = 4 },
+]
+rewards = [{ item = 2036, count = 1, choice = true }, { item = 2037, count = 1, choice = true }]
+
+[[quest]]
+id = 214
+name = "Red Silk Bandanas"
+level = 17
+min_level = 14
+races_mask = 4294967373
+zone = 1581
+xp = 1250
+quest_flags = 8
+objectives_text = "Scout Riell at the Sentinel Hill Tower wants you to bring her 10 Red Silk Bandanas."
+requirements = "[\"Red Silk Bandana x 10\"]"
+starts = [{ npc = 820 }]
+ends = [{ npc = 820 }]
+pre_any = [155]
+objectives = [
+  { item = 915, amount = 10 },
+]
+rewards = [{ item = 2074, count = 1, choice = true }, { item = 2089, count = 1, choice = true }, { item = 6094, count = 1, choice = true }]
+
+[[row]]
+table = "dungeon"
+values = { area = 1581, name = "The Deadmines", alt_areas = "[10029]", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "fixture" }
+

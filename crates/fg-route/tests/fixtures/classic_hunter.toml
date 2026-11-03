@@ -1,0 +1,104 @@
+# The Dwarf hunter's Taming the Beast chain in Classic: Tame Beast is the reward of 6085.
+
+[[npc]]
+id = 1126
+name = "Large Crag Boar"
+level = 6
+max_level = 7
+friendly_to = "AH"
+at = [{ zone = 1, x = 34.33, y = 55.63, z = 385 }, { zone = 1, x = 35.64, y = 54.71, z = 397 }, { zone = 1, x = 36.33, y = 52.17, z = 440 }, { zone = 1, x = 36.39, y = 54.22, z = 405 }]
+
+[[npc]]
+id = 1196
+name = "Ice Claw Bear"
+level = 7
+max_level = 8
+at = [{ zone = 1, x = 25.32, y = 55.76, z = 393 }, { zone = 1, x = 25.5, y = 46.37, z = 387 }, { zone = 1, x = 25.98, y = 55.19, z = 388 }, { zone = 1, x = 26.7, y = 56.19, z = 395 }]
+
+[[npc]]
+id = 1201
+name = "Snow Leopard"
+level = 7
+max_level = 8
+at = [{ zone = 1, x = 25.7, y = 46.92, z = 387 }, { zone = 1, x = 26.76, y = 47.83, z = 386 }, { zone = 1, x = 27.55, y = 54.76, z = 387 }, { zone = 1, x = 27.6, y = 42.51, z = 386 }]
+
+[[npc]]
+id = 1231
+name = "Grif Wildheart"
+level = 12
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1, x = 45.81, y = 53.04, z = 408 }]
+
+[[npc]]
+id = 10090
+name = "Belia Thundergranite"
+level = 40
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 70.86, y = 85.83, z = 508 }]
+
+[[quest]]
+id = 6064
+name = "Taming the Beast"
+level = 10
+min_level = 10
+races_mask = 4
+classes_mask = 4
+zone = -261
+xp = 840
+starts = [{ npc = 1231 }]
+ends = [{ npc = 1231 }]
+objectives = [
+  { creature = 1126, amount = 1 },
+]
+
+[[quest]]
+id = 6084
+name = "Taming the Beast"
+level = 10
+min_level = 10
+races_mask = 4
+classes_mask = 4
+zone = -261
+xp = 840
+starts = [{ npc = 1231 }]
+ends = [{ npc = 1231 }]
+pre_any = [6064]
+objectives = [
+  { creature = 1201, amount = 1 },
+]
+
+[[quest]]
+id = 6085
+name = "Taming the Beast"
+level = 10
+min_level = 10
+races_mask = 4
+classes_mask = 4
+zone = -261
+xp = 840
+reward_spell = 1515
+starts = [{ npc = 1231 }]
+ends = [{ npc = 1231 }]
+pre_any = [6084]
+objectives = [
+  { creature = 1196, amount = 1 },
+]
+
+[[quest]]
+id = 6086
+name = "Training the Beast"
+level = 10
+min_level = 10
+races_mask = 4
+classes_mask = 4
+zone = -261
+xp = 420
+reward_spell = 5149
+quest_flags = 8
+starts = [{ npc = 1231 }]
+ends = [{ npc = 10090 }]
+pre_any = [6085]
+objectives = []
+

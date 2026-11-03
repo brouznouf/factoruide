@@ -3,24 +3,21 @@
 use super::*;
 use crate::plan::Event;
 
-#[test]
-fn known_and_trained_movement_spells_change_the_eligible_walking_legs() {
+/// One character learning a movement spell: the travel time of the legs it can use (a test each).
+fn movement_spell_changes_the_eligible_walking_legs(
+    edition: Edition,
+    race: &str,
+    class: &str,
+    spell: i64,
+    seconds: f64,
+) {
     use crate::terrain::TestGround::{Covered, Dry, Indoor, Mixed, Shallow, Unknown};
-    for (edition, race, class, spell, seconds) in [
-        (Edition::Classic, "nightelf", "druid", 783, 61.22449),
-        (Edition::Classic, "orc", "shaman", 2645, 63.22449),
-        (Edition::Classic, "orc", "hunter", 5118, 65.93407),
-        (Edition::Forever, "nightelf", "druid", 783, 61.22449),
-        (Edition::Forever, "orc", "shaman", 2645, 61.22449),
-        (Edition::Tbc, "nightelf", "druid", 783, 61.22449),
-        (Edition::Tbc, "orc", "shaman", 2645, 61.22449),
-        (Edition::Tbc, "orc", "hunter", 5118, 65.93407),
-        (Edition::Forever, "orc", "hunter", 5118, 65.93407),
-    ] {
+    {
         let conn = database_of(edition.key());
         let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-        let mut req:PlanRequest=serde_json::from_value(serde_json::json!({"race":race,"class":class,"from_level":30,"to_level":31,"required_class_quests":[],"start":{"level":30,"spells":[]}})).unwrap();
-        let mut p = at_start(job::prepare(&conn, &overrides, &req, &|_| {}).unwrap(), 1);
+        let req:PlanRequest=serde_json::from_value(serde_json::json!({"race":race,"class":class,"from_level":30,"to_level":31,"required_class_quests":[],"start":{"level":30,"spells":[]}})).unwrap();
+        let base = class_scenario(&conn, &overrides, &req);
+        let mut p = at_start(base.clone().build(), 1);
         let a = crate::world::Pos {
             continent: 1,
             x: -100.0,
@@ -142,8 +139,9 @@ fn known_and_trained_movement_spells_change_the_eligible_walking_legs() {
             }
         }
         p.world.terrain = crate::terrain::movement_test_ground(Dry);
-        req.start.as_mut().unwrap().spells = vec![spell];
-        let recorded = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let mut known = req.start.unwrap();
+        known.spells = vec![spell];
+        let recorded = base.clone().start(known).build();
         let native_planner = planner(&recorded);
         let native_guide = crate::export::build(&native_planner, &recorded.profile, &[]);
         if edition == Edition::Tbc {
@@ -160,8 +158,7 @@ fn known_and_trained_movement_spells_change_the_eligible_walking_legs() {
             (planner(&p).explicit().edit(&quest).breakdown.travel - seconds).abs() < 0.05,
             "{class}: imported knowledge applies from the first leg"
         );
-        req.start = None;
-        let synthetic = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let synthetic = base.without_start().build();
         p.model.initial.abilities = synthetic.model.initial.abilities;
         assert!(
             (planner(&p).explicit().edit(&quest).breakdown.travel - seconds).abs() < 0.05,
@@ -181,12 +178,33 @@ fn known_and_trained_movement_spells_change_the_eligible_walking_legs() {
     }
 }
 
+macro_rules! movement_spell_tests {
+    ($($name:ident: $edition:ident, $race:literal, $class:literal, $spell:literal, $seconds:literal;)*) => {$(
+        #[test]
+        fn $name() {
+            movement_spell_changes_the_eligible_walking_legs(Edition::$edition, $race, $class, $spell, $seconds);
+        }
+    )*};
+}
+
+movement_spell_tests! {
+    classic_nightelf_druid_movement_spell: Classic, "nightelf", "druid", 783, 61.22449;
+    classic_orc_shaman_movement_spell: Classic, "orc", "shaman", 2645, 63.22449;
+    classic_orc_hunter_movement_spell: Classic, "orc", "hunter", 5118, 65.93407;
+    forever_nightelf_druid_movement_spell: Forever, "nightelf", "druid", 783, 61.22449;
+    forever_orc_shaman_movement_spell: Forever, "orc", "shaman", 2645, 61.22449;
+    tbc_nightelf_druid_movement_spell: Tbc, "nightelf", "druid", 783, 61.22449;
+    tbc_orc_shaman_movement_spell: Tbc, "orc", "shaman", 2645, 61.22449;
+    tbc_orc_hunter_movement_spell: Tbc, "orc", "hunter", 5118, 65.93407;
+    forever_orc_hunter_movement_spell: Forever, "orc", "hunter", 5118, 65.93407;
+}
+
 #[test]
 fn cat_speed_requires_its_quest_and_the_talent_assumption() {
     let conn = database_of("forever");
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let req:PlanRequest=serde_json::from_value(serde_json::json!({"race":"skyborne_horde","class":"druid","from_level":20,"to_level":21,"required_class_quests":[],"start":{"level":20}})).unwrap();
-    let mut p = at_start(job::prepare(&conn, &overrides, &req, &|_| {}).unwrap(), 2);
+    let mut p = at_start(class_prepared(&conn, &overrides, &req), 2);
     let a = crate::world::Pos {
         continent: 1,
         x: -100.0,
@@ -275,7 +293,7 @@ fn classic_and_tbc_cat_speed_follow_the_available_feral_swiftness_rank() {
             "required_class_quests":[],"start":{"level":20,"spells":[]}
         }))
         .unwrap();
-        let mut p = at_start(job::prepare(&conn, &overrides, &req, &|_| {}).unwrap(), 2);
+        let mut p = at_start(class_prepared(&conn, &overrides, &req), 2);
         let a = crate::world::Pos {
             continent: 1,
             x: -100.0,
@@ -349,9 +367,8 @@ fn classic_and_tbc_cat_speed_follow_the_available_feral_swiftness_rank() {
     }
 }
 
-#[test]
-fn group_travel_keeps_the_shared_speed_when_the_druid_knows_travel_form() {
-    for edition in Edition::ALL {
+fn group_travel_keeps_the_shared_speed(edition: Edition) {
+    {
         let conn = database_of(edition.key());
         let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         let req: PlanRequest = serde_json::from_value(serde_json::json!({
@@ -361,7 +378,7 @@ fn group_travel_keeps_the_shared_speed_when_the_druid_knows_travel_form() {
             "mates":[{"name":"Steel-Realm","race":1,"class":"WARRIOR","faction":"Alliance","level":30}]
         }))
         .unwrap();
-        let prepared = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let prepared = class_prepared(&conn, &overrides, &req);
         let mates = prepared.model.initial.mates.clone();
         let mut p = at_start(prepared, 1);
         p.model.initial.mates = mates;
@@ -393,6 +410,21 @@ fn group_travel_keeps_the_shared_speed_when_the_druid_knows_travel_form() {
 }
 
 #[test]
+fn classic_group_travel_keeps_the_shared_speed_when_the_druid_knows_travel_form() {
+    group_travel_keeps_the_shared_speed(Edition::Classic);
+}
+
+#[test]
+fn tbc_group_travel_keeps_the_shared_speed_when_the_druid_knows_travel_form() {
+    group_travel_keeps_the_shared_speed(Edition::Tbc);
+}
+
+#[test]
+fn forever_group_travel_keeps_the_shared_speed_when_the_druid_knows_travel_form() {
+    group_travel_keeps_the_shared_speed(Edition::Forever);
+}
+
+#[test]
 fn movement_training_waits_for_a_nearby_trainer() {
     let conn = database_of("classic");
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
@@ -401,7 +433,7 @@ fn movement_training_waits_for_a_nearby_trainer() {
         "start":{"level":20,"spells":[]}, "required_class_quests":[]
     }))
     .unwrap();
-    let mut p = at_start(job::prepare(&conn, &overrides, &req, &|_| {}).unwrap(), 1);
+    let mut p = at_start(class_prepared(&conn, &overrides, &req), 1);
     p.model.power = None;
     p.params.train_every = 100;
     p.params.train_radius = 50.0;
@@ -493,7 +525,7 @@ fn a_trainer_detour_returns_with_the_new_movement_spell() {
     let conn = database_of("classic");
     let o = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
     let req = serde_json::from_value(serde_json::json!({"race":"orc","class":"hunter","from_level":20,"to_level":21,"required_class_quests":[],"start":{"level":20,"spells":[]}})).unwrap();
-    let mut p = at_start(job::prepare(&conn, &o, &req, &|_| {}).unwrap(), 1);
+    let mut p = at_start(class_prepared(&conn, &o, &req), 1);
     let a = crate::world::Pos {
         continent: 1,
         x: -100.0,

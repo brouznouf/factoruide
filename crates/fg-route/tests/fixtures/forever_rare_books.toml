@@ -1,0 +1,162 @@
+# Forever's Rare Books (91775, 91777): books that drop from elites; a colon in a book's name is one book.
+
+[[npc]]
+id = 40
+name = "Kobold Miner"
+level = 6
+max_level = 7
+at = [{ zone = 12, x = 39.77, y = 79.09, z = 25 }, { zone = 12, x = 39.85, y = 81.06, z = 26 }, { zone = 12, x = 39.95, y = 78.62, z = 22 }, { zone = 12, x = 39.97, y = 80.12, z = 24 }, { zone = 12, x = 40.22, y = 79.6, z = 26 }, { zone = 12, x = 40.32, y = 77.69, z = 19 }, { zone = 12, x = 40.35, y = 78.16, z = 19 }, { zone = 12, x = 40.45, y = 80.26, z = 25 }, { zone = 12, x = 40.71, y = 81.4, z = 4 }, { zone = 12, x = 40.84, y = 77.46, z = 25 }, { zone = 12, x = 40.84, y = 80.42, z = 6 }, { zone = 12, x = 40.87, y = 80.68, z = 24 }]
+
+[[npc]]
+id = 240
+name = "Marshal Dughan"
+level = 25
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 12, x = 42.11, y = 65.93, z = 57 }]
+
+[[npc]]
+id = 471
+name = "Mother Fang"
+level = 7
+max_level = 10
+rank = 1
+at = [{ zone = 12, x = 62.14, y = 48.05, z = 54 }]
+
+[[npc]]
+id = 475
+name = "Kobold Tunneler"
+level = 5
+max_level = 6
+at = [{ zone = 12, x = 36.03, y = 82.7, z = 38 }, { zone = 12, x = 36.19, y = 79.12, z = 43 }, { zone = 12, x = 36.73, y = 84.02, z = 35 }, { zone = 12, x = 37.3, y = 80.58, z = 41 }, { zone = 12, x = 37.4, y = 83.45, z = 20 }, { zone = 12, x = 37.57, y = 79.01, z = 46 }, { zone = 12, x = 37.7, y = 84.86, z = 16 }, { zone = 12, x = 37.82, y = 87.05, z = 26 }, { zone = 12, x = 37.98, y = 83.81, z = 14 }, { zone = 12, x = 38.02, y = 81.63, z = 16 }, { zone = 12, x = 38.1, y = 82.6, z = 14 }, { zone = 12, x = 38.5, y = 81.47, z = 14 }]
+
+[[npc]]
+id = 951
+name = "Brother Paxton"
+level = 27
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 49.51, y = 40.42, z = 82 }, { zone = 12, x = 49.53, y = 40.41, z = 82 }, { zone = 12, x = 49.61, y = 40.41, z = 82 }]
+
+[[npc]]
+id = 248464
+name = "Nimsy"
+level = 6
+rank = 1
+at = [{ zone = 12, x = 41.62, y = 79.9 }]
+
+[[npc]]
+id = 248474
+name = "Geosculptor Yip"
+level = 7
+rank = 1
+at = [{ zone = 12, x = 61.38, y = 48.93 }]
+
+[[item]]
+id = 248001
+name = "Lost Book"
+level = 1
+class = 12
+drops = [{ npc = 40 }, { npc = 475 }]
+
+[[item]]
+id = 248002
+name = "Picture Book: Fun with Elementals"
+level = 1
+class = 12
+drops = [{ npc = 248464 }]
+
+[[item]]
+id = 248003
+name = "Geomancy for Curious Young Wizards"
+level = 1
+class = 12
+drops = [{ npc = 248474 }]
+
+[[item]]
+id = 248004
+name = "Arcane Explainer: Magical Stuff in Simple Words"
+level = 1
+class = 12
+drops = [{ npc = 471 }]
+
+[[item]]
+id = 248005
+name = "Northshire Hammer"
+level = 12
+class = 2
+
+[[item]]
+id = 248006
+name = "Militia Sword"
+level = 12
+class = 2
+
+[[item]]
+id = 248007
+name = "Militia Shortblade"
+level = 12
+class = 2
+
+[[item]]
+id = 248008
+name = "Apprentice's Spellstaff"
+level = 12
+class = 2
+
+[[item]]
+id = 276685
+name = "Militia Bow"
+level = 14
+class = 2
+
+[[item]]
+id = 279935
+name = "Book Bag"
+level = 1
+class = 12
+
+[[item]]
+id = 279936
+name = "Book Bag"
+level = 5
+class = 1
+
+[[quest]]
+id = 91775
+name = "Book Return"
+level = 6
+races_mask = 4294967373
+zone = 12
+xp = 675
+source_item = 279935
+extra = "{\"item_drops\":[[279935,1]]}"
+objectives_text = "Find 6 Lost Books and \"Fun with Elementals\" and return them to Marshal Dughan."
+requirements = "[\"Picture Book: Fun with Elementals\",\"Lost Book x 6\"]"
+starts = [{ npc = 240 }]
+ends = [{ npc = 240 }]
+objectives = [
+  { item = 248002 },
+  { item = 248001 },
+]
+rewards = [{ item = 279936, count = 1, choice = true }]
+
+[[quest]]
+id = 91777
+name = "Rare Books"
+level = 7
+races_mask = 4294967373
+zone = 12
+xp = 790
+objectives_text = "Recover \"Geomancy for Curious Young Wizards\" and \"Arcane Explainer: Magical Stuff in Simple Words\" and return them to Brother Paxton inside Northshire's Abbey."
+requirements = "[\"Geomancy for Curious Young Wizards\",\"Arcane Explainer: Magical Stuff in Simple Words\"]"
+starts = [{ npc = 240 }]
+ends = [{ npc = 951 }]
+pre_all = [91775]
+pre_any = [91775]
+objectives = [
+  { item = 248003 },
+  { item = 248004 },
+]
+rewards = [{ item = 248005, count = 1, choice = true }, { item = 248006, count = 1, choice = true }, { item = 248007, count = 1, choice = true }, { item = 248008, count = 1, choice = true }, { item = 276685, count = 1, choice = true }]
+

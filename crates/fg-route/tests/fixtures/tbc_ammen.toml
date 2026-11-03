@@ -1,0 +1,286 @@
+# Ammen Vale: the first quests of the Draenei start.
+
+[[npc]]
+id = 11790
+name = "Putridus Satyr"
+level = 42
+max_level = 43
+rank = 1
+at = [{ zone = 2100, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 13738
+name = "Veng"
+level = 47
+rank = 1
+at = [{ zone = 2100, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 16475
+name = "Megelon"
+level = 4
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 3524, x = 82.91, y = 43.97, z = 92 }]
+
+[[npc]]
+id = 16477
+name = "Proenitus"
+level = 6
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 3524, x = 80.42, y = 45.89, z = 75 }]
+
+[[npc]]
+id = 16483
+name = "Draenei Survivor"
+level = 1
+max_level = 5
+friendly_to = "A"
+at = [{ zone = 3524, x = 70.0, y = 59.01, z = 50 }, { zone = 3524, x = 70.8, y = 53.08, z = 43 }, { zone = 3524, x = 71.57, y = 48.85, z = 54 }, { zone = 3524, x = 71.66, y = 56.14, z = 44 }]
+
+[[npc]]
+id = 16499
+name = "Keilnei"
+level = 6
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 3524, x = 79.89, y = 49.71, z = 75 }]
+
+[[npc]]
+id = 16500
+name = "Valaatu"
+level = 6
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 3524, x = 79.58, y = 48.76, z = 75 }]
+
+[[npc]]
+id = 16501
+name = "Aurelon"
+level = 6
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 3524, x = 79.69, y = 48.24, z = 75 }]
+
+[[npc]]
+id = 16502
+name = "Zalduun"
+level = 6
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 3524, x = 80.13, y = 48.89, z = 74 }]
+
+[[npc]]
+id = 16503
+name = "Kore"
+level = 6
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 3524, x = 79.59, y = 49.45, z = 75 }]
+
+[[npc]]
+id = 16514
+name = "Botanist Taerix"
+level = 4
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 3524, x = 79.14, y = 46.54, z = 73 }]
+
+[[npc]]
+id = 16517
+name = "Mutated Root Lasher"
+level = 3
+at = [{ zone = 3524, x = 71.44, y = 48.27, z = 53 }, { zone = 3524, x = 71.71, y = 51.45, z = 45 }, { zone = 3524, x = 71.78, y = 50.3, z = 49 }, { zone = 3524, x = 71.86, y = 51.99, z = 44 }]
+
+[[npc]]
+id = 16520
+name = "Vale Moth"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 3524, x = 68.67, y = 55.11, z = 48 }, { zone = 3524, x = 69.83, y = 57.93, z = 50 }, { zone = 3524, x = 69.9, y = 53.18, z = 44 }, { zone = 3524, x = 69.99, y = 56.15, z = 47 }]
+
+[[item]]
+id = 22889
+name = "Vial of Moth Blood"
+level = 1
+class = 12
+drops = [{ npc = 16520, chance = 0.8 }]
+
+[[item]]
+id = 22934
+name = "Lasher Sample"
+level = 1
+class = 12
+drops = [{ npc = 16517, chance = 1.0 }, { npc = 13738, chance = 0.6430159999999999 }, { npc = 11790, chance = 0.227988 }]
+
+[[item]]
+id = 23389
+name = "Empty Draenei Supply Pouch"
+level = 5
+class = 1
+
+[[item]]
+id = 24129
+name = "Salvaged Leather Belt"
+level = 5
+class = 4
+
+[[item]]
+id = 24130
+name = "Worn Slippers"
+level = 5
+class = 4
+
+[[item]]
+id = 24131
+name = "Slightly Rusted Bracers"
+level = 5
+class = 4
+
+[[quest]]
+id = 9279
+name = "You Survived!"
+level = 1
+races_mask = 1024
+zone = 3526
+xp = 60
+quest_flags = 136
+starts = [{ npc = 16475 }]
+ends = [{ npc = 16477 }]
+objectives = []
+
+[[quest]]
+id = 9280
+name = "Replenishing the Healing Crystals"
+level = 1
+races_mask = 1024
+zone = 3526
+xp = 100
+quest_flags = 136
+starts = [{ npc = 16477 }]
+ends = [{ npc = 16477 }]
+exclusive = [9369]
+objectives = [
+  { item = 22889, amount = 1 },
+]
+rewards = [{ item = 24129, count = 1, choice = true }, { item = 24130, count = 1, choice = true }, { item = 24131, count = 1, choice = true }]
+
+[[quest]]
+id = 9369
+name = "Replenishing the Healing Crystals"
+level = 1
+races_mask = 77
+zone = 3526
+xp = 100
+quest_flags = 136
+starts = [{ npc = 16477 }]
+ends = [{ npc = 16477 }]
+exclusive = [9280]
+objectives = [
+  { item = 22889, amount = 1 },
+]
+rewards = [{ item = 24129, count = 1, choice = true }, { item = 24130, count = 1, choice = true }, { item = 24131, count = 1, choice = true }]
+
+[[quest]]
+id = 9283
+name = "Rescue the Survivors!"
+level = 2
+races_mask = 1024
+zone = 3526
+xp = 215
+quest_flags = 128
+starts = [{ npc = 16502 }]
+ends = [{ npc = 16502 }]
+objectives = [
+  { creature = 16483, amount = 1 },
+]
+rewards = [{ item = 23389, count = 1, choice = true }]
+
+[[quest]]
+id = 9287
+name = "Paladin Training"
+level = 2
+min_level = 2
+races_mask = 1024
+classes_mask = 2
+zone = -141
+xp = 85
+quest_flags = 128
+starts = [{ npc = 16501 }]
+ends = [{ npc = 16501 }]
+pre_any = [9280]
+objectives = []
+
+[[quest]]
+id = 9288
+name = "Hunter Training"
+level = 2
+min_level = 2
+races_mask = 1024
+classes_mask = 4
+zone = -261
+xp = 85
+quest_flags = 128
+starts = [{ npc = 16499 }]
+ends = [{ npc = 16499 }]
+pre_any = [9280]
+objectives = []
+
+[[quest]]
+id = 9289
+name = "Warrior Training"
+level = 2
+min_level = 2
+races_mask = 1024
+classes_mask = 1
+zone = -81
+xp = 85
+quest_flags = 128
+starts = [{ npc = 16503 }]
+ends = [{ npc = 16503 }]
+pre_any = [9280]
+objectives = []
+
+[[quest]]
+id = 9290
+name = "Mage Training"
+level = 2
+races_mask = 1024
+classes_mask = 128
+zone = -161
+xp = 85
+quest_flags = 128
+starts = [{ npc = 16500 }]
+ends = [{ npc = 16500 }]
+pre_any = [9280]
+objectives = []
+
+[[quest]]
+id = 9291
+name = "Priest Training"
+level = 2
+races_mask = 1024
+classes_mask = 16
+zone = -262
+xp = 85
+quest_flags = 128
+starts = [{ npc = 16502 }]
+ends = [{ npc = 16502 }]
+pre_any = [9280]
+objectives = []
+
+[[quest]]
+id = 9293
+name = "What Must Be Done..."
+level = 2
+races_mask = 1101
+zone = 3526
+xp = 170
+quest_flags = 136
+starts = [{ npc = 16514 }]
+ends = [{ npc = 16514 }]
+objectives = [
+  { item = 22934, amount = 1 },
+]
+

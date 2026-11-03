@@ -1,0 +1,246 @@
+# Zephras Isle: the first quests of the Skyborne start.
+
+[[npc]]
+id = 250873
+name = "Juvenile Vuldren"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 16593, x = 41.13, y = 28.27 }, { zone = 16593, x = 41.55, y = 26.47 }, { zone = 16593, x = 41.88, y = 28.31 }, { zone = 16593, x = 42.46, y = 27.8 }]
+
+[[npc]]
+id = 251169
+name = "Pesky Cirrusfly"
+level = 1
+at = [{ zone = 16593, x = 43.14, y = 27.14 }, { zone = 16593, x = 43.16, y = 27.78 }, { zone = 16593, x = 43.55, y = 28.39 }, { zone = 16593, x = 43.6, y = 26.9 }]
+
+[[npc]]
+id = 251361
+name = "Rorian the Dayseeker"
+level = 20
+friendly_to = "AH"
+at = [{ zone = 16593, x = 42.05, y = 23.49 }]
+
+[[npc]]
+id = 251362
+name = "Ailee Farheart"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 16593, x = 42.81, y = 23.37 }]
+
+[[npc]]
+id = 251368
+name = "Elatrell Featherlight"
+level = 20
+friendly_to = "AH"
+at = [{ zone = 16593, x = 43.44, y = 24.79 }]
+
+[[npc]]
+id = 251373
+name = "Xyton Silverwind"
+level = 5
+npc_flags = 16
+friendly_to = "AH"
+at = [{ zone = 16593, x = 41.66, y = 23.33 }]
+
+[[npc]]
+id = 251374
+name = "Windshaper Boro"
+level = 5
+npc_flags = 16
+friendly_to = "H"
+at = [{ zone = 16593, x = 42.79, y = 23.58 }]
+
+[[npc]]
+id = 251376
+name = "Tai'ree Farsight"
+level = 5
+npc_flags = 16
+friendly_to = "AH"
+at = [{ zone = 16593, x = 42.49, y = 23.79 }]
+
+[[npc]]
+id = 251379
+name = "Dorii Brightwhisper"
+level = 5
+npc_flags = 16
+friendly_to = "A"
+at = [{ zone = 16593, x = 41.55, y = 23.68 }]
+
+[[npc]]
+id = 251389
+name = "Akeri Duskblade"
+level = 5
+npc_flags = 16
+friendly_to = "AH"
+at = [{ zone = 16593, x = 43.74, y = 24.36 }]
+
+[[npc]]
+id = 251964
+name = "Blademaster Ren"
+level = 5
+npc_flags = 16
+friendly_to = "AH"
+at = [{ zone = 16593, x = 43.65, y = 24.11 }]
+
+[[npc]]
+id = 263113
+name = "Myriaal Mistwake"
+level = 10
+friendly_to = "AH"
+at = [{ zone = 16593, x = 43.68, y = 24.1, z = 1021 }]
+
+[[item]]
+id = 257280
+name = "Vuldren Hide Bracers"
+level = 5
+class = 4
+
+[[item]]
+id = 257281
+name = "Fur-Lined Shoes"
+level = 5
+class = 4
+
+[[item]]
+id = 264908
+name = "Ancient Heirloom"
+level = 1
+class = 4
+
+[[quest]]
+id = 92460
+name = "Coming of Age"
+level = 1
+zone = 16593
+xp = 40
+starts = [{ npc = 251362 }]
+ends = [{ npc = 251361 }]
+objectives = []
+rewards = [{ item = 264908, count = 1, choice = true }]
+
+[[quest]]
+id = 92461
+name = "Harmony in Balance"
+level = 1
+zone = 16593
+xp = 80
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251361 }]
+pre_all = [92460]
+pre_any = [92460]
+objectives = [
+  { creature = 250873, amount = 1 },
+]
+rewards = [{ item = 257280, count = 1, choice = true }, { item = 257281, count = 1, choice = true }]
+
+[[quest]]
+id = 92462
+name = "Infestation Investigation"
+level = 2
+zone = 16593
+xp = 170
+starts = [{ npc = 251368 }]
+ends = [{ npc = 251368 }]
+pre_any = [92460]
+objectives = [
+  { creature = 251169, amount = 1 },
+]
+
+[[quest]]
+id = 92474
+name = "Falling With Style"
+level = 2
+min_level = 2
+races_mask = 12884901888
+zone = 16593
+xp = 85
+starts = [{ npc = 263113 }]
+ends = [{ npc = 251361 }]
+objectives = [
+  # trigger None Jump from the watchtower and use Walk on Air to slow your fall {"16593":[[43.68,24.1]]},
+]
+
+[[quest]]
+id = 92481
+name = "A Student of the Arcane"
+level = 2
+min_level = 2
+races_mask = 4294967296
+classes_mask = 128
+zone = -161
+xp = 85
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251379 }]
+pre_any = [92461]
+objectives = []
+
+[[quest]]
+id = 92482
+name = "The Way of the Hunter"
+level = 2
+min_level = 2
+races_mask = 12884901888
+classes_mask = 4
+zone = -261
+xp = 85
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251376 }]
+pre_any = [92461]
+objectives = []
+
+[[quest]]
+id = 92483
+name = "At Home in the Shadows"
+level = 2
+min_level = 2
+races_mask = 12884901888
+classes_mask = 8
+zone = -162
+xp = 85
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251389 }]
+pre_any = [92461]
+objectives = []
+
+[[quest]]
+id = 92484
+name = "Embracing the Elements"
+level = 2
+min_level = 2
+races_mask = 8589934592
+classes_mask = 64
+zone = -82
+xp = 85
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251374 }]
+pre_any = [92461]
+objectives = []
+
+[[quest]]
+id = 92485
+name = "A Student of Nature"
+level = 2
+min_level = 2
+races_mask = 12884901888
+classes_mask = 1024
+zone = -263
+xp = 85
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251373 }]
+pre_any = [92461]
+objectives = []
+
+[[quest]]
+id = 92532
+name = "The Warrior's Path"
+level = 2
+min_level = 2
+races_mask = 12884901888
+classes_mask = 1
+zone = -81
+xp = 85
+starts = [{ npc = 251361 }]
+ends = [{ npc = 251964 }]
+pre_any = [92461]
+objectives = []
+

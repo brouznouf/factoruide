@@ -1,0 +1,6 @@
+# The ground of Elwynn Forest and the Fargodeep Mine.
+
+[[terrain]]
+map = 0
+tile_x = [29, 35]
+tile_y = [46, 51]

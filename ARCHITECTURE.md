@@ -360,3 +360,27 @@ The planner is one crate among a few, each with one job:
 - `fg-web` and `app/src-tauri` are the two `Host`s: the browser build (WebAssembly) and the
   desktop app. They add what only they can do (settings, the game folder, the contribution
   server for the desktop app; the files of the page for the browser).
+
+## 6. How the tests get their data
+
+A test never reads the game's databases. It names the small world it needs, in files
+(`crates/fg-route/tests/fixtures/*.toml`), and `fg_route::fixture::Fixture` builds a database of the
+game's own shape from them: quests, NPCs, objects, items and their drops, vendors, dungeons, and
+any row of any table (`[[row]]`). The format is at the top of `model/fixture.rs`.
+
+```rust
+let conn = Fixture::new(Edition::Classic).file("classic_druid").file("classic_services").open();
+```
+
+- The database starts from `base-<edition>.sqlite.zst`: the real schema, the game's constants
+  (classes, races, zones, factions, class spells, the maps and the flight network) and the races'
+  start NPCs. `scripts/test-base.sh` makes it from the databases; the files declare the rest.
+- A walk needs the ground: a `[[terrain]]` region copies the tiles of a map from
+  `terrain-<edition>.sqlite.zst` (`scripts/test-terrain.sh`, the regions are listed in
+  `terrain-regions.txt`). `tile_x` follows the world's y and `tile_y` its x.
+- A fixture is built once per process and copied for each call. `FG_TRACE=1` prints the statements
+  a test runs, `FG_SLOW=5` those taking 5 ms or more.
+- A test of what the planner does with a quest declares that quest. Three tests read the real
+  databases and are slow on purpose, because what they check is the data or a whole continent: the
+  example guide the apps ship, opened in every view (`fg-web`) and replayed in the editor
+  (`edit.rs`), and the walks between the south and the north of the Eastern Kingdoms (`routes.rs`).

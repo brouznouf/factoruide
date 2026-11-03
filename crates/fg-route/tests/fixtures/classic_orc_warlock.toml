@@ -1,0 +1,1710 @@
+# The Orc warlock's early quests in Durotar and the Barrens, Owatanka's Tailspike (884) and the quest that Tanaris Field Sampling needs (654, 841).
+
+[[npc]]
+id = 708
+name = "Small Crag Boar"
+level = 3
+friendly_to = "AH"
+at = [{ zone = 1, x = 19.47, y = 75.15, z = 409 }, { zone = 1, x = 19.75, y = 76.42, z = 395 }, { zone = 1, x = 19.86, y = 73.42, z = 403 }, { zone = 1, x = 19.9, y = 72.29, z = 400 }]
+
+[[npc]]
+id = 982
+name = "Thultash"
+level = 45
+npc_flags = 4
+friendly_to = "H"
+at = [{ zone = 8, x = 46.53, y = 54.29, z = 20 }]
+
+[[npc]]
+id = 989
+name = "Banalash"
+level = 50
+npc_flags = 4
+friendly_to = "H"
+at = [{ zone = 8, x = 44.77, y = 56.63, z = 28 }]
+
+[[npc]]
+id = 1148
+name = "Nerrist"
+level = 40
+npc_flags = 4
+friendly_to = "H"
+at = [{ zone = 33, x = 32.7, y = 29.23, z = 4 }]
+
+[[npc]]
+id = 1149
+name = "Uthok"
+level = 40
+npc_flags = 4
+friendly_to = "H"
+at = [{ zone = 33, x = 31.55, y = 27.95, z = 4 }]
+
+[[npc]]
+id = 1496
+name = "Deathguard Dillinger"
+level = 22
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 85, x = 58.2, y = 51.45, z = 34 }]
+
+[[npc]]
+id = 1497
+name = "Gunther Arcanus"
+level = 53
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 68.2, y = 41.92, z = 34 }]
+
+[[npc]]
+id = 1498
+name = "Bethor Iceshard"
+level = 60
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 1497, x = 84.07, y = 17.45, z = -46 }]
+
+[[npc]]
+id = 1499
+name = "Magistrate Sevren"
+level = 14
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 61.26, y = 50.84, z = 39 }]
+
+[[npc]]
+id = 1501
+name = "Mindless Zombie"
+level = 1
+friendly_to = "AH"
+at = [{ zone = 85, x = 30.67, y = 61.75, z = 76 }, { zone = 85, x = 30.7, y = 64.17, z = 89 }, { zone = 85, x = 30.8, y = 61.55, z = 77 }, { zone = 85, x = 30.9, y = 62.12, z = 78 }]
+
+[[npc]]
+id = 1515
+name = "Executor Zygand"
+level = 14
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 60.59, y = 51.76, z = 37 }]
+
+[[npc]]
+id = 1518
+name = "Apothecary Johaan"
+level = 20
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 59.45, y = 52.4, z = 36 }]
+
+[[npc]]
+id = 1519
+name = "Deathguard Simmer"
+level = 23
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 85, x = 40.91, y = 54.17, z = 32 }]
+
+[[npc]]
+id = 1520
+name = "Rattlecage Soldier"
+level = 6
+max_level = 7
+at = [{ zone = 85, x = 43.89, y = 39.83, z = 103 }, { zone = 85, x = 44.56, y = 41.29, z = 99 }, { zone = 85, x = 45.41, y = 38.33, z = 115 }, { zone = 85, x = 45.84, y = 40.43, z = 110 }]
+
+[[npc]]
+id = 1521
+name = "Gretchen Dedmar"
+level = 8
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 61.89, y = 52.73, z = 41 }]
+
+[[npc]]
+id = 1522
+name = "Darkeye Bonecaster"
+level = 7
+max_level = 8
+at = [{ zone = 85, x = 42.39, y = 33.63, z = 85 }, { zone = 85, x = 42.68, y = 35.15, z = 85 }, { zone = 85, x = 42.69, y = 32.27, z = 116 }, { zone = 85, x = 42.83, y = 34.22, z = 86 }]
+
+[[npc]]
+id = 1523
+name = "Cracked Skull Soldier"
+level = 8
+max_level = 9
+at = [{ zone = 85, x = 43.33, y = 31.32, z = 106 }, { zone = 85, x = 43.79, y = 35.37, z = 110 }, { zone = 85, x = 43.83, y = 32.63, z = 114 }, { zone = 85, x = 44.68, y = 33.89, z = 116 }]
+
+[[npc]]
+id = 1525
+name = "Rotting Dead"
+level = 5
+max_level = 6
+at = [{ zone = 85, x = 49.78, y = 56.03, z = 36 }, { zone = 85, x = 49.82, y = 53.77, z = 34 }, { zone = 85, x = 51.27, y = 51.61, z = 34 }, { zone = 85, x = 51.28, y = 53.81, z = 37 }]
+
+[[npc]]
+id = 1526
+name = "Ravaged Corpse"
+level = 6
+max_level = 7
+at = [{ zone = 85, x = 49.24, y = 55.57 }, { zone = 85, x = 49.3, y = 55.15 }, { zone = 85, x = 50.64, y = 54.16 }, { zone = 85, x = 51.36, y = 52.78 }]
+
+[[npc]]
+id = 1535
+name = "Scarlet Warrior"
+level = 6
+max_level = 7
+at = [{ zone = 85, x = 29.72, y = 49.47, z = 41 }, { zone = 85, x = 29.95, y = 49.97, z = 43 }, { zone = 85, x = 30.39, y = 49.13, z = 35 }, { zone = 85, x = 30.46, y = 51.27, z = 47 }]
+
+[[npc]]
+id = 1536
+name = "Scarlet Missionary"
+level = 7
+max_level = 8
+at = [{ zone = 85, x = 43.23, y = 65.17, z = 25 }, { zone = 85, x = 44.46, y = 64.99, z = 29 }, { zone = 85, x = 46.13, y = 65.07 }, { zone = 85, x = 46.68, y = 64.05 }]
+
+[[npc]]
+id = 1537
+name = "Scarlet Zealot"
+level = 8
+max_level = 9
+at = [{ zone = 85, x = 48.82, y = 66.18 }, { zone = 85, x = 50.46, y = 64.71 }, { zone = 85, x = 50.6, y = 67.96 }, { zone = 85, x = 51.15, y = 65.71 }]
+
+[[npc]]
+id = 1547
+name = "Decrepit Darkhound"
+level = 5
+max_level = 6
+at = [{ zone = 85, x = 37.49, y = 45.14, z = 22 }, { zone = 85, x = 37.96, y = 41.45, z = 40 }, { zone = 85, x = 38.47, y = 47.3, z = 31 }, { zone = 85, x = 38.6, y = 41.76, z = 48 }]
+
+[[npc]]
+id = 1548
+name = "Cursed Darkhound"
+level = 7
+max_level = 8
+at = [{ zone = 85, x = 40.26, y = 42.53, z = 66 }, { zone = 85, x = 40.56, y = 60.87, z = 55 }, { zone = 85, x = 40.58, y = 58.42, z = 45 }, { zone = 85, x = 40.99, y = 61.61, z = 45 }]
+
+[[npc]]
+id = 1549
+name = "Ravenous Darkhound"
+level = 9
+max_level = 10
+at = [{ zone = 85, x = 79.59, y = 49.52, z = 82 }, { zone = 85, x = 80.17, y = 42.44, z = 84 }, { zone = 85, x = 81.48, y = 45.15, z = 72 }, { zone = 85, x = 81.96, y = 47.03, z = 73 }]
+
+[[npc]]
+id = 1553
+name = "Greater Duskbat"
+level = 6
+max_level = 7
+friendly_to = "AH"
+at = [{ zone = 85, x = 36.49, y = 47.27, z = 36 }, { zone = 85, x = 37.31, y = 43.48, z = 22 }, { zone = 85, x = 37.44, y = 46.4, z = 27 }, { zone = 85, x = 37.5, y = 38.75, z = 34 }]
+
+[[npc]]
+id = 1560
+name = "Yvette Farthing"
+level = 15
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 61.58, y = 52.6, z = 34 }]
+
+[[npc]]
+id = 1652
+name = "Deathguard Burgess"
+level = 24
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 85, x = 60.93, y = 52.01, z = 37 }]
+
+[[npc]]
+id = 1675
+name = "Rot Hide Mongrel"
+level = 7
+max_level = 8
+at = [{ zone = 85, x = 56.34, y = 33.71, z = 31 }, { zone = 85, x = 57.47, y = 35.15, z = 19 }, { zone = 85, x = 57.84, y = 31.54, z = 22 }, { zone = 85, x = 57.91, y = 32.51, z = 21 }]
+
+[[npc]]
+id = 1931
+name = "Captured Scarlet Zealot"
+level = 9
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 85, x = 61.97, y = 51.29, z = 27 }]
+
+[[npc]]
+id = 1941
+name = "Rot Hide Graverobber"
+level = 6
+max_level = 7
+at = [{ zone = 85, x = 53.29, y = 41.5 }, { zone = 85, x = 53.8, y = 43.93, z = 28 }, { zone = 85, x = 54.31, y = 42.77, z = 21 }, { zone = 85, x = 54.89, y = 42.39, z = 15 }]
+
+[[npc]]
+id = 2115
+name = "Joshua Kien"
+level = 5
+npc_flags = 6
+friendly_to = "H"
+at = [{ zone = 85, x = 32.29, y = 65.44, z = 94 }]
+
+[[npc]]
+id = 2118
+name = "Abigail Shiel"
+level = 9
+npc_flags = 6
+friendly_to = "H"
+at = [{ zone = 85, x = 61.03, y = 52.37, z = 36 }]
+
+[[npc]]
+id = 2832
+name = "Nixxrax Fillamug"
+level = 38
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 33, x = 27.04, y = 77.17, z = 15 }]
+
+[[npc]]
+id = 2947
+name = "Harken Windtotem"
+level = 21
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 48.71, y = 59.32, z = -5 }]
+
+[[npc]]
+id = 2949
+name = "Palemane Tanner"
+level = 5
+max_level = 6
+at = [{ zone = 215, x = 31.61, y = 60.36, z = 53 }, { zone = 215, x = 32.04, y = 59.78, z = 54 }, { zone = 215, x = 32.72, y = 60.96, z = 65 }, { zone = 215, x = 32.78, y = 61.83, z = 65 }]
+
+[[npc]]
+id = 2950
+name = "Palemane Skinner"
+level = 6
+max_level = 7
+at = [{ zone = 215, x = 29.59, y = 60.29, z = 41 }, { zone = 215, x = 30.21, y = 60.69, z = 44 }, { zone = 215, x = 30.34, y = 59.67, z = 46 }, { zone = 215, x = 30.56, y = 60.52, z = 46 }]
+
+[[npc]]
+id = 2951
+name = "Palemane Poacher"
+level = 7
+max_level = 8
+at = [{ zone = 215, x = 30.21, y = 60.53, z = 44 }, { zone = 215, x = 30.21, y = 61.55, z = 49 }, { zone = 215, x = 30.29, y = 61.13, z = 45 }, { zone = 215, x = 30.41, y = 61.82, z = 52 }]
+
+[[npc]]
+id = 2952
+name = "Bristleback Quilboar"
+level = 3
+max_level = 4
+at = [{ zone = 215, x = 57.79, y = 81.7, z = 93 }, { zone = 215, x = 58.39, y = 81.75, z = 92 }, { zone = 215, x = 58.4, y = 78.34, z = 56 }, { zone = 215, x = 58.52, y = 79.78, z = 58 }]
+
+[[npc]]
+id = 2953
+name = "Bristleback Shaman"
+level = 3
+max_level = 4
+at = [{ zone = 215, x = 59.42, y = 78.02, z = 55 }, { zone = 215, x = 59.53, y = 75.44, z = 57 }, { zone = 215, x = 59.96, y = 75.27, z = 56 }, { zone = 215, x = 60.09, y = 76.04, z = 54 }]
+
+[[npc]]
+id = 2962
+name = "Windfury Harpy"
+level = 7
+max_level = 8
+at = [{ zone = 215, x = 31.07, y = 41.09, z = 111 }, { zone = 215, x = 31.15, y = 42.21, z = 101 }, { zone = 215, x = 31.73, y = 40.32, z = 114 }, { zone = 215, x = 31.73, y = 42.24, z = 92 }]
+
+[[npc]]
+id = 2963
+name = "Windfury Wind Witch"
+level = 8
+max_level = 9
+at = [{ zone = 215, x = 31.79, y = 41.34, z = 94 }, { zone = 215, x = 31.86, y = 43.01, z = 100 }, { zone = 215, x = 33.05, y = 43.02, z = 91 }, { zone = 215, x = 33.08, y = 42.19, z = 75 }]
+
+[[npc]]
+id = 2969
+name = "Wiry Swoop"
+level = 5
+max_level = 7
+at = [{ zone = 215, x = 34.18, y = 78.27, z = 106 }, { zone = 215, x = 35.11, y = 66.52, z = 86 }, { zone = 215, x = 36.92, y = 70.41, z = 55 }, { zone = 215, x = 37.06, y = 59.05, z = 52 }]
+
+[[npc]]
+id = 2970
+name = "Swoop"
+level = 7
+max_level = 9
+at = [{ zone = 215, x = 34.82, y = 42.76, z = 38 }, { zone = 215, x = 35.22, y = 49.46, z = 66 }, { zone = 215, x = 36.18, y = 44.93, z = 32 }, { zone = 215, x = 37.62, y = 41.16, z = -9 }]
+
+[[npc]]
+id = 2971
+name = "Taloned Swoop"
+level = 8
+max_level = 10
+at = [{ zone = 215, x = 37.6, y = 17.31, z = -13 }, { zone = 215, x = 42.17, y = 9.97, z = 7 }, { zone = 215, x = 46.59, y = 13.42, z = -26 }, { zone = 215, x = 46.69, y = 10.06, z = 5 }]
+
+[[npc]]
+id = 2981
+name = "Chief Hawkwind"
+level = 36
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 215, x = 44.18, y = 76.06, z = 55 }]
+
+[[npc]]
+id = 2982
+name = "Seer Graytongue"
+level = 8
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 42.57, y = 92.19, z = 103 }]
+
+[[npc]]
+id = 2984
+name = "Seer Wiserunner"
+level = 11
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 32.71, y = 36.09, z = 63 }]
+
+[[npc]]
+id = 2985
+name = "Ruul Eagletalon"
+level = 9
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 47.35, y = 62.02, z = -2 }]
+
+[[npc]]
+id = 2988
+name = "Morin Cloudstalker"
+level = 10
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 57.2, y = 61.22 }]
+
+[[npc]]
+id = 2991
+name = "Greatmother Hawkwind"
+level = 9
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 50.03, y = 81.16, z = 27 }]
+
+[[npc]]
+id = 2993
+name = "Baine Bloodhoof"
+level = 10
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 47.51, y = 60.16, z = -8 }]
+
+[[npc]]
+id = 3054
+name = "Zarlman Two-Moons"
+level = 7
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 47.76, y = 57.53, z = -9 }]
+
+[[npc]]
+id = 3100
+name = "Elder Mottled Boar"
+level = 8
+max_level = 9
+friendly_to = "AH"
+at = [{ zone = 14, x = 34.99, y = 43.25, z = 26 }, { zone = 14, x = 35.03, y = 46.47, z = 30 }, { zone = 14, x = 35.14, y = 49.34, z = 33 }, { zone = 14, x = 35.45, y = 55.66, z = 29 }]
+
+[[npc]]
+id = 3103
+name = "Makrura Clacker"
+level = 6
+max_level = 7
+at = [{ zone = 14, x = 51.41, y = 84.88, z = -9 }, { zone = 14, x = 52.68, y = 84.9, z = -9 }, { zone = 14, x = 57.34, y = 80.02, z = -6 }, { zone = 14, x = 58.96, y = 82.14, z = -3 }]
+
+[[npc]]
+id = 3104
+name = "Makrura Shellhide"
+level = 6
+max_level = 7
+at = [{ zone = 14, x = 53.89, y = 84.83, z = -10 }, { zone = 14, x = 55.08, y = 82.85, z = -12 }, { zone = 14, x = 58.2, y = 85.15, z = -11 }, { zone = 14, x = 60.22, y = 75.74, z = -6 }]
+
+[[npc]]
+id = 3105
+name = "Makrura Snapclaw"
+level = 8
+max_level = 9
+at = [{ zone = 14, x = 57.53, y = 9.39, z = -25 }, { zone = 14, x = 58.48, y = 10.21, z = -14 }, { zone = 14, x = 58.82, y = 15.11, z = -5 }, { zone = 14, x = 59.84, y = 28.91, z = -9 }]
+
+[[npc]]
+id = 3106
+name = "Pygmy Surf Crawler"
+level = 5
+max_level = 6
+friendly_to = "AH"
+at = [{ zone = 14, x = 51.53, y = 84.03, z = -5 }, { zone = 14, x = 52.13, y = 83.97, z = -7 }, { zone = 14, x = 52.22, y = 83.11, z = 1 }, { zone = 14, x = 52.7, y = 83.04, z = 2 }]
+
+[[npc]]
+id = 3107
+name = "Surf Crawler"
+level = 7
+max_level = 8
+friendly_to = "AH"
+at = [{ zone = 14, x = 58.28, y = 83.54, z = -5 }, { zone = 14, x = 58.85, y = 28.34, z = 3 }, { zone = 14, x = 58.89, y = 86.2, z = -9 }, { zone = 14, x = 59.63, y = 81.31, z = -7 }]
+
+[[npc]]
+id = 3108
+name = "Encrusted Surf Crawler"
+level = 9
+max_level = 10
+friendly_to = "AH"
+at = [{ zone = 14, x = 56.3, y = 11.08, z = 1 }, { zone = 14, x = 56.54, y = 9.11, z = -4 }, { zone = 14, x = 56.94, y = 10.16, z = -11 }, { zone = 14, x = 57.18, y = 12.31, z = -2 }]
+
+[[npc]]
+id = 3128
+name = "Kul Tiras Sailor"
+level = 5
+max_level = 6
+friendly_to = "A"
+at = [{ zone = 14, x = 55.72, y = 57.54, z = 27 }, { zone = 14, x = 55.88, y = 51.84, z = 17 }, { zone = 14, x = 55.92, y = 59.05, z = 27 }, { zone = 14, x = 55.95, y = 53.78, z = 18 }]
+
+[[npc]]
+id = 3129
+name = "Kul Tiras Marine"
+level = 6
+max_level = 7
+friendly_to = "A"
+at = [{ zone = 14, x = 56.53, y = 50.8, z = 14 }, { zone = 14, x = 57.51, y = 55.31 }, { zone = 14, x = 57.79, y = 53.79 }, { zone = 14, x = 58.11, y = 55.53, z = 22 }]
+
+[[npc]]
+id = 3139
+name = "Gar'Thok"
+level = 10
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 14, x = 51.95, y = 43.5, z = 18 }]
+
+[[npc]]
+id = 3142
+name = "Orgnil Soulscar"
+level = 18
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 14, x = 52.24, y = 43.15, z = 13 }]
+
+[[npc]]
+id = 3147
+name = "Furl Scornbrow"
+level = 6
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 14, x = 49.88, y = 40.39, z = 76 }]
+
+[[npc]]
+id = 3188
+name = "Master Gadrin"
+level = 12
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 14, x = 55.95, y = 74.72, z = 20 }]
+
+[[npc]]
+id = 3192
+name = "Lieutenant Benedict"
+level = 8
+friendly_to = "A"
+at = [{ zone = 14, x = 59.72, y = 58.27, z = 43 }]
+
+[[npc]]
+id = 3230
+name = "Nazgrel"
+level = 62
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 1637, x = 32.3, y = 35.75, z = 41 }]
+
+[[npc]]
+id = 3304
+name = "Master Vornal"
+level = 11
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 14, x = 55.94, y = 74.39, z = 19 }]
+
+[[npc]]
+id = 3387
+name = "Jorn Skyseer"
+level = 32
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 17, x = 44.86, y = 59.14, z = 96 }]
+
+[[npc]]
+id = 3473
+name = "Owatanka"
+level = 24
+at = [{ zone = 17, x = 44.2, y = 62.0 }, { zone = 17, x = 45.4, y = 62.8 }, { zone = 17, x = 49.2, y = 61.6 }, { zone = 17, x = 49.4, y = 59.2, z = 92 }]
+
+[[npc]]
+id = 3577
+name = "Dalaran Brewmaster"
+level = 15
+max_level = 16
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 130, x = 62.61, y = 65.05, z = 64 }]
+
+[[npc]]
+id = 3708
+name = "Gruna"
+level = 52
+npc_flags = 6
+friendly_to = "H"
+at = [{ zone = 46, x = 65.71, y = 23.91, z = 166 }]
+
+[[npc]]
+id = 5204
+name = "Apothecary Zinge"
+level = 29
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 1497, x = 50.14, y = 67.97, z = -85 }]
+
+[[npc]]
+id = 5616
+name = "Wastewander Thief"
+level = 40
+max_level = 41
+at = [{ zone = 440, x = 59.01, y = 23.42, z = 10 }, { zone = 440, x = 59.79, y = 24.11, z = 10 }, { zone = 440, x = 59.86, y = 22.77, z = 12 }, { zone = 440, x = 59.96, y = 23.42, z = 12 }]
+
+[[npc]]
+id = 5617
+name = "Wastewander Shadow Mage"
+level = 41
+max_level = 43
+at = [{ zone = 440, x = 58.45, y = 37.16 }, { zone = 440, x = 58.48, y = 39.41 }, { zone = 440, x = 58.69, y = 39.28 }, { zone = 440, x = 58.8, y = 39.46 }]
+
+[[npc]]
+id = 5618
+name = "Wastewander Bandit"
+level = 41
+max_level = 42
+at = [{ zone = 440, x = 59.4, y = 24.71 }, { zone = 440, x = 60.41, y = 24.76 }, { zone = 440, x = 60.79, y = 24.2 }, { zone = 440, x = 60.85, y = 23.48 }]
+
+[[npc]]
+id = 6786
+name = "Ukor"
+level = 4
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 14, x = 52.06, y = 68.31, z = 35 }]
+
+[[npc]]
+id = 6928
+name = "Innkeeper Grosk"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 14, x = 51.51, y = 41.64, z = 17 }]
+
+[[npc]]
+id = 7407
+name = "Chief Engineer Bilgewhizzle"
+level = 50
+npc_flags = 2
+friendly_to = "AH"
+at = [{ zone = 440, x = 52.46, y = 28.51, z = 9 }]
+
+[[npc]]
+id = 7683
+name = "Alessandro Luca"
+level = 35
+npc_flags = 7
+friendly_to = "H"
+at = [{ zone = 1497, x = 58.61, y = 54.68, z = -62 }]
+
+[[npc]]
+id = 10478
+name = "Splintered Skeleton"
+level = 59
+max_level = 60
+rank = 1
+at = [{ zone = 2057, x = -1.0, y = -1.0 }]
+
+[[npc]]
+id = 10665
+name = "Junior Apothecary Holland"
+level = 20
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 85, x = 57.44, y = 48.85, z = 33 }]
+
+[[npc]]
+id = 10666
+name = "Gordo"
+level = 30
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 85, x = 43.06, y = 54.69, z = 30 }]
+
+[[object]]
+id = 337
+name = "Water Pitcher"
+at = []
+
+[[object]]
+id = 375
+name = "Tirisfal Pumpkin"
+at = [{ zone = 85, x = 31.88, y = 47.08 }, { zone = 85, x = 31.91, y = 46.67 }, { zone = 85, x = 32.57, y = 47.03 }]
+
+[[object]]
+id = 1165
+name = "Gunther's Books"
+at = [{ zone = 85, x = 67.96, y = 42.09 }]
+
+[[object]]
+id = 2843
+name = "Battered Chest"
+at = [{ zone = 1, x = 20.66, y = 76.74 }, { zone = 1, x = 22.61, y = 80.11 }, { zone = 1, x = 22.62, y = 80.51 }]
+
+[[object]]
+id = 2907
+name = "Water Pitcher"
+at = [{ zone = 215, x = 50.19, y = 81.46 }, { zone = 215, x = 50.22, y = 81.38 }, { zone = 215, x = 50.35, y = 81.37 }]
+
+[[object]]
+id = 2908
+name = "Sealed Supply Crate"
+at = [{ zone = 215, x = 53.74, y = 48.17 }]
+
+[[object]]
+id = 2910
+name = "Well Stone"
+at = [{ zone = 215, x = 42.41, y = 14.19 }, { zone = 215, x = 42.51, y = 13.67 }, { zone = 215, x = 42.81, y = 14.43 }]
+
+[[object]]
+id = 2912
+name = "Ambercorn"
+at = [{ zone = 215, x = 34.19, y = 66.05 }, { zone = 215, x = 34.62, y = 70.42 }, { zone = 215, x = 35.41, y = 57.66 }]
+
+[[object]]
+id = 3239
+name = "Benedict's Chest"
+at = [{ zone = 14, x = 59.26, y = 57.65 }]
+
+[[object]]
+id = 3658
+name = "Water Barrel"
+at = [{ zone = 1, x = 25.92, y = 51.03 }, { zone = 1, x = 26.54, y = 36.55 }, { zone = 1, x = 27.54, y = 36.45 }]
+
+[[object]]
+id = 17190
+name = "Forge"
+at = [{ zone = 215, x = 31.26, y = 49.88 }]
+
+[[object]]
+id = 175566
+name = "Gloom Weed"
+at = [{ zone = 85, x = 39.56, y = 50.65 }, { zone = 85, x = 39.7, y = 54.14 }, { zone = 85, x = 39.84, y = 55.81 }]
+
+[[object]]
+id = 176753
+name = "Doom Weed"
+at = [{ zone = 85, x = 54.73, y = 38.98 }, { zone = 85, x = 54.83, y = 42.52 }, { zone = 85, x = 55.27, y = 40.16 }]
+
+[[item]]
+id = 159
+name = "Refreshing Spring Water"
+level = 5
+class = 0
+drops = [{ npc = 3577, chance = 1.0 }, { object = 3658, chance = 1.0 }, { object = 2843, chance = 0.36 }, { vendor = 982 }, { vendor = 1149 }, { vendor = 2115 }]
+
+[[item]]
+id = 1382
+name = "Rock Mace"
+level = 5
+class = 2
+drops = [{ npc = 10478, chance = 0.0002 }]
+
+[[item]]
+id = 1383
+name = "Stone Tomahawk"
+level = 5
+class = 2
+
+[[item]]
+id = 2137
+name = "Whittling Knife"
+level = 5
+class = 2
+
+[[item]]
+id = 2320
+name = "Coarse Thread"
+level = 5
+class = 7
+drops = [{ vendor = 989 }, { vendor = 1148 }, { vendor = 2118 }]
+
+[[item]]
+id = 2833
+name = "The Lich's Spellbook"
+level = 1
+class = 12
+drops = [{ object = 1165, chance = 1.0 }]
+
+[[item]]
+id = 2834
+name = "Embalming Ichor"
+level = 1
+class = 12
+drops = [{ npc = 1553, chance = 0.00030900000000000003 }]
+
+[[item]]
+id = 2839
+name = "A Letter to Yvette"
+level = 4
+class = 12
+start_quest = 361
+drops = [{ npc = 1520, chance = 0.03 }, { npc = 1522, chance = 0.03 }, { npc = 1523, chance = 0.03 }]
+
+[[item]]
+id = 2846
+name = "Tirisfal Pumpkin"
+level = 1
+class = 12
+drops = [{ object = 375, chance = 1.0 }]
+
+[[item]]
+id = 2855
+name = "Putrid Claw"
+level = 1
+class = 12
+drops = [{ npc = 1525, chance = 0.33 }, { npc = 1526, chance = 0.33 }]
+
+[[item]]
+id = 2858
+name = "Darkhound Blood"
+level = 1
+class = 12
+drops = [{ npc = 1547, chance = 0.35 }, { npc = 1548, chance = 0.35 }, { npc = 1549, chance = 0.35 }]
+
+[[item]]
+id = 2875
+name = "Scarlet Insignia Ring"
+level = 1
+class = 12
+drops = [{ npc = 1535, chance = 0.4 }, { npc = 1536, chance = 0.4 }, { npc = 1537, chance = 0.4 }]
+
+[[item]]
+id = 2876
+name = "Duskbat Pelt"
+level = 1
+class = 12
+drops = [{ npc = 1553, chance = 0.33 }]
+
+[[item]]
+id = 3162
+name = "Notched Rib"
+level = 1
+class = 12
+drops = [{ npc = 1520, chance = 0.4 }, { npc = 1523, chance = 0.4 }]
+
+[[item]]
+id = 3163
+name = "Blackened Skull"
+level = 1
+class = 12
+drops = [{ npc = 1522, chance = 0.4 }]
+
+[[item]]
+id = 3382
+name = "Weak Troll's Blood Potion"
+level = 8
+class = 0
+
+[[item]]
+id = 3435
+name = "Zombie Skin Bracers"
+level = 8
+class = 4
+
+[[item]]
+id = 3437
+name = "Clasped Belt"
+level = 8
+class = 4
+
+[[item]]
+id = 3439
+name = "Zombie Skin Boots"
+level = 8
+class = 4
+
+[[item]]
+id = 3447
+name = "Cryptwalker Boots"
+level = 8
+class = 4
+
+[[item]]
+id = 3833
+name = "Adept's Cloak"
+level = 8
+class = 4
+
+[[item]]
+id = 3834
+name = "Sturdy Cloth Trousers"
+level = 8
+class = 4
+
+[[item]]
+id = 4540
+name = "Tough Hunk of Bread"
+level = 5
+class = 0
+drops = [{ object = 2843, chance = 0.19 }, { npc = 708, chance = 0.0002 }, { npc = 1501, chance = 0.0002 }, { vendor = 2115 }, { vendor = 2832 }, { vendor = 3708 }]
+
+[[item]]
+id = 4703
+name = "Broken Tools"
+level = 1
+class = 12
+drops = [{ object = 17190 }]
+
+[[item]]
+id = 4751
+name = "Windfury Talon"
+level = 1
+class = 12
+drops = [{ npc = 2962, chance = 0.64640875 }, { npc = 2963, chance = 0.64640875 }]
+
+[[item]]
+id = 4755
+name = "Water Pitcher"
+level = 1
+class = 12
+drops = [{ object = 337, chance = 1.0 }, { object = 2907, chance = 1.0 }]
+
+[[item]]
+id = 4769
+name = "Trophy Swoop Quill"
+level = 1
+class = 12
+drops = [{ npc = 2969, chance = 1.0 }, { npc = 2970, chance = 1.0 }, { npc = 2971, chance = 1.0 }]
+
+[[item]]
+id = 4770
+name = "Bristleback Belt"
+level = 1
+class = 12
+drops = [{ npc = 2952, chance = 0.6 }, { npc = 2953, chance = 0.6 }]
+
+[[item]]
+id = 4808
+name = "Well Stone"
+level = 1
+class = 12
+drops = [{ object = 2910, chance = 1.0 }]
+
+[[item]]
+id = 4809
+name = "Ambercorn"
+level = 1
+class = 12
+drops = [{ object = 2912, chance = 1.0 }]
+
+[[item]]
+id = 4870
+name = "Canvas Scraps"
+level = 1
+class = 12
+drops = [{ npc = 3100, chance = 0.000909 }, { npc = 3106, chance = 0.0007539999999999999 }]
+
+[[item]]
+id = 4881
+name = "Aged Envelope"
+level = 1
+class = 12
+start_quest = 830
+drops = [{ object = 3239, chance = 1.0 }]
+
+[[item]]
+id = 4887
+name = "Intact Makrura Eye"
+level = 1
+class = 12
+drops = [{ npc = 3103, chance = 0.7831212500000001 }, { npc = 3104, chance = 0.7831212500000001 }, { npc = 3105, chance = 0.7831212500000001 }]
+
+[[item]]
+id = 4888
+name = "Crawler Mucus"
+level = 1
+class = 12
+drops = [{ npc = 3106, chance = 0.6559550000000001 }, { npc = 3107, chance = 0.6559550000000001 }, { npc = 3108, chance = 0.6559550000000001 }]
+
+[[item]]
+id = 4906
+name = "Rainwalker Boots"
+level = 7
+class = 4
+
+[[item]]
+id = 4941
+name = "Really Sticky Glue"
+level = 10
+class = 0
+
+[[item]]
+id = 4958
+name = "Sun-beaten Cloak"
+level = 8
+class = 4
+
+[[item]]
+id = 4960
+name = "Flash Pellet"
+level = 7
+class = 6
+
+[[item]]
+id = 4969
+name = "Fortified Bindings"
+level = 10
+class = 4
+
+[[item]]
+id = 4970
+name = "Rough-hewn Kodo Leggings"
+level = 9
+class = 4
+
+[[item]]
+id = 5102
+name = "Owatanka's Tailspike"
+level = 10
+class = 12
+start_quest = 884
+drops = [{ npc = 3473, chance = 1.0 }]
+
+[[item]]
+id = 5776
+name = "Elder's Cane"
+level = 5
+class = 2
+
+[[item]]
+id = 5777
+name = "Brave's Axe"
+level = 5
+class = 2
+
+[[item]]
+id = 5939
+name = "Sewing Gloves"
+level = 8
+class = 4
+
+[[item]]
+id = 6063
+name = "Cold Steel Gauntlets"
+level = 8
+class = 4
+
+[[item]]
+id = 8483
+name = "Wastewander Water Pouch"
+level = 1
+class = 15
+drops = [{ npc = 5617, chance = 0.530592 }, { npc = 5616, chance = 0.517714 }, { npc = 5618, chance = 0.517093 }]
+
+[[item]]
+id = 8523
+name = "Field Testing Kit"
+level = 1
+class = 12
+drops = [{ npc = 7683 }, { vendor = 7683 }]
+
+[[item]]
+id = 8524
+name = "Model 4711-FTZ Power Source"
+level = 1
+class = 12
+start_quest = 654
+
+[[item]]
+id = 9438
+name = "Acceptable Scorpid Sample"
+level = 1
+class = 12
+drops = [{ npc = 9990, chance = 0.3 }]
+
+[[item]]
+id = 9440
+name = "Acceptable Basilisk Sample"
+level = 1
+class = 12
+drops = [{ npc = 9990, chance = 0.3 }]
+
+[[item]]
+id = 9441
+name = "Acceptable Hyena Sample"
+level = 1
+class = 12
+drops = [{ npc = 9990, chance = 0.3 }]
+
+[[item]]
+id = 11845
+name = "Handmade Leather Bag"
+level = 1
+class = 1
+
+[[item]]
+id = 12299
+name = "Netted Gloves"
+level = 8
+class = 4
+
+[[item]]
+id = 12737
+name = "Gloom Weed"
+level = 1
+class = 12
+drops = [{ object = 175566, chance = 1.0 }]
+
+[[item]]
+id = 13702
+name = "Doom Weed"
+level = 1
+class = 12
+drops = [{ object = 176753, chance = 1.0 }]
+
+[[quest]]
+id = 232
+name = "Errand for Apothecary Zinge"
+level = 45
+min_level = 38
+races_mask = 178
+zone = 1497
+xp = 390
+starts = [{ npc = 5204 }]
+ends = [{ npc = 7683 }]
+objectives = []
+
+[[quest]]
+id = 238
+name = "Errand for Apothecary Zinge"
+level = 45
+min_level = 38
+races_mask = 178
+zone = 1497
+xp = 390
+starts = [{ npc = 7683 }]
+ends = [{ npc = 5204 }]
+pre_any = [232]
+objectives = []
+
+[[quest]]
+id = 243
+name = "Into the Field"
+level = 46
+min_level = 38
+races_mask = 178
+zone = 440
+xp = 2000
+starts = [{ npc = 5204 }]
+ends = [{ npc = 7407 }]
+pre_any = [238]
+objectives = []
+
+[[quest]]
+id = 357
+name = "The Lich's Identity"
+level = 8
+min_level = 5
+races_mask = 178
+zone = 1497
+xp = 530
+quest_flags = 8
+starts = [{ npc = 1498 }]
+ends = [{ npc = 1498 }]
+pre_any = [405]
+objectives = [
+  { item = 2833, amount = 1 },
+]
+
+[[quest]]
+id = 358
+name = "Graverobbers"
+level = 8
+min_level = 4
+races_mask = 178
+zone = 85
+xp = 700
+quest_flags = 8
+starts = [{ npc = 1499 }]
+ends = [{ npc = 1499 }]
+objectives = [
+  { creature = 1941, amount = 8 },
+  { creature = 1675, amount = 5 },
+  { item = 2834, amount = 8 },
+]
+rewards = [{ item = 3439, count = 1, choice = true }, { item = 6063, count = 1, choice = true }]
+
+[[quest]]
+id = 361
+name = "A Letter Undelivered"
+level = 7
+min_level = 4
+races_mask = 178
+zone = 85
+xp = 475
+starts = [{ item = 2839 }]
+ends = [{ npc = 1560 }]
+objectives = []
+
+[[quest]]
+id = 365
+name = "Fields of Grief"
+level = 7
+min_level = 4
+races_mask = 178
+zone = 85
+xp = 630
+quest_flags = 8
+starts = [{ npc = 1519 }]
+ends = [{ npc = 1518 }]
+objectives = [
+  { item = 2846, amount = 10 },
+]
+
+[[quest]]
+id = 366
+name = "Return the Book"
+level = 8
+min_level = 5
+races_mask = 178
+zone = 85
+xp = 350
+starts = [{ npc = 1498 }]
+ends = [{ npc = 1497 }]
+pre_any = [357]
+objectives = []
+
+[[quest]]
+id = 367
+name = "A New Plague"
+level = 6
+min_level = 6
+races_mask = 178
+zone = 85
+xp = 540
+quest_flags = 8
+starts = [{ npc = 1518 }]
+ends = [{ npc = 1518 }]
+objectives = [
+  { item = 2858, amount = 5 },
+]
+rewards = [{ item = 3382, count = 3 }]
+
+[[quest]]
+id = 374
+name = "Proof of Demise"
+level = 7
+min_level = 5
+races_mask = 178
+zone = 85
+xp = 630
+quest_flags = 8
+starts = [{ npc = 1652 }]
+ends = [{ npc = 1652 }]
+pre_any = [427]
+objectives = [
+  { item = 2875, amount = 10 },
+]
+rewards = [{ item = 3435, count = 1, choice = true }, { item = 3437, count = 1, choice = true }, { item = 12299, count = 1, choice = true }]
+
+[[quest]]
+id = 375
+name = "The Chill of Death"
+level = 8
+min_level = 7
+races_mask = 178
+zone = 85
+xp = 700
+quest_flags = 8
+starts = [{ npc = 1521 }]
+ends = [{ npc = 1521 }]
+objectives = [
+  { item = 2876, amount = 5 },
+  { item = 2320, amount = 1 },
+]
+rewards = [{ item = 3833, count = 1, choice = true }, { item = 5939, count = 1, choice = true }]
+
+[[quest]]
+id = 379
+name = "Slake That Thirst"
+level = 46
+min_level = 38
+races_mask = 178
+zone = 440
+xp = 3050
+quest_flags = 8
+starts = [{ npc = 7407 }]
+ends = [{ npc = 7407 }]
+pre_any = [243]
+objectives = [
+  { item = 8483, amount = 5 },
+]
+rewards = [{ item = 8524, count = 1 }]
+
+[[quest]]
+id = 404
+name = "A Putrid Task"
+level = 6
+min_level = 4
+races_mask = 178
+zone = 85
+xp = 405
+quest_flags = 8
+starts = [{ npc = 1496 }]
+ends = [{ npc = 1496 }]
+objectives = [
+  { item = 2855, amount = 7 },
+]
+
+[[quest]]
+id = 405
+name = "The Prodigal Lich"
+level = 8
+min_level = 5
+races_mask = 178
+zone = 85
+xp = 175
+starts = [{ npc = 1499 }]
+ends = [{ npc = 1498 }]
+pre_any = [358]
+objectives = []
+
+[[quest]]
+id = 407
+name = "Fields of Grief"
+level = 7
+min_level = 4
+races_mask = 178
+zone = 85
+xp = 160
+starts = [{ npc = 1518 }]
+ends = [{ npc = 1931 }]
+pre_any = [365]
+objectives = []
+
+[[quest]]
+id = 426
+name = "The Mills Overrun"
+level = 8
+min_level = 6
+races_mask = 178
+zone = 85
+xp = 880
+quest_flags = 8
+starts = [{ npc = 1496 }]
+ends = [{ npc = 1496 }]
+pre_any = [404]
+objectives = [
+  { item = 3162, amount = 5 },
+  { item = 3163, amount = 3 },
+]
+rewards = [{ item = 3447, count = 1, choice = true }, { item = 3834, count = 1, choice = true }]
+
+[[quest]]
+id = 427
+name = "At War With The Scarlet Crusade"
+level = 8
+min_level = 5
+races_mask = 178
+zone = 85
+xp = 700
+quest_flags = 8
+starts = [{ npc = 1515 }]
+ends = [{ npc = 1515 }]
+objectives = [
+  { creature = 1535, amount = 10 },
+]
+
+[[quest]]
+id = 654
+name = "Tanaris Field Sampling"
+level = 46
+min_level = 38
+races_mask = 178
+zone = 440
+xp = 4050
+time_limit = 7200
+starts = [{ item = 8524 }]
+ends = [{ npc = 7407 }]
+pre_any = [379]
+objectives = [
+  { item = 9440, amount = 8 },
+  { item = 9441, amount = 8 },
+  { item = 9438, amount = 8 },
+  { item = 8523, amount = 1 },
+]
+
+[[quest]]
+id = 743
+name = "Dangers of the Windfury"
+level = 8
+min_level = 5
+races_mask = 178
+zone = 215
+xp = 700
+quest_flags = 8
+starts = [{ npc = 2985 }]
+ends = [{ npc = 2985 }]
+objectives = [
+  { item = 4751, amount = 8 },
+]
+
+[[quest]]
+id = 745
+name = "Sharing the Land"
+level = 6
+races_mask = 178
+zone = 215
+xp = 540
+quest_flags = 8
+starts = [{ npc = 2993 }]
+ends = [{ npc = 2993 }]
+objectives = [
+  { creature = 2949, amount = 10 },
+  { creature = 2950, amount = 8 },
+  { creature = 2951, amount = 5 },
+]
+rewards = [{ item = 4960, count = 25 }]
+
+[[quest]]
+id = 746
+name = "Dwarven Digging"
+level = 8
+min_level = 6
+races_mask = 178
+zone = 215
+xp = 700
+quest_flags = 8
+starts = [{ npc = 2993 }]
+ends = [{ npc = 2993 }]
+objectives = [
+  { item = 4703, amount = 5 },
+]
+rewards = [{ item = 4969, count = 1, choice = true }, { item = 4970, count = 1, choice = true }]
+
+[[quest]]
+id = 749
+name = "The Ravaged Caravan"
+level = 8
+min_level = 5
+races_mask = 178
+zone = 215
+xp = 530
+quest_flags = 8
+starts = [{ npc = 2988 }]
+ends = [{ object = 2908 }]
+objectives = []
+
+[[quest]]
+id = 751
+name = "The Ravaged Caravan"
+level = 8
+min_level = 5
+races_mask = 178
+zone = 215
+xp = 530
+starts = [{ object = 2908 }]
+ends = [{ npc = 2988 }]
+pre_any = [749]
+objectives = []
+
+[[quest]]
+id = 752
+name = "A Humble Task"
+level = 2
+races_mask = 178
+zone = 220
+xp = 85
+quest_flags = 8
+starts = [{ npc = 2981 }]
+ends = [{ npc = 2991 }]
+objectives = []
+
+[[quest]]
+id = 753
+name = "A Humble Task"
+level = 3
+races_mask = 178
+zone = 220
+xp = 250
+starts = [{ npc = 2991 }]
+ends = [{ npc = 2981 }]
+objectives = [
+  { item = 4755, amount = 1 },
+]
+
+[[quest]]
+id = 755
+name = "Rites of the Earthmother"
+level = 3
+races_mask = 178
+zone = 220
+xp = 250
+quest_flags = 8
+starts = [{ npc = 2981 }]
+ends = [{ npc = 2982 }]
+pre_any = [753]
+objectives = []
+
+[[quest]]
+id = 757
+name = "Rite of Strength"
+level = 4
+races_mask = 178
+zone = 220
+xp = 445
+quest_flags = 8
+starts = [{ npc = 2982 }]
+ends = [{ npc = 2981 }]
+pre_any = [755]
+objectives = [
+  { item = 4770, amount = 12 },
+]
+rewards = [{ item = 1382, count = 1, choice = true }, { item = 1383, count = 1, choice = true }, { item = 2137, count = 1, choice = true }, { item = 5776, count = 1, choice = true }, { item = 5777, count = 1, choice = true }]
+
+[[quest]]
+id = 761
+name = "Swoop Hunting"
+level = 6
+min_level = 4
+races_mask = 178
+zone = 215
+xp = 680
+quest_flags = 8
+starts = [{ npc = 2947 }]
+ends = [{ npc = 2947 }]
+objectives = [
+  { item = 4769, amount = 8 },
+]
+
+[[quest]]
+id = 763
+name = "Rites of the Earthmother"
+level = 5
+races_mask = 178
+zone = 220
+xp = 335
+starts = [{ npc = 2981 }]
+ends = [{ npc = 2993 }]
+pre_any = [757]
+objectives = []
+
+[[quest]]
+id = 767
+name = "Rite of Vision"
+level = 6
+min_level = 3
+races_mask = 178
+zone = 215
+xp = 55
+quest_flags = 8
+starts = [{ npc = 2993 }]
+ends = [{ npc = 3054 }]
+objectives = []
+
+[[quest]]
+id = 771
+name = "Rite of Vision"
+level = 7
+min_level = 3
+races_mask = 178
+zone = 215
+xp = 630
+quest_flags = 8
+starts = [{ npc = 3054 }]
+ends = [{ npc = 3054 }]
+pre_any = [767]
+objectives = [
+  { item = 4808, amount = 2 },
+  { item = 4809, amount = 2 },
+]
+
+[[quest]]
+id = 772
+name = "Rite of Vision"
+level = 7
+min_level = 3
+races_mask = 178
+zone = 215
+xp = 475
+starts = [{ npc = 3054 }]
+ends = [{ npc = 2984 }]
+pre_any = [771]
+objectives = []
+rewards = [{ item = 4906, count = 1, choice = true }, { item = 4958, count = 1, choice = true }]
+
+[[quest]]
+id = 784
+name = "Vanquish the Betrayers"
+level = 7
+min_level = 3
+races_mask = 178
+zone = 14
+xp = 630
+quest_flags = 8
+starts = [{ npc = 3139 }]
+ends = [{ npc = 3139 }]
+objectives = [
+  { creature = 3128, amount = 10 },
+  { creature = 3129, amount = 8 },
+  { creature = 3192, amount = 1 },
+]
+
+[[quest]]
+id = 791
+name = "Carry Your Weight"
+level = 7
+min_level = 4
+races_mask = 178
+zone = 14
+xp = 630
+quest_flags = 8
+starts = [{ npc = 3147 }]
+ends = [{ npc = 3147 }]
+objectives = [
+  { item = 4870, amount = 8 },
+]
+rewards = [{ item = 11845, count = 1 }]
+
+[[quest]]
+id = 818
+name = "A Solvent Spirit"
+level = 7
+min_level = 5
+races_mask = 178
+zone = 14
+xp = 630
+quest_flags = 8
+starts = [{ npc = 3304 }]
+ends = [{ npc = 3304 }]
+objectives = [
+  { item = 4887, amount = 4 },
+  { item = 4888, amount = 8 },
+]
+rewards = [{ item = 4941, count = 10 }]
+
+[[quest]]
+id = 823
+name = "Report to Orgnil"
+level = 7
+min_level = 4
+races_mask = 178
+zone = 14
+xp = 315
+quest_flags = 8
+starts = [{ npc = 3188 }]
+ends = [{ npc = 3142 }]
+objectives = []
+
+[[quest]]
+id = 830
+name = "The Admiral's Orders"
+level = 7
+races_mask = 178
+zone = 14
+xp = 630
+starts = [{ item = 4881 }]
+ends = [{ npc = 3139 }]
+objectives = []
+
+[[quest]]
+id = 831
+name = "The Admiral's Orders"
+level = 7
+races_mask = 178
+zone = 14
+xp = 630
+starts = [{ npc = 3139 }]
+ends = [{ npc = 3230 }]
+pre_any = [830]
+objectives = []
+
+[[quest]]
+id = 841
+name = "Another Power Source?"
+level = 46
+min_level = 38
+races_mask = 178
+zone = 440
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 7407 }]
+ends = [{ npc = 7407 }]
+pre_any = [379]
+exclusive = [654]
+objectives = [
+  { item = 8483, amount = 10 },
+]
+rewards = [{ item = 8524, count = 1 }]
+
+[[quest]]
+id = 884
+name = "Owatanka"
+level = 24
+min_level = 10
+races_mask = 178
+zone = 17
+xp = 1450
+starts = [{ item = 5102 }]
+ends = [{ npc = 3387 }]
+objectives = []
+
+[[quest]]
+id = 2161
+name = "A Peon's Burden"
+level = 5
+races_mask = 178
+zone = 14
+xp = 110
+starts = [{ npc = 6786 }]
+ends = [{ npc = 6928 }]
+objectives = []
+rewards = [{ item = 159, count = 5, choice = true }, { item = 4540, count = 5, choice = true }]
+
+[[quest]]
+id = 5481
+name = "Gordo's Task"
+level = 5
+min_level = 5
+races_mask = 178
+zone = 85
+xp = 225
+quest_flags = 8
+starts = [{ npc = 10666 }]
+ends = [{ npc = 10665 }]
+objectives = [
+  { item = 12737, amount = 3 },
+]
+
+[[quest]]
+id = 5482
+name = "Doom Weed"
+level = 6
+min_level = 5
+races_mask = 178
+zone = 85
+xp = 540
+quest_flags = 8
+starts = [{ npc = 10665 }]
+ends = [{ npc = 10665 }]
+pre_any = [5481]
+objectives = [
+  { item = 13702, amount = 10 },
+]
+
+
+# Tanaris samples are taken from these.
+[[npc]]
+id = 9990
+name = "Tanaris Sampler"
+level = 45
+at = [{ zone = 440, x = 50.0, y = 40.0 }, { zone = 440, x = 51.0, y = 41.0 }, { zone = 440, x = 52.0, y = 42.0 }]

@@ -2,13 +2,14 @@
 //! generated on the real data of each edition, for characters that differ in what the data holds
 //! (the classes' spells, the editions' races).
 
-use crate::common::{database_of, repo};
+use crate::common::repo;
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Overrides, PlanRequest};
 use fg_route::plan::Planner;
 use fg_route::xp::Edition;
 
-fn generates_a_guide(edition: Edition, race: &str, class: &str) {
-    let conn = database_of(edition.key());
+fn generates_a_guide(edition: Edition, race: &str, class: &str, start: &str) {
+    let conn = Fixture::new(edition).file(start).open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
     let request: PlanRequest = serde_json::from_value(serde_json::json!({
         "race":race,"class":class,"from_level":1,"to_level":5
@@ -25,22 +26,41 @@ fn generates_a_guide(edition: Edition, race: &str, class: &str) {
 }
 
 macro_rules! preset {
-    ($name:ident, $edition:expr, $race:expr, $class:expr) => {
+    ($name:ident, $edition:expr, $race:expr, $class:expr, $start:expr) => {
         #[test]
         fn $name() {
-            generates_a_guide($edition, $race, $class);
+            generates_a_guide($edition, $race, $class, $start);
         }
     };
 }
 
-preset!(classic_human_warrior, Edition::Classic, "human", "warrior");
-preset!(classic_orc_shaman, Edition::Classic, "orc", "shaman");
-preset!(tbc_bloodelf_paladin, Edition::Tbc, "bloodelf", "paladin");
-preset!(tbc_draenei_shaman, Edition::Tbc, "draenei", "shaman");
-preset!(forever_skyborne_druid, Edition::Forever, "skyborne", "druid");
+preset!(
+    classic_human_warrior,
+    Edition::Classic,
+    "human",
+    "warrior",
+    "classic_northshire"
+);
+preset!(classic_orc_shaman, Edition::Classic, "orc", "shaman", "classic_valley");
+preset!(
+    tbc_bloodelf_paladin,
+    Edition::Tbc,
+    "bloodelf",
+    "paladin",
+    "tbc_sunstrider"
+);
+preset!(tbc_draenei_shaman, Edition::Tbc, "draenei", "shaman", "tbc_ammen");
+preset!(
+    forever_skyborne_druid,
+    Edition::Forever,
+    "skyborne",
+    "druid",
+    "forever_zephras"
+);
 preset!(
     forever_skyborne_horde_druid,
     Edition::Forever,
     "skyborne_horde",
-    "druid"
+    "druid",
+    "forever_zephras"
 );

@@ -1,0 +1,57 @@
+# Sven's Revenge (95) ends at a mound in a camp of Defias of levels 25 to 27.
+
+[[npc]]
+id = 215
+name = "Defias Night Runner"
+level = 24
+max_level = 25
+at = [{ zone = 10, x = 49.48, y = 77.58 }, { zone = 10, x = 49.73, y = 77.58 }, { zone = 10, x = 49.98, y = 77.58 }, { zone = 10, x = 50.23, y = 77.58 }, { zone = 10, x = 49.48, y = 77.83 }, { zone = 10, x = 49.73, y = 77.83 }, { zone = 10, x = 49.98, y = 77.83 }, { zone = 10, x = 50.23, y = 77.83 }]
+
+[[npc]]
+id = 311
+name = "Sven Yorgen"
+level = 20
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 10, x = 7.78, y = 34.07, z = 27 }]
+
+[[npc]]
+id = 909
+name = "Defias Night Blade"
+level = 26
+max_level = 27
+at = [{ zone = 10, x = 49.48, y = 77.58 }, { zone = 10, x = 49.73, y = 77.58 }, { zone = 10, x = 49.98, y = 77.58 }, { zone = 10, x = 50.23, y = 77.58 }, { zone = 10, x = 49.48, y = 77.83 }, { zone = 10, x = 49.73, y = 77.83 }, { zone = 10, x = 49.98, y = 77.83 }, { zone = 10, x = 50.23, y = 77.83 }]
+
+[[npc]]
+id = 910
+name = "Defias Enchanter"
+level = 27
+max_level = 27
+at = [{ zone = 10, x = 49.48, y = 77.58 }, { zone = 10, x = 49.73, y = 77.58 }, { zone = 10, x = 49.98, y = 77.58 }, { zone = 10, x = 50.23, y = 77.58 }, { zone = 10, x = 49.48, y = 77.83 }, { zone = 10, x = 49.73, y = 77.83 }, { zone = 10, x = 49.98, y = 77.83 }, { zone = 10, x = 50.23, y = 77.83 }]
+
+[[npc]]
+id = 923
+name = "Young Black Ravager"
+level = 23
+max_level = 24
+at = [{ zone = 10, x = 17.76, y = 65.05, z = 43 }, { zone = 10, x = 18.23, y = 71.99, z = 30 }, { zone = 10, x = 20.11, y = 77.7, z = 33 }, { zone = 10, x = 21.97, y = 78.31, z = 34 }, { zone = 10, x = 22.07, y = 68.76, z = 29 }, { zone = 10, x = 24.41, y = 78.04, z = 26 }, { zone = 10, x = 24.85, y = 64.01, z = 40 }, { zone = 10, x = 25.71, y = 74.82, z = 30 }, { zone = 10, x = 26.27, y = 70.96, z = 42 }, { zone = 10, x = 26.72, y = 67.59, z = 39 }, { zone = 10, x = 27.63, y = 74.34, z = 41 }, { zone = 10, x = 28.33, y = 62.84, z = 45 }]
+
+[[object]]
+id = 59
+name = "Mound of loose dirt"
+at = [{ zone = 10, x = 49.85, y = 77.71 }]
+
+[[quest]]
+id = 95
+name = "Sven's Revenge"
+level = 25
+min_level = 20
+races_mask = 77
+zone = 10
+xp = 1000
+quest_flags = 8
+objectives_text = "Aller \u00e0 la ferme de Sven et trouver ce qui a \u00e9t\u00e9 enterr\u00e9 derri\u00e8re la vieille souche d'arbre."
+starts = [{ npc = 311 }]
+ends = [{ object = 59 }]
+objectives = []
+

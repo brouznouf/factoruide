@@ -1,0 +1,23 @@
+# The Anchors of Zephras (94414): Halaan Hawk-Eye stands on the top of the watchtower.
+
+[[npc]]
+id = 257554
+name = "Halaan Hawk-Eye"
+level = 10
+friendly_to = "AH"
+at = [{ zone = 16593, x = 43.77, y = 24.09, z = 1020 }]
+
+[[quest]]
+id = 94414
+name = "The Anchors of Zephras"
+level = 2
+min_level = 2
+zone = 16593
+xp = 85
+objectives_text = "Speak with Halaan Hawk-Eye and borrow his gift to view the anchor pylon in the distance."
+starts = [{ npc = 257554 }]
+ends = [{ npc = 257554 }]
+objectives = [
+  { talk = 257554, amount = 1, text = "Speak with Halaan Hawk-Eye and view the anchor pylon" },
+]
+

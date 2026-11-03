@@ -1,0 +1,446 @@
+# Quests that start inside a dungeon: the Crest of Lordaeron (Ruins of Lordaeron) and The Treaty of Understanding (Hall of Thanes); other quests filed under the Ruins.
+
+[[npc]]
+id = 466
+name = "General Marcus Jonathan"
+level = 62
+rank = 1
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 63.4, y = 75.8 }, { zone = 1519, x = 64.0, y = 75.6 }, { zone = 1519, x = 64.4, y = 74.4 }, { zone = 1519, x = 64.4, y = 77.6 }, { zone = 1519, x = 69.17, y = 82.72, z = 97 }, { zone = 1519, x = 69.23, y = 82.92, z = 97 }]
+
+[[npc]]
+id = 2784
+name = "King Magni Bronzebeard"
+level = 63
+rank = 3
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1537, x = 39.09, y = 56.2, z = 506 }]
+
+[[npc]]
+id = 7825
+name = "Oran Snakewrithe"
+level = 50
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 1497, x = 73.06, y = 32.85, z = -62 }]
+
+[[npc]]
+id = 11835
+name = "Theodore Griffs"
+level = 50
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 1497, x = 46.31, y = 71.91, z = -85 }]
+
+[[npc]]
+id = 14450
+name = "Orphan Matron Nightingale"
+level = 10
+npc_flags = 7
+friendly_to = "A"
+at = [{ zone = 1519, x = 56.07, y = 53.79, z = 97 }, { zone = 1519, x = 56.26, y = 54.23, z = 97 }, { zone = 1519, x = 56.31, y = 53.99, z = 97 }, { zone = 1519, x = 56.43, y = 55.32 }]
+
+[[npc]]
+id = 15991
+name = "Lady Dena Kennedy"
+level = 60
+rank = 1
+friendly_to = "A"
+at = [{ zone = 1519, x = 68.0, y = 29.0 }, { zone = 1519, x = 68.4, y = 30.2 }, { zone = 1519, x = 69.0, y = 28.6, z = 122 }, { zone = 1519, x = 69.2, y = 30.8 }, { zone = 1519, x = 70.2, y = 29.8 }]
+
+[[npc]]
+id = 250483
+name = "Witherfang"
+level = 1
+rank = 1
+at = []
+
+[[npc]]
+id = 250618
+name = "Skeleton"
+level = 1
+at = []
+
+[[npc]]
+id = 250621
+name = "Cadaver"
+level = 1
+rank = 1
+at = []
+
+[[npc]]
+id = 250622
+name = "Ragged Ghoul"
+level = 1
+rank = 1
+at = []
+
+[[npc]]
+id = 250623
+name = "Mangled Cadaver"
+level = 1
+rank = 1
+at = []
+
+[[npc]]
+id = 250624
+name = "Skeletal Mage"
+level = 1
+rank = 1
+at = []
+
+[[npc]]
+id = 250657
+name = "Rath'mael"
+level = 1
+rank = 1
+at = []
+
+[[npc]]
+id = 250686
+name = "Tabitha Heartweaver"
+level = 25
+friendly_to = "H"
+at = [{ zone = 130, x = 44.52, y = 43.02 }]
+
+[[npc]]
+id = 251001
+name = "Deathguard Kristof"
+level = 55
+friendly_to = "H"
+at = [{ zone = 85, x = 65.25, y = 60.2 }]
+
+[[npc]]
+id = 266484
+name = "Morbin Lightbane"
+level = 30
+friendly_to = "H"
+at = [{ zone = 1497, x = 58.08, y = 89.51 }]
+
+[[object]]
+id = 673474
+name = "Treaty of Understanding"
+at = [{ zone = 16919, x = -1.0, y = -1.0 }]
+
+[[item]]
+id = 251270
+name = "Blood-Stained Parchment"
+level = 1
+class = 12
+start_quest = 92415
+
+[[item]]
+id = 251485
+name = "Edward's Knife"
+level = 24
+class = 2
+
+[[item]]
+id = 251486
+name = "Tabitha's Cuffs"
+level = 24
+class = 4
+
+[[item]]
+id = 251520
+name = "Last Scrawlings of Edward Heartweaver"
+level = 5
+class = 12
+start_quest = 92415
+
+[[item]]
+id = 251522
+name = "Blood-Stained Letter"
+level = 1
+class = 12
+
+[[item]]
+id = 251533
+name = "Forsaken Greataxe"
+level = 24
+class = 2
+
+[[item]]
+id = 251534
+name = "Gnarled Necromancer's Staff"
+level = 24
+class = 2
+
+[[item]]
+id = 268535
+name = "Bloodied Insignia"
+level = 1
+class = 15
+start_quest = 95195
+drops = [{ npc = 250622 }, { npc = 250623 }, { npc = 250624 }]
+
+[[item]]
+id = 268540
+name = "Bloodied Insignia"
+level = 1
+class = 12
+drops = [{ npc = 250618 }, { npc = 250621 }, { npc = 250622 }]
+
+[[item]]
+id = 268579
+name = "Crest of Lordaeron"
+level = 1
+class = 15
+start_quest = 95189
+drops = [{ object = 614679 }]
+
+[[item]]
+id = 268580
+name = "Intact Limbs"
+level = 1
+class = 12
+drops = [{ npc = 250618 }, { npc = 250621 }, { npc = 250622 }]
+
+[[item]]
+id = 275443
+name = "Highly Toxic Strain"
+level = 1
+class = 12
+drops = [{ npc = 250483 }]
+
+[[item]]
+id = 275521
+name = "Crest of Lordaeron"
+level = 1
+class = 15
+start_quest = 95204
+drops = [{ object = 614679 }]
+
+[[item]]
+id = 279868
+name = "Duty Bound Leggings"
+level = 24
+class = 4
+
+[[item]]
+id = 279869
+name = "Remembrance Armor"
+level = 24
+class = 4
+
+[[item]]
+id = 279874
+name = "The Stitcher"
+level = 24
+class = 2
+
+[[item]]
+id = 279875
+name = "Spare Part Bindings"
+level = 24
+class = 4
+
+[[item]]
+id = 279876
+name = "Plaguefang"
+level = 24
+class = 2
+
+[[item]]
+id = 279877
+name = "Blight Gloves"
+level = 24
+class = 4
+
+[[item]]
+id = 280567
+name = "Small Sack of Gems"
+level = 1
+class = 0
+
+[[item]]
+id = 281030
+name = "Treaty of Understanding"
+level = 1
+class = 12
+start_quest = 98423
+drops = [{ object = 673474 }]
+
+[[quest]]
+id = 95189
+name = "Crest of Lordaeron"
+level = 22
+min_level = 16
+races_mask = 4294967373
+zone = 16611
+xp = 2600
+source_item = 268579
+objectives_text = "Return the Crest of Lordaeron to Lady Dena Kennedy in Stormwind City."
+starts = [{ item = 268579 }]
+ends = [{ npc = 15991 }]
+objectives = []
+rewards = [{ item = 280567, count = 1, choice = true }]
+
+[[quest]]
+id = 92415
+name = "Remember That I Love You"
+level = 22
+min_level = 15
+races_mask = 4294967373
+zone = 16611
+xp = 2600
+source_item = 251522
+objectives_text = "Bring the Blood-Stained Letter to Orphan Matron Nightingale in Stormwind City."
+starts = [{ item = 251270 }, { item = 251520 }]
+ends = [{ npc = 14450 }]
+objectives = []
+
+[[quest]]
+id = 98423
+name = "The Treaty of Understanding"
+level = 16
+min_level = 9
+races_mask = 4294967373
+zone = 1
+xp = 1150
+source_item = 281030
+objectives_text = "Deliver the Treaty of Understanding to Magni Bronzebeard in Ironforge."
+starts = [{ item = 281030 }]
+ends = [{ npc = 2784 }]
+objectives = []
+
+[[quest]]
+id = 92401
+name = "A Frightened Request"
+level = 22
+min_level = 15
+races_mask = 8589934770
+zone = 16611
+xp = 2200
+extra = "{\"trigger_end\":[\"Investigate the disappearance of Edward Heartweaver in the Ruins of Lordaeron.\",{\"1497\":[[67.69,13.55]]}]}"
+objectives_text = "Investigate the disappearance of Edward Heartweaver in the Ruins of Lordaeron."
+requirements = "[\"Investigate the disappearance of Edward Heartweaver in the Ruins of Lordaeron.\"]"
+starts = [{ npc = 250686 }]
+ends = [{ npc = 250686 }]
+objectives = [
+  { trigger = "Investigate the disappearance of Edward Heartweaver in the Ruins of Lordaeron.", at = { zone = 1497, x = 67.69, y = 13.55 } },
+]
+rewards = [{ item = 251485, count = 1, choice = true }, { item = 251486, count = 1, choice = true }]
+
+[[quest]]
+id = 92415
+name = "Remember That I Love You"
+level = 22
+min_level = 15
+races_mask = 4294967373
+zone = 16611
+xp = 2600
+source_item = 251522
+objectives_text = "Bring the Blood-Stained Letter to Orphan Matron Nightingale in Stormwind City."
+starts = [{ item = 251270 }, { item = 251520 }]
+ends = [{ npc = 14450 }]
+objectives = []
+
+[[quest]]
+id = 92421
+name = "Light's Justice"
+level = 22
+min_level = 15
+races_mask = 8589934770
+zone = 16611
+xp = 2200
+objectives_text = "Collect 25 Intact Limbs within The Ruins of Lordaeron for Morbin Lightbane in the Undercity."
+requirements = "[\"Intact Limbs x 25\"]"
+starts = [{ npc = 266484 }]
+ends = [{ npc = 266484 }]
+objectives = [
+  { item = 268580 },
+]
+rewards = [{ item = 279874, count = 1, choice = true }, { item = 279875, count = 1, choice = true }]
+
+[[quest]]
+id = 92422
+name = "The Wrath of Rath'mael"
+level = 22
+min_level = 15
+races_mask = 8589934770
+zone = 16611
+xp = 2200
+objectives_text = "Kill Rath'mael in the Ruins of Lordaeron for Deathguard Kristof in Brill."
+requirements = "[\"Rath'mael\"]"
+starts = [{ npc = 251001 }]
+ends = [{ npc = 251001 }]
+objectives = [
+  { creature = 250657 },
+]
+rewards = [{ item = 251533, count = 1, choice = true }, { item = 251534, count = 1, choice = true }]
+
+[[quest]]
+id = 95189
+name = "Crest of Lordaeron"
+level = 22
+min_level = 16
+races_mask = 4294967373
+zone = 16611
+xp = 2600
+source_item = 268579
+objectives_text = "Return the Crest of Lordaeron to Lady Dena Kennedy in Stormwind City."
+starts = [{ item = 268579 }]
+ends = [{ npc = 15991 }]
+objectives = []
+rewards = [{ item = 280567, count = 1, choice = true }]
+
+[[quest]]
+id = 95195
+name = "Bloodied Insignia"
+level = 22
+min_level = 16
+races_mask = 4294967373
+zone = 16611
+xp = 2600
+source_item = 268540
+objectives_text = "Collect 10 Bloodied Insignias and take them to General Marcus Jonathan in Stormwind City."
+starts = [{ item = 268535 }]
+ends = [{ npc = 466 }]
+objectives = [
+  { item = 268540 },
+]
+rewards = [{ item = 279868, count = 1, choice = true }, { item = 279869, count = 1, choice = true }]
+
+[[quest]]
+id = 95204
+name = "Crest of Lordaeron"
+level = 22
+min_level = 16
+races_mask = 8589934770
+zone = 16611
+xp = 2600
+source_item = 275521
+objectives_text = "Bring the Crest of Lordaeron to Oran Snakewrithe in Undercity."
+starts = [{ item = 275521 }]
+ends = [{ npc = 7825 }]
+objectives = []
+rewards = [{ item = 280567, count = 1, choice = true }]
+
+[[quest]]
+id = 95216
+name = "The New Plague"
+level = 22
+min_level = 16
+races_mask = 8589934770
+zone = 16611
+xp = 2600
+objectives_text = "Collect the Highly Toxic Strain from Witherfang in Ruins of Lordaeron for Theodore Griffs in Undercity."
+requirements = "[\"Highly Toxic Strain\"]"
+starts = [{ npc = 11835 }]
+ends = [{ npc = 11835 }]
+objectives = [
+  { item = 275443 },
+]
+rewards = [{ item = 279876, count = 1, choice = true }, { item = 279877, count = 1, choice = true }]
+
+[[row]]
+table = "dungeon"
+values = { area = 16611, name = "Ruins of Lordaeron", alt_areas = "null", entrance_zone = 1497, entrance_x = 72.48, entrance_y = 11.33, source = "fixture" }
+
+[[row]]
+table = "dungeon"
+values = { area = 16919, name = "The Hall of Thanes", alt_areas = "null", entrance_zone = 1537, entrance_x = 27.63, entrance_y = 47.83, source = "fixture" }
+

@@ -1,0 +1,6 @@
+# The ground of the Thousand Needles and the road to Gadgetzan.
+
+[[terrain]]
+map = 1
+tile_x = [38, 40]
+tile_y = [42, 46]

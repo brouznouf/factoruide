@@ -1,6 +1,7 @@
 //! Completion windows through planning, persisted requests and edited guides.
-use crate::common::{database_of, repo};
+use crate::common::repo;
 use fg_route::faction::Faction;
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Editor, LogQuest, MapPos, Overrides, PlanRequest, QuestId, RouteStep, StartState};
 use fg_route::model::Names;
 use fg_route::plan::{Event, Kind, Planner, Timed};
@@ -31,7 +32,7 @@ fn before_turn(trace: &[Timed], index: usize, from: i64) -> i64 {
 
 #[test]
 fn a_window_includes_the_child_quest_and_its_deadline() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_orc_812").open();
     let mut req = request(&json!([{"quest":812,"min_level":8,"max_level":10}]));
     req.race = "orc".into();
     req.from_level = 8;
@@ -49,7 +50,9 @@ fn a_window_includes_the_child_quest_and_its_deadline() {
 #[test]
 fn quest_windows_plan_the_chain_with_prerequisites_before_the_lower_bound() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition)
+            .file(&format!("{}_northshire", edition.key()))
+            .open();
         let req = request(&json!([{"quest":21,"min_level":3,"max_level":4}]));
         let mut o = overrides(edition);
         o.params.effort = 0.01;
@@ -80,12 +83,7 @@ fn quest_windows_plan_the_chain_with_prerequisites_before_the_lower_bound() {
 // A nearby optional reward would level the player before the required two-quest chain.
 #[test]
 fn generation_prioritizes_the_deadline_chain_and_reports_a_missed_window() {
-    let path = std::env::temp_dir().join(format!("fg-completion-window-{}.sqlite", std::process::id()));
-    let _ = std::fs::remove_file(&path);
-    database_of("classic")
-        .execute("VACUUM INTO ?1", [path.to_str().unwrap()])
-        .unwrap();
-    let conn = rusqlite::Connection::open(&path).unwrap();
+    let conn = Fixture::new(Edition::Classic).file("classic_northshire").open();
     conn.execute_batch(
         "CREATE TEMP TABLE m_quest AS SELECT * FROM main.m_quest WHERE id IN (783,7,33);
          UPDATE m_quest SET xp=0, xp_observed=1;
@@ -131,13 +129,11 @@ fn generation_prioritizes_the_deadline_chain_and_reports_a_missed_window() {
         error.contains("Kobold Camp Cleanup (7)") && error.contains("level 1"),
         "{error}"
     );
-    drop(conn);
-    std::fs::remove_file(&path).ok();
 }
 
 #[test]
 fn imported_horde_class_quest_can_finish_during_level_twenty() {
-    let conn = database_of("forever");
+    let conn = Fixture::new(Edition::Forever).file("forever_druid").open();
     let mut req = request(&json!([{"quest":98362,"min_level":20,"max_level":20}]));
     req.race = "skyborne_horde".into();
     req.class = "druid".into();
@@ -169,7 +165,9 @@ fn imported_horde_class_quest_can_finish_during_level_twenty() {
 #[test]
 fn saved_windows_are_checked_before_reward_xp_and_in_the_editor() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition)
+            .file(&format!("{}_northshire", edition.key()))
+            .open();
         let o = overrides(edition);
         let names = Names::load(&conn, "enUS").unwrap();
         let mut req = request(&json!([{"quest":783,"max_level":1}]));
@@ -203,7 +201,7 @@ fn saved_windows_are_checked_before_reward_xp_and_in_the_editor() {
 
 #[test]
 fn windows_check_each_member_who_still_needs_the_quest() {
-    let conn = database_of("classic");
+    let conn = Fixture::new(Edition::Classic).file("classic_northshire").open();
     let o = overrides(Edition::Classic);
     let names = Names::load(&conn, "enUS").unwrap();
     for (completed, rested, mobs, max, second_xp, valid) in [
@@ -255,7 +253,7 @@ fn windows_check_each_member_who_still_needs_the_quest() {
 
 #[test]
 fn imported_completion_counts_after_the_window_and_unfinished_late_starts_fail() {
-    let conn = database_of("classic");
+    let conn = Fixture::new(Edition::Classic).file("classic_northshire").open();
     let o = overrides(Edition::Classic);
     let mut req = request(&json!([{"quest":783,"max_level":2}]));
     req.to_level = 31;
@@ -272,7 +270,7 @@ fn imported_completion_counts_after_the_window_and_unfinished_late_starts_fail()
 
 #[test]
 fn group_lower_bound_waits_for_the_member_needing_the_quest() {
-    let conn = database_of("classic");
+    let conn = Fixture::new(Edition::Classic).file("classic_northshire").open();
     let o = overrides(Edition::Classic);
     let mut req = request(&json!([{"quest":783,"min_level":3}]));
     let first = StartState {
@@ -310,7 +308,7 @@ fn group_lower_bound_waits_for_the_member_needing_the_quest() {
 
 #[test]
 fn invalid_and_conflicting_windows_report_the_requested_quest() {
-    let conn = database_of("classic");
+    let conn = Fixture::new(Edition::Classic).file("classic_northshire").open();
     let o = overrides(Edition::Classic);
     for quests in [
         json!([{"quest":783,"min_level":0}]),
@@ -322,7 +320,7 @@ fn invalid_and_conflicting_windows_report_the_requested_quest() {
         assert!(format!("{error:#}").contains("required quest \"783\""));
     }
     job::prepare(
-        &database_of("tbc"),
+        &Fixture::new(Edition::Tbc).file("tbc_northshire").open(),
         &overrides(Edition::Tbc),
         &request(&json!([{"quest":783,"max_level":65}])),
         &|_| {},
@@ -354,7 +352,7 @@ fn malformed_windows_report_the_quest_instead_of_ignoring_the_bound() {
 
 #[test]
 fn starting_deadlines_only_check_members_pursuing_the_quests_profession() {
-    let conn = database_of("classic");
+    let conn = Fixture::new(Edition::Classic).file("classic_cooking").open();
     let mut req:PlanRequest = serde_json::from_value(json!({
         "race":"orc","class":"warrior","from_level":45,"to_level":60,"required_class_quests":[],
         "required_quests":[{"quest":6610,"max_level":50}],
@@ -386,7 +384,9 @@ fn starting_deadlines_only_check_members_pursuing_the_quests_profession() {
 #[test]
 fn a_deadline_at_the_level_cap_does_not_change_the_greedy_route() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition)
+            .file(&format!("{}_northshire", edition.key()))
+            .open();
         let o = overrides(edition);
         let plain = request(&json!([21]));
         let capped = request(&json!([{"quest":21,"max_level":edition.rules().max_level}]));

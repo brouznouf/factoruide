@@ -1,0 +1,225 @@
+# Look To The Stars (174): the item it asks for is sold by a dozen vendors of both sides, one in limited supply.
+
+[[npc]]
+id = 276
+name = "Viktori Prism'Antras"
+level = 28
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 10, x = 79.8, y = 48.02, z = 50 }]
+
+[[npc]]
+id = 1448
+name = "Neal Allen"
+level = 20
+npc_flags = 6
+friendly_to = "A"
+at = [{ zone = 11, x = 10.75, y = 56.75, z = 11 }]
+
+[[npc]]
+id = 1694
+name = "Loslor Rudge"
+level = 10
+npc_flags = 7
+friendly_to = "A"
+at = [{ zone = 1, x = 50.08, y = 49.42, z = 395 }]
+
+[[npc]]
+id = 2682
+name = "Fradd Swiftgear"
+level = 24
+npc_flags = 6
+friendly_to = "A"
+at = [{ zone = 11, x = 26.4, y = 25.76, z = 10 }]
+
+[[npc]]
+id = 2683
+name = "Namdo Bizzfizzle"
+level = 24
+npc_flags = 6
+friendly_to = "A"
+at = [{ zone = 1, x = 21.86, y = 31.86, z = 253 }]
+
+[[npc]]
+id = 2684
+name = "Rizz Loosebolt"
+level = 31
+npc_flags = 6
+friendly_to = "AH"
+at = [{ zone = 36, x = 47.3, y = 35.16, z = 140 }]
+
+[[npc]]
+id = 2685
+name = "Mazk Snipeshot"
+level = 36
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 33, x = 28.5, y = 75.12, z = 7 }]
+
+[[npc]]
+id = 2687
+name = "Gnaz Blunderflame"
+level = 42
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 33, x = 50.98, y = 35.21, z = 98 }]
+
+[[npc]]
+id = 2688
+name = "Ruppo Zipcoil"
+level = 52
+npc_flags = 6
+friendly_to = "AH"
+at = [{ zone = 47, x = 34.33, y = 37.76, z = 166 }]
+
+[[npc]]
+id = 3133
+name = "Herble Baubbletump"
+level = 30
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 10, x = 77.99, y = 48.33, z = 37 }]
+
+[[npc]]
+id = 4587
+name = "Elizabeth Van Talen"
+level = 30
+npc_flags = 6
+friendly_to = "H"
+at = [{ zone = 1497, x = 75.48, y = 74.34, z = -62 }]
+
+[[npc]]
+id = 5175
+name = "Gearcutter Cogspinner"
+level = 30
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 1537, x = 67.84, y = 42.5, z = 502 }]
+
+[[npc]]
+id = 5519
+name = "Billibub Cogspinner"
+level = 30
+npc_flags = 5
+friendly_to = "A"
+at = [{ zone = 1519, x = 55.25, y = 7.07, z = 95 }]
+
+[[npc]]
+id = 6231
+name = "Techbot"
+level = 26
+rank = 1
+at = [{ zone = 1, x = 19.78, y = 31.93, z = 247 }]
+
+[[npc]]
+id = 6777
+name = "Zan Shivsproket"
+level = 60
+npc_flags = 6
+friendly_to = "AH"
+at = [{ zone = 36, x = 85.95, y = 79.96, z = 190 }]
+
+[[npc]]
+id = 8679
+name = "Knaz Blunderflame"
+level = 42
+npc_flags = 4
+friendly_to = "AH"
+at = [{ zone = 33, x = 51.05, y = 35.23, z = 98 }]
+
+[[npc]]
+id = 9544
+name = "Yuka Screwspigot"
+level = 51
+npc_flags = 16391
+friendly_to = "AH"
+at = [{ zone = 46, x = 66.06, y = 21.95, z = 165 }]
+
+[[item]]
+id = 4371
+name = "Bronze Tube"
+level = 21
+class = 7
+drops = [{ npc = 6231, chance = 0.007252 }, { item = 6352 }, { vendor = 1448 }, { vendor = 1694 }, { vendor = 2682 }, { vendor = 2683 }, { vendor = 2684 }, { vendor = 2685 }, { vendor = 2687 }, { vendor = 2688 }, { vendor = 3133 }, { vendor = 4587 }, { vendor = 5175 }, { vendor = 5519 }, { vendor = 6777 }, { vendor = 8679 }, { vendor = 9544 }]
+
+[[item]]
+id = 6352
+name = "Waterlogged Crate"
+level = 25
+class = 15
+
+[[vendor]]
+npc = 1448
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 1694
+items = [{ item = 4371, count = 1, restock = 10800.0 }]
+
+[[vendor]]
+npc = 2682
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 2683
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 2684
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 2685
+items = [{ item = 4371, count = 1, restock = 10800.0 }]
+
+[[vendor]]
+npc = 2687
+items = [{ item = 4371, count = 1, restock = 10800.0 }]
+
+[[vendor]]
+npc = 2688
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 3133
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 4587
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 5175
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 5519
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 6777
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 8679
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[vendor]]
+npc = 9544
+items = [{ item = 4371, count = 2, restock = 10800.0 }]
+
+[[quest]]
+id = 174
+name = "Look To The Stars"
+level = 25
+min_level = 20
+races_mask = 77
+zone = 10
+xp = 2000
+quest_flags = 8
+starts = [{ npc = 276 }]
+ends = [{ npc = 276 }]
+objectives = [
+  { item = 4371, amount = 1 },
+]
+

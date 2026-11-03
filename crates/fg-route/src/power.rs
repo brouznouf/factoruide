@@ -150,6 +150,7 @@ impl SpellWeight {
     }
 }
 
+#[derive(Clone)]
 pub struct PowerModel {
     pub items: Vec<Item>,
     item_index: FxHashMap<i64, u16>,

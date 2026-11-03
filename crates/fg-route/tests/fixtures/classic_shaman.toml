@@ -1,0 +1,61 @@
+# The shaman's Call of Earth and its child, Earth Sapta.
+
+[[npc]]
+id = 5888
+name = "Seer Ravenfeather"
+level = 10
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 215, x = 44.73, y = 76.19, z = 54 }]
+
+[[npc]]
+id = 5891
+name = "Minor Manifestation of Earth"
+level = 15
+npc_flags = 2
+friendly_to = "AH"
+at = [{ zone = 14, x = 44.03, y = 76.2, z = 73 }, { zone = 215, x = 53.89, y = 80.54, z = 45 }]
+
+[[item]]
+id = 5175
+name = "Earth Totem"
+level = 4
+class = 5
+
+[[item]]
+id = 6635
+name = "Earth Sapta"
+level = 1
+class = 12
+
+[[quest]]
+id = 1521
+name = "Call of Earth"
+level = 4
+min_level = 4
+races_mask = 178
+classes_mask = 64
+zone = -82
+xp = 445
+reward_spell = 8071
+starts = [{ npc = 5891 }]
+ends = [{ npc = 5888 }]
+child = [1462]
+objectives = []
+rewards = [{ item = 5175, count = 1 }]
+
+[[quest]]
+id = 1462
+name = "Earth Sapta"
+level = 4
+min_level = 4
+races_mask = 178
+classes_mask = 64
+zone = -82
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 5888 }]
+ends = [{ npc = 5888 }]
+objectives = []
+rewards = [{ item = 6635, count = 1 }]
+

@@ -1,0 +1,154 @@
+# City of Dalaran, a dungeon with a door for each faction, and quests filed under it.
+
+[[npc]]
+id = 5502
+name = "Shylamiir"
+level = 35
+npc_flags = 17
+friendly_to = "A"
+at = [{ zone = 1519, x = 31.5, y = 62.61, z = 98 }]
+
+[[npc]]
+id = 246020
+name = "Shade of the Archmage"
+level = 1
+rank = 1
+at = [{ zone = 36, x = 15.2, y = 55.9 }, { zone = 36, x = 15.4, y = 56.5 }]
+
+[[npc]]
+id = 246600
+name = "Mana Echo"
+level = 1
+rank = 1
+at = [{ zone = 36, x = 14.4, y = 68.1 }, { zone = 36, x = 14.7, y = 64.7 }, { zone = 36, x = 14.7, y = 66.2 }, { zone = 36, x = 14.7, y = 69.3 }, { zone = 36, x = 14.9, y = 73.2 }, { zone = 36, x = 15.2, y = 64.2 }, { zone = 36, x = 15.6, y = 74.1 }, { zone = 36, x = 15.9, y = 70.4 }, { zone = 36, x = 15.9, y = 72.4 }, { zone = 36, x = 16.4, y = 63.2 }, { zone = 36, x = 17.3, y = 63.7 }, { zone = 36, x = 18.0, y = 64.6 }]
+
+[[npc]]
+id = 247001
+name = "Saturated Remnant"
+level = 1
+rank = 1
+at = [{ zone = 36, x = 14.2, y = 68.4 }, { zone = 36, x = 15.9, y = 72.4 }, { zone = 36, x = 15.9, y = 73.4 }, { zone = 36, x = 15.9, y = 73.9 }, { zone = 36, x = 16.4, y = 63.3 }, { zone = 36, x = 17.1, y = 64.0 }, { zone = 36, x = 17.1, y = 74.0 }, { zone = 36, x = 18.6, y = 64.4 }, { zone = 36, x = 19.0, y = 63.3 }, { zone = 36, x = 19.1, y = 65.3 }, { zone = 36, x = 19.5, y = 65.5 }, { zone = 36, x = 20.1, y = 74.4 }]
+
+[[npc]]
+id = 247003
+name = "Seeking Remnant"
+level = 1
+rank = 1
+at = [{ zone = 36, x = 14.3, y = 69.1 }, { zone = 36, x = 14.5, y = 67.4 }, { zone = 36, x = 14.7, y = 66.4 }, { zone = 36, x = 14.9, y = 64.6 }, { zone = 36, x = 15.5, y = 64.2 }, { zone = 36, x = 15.5, y = 66.8 }, { zone = 36, x = 15.5, y = 73.8 }, { zone = 36, x = 15.7, y = 62.4 }, { zone = 36, x = 15.8, y = 70.2 }, { zone = 36, x = 16.0, y = 72.3 }, { zone = 36, x = 16.3, y = 71.0 }, { zone = 36, x = 16.9, y = 63.6 }]
+
+[[npc]]
+id = 269127
+name = "Image of Archmage Modera"
+level = 60
+friendly_to = "AH"
+at = [{ zone = 36, x = 14.3, y = 59.57 }, { zone = 130, x = 68.62, y = 45.13 }]
+
+[[item]]
+id = 251961
+name = "Arcane Mote"
+level = 1
+class = 12
+drops = [{ npc = 246020 }]
+
+[[item]]
+id = 251983
+name = "Fel Infused Blossom"
+level = 1
+class = 12
+drops = [{ object = 553757 }]
+
+[[item]]
+id = 277507
+name = "Dalaran Sewer Key"
+level = 1
+class = 13
+
+[[item]]
+id = 279835
+name = "Vine Pruner's Cloak"
+level = 36
+class = 4
+
+[[item]]
+id = 279836
+name = "Thorn Protecting Girdle"
+level = 36
+class = 4
+
+[[item]]
+id = 279837
+name = "Fallen Guard's Pendant"
+level = 36
+class = 4
+
+[[item]]
+id = 279838
+name = "Arcane Infused Rod"
+level = 36
+class = 4
+
+[[quest]]
+id = 92456
+name = "A Green Sample"
+level = 33
+min_level = 24
+races_mask = 4294967373
+zone = 16544
+xp = 3950
+objectives_text = "Collect a Fel Infused Blossom from the City of Dalaran for Shylamiir in Stormwind City."
+requirements = "[\"Fel Infused Blossom\"]"
+starts = [{ npc = 5502 }]
+ends = [{ npc = 5502 }]
+objectives = [
+  { item = 251983, amount = 1 },
+]
+rewards = [{ item = 279835, count = 1, choice = true }, { item = 279836, count = 1, choice = true }]
+
+[[quest]]
+id = 92457
+name = "Starving Arcane"
+level = 33
+min_level = 24
+races_mask = 4294967373
+zone = 16544
+xp = 3950
+objectives_text = "Defeat 8 Seeking Remnants, 8 Saturated Remnants, and 8 Mana Echoes inside the City of Dalaran for Archmage Modera outside of Dalaran."
+requirements = "[\"Seeking Remnant x 8\",\"Saturated Remnant x 8\",\"Mana Echo x 8\"]"
+starts = [{ npc = 269127 }]
+ends = [{ npc = 269127 }]
+objectives = [
+  { creature = 247003, amount = 1 },
+  { creature = 247001, amount = 1 },
+  { creature = 246600, amount = 1 },
+]
+rewards = [{ item = 279837, count = 1, choice = true }, { item = 279838, count = 1, choice = true }]
+
+[[quest]]
+id = 92458
+name = "Heart of Disruption"
+level = 33
+min_level = 24
+races_mask = 4294967373
+zone = 16544
+xp = 3950
+source_item = 277507
+objectives_text = "Collect the Arcane Mote for the Image of Archmage Modera near the City of Dalaran."
+requirements = "[\"Arcane Mote\"]"
+starts = [{ npc = 269127 }]
+ends = [{ npc = 269127 }]
+objectives = [
+  { item = 251961, amount = 1 },
+]
+
+[[row]]
+table = "dungeon"
+values = { area = 16544, name = "City of Dalaran", alt_areas = "null", entrance_zone = 36, entrance_x = 8.46, entrance_y = 59.21, source = "fixture" }
+
+[[row]]
+table = "dungeon_entrance"
+values = { area = 16544, faction = "A", zone = 36, x = 14.7, y = 63.0, source = "manual" }
+
+[[row]]
+table = "dungeon_entrance"
+values = { area = 16544, faction = "H", zone = 36, x = 8.46, y = 59.21, source = "manual" }
+

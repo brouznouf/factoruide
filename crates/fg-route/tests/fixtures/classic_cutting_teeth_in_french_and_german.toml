@@ -1,0 +1,9 @@
+# The names of Cutting Teeth (788) in French and German, as the guide is written in them.
+
+[[row]]
+table = "l10n"
+values = { entity_type = "quest", locale = "frFR", id = 788, name = "La dent tranchante" }
+
+[[row]]
+table = "l10n"
+values = { entity_type = "quest", locale = "deDE", id = 788, name = "Scharfe Zähne" }

@@ -1,0 +1,6 @@
+# The ground of Zephras Isle around the watchtower and its stairs.
+
+[[terrain]]
+map = 2991
+tile_x = [26, 30]
+tile_y = [22, 26]

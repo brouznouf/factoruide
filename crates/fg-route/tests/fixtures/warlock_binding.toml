@@ -1,0 +1,64 @@
+# The warlock's Binding quests (the demon summoned for the Undead and the others), which give the
+# class its power.
+
+[[npc]]
+id = 5675
+name = "Carendin Halgar"
+level = 50
+npc_flags = 2
+friendly_to = "H"
+at = [{ zone = 1497, x = 85.06, y = 25.99, z = -62 }]
+
+[[npc]]
+id = 5676
+name = "Summoned Voidwalker"
+level = 10
+friendly_to = "AH"
+at = [{ zone = 1497, x = 86.6, y = 27.1 }, { zone = 1519, x = 25.1, y = 77.4 }, { zone = 1637, x = 49.3, y = 50.0 }]
+
+[[npc]]
+id = 5677
+name = "Summoned Succubus"
+level = 20
+friendly_to = "AH"
+at = [{ zone = 1497, x = 86.7, y = 27.1 }, { zone = 1519, x = 25.1, y = 77.4 }, { zone = 1637, x = 49.4, y = 50.0 }]
+
+[[item]]
+id = 22243
+name = "Small Soul Pouch"
+level = 20
+class = 1
+
+[[quest]]
+id = 1471
+name = "The Binding"
+level = 10
+min_level = 10
+races_mask = 16
+classes_mask = 256
+zone = -61
+xp = 630
+reward_spell = 697
+starts = [{ npc = 5675 }]
+ends = [{ npc = 5675 }]
+objectives = [
+  { creature = 5676, amount = 1 },
+]
+
+[[quest]]
+id = 1474
+name = "The Binding"
+level = 20
+min_level = 20
+races_mask = 178
+classes_mask = 256
+zone = -61
+xp = 1550
+reward_spell = 712
+starts = [{ npc = 5675 }]
+ends = [{ npc = 5675 }]
+objectives = [
+  { creature = 5677, amount = 1 },
+]
+rewards = [{ item = 22243, count = 1 }]
+

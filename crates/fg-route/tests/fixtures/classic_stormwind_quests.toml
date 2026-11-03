@@ -1,0 +1,131 @@
+# Quests started and turned in in Stormwind: done there, the flight path of the city is known.
+
+[[npc]]
+id = 258
+name = "Joshua Maclure"
+level = 5
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 12, x = 42.36, y = 89.38, z = 35 }]
+
+[[npc]]
+id = 277
+name = "Roberto Pupellyverbos"
+level = 30
+npc_flags = 5
+friendly_to = "A"
+at = [{ zone = 1519, x = 52.15, y = 67.75 }]
+
+[[npc]]
+id = 297
+name = "Caretaker Folsom"
+level = 30
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 29.53, y = 61.93 }]
+
+[[npc]]
+id = 465
+name = "Barkeep Dobbins"
+level = 10
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 12, x = 44.0, y = 65.69, z = 57 }]
+
+[[npc]]
+id = 1427
+name = "Harlan Bagley"
+level = 12
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 55.11, y = 56.23 }]
+
+[[npc]]
+id = 1428
+name = "Rema Schneider"
+level = 35
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 49.65, y = 55.64 }]
+
+[[npc]]
+id = 1431
+name = "Suzetta Gallina"
+level = 30
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 1519, x = 52.48, y = 67.61 }]
+
+[[npc]]
+id = 1432
+name = "Renato Gallina"
+level = 45
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 1519, x = 56.98, y = 63.53 }]
+
+[[object]]
+id = 1561
+name = "Sealed Crate"
+at = [{ zone = 1519, x = 29.45, y = 61.53 }]
+
+[[item]]
+id = 2722
+name = "Wine Ticket"
+level = 1
+class = 12
+
+[[item]]
+id = 2723
+name = "Bottle of Pinot Noir"
+level = 1
+class = 0
+drops = [{ vendor = 258 }, { vendor = 277 }, { vendor = 465 }]
+
+[[item]]
+id = 2724
+name = "Cloth Request"
+level = 1
+class = 12
+
+[[quest]]
+id = 72
+name = "The Legend of Stalvan"
+level = 28
+min_level = 22
+races_mask = 77
+zone = 10
+xp = 230
+quest_flags = 8
+objectives_text = "Rechercher un indice dans le tas d'affaires."
+starts = [{ npc = 297 }]
+ends = [{ object = 1561 }]
+objectives = []
+
+[[quest]]
+id = 332
+name = "Wine Shop Advert"
+level = 2
+races_mask = 77
+zone = 1519
+xp = 130
+source_item = 2722
+objectives_text = "Aller \u00e0 la Cave \u00e0 vins des Gallina et apporter \u00e0 Suzetta Gallina le Bon pour une bouteille de vin gratuite."
+starts = [{ npc = 1432 }]
+ends = [{ npc = 1431 }]
+objectives = []
+rewards = [{ item = 2723, count = 1 }]
+
+[[quest]]
+id = 333
+name = "Harlan Needs a Resupply"
+level = 2
+races_mask = 77
+zone = 1519
+xp = 85
+source_item = 2724
+objectives_text = "Aller \u00e0 la Boutique de tailleur du canal et donner \u00e0 Rema Schneider la Demande de tissu, pour Harlan Bagley."
+starts = [{ npc = 1427 }]
+ends = [{ npc = 1428 }]
+objectives = []
+

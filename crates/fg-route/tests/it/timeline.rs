@@ -1,8 +1,9 @@
 //! A guide replayed to be watched, on a scenario built by hand: its times are the guide's, the
 //! character moves to where each step is done, and what it holds follows the steps.
 
-use crate::common::{database, leveling, repo};
+use crate::common::{leveling, repo};
 use fg_route::export::StepKind;
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Editor, LegMode, Overrides, PlanOutcome, PlanRequest, Timeline};
 use fg_route::model::Names;
 use fg_route::xp::Edition;
@@ -20,14 +21,18 @@ fn setup() -> &'static (PlanOutcome, Editor, Timeline) {
     })
 }
 
-/// A guide on the real Classic terrain, to level 12: its walks go around the mountains.
+/// A guide on the Classic terrain of Durotar, to level 10: its walks go around the mountains.
 fn on_the_terrain() -> &'static (PlanOutcome, Timeline) {
     static SETUP: OnceLock<(PlanOutcome, Timeline)> = OnceLock::new();
     SETUP.get_or_init(|| {
-        let conn = database();
+        let conn = Fixture::new(Edition::Classic)
+            .file("classic_durotar_terrain")
+            .file("classic_orc_warlock")
+            .file("classic_valley")
+            .open();
         let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Classic).unwrap();
         let request: PlanRequest = serde_json::from_value(serde_json::json!({
-            "race": "orc", "class": "warlock", "from_level": 1, "to_level": 12,
+            "race": "orc", "class": "warlock", "from_level": 1, "to_level": 10,
             "params": overrides.params.with_overrides(&["progression=cautious".to_owned()]).unwrap(),
         }))
         .unwrap();

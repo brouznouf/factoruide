@@ -1,0 +1,6 @@
+# The ground of Tirisfal Glades (Deathknell and the slope north of it).
+
+[[terrain]]
+map = 0
+tile_x = [26, 34]
+tile_y = [24, 30]

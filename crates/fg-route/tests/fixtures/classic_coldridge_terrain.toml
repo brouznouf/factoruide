@@ -1,0 +1,6 @@
+# The ground of Coldridge Valley and the tunnel to Kharanos.
+
+[[terrain]]
+map = 0
+tile_x = [29, 34]
+tile_y = [40, 45]

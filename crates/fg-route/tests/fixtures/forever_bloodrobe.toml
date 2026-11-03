@@ -1,0 +1,157 @@
+# The warlock's Components for the Enchanted Gold Bloodrobe: a coal dropped, a thread asked for (4785), a shard bought.
+
+[[npc]]
+id = 2670
+name = "Xizk Goodstitch"
+level = 43
+npc_flags = 7
+friendly_to = "AH"
+at = [{ zone = 33, x = 28.71, y = 76.89, z = 32 }]
+
+[[npc]]
+id = 2760
+name = "Burning Exile"
+level = 38
+max_level = 39
+at = [{ zone = 45, x = 24.37, y = 29.48, z = 47 }, { zone = 45, x = 24.38, y = 30.52, z = 46 }, { zone = 45, x = 24.59, y = 32.75, z = 48 }, { zone = 45, x = 24.78, y = 28.52, z = 48 }]
+
+[[npc]]
+id = 4670
+name = "Hatefury Rogue"
+level = 31
+max_level = 32
+at = [{ zone = 405, x = 70.92, y = 16.65, z = 100 }, { zone = 405, x = 72.26, y = 16.98, z = 92 }, { zone = 405, x = 73.1, y = 11.04, z = 170 }, { zone = 405, x = 73.53, y = 9.04, z = 175 }]
+
+[[npc]]
+id = 4671
+name = "Hatefury Trickster"
+level = 31
+max_level = 32
+at = [{ zone = 405, x = 71.54, y = 17.92, z = 91 }, { zone = 405, x = 73.04, y = 22.33, z = 92 }, { zone = 405, x = 73.12, y = 24.39, z = 92 }, { zone = 405, x = 73.67, y = 23.61, z = 96 }]
+
+[[npc]]
+id = 4672
+name = "Hatefury Felsworn"
+level = 31
+max_level = 32
+at = [{ zone = 405, x = 69.4, y = 15.8 }, { zone = 405, x = 70.2, y = 15.6 }, { zone = 405, x = 70.4, y = 16.8 }, { zone = 405, x = 71.0, y = 15.2 }]
+
+[[npc]]
+id = 4676
+name = "Lesser Infernal"
+level = 36
+max_level = 37
+at = [{ zone = 405, x = 48.89, y = 77.0, z = 62 }, { zone = 405, x = 49.36, y = 77.96, z = 65 }, { zone = 405, x = 50.46, y = 73.68, z = 62 }, { zone = 405, x = 50.83, y = 70.2, z = 61 }]
+
+[[npc]]
+id = 6266
+name = "Menara Voidrender"
+level = 50
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 17, x = 62.51, y = 35.45, z = 41 }]
+
+[[npc]]
+id = 11937
+name = "Demon Portal Guardian"
+level = 38
+at = [{ zone = 405, x = 49.4, y = 76.0 }, { zone = 405, x = 49.6, y = 76.0 }, { zone = 405, x = 49.8, y = 77.0 }, { zone = 405, x = 50.0, y = 74.6 }]
+
+[[npc]]
+id = 17078
+name = "Jimmy McWeaksauce"
+level = 10
+friendly_to = "AH"
+at = []
+
+[[npc]]
+id = 217305
+name = "Ancient Fire Elemental"
+level = 34
+max_level = 35
+at = [{ zone = 36, x = 59.4, y = 46.4 }, { zone = 36, x = 60.0, y = 45.4 }, { zone = 36, x = 60.0, y = 45.6 }, { zone = 36, x = 60.0, y = 46.6 }]
+
+[[item]]
+id = 6265
+name = "Soul Shard"
+level = 10
+class = 5
+drops = [{ vendor = 17078 }]
+
+[[item]]
+id = 6989
+name = "Vial of Hatefury Blood"
+level = 1
+class = 12
+drops = [{ npc = 4670, chance = 0.8 }, { npc = 4671, chance = 0.8 }, { npc = 4672, chance = 0.8 }]
+
+[[item]]
+id = 6990
+name = "Lesser Infernal Stone"
+level = 1
+class = 12
+drops = [{ npc = 4676, chance = 1.0 }, { npc = 11937, chance = 1.0 }]
+
+[[item]]
+id = 6991
+name = "Smoldering Coal"
+level = 1
+class = 12
+drops = [{ npc = 2760, chance = 0.8 }, { npc = 217305, chance = 0.002928 }]
+
+[[item]]
+id = 12293
+name = "Fine Gold Thread"
+level = 1
+class = 12
+drops = [{ npc = 2670 }]
+
+[[quest]]
+id = 4783
+name = "Components for the Enchanted Gold Bloodrobe"
+level = 37
+min_level = 31
+classes_mask = 256
+zone = -61
+xp = 2850
+quest_flags = 8
+starts = [{ npc = 6266 }]
+ends = [{ npc = 6266 }]
+objectives = [
+  { item = 6989, amount = 10 },
+  { item = 6990, amount = 1 },
+]
+
+[[quest]]
+id = 4784
+name = "Components for the Enchanted Gold Bloodrobe"
+level = 37
+min_level = 31
+classes_mask = 256
+zone = -61
+xp = 2100
+quest_flags = 8
+starts = [{ npc = 6266 }]
+ends = [{ npc = 6266 }]
+pre_any = [4783]
+objectives = [
+  { item = 12293, amount = 1 },
+  { item = 6991, amount = 2 },
+  { item = 6265, amount = 1 },
+]
+
+[[quest]]
+id = 4785
+name = "Fine Gold Thread"
+level = 37
+min_level = 31
+classes_mask = 256
+zone = -61
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 2670 }]
+ends = [{ npc = 2670 }]
+pre_any = [4783]
+objectives = []
+rewards = [{ item = 12293, count = 1 }]
+
