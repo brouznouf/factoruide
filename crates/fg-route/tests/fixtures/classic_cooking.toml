@@ -1,54 +1,64 @@
-# Clamlette Surprise (6610) asks for a Cooking line and items from mobs, a clam and a vendor.
+# Clamlette Surprise (6610): a Cooking line, items from mobs, a clam and a vendor; 5150 is its optional reward package.
 
 [[npc]]
-id = 466
-name = "General Marcus Jonathan"
+id = 4388
+name = "Young Murk Thresher"
+level = 40
+max_level = 41
+friendly_to = "AH"
+at = [{ zone = 490, x = 32, y = 41 }]
+
+[[npc]]
+id = 6352
+name = "Coralshell Lurker"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 34, y = 42 }]
+
+[[npc]]
+id = 6369
+name = "Coralshell Tortoise"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 36, y = 43 }]
+
+[[npc]]
+id = 6560
+name = "Stone Guardian"
 level = 60
+max_level = 61
 rank = 1
-npc_flags = 2
-friendly_to = "A"
-at = [{ zone = 1519, x = 63.97, y = 75.32, z = 97 }]
+friendly_to = "AH"
+at = [{ zone = 490, x = 38, y = 44 }]
 
 [[npc]]
-id = 2929
-name = "Savage Owlbeast"
-level = 46
-max_level = 47
-at = [{ zone = 47, x = 51.4, y = 45.6 }, { zone = 47, x = 51.4, y = 47.0 }, { zone = 47, x = 51.4, y = 49.4 }, { zone = 47, x = 51.4, y = 54.2 }]
+id = 6746
+name = "Innkeeper Pala"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 490, x = 40, y = 45 }]
 
 [[npc]]
-id = 6351
-name = "Storm Bay Oracle"
-level = 54
-max_level = 55
-at = [{ zone = 16, x = 47.0, y = 92.21, z = -14 }, { zone = 16, x = 48.27, y = 91.97, z = -15 }, { zone = 16, x = 50.72, y = 94.1, z = -6 }, { zone = 16, x = 55.31, y = 95.32, z = -12 }]
+id = 7097
+name = "Ironbeak Owl"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 42, y = 46 }]
 
 [[npc]]
-id = 6370
-name = "Makrinni Scrabbler"
-level = 52
-max_level = 53
-at = [{ zone = 16, x = 53.72, y = 41.44, z = -14 }, { zone = 16, x = 55.17, y = 40.09, z = -6 }, { zone = 16, x = 70.5, y = 35.14, z = -11 }, { zone = 16, x = 71.19, y = 38.09, z = -14 }]
+id = 7099
+name = "Ironbeak Hunter"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 44, y = 47 }]
 
 [[npc]]
-id = 6371
-name = "Storm Bay Warrior"
-level = 51
-max_level = 52
-at = [{ zone = 16, x = 46.93, y = 14.78, z = -21 }, { zone = 16, x = 53.55, y = 39.88, z = -9 }, { zone = 16, x = 55.9, y = 39.0, z = -5 }, { zone = 16, x = 58.64, y = 8.73, z = -19 }]
-
-[[npc]]
-id = 7450
-name = "Ragged Owlbeast"
-level = 53
-max_level = 55
-at = [{ zone = 618, x = 28.57, y = 48.28, z = 575 }, { zone = 618, x = 28.99, y = 45.03, z = 574 }, { zone = 618, x = 33.02, y = 39.33, z = 533 }, { zone = 618, x = 33.4, y = 39.67, z = 537 }]
-
-[[npc]]
-id = 7808
-name = "Marauding Owlbeast"
-level = 46
-at = [{ zone = 47, x = 58.76, y = 51.05 }]
+id = 7456
+name = "Winterspring Screecher"
+level = 45
+friendly_to = "AH"
+at = [{ zone = 490, x = 46, y = 48 }]
 
 [[npc]]
 id = 8125
@@ -59,22 +69,74 @@ friendly_to = "AH"
 at = [{ zone = 440, x = 52.63, y = 28.11, z = 9 }]
 
 [[npc]]
-id = 14401
-name = "Master Elemental Shaper Krixix"
+id = 9118
+name = "Larion"
+level = 51
+npc_flags = 3
+friendly_to = "H"
+at = [{ zone = 490, x = 48, y = 49 }]
+
+[[npc]]
+id = 9274
+name = "Dadanga"
+level = 45
+npc_flags = 2
+friendly_to = "AH"
+at = [{ zone = 490, x = 50, y = 50 }]
+
+[[npc]]
+id = 10583
+name = "Gryfe"
+level = 55
+rank = 1
+npc_flags = 11
+friendly_to = "AH"
+at = [{ zone = 490, x = 52, y = 51 }]
+
+[[npc]]
+id = 11106
+name = "Innkeeper Sikewa"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 490, x = 54, y = 52 }]
+
+[[npc]]
+id = 11116
+name = "Innkeeper Abeqwa"
+level = 30
+npc_flags = 135
+friendly_to = "H"
+at = [{ zone = 490, x = 56, y = 53 }]
+
+[[npc]]
+id = 14527
+name = "Simone the Inconspicuous"
 level = 60
 rank = 1
-at = [{ zone = 2677, x = -1.0, y = -1.0 }]
+npc_flags = 1
+friendly_to = "AH"
+at = [{ zone = 490, x = 58, y = 54 }]
+
+[[npc]]
+id = 15540
+name = "Windcaller Kaldon"
+level = 60
+rank = 1
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 490, x = 60, y = 55 }]
 
 [[object]]
-id = 176224
-name = "Supply Crate"
-at = [{ zone = 2017, x = -1.0, y = -1.0 }]
+id = 164958
+name = "Bloodpetal Sprout"
+at = [{ zone = 490, x = 62, y = 56 }]
 
 [[item]]
 id = 7973
 name = "Big-mouth Clam"
 level = 40
-drops = [{ npc = 6370, chance = 0.83 }, { npc = 6371, chance = 0.83 }, { npc = 6351, chance = 0.82 }]
+drops = [{ npc = 4388, chance = 0.41 }, { npc = 6369, chance = 0.41 }, { npc = 6352, chance = 0.38 }]
 
 [[item]]
 id = 7974
@@ -86,13 +148,24 @@ drops = [{ item = 7973 }]
 id = 8932
 name = "Alterac Swiss"
 level = 55
-drops = [{ npc = 14401, chance = 1.0 }, { object = 176224, chance = 0.932 }, { npc = 466, chance = 0.714286 }]
+drops = [{ npc = 15540, chance = 0.5 }, { npc = 9118, chance = 0.2 }, { npc = 10583, chance = 0.139486 }, { vendor = 6746 }, { vendor = 11106 }, { vendor = 11116 }]
+
+[[item]]
+id = 11315
+name = "Bloodpetal Sprout"
+level = 1
+drops = [{ object = 164958, chance = 1.0 }, { npc = 14527, chance = 0.283898 }, { npc = 6560, chance = 0.011926 }]
 
 [[item]]
 id = 12207
 name = "Giant Egg"
 level = 45
-drops = [{ npc = 7808, chance = 0.573517 }, { npc = 2929, chance = 0.538094 }, { npc = 7450, chance = 0.5096620000000001 }]
+drops = [{ npc = 7456, chance = 0.40827399999999997 }, { npc = 7099, chance = 0.40404 }, { npc = 7097, chance = 0.400314 }]
+
+[[item]]
+id = 15699
+name = "Small Brown-wrapped Package"
+level = 1
 
 [[item]]
 id = 16971
@@ -117,4 +190,20 @@ objectives = [
   { item = 8932, amount = 20 },
 ]
 rewards = [{ item = 16971, count = 20 }]
+
+[[quest]]
+id = 5150
+name = "Dadanga is Hungry!"
+level = 55
+min_level = 47
+zone = 490
+xp = 0
+quest_flags = 8
+special_flags = 1
+starts = [{ npc = 9274 }]
+ends = [{ npc = 9274 }]
+objectives = [
+  { item = 11315, amount = 15 },
+]
+rewards = [{ item = 15699, count = 1 }]
 

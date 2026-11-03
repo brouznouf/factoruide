@@ -7,6 +7,7 @@ use fg_route::params::ReputationGoal;
 use fg_route::plan::{Edit, Event, Kind, Outcome, Planner, Stop};
 use fg_route::testing::{At, Obj, Q, Scenario};
 use fg_route::xp::Edition;
+use fg_route::fixture::Fixture;
 use rusqlite::Connection;
 use std::sync::OnceLock;
 
@@ -3037,7 +3038,7 @@ fn items_a_child_hands_over_are_got_at_its_hand_in() {
 #[test]
 fn clamlette_surprise_buys_swiss_without_the_optional_reward_package() {
     for edition in Edition::ALL {
-        let conn = database_of(edition.key());
+        let conn = Fixture::new(edition).file(&format!("{}_cooking", edition.key())).open();
         let mut o = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
         o.params.excluded_quests.push(5150);
         let req: PlanRequest = serde_json::from_value(serde_json::json!({
