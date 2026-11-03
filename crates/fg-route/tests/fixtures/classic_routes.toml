@@ -203,6 +203,14 @@ max_level = 20
 at = [{ zone = 44, x = 37.06, y = 45.23 }, { zone = 44, x = 37.09, y = 45.58 }, { zone = 44, x = 37.21, y = 45.75 }, { zone = 44, x = 38.24, y = 41.16, z = 104 }, { zone = 44, x = 38.31, y = 41.25, z = 104 }, { zone = 44, x = 40.17, y = 40.68 }, { zone = 44, x = 40.59, y = 41.45, z = 118 }, { zone = 44, x = 43.43, y = 40.17 }, { zone = 44, x = 59.02, y = 43.7, z = 109 }, { zone = 44, x = 59.43, y = 44.33, z = 110 }, { zone = 44, x = 59.6, y = 42.21, z = 113 }, { zone = 44, x = 59.78, y = 41.95, z = 113 }]
 
 [[npc]]
+id = 461
+name = "Demisette Cloyce"
+level = 60
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1519, x = 25.28, y = 78.22, z = 101 }]
+
+[[npc]]
 id = 467
 name = "The Defias Traitor"
 level = 15
@@ -648,6 +656,14 @@ friendly_to = "H"
 at = [{ zone = 14, x = 42.85, y = 69.15, z = 38 }]
 
 [[npc]]
+id = 3326
+name = "Zevrost"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 48.47, y = 45.43, z = -15 }]
+
+[[npc]]
 id = 3535
 name = "Blackmoss the Fetid"
 level = 13
@@ -719,6 +735,22 @@ friendly_to = "A"
 at = [{ zone = 1657, x = 34.77, y = 7.37, z = 1326 }]
 
 [[npc]]
+id = 4563
+name = "Kaal Soulreaper"
+level = 60
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1497, x = 86.21, y = 15.93, z = -61 }]
+
+[[npc]]
+id = 5172
+name = "Briarthorn"
+level = 50
+npc_flags = 19
+friendly_to = "A"
+at = [{ zone = 1537, x = 50.35, y = 5.66, z = 505 }]
+
+[[npc]]
 id = 5505
 name = "Theridran"
 level = 50
@@ -741,6 +773,14 @@ level = 10
 npc_flags = 2
 friendly_to = "H"
 at = [{ zone = 14, x = 42.59, y = 69.0, z = 38 }]
+
+[[npc]]
+id = 6251
+name = "Strahad Farsan"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 17, x = 62.63, y = 35.5, z = 41 }]
 
 [[npc]]
 id = 6746
@@ -1240,6 +1280,11 @@ id = 16604
 name = "Moon Robes of Elune"
 level = 5
 
+[[item]]
+id = 16608
+name = "Aquarius Belt"
+level = 16
+
 [[vendor]]
 npc = 1448
 items = [{ item = 4371, count = 2, restock = 10800.0 }]
@@ -1285,6 +1330,20 @@ objectives = [
 ]
 
 [[quest]]
+id = 26
+name = "A Lesson to Learn"
+level = 16
+min_level = 16
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 115
+quest_flags = 8
+starts = [{ npc = 4217 }]
+ends = [{ npc = 11802 }]
+objectives = []
+
+[[quest]]
 id = 27
 name = "A Lesson to Learn"
 level = 16
@@ -1319,6 +1378,26 @@ objectives = [
 ]
 
 [[quest]]
+id = 29
+name = "Trial of the Lake"
+level = 16
+min_level = 16
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 880
+time_limit = 1800
+quest_flags = 10
+special_flags = 2
+extra = "{\"required_source_items\":[15877],\"time_limit\":1800}"
+starts = [{ npc = 11802 }]
+ends = [{ npc = 11799 }]
+pre_any = [26]
+objectives = [
+  { object = 15885, amount = 1 },
+]
+
+[[quest]]
 id = 30
 name = "Trial of the Sea Lion"
 level = 16
@@ -1335,6 +1414,22 @@ pre_any = [28]
 objectives = [
   { item = 15885, amount = 1 },
 ]
+
+[[quest]]
+id = 31
+name = "Aquatic Form"
+level = 16
+min_level = 16
+races_mask = 32
+classes_mask = 1024
+zone = -263
+xp = 1150
+reward_spell = 1066
+starts = [{ npc = 11802 }]
+ends = [{ npc = 3033 }]
+pre_any = [30]
+objectives = []
+rewards = [{ item = 16608, count = 1 }]
 
 [[quest]]
 id = 33
@@ -1604,6 +1699,24 @@ objectives = [
   { item = 915, amount = 10 },
 ]
 rewards = [{ item = 2074, count = 1, choice = true }, { item = 2089, count = 1, choice = true }, { item = 6094, count = 1, choice = true }]
+
+[[quest]]
+id = 272
+name = "Trial of the Sea Lion"
+level = 16
+min_level = 16
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 880
+quest_flags = 8
+extra = "{\"required_source_items\":[15883,15882]}"
+starts = [{ npc = 11799 }]
+ends = [{ npc = 11802 }]
+pre_any = [29]
+objectives = [
+  { item = 15885, amount = 1 },
+]
 
 [[quest]]
 id = 273
@@ -1958,6 +2071,77 @@ pre_any = [456]
 objectives = []
 
 [[quest]]
+id = 3631
+name = "Summon Felsteed"
+level = 40
+min_level = 40
+races_mask = 178
+classes_mask = 256
+zone = -61
+quest_flags = 8
+starts = [{ npc = 3326 }]
+ends = [{ npc = 6251 }]
+exclusive = [4487, 4488, 4489]
+objectives = []
+
+[[quest]]
+id = 4487
+name = "Summon Felsteed"
+level = 40
+min_level = 40
+races_mask = 77
+classes_mask = 256
+zone = -61
+quest_flags = 8
+starts = [{ npc = 5172 }]
+ends = [{ npc = 6251 }]
+exclusive = [3631, 4488, 4489]
+objectives = []
+
+[[quest]]
+id = 4488
+name = "Summon Felsteed"
+level = 40
+min_level = 40
+races_mask = 77
+classes_mask = 256
+zone = -61
+quest_flags = 8
+starts = [{ npc = 461 }]
+ends = [{ npc = 6251 }]
+exclusive = [3631, 4487, 4489]
+objectives = []
+
+[[quest]]
+id = 4489
+name = "Summon Felsteed"
+level = 40
+min_level = 40
+races_mask = 178
+classes_mask = 256
+zone = -61
+quest_flags = 8
+starts = [{ npc = 4563 }]
+ends = [{ npc = 6251 }]
+exclusive = [3631, 4487, 4488]
+objectives = []
+
+[[quest]]
+id = 4490
+name = "Summon Felsteed"
+level = 40
+min_level = 40
+classes_mask = 256
+zone = -61
+xp = 315
+reward_spell = 5784
+quest_flags = 8
+starts = [{ npc = 6251 }]
+ends = [{ npc = 6251 }]
+pre_any = [3631, 4487, 4488, 4489]
+objectives = []
+
+[[quest]]
 id = 4641
 name = "Your Place In The World"
 level = 1
@@ -1968,6 +2152,22 @@ quest_flags = 8
 starts = [{ npc = 10176 }]
 ends = [{ npc = 3143 }]
 objectives = []
+
+[[quest]]
+id = 5061
+name = "Aquatic Form"
+level = 16
+min_level = 16
+races_mask = 8
+classes_mask = 1024
+zone = -263
+xp = 1150
+reward_spell = 1066
+starts = [{ npc = 11802 }]
+ends = [{ npc = 4217 }]
+pre_any = [272]
+objectives = []
+rewards = [{ item = 16608, count = 1 }]
 
 [[quest]]
 id = 5261
