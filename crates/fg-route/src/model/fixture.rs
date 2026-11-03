@@ -242,9 +242,21 @@ struct Row {
     values: BTreeMap<String, toml::Value>,
 }
 
+/// Tiles of the terrain pack (`terrain-<edition>.sqlite.zst`, `scripts/test-terrain.sh`): the part
+/// of a map a walk needs.
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct TerrainRegion {
+    map: i64,
+    tile_x: [i64; 2],
+    tile_y: [i64; 2],
+}
+
 #[derive(Debug, Deserialize, Default)]
 #[serde(deny_unknown_fields)]
 struct File {
+    #[serde(default)]
+    terrain: Vec<TerrainRegion>,
     #[serde(default)]
     npc: Vec<Npc>,
     #[serde(default)]
@@ -280,6 +292,21 @@ fn base(edition: Edition) -> &'static [u8] {
     };
     BASES[slot].get_or_init(|| {
         let path = folder().join(format!("base-{}.sqlite.zst", edition.key()));
+        let file = std::fs::File::open(&path).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
+        zstd::decode_all(file).unwrap_or_else(|e| panic!("{}: {e}", path.display()))
+    })
+}
+
+/// The terrain pack of an edition, as bytes (unpacked once).
+fn terrain_pack(edition: Edition) -> &'static [u8] {
+    static PACKS: [OnceLock<Vec<u8>>; 3] = [OnceLock::new(), OnceLock::new(), OnceLock::new()];
+    let slot = match edition {
+        Edition::Classic => 0,
+        Edition::Tbc => 1,
+        Edition::Forever => 2,
+    };
+    PACKS[slot].get_or_init(|| {
+        let path = folder().join(format!("terrain-{}.sqlite.zst", edition.key()));
         let file = std::fs::File::open(&path).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
         zstd::decode_all(file).unwrap_or_else(|e| panic!("{}: {e}", path.display()))
     })
@@ -331,7 +358,7 @@ impl Fixture {
             conn.deserialize_read_exact(rusqlite::MAIN_DB, &mut &bytes[..], bytes.len(), false)?;
             for (name, text) in &self.files {
                 let file: File = toml::from_str(text).with_context(|| format!("fixture {name}"))?;
-                insert(&conn, &file).with_context(|| format!("fixture {name}"))?;
+                insert(&conn, self.edition, &file).with_context(|| format!("fixture {name}"))?;
             }
             let data = conn.serialize(rusqlite::MAIN_DB)?.to_vec();
             BUILT
@@ -373,7 +400,37 @@ fn spawn(conn: &Connection, kind: &str, id: i64, at: &At, respawn: Option<f64>) 
     Ok(())
 }
 
-fn insert(conn: &Connection, file: &File) -> Result<()> {
+fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
+    if !file.terrain.is_empty() {
+        let bytes = terrain_pack(edition);
+        let mut pack = Connection::open_in_memory()?;
+        pack.deserialize_read_exact(rusqlite::MAIN_DB, &mut &bytes[..], bytes.len(), true)?;
+        for r in &file.terrain {
+            let range = params![r.map, r.tile_x[0], r.tile_x[1], r.tile_y[0], r.tile_y[1]];
+            let mut layers = pack.prepare(
+                "SELECT map_id, tile_x, tile_y, version, floors, data FROM client_terrain_layers
+                 WHERE map_id = ?1 AND tile_x BETWEEN ?2 AND ?3 AND tile_y BETWEEN ?4 AND ?5",
+            )?;
+            let mut rows = layers.query(range)?;
+            while let Some(row) = rows.next()? {
+                conn.execute(
+                    "INSERT OR IGNORE INTO client_terrain_layers VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
+                    params![row.get::<_, i64>(0)?, row.get::<_, i64>(1)?, row.get::<_, i64>(2)?, row.get::<_, i64>(3)?, row.get::<_, i64>(4)?, row.get::<_, Vec<u8>>(5)?],
+                )?;
+            }
+            let mut gates = pack.prepare(
+                "SELECT map_id, tile_x, tile_y, version, graph FROM client_terrain_gates
+                 WHERE map_id = ?1 AND tile_x BETWEEN ?2 AND ?3 AND tile_y BETWEEN ?4 AND ?5",
+            )?;
+            let mut rows = gates.query(range)?;
+            while let Some(row) = rows.next()? {
+                conn.execute(
+                    "INSERT OR IGNORE INTO client_terrain_gates VALUES (?1, ?2, ?3, ?4, ?5)",
+                    params![row.get::<_, i64>(0)?, row.get::<_, i64>(1)?, row.get::<_, i64>(2)?, row.get::<_, i64>(3)?, row.get::<_, Vec<u8>>(4)?],
+                )?;
+            }
+        }
+    }
     for n in &file.npc {
         // The races' start NPCs are in the base already: their declaration changes nothing.
         if conn.query_row("SELECT count(*) FROM m_npc WHERE id = ?1", [n.id], |r| r.get::<_, i64>(0))? > 0 {

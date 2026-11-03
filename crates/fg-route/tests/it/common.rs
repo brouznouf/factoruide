@@ -92,3 +92,11 @@ pub fn bare_world(edition: fg_route::xp::Edition, faction: fg_route::faction::Fa
     let overrides = fg_route::job::Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
     fg_route::job::game_world(&fg_route::fixture::Fixture::new(edition).open(), &overrides, faction, 0).unwrap()
 }
+
+/// The walking world of an edition for a faction on the terrain of fixtures' files (their
+/// `[[terrain]]` regions), built for each test.
+pub fn terrain_world(edition: fg_route::xp::Edition, faction: fg_route::faction::Faction, files: &[&str]) -> fg_route::world::World {
+    let overrides = fg_route::job::Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+    let conn = files.iter().fold(fg_route::fixture::Fixture::new(edition), |f, n| f.file(n)).open();
+    fg_route::job::game_world(&conn, &overrides, faction, 0).unwrap()
+}
