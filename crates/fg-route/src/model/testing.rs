@@ -400,6 +400,7 @@ impl Q {
 }
 
 /// A character, a few zones and quests, and the settings of the plan.
+#[derive(Clone)]
 pub struct Scenario {
     zones: Vec<(i64, &'static str)>,
     quests: Vec<Q>,
@@ -534,6 +535,12 @@ impl Scenario {
     /// An inn (the hearthstone binds there). The first one is where the character starts bound.
     pub fn inn(mut self, name: &'static str, zone: i64, x: f64, y: f64) -> Self {
         self.inns.push((name, At { zone, x, y }));
+        self
+    }
+
+    /// The same character before it was met in game: nothing known but its class's spells.
+    pub fn without_start(mut self) -> Self {
+        self.start = None;
         self
     }
 

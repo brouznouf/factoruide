@@ -111,6 +111,24 @@ fn at_start(mut p: Prepared, n: usize) -> Prepared {
     p
 }
 
+/// The character of a request with its class's spells and power from the database, and one quest.
+pub(crate) fn class_scenario(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> crate::testing::Scenario {
+    use crate::testing::{Q, Scenario};
+    let level = req.from_level.max(1);
+    let mut scenario = Scenario::of_class(conn, overrides, req)
+        .unwrap()
+        .quest(Q::new(900, "Quest").level(level).min_level(level));
+    // The quests the character did.
+    for done in req.start.iter().flat_map(|s| &s.completed) {
+        scenario = scenario.quest(Q::new(done.0, "Done").level(level).min_level(level));
+    }
+    scenario
+}
+
+pub(crate) fn class_prepared(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> Prepared {
+    class_scenario(conn, overrides, req).build()
+}
+
 fn planner(p: &Prepared) -> Planner<'_> {
     Planner::new(&p.model, &p.world, &p.params, &p.profile)
 }

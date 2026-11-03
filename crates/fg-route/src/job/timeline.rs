@@ -1293,7 +1293,7 @@ mod movement_tests {
             "start":{"level":20,"spells":[]}, "required_class_quests":[]
         }))
         .unwrap();
-        let mut editor = Editor::open(&conn, &o, &req, None).unwrap();
+        let mut editor = Editor::from_prepared(crate::plan::tests::class_prepared(&conn, &o, &req));
         let p = &mut editor.prepared;
         let a = Pos {
             continent: 1,
@@ -1307,7 +1307,7 @@ mod movement_tests {
         p.model.trainers[0].pos = Pos { x: -200.0, ..a };
         p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Dry);
         (p.params.run_speed, p.params.detour, p.params.mount_level) = (7.0, 1.0, 40);
-        let names = Names::load(&conn, "enUS").unwrap();
+        let names = Names::new("enUS");
         let p = &editor.prepared;
         let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile).explicit();
         let replay = Replay::run(&editor, &planner, &[Edit::Train { trainer: 0 }], &names, Lines::Events).unwrap();
