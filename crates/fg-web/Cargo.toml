@@ -23,3 +23,7 @@ zstd = "0.14"
 
 [lints]
 workspace = true
+
+[dev-dependencies]
+# The tests serve small worlds declared in fg-route's fixture files.
+fg-route = { path = "../fg-route", features = ["testing"] }

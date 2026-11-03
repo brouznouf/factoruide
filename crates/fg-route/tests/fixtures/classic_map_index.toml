@@ -1,0 +1,5 @@
+# The maps the app lists: Dun Morogh, the zone of the Dwarf start.
+
+[[row]]
+table = "app_meta"
+values = { key = "map_index", value = "[{\"area\":1,\"bounds\":{\"map\":0,\"max_x\":-3877.083251953125,\"max_y\":1802.083251953125,\"min_x\":-7160.41650390625,\"min_y\":-3122.91650390625},\"file\":\"1426.webp\",\"height\":668,\"highlight\":\"h1426.png\",\"id\":1426,\"kind\":3,\"name\":\"Dun Morogh\",\"parent\":1415,\"width\":1002}]" }
