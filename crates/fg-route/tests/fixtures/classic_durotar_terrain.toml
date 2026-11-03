@@ -1,0 +1,6 @@
+# The ground of Durotar: the Valley of Trials, Razor Hill, Sen'jin Village and the road to the Barrens.
+
+[[terrain]]
+map = 1
+tile_x = [35, 45]
+tile_y = [28, 35]
