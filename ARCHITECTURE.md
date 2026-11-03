@@ -34,6 +34,12 @@ Planning and edited-guide saves reject missed windows.
 `world.rs` gives the geography: zone coordinates converted to world coordinates, the passes
 between zones, boats, zeppelins and tram (`overrides/`), and the flight path network.
 
+The quest data itself is corrected in `overrides/database/` (`*.toml` for every edition,
+`<edition>/` for one): races and classes of a quest, prerequisites, objectives, spawns, drop
+chances, an NPC's side. The database builder applies them on top of its sources at every build,
+so a data fix goes there (the format is at the top of `overrides/database/quests.toml`), never
+into the packed database alone.
+
 A guide can start from a character met in game (`job/start.rs`): the profile the addon saves
 (`Profile.lua`, read by the app from the SavedVariables) becomes the simulation's initial state:
 quests turned in, position, hearthstone, known flight paths, XP and rested XP, gear worn, last
