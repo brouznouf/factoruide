@@ -1,0 +1,145 @@
+# The Skyborne Horde druid's class unlocks in Forever: Moonglade and the cat form chain.
+
+[[npc]]
+id = 3033
+name = "Turak Runetotem"
+level = 50
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 76.48, y = 27.22, z = 160 }]
+
+[[npc]]
+id = 11802
+name = "Dendrite Starblaze"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 493, x = 56.21, y = 30.64, z = 525 }]
+
+[[npc]]
+id = 272054
+name = "Avatar of Saeyleenan"
+level = 60
+friendly_to = "AH"
+at = [{ zone = 493, x = 43.92, y = 73.44 }]
+
+[[object]]
+id = 672821
+name = "Relic of the Fang"
+at = [{ zone = 493, x = 72.4, y = 66.0 }, { zone = 493, x = 72.6, y = 66.1 }]
+
+[[object]]
+id = 673093
+name = "Relic of the Claw"
+at = [{ zone = 493, x = 75.2, y = 67.2 }]
+
+[[object]]
+id = 673094
+name = "Relic of the Silent Shadow"
+at = [{ zone = 493, x = 74.4, y = 65.4 }, { zone = 493, x = 74.4, y = 65.5 }, { zone = 493, x = 74.5, y = 65.1 }]
+
+[[item]]
+id = 280502
+name = "Relic of the Fang"
+level = 1
+drops = [{ object = 672821, chance = 0.1 }]
+
+[[item]]
+id = 280679
+name = "Relic of the Claw"
+level = 1
+drops = [{ object = 673093, chance = 0.1 }]
+
+[[item]]
+id = 280680
+name = "Relic of the Silent Shadow"
+level = 1
+drops = [{ object = 673094, chance = 0.1 }]
+
+[[quest]]
+id = 94913
+name = "Moonglade"
+level = 10
+min_level = 10
+races_mask = 8589934592
+classes_mask = 1024
+zone = -263
+xp = 210
+starts = [{ npc = 3033 }]
+ends = [{ npc = 11802 }]
+objectives = []
+
+[[quest]]
+id = 98340
+name = "The Great Cat Spirit"
+level = 20
+min_level = 20
+races_mask = 8589934624
+classes_mask = 1024
+zone = -263
+xp = 390
+starts = [{ npc = 3033 }]
+ends = [{ npc = 11802 }]
+objectives = []
+
+[[quest]]
+id = 98341
+name = "The Great Windborne Cat Spirit"
+level = 20
+min_level = 20
+races_mask = 12884901888
+classes_mask = 1024
+zone = -263
+xp = 780
+starts = [{ npc = 11802 }]
+ends = [{ npc = 272054 }]
+pre_any = [98340]
+objectives = []
+
+[[quest]]
+id = 98404
+name = "The Great Windborne Cat Spirit"
+level = 20
+min_level = 20
+races_mask = 12884901888
+classes_mask = 1024
+zone = -263
+xp = 780
+starts = [{ npc = 272054 }]
+ends = [{ npc = 272054 }]
+pre_all = [98341]
+objectives = [
+  { item = 280502, amount = 1 },
+  { item = 280679, amount = 1 },
+  { item = 280680, amount = 1 },
+]
+
+[[quest]]
+id = 98738
+name = "Blessings of the Great Windborne Cat Spirit"
+level = 20
+min_level = 20
+races_mask = 12884901888
+classes_mask = 1024
+zone = -263
+xp = 780
+starts = [{ npc = 272054 }]
+ends = [{ npc = 11802 }]
+pre_all = [98404]
+objectives = []
+
+[[quest]]
+id = 98362
+name = "To Thunder Bluff"
+level = 20
+min_level = 20
+races_mask = 8589934624
+classes_mask = 1024
+zone = -263
+xp = 155
+reward_spell = 768
+starts = [{ npc = 11802 }]
+ends = [{ npc = 3033 }]
+pre_any = [98738]
+objectives = []
+
