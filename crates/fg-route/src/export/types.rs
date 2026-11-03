@@ -214,8 +214,8 @@ pub struct Step {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub path: Vec<[f64; 2]>,
     /// Profession skill a profession quest needs (its accept step is optional: skipped without
-    /// it); in routes made before professions left the guide, the skill to reach (practice) or
-    /// the rank cap learned (profession).
+    /// it); on a profession step (`Params::profession_trainers`; practice steps only in routes made
+    /// before professions left the guide) the rank cap learned, or the skill to reach.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub skill: Option<i64>,
     /// Profession skill line of that skill.

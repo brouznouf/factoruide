@@ -9,6 +9,7 @@ pub mod groups;
 mod lua;
 mod phrase;
 pub mod polestar;
+mod profession_trainers;
 mod templates;
 mod types;
 mod vendors;
@@ -167,6 +168,8 @@ pub fn build_traced(
     }
     // Items in limited supply offered at the other vendors passed by on the way.
     vendors::add_tries(&writer, &mut steps, &mut xps);
+    // Stops at the profession trainers the route passes.
+    profession_trainers::add(&writer, &mut steps, &mut xps);
     let mut checkpoints = checkpoints::checkpoints(planner, profile, &mut steps);
     // A step at each checkpoint (the character grinds there when behind the route), grinds
     // where mobs of the character's level live.

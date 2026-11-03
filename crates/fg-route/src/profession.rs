@@ -1,7 +1,8 @@
 //! Professions: the skill a character leveling them should have at each level. The route
 //! does not plan them (no trainer visit, no practice time): the addon shows whether the skill
 //! is ahead or behind this curve, and the profession's quests are planned when the curve
-//! reaches their skill (optional in the guide).
+//! reaches their skill (optional in the guide). With `Params::profession_trainers` the guide
+//! also stops at the trainers the route already passes (`export::profession_trainers`).
 
 use serde::{Deserialize, Serialize};
 

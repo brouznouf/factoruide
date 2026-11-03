@@ -189,6 +189,7 @@ export interface Params {
   food_xp: boolean;
   sleeping_bag: boolean;
   auction_house: boolean;
+  profession_trainers: boolean;
   edition: Edition;
 }
 

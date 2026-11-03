@@ -193,6 +193,10 @@ pub struct Params {
     /// Buy there any other such item, quest items aside (Rough Dynamite): for players who use
     /// the auction house.
     pub auction_house: bool,
+    /// With professions: a stop at their trainer to learn each profession and, before the skill
+    /// reaches the cap of its rank, the next rank. Only at trainers the route already passes (no
+    /// detour, no route time), and no stop for a rank whose trainer it does not pass.
+    pub profession_trainers: bool,
     /// Greedy construction: levels below the character a quest can be without penalty, and
     /// the penalty per level beyond (quests turned in late give less XP).
     pub fit_free_levels: i64,
@@ -543,6 +547,7 @@ impl Default for Params {
             approx_sources: false,
             auction_items: vec![],
             auction_house: false,
+            profession_trainers: false,
             fit_free_levels: 2,
             fit_penalty: 0.0,
             fit_above_penalty: 0.4,

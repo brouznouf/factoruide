@@ -163,6 +163,17 @@ impl Flags {
     }
 }
 
+/// The skill line of the profession a trainer teaches, from its title and flags.
+pub(crate) fn profession_of(title: &str, flags: i64, edition: Edition) -> Option<i64> {
+    if flags & Flags::of(edition).trainer == 0 {
+        return None;
+    }
+    match PROFESSIONS.iter().find(|(word, _)| title.contains(word)) {
+        Some(&(_, line)) => Some(line),
+        None => (title.contains("Tailor") || title.contains("Shadoweave")).then_some(TAILORING),
+    }
+}
+
 /// What an NPC offers from its title and flags (several things for some: an innkeeper selling
 /// food is only an innkeeper, an armorer repairing is a repairer).
 fn services(title: &str, flags: i64, edition: Edition) -> Vec<(Service, i64)> {
@@ -172,12 +183,8 @@ fn services(title: &str, flags: i64, edition: Edition) -> Vec<(Service, i64)> {
         && let Some(&(_, id)) = CLASSES.iter().find(|(name, _)| *name == class)
     {
         out.push((Service::Class, id));
-    } else if flags & f.trainer != 0 {
-        if let Some(&(_, line)) = PROFESSIONS.iter().find(|(word, _)| title.contains(word)) {
-            out.push((Service::Profession, line));
-        } else if title.contains("Tailor") || title.contains("Shadoweave") {
-            out.push((Service::Profession, TAILORING));
-        }
+    } else if let Some(line) = profession_of(title, flags, edition) {
+        out.push((Service::Profession, line));
     }
     if flags & f.flight != 0 || FLIGHT.contains(&title) {
         out.push((Service::Flight, 0));

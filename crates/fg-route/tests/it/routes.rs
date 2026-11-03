@@ -3002,6 +3002,68 @@ fn camping_101_is_a_profession_quest_after_the_great_outdoors() {
     assert!(quest(&p, 97935).is_none(), "Camping 101: Mining without Mining");
 }
 
+/// Profession trainer stops (GitHub #106): with `profession_trainers` the guide stops at the trainers
+/// of the professions the route passes, to learn each profession and its next rank; by default it
+/// has none, and the stops never change the time of the route.
+#[test]
+fn profession_trainer_stops_are_off_unless_chosen() {
+    let goal = |key: &str| fg_route::profession::ProfessionGoal {
+        key: key.into(),
+        target: 300,
+        start_level: None,
+        milestones: vec![],
+    };
+    let plan = |setting: &[&str]| {
+        let request = PlanRequest {
+            professions: ["leatherworking", "skinning", "mining", "first_aid"].map(goal).to_vec(),
+            ..request("orc", "warrior", 30, &[&["effort=0"], setting].concat())
+        };
+        job::plan(&database(), &overrides(), &request, &|_| {}).unwrap().route
+    };
+    let stops = |r: &fg_route::export::Route| {
+        (r.steps.iter())
+            .filter(|s| s.kind == fg_route::export::StepKind::Profession)
+            .cloned()
+            .collect::<Vec<_>>()
+    };
+    let off = plan(&[]);
+    assert!(stops(&off).is_empty(), "off by default");
+    let on = plan(&["profession_trainers=true"]);
+    let found = stops(&on);
+    assert!(!found.is_empty(), "stops at the trainers the route passes");
+    assert_eq!(
+        on.steps.len(),
+        off.steps.len() + found.len(),
+        "only the stops are added"
+    );
+    assert_eq!(on.total_time, off.total_time, "no time added");
+    let lines: Vec<i64> = on.professions.iter().map(|p| p.skill_line).collect();
+    for s in &found {
+        let line = s.line.expect("the profession's skill line");
+        assert!(lines.contains(&line), "{}: a profession of the guide", s.text);
+        assert!(
+            s.skill.is_some_and(|cap| [75, 150, 225, 300].contains(&cap)),
+            "{}",
+            s.text
+        );
+        assert!(
+            s.target.is_some() && s.world.is_some() && s.map.is_some(),
+            "{}: a trainer to walk to",
+            s.text
+        );
+        assert!(s.text.starts_with("Learn "), "{}", s.text);
+    }
+    // The first rank of a profession comes before its next ones.
+    for line in lines {
+        let caps: Vec<i64> = found
+            .iter()
+            .filter(|s| s.line == Some(line))
+            .filter_map(|s| s.skill)
+            .collect();
+        assert!(caps.windows(2).all(|w| w[0] < w[1]), "ranks in order: {caps:?}");
+    }
+}
+
 /// The Warsong Reports (Horde, Ashenvale): Kadrak gives the Bundle of Reports with the quest,
 /// each scout takes the Warsong Report out of it and hands over the update Kadrak asks for. The
 /// scouts' quests are children of The Warsong Reports: their updates are got at their hand-in,

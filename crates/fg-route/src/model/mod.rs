@@ -33,8 +33,8 @@ pub use loot::CommonLoot;
 pub use names::Names;
 pub use types::{
     CompletionWindow, Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Mate, MateStart, Model,
-    Objective, ObjectiveOrder, ProfessionPlan, Profile, Quest, QuestOverride, QuestRequirement, Spots, Teleport,
-    TeleportDef, Vendor, race_bit,
+    Objective, ObjectiveOrder, ProfessionPlan, ProfessionTrainer, Profile, Quest, QuestOverride, QuestRequirement,
+    Spots, Teleport, TeleportDef, Vendor, race_bit,
 };
 
 use crate::params::Params;
@@ -130,7 +130,15 @@ pub fn load(
     let known_names: HashSet<_> = names_known.into_iter().filter_map(|(n, k)| k.then_some(n)).collect();
     chains::drop_unhanded(&mut quests, &mut skipped);
     report_skipped_class_quests(&sources, &skipped);
-    let places = Places::load(conn, world, &sources.entities, profile, &sources.start, params.edition)?;
+    let places = Places::load(
+        conn,
+        world,
+        &sources.entities,
+        profile,
+        &sources.start,
+        params.edition,
+        params.profession_trainers && !profile.profession_goals().is_empty(),
+    )?;
     for q in &mut quests {
         if known_names.contains(&q.name) && !q.required && !q.zone_forced {
             q.mandatory = false;
@@ -254,6 +262,7 @@ pub fn load(
         unlocks,
         chain_top,
         trainers: places.trainers,
+        profession_trainers: places.profession_trainers,
         inns: places.inns,
         vendors: places.vendors,
         start_inn: places.start_inn,

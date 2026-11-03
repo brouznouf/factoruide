@@ -2,13 +2,14 @@
 //! that travel: teleports to the capitals, a second hearthstone.
 
 use super::entities::Entities;
-use super::types::{EntityKind, Loc, Profile, Teleport};
+use super::types::{EntityKind, Loc, ProfessionTrainer, Profile, Teleport};
 use crate::world::World;
 use anyhow::Result;
 use rusqlite::Connection;
 
 pub(super) struct Places {
     pub(super) trainers: Vec<Loc>,
+    pub(super) profession_trainers: Vec<ProfessionTrainer>,
     pub(super) inns: Vec<Loc>,
     pub(super) vendors: Vec<Loc>,
     /// Where the hearthstone of a new character takes it: its starting place (not an inn, it
@@ -26,6 +27,7 @@ impl Places {
         profile: &Profile,
         start: &Loc,
         edition: crate::xp::Edition,
+        profession_trainers: bool,
     ) -> Result<Self> {
         let finder = NpcFinder {
             conn,
@@ -41,6 +43,11 @@ impl Places {
         let trainers = finder.with_subname(&format!("{} Trainer", profile.class_name))?;
         // The vendor flag of the client the data was read from (1.12 for Classic and Forever).
         let vendors = finder.with_flag(if edition == crate::xp::Edition::Tbc { 128 } else { 4 })?;
+        let profession_trainers = if profession_trainers {
+            finder.profession_trainers(edition)?
+        } else {
+            Vec::new()
+        };
         let spells = class_spells(conn, profile.class_id)?;
         // Where a teleport lands: the class trainer of that city, else its inn (the character's
         // capitals only: the others have none friendly to it).
@@ -71,6 +78,7 @@ impl Places {
             .map(|(_, level)| *level);
         Ok(Self {
             trainers,
+            profession_trainers,
             inns,
             vendors,
             start_inn,
@@ -166,6 +174,42 @@ impl NpcFinder<'_> {
         Ok(ids.into_iter().filter_map(|id| self.place(id)).collect())
     }
 
+    /// The profession trainers friendly to the character, from their title ("Journeyman Blacksmith",
+    /// "Skinning Trainer") and the trainer flag; none without the flags column.
+    fn profession_trainers(&self, edition: crate::xp::Edition) -> Result<Vec<ProfessionTrainer>> {
+        let known: bool = self.conn.query_row(
+            "SELECT count(*) > 0 FROM pragma_table_info('m_npc') WHERE name = 'npc_flags'",
+            [],
+            |r| r.get(0),
+        )?;
+        if !known {
+            return Ok(Vec::new());
+        }
+        let mut stmt = self.conn.prepare(
+            "SELECT id, subname, npc_flags FROM m_npc
+             WHERE subname IS NOT NULL AND subname != '' AND npc_flags IS NOT NULL
+               AND (friendly_to IS NULL OR instr(friendly_to, ?1) > 0)
+             ORDER BY id",
+        )?;
+        let rows = stmt
+            .query_map([self.faction], |r| {
+                Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, i64>(2)?))
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()?;
+        Ok(rows
+            .into_iter()
+            .filter_map(|(id, title, flags)| {
+                let line = crate::job::profession_of(&title, flags, edition)?;
+                let def = crate::profession::PROFESSIONS.iter().find(|d| d.skill_id == line)?;
+                Some(ProfessionTrainer {
+                    line,
+                    cap: rank_cap_of_title(&title, def.kind),
+                    loc: self.place(id)?,
+                })
+            })
+            .collect())
+    }
+
     /// NPCs with an NPC flag (`npc_flags`) friendly to the character; none without the column.
     fn with_flag(&self, flag: i64) -> Result<Vec<Loc>> {
         let known: bool = self.conn.query_row(
@@ -183,5 +227,45 @@ impl NpcFinder<'_> {
             .query_map(rusqlite::params![flag, self.faction], |r| r.get(0))?
             .collect::<rusqlite::Result<_>>()?;
         Ok(ids.into_iter().filter_map(|id| self.place(id)).collect())
+    }
+}
+
+/// The highest skill cap a profession trainer's title says it teaches ("Artisan" 300, "Expert"
+/// 225, "Journeyman" 150, "Apprentice" 75). A plain title ("Skinning Trainer") says nothing of
+/// the rank: crafting trainers of those teach the first rank; gathering and secondary ones the
+/// first three, as far as the game data shows.
+fn rank_cap_of_title(title: &str, kind: crate::profession::Kind) -> i64 {
+    let says = |words: &[&str]| words.iter().any(|w| title.contains(w));
+    // "Master ..." titles are the specializations (Master Goblin Engineer), not the rank.
+    if says(&["Artisan"]) {
+        300
+    } else if says(&["Expert"]) {
+        225
+    } else if says(&["Journeyman"]) {
+        150
+    } else if says(&["Apprentice", "Junior"]) || kind == crate::profession::Kind::Crafting {
+        75
+    } else {
+        225
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::profession::Kind;
+
+    #[test]
+    fn a_title_says_how_far_a_trainer_teaches() {
+        let cap = |title, kind| rank_cap_of_title(title, kind);
+        assert_eq!(cap("Artisan Tailor", Kind::Crafting), 300);
+        assert_eq!(cap("Expert Leatherworker", Kind::Crafting), 225);
+        assert_eq!(cap("Journeyman Blacksmith", Kind::Crafting), 150);
+        assert_eq!(cap("Junior Skinning Trainer", Kind::Gathering), 75);
+        // A plain title: the first rank of a crafting profession, three of the others.
+        assert_eq!(cap("Alchemy Trainer", Kind::Crafting), 75);
+        assert_eq!(cap("Skinning Trainer", Kind::Gathering), 225);
+        // Specializations teach no rank.
+        assert_eq!(cap("Master Goblin Engineer", Kind::Crafting), 75);
     }
 }

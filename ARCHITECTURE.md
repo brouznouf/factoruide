@@ -92,7 +92,11 @@ level:
   objectives, which count them where they are done.
   Professions add no time: only their quests are planned, once the skill curve reaches them
   (optional in the guide). Their reward is the profession's, not XP: they are kept once gray,
-  and each one left out costs `profession_quest_weight`.
+  and each one left out costs `profession_quest_weight`. With `profession_trainers` (off by default)
+  the guide, once built, gets a stop at the trainer of each profession and rank (`export/profession_trainers.rs`):
+  after the step that already passes a trainer teaching it, between the level the rank needs and
+  the point the curve passes the cap of the rank before. No detour and no time: a rank whose trainer
+  the route does not pass has no stop.
 - **Every action is a step**: each take, objective and turn-in of a quest is a stop of the route,
   done at that stop and nowhere else (no quest taken in passing at another stop, no objective
   finished on the way), so that each one can be moved or removed in the guide editor. What doing

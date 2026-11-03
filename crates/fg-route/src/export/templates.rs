@@ -688,6 +688,34 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
         ],
     ),
     (
+        "profession.learn",
+        [
+            "Learn {profession} from {who}",
+            "Apprendre {profession} auprès de {who}",
+            "{profession} bei {who} lernen",
+            "Aprender {profession} con {who}",
+            "Aprender {profession} com {who}",
+            "Изучить профессию «{profession}» ({who})",
+            "{who}에게서 {profession} 배우기",
+            "向{who}学习{profession}",
+            "向{who}學習{profession}",
+        ],
+    ),
+    (
+        "profession.rank",
+        [
+            "Learn the next rank of {profession} from {who}",
+            "Apprendre le rang suivant de {profession} auprès de {who}",
+            "Nächsten Rang von {profession} bei {who} lernen",
+            "Aprender el siguiente rango de {profession} con {who}",
+            "Aprender o próximo grau de {profession} com {who}",
+            "Изучить следующий уровень профессии «{profession}» ({who})",
+            "{who}에게서 {profession}의 다음 등급 배우기",
+            "向{who}学习下一级{profession}",
+            "向{who}學習下一級{profession}",
+        ],
+    ),
+    (
         "bind",
         [
             "Set your hearthstone at {who} ({zone})",
