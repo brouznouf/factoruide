@@ -1038,7 +1038,7 @@ fn checkpoints_wait_for_their_level() {
 /// those shown to the other faction only.
 #[test]
 fn flight_paths_are_flight_masters() {
-    let world = crate::common::world(Edition::Classic, fg_route::faction::Faction::Horde);
+    let world = &crate::common::bare_world(Edition::Classic, fg_route::faction::Faction::Horde);
     let has = |name: &str| world.taxi_nodes.iter().any(|n| n.name.starts_with(name));
     assert!(has("Ratchet") && has("Crossroads") && has("Hammerfall"));
     assert!(!has("Quest Path"), "a shaman quest's flight");
