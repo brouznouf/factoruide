@@ -1,6 +1,6 @@
 //! Class chains through normal planning and recorded character starts.
 
-use crate::common::{database, database_of, repo};
+use crate::common::repo;
 use fg_route::fixture::Fixture;
 use fg_route::job::{self, Overrides, PlanRequest, StartState};
 use fg_route::plan::{Edit, Kind, Outcome, Planner, Stop};

@@ -23,7 +23,7 @@ fn set_file(path: String, bytes: Vec<u8>) {
     let mut files = FILES.lock().unwrap();
     files.retain(|(p, _)| *p != path);
     files.push((path, bytes));
-    super::forget_databases();
+    forget_databases();
 }
 
 /// An edition's database served as the site serves it.
@@ -47,7 +47,10 @@ fn serve_fixture(edition: Edition, files: &[&str]) {
 }
 
 fn serve_classic() {
-    serve_fixture(Edition::Classic, &["classic_services", "classic_coldridge", "classic_map_index"]);
+    serve_fixture(
+        Edition::Classic,
+        &["classic_services", "classic_coldridge", "classic_map_index"],
+    );
 }
 
 /// What `/fg export` gives for a dwarf warrior.

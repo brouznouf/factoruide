@@ -1,7 +1,7 @@
 //! Completion windows through planning, persisted requests and edited guides.
 use crate::common::repo;
-use fg_route::fixture::Fixture;
 use fg_route::faction::Faction;
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Editor, LogQuest, MapPos, Overrides, PlanRequest, QuestId, RouteStep, StartState};
 use fg_route::model::Names;
 use fg_route::plan::{Event, Kind, Planner, Timed};
@@ -50,7 +50,9 @@ fn a_window_includes_the_child_quest_and_its_deadline() {
 #[test]
 fn quest_windows_plan_the_chain_with_prerequisites_before_the_lower_bound() {
     for edition in Edition::ALL {
-        let conn = Fixture::new(edition).file(&format!("{}_northshire", edition.key())).open();
+        let conn = Fixture::new(edition)
+            .file(&format!("{}_northshire", edition.key()))
+            .open();
         let req = request(&json!([{"quest":21,"min_level":3,"max_level":4}]));
         let mut o = overrides(edition);
         o.params.effort = 0.01;
@@ -163,7 +165,9 @@ fn imported_horde_class_quest_can_finish_during_level_twenty() {
 #[test]
 fn saved_windows_are_checked_before_reward_xp_and_in_the_editor() {
     for edition in Edition::ALL {
-        let conn = Fixture::new(edition).file(&format!("{}_northshire", edition.key())).open();
+        let conn = Fixture::new(edition)
+            .file(&format!("{}_northshire", edition.key()))
+            .open();
         let o = overrides(edition);
         let names = Names::load(&conn, "enUS").unwrap();
         let mut req = request(&json!([{"quest":783,"max_level":1}]));
@@ -380,7 +384,9 @@ fn starting_deadlines_only_check_members_pursuing_the_quests_profession() {
 #[test]
 fn a_deadline_at_the_level_cap_does_not_change_the_greedy_route() {
     for edition in Edition::ALL {
-        let conn = Fixture::new(edition).file(&format!("{}_northshire", edition.key())).open();
+        let conn = Fixture::new(edition)
+            .file(&format!("{}_northshire", edition.key()))
+            .open();
         let o = overrides(edition);
         let plain = request(&json!([21]));
         let capped = request(&json!([{"quest":21,"max_level":edition.rules().max_level}]));

@@ -71,8 +71,9 @@ struct Npc {
     /// Where it stands (several places for a wanderer or a camp).
     #[serde(default)]
     at: Vec<At>,
-    #[serde(default)]
-    npc_flags: i64,
+    /// The game's NPC flags (vendor, trainer, flight master...).
+    #[serde(default, rename = "npc_flags")]
+    flags: i64,
     #[serde(default)]
     faction: i64,
     /// The sides it talks to: A, H, AH.
@@ -157,7 +158,8 @@ struct Quest {
     source_item: Option<i64>,
     required_skill: Option<i64>,
     required_spell: Option<i64>,
-    quest_flags: Option<i64>,
+    #[serde(rename = "quest_flags")]
+    flags: Option<i64>,
     special_flags: Option<i64>,
     /// `available` (default), `removed` or `incomplete`.
     status: Option<String>,
@@ -327,6 +329,7 @@ impl Fixture {
     }
 
     /// A file of `tests/fixtures/` (its name without `.toml`).
+    #[must_use]
     pub fn file(mut self, name: &str) -> Self {
         let path = folder().join(format!("{name}.toml"));
         let text = std::fs::read_to_string(&path).unwrap_or_else(|e| panic!("{}: {e}", path.display()));
@@ -335,6 +338,7 @@ impl Fixture {
     }
 
     /// Declarations given in the test itself.
+    #[must_use]
     pub fn toml(mut self, text: &str) -> Self {
         self.files.push(("inline".to_owned(), text.to_owned()));
         self
@@ -347,9 +351,24 @@ impl Fixture {
 
     pub fn try_open(self) -> Result<Connection> {
         // The database of the same files is built once: the next ones are copies of it.
-        static BUILT: std::sync::Mutex<BTreeMap<String, std::sync::Arc<Vec<u8>>>> = std::sync::Mutex::new(BTreeMap::new());
-        let key = format!("{}\n{}", self.edition.key(), self.files.iter().map(|(n, t)| format!("{n}\n{t}")).collect::<String>());
-        let cached = BUILT.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get(&key).cloned();
+        static BUILT: std::sync::Mutex<BTreeMap<String, std::sync::Arc<Vec<u8>>>> =
+            std::sync::Mutex::new(BTreeMap::new());
+        let key = format!(
+            "{}\n{}",
+            self.edition.key(),
+            self.files.iter().fold(String::new(), |mut all, (n, t)| {
+                all.push_str(n);
+                all.push('\n');
+                all.push_str(t);
+                all.push('\n');
+                all
+            })
+        );
+        let cached = BUILT
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
+            .get(&key)
+            .cloned();
         let mut conn = Connection::open_in_memory()?;
         if let Some(bytes) = cached {
             conn.deserialize_read_exact(rusqlite::MAIN_DB, &mut &bytes[..], bytes.len(), false)?;
@@ -377,7 +396,11 @@ impl Fixture {
                         && took.as_millis() >= u128::from(LIMIT.load(std::sync::atomic::Ordering::Relaxed))
                     {
                         let line: String = statement.sql().split_whitespace().collect::<Vec<_>>().join(" ");
-                        eprintln!("SLOW {:>4} ms  {}", took.as_millis(), line.chars().take(150).collect::<String>());
+                        eprintln!(
+                            "SLOW {:>4} ms  {}",
+                            took.as_millis(),
+                            line.chars().take(150).collect::<String>()
+                        );
                     }
                 }),
             );
@@ -398,8 +421,8 @@ impl Fixture {
     }
 }
 
-fn text(s: &Option<String>, fallback: impl FnOnce() -> String) -> String {
-    s.clone().unwrap_or_else(fallback)
+fn text(s: Option<&String>, fallback: impl FnOnce() -> String) -> String {
+    s.cloned().unwrap_or_else(fallback)
 }
 
 fn spawn(conn: &Connection, kind: &str, id: i64, at: &At, respawn: Option<f64>) -> Result<()> {
@@ -431,7 +454,14 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
             while let Some(row) = rows.next()? {
                 conn.execute(
                     "INSERT OR IGNORE INTO client_terrain_layers VALUES (?1, ?2, ?3, ?4, ?5, ?6)",
-                    params![row.get::<_, i64>(0)?, row.get::<_, i64>(1)?, row.get::<_, i64>(2)?, row.get::<_, i64>(3)?, row.get::<_, i64>(4)?, row.get::<_, Vec<u8>>(5)?],
+                    params![
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, i64>(1)?,
+                        row.get::<_, i64>(2)?,
+                        row.get::<_, i64>(3)?,
+                        row.get::<_, i64>(4)?,
+                        row.get::<_, Vec<u8>>(5)?
+                    ],
                 )?;
             }
             let mut gates = pack.prepare(
@@ -442,14 +472,23 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
             while let Some(row) = rows.next()? {
                 conn.execute(
                     "INSERT OR IGNORE INTO client_terrain_gates VALUES (?1, ?2, ?3, ?4, ?5)",
-                    params![row.get::<_, i64>(0)?, row.get::<_, i64>(1)?, row.get::<_, i64>(2)?, row.get::<_, i64>(3)?, row.get::<_, Vec<u8>>(4)?],
+                    params![
+                        row.get::<_, i64>(0)?,
+                        row.get::<_, i64>(1)?,
+                        row.get::<_, i64>(2)?,
+                        row.get::<_, i64>(3)?,
+                        row.get::<_, Vec<u8>>(4)?
+                    ],
                 )?;
             }
         }
     }
     for n in &file.npc {
         // The races' start NPCs are in the base already: their declaration changes nothing.
-        if conn.query_row("SELECT count(*) FROM m_npc WHERE id = ?1", [n.id], |r| r.get::<_, i64>(0))? > 0 {
+        if conn.query_row("SELECT count(*) FROM m_npc WHERE id = ?1", [n.id], |r| {
+            r.get::<_, i64>(0)
+        })? > 0
+        {
             continue;
         }
         conn.execute(
@@ -457,7 +496,7 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
              VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, 'fixture')",
             params![
                 n.id,
-                text(&n.name, || format!("Npc {}", n.id)),
+                text(n.name.as_ref(), || format!("Npc {}", n.id)),
                 n.subname,
                 n.level,
                 n.max_level.unwrap_or(n.level),
@@ -465,7 +504,7 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
                 n.at.first().map(|a| a.zone),
                 n.faction,
                 n.friendly_to,
-                n.npc_flags,
+                n.flags,
             ],
         )?;
         for at in &n.at {
@@ -473,19 +512,29 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
         }
     }
     for o in &file.object {
-        if conn.query_row("SELECT count(*) FROM m_object WHERE id = ?1", [o.id], |r| r.get::<_, i64>(0))? > 0 {
+        if conn.query_row("SELECT count(*) FROM m_object WHERE id = ?1", [o.id], |r| {
+            r.get::<_, i64>(0)
+        })? > 0
+        {
             continue;
         }
         conn.execute(
             "INSERT INTO m_object (id, name, zone_id, faction_id, sources) VALUES (?1, ?2, ?3, 0, 'fixture')",
-            params![o.id, text(&o.name, || format!("Object {}", o.id)), o.at.first().map(|a| a.zone)],
+            params![
+                o.id,
+                text(o.name.as_ref(), || format!("Object {}", o.id)),
+                o.at.first().map(|a| a.zone)
+            ],
         )?;
         for at in &o.at {
             spawn(conn, "object", o.id, at, o.respawn)?;
         }
     }
     for i in &file.item {
-        if conn.query_row("SELECT count(*) FROM m_item WHERE id = ?1", [i.id], |r| r.get::<_, i64>(0))? > 0 {
+        if conn.query_row("SELECT count(*) FROM m_item WHERE id = ?1", [i.id], |r| {
+            r.get::<_, i64>(0)
+        })? > 0
+        {
             continue;
         }
         conn.execute(
@@ -493,7 +542,7 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
              VALUES (?1, ?2, ?3, ?3, ?4, 0, ?5, ?6, 'fixture')",
             params![
                 i.id,
-                text(&i.name, || format!("Item {}", i.id)),
+                text(i.name.as_ref(), || format!("Item {}", i.id)),
                 i.level,
                 i.class.unwrap_or(if i.start_quest.is_some() { 12 } else { 0 }),
                 i.start_quest,
@@ -524,7 +573,10 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
     }
     for q in &file.quest {
         // Declared by an earlier file: the first one counts.
-        if conn.query_row("SELECT count(*) FROM m_quest WHERE id = ?1", [q.id], |r| r.get::<_, i64>(0))? > 0 {
+        if conn.query_row("SELECT count(*) FROM m_quest WHERE id = ?1", [q.id], |r| {
+            r.get::<_, i64>(0)
+        })? > 0
+        {
             continue;
         }
         quest(conn, q)?;
@@ -534,7 +586,12 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
         let marks: Vec<String> = (1..=columns.len()).map(|i| format!("?{i}")).collect();
         let values: Vec<Value> = r.values.values().map(sql_value).collect::<Result<_>>()?;
         conn.execute(
-            &format!("INSERT INTO {} ({}) VALUES ({})", r.table, columns.join(", "), marks.join(", ")),
+            &format!(
+                "INSERT INTO {} ({}) VALUES ({})",
+                r.table,
+                columns.join(", "),
+                marks.join(", ")
+            ),
             rusqlite::params_from_iter(values),
         )?;
     }
@@ -560,7 +617,7 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
          VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, 'fixture', ?17, 0, 1, ?18, ?19, ?20, 1, ?21, ?22, ?23)",
         params![
             q.id,
-            text(&q.name, || format!("Quest {}", q.id)),
+            text(q.name.as_ref(), || format!("Quest {}", q.id)),
             q.level,
             min_level,
             q.max_level,
@@ -571,7 +628,7 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
             q.next,
             q.breadcrumb_for,
             q.parent,
-            q.quest_flags.unwrap_or(0),
+            q.flags.unwrap_or(0),
             q.special_flags.unwrap_or(0),
             q.required_skill,
             q.required_spell,
@@ -609,7 +666,10 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
             (None, None, Some(id), None) => ("object", Some(id)),
             (None, None, None, Some(id)) => ("talk", Some(id)),
             (None, None, None, None) if o.trigger.is_some() => ("trigger", None),
-            _ => bail!("quest {}: an objective names one of creature, item, object, talk, trigger", q.id),
+            _ => bail!(
+                "quest {}: an objective names one of creature, item, object, talk, trigger",
+                q.id
+            ),
         };
         let extra = o.at.as_ref().map(|at| {
             let z = at.z.map(|z| format!(",{z}")).unwrap_or_default();

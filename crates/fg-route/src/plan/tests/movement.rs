@@ -4,7 +4,13 @@ use super::*;
 use crate::plan::Event;
 
 /// One character learning a movement spell: the travel time of the legs it can use (a test each).
-fn movement_spell_changes_the_eligible_walking_legs(edition: Edition, race: &str, class: &str, spell: i64, seconds: f64) {
+fn movement_spell_changes_the_eligible_walking_legs(
+    edition: Edition,
+    race: &str,
+    class: &str,
+    spell: i64,
+    seconds: f64,
+) {
     use crate::terrain::TestGround::{Covered, Dry, Indoor, Mixed, Shallow, Unknown};
     {
         let conn = database_of(edition.key());
@@ -133,7 +139,7 @@ fn movement_spell_changes_the_eligible_walking_legs(edition: Edition, race: &str
             }
         }
         p.world.terrain = crate::terrain::movement_test_ground(Dry);
-        let mut known = req.start.clone().unwrap();
+        let mut known = req.start.unwrap();
         known.spells = vec![spell];
         let recorded = base.clone().start(known).build();
         let native_planner = planner(&recorded);

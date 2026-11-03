@@ -8,6 +8,8 @@ pub use dungeons::dungeon_levels;
 mod entities;
 mod explore;
 mod farm;
+#[cfg(any(test, feature = "testing"))]
+pub mod fixture;
 mod givers;
 mod guard;
 mod item;
@@ -21,8 +23,6 @@ mod required;
 mod rewards;
 mod selection;
 mod sources;
-#[cfg(any(test, feature = "testing"))]
-pub mod fixture;
 #[cfg(any(test, feature = "testing"))]
 pub mod testing;
 mod types;

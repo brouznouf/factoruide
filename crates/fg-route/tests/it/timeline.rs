@@ -2,8 +2,8 @@
 //! character moves to where each step is done, and what it holds follows the steps.
 
 use crate::common::{leveling, repo};
-use fg_route::fixture::Fixture;
 use fg_route::export::StepKind;
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Editor, LegMode, Overrides, PlanOutcome, PlanRequest, Timeline};
 use fg_route::model::Names;
 use fg_route::xp::Edition;

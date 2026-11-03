@@ -2,9 +2,9 @@
 //! steps (for the compass) and the places that serve the player.
 
 use crate::common::repo;
-use fg_route::fixture::Fixture;
 use fg_route::Route;
 use fg_route::faction::Faction;
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Overrides, Service};
 use fg_route::model::Names;
 use fg_route::plan::Breakdown;
@@ -132,7 +132,11 @@ fn each_guide_carries_its_format() {
 /// the walk give the floor by floor path's length (Ziz Fizziks in Stonetalon to Ratchet).
 #[test]
 fn a_long_walk_follows_the_ground_between_gates() {
-    let world = &crate::common::terrain_world(Edition::Classic, Faction::Alliance, &["classic_stonetalon_barrens_terrain"]);
+    let world = &crate::common::terrain_world(
+        Edition::Classic,
+        Faction::Alliance,
+        &["classic_stonetalon_barrens_terrain"],
+    );
     let a = world
         .to_world(world.zone_of_ui_map(1442).unwrap(), 58.99, 62.6)
         .unwrap();

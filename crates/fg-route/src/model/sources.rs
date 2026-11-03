@@ -433,9 +433,12 @@ fn links(conn: &Connection, profile: &Profile) -> Result<HashMap<i64, Vec<(LinkK
             let alternatives = links.entry(correction.id).or_default();
             alternatives.retain(|(existing, _, _)| *existing != kind);
             for id in required {
-                let (races, classes) = scope
-                    .query_row([id], |r| Ok((r.get(0)?, r.get(1)?)))
-                    .with_context(|| format!("the correction of quest {} requires quest {id}, which the database does not have", correction.id))?;
+                let (races, classes) = scope.query_row([id], |r| Ok((r.get(0)?, r.get(1)?))).with_context(|| {
+                    format!(
+                        "the correction of quest {} requires quest {id}, which the database does not have",
+                        correction.id
+                    )
+                })?;
                 alternatives.push((kind, *id, profile.members_of(races, classes) != 0));
             }
         }

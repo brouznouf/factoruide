@@ -9,11 +9,6 @@ pub fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-/// The Classic database, unpacked next to the packed one when missing or older.
-pub fn database() -> Connection {
-    database_of("classic")
-}
-
 /// An edition's database (classic, tbc, forever), unpacked the same way.
 pub fn database_of(edition: &str) -> Connection {
     static UNPACK: Mutex<()> = Mutex::new(());
@@ -95,8 +90,15 @@ pub fn bare_world(edition: fg_route::xp::Edition, faction: fg_route::faction::Fa
 
 /// The walking world of an edition for a faction on the terrain of fixtures' files (their
 /// `[[terrain]]` regions), built for each test.
-pub fn terrain_world(edition: fg_route::xp::Edition, faction: fg_route::faction::Faction, files: &[&str]) -> fg_route::world::World {
+pub fn terrain_world(
+    edition: fg_route::xp::Edition,
+    faction: fg_route::faction::Faction,
+    files: &[&str],
+) -> fg_route::world::World {
     let overrides = fg_route::job::Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
-    let conn = files.iter().fold(fg_route::fixture::Fixture::new(edition), |f, n| f.file(n)).open();
+    let conn = files
+        .iter()
+        .fold(fg_route::fixture::Fixture::new(edition), |f, n| f.file(n))
+        .open();
     fg_route::job::game_world(&conn, &overrides, faction, 0).unwrap()
 }

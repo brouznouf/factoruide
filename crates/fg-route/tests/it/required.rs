@@ -1,8 +1,8 @@
 //! Explicit quest requirements through request resolution, model construction and guide saving.
 
-use crate::common::{database_of, repo};
-use fg_route::fixture::Fixture;
+use crate::common::repo;
 use fg_route::faction::Faction;
+use fg_route::fixture::Fixture;
 use fg_route::job::{self, Editor, LogQuest, Overrides, PlanRequest, QuestId, RequiredQuest, RouteStep, StartState};
 use fg_route::plan::{Kind, Planner, Stop};
 use fg_route::testing::{At, Obj, Q, Scenario};
@@ -667,35 +667,50 @@ fn sleeping_bag_option_preserves_an_explicit_completion_window() {
 /// required: the Orc mage takes the Undead's and the Troll's quests, the Troll warlock the Orc's
 /// Voidwalker quests, the High Order Skyborne mage the Human's and the Gnome's, the druid the
 /// Night Elf's.
-#[test]
-fn class_quests_are_open_to_the_races_new_to_a_class() {
+fn class_quests_are_open_to_the_races_new_to_a_class_of(race: &str, class: &str, quests: &[i64]) {
     let conn = Fixture::new(Edition::Forever).file("forever_new_race_classes").open();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    let pairs: [(&str, &str, &[i64]); 4] = [
-        ("orc", "mage", &[1943, 1944, 1945, 1946, 1959, 1960, 1962]),
-        ("troll", "warlock", &[1501, 1504]),
-        ("skyborne", "mage", &[1860, 1919, 1921, 1938, 1940, 1941, 1942]),
-        ("skyborne", "druid", &[26, 29, 5061, 6123, 6124, 6125]),
-    ];
-    for (race, class, quests) in pairs {
-        for &id in quests {
-            let mut req = request(race, class, &[RequiredQuest::Id(id)]);
-            req.to_level = 60;
-            // Some of these cannot be planned for any race (1960's item has no known source):
-            // what must not happen is being refused for the character's race or class.
-            match job::prepare(&conn, &overrides, &req, &|_| {}) {
-                Ok(p) => {
-                    let quest = p.model.quests.iter().find(|q| q.id == id).expect("planned");
-                    assert!(quest.mandatory, "{race} {class}: {} ({id}) is required", quest.name);
-                }
-                Err(e) => {
-                    let e = format!("{e:#}");
-                    assert!(
-                        !e.contains("unavailable to this character"),
-                        "{race} {class}, quest {id}: {e}"
-                    );
-                }
+    for &id in quests {
+        let mut req = request(race, class, &[RequiredQuest::Id(id)]);
+        req.to_level = 60;
+        // Some of these cannot be planned for any race (1960's item has no known source):
+        // what must not happen is being refused for the character's race or class.
+        match job::prepare(&conn, &overrides, &req, &|_| {}) {
+            Ok(p) => {
+                let quest = p.model.quests.iter().find(|q| q.id == id).expect("planned");
+                assert!(quest.mandatory, "{race} {class}: {} ({id}) is required", quest.name);
+            }
+            Err(e) => {
+                let e = format!("{e:#}");
+                assert!(
+                    !e.contains("unavailable to this character"),
+                    "{race} {class}, quest {id}: {e}"
+                );
             }
         }
     }
+}
+
+#[test]
+fn class_quests_are_open_to_the_orc_mage() {
+    class_quests_are_open_to_the_races_new_to_a_class_of("orc", "mage", &[1943, 1944, 1945, 1946, 1959, 1960, 1962]);
+}
+
+#[test]
+fn class_quests_are_open_to_the_troll_warlock() {
+    class_quests_are_open_to_the_races_new_to_a_class_of("troll", "warlock", &[1501, 1504]);
+}
+
+#[test]
+fn class_quests_are_open_to_the_skyborne_mage() {
+    class_quests_are_open_to_the_races_new_to_a_class_of(
+        "skyborne",
+        "mage",
+        &[1860, 1919, 1921, 1938, 1940, 1941, 1942],
+    );
+}
+
+#[test]
+fn class_quests_are_open_to_the_skyborne_druid() {
+    class_quests_are_open_to_the_races_new_to_a_class_of("skyborne", "druid", &[26, 29, 5061, 6123, 6124, 6125]);
 }

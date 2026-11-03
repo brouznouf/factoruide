@@ -34,11 +34,29 @@ macro_rules! preset {
     };
 }
 
-preset!(classic_human_warrior, Edition::Classic, "human", "warrior", "classic_northshire");
+preset!(
+    classic_human_warrior,
+    Edition::Classic,
+    "human",
+    "warrior",
+    "classic_northshire"
+);
 preset!(classic_orc_shaman, Edition::Classic, "orc", "shaman", "classic_valley");
-preset!(tbc_bloodelf_paladin, Edition::Tbc, "bloodelf", "paladin", "tbc_sunstrider");
+preset!(
+    tbc_bloodelf_paladin,
+    Edition::Tbc,
+    "bloodelf",
+    "paladin",
+    "tbc_sunstrider"
+);
 preset!(tbc_draenei_shaman, Edition::Tbc, "draenei", "shaman", "tbc_ammen");
-preset!(forever_skyborne_druid, Edition::Forever, "skyborne", "druid", "forever_zephras");
+preset!(
+    forever_skyborne_druid,
+    Edition::Forever,
+    "skyborne",
+    "druid",
+    "forever_zephras"
+);
 preset!(
     forever_skyborne_horde_druid,
     Edition::Forever,
