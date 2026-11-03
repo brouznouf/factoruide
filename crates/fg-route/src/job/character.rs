@@ -93,6 +93,15 @@ pub(crate) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
             }
         }
     }
+    let required_class_quests =
+        required_class_quests(&super::options::class_quests(conn, overrides)?, req, &class, &group);
+    let class_ids: Vec<i64> = std::iter::once(class_id)
+        .chain(mates.iter().map(|m| m.class_id))
+        .collect();
+    let class_requirements = crate::model::requirements::select(
+        crate::model::requirements::load(conn, &class_ids)?,
+        &required_class_quests,
+    );
     let profile = Profile {
         name: req.name.clone().unwrap_or_else(|| format!("{race_key}-{class}")),
         race_id: race.id,
@@ -102,12 +111,8 @@ pub(crate) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
         start_npc: race.start_npc,
         from_level,
         to_level: req.to_level,
-        required_class_quests: required_class_quests(
-            &super::options::class_quests(conn, overrides)?,
-            req,
-            &class,
-            &group,
-        ),
+        required_class_quests,
+        class_requirements,
         required_quests: vec![],
         completed_quests,
         class_powers: overrides.class_powers.get(&class).cloned().unwrap_or_default(),

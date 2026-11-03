@@ -448,6 +448,8 @@ pub struct Scenario {
     graveyards: Vec<At>,
     /// Boats between two places (name, ends, seconds), both ways.
     boats: Vec<(&'static str, At, At, f64)>,
+    /// The class requirements of the guide (`Scenario::requirement`).
+    requirements: Vec<super::ClassRequirement>,
     /// The class's spells and power as the database has them (`Scenario::of_class`).
     class: Option<(crate::abilities::Abilities, Option<crate::power::PowerModel>)>,
 }
@@ -480,6 +482,7 @@ impl Scenario {
             graveyards: Vec::new(),
             boats: Vec::new(),
             class: None,
+            requirements: Vec::new(),
         }
     }
 
@@ -599,6 +602,20 @@ impl Scenario {
         self
     }
 
+    /// A class requirement of the guide: the route does one of its quests (the last of each version).
+    pub fn requirement(mut self, name: &str, quests: &[i64]) -> Self {
+        self.requirements.push(super::ClassRequirement {
+            class_id: 1,
+            name: name.to_owned(),
+            spell: None,
+            max_level: None,
+            quests: quests.to_vec(),
+            quest_names: Vec::new(),
+            selected: true,
+        });
+        self
+    }
+
     /// A must-have quest (and what it needs first).
     pub fn required(mut self, id: i64) -> Self {
         self.required.push(id);
@@ -696,6 +713,7 @@ impl Scenario {
                 quests.push(built);
             }
         }
+        self.profile.class_requirements = std::mem::take(&mut self.requirements);
         self.profile.required_quests = self
             .required
             .iter()
@@ -783,6 +801,7 @@ impl Scenario {
             &self.params,
             &HashSet::new(),
             &self.profile.completed_quests,
+            &self.profile.class_requirements,
         );
         let mut dungeons = dungeons;
         super::dungeons::set_dungeon_levels(
@@ -950,6 +969,7 @@ pub fn profile(faction: Faction, from: i64, to: i64) -> Profile {
         required_quests: Vec::new(),
         completed_quests: HashSet::new(),
         class_powers: Vec::new(),
+        class_requirements: Vec::new(),
         spell_weights: Vec::new(),
         abilities: Vec::new(),
         dungeons: Vec::new(),

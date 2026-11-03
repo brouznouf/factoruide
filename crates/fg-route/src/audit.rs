@@ -364,7 +364,7 @@ pub fn audit(
                 };
                 if required {
                     let own = class_quest_ids(conn, p.profile.class_id)?;
-                    class_quests_left_out(&class, &p.profile.required_class_quests, &own, &p.model)
+                    class_quests_left_out(&class, &p.profile.class_requirements, &own, &p.model)
                         .into_iter()
                         .for_each(&mut add);
                 }
@@ -552,26 +552,46 @@ fn class_quest_ids(conn: &Connection, class_id: i64) -> Result<HashSet<i64>> {
     Ok(ids)
 }
 
-/// Required class quests of a class (by name) the model leaves out: skipped while building it,
-/// or no longer required because a prerequisite cannot be planned.
-fn class_quests_left_out(class: &str, required: &[String], own: &HashSet<i64>, model: &Model) -> Vec<Finding> {
-    let skipped = (model.skipped.iter())
-        .filter(|(id, name, _)| required.contains(name) && own.contains(id))
-        .map(|(id, name, why)| (*id, name, why.as_str()));
-    // Of a name teaching a spell, only those leading to it are required.
-    let designated = crate::model::required_by_name(&model.quests);
-    let released = (model.quests.iter())
-        .filter(|q| required.contains(&q.name) && own.contains(&q.id) && !q.mandatory)
-        .filter(|q| designated.contains(&q.id))
-        .map(|q| (q.id, &q.name, "a prerequisite cannot be planned"));
-    skipped
-        .chain(released)
-        .map(|(id, name, why)| Finding {
-            check: "class-quests",
-            key: format!("{class} quest {id}"),
-            detail: format!("{name} ({id}): {why}"),
-            races: Vec::new(),
-            npcs: Vec::new(),
+/// Required class quests of a class the model leaves out: skipped while building it (no version
+/// can be planned), or no longer required because a prerequisite cannot be planned.
+fn class_quests_left_out(
+    class: &str,
+    requirements: &[crate::model::ClassRequirement],
+    own: &HashSet<i64>,
+    model: &Model,
+) -> Vec<Finding> {
+    requirements
+        .iter()
+        .filter(|requirement| requirement.selected)
+        .filter_map(|requirement| {
+            let members: Vec<i64> = requirement
+                .quests
+                .iter()
+                .copied()
+                .filter(|id| own.contains(id))
+                .collect();
+            let first = *members.first()?;
+            let done = |id: &i64| {
+                model
+                    .quests
+                    .iter()
+                    .any(|q| q.id == *id && (q.mandatory || !q.exclusive.is_empty()))
+            };
+            if members.iter().any(done) {
+                return None;
+            }
+            let skipped = model.skipped.iter().find(|(id, _, _)| members.contains(id));
+            let (id, why) = match skipped {
+                Some((id, _, why)) => (*id, why.as_str()),
+                None => (first, "a prerequisite cannot be planned"),
+            };
+            Some(Finding {
+                check: "class-quests",
+                key: format!("{class} quest {id}"),
+                detail: format!("{} ({id}): {why}", requirement.name),
+                races: Vec::new(),
+                npcs: Vec::new(),
+            })
         })
         .collect()
 }

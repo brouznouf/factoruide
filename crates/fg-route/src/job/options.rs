@@ -328,65 +328,27 @@ fn factions(conn: &Connection, races: &[RaceOption]) -> Result<Vec<FactionOption
     Ok(out)
 }
 
-/// Class quests teaching a spell from this level on are endgame (see `class_quests`).
+/// Class requirements from this level on are endgame (see `class_quests`).
 const SPELL_QUESTS_BELOW: i64 = 50;
 
-/// The class quests required by default, by class key: the configured ones
-/// (overrides/class_quests.toml), then the class quests the data says teach a spell (a pet, a
-/// stance, a totem, Redemption...), by level: a guide does not leave a class spell out. The app
-/// lists them, the player takes out those not wanted. Those from level 50 (an epic mount,
-/// Inferno, Ritual of Doom: raids and elite dungeons) are endgame, not leveling. Then the start
-/// zone's letter to the class trainer (Encrypted Sigil): little XP, but it leads to the trainer.
+/// The class requirements by default, by class key: those the database builds (`m_class_requirement`:
+/// a class spell a pet, a stance, a totem, Redemption... needs one of its quests, a start zone's
+/// letter to the class trainer, the overrides' lists), then the configured ones
+/// (overrides/class_quests.toml). A guide does not leave a class spell out. The app lists them,
+/// the player takes out those not wanted. Those whose quests start from level 50 (an epic mount,
+/// Inferno, Ritual of Doom: raids and elite dungeons) are endgame, not leveling.
 pub fn class_quests(conn: &Connection, overrides: &Overrides) -> Result<HashMap<String, Vec<String>>> {
     let mut out = overrides.class_quests.clone();
-    // Databases built before the column existed: the configured ones only.
-    let known: bool = conn.query_row(
-        "SELECT count(*) > 0 FROM pragma_table_info('m_quest') WHERE name = 'reward_spell'",
-        [],
-        |r| r.get(0),
-    )?;
     let Ok(mut classes) = conn.prepare("SELECT ID, lower(Filename) FROM client_chrclasses ORDER BY ID") else {
         return Ok(out);
     };
-    if !known {
-        return Ok(out);
-    }
     let classes: Vec<(i64, String)> = classes
         .query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?
         .collect::<rusqlite::Result<_>>()?;
-    let mut stmt = conn.prepare(
-        "SELECT name FROM m_quest
-         WHERE reward_spell IS NOT NULL AND status = 'available' AND (classes_mask = ?1 OR zone_or_sort = ?2)
-         GROUP BY name HAVING min(coalesce(min_level, level, 1)) < ?3
-         ORDER BY min(coalesce(min_level, level, 1)), name",
-    )?;
-    let has_subname: bool = conn.query_row(
-        "SELECT count(*) > 0 FROM pragma_table_info('m_npc') WHERE name = 'subname'",
-        [],
-        |r| r.get(0),
-    )?;
-    let mut letters = conn.prepare(if has_subname {
-        "SELECT DISTINCT q.name FROM m_quest q
-         JOIN m_quest_relation r ON r.quest_id = q.id AND r.role = 'end' AND r.entity_type = 'npc'
-         JOIN m_npc n ON n.id = r.entity_id
-         WHERE q.status = 'available' AND q.classes_mask = ?1 AND coalesce(q.level, 1) BETWEEN 0 AND 2
-           AND n.subname LIKE '% Trainer'
-         ORDER BY q.name"
-    } else {
-        "SELECT name FROM m_quest WHERE 0 AND ?1"
-    })?;
     for (id, key) in classes.into_iter().filter(|(id, _)| (1..=31).contains(id)) {
-        let names: Vec<String> = stmt
-            .query_map(
-                rusqlite::params![1i64 << (id - 1), -crate::model::class_sort(id), SPELL_QUESTS_BELOW],
-                |r| r.get(0),
-            )?
-            .collect::<rusqlite::Result<_>>()?;
-        let letters: Vec<String> = letters
-            .query_map([1i64 << (id - 1)], |r| r.get(0))?
-            .collect::<rusqlite::Result<_>>()?;
+        let names = crate::model::requirements::defaults(conn, id, SPELL_QUESTS_BELOW)?;
         let list = out.entry(key).or_default();
-        for name in names.into_iter().chain(letters) {
+        for name in names {
             if !list.contains(&name) {
                 list.push(name);
             }
@@ -413,25 +375,21 @@ pub fn race_classes(conn: &Connection, race_id: i64) -> Result<Vec<String>> {
 mod tests {
     use super::*;
 
-    /// The class quests teaching a spell join the configured ones, by level, once each name:
-    /// filed under the class (Forever's) or given to it only; removed quests, other classes' and
-    /// endgame ones do not.
+    /// The class requirements the database has are required by default, the endgame ones (their
+    /// quests from level 50 on) not; the configured ones come first.
     #[test]
-    fn class_quests_teaching_a_spell_are_required_by_default() {
+    fn class_requirements_are_required_by_default_unless_endgame() {
         let conn = Connection::open_in_memory().unwrap();
         conn.execute_batch(
             "CREATE TABLE client_chrclasses (ID, Filename);
              INSERT INTO client_chrclasses VALUES (2, 'PALADIN'), (3, 'HUNTER');
-             CREATE TABLE m_quest (id, name, level, min_level, classes_mask, zone_or_sort, status, reward_spell);
-             INSERT INTO m_quest VALUES
-               (1, 'The Tome of Divinity', 12, 12, 2, -141, 'available', 7328),
-               (2, 'The Tome of Nobility', 40, 40, 2, -141, 'available', 13819),
-               (3, 'A Lesson in Divinity', 12, 12, NULL, -141, 'available', 7328),
-               (4, 'A Lesson in Divinity', 12, 12, NULL, -141, 'available', NULL),
-               (5, 'The Tome of Valor', 20, 20, 2, -141, 'removed', 5502),
-               (6, 'Seeking the Kor Gem', 25, 25, 2, -141, 'available', NULL),
-               (8, 'Judgment and Redemption', 60, 60, 2, -141, 'available', 23214),
-               (7, 'Taming the Beast', 10, 10, 4, -261, 'available', 1515);",
+             CREATE TABLE m_class_requirement (id, class_id, name, spell_id, max_level, min_level, source);
+             INSERT INTO m_class_requirement VALUES
+               (1, 2, 'Redemption', 7328, NULL, 12, 'data'),
+               (2, 2, 'Summon Warhorse', 13819, NULL, 40, 'data'),
+               (3, 2, 'Summon Charger', 23214, NULL, 60, 'data'),
+               (4, 2, 'Encrypted Sigil', NULL, NULL, 1, 'data'),
+               (5, 3, 'Tame Beast', 1515, NULL, 10, 'data');",
         )
         .unwrap();
         let mut overrides = Overrides::default();
@@ -441,31 +399,14 @@ mod tests {
         let quests = class_quests(&conn, &overrides).unwrap();
         assert_eq!(
             quests["paladin"],
-            ["The Tome of Divinity", "A Lesson in Divinity", "The Tome of Nobility"]
+            [
+                "The Tome of Divinity",
+                "Encrypted Sigil",
+                "Redemption",
+                "Summon Warhorse"
+            ]
         );
-        assert_eq!(quests["hunter"], ["Taming the Beast"]);
-    }
-
-    /// The start zone's letter to the class trainer is required; a level 1 class quest turned in
-    /// elsewhere, or a later one at the trainer, is not.
-    #[test]
-    fn letters_to_the_class_trainer_are_required() {
-        let conn = Connection::open_in_memory().unwrap();
-        conn.execute_batch(
-            "CREATE TABLE client_chrclasses (ID, Filename);
-             INSERT INTO client_chrclasses VALUES (4, 'ROGUE');
-             CREATE TABLE m_quest (id, name, level, min_level, classes_mask, zone_or_sort, status, reward_spell);
-             CREATE TABLE m_quest_relation (quest_id, role, entity_type, entity_id);
-             CREATE TABLE m_npc (id, subname);
-             INSERT INTO m_npc VALUES (1, 'Rogue Trainer'), (2, NULL);
-             INSERT INTO m_quest VALUES (1, 'Encrypted Sigil', 1, 1, 8, NULL, 'available', NULL),
-                                        (2, 'Plain Errand', 1, 1, 8, NULL, 'available', NULL),
-                                        (3, 'The Deadliest Trap', 12, 12, 8, NULL, 'available', NULL);
-             INSERT INTO m_quest_relation VALUES (1, 'end', 'npc', 1), (2, 'end', 'npc', 2), (3, 'end', 'npc', 1);",
-        )
-        .unwrap();
-        let quests = class_quests(&conn, &Overrides::default()).unwrap();
-        assert_eq!(quests["rogue"], ["Encrypted Sigil"]);
+        assert_eq!(quests["hunter"], ["Tame Beast"]);
     }
 
     /// The factions available quests give reputation with, most quests first, with their side

@@ -2361,7 +2361,7 @@ fn group_class_quests_are_required() {
         .model
         .quests
         .iter()
-        .filter(|q| q.name == "Summon Felsteed")
+        .filter(|q| q.name == "Summon Felsteed" && q.reward_spell.is_some())
         .map(|q| q.mandatory)
         .collect();
     assert!(!felsteed.is_empty() && felsteed.iter().all(|&m| m), "{felsteed:?}");

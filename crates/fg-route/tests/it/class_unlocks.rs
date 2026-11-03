@@ -470,7 +470,7 @@ fn one_known_demon_keeps_the_shared_binding_power() {
             .class_powers
             .get_mut("warlock")
             .unwrap()
-            .retain(|(name, _)| name != "The Binding");
+            .retain(|(name, _)| name != "Summon Voidwalker");
         let mut req = request("undead", "warlock");
         req.from_level = 25;
         req.to_level = 26;
@@ -495,8 +495,8 @@ fn one_known_demon_keeps_the_shared_binding_power() {
     }
 }
 
-/// A character with two chains of one required class quest name, side by side: 1 then 2, and 3
-/// then 4 then 5, what each gives set by the caller. `scenario` adds to it.
+/// A character with two chains of one class quest, side by side: 1 then 2, and 3 then 4 then 5,
+/// what each gives set by the caller. `scenario` adds to it (the requirements).
 fn two_versions(
     first: impl Fn(Q) -> Q,
     second: impl Fn(Q) -> Q,
@@ -521,17 +521,22 @@ fn two_versions(
     .build()
 }
 
+/// Call of Air as the requirement of both chains: the last quest of each is a version.
+fn one_requirement(s: Scenario) -> Scenario {
+    s.requirement("Call of Air", &[2, 5])
+}
+
 fn exclusive_of(p: &job::Prepared, id: i64) -> Vec<i64> {
     let mut with = p.model.quests[p.model.index[&id]].exclusive.clone();
     with.sort_unstable();
     with
 }
 
-/// Chains of one name giving the same thing are one requirement: the route does one of them
-/// (Call of Fire's Searing Totem, 2984 to 1527 or 97243 to 97257), and that one is not missing.
+/// Two chains listed in one requirement are one requirement: the route does one of them (Call of
+/// Fire's Searing Totem, 1527 or 97257), and that one is not missing.
 #[test]
-fn class_quest_chains_giving_the_same_spell_are_one_requirement() {
-    let p = two_versions(|q| q.teaches(9), |q| q.teaches(9), |s| s);
+fn the_versions_of_a_class_requirement_are_done_once() {
+    let p = two_versions(|q| q, |q| q, one_requirement);
     assert_eq!(exclusive_of(&p, 1), [3, 4, 5]);
     assert_eq!(exclusive_of(&p, 5), [1, 2]);
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
@@ -544,40 +549,26 @@ fn class_quest_chains_giving_the_same_spell_are_one_requirement() {
     assert_eq!(planner.missing_class_quests(&route), Vec::<String>::new());
 }
 
-/// The same item is the same requirement too, whatever else the chains give (a choice of two).
-#[test]
-fn class_quest_chains_giving_the_same_item_are_one_requirement() {
-    let p = two_versions(|q| q.rewards(&[5178]), |q| q.rewards(&[5178, 263_412]), |s| s);
-    assert_eq!(exclusive_of(&p, 1), [3, 4, 5]);
-}
-
 /// The Binding: one name, a demon each. Each is a requirement of its own.
 #[test]
-fn class_quest_chains_giving_other_spells_or_items_stay_required() {
-    let spells = two_versions(|q| q.teaches(697), |q| q.teaches(712), |s| s);
-    let items = two_versions(|q| q.rewards(&[22_243]), |q| q.rewards(&[22_244]), |s| s);
-    for p in [spells, items] {
-        assert_eq!(exclusive_of(&p, 1), Vec::<i64>::new());
-        assert_eq!(exclusive_of(&p, 5), Vec::<i64>::new());
-        assert!(p.model.quests.iter().all(|q| q.mandatory));
-    }
-}
-
-/// Call of Air 96136 has no reward in the data: a chain with nothing known about its reward is
-/// the same requirement as one of its name turned in to the same NPC (Prate Cloudseer), not as
-/// one turned in to someone else.
-#[test]
-fn a_class_quest_chain_with_no_known_reward_goes_by_who_ends_it() {
-    let same = two_versions(|q| q.rewards(&[5178]).ended_by(5905), |q| q.ended_by(5905), |s| s);
-    assert_eq!(exclusive_of(&same, 1), [3, 4, 5]);
-    let other = two_versions(|q| q.rewards(&[5178]).ended_by(5905), |q| q.ended_by(6000), |s| s);
-    assert_eq!(exclusive_of(&other, 1), Vec::<i64>::new());
+fn class_quests_of_different_requirements_stay_required() {
+    let p = two_versions(
+        |q| q,
+        |q| q,
+        |s| {
+            s.requirement("Summon Voidwalker", &[2])
+                .requirement("Summon Succubus", &[5])
+        },
+    );
+    assert_eq!(exclusive_of(&p, 1), Vec::<i64>::new());
+    assert_eq!(exclusive_of(&p, 5), Vec::<i64>::new());
+    assert!(p.model.quests.iter().all(|q| q.mandatory));
 }
 
 /// A version the player asked for is the one done: the other is not required, and does not close it.
 #[test]
 fn a_must_have_version_of_a_class_quest_replaces_the_others() {
-    let p = two_versions(|q| q.teaches(9), |q| q.teaches(9), |s| s.required(5));
+    let p = two_versions(|q| q, |q| q, |s| one_requirement(s).required(5));
     let mandatory = |id: i64| p.model.quests[p.model.index[&id]].mandatory;
     assert!(!mandatory(1) && !mandatory(2));
     assert!(mandatory(3) && mandatory(5));
@@ -587,14 +578,14 @@ fn a_must_have_version_of_a_class_quest_replaces_the_others() {
 /// In a group, a version only one player can take is no substitute for the one everyone can.
 #[test]
 fn versions_of_a_class_quest_for_other_players_stay_required() {
-    let p = two_versions(|q| q.teaches(9).members(0b01), |q| q.teaches(9).members(0b11), |s| s);
+    let p = two_versions(|q| q.members(0b01), |q| q.members(0b11), one_requirement);
     assert_eq!(exclusive_of(&p, 5), Vec::<i64>::new());
 }
 
 /// A chain that cannot be finished is no alternative: the other stays required.
 #[test]
 fn a_class_quest_chain_that_cannot_be_finished_closes_nothing() {
-    let p = two_versions(|q| q.teaches(9).after(&[999]), |q| q.teaches(9), |s| s);
+    let p = two_versions(|q| q.after(&[999]), |q| q, one_requirement);
     assert_eq!(exclusive_of(&p, 3), Vec::<i64>::new());
     assert!(p.model.quests[p.model.index[&5]].mandatory);
 }
@@ -614,7 +605,6 @@ fn same_name_class_quests_in_the_real_data() {
     let linked = |p: &job::Prepared, a: i64, b: i64| exclusive_of(p, a).contains(&b) && exclusive_of(p, b).contains(&a);
     let shaman = prepared("skyborne_horde", "shaman", 60);
     assert!(linked(&shaman, 1527, 97257), "Call of Fire: the same Searing Totem");
-    assert!(linked(&shaman, 2984, 97243), "from the start of each chain");
     assert!(linked(&shaman, 1532, 96136), "Call of Air: 96136 has no reward row");
     assert!(linked(&shaman, 1531, 96136), "Call of Air");
     let priest = prepared("human", "priest", 20);
@@ -654,9 +644,9 @@ fn every_race_the_game_allows_can_take_each_voidwalker_version() {
     assert!(!troll.model.index.contains_key(&1471), "troll: not Undercity's");
 }
 
-/// Call of Earth in the real data: each Horde shaman chooses between Durotar's and Mulgore's, the
-/// Skyborne also their own, for one Earth Totem. Each step closes the others once taken. The game
-/// lets either first step lead to either second one.
+/// Call of Earth in the real data: each Horde shaman chooses between Durotar's and Mulgore's
+/// (the Troll has Durotar's second step only), for one Earth Totem; the Skyborne have their own.
+/// Each version closes the others once taken.
 #[test]
 fn every_horde_shaman_can_take_each_version_of_call_of_earth() {
     let conn = database_of("forever");
@@ -670,21 +660,15 @@ fn every_horde_shaman_can_take_each_version_of_call_of_earth() {
             assert!(exclusive_of(&p, a).contains(&b), "{race}: {a} closes {b}");
             assert!(exclusive_of(&p, b).contains(&a), "{race}: {b} closes {a}");
         };
-        closes(1516, 1519);
-        for (a, b) in [(1517, 1520), (1517, 1521), (1518, 1520), (1518, 1521)] {
-            closes(a, b);
-        }
         if race == "skyborne_horde" {
-            for (a, b) in [
-                (92466, 1516),
-                (92466, 1519),
-                (92467, 1517),
-                (92467, 1520),
-                (92468, 1518),
-                (92468, 1521),
-            ] {
-                closes(a, b);
-            }
+            assert!(!p.model.index.contains_key(&1518), "{race}: not the old chain");
+            let earth = p.model.quests[p.model.index[&92468]].mandatory;
+            assert!(earth, "{race}: its own Call of Earth");
+            continue;
+        }
+        closes(1518, 1521);
+        if race != "troll" {
+            closes(1516, 1519);
         }
     }
 }
@@ -692,7 +676,7 @@ fn every_horde_shaman_can_take_each_version_of_call_of_earth() {
 /// A forced zone wants its quests: the version there is the one done.
 #[test]
 fn a_version_of_a_class_quest_in_a_forced_zone_replaces_the_others() {
-    let p = two_versions(|q| q.teaches(9).zone_forced(), |q| q.teaches(9), |s| s);
+    let p = two_versions(|q| q.zone_forced(), |q| q, one_requirement);
     let mandatory = |id: i64| p.model.quests[p.model.index[&id]].mandatory;
     assert!(mandatory(1) && mandatory(2), "the version in the zone");
     assert!(!mandatory(3) && !mandatory(4) && !mandatory(5), "the other");
@@ -767,16 +751,17 @@ fn one_spell_by_two_names(extra: impl Fn(Scenario) -> Scenario) -> job::Prepared
     extra(
         Scenario::new()
             .levels(1, 3)
+            .requirement("Defensive Stance", &[2, 3])
             .quest(step(1, "Path of Defense"))
-            .quest(step(2, "Bartleby's Mug").after_any(&[1]).teaches(9))
-            .quest(step(3, "The Skybreaker Bulwark").teaches(9)),
+            .quest(step(2, "Bartleby's Mug").after_any(&[1]))
+            .quest(step(3, "The Skybreaker Bulwark")),
     )
     .build()
 }
 
-/// The same spell under another name is another version, the quests leading to it closed with it.
+/// A requirement lists quests of any names: another version, the quests leading to it closed with it.
 #[test]
-fn class_quests_of_other_names_teaching_one_spell_are_versions() {
+fn class_quests_of_other_names_listed_in_one_requirement_are_versions() {
     let p = one_spell_by_two_names(|s| s);
     assert_eq!(exclusive_of(&p, 3), vec![1, 2]);
     assert_eq!(exclusive_of(&p, 2), vec![3]);
@@ -787,13 +772,12 @@ fn class_quests_of_other_names_teaching_one_spell_are_versions() {
 #[test]
 fn a_prerequisite_something_else_needs_is_not_closed_with_a_version() {
     let p = one_spell_by_two_names(|s| {
-        s.quest(
+        s.requirement("Other", &[4]).quest(
             Q::new(4, "Other")
                 .mandatory()
                 .xp(100)
                 .giver(1, 44.0, 40.0)
-                .after_any(&[1])
-                .teaches(10),
+                .after_any(&[1]),
         )
     });
     assert_eq!(exclusive_of(&p, 3), vec![2]);

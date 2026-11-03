@@ -338,7 +338,13 @@ fn class_quest_ids(
     let mut ids: HashSet<_> = rows
         .iter()
         .filter(|r| profile.class_ids().iter().any(|c| r.of_class(*c)))
-        .filter(|r| profile.required_class_quests.contains(&r.name) || reward_quests.contains(&r.id))
+        .filter(|r| {
+            profile
+                .class_requirements
+                .iter()
+                .any(|c| c.selected && c.quests.contains(&r.id))
+                || reward_quests.contains(&r.id)
+        })
         .filter(|r| !known.contains(&r.id))
         .filter(|r| {
             reward_quests.contains(&r.id)

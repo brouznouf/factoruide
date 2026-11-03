@@ -18,6 +18,7 @@ mod places;
 mod pvp;
 mod quest;
 mod required;
+pub mod requirements;
 mod rewards;
 mod selection;
 mod sources;
@@ -25,16 +26,16 @@ mod sources;
 pub mod testing;
 mod types;
 
-pub(crate) use chains::{class_sort, required_by_name};
+pub(crate) use chains::class_sort;
 pub use farm::{FarmMobs, Met};
 pub use givers::{Dropper, UNKNOWN_START_CHANCE, assumed_start_chance};
 pub use guard::Guards;
 pub use loot::CommonLoot;
 pub use names::Names;
 pub use types::{
-    CompletionWindow, Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Mate, MateStart, Model,
-    Objective, ObjectiveOrder, ProfessionPlan, Profile, Quest, QuestOverride, QuestRequirement, Spots, Teleport,
-    TeleportDef, Vendor, race_bit,
+    ClassRequirement, CompletionWindow, Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Mate,
+    MateStart, Model, Objective, ObjectiveOrder, ProfessionPlan, Profile, Quest, QuestOverride, QuestRequirement,
+    Spots, Teleport, TeleportDef, Vendor, race_bit,
 };
 
 use crate::params::Params;
@@ -155,6 +156,7 @@ pub fn load(
         params,
         &known_prerequisites,
         &profile.completed_quests,
+        &profile.class_requirements,
     );
     let loot = CommonLoot::load(conn, &mut quests)?;
     let levels = dungeon_levels(conn, &profile.dungeons)?;
@@ -230,10 +232,11 @@ pub fn load(
         .iter()
         .enumerate()
         .filter(|(_, (name, _))| {
-            sources
-                .rows
-                .iter()
-                .any(|q| &q.name == name && abilities.quest(q.id) & own_knowledge != 0)
+            // The quests of the requirement of that name (a pet, a form) give the power.
+            (profile.class_requirements.iter())
+                .filter(|c| &c.name == name)
+                .flat_map(|c| &c.quests)
+                .any(|id| abilities.quest(*id) & own_knowledge != 0)
         })
         .fold(0, |bits, (k, _)| bits | (1 << k));
     Ok(Model {
@@ -287,9 +290,9 @@ pub(crate) fn settle_quests(
     params: &Params,
     known: &HashSet<i64>,
     completed: &HashSet<i64>,
+    requirements: &[ClassRequirement],
 ) {
-    chains::narrow_class_quests_to_spells(quests, params.all_class_quests);
-    let versions = chains::class_quest_versions(quests, params.all_class_quests);
+    let versions = chains::class_quest_versions(quests, requirements, params.all_class_quests);
     for q in quests.iter_mut() {
         let forced = |d: usize| params.forced_dungeon_quests.contains(&dungeons[d].area);
         q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
