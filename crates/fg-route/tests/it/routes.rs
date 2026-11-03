@@ -1244,7 +1244,7 @@ in_each_edition!(coldridge_valley_is_left_by_its_tunnel, coldridge_valley_is_lef
 /// Darkwhisper Gorge, even from Felwood just below its western rim.
 #[test]
 fn mount_hyjal_is_reached_by_darkwhisper_gorge() {
-    let w = crate::common::world(Edition::Forever, fg_route::faction::Faction::Horde);
+    let w = &crate::common::terrain_world(Edition::Forever, fg_route::faction::Faction::Horde, &["forever_hyjal_terrain"]);
     let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
     let gorge = at(618, 56.5, 71.6);
     let (west, foothills) = (at(616, 12.8, 52.4), at(616, 55.1, 82.6));
@@ -3190,7 +3190,7 @@ fn zephras_watchtower_is_climbed() {
         params: Some(overrides.params.with_overrides(&[]).unwrap()),
         ..request("skyborne", "mage", 5, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_zephras_terrain").file("forever_anchors_of_zephras").open(), &overrides, &request, &|_| {}).unwrap();
     let q = &p.model.quests[quest(&p, 94414).expect("The Anchors of Zephras planned") as usize];
     let halaan = &q.starts[0].pos;
     assert_eq!(halaan.z, Some(1020));

@@ -366,6 +366,22 @@ impl Fixture {
                 .unwrap_or_else(std::sync::PoisonError::into_inner)
                 .insert(key, std::sync::Arc::new(data));
         }
+        // `FG_SLOW=5` prints the statements that take 5 ms or more.
+        if let Some(ms) = std::env::var("FG_SLOW").ok().and_then(|v| v.parse::<u128>().ok()) {
+            static LIMIT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(0);
+            LIMIT.store(ms as u64, std::sync::atomic::Ordering::Relaxed);
+            let _ = conn.trace_v2(
+                rusqlite::trace::TraceEventCodes::SQLITE_TRACE_PROFILE,
+                Some(|event: rusqlite::trace::TraceEvent<'_>| {
+                    if let rusqlite::trace::TraceEvent::Profile(statement, took) = event
+                        && took.as_millis() >= u128::from(LIMIT.load(std::sync::atomic::Ordering::Relaxed))
+                    {
+                        let line: String = statement.sql().split_whitespace().collect::<Vec<_>>().join(" ");
+                        eprintln!("SLOW {:>4} ms  {}", took.as_millis(), line.chars().take(150).collect::<String>());
+                    }
+                }),
+            );
+        }
         // `FG_TRACE=1` prints every statement the code under test runs on it.
         if std::env::var_os("FG_TRACE").is_some() {
             let _ = conn.trace_v2(

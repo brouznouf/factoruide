@@ -869,15 +869,21 @@ pub(crate) struct MapArea {
 pub(crate) fn map_areas(conn: &Connection) -> Result<std::sync::Arc<Vec<MapArea>>> {
     crate::memo::rows(conn, "map areas", 0, || {
         let mut stmt = conn.prepare(
-            "SELECT t.ID, a.AreaID, t.AreaName_lang, coalesce(t.ExplorationLevel, 0),
+            // One row per area of an overlay (a join on `IN (AreaID_0, ...)` reads the whole table
+            // of areas for each overlay: 150 ms).
+            "WITH overlay_area(overlay, area) AS (
+               SELECT ID, AreaID_0 FROM client_worldmapoverlay UNION SELECT ID, AreaID_1 FROM client_worldmapoverlay
+               UNION SELECT ID, AreaID_2 FROM client_worldmapoverlay UNION SELECT ID, AreaID_3 FROM client_worldmapoverlay)
+             SELECT t.ID, a.AreaID, t.AreaName_lang, coalesce(t.ExplorationLevel, 0),
                     (o.OffsetX + o.TextureWidth / 2.0) * 100.0 / l.LayerWidth,
                     (o.OffsetY + o.TextureHeight / 2.0) * 100.0 / l.LayerHeight
-             FROM client_worldmapoverlay o
+             FROM overlay_area oa
+             JOIN client_worldmapoverlay o ON o.ID = oa.overlay
              JOIN client_uimapxmapart x ON x.UiMapArtID = o.UiMapArtID
              JOIN client_uimapart ua ON ua.ID = o.UiMapArtID
              JOIN client_uimapartstylelayer l ON l.UiMapArtStyleID = ua.UiMapArtStyleID AND l.LayerIndex = 0
              JOIN client_uimapassignment a ON a.UiMapID = x.UiMapID AND a.OrderIndex = 0
-             JOIN client_areatable t ON t.ID IN (o.AreaID_0, o.AreaID_1, o.AreaID_2, o.AreaID_3)",
+             JOIN client_areatable t ON t.ID = oa.area",
         )?;
         let rows = stmt.query_map([], |r| {
             Ok(MapArea {
