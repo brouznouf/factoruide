@@ -15,6 +15,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Guides
 
 - Versions of a class quest count once, for every class: chains of one name giving the same spell or item, and quests of any names teaching the same spell. The Skyborne Horde shaman does one Call of Fire and one Call of Air, the human priest one Divine Grace, the gnome priest one Confounding Flash, the Skyborne warrior one Defensive Stance. Taking a version closes the others; the search can change which one a route takes (GitHub #110).
+- A summoned creature is fought where its quest says to summon it: The Binding's demons at the quest's own circle, in Orgrimmar or Undercity, not in another city (GitHub #110).
 - WoW Forever data: each Horde shaman can take any Call of Earth, orc and undead warlocks either voidwalker quest, troll warlocks Orgrimmar's (GitHub #110).
 - A quest started by an item found in a dungeon's object is planned with the run and taken in it: WoW Forever's The Treaty of Understanding, from the Hall of Thanes.
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
