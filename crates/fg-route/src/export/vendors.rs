@@ -92,7 +92,9 @@ pub(super) fn add_tries(writer: &StepWriter<'_>, steps: &mut Vec<Step>, xps: &mu
             .map_or(steps.len(), |t| i + t);
         let n = Arg::Num(o.count.round().max(1.0) as i64);
         for (j, shop) in passed_by(steps, start..end, i, &shops) {
-            let at = &steps[j];
+            let index = offer_index(steps, j);
+            // The level and time of the step it follows.
+            let at = &steps[index - 1];
             let mut offer = Step::bare(StepKind::Objective, at.level, at.time);
             offer.quest = Some(q);
             offer.quest_name.clone_from(&step.quest_name);
@@ -122,7 +124,7 @@ pub(super) fn add_tries(writer: &StepWriter<'_>, steps: &mut Vec<Step>, xps: &mu
                 );
             }
             writer.put_at(&mut offer, &shop.pos, shop.zone);
-            tries.push((j + 1, offer));
+            tries.push((index, offer));
         }
     }
     for i in limited {
@@ -154,6 +156,16 @@ fn passed_by<'s>(
         })
         .take(MAX_TRIES)
         .collect()
+}
+
+/// Where the offer for the shop passed by at step `j` goes in the guide: after it, but before a
+/// flight or a link (boat, zeppelin, shortcut), whose place is where it starts: the character
+/// has left by the time it is done.
+fn offer_index(steps: &[Step], j: usize) -> usize {
+    match steps[j].kind {
+        StepKind::Fly | StepKind::Link if j > 0 => j,
+        _ => j + 1,
+    }
 }
 
 /// Whether a step at `world` ([continent, x, y]) passes by `pos`.
@@ -209,5 +221,26 @@ mod tests {
             .map(|(j, v)| (*j, v.who[0].0))
             .collect();
         assert_eq!(found, vec![(2, 1), (1, 3)]);
+    }
+
+    /// A flight or a link is placed where it starts and done where it ends: the offer for a shop
+    /// at its start comes before it. Any other step is done where it is placed: the offer follows.
+    #[test]
+    fn offers_come_before_the_trips_they_pass_by() {
+        let kinds = [
+            StepKind::Accept,
+            StepKind::Fly,
+            StepKind::Link,
+            StepKind::Hearth,
+            StepKind::Teleport,
+            StepKind::TurnIn,
+        ];
+        let steps: Vec<Step> = kinds.iter().map(|&k| Step::bare(k, 20, 0.0)).collect();
+        let index: Vec<usize> = (0..steps.len()).map(|j| offer_index(&steps, j)).collect();
+        // The hearthstone and the teleport are placed where they end: the offer follows them.
+        assert_eq!(index, vec![1, 1, 2, 4, 5, 6]);
+        // Nothing before a trip that starts the guide.
+        let first = [Step::bare(StepKind::Fly, 20, 0.0)];
+        assert_eq!(offer_index(&first, 0), 1);
     }
 }
