@@ -624,3 +624,178 @@ fn same_name_class_quests_in_the_real_data() {
         assert!(!linked(&warlock, a, b), "The Binding: {a} and {b} are other demons");
     }
 }
+
+/// The voidwalker in the real data: an orc or undead warlock chooses between Orgrimmar's and
+/// Undercity's, closed once one is taken; a troll has Orgrimmar's only (Forever's sources agree).
+#[test]
+fn every_race_the_game_allows_can_take_each_voidwalker_version() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let prepared = |race: &str| {
+        let mut req = request(race, "warlock");
+        req.required_class_quests = None;
+        req.to_level = 20;
+        job::prepare(&conn, &overrides, &req, &|_| {}).unwrap()
+    };
+    for race in ["orc", "undead"] {
+        let p = prepared(race);
+        for (orgrimmar, undercity) in [(1501, 1473), (1504, 1471)] {
+            assert!(p.model.index.contains_key(&orgrimmar), "{race}: {orgrimmar}");
+            assert!(p.model.index.contains_key(&undercity), "{race}: {undercity}");
+            assert!(exclusive_of(&p, orgrimmar).contains(&undercity), "{race}: {orgrimmar}");
+            assert!(exclusive_of(&p, undercity).contains(&orgrimmar), "{race}: {undercity}");
+        }
+    }
+    let troll = prepared("troll");
+    assert!(
+        troll.model.quests[troll.model.index[&1504]].mandatory,
+        "troll: Orgrimmar's"
+    );
+    assert!(!troll.model.index.contains_key(&1471), "troll: not Undercity's");
+}
+
+/// Call of Earth in the real data: each Horde shaman chooses between Durotar's and Mulgore's, the
+/// Skyborne also their own, for one Earth Totem. Each step closes the others once taken. The game
+/// lets either first step lead to either second one.
+#[test]
+fn every_horde_shaman_can_take_each_version_of_call_of_earth() {
+    let conn = database_of("forever");
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    for race in ["orc", "troll", "tauren", "skyborne_horde"] {
+        let mut req = request(race, "shaman");
+        req.required_class_quests = None;
+        req.to_level = 20;
+        let p = job::prepare(&conn, &overrides, &req, &|_| {}).unwrap();
+        let closes = |a: i64, b: i64| {
+            assert!(exclusive_of(&p, a).contains(&b), "{race}: {a} closes {b}");
+            assert!(exclusive_of(&p, b).contains(&a), "{race}: {b} closes {a}");
+        };
+        closes(1516, 1519);
+        for (a, b) in [(1517, 1520), (1517, 1521), (1518, 1520), (1518, 1521)] {
+            closes(a, b);
+        }
+        if race == "skyborne_horde" {
+            for (a, b) in [
+                (92466, 1516),
+                (92466, 1519),
+                (92467, 1517),
+                (92467, 1520),
+                (92468, 1518),
+                (92468, 1521),
+            ] {
+                closes(a, b);
+            }
+        }
+    }
+}
+
+/// A forced zone wants its quests: the version there is the one done.
+#[test]
+fn a_version_of_a_class_quest_in_a_forced_zone_replaces_the_others() {
+    let p = two_versions(|q| q.teaches(9).zone_forced(), |q| q.teaches(9), |s| s);
+    let mandatory = |id: i64| p.model.quests[p.model.index[&id]].mandatory;
+    assert!(mandatory(1) && mandatory(2), "the version in the zone");
+    assert!(!mandatory(3) && !mandatory(4) && !mandatory(5), "the other");
+    assert_eq!(exclusive_of(&p, 2), Vec::<i64>::new());
+}
+
+/// Every race and class in the real data: no spell is required twice. Quests teaching it are
+/// versions, each closing the others once taken.
+#[test]
+fn no_race_and_class_is_required_to_learn_a_spell_twice() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let races = [
+        "human",
+        "orc",
+        "dwarf",
+        "nightelf",
+        "undead",
+        "tauren",
+        "gnome",
+        "troll",
+        "skyborne",
+        "skyborne_horde",
+    ];
+    let classes = [
+        "warrior", "paladin", "hunter", "rogue", "priest", "shaman", "mage", "warlock", "druid",
+    ];
+    let doubles = std::thread::scope(|scope| {
+        let of_class = |class: &'static str| {
+            let overrides = &overrides;
+            scope.spawn(move || {
+                let conn = database_of("forever");
+                let mut doubles = Vec::new();
+                for race in races {
+                    let mut req = request(race, class);
+                    req.required_class_quests = None;
+                    req.to_level = 60;
+                    let Ok(p) = job::prepare(&conn, overrides, &req, &|_| {}) else {
+                        continue; // Not a class of this race.
+                    };
+                    let teaching: Vec<_> = (p.model.quests.iter())
+                        .filter(|q| q.mandatory && q.reward_spell.is_some())
+                        .collect();
+                    for a in &teaching {
+                        for b in teaching
+                            .iter()
+                            .filter(|b| a.id < b.id && a.reward_spell == b.reward_spell)
+                        {
+                            // Two steps of one path (Returning Home before Stars of Elune).
+                            let needs = |q: &fg_route::model::Quest, id: i64| {
+                                q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held).any(|&p| p == id)
+                            };
+                            if needs(a, b.id) || needs(b, a.id) {
+                                continue;
+                            }
+                            if !a.exclusive.contains(&b.id) || !b.exclusive.contains(&a.id) {
+                                doubles.push(format!("{race} {class}: {} {} and {}", a.name, a.id, b.id));
+                            }
+                        }
+                    }
+                }
+                doubles
+            })
+        };
+        let running: Vec<_> = classes.map(of_class).into_iter().collect();
+        running.into_iter().flat_map(|t| t.join().unwrap()).collect::<Vec<_>>()
+    });
+    assert_eq!(doubles, Vec::<String>::new());
+}
+
+fn one_spell_by_two_names(extra: impl Fn(Scenario) -> Scenario) -> job::Prepared {
+    let step = |id, name: &str| Q::new(id, name).mandatory().xp(100).giver(1, 40.0 + id as f64, 40.0);
+    extra(
+        Scenario::new()
+            .levels(1, 3)
+            .quest(step(1, "Path of Defense"))
+            .quest(step(2, "Bartleby's Mug").after_any(&[1]).teaches(9))
+            .quest(step(3, "The Skybreaker Bulwark").teaches(9)),
+    )
+    .build()
+}
+
+/// The same spell under another name is another version, the quests leading to it closed with it.
+#[test]
+fn class_quests_of_other_names_teaching_one_spell_are_versions() {
+    let p = one_spell_by_two_names(|s| s);
+    assert_eq!(exclusive_of(&p, 3), vec![1, 2]);
+    assert_eq!(exclusive_of(&p, 2), vec![3]);
+    assert_eq!(exclusive_of(&p, 1), vec![3]);
+}
+
+/// A quest another requirement needs stays open: taking the other version must not close it.
+#[test]
+fn a_prerequisite_something_else_needs_is_not_closed_with_a_version() {
+    let p = one_spell_by_two_names(|s| {
+        s.quest(
+            Q::new(4, "Other")
+                .mandatory()
+                .xp(100)
+                .giver(1, 44.0, 40.0)
+                .after_any(&[1])
+                .teaches(10),
+        )
+    });
+    assert_eq!(exclusive_of(&p, 3), vec![2]);
+    assert_eq!(exclusive_of(&p, 1), Vec::<i64>::new());
+}

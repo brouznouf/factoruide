@@ -671,7 +671,7 @@ impl Planner<'_> {
     }
 
     /// How many quests come before each one in its chain (prerequisites of prerequisites...).
-    fn chain_depths(&self) -> Vec<u32> {
+    pub(super) fn chain_depths(&self) -> Vec<u32> {
         fn of(
             i: usize,
             quests: &[crate::model::Quest],
@@ -759,7 +759,7 @@ impl Planner<'_> {
     }
 
     /// Where quest `q`'s stop is in the route.
-    fn position_of(route: &[Stop], q: u32, kind: Kind) -> Option<usize> {
+    pub(super) fn position_of(route: &[Stop], q: u32, kind: Kind) -> Option<usize> {
         route.iter().position(|s| *s == Stop::quest(q, kind))
     }
 

@@ -327,6 +327,11 @@ impl Q {
         self
     }
 
+    pub fn zone_forced(mut self) -> Self {
+        self.quest.zone_forced = true;
+        self
+    }
+
     pub fn mandatory(mut self) -> Self {
         self.quest.mandatory = true;
         self
