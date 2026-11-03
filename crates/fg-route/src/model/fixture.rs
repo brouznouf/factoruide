@@ -159,6 +159,8 @@ struct Quest {
     special_flags: Option<i64>,
     /// `available` (default), `removed` or `incomplete`.
     status: Option<String>,
+    /// What the quest asks, in words.
+    objectives_text: Option<String>,
     /// The JSON the sources add to the quest (an escort's `trigger_end`).
     extra: Option<String>,
     /// The JSON of what the quest requires.
@@ -463,8 +465,8 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
     conn.execute(
         "INSERT INTO m_quest (id, name, level, min_level, max_level, races_mask, classes_mask, zone_or_sort, source_item_id, next_in_chain, \
          breadcrumb_for, parent_quest, quest_flags, special_flags, required_skill_id, required_spell, sources, status, hidden, in_client, \
-         time_limit, xp, reward_spell, xp_observed, extra, requirements) \
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, 'fixture', ?17, 0, 1, ?18, ?19, ?20, 1, ?21, ?22)",
+         time_limit, xp, reward_spell, xp_observed, extra, requirements, objectives_text) \
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, 'fixture', ?17, 0, 1, ?18, ?19, ?20, 1, ?21, ?22, ?23)",
         params![
             q.id,
             text(&q.name, || format!("Quest {}", q.id)),
@@ -488,6 +490,7 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
             q.reward_spell,
             q.extra,
             q.requirements,
+            q.objectives_text,
         ],
     )?;
     let relation = |role: &str, kind: &str, id: i64| {
