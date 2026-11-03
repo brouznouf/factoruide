@@ -76,7 +76,7 @@ fn prepare_request(request: &PlanRequest) -> Prepared {
 
 /// The Classic database of these tests: the quests they name (`tests/fixtures/`).
 fn database() -> Connection {
-    fixture(&["classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
+    fixture(&["classic_tirisfal", "classic_aged_envelope", "classic_cutting_teeth_in_french_and_german", "classic_auction_houses", "classic_vendors_of_a_ring", "classic_routes", "classic_orc_warlock", "classic_valley", "classic_northshire"])
 }
 
 /// A Classic database of the fixtures' files (`tests/fixtures/<name>.toml`).
