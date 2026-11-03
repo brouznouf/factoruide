@@ -542,7 +542,7 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
         });
         conn.execute(
             "INSERT INTO m_quest_objective (quest_id, idx, type, target_id, amount, text, extra, source) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'fixture')",
-            params![q.id, idx as i64 + 1, kind, target, o.amount.unwrap_or(1), o.trigger, extra],
+            params![q.id, idx as i64 + 1, kind, target, o.amount, o.trigger, extra],
         )?;
     }
     for r in &q.rewards {

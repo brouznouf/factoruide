@@ -1,0 +1,73 @@
+# A book for the library: The Dalaran Digest (78127) is offered while its book (209844) is in the bags.
+
+[[npc]]
+id = 958
+name = "Dawn Brightstar"
+level = 35
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 12, x = 64.88, y = 69.19, z = 99 }]
+
+[[npc]]
+id = 983
+name = "Thultazor"
+level = 45
+npc_flags = 4
+friendly_to = "H"
+at = [{ zone = 8, x = 45.78, y = 52.82, z = 21 }]
+
+[[npc]]
+id = 1257
+name = "Keldric Boucher"
+level = 30
+npc_flags = 5
+friendly_to = "A"
+at = [{ zone = 1519, x = 55.0, y = 65.2 }, { zone = 1519, x = 55.8, y = 65.2 }, { zone = 1519, x = 62.8, y = 75.03, z = 96 }]
+
+[[npc]]
+id = 211022
+name = "Owen Thadd"
+level = 40
+friendly_to = "H"
+at = [{ zone = 1497, x = 73.4, y = 33.0 }]
+
+[[npc]]
+id = 211033
+name = "Garion Wendell"
+level = 60
+friendly_to = "A"
+at = [{ zone = 1519, x = 48.94, y = 86.54 }]
+
+[[object]]
+id = 409501
+name = "Dalaran Digest"
+at = [{ zone = 130, x = 63.5, y = 63.2 }]
+
+[[item]]
+id = 209844
+name = "The Dalaran Digest, Vol. 23"
+level = 1
+class = 0
+drops = [{ object = 409501 }]
+
+[[item]]
+id = 211779
+name = "Comprehension Charm"
+level = 1
+class = 15
+drops = [{ vendor = 958 }, { vendor = 983 }, { vendor = 1257 }]
+
+[[quest]]
+id = 78127
+name = "The Dalaran Digest"
+level = 20
+xp = 155
+objectives_text = "Have you brought something to add to our collection?"
+requirements = "[\"The Dalaran Digest, Vol. 23\"]"
+starts = [{ item = 209844 }, { npc = 211022 }, { npc = 211033 }]
+ends = [{ npc = 211022 }, { npc = 211033 }]
+objectives = [
+  { item = 209844, amount = 1 },
+]
+rewards = [{ item = 211779, count = 1, choice = true }]
+

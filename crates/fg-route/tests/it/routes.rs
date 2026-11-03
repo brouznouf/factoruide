@@ -2769,7 +2769,7 @@ fn city_of_dalaran_has_a_door_for_each_faction() {
             params: Some(overrides.params.with_overrides(&[]).unwrap()),
             ..request(race, "mage", 40, &[])
         };
-        let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+        let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_dalaran").open(), &overrides, &request, &|_| {}).unwrap();
         let dalaran = p
             .model
             .dungeons
@@ -2799,7 +2799,7 @@ fn library_book_is_looted_before_the_librarian() {
         params: Some(overrides.params.with_overrides(&["zone_gap=0".to_owned()]).unwrap()),
         ..request("human", "mage", 30, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_library_book").open(), &overrides, &request, &|_| {}).unwrap();
     let digest = quest(&p, 78127).expect("The Dalaran Digest planned");
     let q = &p.model.quests[digest as usize];
     assert_eq!(q.held, Some(209844), "offered for The Dalaran Digest, Vol. 23");
@@ -3469,7 +3469,7 @@ fn rare_books_asked_for_are_planned_with_one_of_each_book() {
         required_quests: vec![job::RequiredQuest::Id(91777)],
         ..request("human", "warrior", 12, &[])
     };
-    let p = job::prepare(&database_of("forever"), &overrides, &request, &|_| {}).unwrap();
+    let p = job::prepare(&Fixture::new(Edition::Forever).file("forever_services").file("forever_rare_books").open(), &overrides, &request, &|_| {}).unwrap();
     let counts = |id: i64| {
         let q = &p.model.quests[quest(&p, id).unwrap_or_else(|| panic!("{id} planned")) as usize];
         q.objectives.iter().map(|o| (o.loc.id, o.count)).collect::<Vec<_>>()
