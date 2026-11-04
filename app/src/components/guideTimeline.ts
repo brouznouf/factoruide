@@ -39,9 +39,9 @@ export function buildCards(steps: Step[], fromLevel: number): Card[] {
   steps.forEach((s, i) => {
     const last = cards[cards.length - 1];
     const travel = TRAVEL_KINDS.has(s.kind);
-    // Checkpoints, quests abandoned (no place) and quests done in a dungeon belong to the card
-    // before. A step without a place yet (edited, not replayed) keeps its own.
-    if (last && (isCheckpoint(s) || (s.kind === "abandon" && !s.world) || s.inside)) {
+    // Checkpoints and quests abandoned (no place) belong to the card before. A step without a
+    // place yet (edited, not replayed) keeps its own.
+    if (last && (isCheckpoint(s) || (s.kind === "abandon" && !s.world))) {
       last.last = i;
       last.end = s.time;
       last.farm += s.farm ?? 0;

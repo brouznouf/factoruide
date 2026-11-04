@@ -1,21 +1,26 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import type { MapInfo, Step } from "../api";
 import { useT } from "../i18n";
-import type { Card } from "./guideTimeline";
 import { loadImage, loadIndex } from "./WorldMap";
 
-/** The dungeon of a card: the name of the dungeon its steps are done in (null: none of them). */
-export function dungeonOf(steps: Step[], card: Card | undefined): string | null {
-  if (!card) return null;
-  for (let i = card.first; i <= card.last; i++) if (steps[i].inside) return steps[i].zone ?? null;
+/** The steps of a dungeon in the guide: its entrance, then those done inside it. */
+export interface Block {
+  first: number;
+  last: number;
+}
+
+/** The name of the dungeon of a block's steps (null: none is done inside one). */
+export function dungeonOf(steps: Step[], block: Block | undefined): string | null {
+  if (!block) return null;
+  for (let i = block.first; i <= block.last; i++) if (steps[i].inside) return steps[i].zone ?? null;
   return null;
 }
 
 /** The floors of a dungeon: the maps its steps are placed on, and those of its name (a dungeon
  * whose steps have no place), by floor. */
-export function floorsOf(index: MapInfo[], steps: Step[], card: Card, name: string): MapInfo[] {
+export function floorsOf(index: MapInfo[], steps: Step[], block: Block, name: string): MapInfo[] {
   const placed = new Set<number>();
-  for (let i = card.first; i <= card.last; i++) {
+  for (let i = block.first; i <= block.last; i++) {
     const f = steps[i].floor;
     if (f) placed.add(f.ui_map);
   }
@@ -24,8 +29,8 @@ export function floorsOf(index: MapInfo[], steps: Step[], card: Card, name: stri
 
 interface Props {
   steps: Step[];
-  /** The card of the dungeon (its entrance, then the steps done inside). */
-  card: Card;
+  /** The dungeon's steps (its entrance, then those done inside). */
+  block: Block;
   /** The step under way (index in `steps`). */
   step: number;
   /** A step of the dungeon chosen in its list. */
@@ -41,7 +46,7 @@ interface Props {
  * (or one chosen), its steps numbered in their order, and their list beside it (the only place of
  * the steps of a dungeon none of whose places is known).
  */
-export function DungeonMap({ steps, card, step, onStep, onBack, status }: Props) {
+export function DungeonMap({ steps, block, step, onStep, onBack, status }: Props) {
   const t = useT();
   const [index, setIndex] = useState<MapInfo[] | null>(null);
   useEffect(() => {
@@ -49,9 +54,9 @@ export function DungeonMap({ steps, card, step, onStep, onBack, status }: Props)
       .then(setIndex)
       .catch(() => setIndex([]));
   }, []);
-  const name = dungeonOf(steps, card) ?? "";
-  const floors = useMemo(() => (index ? floorsOf(index, steps, card, name) : []), [index, steps, card, name]);
-  const list = useMemo(() => Array.from({ length: card.last - card.first + 1 }, (_, k) => card.first + k), [card]);
+  const name = dungeonOf(steps, block) ?? "";
+  const floors = useMemo(() => (index ? floorsOf(index, steps, block, name) : []), [index, steps, block, name]);
+  const list = useMemo(() => Array.from({ length: block.last - block.first + 1 }, (_, k) => block.first + k), [block]);
 
   // The floor shown: the step's under way (else that of the dungeon's first step placed: the
   // entrance has none), or one chosen while the step stays on its floor.
@@ -79,7 +84,7 @@ export function DungeonMap({ steps, card, step, onStep, onBack, status }: Props)
   const H = info?.height ?? 1;
   const r = W / 90;
   const at = (i: number) => [(steps[i].floor!.x / 100) * W, (steps[i].floor!.y / 100) * H] as const;
-  const number = (i: number) => i - card.first + 1;
+  const number = (i: number) => i - block.first + 1;
 
   return (
     <div className="guide-map dungeon-map">

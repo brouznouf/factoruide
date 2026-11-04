@@ -166,9 +166,11 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
       .then(setMapIndex)
       .catch(() => setMapIndex([]));
   }, []);
+  // The dungeon under way: the zone segment of its steps (the entrance, then those done inside).
   const [worldAt, setWorldAt] = useState<number | null>(null);
-  const dungeon = dungeonOf(steps, cards[card]);
-  const inDungeon = dungeon != null && worldAt !== card && !!mapIndex && floorsOf(mapIndex, steps, cards[card], dungeon).length > 0;
+  const block = segs[seg]?.dungeon ? segs[seg] : undefined;
+  const dungeon = dungeonOf(steps, block);
+  const inDungeon = !!block && dungeon != null && worldAt !== seg && !!mapIndex && floorsOf(mapIndex, steps, block, dungeon).length > 0;
   const pick = useCallback(
     (n: number) => {
       setWorldAt(null);
@@ -282,8 +284,8 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
         onCheck={onCheck && ((n) => onCheck(Array.from({ length: cards[n].last - cards[n].first + 1 }, (_, k) => cards[n].first + k)))}
         edit={listEdit}
       />
-      {inDungeon ? (
-        <DungeonMap steps={steps} card={cards[card]} step={shownStep} onStep={seekStep} onBack={() => setWorldAt(card)} status={status} />
+      {inDungeon && block ? (
+        <DungeonMap steps={steps} block={block} step={shownStep} onStep={seekStep} onBack={() => setWorldAt(seg)} status={status} />
       ) : (
       <GuideMap
         steps={steps}
