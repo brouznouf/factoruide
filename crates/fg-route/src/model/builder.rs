@@ -60,6 +60,14 @@ impl<'a> QuestBuilder<'a> {
         }
     }
 
+    /// The place of entity `id` inside dungeon `d`: its floor's point when known.
+    pub(super) fn inside_at(&self, d: usize, kind: EntityKind, id: i64) -> Loc {
+        Loc {
+            floor: self.sources.floors.get(&(kind, id)).copied(),
+            ..self.inside(d)
+        }
+    }
+
     pub(super) fn dungeon_of(&self, kind: EntityKind, id: i64) -> Option<usize> {
         let kind = if kind == EntityKind::Object {
             EntityKind::Object
@@ -135,7 +143,7 @@ impl<'a> QuestBuilder<'a> {
             let mut loc = if self.has_points(kind, id) {
                 self.sources.dungeons[d].entrance.clone()
             } else {
-                self.inside(d)
+                self.inside_at(d, kind, id)
             };
             loc.kind = kind;
             loc.id = id;
@@ -154,6 +162,7 @@ impl<'a> QuestBuilder<'a> {
             id,
             name: entities.name(kind, id),
             inside: None,
+            floor: None,
         })
     }
 }

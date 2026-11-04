@@ -103,6 +103,7 @@ pub(super) fn load_dungeons(
                 id: area,
                 name: name.clone(),
                 inside: None,
+                floor: None,
             },
             name,
             min_level: 0,

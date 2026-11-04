@@ -61,6 +61,7 @@ impl Places<'_> {
                     id: n.id,
                     name: n.name.clone(),
                     inside: None,
+                    floor: None,
                 }
             }
             Kind::Bind => self.model.inns[stop.index as usize].clone(),

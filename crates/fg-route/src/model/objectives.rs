@@ -266,6 +266,7 @@ impl QuestBuilder<'_> {
             id: 0,
             name: name.clone(),
             inside: None,
+            floor: None,
         };
         let text = format!("Battleground: {}", text.unwrap_or_else(|| format!("{name} x{count}")));
         Objective {
@@ -331,18 +332,26 @@ impl QuestBuilder<'_> {
             .flatten();
         // Shown in the guide ("Defias Prisoner x10").
         let count = amount.map_or(1.0, |n| n.max(1) as f64);
-        Some(match place {
-            // Done by the dungeon's group outside: when entering it.
-            Some(place) => Objective {
+        // Done by the dungeon's group outside: when entering it.
+        if let Some(place) = place {
+            return Some(Objective {
                 dungeon: Some(d),
                 count,
                 ..Objective::plain(place, text, 0.0)
-            },
-            // Inside: what to get there, by its name ("Deviate Hide").
-            None => Objective {
-                count,
-                ..Objective::plain(self.inside(d), row.2.clone().unwrap_or(name), 0.0)
-            },
+            });
+        }
+        // Inside: what to get there, by its name ("Deviate Hide"), where the target stands, or
+        // for an item the first of its sources in the dungeon.
+        let at = match kind {
+            ObjectiveKind::Item => (self.item_sources(target, &quest.parts).into_iter())
+                .filter_map(|(t, id)| Some((t.entity()?, id)))
+                .find(|&(e, id)| self.dungeon_of(e, id) == Some(d)),
+            _ => Some((kind.entity(), target)),
+        };
+        let loc = at.map_or_else(|| self.inside(d), |(e, id)| self.inside_at(d, e, id));
+        Some(Objective {
+            count,
+            ..Objective::plain(loc, row.2.clone().unwrap_or(name), 0.0)
         })
     }
 
@@ -370,6 +379,7 @@ impl QuestBuilder<'_> {
             id: item,
             name: self.sources.entities.name(EntityKind::Item, item),
             inside: None,
+            floor: None,
         })
     }
 
@@ -445,6 +455,7 @@ impl QuestBuilder<'_> {
             id: target,
             name: name.clone(),
             inside: None,
+            floor: None,
         };
         if friendly {
             return Ok(Objective::plain(
@@ -555,6 +566,7 @@ impl QuestBuilder<'_> {
                 id: target,
                 name: name.clone(),
                 inside: None,
+                floor: None,
             };
             Objective {
                 uses,
@@ -601,6 +613,7 @@ impl QuestBuilder<'_> {
             id: 0,
             name: text.clone().unwrap_or_default(),
             inside: None,
+            floor: None,
         };
         Ok(Objective::plain(
             loc,

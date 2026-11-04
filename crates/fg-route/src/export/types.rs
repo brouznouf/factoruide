@@ -191,6 +191,9 @@ pub struct Step {
     pub zone_id: Option<i64>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub map: Option<MapPointOut>,
+    /// Inside a dungeon: where on its floor's map (`ui_map` a floor of `dungeon_floor`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub floor: Option<MapPointOut>,
     /// Other places its mobs are, closest first: where to look when there is nothing at `map`
     /// (mobs to kill or loot, the mob dropping the item that starts a quest).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -313,6 +316,7 @@ impl Step {
             zone: None,
             zone_id: None,
             map: None,
+            floor: None,
             spots: Vec::new(),
             patrol: false,
             world: None,

@@ -204,6 +204,17 @@ pub struct Loc {
     /// The dungeon it is inside (index in `Model::dungeons`, below 128 as `State::dungeons`):
     /// reached by entering it.
     pub inside: Option<u8>,
+    /// Where it stands on its dungeon's floor, when known (`dungeon_spawn`).
+    pub floor: Option<FloorPoint>,
+}
+
+/// A point on a dungeon floor's map: the floor (its map, `dungeon_floor`) and percent
+/// coordinates on it.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct FloorPoint {
+    pub ui_map: i32,
+    pub x: f32,
+    pub y: f32,
 }
 
 /// A trainer of a profession.

@@ -829,6 +829,7 @@ mod tests {
                 x: 50.0,
                 y: 50.0,
             }),
+            floor: None,
             world: None,
             height: None,
             path: Vec::new(),

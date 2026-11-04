@@ -23,6 +23,7 @@ pub(super) struct Givers {
 }
 
 /// How the item starting a quest is got.
+#[expect(clippy::large_enum_variant, reason = "one a quest, read at once")]
 enum ItemStart {
     Looted {
         at: Loc,
@@ -170,7 +171,11 @@ impl QuestBuilder<'_> {
                 kind: EntityKind::Item,
                 id: item,
                 name: entities.name(EntityKind::Item, item),
-                ..self.inside(d)
+                // At the boss dropping it.
+                ..match &mob {
+                    Some((npc, _)) => self.inside_at(d, EntityKind::Npc, *npc),
+                    None => self.inside(d),
+                }
             },
             work: (0.0, 0, 0.0),
             mob,
@@ -218,6 +223,7 @@ impl QuestBuilder<'_> {
             id: item,
             name: entities.name(EntityKind::Item, item),
             inside: None,
+            floor: None,
         };
         if let Some((pos, zone, _)) = best_cluster(&objects, Some(&start.pos)) {
             return ItemStart::Looted {

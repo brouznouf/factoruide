@@ -4,7 +4,7 @@
 use super::dungeons::load_dungeons;
 use super::entities::{EliteSpawns, Entities};
 use super::pvp::pvp_quests;
-use super::types::{Dungeon, EntityKind, Loc, Profile};
+use super::types::{Dungeon, EntityKind, FloorPoint, Loc, Profile};
 use crate::params::Params;
 use crate::world::{Pos, World};
 use anyhow::{Context, Result};
@@ -123,6 +123,8 @@ pub(super) struct Sources {
     pub(super) dungeons: Vec<Dungeon>,
     pub(super) dungeon_by_area: HashMap<i64, usize>,
     pub(super) inside: HashMap<(EntityKind, i64), usize>,
+    /// Where the creatures and objects inside dungeons stand on their floors (`dungeon_spawn`).
+    pub(super) floors: Arc<HashMap<(EntityKind, i64), FloorPoint>>,
     pub(super) rows: Vec<QuestRow>,
     pub(super) class_quest_ids: HashSet<i64>,
     pub(super) relations: Relations,
@@ -189,6 +191,7 @@ impl Sources {
             dungeons,
             dungeon_by_area,
             inside,
+            floors: floor_points(conn)?,
             rows,
             objectives,
             item_origins,
@@ -217,6 +220,40 @@ impl Sources {
     }
 }
 
+/// The first spawn of each creature and object on a dungeon floor; none in a database without
+/// them (`dungeon_spawn`, Classic and Forever).
+fn floor_points(conn: &Connection) -> Result<Arc<HashMap<(EntityKind, i64), FloorPoint>>> {
+    let has: bool = conn.query_row(
+        "SELECT count(*) > 0 FROM sqlite_master WHERE name = 'dungeon_spawn'",
+        [],
+        |r| r.get(0),
+    )?;
+    if !has {
+        return Ok(Arc::default());
+    }
+    crate::memo::rows(conn, "dungeon spawns", 0, || {
+        let mut stmt = conn.prepare("SELECT entity_type, entity_id, ui_map, x, y FROM dungeon_spawn ORDER BY rowid")?;
+        let mut out = HashMap::new();
+        for row in stmt.query_map([], |r| {
+            Ok((
+                r.get::<_, String>(0)?,
+                r.get::<_, i64>(1)?,
+                FloorPoint {
+                    ui_map: r.get(2)?,
+                    x: r.get(3)?,
+                    y: r.get(4)?,
+                },
+            ))
+        })? {
+            let (kind, id, point) = row?;
+            if let Some(kind) = EntityKind::parse(&kind) {
+                out.entry((kind, id)).or_insert(point);
+            }
+        }
+        Ok(out)
+    })
+}
+
 fn area_parents(conn: &Connection) -> Result<HashMap<i64, i64>> {
     let mut stmt = conn.prepare("SELECT ID, ParentAreaID FROM client_areatable WHERE ParentAreaID > 0")?;
     let rows = stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))?;
@@ -235,6 +272,7 @@ fn start_place(entities: &Entities, world: &World, profile: &Profile) -> Result<
         id: profile.start_npc,
         name: entities.name(EntityKind::Npc, profile.start_npc),
         inside: None,
+        floor: None,
     })
 }
 

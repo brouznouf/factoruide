@@ -353,6 +353,7 @@ impl Q {
             id,
             name: name.to_owned(),
             inside: None,
+            floor: None,
         }
     }
 

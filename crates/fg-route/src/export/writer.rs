@@ -131,9 +131,15 @@ impl StepWriter<'_> {
             }
         };
         Self::set_place(&mut step, place, self.planner.world);
-        // Done inside a dungeon.
+        // Done inside a dungeon, where on its floor when known.
         if let Event::Stop { loc, .. } = &t.event {
             step.inside |= loc.inside.is_some();
+            let round = |v: f32| (f64::from(v) * 100.0).round() / 100.0;
+            step.floor = loc.floor.map(|f| MapPointOut {
+                ui_map: i64::from(f.ui_map),
+                x: round(f.x),
+                y: round(f.y),
+            });
         }
         step
     }
@@ -288,6 +294,7 @@ impl StepWriter<'_> {
             zone: None,
             zone_id: None,
             map: None,
+            floor: None,
             spots: Vec::new(),
             patrol: false,
             world: None,
