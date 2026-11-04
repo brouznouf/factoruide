@@ -1,0 +1,44 @@
+# A quest against elites (The Dark Iron War's kind), and its follow-up a must-have may need.
+
+[[npc]]
+id = 93100
+name = "Iron Warden"
+level = 20
+npc_flags = 2
+friendly_to = "A"
+at = [{ zone = 12, x = 42.0, y = 66.0, z = 57 }]
+
+[[npc]]
+id = 93101
+name = "Dark Iron Brute"
+level = 20
+max_level = 21
+rank = 1
+at = [{ zone = 12, x = 60.0, y = 50.0, z = 50 }, { zone = 12, x = 60.5, y = 50.5, z = 50 }, { zone = 12, x = 61.0, y = 50.0, z = 50 }, { zone = 12, x = 61.5, y = 51.0, z = 50 }, { zone = 12, x = 60.2, y = 51.5, z = 50 }, { zone = 12, x = 60.8, y = 49.5, z = 50 }]
+
+[[quest]]
+id = 93000
+name = "The Iron Threat"
+level = 20
+min_level = 1
+races_mask = 4294967373
+zone = 12
+xp = 900
+objectives_text = "Kill 6 Dark Iron Brutes."
+starts = [{ npc = 93100 }]
+ends = [{ npc = 93100 }]
+objectives = [{ creature = 93101, amount = 6 }]
+
+[[quest]]
+id = 93001
+name = "After the Threat"
+level = 20
+min_level = 1
+races_mask = 4294967373
+zone = 12
+xp = 900
+objectives_text = "Report to the Iron Warden."
+pre_all = [93000]
+starts = [{ npc = 93100 }]
+ends = [{ npc = 93100 }]
+objectives = []

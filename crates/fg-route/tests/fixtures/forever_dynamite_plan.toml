@@ -30,3 +30,18 @@ objectives = [
   { item = 4358, amount = 10 },
 ]
 
+
+# Its follow-up, taken once the dynamite is handed over: a must-have needs the plan first.
+[[quest]]
+id = 92900
+name = "Dynamite Delivery"
+level = 16
+min_level = 9
+races_mask = 4294967373
+zone = 40
+xp = 580
+objectives_text = "Talk to Sprite Jumpsprocket again."
+pre_all = [92749]
+starts = [{ npc = 11026 }]
+ends = [{ npc = 11026 }]
+objectives = []

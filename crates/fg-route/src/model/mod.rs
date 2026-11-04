@@ -338,20 +338,19 @@ fn build_quests(
     params: &Params,
 ) -> (Vec<Quest>, Vec<(i64, String, String)>) {
     let builder = QuestBuilder::new(sources, world, profile, params);
-    // The quests the player asked for are done even when their mobs are elites.
-    let with_elites = Params {
+    // The quests the player asked for (see `asked_quests`) are done even when their mobs are
+    // elites, or an item they ask for is only sold at the auction house.
+    let for_asked = Params {
         allow_elite: true,
+        auction_house: true,
         ..params.clone()
     };
-    let asked = QuestBuilder::new(sources, world, profile, &with_elites);
+    let asked = QuestBuilder::new(sources, world, profile, &for_asked);
+    let asked_ids = asked_quests(sources, profile, params);
     let mut quests = Vec::new();
     let mut skipped = Vec::new();
     for row in &sources.rows {
-        let builder = if profile.required_quests.iter().any(|q| q.id == row.id) {
-            &asked
-        } else {
-            &builder
-        };
+        let builder = if asked_ids.contains(&row.id) { &asked } else { &builder };
         match builder.build(row) {
             // The objectives done are a mask of 8 bits (`State::objectives`).
             Ok(Some(quest)) if quest.objectives.len() > 8 => {
@@ -369,6 +368,31 @@ fn build_quests(
         }
     }
     (quests, skipped)
+}
+
+/// The quests the player asked for: the must-haves, those of a dungeon forced with its quests
+/// (filed under it), and every quest they need first.
+fn asked_quests(sources: &Sources, profile: &Profile, params: &Params) -> HashSet<i64> {
+    let mut todo: Vec<i64> = profile.required_quests.iter().map(|q| q.id).collect();
+    todo.extend(
+        (sources.rows.iter())
+            .filter(|r| r.sort.is_some_and(|zone| params.forced_dungeon_quests.contains(&zone)))
+            .map(|r| r.id),
+    );
+    let mut asked = HashSet::new();
+    while let Some(id) = todo.pop() {
+        if asked.insert(id) {
+            let needs = sources.links.get(&id).into_iter().flatten();
+            todo.extend(
+                needs
+                    .filter(|(kind, other)| {
+                        matches!(kind, sources::LinkKind::PreAll | sources::LinkKind::PreAny) && *other > 0
+                    })
+                    .map(|(_, other)| *other),
+            );
+        }
+    }
+    asked
 }
 
 /// Class quests the planner cannot do are worth knowing about.

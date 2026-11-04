@@ -754,3 +754,27 @@ fn class_quests_are_open_to_the_skyborne_mage() {
 fn class_quests_are_open_to_the_skyborne_druid() {
     class_quests_are_open_to_the_races_new_to_a_class_of("skyborne", "druid", &[26, 29, 5061, 6123, 6124, 6125]);
 }
+
+/// The chain of a must-have quest keeps the quests left out otherwise: an item only crafted is
+/// bought at the auction house (that option off), an elite quest is done (elites off).
+#[test]
+fn a_must_have_chain_keeps_crafted_items_and_elites() {
+    let conn = Fixture::new(Edition::Forever)
+        .file("forever_services")
+        .file("forever_dynamite_plan")
+        .file("forever_elite_chain")
+        .open();
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let prepare = |required: &[RequiredQuest]| {
+        let mut request = request("human", "warrior", required);
+        let params = ["auction_house=false".to_owned(), "allow_elite=false".to_owned()];
+        request.params = Some(overrides.params.with_overrides(&params).unwrap());
+        job::prepare(&conn, &overrides, &request, &|_| {}).expect("planned")
+    };
+    let has = |p: &job::Prepared, id: i64| p.model.index.contains_key(&id);
+    let p = prepare(&[]);
+    assert!(!has(&p, 92749) && !has(&p, 93000), "left out without a must-have");
+    let p = prepare(&[RequiredQuest::Id(92900), RequiredQuest::Id(93001)]);
+    assert!(has(&p, 92749), "the dynamite bought");
+    assert!(has(&p, 93000), "the elites fought");
+}
