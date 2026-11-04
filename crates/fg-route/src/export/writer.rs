@@ -160,46 +160,21 @@ impl StepWriter<'_> {
         } else {
             Phrase::new("checkpoint").arg("level", num(level))
         };
+        // At the place of `at` (its zone, map point and height) and its state (time, power,
+        // gear, party), nothing else: no walk to it, nor the places of its mobs or NPC.
         Step {
-            kind: StepKind::Grind,
-            quest: None,
-            quest_name: None,
-            alt: Vec::new(),
-            pre: Vec::new(),
-            pre_any: Vec::new(),
-            pre_need: None,
-            min_level: None,
-            bg: false,
-            try_buy: false,
-            buy: false,
-            inside: false,
-            held: false,
-            objective: None,
-            slot: None,
-            child: None,
-            child_name: None,
-            text: String::new(),
             say: vec![say],
-            target: None,
-            skill: None,
-            line: None,
-            mobs: Vec::new(),
-            mob_ids: Vec::new(),
-            elite: false,
-            mob_level: None,
-            reward: None,
-            reward_xp: None,
-            party_reward_xp: Vec::new(),
-            route_xp: None,
-            spells: Vec::new(),
+            zone: at.zone.clone(),
+            zone_id: at.zone_id,
+            map: at.map.clone(),
+            world: at.world,
+            height: at.height,
             xp: (xp > 0).then_some(xp),
-            farm: None,
-            farm_xp: None,
-            level,
+            power: at.power,
+            gear: at.gear,
+            party: at.party.clone(),
             keep: true,
-            members: None,
-            event: None,
-            ..at.clone()
+            ..Step::bare(StepKind::Grind, level, at.time)
         }
     }
 
@@ -963,6 +938,39 @@ mod tests {
     use crate::plan::tests::quests_at_start;
     use crate::plan::{Kind, Planner, Stop};
     use crate::world::Pos;
+
+    /// A checkpoint after the step of a patrolling NPC: at its place, without its walk nor
+    /// the places along the NPC's path (the compass would follow them).
+    #[test]
+    fn a_checkpoint_takes_the_place_of_its_step_not_its_walk_nor_its_spots() {
+        use super::StepWriter;
+        use crate::export::{MapPointOut, Step};
+        let p = quests_at_start(1);
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let writer = StepWriter {
+            planner: &planner,
+            route: &[],
+            background: std::collections::HashSet::new(),
+        };
+        let point = |x| MapPointOut { ui_map: 1, x, y: 50.0 };
+        let mut at = Step::bare(StepKind::TurnIn, 5, 300.0);
+        at.zone = Some("Durotar".to_owned());
+        at.map = Some(point(40.0));
+        at.world = Some([1.0, 10.0, 20.0]);
+        at.spots = vec![point(41.0), point(45.0)];
+        at.patrol = true;
+        at.path = vec![[0.0, 0.0], [10.0, 20.0]];
+        at.party = vec![(2, 5)];
+        let step = writer.checkpoint(&at, 6, 6, 0);
+        assert_eq!(step.kind, StepKind::Grind);
+        let x = step.map.as_ref().map(|m| m.x);
+        assert_eq!(
+            (step.zone.as_deref(), x, step.world),
+            (Some("Durotar"), Some(40.0), at.world)
+        );
+        assert_eq!((step.time, step.party.as_slice()), (300.0, &[(2, 5)][..]));
+        assert!(step.spots.is_empty() && !step.patrol && step.path.is_empty());
+    }
 
     /// Gordo's case (GitHub #20): a quest given and taken back by an NPC who walks ~700 yards
     /// along a road. Its steps say he patrols and give places along his path, away from the
