@@ -431,30 +431,7 @@ fn addon_health() -> AddonState {
 // Maps ------------------------------------------------------------------------------------
 
 fn map_index() -> CmdResult<serde_json::Value> {
-    let db = open_db(edition())?;
-    let text: String = db
-        .query_row("SELECT value FROM app_meta WHERE key = 'map_index'", [], |r| r.get(0))
-        .map_err(err)?;
-    let mut index: serde_json::Value = serde_json::from_str(&text).map_err(err)?;
-    let mut names: HashMap<i64, serde_json::Map<String, serde_json::Value>> = HashMap::new();
-    if let Ok(mut stmt) =
-        db.prepare("SELECT id, locale, name FROM l10n WHERE entity_type = 'zone' AND name IS NOT NULL")
-    {
-        let rows = stmt
-            .query_map([], |r| {
-                Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?))
-            })
-            .map_err(err)?;
-        for (id, locale, name) in rows.flatten() {
-            names.entry(id).or_default().insert(locale, name.into());
-        }
-    }
-    for map in index.as_array_mut().into_iter().flatten() {
-        if let Some(n) = map["area"].as_i64().and_then(|a| names.get(&a)) {
-            map["names"] = serde_json::Value::Object(n.clone());
-        }
-    }
-    Ok(index)
+    fg_app::map_index(&open_db(edition())?)
 }
 
 // Calls -----------------------------------------------------------------------------------

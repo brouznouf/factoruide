@@ -5,38 +5,14 @@
     reason = "tauri commands take their arguments by value"
 )]
 
-use super::{AppState, CmdResult, Edition, HashMap, OnceLock, State, embedded, err};
+use super::{AppState, CmdResult, Edition, HashMap, OnceLock, State, embedded};
 
 // Maps -----------------------------------------------------------------------------
 
-/// Map index written by `fg maps` (ids, names, sizes, world bounds).
+/// The maps of the edition: the world's and the dungeons' floors (`fg_app::map_index`).
 #[tauri::command(async)]
 pub(crate) fn map_index(state: State<'_, AppState>) -> CmdResult<serde_json::Value> {
-    let db = state.open_db()?;
-    let text: String = db
-        .query_row("SELECT value FROM app_meta WHERE key = 'map_index'", [], |r| r.get(0))
-        .map_err(err)?;
-    let mut index: serde_json::Value = serde_json::from_str(&text).map_err(err)?;
-    // Zone names in the game's languages (`names`: locale -> name), when the data has them.
-    let mut names: HashMap<i64, serde_json::Map<String, serde_json::Value>> = HashMap::new();
-    if let Ok(mut stmt) =
-        db.prepare("SELECT id, locale, name FROM l10n WHERE entity_type = 'zone' AND name IS NOT NULL")
-    {
-        let rows = stmt
-            .query_map([], |r| {
-                Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?))
-            })
-            .map_err(err)?;
-        for (id, locale, name) in rows.flatten() {
-            names.entry(id).or_default().insert(locale, name.into());
-        }
-    }
-    for map in index.as_array_mut().into_iter().flatten() {
-        if let Some(n) = map["area"].as_i64().and_then(|a| names.get(&a)) {
-            map["names"] = serde_json::Value::Object(n.clone());
-        }
-    }
-    Ok(index)
+    fg_app::map_index(&state.open_db()?)
 }
 
 /// A map image as a data URL.

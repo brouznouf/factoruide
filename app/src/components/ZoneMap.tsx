@@ -17,8 +17,12 @@ interface Props {
   onActive: (n: number | null) => void;
 }
 
+/** Where a step is shown: on its dungeon floor's map when inside one, else on its zone's. */
+const placeOf = (s: Step) => s.floor ?? s.map;
+
 /** The map of a zone with its steps in order: the zone the most steps are on (cities, caves and
- * dungeons have maps of their own). Each dot is a step, colored by its type. */
+ * dungeons have maps of their own, a dungeon one per floor). Each dot is a step, colored by its
+ * type. */
 export function ZoneMap({ title, steps, active, onActive }: Props) {
   const t = useT();
   const areaName = useAreaName();
@@ -31,7 +35,10 @@ export function ZoneMap({ title, steps, active, onActive }: Props) {
   }, []);
   const mapId = useMemo(() => {
     const count = new Map<number, number>();
-    for (const s of steps) if (s.map) count.set(s.map.ui_map, (count.get(s.map.ui_map) ?? 0) + 1);
+    for (const s of steps) {
+      const p = placeOf(s);
+      if (p) count.set(p.ui_map, (count.get(p.ui_map) ?? 0) + 1);
+    }
     return [...count].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
   }, [steps]);
   useEffect(() => {
@@ -46,8 +53,8 @@ export function ZoneMap({ title, steps, active, onActive }: Props) {
   }, [mapId]);
 
   const info = index?.find((m) => m.id === mapId);
-  const here = steps.filter((s) => s.map?.ui_map === mapId);
-  const elsewhere = steps.filter((s) => s.map && s.map.ui_map !== mapId).length;
+  const here = steps.filter((s) => placeOf(s)?.ui_map === mapId);
+  const elsewhere = steps.filter((s) => placeOf(s) && placeOf(s)!.ui_map !== mapId).length;
   if (mapId == null || !info) {
     return (
       <div className="zone-map">
@@ -58,7 +65,7 @@ export function ZoneMap({ title, steps, active, onActive }: Props) {
   }
   const W = info.width;
   const H = info.height;
-  const at = (s: NumberedStep) => [(s.map!.x / 100) * W, (s.map!.y / 100) * H] as const;
+  const at = (s: NumberedStep) => [(placeOf(s)!.x / 100) * W, (placeOf(s)!.y / 100) * H] as const;
   const r = W / 90;
   // Numbers on every dot when there are few, else only on the step pointed at.
   const numbered = here.length <= 20;

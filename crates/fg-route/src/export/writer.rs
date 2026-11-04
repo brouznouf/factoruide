@@ -131,6 +131,18 @@ impl StepWriter<'_> {
             }
         };
         Self::set_place(&mut step, place, self.planner.world);
+        // In a dungeon (entering it, or a stop inside): a zone of its own, the dungeon.
+        let dungeon = match &t.event {
+            Event::Enter { dungeon } => Some(*dungeon),
+            Event::Stop { stop, loc, .. } => match stop.kind {
+                Kind::Dungeon => Some(stop.index as usize),
+                _ => loc.inside.map(usize::from),
+            },
+            _ => None,
+        };
+        if let Some(d) = dungeon {
+            step.zone = Some(self.planner.model.dungeons[d].name.clone());
+        }
         // Done inside a dungeon, where on its floor when known.
         if let Event::Stop { loc, .. } = &t.event {
             step.inside |= loc.inside.is_some();

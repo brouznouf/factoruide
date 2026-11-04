@@ -332,6 +332,8 @@ export interface Step {
   /** Mobs to target (to kill, or that drop the item): their names. */
   mobs?: string[];
   map?: { ui_map: number; x: number; y: number };
+  /** Inside a dungeon: where on its floor's map (a map of kind 4 of the index). */
+  floor?: { ui_map: number; x: number; y: number };
   /** World position: [continent (map ID), x, y]. */
   world?: [number, number, number];
   /** XP the guide has in `level` once the step is done. */
