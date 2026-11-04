@@ -78,7 +78,7 @@ pub(crate) fn sent_lua(state: &SendState) -> String {
          FactoruideSent = {\n",
     );
     for (character, last_seq) in state.sent_by_name() {
-        let _ = writeln!(lua, "  [{}] = {last_seq},", lua_string(&character));
+        let _ = writeln!(lua, "  [{}] = {last_seq},", fg_route::export::lua_str(&character));
     }
     lua.push_str("}\n");
     lua

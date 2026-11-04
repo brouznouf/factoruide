@@ -30,7 +30,7 @@ mod characters;
 /// Contributions to the contribution server.
 mod contributions;
 use addon::{
-    ADDON_VERSION, addon_synced, export_polestar, guide_text, install_addon, install_polestar, lua_string, open_link,
+    ADDON_VERSION, addon_synced, export_polestar, guide_text, install_addon, install_polestar, open_link,
     polestar_installed, polestar_installed_in, polestar_string, write_data,
 };
 use job::DATA_ADDON;

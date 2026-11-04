@@ -16,6 +16,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- A guide text with a control character or a character name with an unusual letter is written into the data addon as the game reads it, not as stray letters.
 - "On the way: buy ... at the auction house" comes before the flight, boat or zeppelin that leaves the city, not after it (GitHub #115).
 - WoW Forever: the Orc mage takes the Undercity mage quests (Investigate the Alchemist Shop, Spellfire Robes, Speak with Deino...), the Troll warlock the Voidwalker's Creature of the Void and The Binding, and the High Order Skyborne mage and druid the Human, Gnome and Night Elf quests of their sides, instead of leaving them out of the guide (GitHub #111, #114).
 - Class quests: the guide takes one version of each (the Skyborne shaman's two Call of Fire chains, the human priest's Divine Grace, the warlocks' demons by race...) instead of all of them, and a class quest no version of which can be planned is reported. The races of the class quests follow the quests' pages (the troll warlock gets its Voidwalker and Incubus, Piercing the Veil is the orc and undead warlocks') (GitHub #110, #111, #112, #114).

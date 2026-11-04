@@ -14,6 +14,7 @@ mod source;
 pub use source::{guide_name, pack_json, source};
 
 use super::Arg;
+use super::lua::lua_str as lua;
 use super::types::{Route, Step, StepKind, TargetKind};
 use std::fmt::Write as _;
 
@@ -69,24 +70,6 @@ pub fn pack(guides: &[(String, Route)], version: &str) -> Vec<(&'static str, Str
         ("Pack.lua", pack),
         ("Guides.lua", out),
     ]
-}
-
-/// A Lua string literal (control characters as decimal escapes).
-fn lua(text: &str) -> String {
-    let mut out = String::from("\"");
-    for c in text.chars() {
-        match c {
-            '\\' => out.push_str("\\\\"),
-            '"' => out.push_str("\\\""),
-            '\n' => out.push_str("\\n"),
-            c if c.is_ascii_control() => {
-                let _ = write!(out, "\\{:03}", c as u32);
-            }
-            c => out.push(c),
-        }
-    }
-    out.push('"');
-    out
 }
 
 /// The race's file name in the game (Polestar's `races`).

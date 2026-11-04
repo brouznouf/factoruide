@@ -5,7 +5,11 @@
     reason = "tauri commands take their arguments by value"
 )]
 
-use super::*;
+use super::{
+    AppState, CmdError, CmdResult, DATA_ADDON, Edition, GUIDE_ADDON, GuideId, Host, Library, LockExt, Mutex,
+    PROFILE_ADDON, Path, Settings, State, WowProblem, addon_snapshot, embedded, err, game, job, loaded_files, now,
+    overrides, read_send_record, send_record_file, sent_lua, update_settings,
+};
 
 /// The oldest addon this app works with (its .toc version): older ones are to be updated.
 pub(crate) const ADDON_VERSION: &str = embedded::ADDON_VERSION;
@@ -214,25 +218,6 @@ pub(crate) fn open_link(url: String) -> CmdResult<()> {
     };
     std::process::Command::new(program).arg(&url).spawn().map_err(err)?;
     Ok(())
-}
-
-/// A Lua string literal.
-pub(crate) fn lua_string(text: &str) -> String {
-    let mut out = String::from("\"");
-    for c in text.chars() {
-        match c {
-            '\\' => out.push_str("\\\\"),
-            '"' => out.push_str("\\\""),
-            '\n' => out.push_str("\\n"),
-            // Other control characters as decimal escapes, always 3 digits (a digit may follow).
-            c if c.is_ascii_control() => {
-                let _ = write!(out, "\\{:03}", c as u32);
-            }
-            c => out.push(c),
-        }
-    }
-    out.push('"');
-    out
 }
 
 /// The addon was called BrouzQuest, then was a single addon, Factoruide, before its profile and
