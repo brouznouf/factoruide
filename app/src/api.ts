@@ -803,6 +803,8 @@ export interface MapInfo {
   bounds: { map: number; min_x: number; max_x: number; min_y: number; max_y: number } | null;
   /** Game zone (AreaTable ID) of a zone map. */
   area: number | null;
+  /** A dungeon's floor (kind 4): its number in the dungeon, from 1. */
+  floor?: number;
   /** Translated zone names by game locale. */
   names?: Record<string, string>;
   /** Outline on the parent map (pixel rings, even-odd), when known. */

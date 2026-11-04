@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import type { EditCatalog, PlanRequest, QuestInfo, Route, RouteStep, Suggestions, Timeline } from "../api";
+import type { EditCatalog, MapInfo, PlanRequest, QuestInfo, Route, RouteStep, Suggestions, Timeline } from "../api";
 import { useT } from "../i18n";
 import { AddMenu } from "./AddMenu";
 import { CharacterPanel } from "./CharacterPanel";
+import { DungeonMap, dungeonOf, floorsOf } from "./DungeonMap";
 import type { useNames } from "./editing";
 import { DEFAULT_LAYERS, GuideMap, type MapLayers } from "./GuideMap";
 import { activityAt, buildCards, cardOf, cardTitle, positionAt, stateTracker, stepAt, stepStart, straightMoves } from "./guideTimeline";
@@ -10,6 +11,7 @@ import { PlaybackBar } from "./PlaybackBar";
 import { Clock, useClock } from "./playback";
 import { segments } from "./segments";
 import { type ListEdit, StepList } from "./StepList";
+import { loadIndex } from "./WorldMap";
 
 const LAYERS_KEY = "factoruide.mapLayers";
 
@@ -156,10 +158,36 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
   useEffect(() => suggestAt?.(shownStep > 0 ? shownStep - 1 : null), [suggestAt, shownStep]);
 
   const [follow, setFollow] = useState(true);
+  // In a dungeon that has a map, the map is the dungeon's, unless asked to go back to the world's
+  // (for this card: the next dungeon, or this one chosen again, shows its own).
+  const [mapIndex, setMapIndex] = useState<MapInfo[] | null>(null);
+  useEffect(() => {
+    loadIndex()
+      .then(setMapIndex)
+      .catch(() => setMapIndex([]));
+  }, []);
+  const [worldAt, setWorldAt] = useState<number | null>(null);
+  const dungeon = dungeonOf(steps, cards[card]);
+  const inDungeon = dungeon != null && worldAt !== card && !!mapIndex && floorsOf(mapIndex, steps, cards[card], dungeon).length > 0;
+  const pick = useCallback(
+    (n: number) => {
+      setWorldAt(null);
+      select(n);
+    },
+    [select],
+  );
+  const seekStep = useCallback(
+    (i: number) => {
+      const p = toPlay(i);
+      if (p != null) clock.seek(stepStart(play.steps, p));
+    },
+    [toPlay, clock, play],
+  );
   // A card chosen in the list, with the keys or the playback bar's steps: shown on the map.
   const [focus, setFocus] = useState<{ card: number; seq: number } | undefined>(undefined);
   const show = useCallback(
     (n: number) => {
+      setWorldAt(null);
       select(n);
       setFocus((f) => ({ card: Math.min(cards.length - 1, Math.max(0, n)), seq: (f?.seq ?? 0) + 1 }));
     },
@@ -254,6 +282,9 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
         onCheck={onCheck && ((n) => onCheck(Array.from({ length: cards[n].last - cards[n].first + 1 }, (_, k) => cards[n].first + k)))}
         edit={listEdit}
       />
+      {inDungeon ? (
+        <DungeonMap steps={steps} card={cards[card]} step={shownStep} onStep={seekStep} onBack={() => setWorldAt(card)} status={status} />
+      ) : (
       <GuideMap
         steps={steps}
         moves={moves}
@@ -267,12 +298,13 @@ export function GuideViewer({ route, played, timeline, failed, request, keys, on
         onFollow={setFollow}
         layers={layers}
         onLayers={changeLayers}
-        onSelect={select}
+        onSelect={pick}
         focus={focus}
         status={status}
         suggestions={edit?.suggestions ?? null}
         onPick={edit && ((s) => edit.onInsert(shownStep - 1, s))}
       />
+      )}
       <CharacterPanel
         route={play}
         request={request}

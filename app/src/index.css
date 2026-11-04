@@ -4222,6 +4222,61 @@ button.link.cmp-jump {
   position: absolute;
   inset: 12px auto auto 12px;
 }
+/* The guide's map while it is in a dungeon: the floor's map, the dungeon's steps beside it. */
+.dm-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  background: var(--map-bg);
+}
+.dm-map {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  overflow: auto;
+}
+.dm-map .zone-map-frame {
+  max-height: 100%;
+  margin: 0 auto;
+}
+.dm-map .zone-dot {
+  cursor: pointer;
+}
+.dm-steps {
+  flex: none;
+  width: 300px;
+  margin: 0;
+  padding: 8px 0;
+  overflow-y: auto;
+  list-style: none;
+  background: var(--surface-1);
+  border-left: 1px solid var(--border);
+}
+.dm-steps li button {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 12px;
+  text-align: left;
+  color: var(--text-primary);
+}
+.dm-steps li.active button {
+  background: var(--accent-fill);
+  color: var(--on-accent);
+}
+.dm-n {
+  flex: none;
+  min-width: 1.6em;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.dm-steps li.active .dm-n {
+  color: inherit;
+}
 /* The game's maps a little softened, as the other maps of the app. */
 .gm-image {
   filter: var(--game-map);
