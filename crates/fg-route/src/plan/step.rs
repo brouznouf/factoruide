@@ -11,8 +11,12 @@ use crate::xp;
 const TIMED_SHARE: f64 = 0.75;
 
 impl Simulator<'_> {
-    /// Training after a step: the class, then the professions.
+    /// Training after a step: the class, then the professions. Not inside a dungeon (its steps
+    /// of unknown places stand at its entrance, maybe by a trainer): once out of it.
     pub(crate) fn train(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) {
+        if s.inside.is_some() {
+            return;
+        }
         self.train_class(s, record);
         self.train_professions(s, record);
     }
@@ -85,7 +89,8 @@ impl Simulator<'_> {
     /// (`Params::bag_weight`): routes by vendors keep room for the loot.
     pub(crate) fn sell(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) {
         let radius = self.params.sell_radius;
-        if self.explicit || self.params.bag_weight <= 0.0 || radius <= 0.0 || s.bags <= 0.0 {
+        // Not inside a dungeon (see `train`).
+        if self.explicit || self.params.bag_weight <= 0.0 || radius <= 0.0 || s.bags <= 0.0 || s.inside.is_some() {
             return;
         }
         let room = self.growth().bag_room(s.level) - f64::from(s.held);

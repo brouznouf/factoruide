@@ -776,6 +776,24 @@ fn a_vendor_on_the_way_empties_half_full_bags() {
     assert!(s.bags == 0.0 && s.time >= before + p.params.sell_time);
 }
 
+/// Inside a dungeon, no stop at a vendor nor a trainer by its entrance (the steps of a dungeon
+/// whose places are not known stand at its entrance, in town): once out of it.
+#[test]
+fn no_vendor_nor_trainer_while_in_a_dungeon() {
+    let mut p = quests_at_start(1);
+    let mut vendor = p.model.start.clone();
+    vendor.pos.x += 30.0;
+    p.model.vendors = vec![vendor];
+    let planner = planner(&p);
+    let mut s = planner.sim().initial_state();
+    let mut events = Vec::new();
+    s.bags = (planner.growth().bag_room(1) * 0.6) as f32;
+    s.inside = Some(0);
+    planner.sim().sell(&mut s, &mut |_, e| events.push(e));
+    planner.sim().train(&mut s, &mut |_, e| events.push(e));
+    assert!(events.is_empty(), "{events:?}");
+}
+
 /// What the bags keep for the class and the gathering professions: a hunter's quiver takes a bag,
 /// a herbalist keeps a share for the herbs from the level it is taken.
 #[test]
