@@ -1,8 +1,8 @@
 //! Building a first route: greedy or region by region, then repairs (class quests, pet quests first, settling).
 
-use super::Planner;
 use super::Simulator;
 use super::state::{Kind, State, Stop, fmt_time};
+use super::{Planner, ZoneChange};
 use crate::params::Construction;
 use crate::world::Pos;
 
@@ -26,6 +26,11 @@ struct Candidate {
 impl Planner<'_> {
     /// Greedy construction: nearest worthwhile stop first.
     pub fn greedy(&self) -> Vec<Stop> {
+        self.greedy_zones().0
+    }
+
+    /// `greedy`, with its zone changes.
+    fn greedy_zones(&self) -> (Vec<Stop>, Vec<ZoneChange>) {
         let mut s = self.sim().initial_state();
         // The quests of the character's log not worth finishing from here are given up (the
         // replay does it too, `start_state`): `keep_log_quests` puts back those on the way.
@@ -133,7 +138,6 @@ impl Planner<'_> {
                 break;
             }
         }
-        *self.zone_changes.borrow_mut() = changes;
 
         if self.diagnostics.debug {
             eprintln!(
@@ -145,7 +149,7 @@ impl Planner<'_> {
             );
         }
         let route = self.settle(route);
-        self.insert_missing_mandatory(route)
+        (self.insert_missing_mandatory(route), changes)
     }
 
     /// Zones other than the character's with the most quests worth doing from the start, the
@@ -543,14 +547,19 @@ impl Planner<'_> {
 
     /// Build the initial route: by quest groups (default) or plain nearest-neighbour greedy.
     pub fn construct(&self, log: impl Fn(&str)) -> Vec<Stop> {
-        let route = if self.params.construction == Construction::Greedy {
-            self.greedy()
+        self.construct_zones(log).0
+    }
+
+    /// `construct`, with the zone changes of the greedy construction (none by quest groups).
+    pub(crate) fn construct_zones(&self, log: impl Fn(&str)) -> (Vec<Stop>, Vec<ZoneChange>) {
+        let (route, changes) = if self.params.construction == Construction::Greedy {
+            self.greedy_zones()
         } else {
-            self.plan_regions(&log)
+            (self.plan_regions(&log), Vec::new())
         };
         // Given up (see `abortable`): the unfinished route is thrown away.
         if self.aborted() {
-            return route;
+            return (route, changes);
         }
         let route = if self.params.construction == Construction::Greedy {
             route
@@ -571,7 +580,7 @@ impl Planner<'_> {
                 self.simulate(&route, None).map(fmt_time)
             ));
         }
-        route
+        (route, changes)
     }
 
     /// The quests of the character's log the route does not turn in (given up, or left after

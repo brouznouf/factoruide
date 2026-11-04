@@ -80,7 +80,6 @@ use indexes::Indexes;
 use on_the_way::FarmWalks;
 pub(crate) use sim::Simulator;
 pub(crate) use state::State;
-use std::cell::RefCell;
 use std::rc::Rc;
 use travel::{FlightTables, Grounds, Legs, Trips};
 
@@ -120,8 +119,6 @@ pub struct Planner<'a> {
     pub profile: &'a Profile,
     /// What it computed already: its own, its keys tell only the calls of one planner apart.
     memo: Memo,
-    /// The zone changes of the last greedy construction: (level, time, from, to).
-    zone_changes: RefCell<Vec<ZoneChange>>,
     mode: Mode,
     /// What is looked up all the time, computed once from the model (shared with `replaying`).
     ix: Rc<Indexes>,
@@ -176,7 +173,6 @@ impl<'a> Planner<'a> {
             params,
             profile,
             memo: Memo::default(),
-            zone_changes: RefCell::new(Vec::new()),
             mode: Mode::Plan,
             ix,
             from_start,
@@ -209,11 +205,6 @@ impl<'a> Planner<'a> {
     /// Whether the construction must give up (see `abortable`).
     pub fn aborted(&self) -> bool {
         self.abort.is_some_and(|abort| abort())
-    }
-
-    /// The zone changes of the last greedy construction: (level, time, from, to).
-    pub(crate) fn zone_changes(&self) -> Vec<ZoneChange> {
-        self.zone_changes.borrow().clone()
     }
 
     /// The same planner telling and checking what `diagnostics` asks.

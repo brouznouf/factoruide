@@ -647,13 +647,12 @@ impl Searcher<'_> {
         mutant: Option<&Mutant>,
         log: impl Fn(&str),
     ) -> Option<(Vec<Stop>, Vec<ZoneChange>)> {
-        let route = planner.construct(log);
+        let (route, changes) = planner.construct_zones(log);
         if planner.aborted() {
             return None;
         }
         self.live.built.fetch_add(1, Ordering::Relaxed);
         self.live.built_stops.fetch_add(route.len(), Ordering::Relaxed);
-        let changes = planner.zone_changes();
         if let Some(m) = mutant
             && self.diagnostics.race
         {
