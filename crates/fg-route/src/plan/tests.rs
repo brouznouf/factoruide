@@ -7,7 +7,6 @@ use crate::model::{Guard, Initial, Objective};
 use crate::xp::Edition;
 use rusqlite::Connection;
 use std::path::PathBuf;
-use std::sync::Mutex;
 
 mod movement;
 mod profession_trainers;
@@ -49,19 +48,16 @@ fn repo() -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../..")
 }
 
-pub(crate) fn database_of(edition: &str) -> Connection {
-    static UNPACK: Mutex<()> = Mutex::new(());
-    let _guard = UNPACK.lock().unwrap();
-    let (path, packed) = (
-        repo().join(format!("data/{edition}.sqlite")),
-        repo().join(format!("data/{edition}.sqlite.zst")),
-    );
-    let modified = |p: &PathBuf| std::fs::metadata(p).and_then(|m| m.modified()).ok();
-    if !path.exists() || modified(&packed) > modified(&path) {
-        let data = zstd::decode_all(std::fs::File::open(&packed).unwrap()).unwrap();
-        std::fs::write(&path, data).unwrap();
-    }
-    Connection::open(path).unwrap()
+/// The fixtures' base of an edition (`scripts/test-base.sh`): the game's classes, races, zones and
+/// class spells, no quest.
+pub(crate) fn base_of(edition: &str) -> Connection {
+    fixture_of(edition, &[])
+}
+
+/// The fixtures' base of an edition with the fixture `files` (`tests/fixtures/<file>.toml`).
+pub(crate) fn fixture_of(edition: &str, files: &[&str]) -> Connection {
+    let base = crate::fixture::Fixture::new(Edition::from_key(edition).expect("an edition"));
+    files.iter().fold(base, |f, name| f.file(name)).open()
 }
 
 /// Level 1 human warrior with only `n` quests of its own: taken and turned in at the start NPC,

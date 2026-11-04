@@ -1288,7 +1288,7 @@ mod movement_tests {
 
     #[test]
     fn unmatched_saved_steps_use_aligned_knowledge_when_replay_times_differ() {
-        let conn = crate::plan::tests::database_of("classic");
+        let conn = crate::plan::tests::base_of("classic");
         let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../overrides");
         let o = crate::job::Overrides::load_edition(&dir, crate::xp::Edition::Classic).unwrap();
         let req = serde_json::from_value(serde_json::json!({

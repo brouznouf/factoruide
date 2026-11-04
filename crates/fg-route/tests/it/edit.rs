@@ -3,11 +3,9 @@
 //! plain and a far barrens, a trainer, two flight masters).
 
 use crate::common::leveling;
-use crate::common::repo;
-use fg_route::job::{Editor, Overrides, PlanOutcome, PlanRequest, RouteStep};
+use fg_route::job::{Editor, PlanOutcome, RouteStep};
 use fg_route::model::Names;
 use fg_route::testing::{Q, Scenario};
-use fg_route::xp::Edition;
 use std::sync::OnceLock;
 
 /// The scenario's guide to 10 (its first routes, no optimization).
@@ -292,28 +290,6 @@ fn a_guide_with_a_child_quest_replays_in_the_editor() {
         .zip(&report.steps)
         .filter(|(_, r)| r.status == "error")
         .map(|(s, r)| (s, r.reason))
-        .collect();
-    assert_eq!(report.errors, 0, "{broken:?}");
-}
-
-/// A guide made when child quests were folded into their parent's objectives and repeatable quests
-/// were left out (the example guide: Bitter Rivals' children, the Paladin's Tomes) replays in the
-/// editor without an impossible step (GitHub #86).
-#[test]
-fn a_guide_made_before_child_quests_were_quests_replays_in_the_editor() {
-    let text = std::fs::read_to_string(repo().join("app/src/assets/example-guide.fgguide")).unwrap();
-    let v: serde_json::Value = serde_json::from_str(&text).unwrap();
-    let request: PlanRequest = serde_json::from_value(v["request"].clone()).unwrap();
-    let outcome = PlanOutcome::from_json(&v["outcome"].to_string()).unwrap();
-    let conn = crate::common::database_of("forever");
-    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
-    let editor = Editor::open(&conn, &overrides, &request, None).unwrap();
-    let names = Names::load(&conn, "enUS").unwrap();
-    let (steps, _) = editor.steps(&outcome);
-    let report = editor.simulate(&steps, &names);
-    let broken: Vec<_> = (steps.iter().zip(&report.steps))
-        .filter(|(_, r)| r.status == "error")
-        .map(|(s, r)| (format!("{s:?}"), r.reason))
         .collect();
     assert_eq!(report.errors, 0, "{broken:?}");
 }

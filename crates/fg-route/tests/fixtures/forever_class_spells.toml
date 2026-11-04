@@ -1,0 +1,75 @@
+# Forever's class quests teaching a spell the planner gates by them, alone (their chains left out):
+# the Skyborne druid's bear form, the night elf druid's cat form and the undead paladin's Holy Light.
+
+[[npc]]
+id = 255853
+name = "Urs'endris"
+level = 10
+friendly_to = "AH"
+at = [{ zone = 16593, x = 69.81, y = 61.71 }]
+
+[[npc]]
+id = 11802
+name = "Dendrite Starblaze"
+level = 60
+npc_flags = 3
+friendly_to = "AH"
+at = [{ zone = 493, x = 56.21, y = 30.64, z = 525 }]
+
+[[npc]]
+id = 4217
+name = "Mathrengyl Bearwalker"
+level = 60
+npc_flags = 23
+friendly_to = "A"
+at = [{ zone = 1657, x = 35.37, y = 8.4, z = 1340 }]
+
+[[npc]]
+id = 244808
+name = "Aramis Hammerhand"
+level = 5
+npc_flags = 16
+friendly_to = "H"
+at = [{ zone = 85, x = 31.1, y = 66.41 }]
+
+[[quest]]
+id = 94638
+name = "Strength and Mercy"
+level = 10
+min_level = 10
+races_mask = 12884901888
+classes_mask = 1024
+zone = -263
+xp = 840
+reward_spell = 5487
+starts = [{ npc = 255853 }]
+ends = [{ npc = 255853 }]
+objectives = []
+
+[[quest]]
+id = 98397
+name = "To Darnassus"
+level = 20
+min_level = 20
+races_mask = 4294967304
+classes_mask = 1024
+zone = -263
+xp = 155
+reward_spell = 768
+starts = [{ npc = 11802 }]
+ends = [{ npc = 4217 }]
+objectives = []
+
+[[quest]]
+id = 90902
+name = "Rediscovering the Light"
+level = 2
+min_level = 2
+races_mask = 16
+classes_mask = 2
+zone = -141
+xp = 85
+reward_spell = 635
+starts = [{ npc = 244808 }]
+ends = [{ npc = 244808 }]
+objectives = []
