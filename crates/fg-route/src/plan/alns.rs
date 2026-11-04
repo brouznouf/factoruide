@@ -4,6 +4,7 @@
 use super::Planner;
 use super::evaluate::Run;
 use super::state::{Kind, Stop};
+use crate::world::Pos;
 use rand::RngExt;
 use rand::rngs::SmallRng;
 
@@ -202,20 +203,23 @@ impl Planner<'_> {
             return None;
         }
         let first = route.iter().position(|s| s.is_quest() && remove.contains(&s.index))?;
-        // Levels before each remaining stop, kept aligned while reinserting.
+        // Levels before each remaining stop and their places, kept aligned while reinserting.
+        let s0 = self.sim().initial_state();
         let mut levels: Vec<i64> = Vec::with_capacity(len);
+        let mut places: Vec<Pos> = Vec::with_capacity(len);
         let mut kept: Vec<Stop> = Vec::with_capacity(len);
         for (i, s) in route.iter().enumerate() {
             if !(s.is_quest() && remove.contains(&s.index)) {
                 kept.push(*s);
                 levels.push(level_at(i));
+                places.push(self.sim().pos_from_start(&s0, *s));
             }
         }
         *route = kept;
         remove.sort_by_key(|&q| self.quest(q).level);
         let mut changed = first;
         for q in remove {
-            let at = self.insert_quest_leveled(route, &mut levels, q);
+            let at = self.insert_quest_leveled(route, &mut levels, &mut places, &s0, q);
             changed = changed.min(at);
         }
         Some((changed, route.len(), false))

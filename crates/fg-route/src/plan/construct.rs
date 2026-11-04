@@ -945,11 +945,20 @@ impl Planner<'_> {
     }
 
     /// Insert a quest: accepted where the character is around its level (closest to the giver),
-    /// objectives and turn-in at the closest places within the following stretch.
-    pub(crate) fn insert_quest_leveled(&self, route: &mut Vec<Stop>, levels: &mut Vec<i64>, q: u32) -> usize {
+    /// objectives and turn-in at the closest places within the following stretch. `levels` and
+    /// `places` (`Simulator::pos_from_start` of each stop, from the initial state `s0`) are kept
+    /// aligned with the route.
+    pub(crate) fn insert_quest_leveled(
+        &self,
+        route: &mut Vec<Stop>,
+        levels: &mut Vec<i64>,
+        places: &mut Vec<Pos>,
+        s0: &State,
+        q: u32,
+    ) -> usize {
         let quest = self.quest(q);
         let (lo, hi) = (quest.min_level.max(quest.level - 3), quest.level + 2);
-        let s0 = self.sim().initial_state();
+        let in_log = self.in_log_at_start(q);
         let level = |levels: &Vec<i64>, p: usize| {
             if levels.is_empty() {
                 1
@@ -961,13 +970,13 @@ impl Planner<'_> {
         // Each distance once (the first of the nearest, as `min_by` keeps).
         // A quest of the log is not accepted: its stops go where they fit best.
         let at = (0..=route.len())
-            .filter(|_| !self.in_log_at_start(q))
+            .filter(|_| !in_log)
             .filter(|&p| (lo..=hi).contains(&level(levels, p)))
             .map(|p| {
                 let d = if p == 0 {
                     f64::INFINITY
                 } else {
-                    self.sim().pos_from_start(&s0, route[p - 1]).dist(&giver)
+                    places[p - 1].dist(&giver)
                 };
                 (p, d)
             })
@@ -992,29 +1001,30 @@ impl Planner<'_> {
             }
             let last = levels.last().copied().unwrap_or(1);
             levels.resize(route.len(), last);
+            *places = route.iter().map(|&stop| self.sim().pos_from_start(s0, stop)).collect();
             return first;
         };
         let first = at;
-        let put = |route: &mut Vec<Stop>, levels: &mut Vec<i64>, p: usize, stop: Stop| {
+        let put = |route: &mut Vec<Stop>, levels: &mut Vec<i64>, places: &mut Vec<Pos>, p: usize, stop: Stop| {
             let l = level(levels, p);
             route.insert(p, stop);
             levels.insert(p, l);
+            places.insert(p, self.sim().pos_from_start(s0, stop));
         };
-        put(route, levels, at, Stop::quest(q, Kind::Accept));
-        let window = |from: usize, route: &Vec<Stop>| (from, (from + 300).min(route.len()));
-        let nearest = |route: &Vec<Stop>, pos: &Pos, from: usize| {
-            let (a, b) = window(from, route);
+        put(route, levels, places, at, Stop::quest(q, Kind::Accept));
+        let nearest = |places: &[Pos], pos: &Pos, from: usize| {
+            let (a, b) = (from, (from + 300).min(places.len()));
             (a..b)
-                .map(|x| (x, self.sim().pos_from_start(&s0, route[x]).dist(pos)))
+                .map(|x| (x, places[x].dist(pos)))
                 .min_by(|x, y| x.1.total_cmp(&y.1))
                 .map_or(from, |(i, _)| i + 1)
         };
         for k in 0..quest.objectives.len() {
-            at = nearest(route, &quest.objectives[k].loc.pos, at + 1).max(at + 1);
-            put(route, levels, at, Stop::quest(q, Kind::Objective(k as u8)));
+            at = nearest(places, &quest.objectives[k].loc.pos, at + 1).max(at + 1);
+            put(route, levels, places, at, Stop::quest(q, Kind::Objective(k as u8)));
         }
-        at = nearest(route, &quest.ends[0].pos, at + 1).max(at + 1);
-        put(route, levels, at, Stop::quest(q, Kind::TurnIn));
+        at = nearest(places, &quest.ends[0].pos, at + 1).max(at + 1);
+        put(route, levels, places, at, Stop::quest(q, Kind::TurnIn));
         first
     }
 
