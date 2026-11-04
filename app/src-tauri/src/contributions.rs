@@ -562,7 +562,7 @@ pub(crate) fn setup_of(state: &AppState) -> fg_contrib::issue::Setup {
         not_loaded: health.not_loaded,
         disabled: u32::try_from(health.disabled_for.len()).unwrap_or(u32::MAX),
         saved_variables: health.saved_variables,
-        restart_needed: *state.restart_needed.locked(),
+        restart_needed: state.restart_needed.load(Ordering::Relaxed),
     }
 }
 

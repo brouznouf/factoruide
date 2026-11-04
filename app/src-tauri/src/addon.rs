@@ -6,9 +6,9 @@
 )]
 
 use super::{
-    AppState, CmdError, CmdResult, DATA_ADDON, Edition, GUIDE_ADDON, GuideId, Host, LockExt, Mutex, PROFILE_ADDON,
-    Path, Settings, State, WowProblem, addon_snapshot, embedded, err, game, job, loaded_files, overrides,
-    read_send_record, send_record_file, sent_lua, update_settings,
+    AppState, CmdError, CmdResult, DATA_ADDON, Edition, GUIDE_ADDON, GuideId, Host, Ordering, PROFILE_ADDON, Path,
+    Settings, State, WowProblem, addon_snapshot, embedded, err, game, job, loaded_files, overrides, read_send_record,
+    send_record_file, sent_lua, update_settings,
 };
 
 /// The oldest addon this app works with (its .toc version): older ones are to be updated.
@@ -25,9 +25,10 @@ pub(crate) fn install_addon(state: State<'_, AppState>) -> CmdResult<usize> {
 
 /// What `install_addon` does.
 pub(crate) fn write_data(state: &AppState) -> CmdResult<usize> {
-    // Off the main thread, two writes could touch the same files at once: one at a time.
-    static INSTALLING: Mutex<()> = Mutex::new(());
-    let _one = INSTALLING.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+    let _one = state
+        .installing
+        .lock()
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     let settings = state.settings();
     match game::status(&settings.wow_dir, settings.edition).problem {
         None => {}
@@ -77,7 +78,7 @@ pub(crate) fn write_data(state: &AppState) -> CmdResult<usize> {
     // A folder or a file the game does not load yet: it reads the .toc files when it starts.
     let after = loaded_files(&addons);
     let restart = after.iter().any(|(toc, files)| before.get(toc) != Some(files));
-    *state.restart_needed.locked() = restart;
+    state.restart_needed.store(restart, Ordering::Relaxed);
     // Only what was installed: the other settings may have changed meanwhile.
     let installed = addon_snapshot(&settings);
     update_settings(state, |s| s.addon_installed = Some(installed))?;
@@ -107,7 +108,7 @@ pub(crate) fn install_polestar(state: State<'_, AppState>) -> CmdResult<usize> {
     for (name, content) in files {
         std::fs::write(pack.join(name), content).map_err(err)?;
     }
-    *state.restart_needed.locked() = true;
+    state.restart_needed.store(true, Ordering::Relaxed);
     Ok(guides.len())
 }
 

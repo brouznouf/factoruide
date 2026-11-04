@@ -7,6 +7,7 @@
 
 use fg_app::{CmdError, EditOpened, Host, Settings, SettingsStore, Studio, now};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 /// The settings file, in the app's config folder.
 const SETTINGS_FILE: &str = "settings.json";
@@ -93,7 +94,7 @@ fn default_wow_dir() -> PathBuf {
 struct AppState {
     settings: SettingsStore<DiskFiles>,
     /// The last install added files the game reads only when it starts.
-    restart_needed: Mutex<bool>,
+    restart_needed: AtomicBool,
     /// Where the embedded databases are unpacked, and those unpacked so far.
     db_dir: PathBuf,
     dbs: Mutex<HashMap<Edition, PathBuf>>,
@@ -109,6 +110,9 @@ struct AppState {
     /// Held while a contribution is read, sent and recorded: one send at a time, manual or
     /// automatic.
     send_lock: Mutex<()>,
+    /// Held while the addon's files are written: off the main thread, two installs could touch
+    /// the same files at once.
+    installing: Mutex<()>,
     /// Wakes the automatic contributions up (turned on in the settings).
     auto_wake: std::sync::mpsc::Sender<()>,
     /// What the `FG_*` variables the app started with ask the generations to tell or check.
@@ -382,7 +386,7 @@ fn addon_health(state: State<'_, AppState>) -> AddonState {
     let settings = state.settings();
     AddonState {
         health: game::addon_health(&settings.wow_dir, settings.edition, ADDON_VERSION),
-        restart_needed: *state.restart_needed.locked(),
+        restart_needed: state.restart_needed.load(Ordering::Relaxed),
     }
 }
 
@@ -495,7 +499,8 @@ fn main() {
             let (auto_wake, wake) = std::sync::mpsc::channel();
             app.manage(AppState {
                 settings,
-                restart_needed: Mutex::new(false),
+                restart_needed: AtomicBool::new(false),
+                installing: Mutex::new(()),
                 db_dir,
                 dbs: Mutex::new(HashMap::default()),
                 files: DiskFiles::new(data_dir.clone()),
