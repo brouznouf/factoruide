@@ -55,7 +55,6 @@ mod worth;
 #[cfg(test)]
 pub(crate) mod tests;
 
-pub use alns::ALNS_OPS;
 pub use combat::Combat;
 pub use edit::{Edit, Edited, EditedStep, Farmed, Outcome};
 pub use evaluate::End;
