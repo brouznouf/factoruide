@@ -510,6 +510,7 @@ fn passage_walks_keep_the_normal_speed_even_with_dry_ground_under_them() {
                 one_way: false,
                 lift: true,
             }],
+            crate::world::WorldTables::shared(),
         )
         .unwrap();
     assert!(warnings.is_empty(), "{warnings:?}");

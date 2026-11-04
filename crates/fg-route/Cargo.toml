@@ -10,6 +10,7 @@ license.workspace = true
 anyhow.workspace = true
 base64 = "0.23"
 miniz_oxide = "0.9"
+quick_cache = "0.6"
 rand = "0.10"
 rusqlite = { version = "0.41", features = ["bundled"] }
 rustc-hash = "2"

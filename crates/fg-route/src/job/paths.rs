@@ -25,7 +25,7 @@ pub fn walk_world(conn: &Connection, overrides: &Overrides, faction: Faction) ->
         .filter(|p| params.shortcuts || !p.shortcut)
         .cloned()
         .collect();
-    world.add_passes(conn, &passes)?;
+    world.add_passes(conn, &passes, crate::world::WorldTables::shared())?;
     Ok(world)
 }
 

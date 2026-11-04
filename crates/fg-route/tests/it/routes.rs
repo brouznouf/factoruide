@@ -1480,7 +1480,8 @@ fn link_opened_by_a_quest() {
         p.params.run_speed / p.params.detour,
         p.params.link_wait,
     );
-    p.world.add_links(&[link], faction, speed, wait);
+    p.world
+        .add_links(&[link], faction, speed, wait, fg_route::world::WorldTables::shared());
     let mut o = one_kill_east_of_start(&p, 0.0);
     (o.loc.pos, o.loc.zone) = (p.world.to_world(1537, 50.0, 50.0).unwrap(), 1537);
     p.model.quests[0].objectives = vec![o];
@@ -1522,7 +1523,8 @@ fn link_open_while_a_quest_is_held() {
         p.params.run_speed / p.params.detour,
         p.params.link_wait,
     );
-    p.world.add_links(&[link], faction, speed, wait);
+    p.world
+        .add_links(&[link], faction, speed, wait, fg_route::world::WorldTables::shared());
     let mut o = one_kill_east_of_start(&p, 0.0);
     (o.loc.pos, o.loc.zone) = (p.world.to_world(1537, 50.0, 50.0).unwrap(), 1537);
     p.model.quests[0].objectives = vec![o];

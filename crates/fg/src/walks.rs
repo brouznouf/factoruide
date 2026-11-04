@@ -28,7 +28,7 @@ pub fn run(conn: &Connection, overrides_dir: &Path, route: &Path, out: &Path, ce
         .filter(|p| params.shortcuts || !p.shortcut)
         .cloned()
         .collect();
-    world.add_passes(conn, &passes)?;
+    world.add_passes(conn, &passes, fg_route::world::WorldTables::shared())?;
     let walks = route_walks(&world, &route);
     let next = AtomicUsize::new(0);
     let threads = std::thread::available_parallelism().map_or(1, usize::from).min(8);

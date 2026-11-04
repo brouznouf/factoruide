@@ -69,7 +69,7 @@ pub fn run(
     for w in world.add_caves(&overrides.caves) {
         eprintln!("{w}");
     }
-    for w in world.add_passes(conn, &overrides.passes)? {
+    for w in world.add_passes(conn, &overrides.passes, fg_route::world::WorldTables::shared())? {
         eprintln!("{w}");
     }
     let (a, b) = (point(&world, from)?, point(&world, to)?);
@@ -263,7 +263,7 @@ pub fn overrides(conn: &Connection, overrides_dir: &Path, faction: &str) -> Resu
         println!("{w}");
     }
     world.add_caves(&overrides.caves);
-    for w in world.add_passes(conn, &overrides.passes)? {
+    for w in world.add_passes(conn, &overrides.passes, fg_route::world::WorldTables::shared())? {
         println!("{w}");
     }
     for p in &world.passes {

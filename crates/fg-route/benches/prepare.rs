@@ -8,7 +8,7 @@ use criterion::{Criterion, criterion_group, criterion_main};
 use fg_route::faction::Faction;
 use fg_route::job::{self, Overrides, PlanRequest};
 use fg_route::terrain::Terrain;
-use fg_route::world::World;
+use fg_route::world::{World, WorldTables};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use std::hint::black_box;
@@ -75,7 +75,7 @@ fn bench(c: &mut Criterion) {
                 world.add_zone_levels(&conn, params.zone_gap).unwrap();
                 world
             },
-            |mut world| world.add_passes(&conn, &passes).unwrap(),
+            |mut world| world.add_passes(&conn, &passes, &WorldTables::computed()).unwrap(),
         );
     });
     group.finish();

@@ -678,6 +678,7 @@ impl Scenario {
             self.profile.faction,
             self.params.run_speed,
             self.params.link_wait,
+            crate::world::WorldTables::shared(),
         );
         let start = Q::at(
             At {

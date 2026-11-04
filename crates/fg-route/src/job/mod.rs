@@ -468,10 +468,16 @@ fn world_for(
         "{:?}{:?}{:?}{:?}{:?}{:?}{:?}",
         overrides.closed, overrides.enclosed, overrides.caves, passes, params.zone_gap, params.detour, params.run_speed
     ));
-    for warning in world.add_passes(conn, &passes)? {
+    for warning in world.add_passes(conn, &passes, crate::world::WorldTables::shared())? {
         progress(&JobEvent::Status(&warning));
     }
     let links = overrides.links_of_race(race_id);
-    world.add_links(&links, faction, params.run_speed / params.detour, params.link_wait);
+    world.add_links(
+        &links,
+        faction,
+        params.run_speed / params.detour,
+        params.link_wait,
+        crate::world::WorldTables::shared(),
+    );
     Ok(world)
 }

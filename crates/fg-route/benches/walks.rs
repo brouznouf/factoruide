@@ -50,7 +50,9 @@ fn world() -> World {
         .filter(|p| params.shortcuts || !p.shortcut)
         .cloned()
         .collect();
-    world.add_passes(&conn, &passes).unwrap();
+    world
+        .add_passes(&conn, &passes, fg_route::world::WorldTables::shared())
+        .unwrap();
     world
 }
 

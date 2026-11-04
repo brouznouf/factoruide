@@ -2,6 +2,7 @@
 
 pub mod abilities;
 pub mod audit;
+pub mod cache;
 pub mod diagnostics;
 pub mod export;
 pub mod faction;

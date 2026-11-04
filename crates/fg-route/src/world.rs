@@ -1,5 +1,6 @@
 //! Geography: zone coordinates <-> world coordinates, and the flight path network.
 
+use crate::cache::{Cached, Compute};
 use crate::faction::Faction;
 use anyhow::Result;
 use rusqlite::Connection;
@@ -244,28 +245,127 @@ pub struct World {
     source: Option<u64>,
 }
 
-/// Walks between the passages already computed (`World::add_passes`): they take about a second
-/// and the same ones are asked for again at each plan with the same game data and settings.
-/// Few entries (an edition and a faction each), cleared with the process.
-static PASS_WALKS: std::sync::Mutex<Vec<(u64, PassWalks)>> = std::sync::Mutex::new(Vec::new());
-const PASS_WALKS_MAX: usize = 8;
-/// Held while the walks (or the chain tables) are computed, so that worlds asking at once for
-/// the same compute them once.
-static PASS_COMPUTE: std::sync::Mutex<()> = std::sync::Mutex::new(());
-static LINK_COMPUTE: std::sync::Mutex<()> = std::sync::Mutex::new(());
+/// The tables a world works out from its passages and links, the same for the same game data,
+/// settings and passages (`World::stamp`): the walks between the passages take about a second.
+/// `shared` keeps them for the next worlds (an edition and a faction each); `computed` computes
+/// them each time.
+pub struct WorldTables {
+    walks: Box<dyn Compute<World, Output = PassWalks> + Send + Sync>,
+    sides: Box<dyn Compute<World, Output = PassSides> + Send + Sync>,
+    chains: Box<dyn for<'a> Compute<Chaining<'a>, Output = LinkChains> + Send + Sync>,
+}
 
-/// The boats' and zeppelins' chain tables already computed (`World::add_links`), as `PASS_WALKS`.
-static LINK_CHAINS: std::sync::Mutex<Vec<(u64, LinkChains)>> = std::sync::Mutex::new(Vec::new());
+/// How many worlds' tables `WorldTables::shared` keeps.
+const TABLES_KEPT: usize = 8;
+
+impl WorldTables {
+    /// The tables kept for the whole process.
+    pub fn shared() -> &'static Self {
+        static SHARED: std::sync::LazyLock<WorldTables> = std::sync::LazyLock::new(|| WorldTables {
+            walks: Box::new(Cached::new(PassWalksOf, TABLES_KEPT)),
+            sides: Box::new(Cached::new(PassSidesOf, TABLES_KEPT)),
+            chains: Box::new(Cached::new(LinkChainsOf, TABLES_KEPT)),
+        });
+        &SHARED
+    }
+
+    /// The tables computed for each world (a bench of their computation).
+    pub fn computed() -> Self {
+        Self {
+            walks: Box::new(PassWalksOf),
+            sides: Box::new(PassSidesOf),
+            chains: Box::new(LinkChainsOf),
+        }
+    }
+}
+
+/// A world's links to chain, at a walking speed (`World::add_links`).
+pub struct Chaining<'a> {
+    world: &'a World,
+    walk_speed: f64,
+}
 
 type LinkChains = std::sync::Arc<Vec<Vec<Vec<f64>>>>;
-
-/// The sides of the passages already worked out (`World::set_pass_sides`), as `PASS_WALKS`.
-static PASS_SIDES: std::sync::Mutex<Vec<(u64, PassSides)>> = std::sync::Mutex::new(Vec::new());
 
 /// For each passage: its sides and the area of each as the terrain labels it.
 type PassSides = std::sync::Arc<Vec<(Vec<(u32, Pos)>, Vec<Option<u32>>)>>;
 
 type PassWalks = std::sync::Arc<(Vec<Vec<f64>>, Vec<Vec<usize>>, Vec<Vec<bool>>, FxHashMap<u8, PassGraph>)>;
+
+/// The walks between a world's passages (`World::pass_walks`).
+struct PassWalksOf;
+
+impl Compute<World> for PassWalksOf {
+    type Output = PassWalks;
+
+    /// The same data, the same terrain, the same passages, the same zone levels.
+    fn key(&self, w: &World) -> Option<u64> {
+        w.stamp.map(|stamp| {
+            use std::hash::{Hash, Hasher};
+            let mut h = std::collections::hash_map::DefaultHasher::new();
+            stamp.hash(&mut h);
+            format!("{:?}", w.passes).hash(&mut h);
+            let mut levels: Vec<_> = w.zone_levels.iter().collect();
+            levels.sort_unstable();
+            (levels, &w.band_levels, w.zone_gap).hash(&mut h);
+            h.finish()
+        })
+    }
+
+    fn compute(&self, w: &World) -> PassWalks {
+        w.pass_walks()
+    }
+}
+
+/// The sides of a world's passages (`World::pass_sides`).
+struct PassSidesOf;
+
+impl Compute<World> for PassSidesOf {
+    type Output = PassSides;
+
+    fn key(&self, w: &World) -> Option<u64> {
+        w.stamp.map(|stamp| {
+            use std::hash::{Hash, Hasher};
+            let mut h = std::collections::hash_map::DefaultHasher::new();
+            (stamp, format!("{:?}", w.passes)).hash(&mut h);
+            h.finish()
+        })
+    }
+
+    fn compute(&self, w: &World) -> PassSides {
+        w.pass_sides()
+    }
+}
+
+/// The boats' and zeppelins' chain tables of a world (`World::chain_links`).
+struct LinkChainsOf;
+
+impl Compute<Chaining<'_>> for LinkChainsOf {
+    type Output = LinkChains;
+
+    fn key(&self, c: &Chaining<'_>) -> Option<u64> {
+        c.world.stamp.map(|stamp| {
+            use std::hash::{Hash, Hasher};
+            let mut h = std::collections::hash_map::DefaultHasher::new();
+            (
+                stamp,
+                format!("{:?}", c.world.links),
+                c.walk_speed.to_bits(),
+                &c.world.link_quests,
+            )
+                .hash(&mut h);
+            h.finish()
+        })
+    }
+
+    fn compute(&self, c: &Chaining<'_>) -> LinkChains {
+        std::sync::Arc::new(
+            (0..1usize << c.world.link_quests.len())
+                .map(|open| c.world.chain_links(open, c.walk_speed))
+                .collect(),
+        )
+    }
+}
 
 /// A named place of a zone map (Ratchet, Valley of Trials...), at the center of its overlay.
 struct Landmark {
@@ -962,7 +1062,7 @@ impl World {
     /// Register transport links usable by `faction`; `walk_speed` (yards/s, detour included)
     /// is used to chain links together.
     /// `wait`: average wait before boarding (boats and zeppelins leave every few minutes).
-    pub fn add_links(&mut self, defs: &[LinkDef], faction: Faction, walk_speed: f64, wait: f64) {
+    pub fn add_links(&mut self, defs: &[LinkDef], faction: Faction, walk_speed: f64, wait: f64, tables: &WorldTables) {
         for d in defs {
             if d.faction.is_some_and(|f| f != faction) {
                 continue;
@@ -1003,42 +1103,11 @@ impl World {
         }
         // Beyond the cache key's room, the links of the last quests are always open.
         self.link_quests.truncate(LINK_QUESTS_MAX);
-        // The same tables as an earlier world's (see `PASS_WALKS`).
-        let key = self.stamp.map(|stamp| {
-            use std::hash::{Hash, Hasher};
-            let mut h = std::collections::hash_map::DefaultHasher::new();
-            (
-                stamp,
-                format!("{:?}", self.links),
-                walk_speed.to_bits(),
-                &self.link_quests,
-            )
-                .hash(&mut h);
-            h.finish()
+        let chains = tables.chains.compute(&Chaining {
+            world: self,
+            walk_speed,
         });
-        // One world computes them while the others wait for the same.
-        let _computing = key.map(|_| LINK_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
-        let kept = key.and_then(|key| {
-            let cache = LINK_CHAINS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-            cache
-                .iter()
-                .find(|(k, _)| *k == key)
-                .map(|(_, c)| std::sync::Arc::clone(c))
-        });
-        if let Some(chains) = kept {
-            self.link_chains.clone_from(chains.as_ref());
-            return;
-        }
-        self.link_chains = (0..1usize << self.link_quests.len())
-            .map(|open| self.chain_links(open, walk_speed))
-            .collect();
-        if let Some(key) = key {
-            let mut cache = LINK_CHAINS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-            if cache.len() >= PASS_WALKS_MAX {
-                cache.remove(0);
-            }
-            cache.push((key, std::sync::Arc::new(self.link_chains.clone())));
-        }
+        self.link_chains.clone_from(&chains);
     }
 
     /// The links' chain table (see `link_chains`) with the links of the quests not in `open`
@@ -1342,7 +1411,7 @@ impl World {
     }
 
     /// Register passages; subzone positions come from the map exploration overlays.
-    pub fn add_passes(&mut self, conn: &Connection, defs: &[PassDef]) -> Result<Vec<String>> {
+    pub fn add_passes(&mut self, conn: &Connection, defs: &[PassDef], tables: &WorldTables) -> Result<Vec<String>> {
         // Center of each explorable map area, per zone.
         let mut areas: HashMap<String, Vec<(i64, f64, f64)>> = HashMap::new();
         let query = "SELECT t.AreaName_lang, a.AreaID,
@@ -1398,7 +1467,10 @@ impl World {
         }
         self.area_passes.clear();
         self.area_lifts.clear();
-        self.set_pass_sides();
+        let sides = tables.sides.compute(self);
+        for (pass, (areas, raw)) in self.passes.iter_mut().zip(sides.iter()) {
+            (pass.areas, pass.raw_areas) = (areas.clone(), raw.clone());
+        }
         for i in 0..self.passes.len() {
             let pass = &self.passes[i];
             if pass.shortcut || pass.one_way {
@@ -1420,30 +1492,15 @@ impl World {
             }
         }
         self.walk_id = NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed);
-        // The same walks as an earlier world's: the same data, the same terrain, the same passages.
-        let key = self.stamp.map(|stamp| {
-            use std::hash::{Hash, Hasher};
-            let mut h = std::collections::hash_map::DefaultHasher::new();
-            stamp.hash(&mut h);
-            format!("{:?}", self.passes).hash(&mut h);
-            let mut levels: Vec<_> = self.zone_levels.iter().collect();
-            levels.sort_unstable();
-            (levels, &self.band_levels, self.zone_gap).hash(&mut h);
-            h.finish()
-        });
-        let _computing = key.map(|_| PASS_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
-        if let Some(key) = key
-            && let Some(walks) = (PASS_WALKS
-                .lock()
-                .unwrap_or_else(std::sync::PoisonError::into_inner)
-                .iter())
-            .find(|(k, _)| *k == key)
-            .map(|(_, w)| std::sync::Arc::clone(w))
-        {
-            (self.pass_dist, self.pass_next, self.pass_shortcut, self.pass_closed) =
-                (walks.0.clone(), walks.1.clone(), walks.2.clone(), walks.3.clone());
-            return Ok(warnings);
-        }
+        let walks = tables.walks.compute(self);
+        (self.pass_dist, self.pass_next, self.pass_shortcut, self.pass_closed) =
+            (walks.0.clone(), walks.1.clone(), walks.2.clone(), walks.3.clone());
+        Ok(warnings)
+    }
+
+    /// The walks between the passages (`pass_dist`, `pass_next`, `pass_shortcut`,
+    /// `pass_closed`).
+    fn pass_walks(&self) -> PassWalks {
         // Walking from a passage to another taken from the zone it leads into, then all-pairs
         // shortest walks (one-way passages: not the same both ways). Between two passages of
         // the same terrain area, over the terrain from their points in it (a passage may stand
@@ -1459,84 +1516,39 @@ impl World {
             }
         }
         let (d, next) = self.pass_graph(&edges, |_| false);
-        self.pass_closed.clear();
+        let mut closed = FxHashMap::default();
         if !self.zone_levels.is_empty() {
             for &level in self.band_levels.iter().filter(|&&l| l != 0) {
-                if !self.pass_closed.contains_key(&level) {
-                    let graph = self.pass_graph(&edges, |z| self.zone_closed(z, level));
-                    self.pass_closed.insert(level, graph);
-                }
+                closed
+                    .entry(level)
+                    .or_insert_with(|| self.pass_graph(&edges, |z| self.zone_closed(z, level)));
             }
         }
-        self.pass_dist = d;
-        self.pass_next = next;
-        self.pass_shortcut = (0..n)
+        let shortcut = (0..n)
             .map(|i| {
                 (0..n)
-                    .map(|j| self.pass_path(i, j).iter().any(|&k| self.passes[k].shortcut))
+                    .map(|j| path_in(&d, &next, i, j).iter().any(|&k| self.passes[k].shortcut))
                     .collect()
             })
             .collect();
-        if let Some(key) = key {
-            let mut kept = PASS_WALKS.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-            if kept.len() >= PASS_WALKS_MAX {
-                kept.remove(0);
-            }
-            kept.push((
-                key,
-                std::sync::Arc::new((
-                    self.pass_dist.clone(),
-                    self.pass_next.clone(),
-                    self.pass_shortcut.clone(),
-                    self.pass_closed.clone(),
-                )),
-            ));
-        }
-        Ok(warnings)
+        std::sync::Arc::new((d, next, shortcut, closed))
     }
 
-    /// The sides of each passage (`Pass::areas`), worked out with walks over the terrain, or
-    /// taken from an earlier world's with the same data, terrain and passages (`PASS_SIDES`).
-    fn set_pass_sides(&mut self) {
-        let key = self.stamp.map(|stamp| {
-            use std::hash::{Hash, Hasher};
-            let mut h = std::collections::hash_map::DefaultHasher::new();
-            (stamp, format!("{:?}", self.passes)).hash(&mut h);
-            h.finish()
-        });
-        let _computing = key.map(|_| PASS_COMPUTE.lock().unwrap_or_else(std::sync::PoisonError::into_inner));
-        let kept = key.and_then(|key| {
-            let sides = PASS_SIDES.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-            sides
-                .iter()
-                .find(|(k, _)| *k == key)
-                .map(|(_, s)| std::sync::Arc::clone(s))
-        });
-        let sides = kept.unwrap_or_else(|| {
-            let sides: PassSides = std::sync::Arc::new(
-                (self.passes.iter())
-                    .map(|pass| {
-                        let areas = self.pass_areas(&pass.pos);
-                        let raw = areas
-                            .iter()
-                            .map(|(_, p)| self.terrain.large_areas_of(p).map(|(raw, _)| raw))
-                            .collect();
-                        (areas, raw)
-                    })
-                    .collect(),
-            );
-            if let Some(key) = key {
-                let mut kept = PASS_SIDES.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
-                if kept.len() >= PASS_WALKS_MAX {
-                    kept.remove(0);
-                }
-                kept.push((key, std::sync::Arc::clone(&sides)));
-            }
-            sides
-        });
-        for (pass, (areas, raw)) in self.passes.iter_mut().zip(sides.iter()) {
-            (pass.areas, pass.raw_areas) = (areas.clone(), raw.clone());
-        }
+    /// The sides of each passage (`Pass::areas`), worked out with walks over the terrain, and the
+    /// area of each as the terrain labels it.
+    fn pass_sides(&self) -> PassSides {
+        std::sync::Arc::new(
+            (self.passes.iter())
+                .map(|pass| {
+                    let areas = self.pass_areas(&pass.pos);
+                    let raw = areas
+                        .iter()
+                        .map(|(_, p)| self.terrain.large_areas_of(p).map(|(raw, _)| raw))
+                        .collect();
+                    (areas, raw)
+                })
+                .collect(),
+        )
     }
 
     /// The sides of a passage (`Pass::areas`): the large terrain areas around it, its own
@@ -1725,16 +1737,7 @@ impl World {
     /// The same for a character of `level` (`pass_graph_at`).
     fn pass_path_at(&self, i: usize, j: usize, level: u8) -> Vec<usize> {
         let (dist, next) = self.pass_graph_at(level);
-        if dist[i][j].is_infinite() {
-            return Vec::new();
-        }
-        let mut path = vec![i];
-        let mut k = i;
-        while k != j {
-            k = next[k][j];
-            path.push(k);
-        }
-        path
+        path_in(dist, next, i, j)
     }
 
     /// The shortcuts (off-road passages) the walk from `a` to `b` takes, in order.
@@ -2180,4 +2183,19 @@ impl World {
         }
         self.terrain.distance(a, b).unwrap_or(f64::INFINITY)
     }
+}
+
+/// The passages of the shortest walk from passage `i` to passage `j` in a graph of shortest walks
+/// (`World::pass_graph`), both included; none when no walk goes there.
+fn path_in(dist: &[Vec<f64>], next: &[Vec<usize>], i: usize, j: usize) -> Vec<usize> {
+    if dist[i][j].is_infinite() {
+        return Vec::new();
+    }
+    let mut path = vec![i];
+    let mut k = i;
+    while k != j {
+        k = next[k][j];
+        path.push(k);
+    }
+    path
 }
