@@ -1,0 +1,39 @@
+# Stonetalon Mountains far above a low character: 30 hostile level 25 mobs (the zone's median
+# level), with the ground between Stonetalon and the Barrens (classic_stonetalon_barrens_terrain).
+
+[[npc]]
+id = 900001
+name = "Strong Beast"
+level = 25
+at = [
+    { zone = 406, x = 40.0, y = 40.0 },
+    { zone = 406, x = 43.0, y = 40.0 },
+    { zone = 406, x = 46.0, y = 40.0 },
+    { zone = 406, x = 49.0, y = 40.0 },
+    { zone = 406, x = 52.0, y = 40.0 },
+    { zone = 406, x = 55.0, y = 40.0 },
+    { zone = 406, x = 40.0, y = 45.0 },
+    { zone = 406, x = 43.0, y = 45.0 },
+    { zone = 406, x = 46.0, y = 45.0 },
+    { zone = 406, x = 49.0, y = 45.0 },
+    { zone = 406, x = 52.0, y = 45.0 },
+    { zone = 406, x = 55.0, y = 45.0 },
+    { zone = 406, x = 40.0, y = 50.0 },
+    { zone = 406, x = 43.0, y = 50.0 },
+    { zone = 406, x = 46.0, y = 50.0 },
+    { zone = 406, x = 49.0, y = 50.0 },
+    { zone = 406, x = 52.0, y = 50.0 },
+    { zone = 406, x = 55.0, y = 50.0 },
+    { zone = 406, x = 40.0, y = 55.0 },
+    { zone = 406, x = 43.0, y = 55.0 },
+    { zone = 406, x = 46.0, y = 55.0 },
+    { zone = 406, x = 49.0, y = 55.0 },
+    { zone = 406, x = 52.0, y = 55.0 },
+    { zone = 406, x = 55.0, y = 55.0 },
+    { zone = 406, x = 40.0, y = 60.0 },
+    { zone = 406, x = 43.0, y = 60.0 },
+    { zone = 406, x = 46.0, y = 60.0 },
+    { zone = 406, x = 49.0, y = 60.0 },
+    { zone = 406, x = 52.0, y = 60.0 },
+    { zone = 406, x = 55.0, y = 60.0 },
+]

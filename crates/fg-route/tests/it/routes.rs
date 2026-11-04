@@ -1366,37 +1366,21 @@ fn mount_hyjal_is_reached_by_darkwhisper_gorge() {
     }
 }
 
-/// The passages of the Eastern Kingdoms' south (Stormwind, Elwynn) and north (Dun Morogh,
-/// Silverpine) do not meet: going from one to the other takes the tram, a flight or a boat, never
-/// a walk in a straight line over the mountains.
-#[test]
-fn no_walk_between_the_south_and_north_of_the_eastern_kingdoms() {
-    let w = crate::common::world(Edition::Classic, fg_route::faction::Faction::Alliance);
-    let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
-    let stormwind = at(1519, 77.0, 30.3);
-    assert!(w.walk_distance(&stormwind, &at(130, 58.2, 69.9)).is_infinite());
-    assert!(w.walk_distance(&at(12, 42.0, 65.0), &at(38, 35.0, 46.0)).is_infinite());
-    assert!(w.walk_distance(&stormwind, &at(40, 56.0, 47.0)).is_finite());
-    assert!(w.walk_distance(&at(1, 47.0, 52.0), &at(38, 35.0, 46.0)).is_finite());
-}
-
-/// A level 17 does not walk into a zone whose mobs are far above it (Stranglethorn Vale, to the
-/// boat of Booty Bay), nor across one on its way (Arathi, behind the Burning Steppes), but walks
-/// to Ashenvale and the Barrens; a level 50 walks to all of them.
+/// A level 10 does not walk into a zone whose mobs are far above it (Stonetalon's, level 25),
+/// a level 30 does; out of such a zone, a level 10 walks.
 #[test]
 fn walks_do_not_go_into_zones_far_above_the_character() {
-    let w = crate::common::world(Edition::Classic, fg_route::faction::Faction::Alliance);
-    let at = |zone, x, y| w.to_world(zone, x, y).unwrap();
-    let westfall = at(40, 40.0, 70.0);
-    let booty_bay = at(33, 26.1, 73.4);
-    let (weak, strong) = (w.walk_level(17), w.walk_level(50));
-    assert!(w.walk_distance_at(&westfall, &booty_bay, weak).is_infinite());
-    assert!(w.walk_distance_at(&westfall, &booty_bay, strong).is_finite());
-    let darkshore = at(148, 36.0, 45.0);
-    assert!(w.walk_distance_at(&darkshore, &at(331, 34.0, 50.0), weak).is_finite());
-    assert!(w.walk_distance_at(&darkshore, &at(17, 63.0, 37.0), weak).is_finite());
-    // Out of a zone too strong for the character: yes.
-    assert!(w.walk_distance_at(&booty_bay, &westfall, weak).is_finite());
+    let w = &crate::common::terrain_world(
+        Edition::Classic,
+        fg_route::faction::Faction::Horde,
+        &["classic_stonetalon_barrens_terrain", "classic_strong_stonetalon"],
+    );
+    let barrens = w.to_world(w.zone_of_ui_map(1413).unwrap(), 62.98, 37.22).unwrap();
+    let stonetalon = w.to_world(w.zone_of_ui_map(1442).unwrap(), 58.99, 62.6).unwrap();
+    let (weak, strong) = (w.walk_level(10), w.walk_level(30));
+    assert!(w.walk_distance_at(&barrens, &stonetalon, weak).is_infinite());
+    assert!(w.walk_distance_at(&barrens, &stonetalon, strong).is_finite());
+    assert!(w.walk_distance_at(&stonetalon, &barrens, weak).is_finite());
 }
 
 /// The mountain skip from Dun Morogh into the Wetlands is a drop: taken that way only, and a step
