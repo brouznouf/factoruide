@@ -226,13 +226,15 @@ impl AppState {
     fn edition(&self) -> Edition {
         self.settings.locked().edition
     }
-    /// The database of an edition, unpacked the first time.
+    /// The database of an edition, unpacked the first time (locked meanwhile: an unpack removes
+    /// the files of other builds, so two at once could remove the one just written).
     fn db_path(&self, edition: Edition) -> CmdResult<PathBuf> {
-        if let Some(p) = self.dbs.locked().get(&edition) {
+        let mut dbs = self.dbs.locked();
+        if let Some(p) = dbs.get(&edition) {
             return Ok(p.clone());
         }
         let path = unpack_database(&self.db_dir, edition).map_err(err)?;
-        self.dbs.locked().insert(edition, path.clone());
+        dbs.insert(edition, path.clone());
         Ok(path)
     }
     fn open_db(&self) -> CmdResult<Connection> {
