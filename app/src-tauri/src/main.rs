@@ -126,7 +126,7 @@ fn err(e: impl std::fmt::Display) -> CmdError {
 }
 
 /// Embedded overrides of an edition.
-fn overrides(edition: Edition) -> CmdResult<Overrides> {
+fn overrides(edition: Edition) -> CmdResult<Arc<Overrides>> {
     fg_app::embedded_overrides(embedded::OVERRIDES, edition)
 }
 
@@ -172,7 +172,7 @@ impl Host for AppState {
         open_db(&self.db_path(edition)?)
     }
 
-    fn overrides(&self, edition: Edition) -> CmdResult<Overrides> {
+    fn overrides(&self, edition: Edition) -> CmdResult<Arc<Overrides>> {
         overrides(edition)
     }
 
@@ -324,7 +324,7 @@ fn set_auto_contribute(state: State<'_, AppState>, on: bool) -> CmdResult<()> {
 async fn get_options(app: AppHandle) -> CmdResult<Options> {
     tauri::async_runtime::spawn_blocking(move || {
         let state = app.state::<AppState>();
-        job::options(&state.open_db()?, &overrides(state.edition())?).map_err(err)
+        job::options(&state.open_db()?, &*overrides(state.edition())?).map_err(err)
     })
     .await
     .map_err(err)?

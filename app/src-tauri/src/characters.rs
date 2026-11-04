@@ -130,7 +130,7 @@ pub(crate) fn characters(state: &AppState) -> CmdResult<Vec<CharacterInfo>> {
     let client_dir = settings.edition.client_dir(&settings.wow_dir);
     let files = fg_contrib::collector::find_saved_variables(&client_dir);
     let full_names = full_names(&files);
-    let races = overrides(settings.edition)?.races;
+    let races = &overrides(settings.edition)?.races;
     let now = i64::try_from(state.now()?).map_err(err)?;
     let profiles: Vec<(bool, StartState)> = fg_contrib::profile::read(&files)
         .map_err(err)?
@@ -166,7 +166,7 @@ pub(crate) fn characters(state: &AppState) -> CmdResult<Vec<CharacterInfo>> {
             };
             CharacterInfo {
                 full_name,
-                race: fg_app::race_key(&races, &profile),
+                race: fg_app::race_key(races, &profile),
                 class: profile.class.to_lowercase(),
                 professions: fg_app::profession_ranks(&profile),
                 shared,

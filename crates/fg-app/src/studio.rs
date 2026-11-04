@@ -8,7 +8,6 @@ use fg_route::terrain::Walks;
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::sync::{Arc, Mutex};
 
 type Result<T> = std::result::Result<T, CmdError>;
@@ -74,11 +73,17 @@ pub struct Studio {
     editor: Mutex<Option<EditSession>>,
     /// The last guide version replayed to be watched: opened again at once.
     timeline: Mutex<Option<(TimelineKey, job::Timeline)>>,
-    /// Names of the game in each language read so far, to write guides in it.
-    names: Mutex<HashMap<(Edition, String), Arc<Names>>>,
-    /// Walking memory of each edition (paths around the terrain already searched), kept between
-    /// generations: filled at the first one with the memories saved with the guides.
-    walks: Mutex<HashMap<Edition, Arc<Walks>>>,
+    /// Walking memory of each edition (`Edition::ALL`: paths around the terrain already
+    /// searched), kept between generations: filled at the first one with the memories saved with
+    /// the guides.
+    walks: [std::sync::OnceLock<Arc<Walks>>; Edition::ALL.len()],
+}
+
+/// The place of an edition in `Edition::ALL`.
+fn edition_index(edition: Edition) -> usize {
+    (Edition::ALL.iter())
+        .position(|&e| e == edition)
+        .expect("an edition of Edition::ALL")
 }
 
 /// Version of the quest data imported in a database.
@@ -161,7 +166,7 @@ impl Studio {
         let mut request = v.request;
         let edition = request.params.as_ref().map_or_else(|| host.edition(), |p| p.edition);
         if request.params.is_none() {
-            request.params = Some(host.overrides(edition)?.params);
+            request.params = Some(host.overrides(edition)?.params.clone());
         }
         request.name = None;
         // The players of a group, in order: "Player 1", "Player 2"... instead of their names, in
@@ -310,7 +315,7 @@ impl Studio {
         let progress = |event: &job::JobEvent<'_>| host.event(event);
         Ok(job::preview_starts(
             &conn,
-            &host.overrides(edition)?,
+            &*host.overrides(edition)?,
             request,
             &progress,
             &self.interrupt,
@@ -329,7 +334,7 @@ impl Studio {
         let edition = request_edition(host, request);
         let conn = host.open_db(edition)?;
         let walks = self.walks(host, edition);
-        let outcome = job::manual(&conn, &host.overrides(edition)?, request, Some(&walks))?;
+        let outcome = job::manual(&conn, &*host.overrides(edition)?, request, Some(&walks))?;
         Ok(library(host, edition).add_version(request, &outcome, data_version(&conn), Origin::EDITED, host.now()?)?)
     }
 
@@ -365,7 +370,7 @@ impl Studio {
         let conn = host.open_db(host.edition())?;
         Ok(job::quest_choices(
             &conn,
-            &host.overrides(host.edition())?,
+            &*host.overrides(host.edition())?,
             race,
             class,
             query,
@@ -388,14 +393,18 @@ impl Studio {
     /// The walking memory of an edition: the first time, the memories of all its guides (each
     /// version's outcome holds the paths it searched).
     pub fn walks<H: Host>(&self, host: &H, edition: Edition) -> Arc<Walks> {
-        if let Some(w) = self.walks.locked().get(&edition) {
-            return Arc::clone(w);
-        }
-        let walks = Arc::new(Walks::default());
-        for memory in library(host, edition).walk_memories() {
-            walks.add(memory);
-        }
-        Arc::clone(self.walks.locked().entry(edition).or_insert(walks))
+        Arc::clone(self.walks[edition_index(edition)].get_or_init(|| {
+            let walks = Arc::new(Walks::default());
+            for memory in library(host, edition).walk_memories() {
+                walks.add(memory);
+            }
+            walks
+        }))
+    }
+
+    /// The walking memory of an edition if a generation filled it already.
+    fn kept_walks(&self, edition: Edition) -> Option<&Arc<Walks>> {
+        self.walks[edition_index(edition)].get()
     }
 
     /// Names of an edition in a game language, read once.
@@ -404,13 +413,7 @@ impl Studio {
     ///
     /// [`CmdError`]: `Cancelled` and `Superseded` when the page gave up, otherwise the planner, the game data or the guide files failed.
     pub fn names<H: Host>(&self, host: &H, edition: Edition, locale: &str) -> Result<Arc<Names>> {
-        let key = (edition, locale.to_owned());
-        if let Some(n) = self.names.locked().get(&key) {
-            return Ok(n.clone());
-        }
-        let names = Arc::new(Names::load(&host.open_db(edition)?, locale)?);
-        self.names.locked().insert(key, names.clone());
-        Ok(names)
+        Ok(Names::kept(&host.open_db(edition)?, locale)?)
     }
 
     /// A guide written in `locale` (None: the language it was made in).
@@ -439,7 +442,7 @@ impl Studio {
         let route = self.render(host, edition, &v.outcome.route, None)?;
         let lua = job::guides_lua(
             &host.open_db(edition)?,
-            &host.overrides(edition)?,
+            &*host.overrides(edition)?,
             edition,
             vec![(route, v.meta.created, n)],
         )?;
@@ -538,7 +541,7 @@ impl Studio {
         let shared = SharedGuide::parse(content)?;
         let edition = host.edition();
         // Its walking memory joins the app's (when made on the same terrain data).
-        if let (Some(memory), Some(walks)) = (&shared.outcome.walks, self.walks.locked().get(&edition)) {
+        if let (Some(memory), Some(walks)) = (&shared.outcome.walks, self.kept_walks(edition)) {
             walks.add(memory.clone());
         }
         Ok(library(host, edition).add_version(
@@ -573,7 +576,7 @@ impl Studio {
         }
         let conn = host.open_db(edition)?;
         let walks = self.walks(host, edition);
-        let editor = job::Editor::open(&conn, &host.overrides(edition)?, &v.request, Some(&walks))?;
+        let editor = job::Editor::open(&conn, &*host.overrides(edition)?, &v.request, Some(&walks))?;
         let timeline = editor.timeline(&v.outcome, &*self.names(host, edition, locale)?);
         *self.timeline.locked() = Some((key, timeline.clone()));
         Ok(timeline)
@@ -589,7 +592,7 @@ impl Studio {
         let edition = request_edition(host, &v.request);
         let conn = host.open_db(edition)?;
         let walks = self.walks(host, edition);
-        let editor = job::Editor::open(&conn, &host.overrides(edition)?, &v.request, Some(&walks))?;
+        let editor = job::Editor::open(&conn, &*host.overrides(edition)?, &v.request, Some(&walks))?;
         let names = self.names(host, edition, locale)?;
         let (steps, rebuilt) = editor.steps(&v.outcome);
         let request = self.edit_requests.next();

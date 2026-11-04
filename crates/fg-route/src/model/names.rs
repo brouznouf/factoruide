@@ -25,6 +25,11 @@ impl Names {
         }
     }
 
+    /// The names of `locale`, read once for each database (`memo::rows`).
+    pub fn kept(conn: &Connection, locale: &str) -> Result<std::sync::Arc<Self>> {
+        crate::memo::rows(conn, "names", crate::memo::setting(locale), || Self::load(conn, locale))
+    }
+
     pub fn load(conn: &Connection, locale: &str) -> Result<Self> {
         let mut names = Names {
             locale: locale.to_owned(),

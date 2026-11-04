@@ -42,7 +42,7 @@ impl Host for WebHost {
         open_db(edition)
     }
 
-    fn overrides(&self, edition: Edition) -> CmdResult<Overrides> {
+    fn overrides(&self, edition: Edition) -> CmdResult<Arc<Overrides>> {
         overrides(edition)
     }
 
@@ -153,7 +153,7 @@ fn open_db(edition: Edition) -> CmdResult<Connection> {
     Ok(conn)
 }
 
-fn overrides(edition: Edition) -> CmdResult<Overrides> {
+fn overrides(edition: Edition) -> CmdResult<Arc<Overrides>> {
     fg_app::embedded_overrides(embedded::OVERRIDES, edition)
 }
 
@@ -189,7 +189,7 @@ fn data_zip() -> CmdResult<serde_json::Value> {
     if guides.is_empty() {
         return Err("no guide yet".into());
     }
-    let lua = job::guides_lua(&open_db(edition)?, &overrides(edition)?, edition, guides).map_err(err)?;
+    let lua = job::guides_lua(&open_db(edition)?, &*overrides(edition)?, edition, guides).map_err(err)?;
     let files: Vec<(String, Vec<u8>)> =
         job::data_addon_files(&lua, embedded::ADDON_INTERFACE, APP_VERSION, WebHost.now()?)
             .into_iter()
@@ -315,7 +315,7 @@ fn profiles(edition: Edition) -> Vec<serde_json::Value> {
 fn characters() -> CmdResult<Vec<CharacterInfo>> {
     let settings = settings();
     let edition = settings.edition;
-    let races = overrides(edition)?.races;
+    let races = &overrides(edition)?.races;
     let now = i64::try_from(WebHost.now()?).map_err(err)?;
     Ok(profiles(edition)
         .into_iter()
@@ -325,7 +325,7 @@ fn characters() -> CmdResult<Vec<CharacterInfo>> {
             profile.rested = fg_app::rested_now(&profile, now);
             CharacterInfo {
                 full_name: None,
-                race: fg_app::race_key(&races, &profile),
+                race: fg_app::race_key(races, &profile),
                 class: profile.class.to_lowercase(),
                 professions: fg_app::profession_ranks(&profile),
                 profile,
@@ -535,7 +535,7 @@ fn run(cmd: &str, a: serde_json::Value) -> CmdResult<serde_json::Value> {
         "list_editions" => to_json(Ok(list_editions())),
         "get_options" => {
             let edition = edition();
-            to_json(job::options(&open_db(edition)?, &overrides(edition)?).map_err(err))
+            to_json(job::options(&open_db(edition)?, &*overrides(edition)?).map_err(err))
         }
         "plan_route" => {
             #[derive(Deserialize)]

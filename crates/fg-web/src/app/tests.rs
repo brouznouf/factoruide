@@ -102,7 +102,7 @@ fn a_character_pasted_gets_its_guide_into_the_game() {
         serde_json::from_str(r#"{"race":"dwarf","class":"warrior","from_level":6,"to_level":8,"name":"Brouz web"}"#)
             .unwrap();
     request["start"] = characters[0]["profile"].clone();
-    let mut params = serde_json::to_value(overrides(Edition::Classic).unwrap().params).unwrap();
+    let mut params = serde_json::to_value(overrides(Edition::Classic).unwrap().params.clone()).unwrap();
     params["effort"] = 0.0.into();
     request["params"] = params;
     let meta = call("plan_route", &serde_json::json!({ "request": request })).unwrap();
@@ -333,7 +333,7 @@ fn calls_reading_the_game_data_at_the_same_time_all_answer() {
     let mut request: serde_json::Value =
         serde_json::from_str(r#"{"race":"skyborne","class":"mage","from_level":1,"to_level":5,"name":"Concurrent"}"#)
             .unwrap();
-    let mut params = serde_json::to_value(overrides(Edition::Forever).unwrap().params).unwrap();
+    let mut params = serde_json::to_value(overrides(Edition::Forever).unwrap().params.clone()).unwrap();
     params["effort"] = 0.0.into();
     request["params"] = params;
     let meta = call("plan_route", &serde_json::json!({ "request": request })).unwrap();

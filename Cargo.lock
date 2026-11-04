@@ -1087,6 +1087,7 @@ dependencies = [
  "fg-contrib",
  "fg-library",
  "fg-route",
+ "quick_cache",
  "rusqlite",
  "serde",
  "serde_json",

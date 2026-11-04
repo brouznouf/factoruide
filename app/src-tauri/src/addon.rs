@@ -54,7 +54,7 @@ pub(crate) fn write_data(state: &AppState) -> CmdResult<usize> {
     let count = guides.len();
     let mut lua = job::guides_lua(
         &state.open_db()?,
-        &overrides(settings.edition)?,
+        &*overrides(settings.edition)?,
         settings.edition,
         guides,
     )
