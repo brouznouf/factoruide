@@ -351,8 +351,9 @@ struct Grid {
     cols: i32,
     tile_cols: usize,
     /// The floors of each tile (None: none), by tile of 64 x 64 cells (row by row, `tile_cols`
-    /// a row).
-    tiles: Vec<Option<Box<TileNodes>>>,
+    /// a row). Shared with the terrain it was copied from (`fork`) until one of them changes a
+    /// tile (`tile_mut`): the copy of a whole terrain costs a hundred megabytes.
+    tiles: Vec<Option<Arc<TileNodes>>>,
     /// Where the nodes of each tile beyond its first floors start among the continent's
     /// (`Scratch::best`), and their count.
     extra_base: Vec<u32>,
@@ -435,6 +436,11 @@ impl Grid {
             caves: self.caves.clone(),
             drop_tier: self.drop_tier,
         }
+    }
+
+    /// Tile `t`'s floors to change, copied first when shared with another terrain.
+    fn tile_mut(&mut self, t: usize) -> Option<&mut TileNodes> {
+        self.tiles[t].as_mut().map(Arc::make_mut)
     }
 
     /// Index of a cell's tile and its index in it, None out of the box.
@@ -897,7 +903,7 @@ impl Grid {
             all.into_iter().map(|x| x.1).collect()
         });
         for (t, (moves, edges)) in all.into_iter().enumerate() {
-            if let Some(tile) = self.tiles[t].as_deref_mut() {
+            if let Some(tile) = self.tile_mut(t) {
                 tile.moves = moves;
                 tile.edges = edges;
             }
@@ -998,7 +1004,7 @@ impl Grid {
         let mut tiles: std::collections::BTreeSet<usize> = std::collections::BTreeSet::new();
         for &n in closed {
             let Some((t, l)) = self.locate(n) else { continue };
-            if let Some(tile) = self.tiles[t].as_deref_mut() {
+            if let Some(tile) = self.tile_mut(t) {
                 tile.moves[l] = MOVE_NO_GO;
                 tile.flags[l] |= NO_GO;
             }
@@ -1009,7 +1015,7 @@ impl Grid {
                     let m = Node::new(pr, pc, f);
                     let Some((u, k)) = self.locate(m) else { continue };
                     tiles.insert(u);
-                    let Some(tile) = self.tiles[u].as_deref_mut() else {
+                    let Some(tile) = self.tile_mut(u) else {
                         continue;
                     };
                     if n.f() == 0 {
@@ -1022,7 +1028,7 @@ impl Grid {
         // The other steps to them (edges).
         for &t in &tiles {
             let origin = self.origin(t);
-            let Some(tile) = self.tiles[t].as_deref_mut() else {
+            let Some(tile) = self.tile_mut(t) else {
                 continue;
             };
             let mut edges = std::mem::take(&mut tile.edges).into_vec();
@@ -1282,7 +1288,7 @@ type TileRow = (i32, i32, TileLayers);
 
 /// The nodes of a tile from its layers, their moves left for `Grid::link` (they need the tiles
 /// around).
-fn tile_nodes(l: &TileLayers) -> Box<TileNodes> {
+fn tile_nodes(l: &TileLayers) -> Arc<TileNodes> {
     let mut more = Vec::with_capacity(4097);
     let mut more_cell = Vec::new();
     let mut k = 0u16;
@@ -1324,7 +1330,7 @@ fn tile_nodes(l: &TileLayers) -> Box<TileNodes> {
             nodes.flags[at] = flags;
         }
     }
-    Box::new(nodes)
+    Arc::new(nodes)
 }
 
 impl Terrain {
@@ -1438,7 +1444,7 @@ impl Terrain {
             let tile_cols = cols as usize / 64;
             let count = rows as usize / 64 * tile_cols;
             let mut layers: Vec<Option<TileLayers>> = (0..count).map(|_| None).collect();
-            let mut nodes: Vec<Option<Box<TileNodes>>> = (0..count).map(|_| None).collect();
+            let mut nodes: Vec<Option<Arc<TileNodes>>> = (0..count).map(|_| None).collect();
             for (x, y, l) in list {
                 let t = (y - ty0) as usize * tile_cols + (x - tx0) as usize;
                 nodes[t] = Some(tile_nodes(&l));

@@ -699,7 +699,7 @@ pub(super) fn movement_ground(kind: TestGround) -> Terrain {
             let mut terrain = flat(|_, _| false);
             for grid in terrain.grids.values_mut() {
                 for nodes in grid.tiles.iter_mut().flatten() {
-                    nodes.kind.fill(UNDER);
+                    Arc::make_mut(nodes).kind.fill(UNDER);
                 }
             }
             return terrain;
