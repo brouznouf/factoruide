@@ -10,7 +10,8 @@ license.workspace = true
 anyhow.workspace = true
 base64 = "0.23"
 miniz_oxide = "0.9"
-quick_cache = "0.6"
+# Without parking_lot: its locks panic in the browser when a thread has to wait (no parking on wasm without nightly).
+quick_cache = { version = "0.6", default-features = false, features = ["ahash"] }
 rand = "0.10"
 rusqlite = { version = "0.41", features = ["bundled"] }
 rustc-hash = "2"

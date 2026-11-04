@@ -11,6 +11,11 @@ cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 cargo test --workspace --locked --release
 if has cargo-deny; then cargo deny --log-level error check; else echo "skip: cargo deny (cargo install cargo-deny)"; fi
+# parking_lot cannot make a thread wait in the browser (it panics): the web backend must not use it.
+if cargo tree -p fg-web --target wasm32-wasip1-threads -i parking_lot_core >/dev/null 2>&1; then
+    echo "parking_lot is in the web backend's dependencies: its locks panic in the browser" >&2
+    exit 1
+fi
 
 (cd app && npm run build && npm test && npx oxlint --deny-warnings && npm run check:i18n)
 

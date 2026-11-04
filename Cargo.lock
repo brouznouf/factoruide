@@ -3043,7 +3043,6 @@ dependencies = [
  "ahash",
  "equivalent",
  "hashbrown 0.16.1",
- "parking_lot",
 ]
 
 [[package]]
