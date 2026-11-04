@@ -2162,3 +2162,19 @@ quests = [5921, 5922, 94913, 94914]
 class = "shaman"
 name = "Call of Air"
 quests = [1531, 1532, 94789, 96136]
+
+# Lost in the Thicket Things (Excavation Site: Wetlands): taken from Caitlin Grassman in Menethil
+# Harbor, done and ended inside the dungeon at her husband Ardin, who gives Heartwoven to take back
+# to her. No source knows where Ardin stands: placed in the dungeon like its other creatures.
+[[spawn]]
+type = "npc"
+id = 262681
+zone = 16732
+x = -1
+y = -1
+
+[[quest]]
+id = 95647
+remove_ends = [{ type = "npc", id = 1480 }]
+ends = [{ type = "npc", id = 262681 }]
+objectives = [{ type = "creature", id = 262681, amount = 1, text = "Find Ardin Grassman in the Excavation Site" }]

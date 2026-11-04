@@ -2,7 +2,9 @@
 
 use crate::common::{leveling, leveling_of, repo};
 use fg_route::fixture::Fixture;
-use fg_route::job::{self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, StartState};
+use fg_route::job::{
+    self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, RequiredQuest, StartState,
+};
 use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
 use fg_route::params::ReputationGoal;
 use fg_route::plan::{Edit, Event, Kind, Outcome, Planner, Stop};
@@ -3725,7 +3727,7 @@ fn rare_books_asked_for_are_planned_with_one_of_each_book() {
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let request = PlanRequest {
         params: Some(overrides.params.with_overrides(&[]).unwrap()),
-        required_quests: vec![job::RequiredQuest::Id(91777)],
+        required_quests: vec![RequiredQuest::Id(91777)],
         ..request("human", "warrior", 12, &[])
     };
     let p = job::prepare(
@@ -4057,4 +4059,36 @@ fn death_skips_below_level_ten_and_a_half() {
         report.total_time,
         outcome.route.total_time
     );
+}
+
+/// A quest a dungeon's NPC gives once the quest before it is ended to him (Heartwoven, given by
+/// Ardin Grassman at the end of Lost in the Thicket Things, GitHub #107) is taken during the run of
+/// that one and handed in outside: it asks no run of its own, a dungeon being run once.
+#[test]
+fn a_quest_given_in_a_dungeon_after_the_one_before_it_asks_no_second_run() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let request = PlanRequest {
+        required_quests: vec![RequiredQuest::Id(95809)],
+        params: Some(overrides.params.with_overrides(&[]).unwrap()),
+        ..request("dwarf", "warrior", 40, &[])
+    };
+    let p = job::prepare(
+        &Fixture::new(Edition::Forever)
+            .file("forever_services")
+            .file("forever_excavation")
+            .open(),
+        &overrides,
+        &request,
+        &|_| {},
+    )
+    .unwrap();
+    let quest_of = |id| &p.model.quests[quest(&p, id).unwrap() as usize];
+    assert!(!quest_of(95647).objectives.is_empty(), "the first is done in the run");
+    assert!(
+        quest_of(95809).objectives.is_empty(),
+        "the second needs no run of its own"
+    );
+    let planner = planner(&p);
+    let route = planner.greedy();
+    planner.validate_required(&route).unwrap();
 }

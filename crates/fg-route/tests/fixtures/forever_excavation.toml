@@ -1,0 +1,48 @@
+# Lost in the Thicket Things and Heartwoven (Excavation Site: Wetlands): the first is taken from
+# Caitlin Grassman in Menethil Harbor and ended to her husband Ardin inside the dungeon, who gives
+# the second, ended to Caitlin.
+
+[[npc]]
+id = 1480
+name = "Caitlin Grassman"
+level = 20
+npc_flags = 3
+friendly_to = "A"
+at = [{ zone = 11, x = 11.88, y = 58.82 }]
+
+[[npc]]
+id = 262681
+name = "Ardin Grassman"
+level = 40
+rank = 1
+friendly_to = "A"
+at = [{ zone = 16732, x = -1.0, y = -1.0 }]
+
+[[dungeon]]
+area = 16732
+name = "Excavation Site: Wetlands"
+at = { zone = 11, x = 52.0, y = 60.0 }
+
+[[quest]]
+id = 95647
+name = "Lost in the Thicket Things"
+level = 31
+min_level = 24
+races_mask = 4294967373
+zone = 16732
+xp = 2500
+starts = [{ npc = 1480 }]
+ends = [{ npc = 262681 }]
+objectives = [{ creature = 262681, amount = 1, text = "Find Ardin Grassman in the Excavation Site" }]
+
+[[quest]]
+id = 95809
+name = "Heartwoven"
+level = 31
+min_level = 24
+races_mask = 4294967373
+zone = 16732
+xp = 3150
+starts = [{ npc = 262681 }]
+ends = [{ npc = 1480 }]
+pre_all = [95647]

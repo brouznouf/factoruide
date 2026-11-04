@@ -95,6 +95,10 @@ impl QuestBuilder<'_> {
         if rows.is_empty()
             && let Some(d) = r.sort.and_then(|s| self.sources.dungeon_by_area.get(&s).copied())
         {
+            // Taken during the run of its prerequisite and handed in outside: nothing of its own.
+            if self.follows_in_the_run(r.id, d) {
+                return Ok(Vec::new());
+            }
             let dungeon = &self.sources.dungeons[d];
             let mut objs = vec![Objective {
                 dungeon: Some(d),
@@ -601,6 +605,16 @@ impl QuestBuilder<'_> {
         ))
     }
 
+    /// A quest whose prerequisite has its giver or turn-in inside dungeon `d` too is taken during
+    /// the run of the prerequisite (Heartwoven, given by Ardin Grassman once Lost in the Thicket
+    /// Things is ended to him): a dungeon is run once, it asks no run of its own.
+    fn follows_in_the_run(&self, quest: i64, d: usize) -> bool {
+        self.links(quest, super::sources::LinkKind::PreAll).iter().any(|pre| {
+            (self.sources.relations.get(pre).into_iter().flatten())
+                .any(|(_, kind, id)| self.dungeon_of(*kind, *id) == Some(d))
+        })
+    }
+
     /// A giver or turn-in that lives inside a dungeon (a corpse, a scout in the instance) is
     /// only met during a run of it.
     fn add_dungeon_givers(&self, r: &QuestRow, objs: &mut Vec<Objective>) {
@@ -626,6 +640,7 @@ impl QuestBuilder<'_> {
             let (kind, id) = (&kind, &id);
             if let Some(d) = self.dungeon_of(*kind, *id)
                 && !objs.iter().any(|o| o.dungeon == Some(d))
+                && !self.follows_in_the_run(r.id, d)
             {
                 let dungeon = &self.sources.dungeons[d];
                 let text = format!("{}: {}", dungeon.name, self.sources.entities.name(*kind, *id));
