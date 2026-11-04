@@ -949,6 +949,16 @@ impl Planner<'_> {
         let (mut missing, mut zone) = (0, 0);
         for (i, q) in self.model.quests.iter().enumerate() {
             if q.mandatory && !s.rewarded(i) && !self.availability().alternative_done(s, q) {
+                // Versions of one quest (the two letters of the Felsteed) are missing once, at the first.
+                let version_before = q.exclusive.iter().any(|id| {
+                    self.model
+                        .index
+                        .get(id)
+                        .is_some_and(|&j| j < i && self.model.quests[j].mandatory)
+                });
+                if version_before {
+                    continue;
+                }
                 if q.zone_forced { zone += 1 } else { missing += 1 }
             }
         }
