@@ -176,7 +176,7 @@ impl Planner<'_> {
             let level_ok = self.combat().need(q, o) <= self.params.reach(s.level, s.might());
             (self.availability().objective_open(s, i, k)
                 && level_ok
-                && o.dungeon.is_none()
+                && o.dungeon_of().is_none()
                 && self.near_group(s, stop, group))
             .then_some(stop)
         })
@@ -279,7 +279,7 @@ impl Planner<'_> {
                         let level_ok = self.combat().need(q, o) <= self.params.reach(s.level, s.might());
                         if self.availability().objective_open(s, i, k)
                             && level_ok
-                            && o.dungeon.is_none()
+                            && o.dungeon_of().is_none()
                             && (groups.of_quest[iu] == g || self.near_group(s, stop, group))
                         {
                             consider(stop, 1.0, s);

@@ -104,7 +104,7 @@ impl Combat<'_> {
         if o.elite {
             x *= 2.0;
         }
-        if o.dungeon.is_some() {
+        if o.dungeon_of().is_some() {
             x *= self.rules().dungeon_kill_xp;
         }
         x
@@ -112,7 +112,7 @@ impl Combat<'_> {
 
     /// Expansion of the content of an objective's mobs (Azeroth, Outland), for their XP.
     fn content(self, o: &Objective) -> usize {
-        o.dungeon.map_or_else(
+        o.dungeon_of().map_or_else(
             || xp::content_at(o.loc.pos.continent, o.loc.pos.zone),
             |d| self.dungeons[d].content,
         )

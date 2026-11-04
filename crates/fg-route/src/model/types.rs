@@ -293,7 +293,7 @@ pub struct Vendor {
 impl Objective {
     /// The dungeon the objective belongs to: done by entering it (`dungeon`), or inside it.
     pub fn dungeon_of(&self) -> Option<usize> {
-        self.dungeon
+        self.dungeon.or(self.loc.inside.map(usize::from))
     }
 
     /// Its places: itself, then its `alts`.
@@ -528,9 +528,11 @@ pub struct Quest {
 }
 
 impl Quest {
-    /// The dungeon one of its objectives belongs to (`Objective::dungeon_of`).
+    /// The dungeon one of its objectives belongs to (`Objective::dungeon_of`), else the one it is
+    /// handed in inside.
     pub fn dungeon(&self) -> Option<usize> {
-        self.objectives.iter().find_map(Objective::dungeon_of)
+        (self.objectives.iter().find_map(Objective::dungeon_of))
+            .or_else(|| self.ends.iter().find_map(|l| l.inside.map(usize::from)))
     }
 
     /// The `pre_any` quests that must be done: `pre_need` of them, at most the ones that exist.

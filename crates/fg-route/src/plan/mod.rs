@@ -160,7 +160,7 @@ impl<'a> Planner<'a> {
         let mut in_dungeon = vec![Vec::new(); model.dungeons.len()];
         for (i, q) in model.quests.iter().enumerate() {
             for (k, o) in q.objectives.iter().enumerate() {
-                if let Some(d) = o.dungeon {
+                if let Some(d) = o.dungeon_of() {
                     in_dungeon[d].push((i as u32, k as u8));
                 }
             }
@@ -324,6 +324,7 @@ impl<'a> Planner<'a> {
             abilities: init.abilities,
             ranks: self.ranks_known_at_start(level),
             dungeons: 0,
+            inside: None,
             accepted: Flags::new(n),
             turned: Flags::new(n),
             dropped: Vec::new(),
@@ -351,7 +352,7 @@ impl<'a> Planner<'a> {
             gear_bonus: 0.0,
             gear_quality: 0.0,
             explored: Flags::new(self.model.explore.len()),
-            abandon_check: (0, 0),
+            abandon_check: (0, 0, None),
             log: 0,
             grind_used: 0,
             farm_used: 0,

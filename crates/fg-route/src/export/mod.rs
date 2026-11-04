@@ -114,6 +114,7 @@ pub fn build_traced(
                 }
                 let run = match &t.event {
                     Event::Stop { stop, .. } if stop.kind == Kind::Dungeon => Some(stop.index as usize),
+                    Event::Enter { dungeon } => Some(*dungeon),
                     _ => None,
                 };
                 let inside = run.map(|d| writer.dungeon_quests(d, &step)).unwrap_or_default();
@@ -130,32 +131,8 @@ pub fn build_traced(
                     .map_or((0.0, t.level, t.xp), |(s, x)| (s.time, s.level, *x));
                 let entered = (t.time - planner.model.dungeons[d].minutes * 60.0).max(start);
                 (step.time, step.level) = (entered, level);
-                // A quest started by a boss's drop is accepted in the run, not before it.
-                let from_boss = |s: &Step| {
-                    s.kind == StepKind::Accept
-                        && (planner.model.quests.iter()).any(|q| Some(q.id) == s.quest && q.start_dungeon == Some(d))
-                };
-                // Wherever the search put it: nothing else of the quest happens before the run (its
-                // objective is in it), so it moves there (Hall of Thanes' Treaty of Understanding,
-                // taken at the entrance levels earlier).
-                let mut looted = Vec::new();
-                let mut k = 0;
-                while k < steps.len() {
-                    if from_boss(&steps[k]) && !steps[k + 1..].iter().any(|s| s.quest == steps[k].quest) {
-                        let mut accept = steps.remove(k);
-                        xps.remove(k);
-                        (accept.time, accept.level, accept.inside) = (entered, level, true);
-                        looted.push(accept);
-                    } else {
-                        k += 1;
-                    }
-                }
                 steps.push(step);
                 xps.push(xp);
-                for accept in looted {
-                    steps.push(accept);
-                    xps.push(xp);
-                }
                 let count = inside.len() as f64;
                 for (k, mut quest) in inside.into_iter().enumerate() {
                     quest.time = entered + (t.time - entered) * (k as f64 + 1.0) / count;

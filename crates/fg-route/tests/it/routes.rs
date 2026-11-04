@@ -3706,7 +3706,8 @@ fn a_quest_started_by_an_object_inside_a_dungeon_starts_in_the_run() {
     let thanes = p.model.dungeons.iter().position(|d| d.area == 16919).unwrap();
     let q = &p.model.quests[quest(&p, 98423).expect("The Treaty of Understanding planned") as usize];
     assert_eq!(q.start_dungeon, Some(thanes));
-    assert!(q.objectives.iter().any(|o| o.dungeon == Some(thanes)));
+    // Taken inside: in the dungeon, entered for it.
+    assert!(q.starts.iter().all(|l| l.inside.map(usize::from) == Some(thanes)));
 }
 
 /// Forever's Rare Books (GitHub #59): its books drop from elites, left out of a solo guide, but
@@ -4116,7 +4117,10 @@ fn a_dungeon_is_run_from_the_minimum_level_of_its_must_have_quest() {
         let mut trace = Vec::new();
         planner.simulate_full(&route, Some(&mut trace)).unwrap();
         (trace.iter())
-            .find(|t| matches!(t.event, Event::Stop { stop, .. } if stop.kind == Kind::Dungeon))
+            .find(|t| {
+                matches!(t.event, Event::Enter { .. })
+                    || matches!(t.event, Event::Stop { stop, .. } if stop.kind == Kind::Dungeon)
+            })
             .map(|t| t.level)
             .expect("the dungeon is run")
     };

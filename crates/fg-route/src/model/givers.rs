@@ -158,7 +158,7 @@ impl QuestBuilder<'_> {
             .flat_map(|(_, o)| entities.points(world, EntityKind::Object, *o))
             .collect();
         // A boss's drop, or an object's inside (Hall of Thanes' Treaty of Understanding): looted
-        // during the run, with the group (the quest needs it, `add_dungeon_givers`).
+        // inside, with the group: taken there.
         let boss = sources.iter().find_map(|(t, n)| {
             (*t == SourceKind::Npc).then(|| self.dungeon_of(EntityKind::Npc, *n).map(|d| (*n, d)))?
         });
@@ -170,7 +170,7 @@ impl QuestBuilder<'_> {
                 kind: EntityKind::Item,
                 id: item,
                 name: entities.name(EntityKind::Item, item),
-                ..self.sources.dungeons[d].entrance.clone()
+                ..self.inside(d)
             },
             work: (0.0, 0, 0.0),
             mob,

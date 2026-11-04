@@ -37,6 +37,55 @@ impl Change {
 }
 
 impl Planner<'_> {
+    /// Each dungeon's stops back together: a dungeon is entered once, so a move taking some of
+    /// its stops elsewhere takes the others with them (the whole dungeon moves). `change` grows to
+    /// what moved.
+    pub(crate) fn gather_dungeons(&self, route: &mut Vec<Stop>, change: &mut Change) {
+        let places = self.places();
+        for d in places.entered(route) {
+            let d = d as usize;
+            let at: Vec<usize> = (0..route.len())
+                .filter(|&k| places.usual_inside(route[k]) == Some(d))
+                .collect();
+            if at.windows(2).all(|w| w[1] == w[0] + 1) {
+                continue;
+            }
+            // The part a move took apart (the smallest one: the stops it moved), the others joining it.
+            let mut parts: Vec<&[usize]> = Vec::new();
+            let mut from = 0;
+            for n in 1..=at.len() {
+                if n == at.len() || at[n] != at[n - 1] + 1 {
+                    parts.push(&at[from..n]);
+                    from = n;
+                }
+            }
+            // Of parts as small, the one the move touched.
+            let touched = |p: &[usize]| p.iter().any(|&k| (change.first..=change.last).contains(&k));
+            let anchor = (parts.iter())
+                .min_by_key(|p| (p.len(), !touched(p)))
+                .map_or(at[0], |p| p[0]);
+            let block: Vec<Stop> = at.iter().map(|&k| route[k]).collect();
+            // Where the anchor lands once the others are taken out.
+            let start = anchor - at.iter().filter(|&&k| k < anchor).count();
+            for &k in at.iter().rev() {
+                route.remove(k);
+            }
+            let first = at[0].min(start);
+            for (n, stop) in block.into_iter().enumerate() {
+                route.insert(start + n, stop);
+            }
+            change.first = change.first.min(first);
+            change.last = change
+                .last
+                .max(at[at.len() - 1])
+                .max(start + at.len() - 1)
+                .min(route.len() - 1);
+            change.reordered = true;
+        }
+    }
+}
+
+impl Planner<'_> {
     /// One of the small moves, drawn at random.
     pub(crate) fn random_move(&self, route: &mut Vec<Stop>, run: &Run, rng: &mut SmallRng) -> Option<Change> {
         match rng.random_range(0..25) {

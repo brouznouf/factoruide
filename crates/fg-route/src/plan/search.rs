@@ -150,14 +150,15 @@ impl Planner<'_> {
         } else {
             self.random_move(&mut candidate, &search.run, &mut search.rng)
         };
-        let Some(change) = change else { return };
+        let Some(mut change) = change else { return };
+        self.gather_dungeons(&mut candidate, &mut change);
         // The start chosen (`Params::start_zone`) is kept: the route begins in that zone.
         if self.begins_in_start_zone(&search.route) && !self.begins_in_start_zone(&candidate) {
             return;
         }
         // Replayed up to a window past the change, the rest estimated; to the end only when the
         // estimate would keep it (and always when it changes the dungeons run).
-        let dungeons = |r: &[Stop]| r.iter().filter(|s| s.kind == Kind::Dungeon).count();
+        let dungeons = |r: &[Stop]| self.places().entered(r);
         // The last stop changed: past it, both routes end alike (the moves that edit a route
         // only say it changes up to its end).
         let same_end = (candidate.iter().rev())
@@ -296,10 +297,7 @@ impl Planner<'_> {
     /// cut past the target level, or never planned): they cannot be finished, so they go
     /// whatever they save. Those another quest needs stay. None when there is nothing to remove.
     pub(crate) fn drop_dungeonless(&self, route: &[Stop]) -> Option<Vec<Stop>> {
-        let runs: HashSet<u32> = (route.iter())
-            .filter(|s| s.kind == Kind::Dungeon)
-            .map(|s| s.index)
-            .collect();
+        let runs = self.places().entered(route);
         let mut left: Vec<u32> = (route.iter())
             .filter(|s| s.kind == Kind::Accept && !self.quest(s.index).mandatory)
             .filter(|s| {

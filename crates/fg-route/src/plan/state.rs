@@ -95,6 +95,10 @@ pub enum Event {
     LearnFlight {
         node: usize,
     },
+    /// Dungeon `dungeon` entered (`Model::dungeons`): its run's fixed time, mobs and loot.
+    Enter {
+        dungeon: usize,
+    },
     /// An off-road shortcut taken on a walk (index in `World::passes`).
     Shortcut {
         pass: usize,
@@ -286,7 +290,11 @@ pub(crate) struct State {
     /// The ranks learned of each profession of `Model::professions` (a bit each, apprentice
     /// first; see `Planner::train_professions`).
     pub(crate) ranks: [u8; crate::profession::PROFESSIONS.len()],
+    /// The dungeons entered (a bit each): one left is not entered again.
     pub(crate) dungeons: u128,
+    /// The dungeon the character is in (`Model::dungeons`), entered by the first stop inside it
+    /// and left by the first stop outside.
+    pub(crate) inside: Option<u8>,
     pub(crate) accepted: Flags,
     /// Quests out of play: turned in, or given up (those are also in `dropped`).
     pub(crate) turned: Flags,
@@ -332,8 +340,9 @@ pub(crate) struct State {
     pub(crate) gear_bonus: f64,
     /// Quality of the gear for what the character takes on (`Power::gear_quality`).
     pub(crate) gear_quality: f64,
-    /// Level and dungeons done at the last check for quests to give up.
-    pub(crate) abandon_check: (i64, u128),
+    /// Level, dungeons entered and the one the character is in at the last check for quests to
+    /// give up.
+    pub(crate) abandon_check: (i64, u128, Option<u8>),
     /// Explorable areas already discovered.
     pub(crate) explored: Flags,
     pub(crate) log: usize,

@@ -1,5 +1,6 @@
 //! Which quests and stops the character can do now: prerequisites, exclusive quests, gray quests, dungeons, chains.
 
+use super::Planner;
 use super::state::{Kind, State, Stop};
 use crate::model::{Model, Profile, Quest};
 use crate::params::Params;
@@ -197,6 +198,13 @@ impl Availability<'_> {
 
     pub(crate) fn valid(&self, s: &State, stop: Stop) -> bool {
         let i = stop.index as usize;
+        // Inside a dungeon: there, or entering it.
+        if stop.kind != Kind::Dungeon
+            && !Planner::already_done(s, stop)
+            && super::places::stop_inside(self.model, s, stop).is_some_and(|d| !self.can_be_in(s, d))
+        {
+            return false;
+        }
         match stop.kind {
             // Taken or turned in on the spot already: the stop is skipped.
             Kind::Accept if s.accepted[i] || s.turned[i] => true,
@@ -227,12 +235,8 @@ impl Availability<'_> {
                     || (i == 1 && self.model.recall.is_some())
             }
             // Never past its levels (`Params::dungeon_to`); below them, the guide grinds to them.
-            Kind::Dungeon => {
-                self.dungeon_allowed(i)
-                    && s.dungeons & (1u128 << i) == 0
-                    && self.model.dungeons[i].min_level <= self.profile.to_level
-                    && s.level <= self.model.dungeons[i].max_level
-            }
+            // In it already: nothing more to do.
+            Kind::Dungeon => self.can_be_in(s, i),
         }
     }
 
@@ -277,6 +281,19 @@ impl Availability<'_> {
     pub(crate) fn dungeon_quests(&self, d: usize) -> impl Iterator<Item = u32> + '_ {
         (0..self.model.quests.len() as u32)
             .filter(move |&i| self.quest_at(i).objectives.iter().any(|o| o.dungeon_of() == Some(d)))
+    }
+
+    /// Dungeon `d` may be entered now: allowed, not entered before, within its levels.
+    pub(crate) fn enterable(&self, s: &State, d: usize) -> bool {
+        self.dungeon_allowed(d)
+            && s.dungeons & (1u128 << d) == 0
+            && self.model.dungeons[d].min_level <= self.profile.to_level
+            && s.level <= self.model.dungeons[d].max_level
+    }
+
+    /// The character is in dungeon `d`, or may enter it.
+    pub(crate) fn can_be_in(&self, s: &State, d: usize) -> bool {
+        s.inside.is_some_and(|i| usize::from(i) == d) || self.enterable(s, d)
     }
 
     /// Dungeon `d` may be run: dungeons on (or this one forced), and not excluded.

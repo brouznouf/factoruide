@@ -52,6 +52,14 @@ impl<'a> QuestBuilder<'a> {
     }
 
     /// Dungeon a giver, a mob or an object lives in.
+    /// A place inside dungeon `d`: at its entrance, as long as the places inside are not known.
+    pub(super) fn inside(&self, d: usize) -> Loc {
+        Loc {
+            inside: Some(u8::try_from(d).expect("fewer dungeons than `State::dungeons` holds")),
+            ..self.sources.dungeons[d].entrance.clone()
+        }
+    }
+
     pub(super) fn dungeon_of(&self, kind: EntityKind, id: i64) -> Option<usize> {
         let kind = if kind == EntityKind::Object {
             EntityKind::Object
@@ -118,11 +126,17 @@ impl<'a> QuestBuilder<'a> {
     }
 
     /// Where to meet an NPC or an object: its main spawn cluster nearest to `near`, or the
-    /// entrance of the dungeon it lives in. NPCs hostile to the character do not talk to it.
+    /// entrance of the dungeon it lives in: inside it when it stands nowhere outside (the ones
+    /// of the cave before Wailing Caverns' portal are met without entering). NPCs hostile to the
+    /// character do not talk to it.
     pub(super) fn locate(&self, kind: EntityKind, id: i64, near: Option<&Pos>) -> Option<Loc> {
         let entities = &self.sources.entities;
         if let Some(d) = self.dungeon_of(kind, id) {
-            let mut loc = self.sources.dungeons[d].entrance.clone();
+            let mut loc = if self.has_points(kind, id) {
+                self.sources.dungeons[d].entrance.clone()
+            } else {
+                self.inside(d)
+            };
             loc.kind = kind;
             loc.id = id;
             loc.name = entities.name(kind, id);

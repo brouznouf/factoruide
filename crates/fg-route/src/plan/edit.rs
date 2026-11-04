@@ -549,7 +549,9 @@ impl Planner<'_> {
                     Event::Grind { to_level, .. } => Edit::GrindTo { level: to_level },
                     Event::GrindMobs { mobs, .. } => Edit::Grind { mobs },
                     // Profession trainer visits belong to the planner: an edited route has none.
+                    // A dungeon is entered by its first stop inside.
                     Event::Reward { .. }
+                    | Event::Enter { .. }
                     | Event::Farm { .. }
                     | Event::Shortcut { .. }
                     | Event::CatchUp { .. }
@@ -582,7 +584,8 @@ impl Planner<'_> {
 fn is_action(event: &Event) -> bool {
     !matches!(
         event,
-        Event::Farm { .. } | Event::Reward { .. } | Event::Shortcut { .. }
+        // A dungeon is entered by the first step inside it: part of that step.
+        Event::Farm { .. } | Event::Reward { .. } | Event::Shortcut { .. } | Event::Enter { .. }
     )
 }
 

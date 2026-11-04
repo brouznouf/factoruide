@@ -236,7 +236,7 @@ impl Planner<'_> {
             let Kind::Objective(k) = s.kind else { continue };
             let q = self.quest(s.index);
             let o = &q.objectives[k as usize];
-            if o.kills <= 0.0 || o.dungeon.is_some() || self.model.unlocks[s.index as usize] > 0.0 {
+            if o.kills <= 0.0 || o.dungeon_of().is_some() || self.model.unlocks[s.index as usize] > 0.0 {
                 continue;
             }
             if o.kills * self.combat().kill_time(q.level, 0.0, o) < 240.0 {

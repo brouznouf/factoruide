@@ -119,7 +119,8 @@ impl Obj {
         self
     }
 
-    /// Done inside dungeon `d` (index in the scenario's dungeons).
+    /// Done inside dungeon `d` (index in the scenario's dungeons): a stop there, its mobs those of
+    /// the run.
     pub fn inside(mut self, d: usize) -> Self {
         self.dungeon = Some(d);
         self
@@ -402,11 +403,10 @@ impl Q {
                     alts,
                     auction,
                     item,
-                    kills: o.kills,
+                    kills: if o.dungeon.is_some() { 0.0 } else { o.kills },
                     mob_level: o.mob_level,
-                    uses: o.uses,
+                    uses: if o.dungeon.is_some() { 0.0 } else { o.uses },
                     elite: o.elite,
-                    dungeon: o.dungeon,
                     handed_by: o.handed_by.clone(),
                     lasts: o.lasts,
                     after: o.after.iter().fold(0u8, |mask, k| mask | 1u8 << k),
@@ -418,7 +418,14 @@ impl Q {
                     } else {
                         Vec::new()
                     },
-                    ..Objective::plain(loc, o.text.clone(), 0.0)
+                    ..Objective::plain(
+                        Loc {
+                            inside: o.dungeon.map(|d| u8::try_from(d).expect("a scenario's dungeon")),
+                            ..loc
+                        },
+                        o.text.clone(),
+                        0.0,
+                    )
                 }
             })
             .collect();

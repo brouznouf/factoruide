@@ -8,6 +8,7 @@ use crate::xp::Edition;
 use rusqlite::Connection;
 use std::path::PathBuf;
 
+mod dungeons;
 mod movement;
 mod profession_trainers;
 mod xp_buffs;

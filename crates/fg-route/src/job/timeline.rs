@@ -768,7 +768,8 @@ impl<'r> Replay<'r> {
                     let p = world.passes[*pass].pos;
                     via.push([p.x as f32, p.y as f32]);
                 }
-                Event::Farm { .. } | Event::Reward { .. } => {}
+                // The run of a dungeon entered: counted with the stop inside it that enters it.
+                Event::Farm { .. } | Event::Reward { .. } | Event::Enter { .. } => {}
                 Event::Stop { stop, loc, .. } => {
                     let walk = walking.min(e.time - t).max(0.0);
                     if apart(&at, &loc.pos) {

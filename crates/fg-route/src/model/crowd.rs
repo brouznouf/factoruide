@@ -16,7 +16,7 @@ impl QuestBuilder<'_> {
         let p = self.params;
         let level = r.level.unwrap_or(1).max(1);
         let crowd = p.crowd_at(level);
-        for o in objectives.iter_mut().filter(|o| o.dungeon.is_none()) {
+        for o in objectives.iter_mut().filter(|o| o.dungeon_of().is_none()) {
             if o.loc.kind == EntityKind::Area && is_event(r, &o.text) {
                 o.extra += crowd * p.crowd_event_time;
                 continue;

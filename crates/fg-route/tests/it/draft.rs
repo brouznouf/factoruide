@@ -172,9 +172,9 @@ fn an_offered_quest_added_after_a_step_is_taken_there() {
     assert_eq!(view.lines[k + 1].kind.as_str(), "accept");
 }
 
-/// A dungeon quest taken whose dungeon is no longer run (and that is not turned in) is an
-/// error of its accept, which the draft cannot be saved with; the dungeon's objectives are then
-/// offered at its entrance.
+/// A dungeon quest taken whose dungeon is no longer entered (its run and its objectives inside
+/// gone, and it is not turned in) is an error of its accept, which the draft cannot be saved
+/// with; the dungeon's objectives are then offered at its entrance.
 #[test]
 fn a_dungeon_quest_without_its_run_is_an_error() {
     const DEADMINES: i64 = 900;
@@ -202,12 +202,18 @@ fn a_dungeon_quest_without_its_run_is_an_error() {
     let names = Names::default();
     assert_eq!(editor.simulate(&guide.plan, &names).errors, 0, "the guide as planned");
 
-    let run = (guide.plan.iter())
-        .position(|s| matches!(s, RouteStep::Dungeon { dungeon: DEADMINES }))
-        .expect("the forced run");
+    assert!(
+        (guide.plan.iter()).any(|s| matches!(s, RouteStep::Objective { quest: 300 | 301, .. })),
+        "the objectives inside are steps of their own"
+    );
     let mut draft = guide.plan;
-    draft.remove(run);
-    // Its turn-ins, which cannot be done without the run, go too.
+    draft.retain(|s| {
+        !matches!(
+            s,
+            RouteStep::Dungeon { dungeon: DEADMINES } | RouteStep::Objective { quest: 300 | 301, .. }
+        )
+    });
+    // Its turn-ins, which cannot be done without the dungeon, go too.
     let report = editor.simulate(&draft, &names);
     let draft: Vec<RouteStep> = (draft.iter().zip(&report.steps))
         .filter(|(s, r)| !(matches!(s, RouteStep::TurnIn { .. }) && r.status == "error"))

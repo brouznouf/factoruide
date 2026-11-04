@@ -84,7 +84,7 @@ impl Worth<'_> {
         let hardest = q
             .objectives
             .iter()
-            .filter(|o| o.dungeon.is_none())
+            .filter(|o| o.dungeon_of().is_none())
             .map(|o| self.combat.need(q, o))
             .fold(0.0, f64::max);
         if hardest > self.params.reach(level + 1, might) {
@@ -134,7 +134,7 @@ impl Worth<'_> {
             .map(|(_, o)| o)
             .collect();
         let hardest = (left.iter())
-            .filter(|o| o.dungeon.is_none())
+            .filter(|o| o.dungeon_of().is_none())
             .map(|o| self.combat.need(q, o))
             .fold(0.0, f64::max);
         if hardest > self.params.reach(level + 1, s.might()) {

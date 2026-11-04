@@ -514,7 +514,14 @@ fn a_required_quest_inside_a_dungeon_runs_the_dungeon() {
     let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
     let route = planner.construct(|_| {});
     planner.validate_required(&route).unwrap();
-    assert!(route.iter().any(|s| s.kind == Kind::Dungeon));
+    // Entered, by its run or by the objective inside it.
+    let mut trace = Vec::new();
+    planner.simulate_full(&route, Some(&mut trace)).unwrap();
+    assert!(trace.iter().any(|t| match t.event {
+        fg_route::plan::Event::Enter { .. } => true,
+        fg_route::plan::Event::Stop { stop, .. } => stop.kind == Kind::Dungeon,
+        _ => false,
+    }));
 }
 
 /// A must-have quest whose dungeon objectives are already complete in the log (GitHub #87) does

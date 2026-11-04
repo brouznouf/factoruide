@@ -81,7 +81,8 @@ impl Planner<'_> {
                             }
                         }
                         for (k, o) in q.objectives.iter().enumerate() {
-                            if self.availability().objective_open(&s, i, k) && o.kills > 0.0 && o.dungeon.is_none() {
+                            if self.availability().objective_open(&s, i, k) && o.kills > 0.0 && o.dungeon_of().is_none()
+                            {
                                 options.push((
                                     self.params.level_for(self.combat().need(q, o), s.might()),
                                     Stop::quest(i, Kind::Objective(k as u8)),
@@ -94,7 +95,7 @@ impl Planner<'_> {
                         // Or the level its hardest objective needs (`worth_it` looks one level
                         // ahead): its giver in reach, its mobs not yet.
                         let hardest = (q.objectives.iter())
-                            .filter(|o| o.dungeon.is_none())
+                            .filter(|o| o.dungeon_of().is_none())
                             .map(|o| self.combat().need(q, o))
                             .fold(0.0, f64::max);
                         let gate = gate.max(self.params.level_for(hardest, s.might()) - 1);
@@ -193,6 +194,12 @@ impl Planner<'_> {
         if forced_now.is_some() {
             return forced_now;
         }
+        // In a dungeon: what is left to do in it, before leaving it for good.
+        if let Some(d) = s.inside
+            && let Some(stop) = self.stop_inside(s, usize::from(d))
+        {
+            return Some(stop);
+        }
         // Quest value only decides what is worth accepting. Weights favour finishing what
         // is in the log, and class quests.
         let mut candidates: Vec<Candidate> = Vec::new();
@@ -204,6 +211,10 @@ impl Planner<'_> {
             self.params.zone_detour_pull
         };
         let mut add = |stop: Stop, weight: f64, worth: Option<u32>, lower: f64| {
+            // A dungeon is entered by its run (`dungeon_ready`), not by a stop inside it.
+            if stop.kind != Kind::Dungeon && self.places().inside(s, stop).is_some() {
+                return;
+            }
             let pos = self.places().pos(s, stop);
             let zone = self.places().zone(stop);
             // Finish the zone before leaving it (clear a zone, then move on).
@@ -996,12 +1007,39 @@ impl Planner<'_> {
         first
     }
 
+    /// The next stop inside dungeon `d`, where the character is: a quest to take there, an
+    /// objective of the log done there, a quest handed in there.
+    fn stop_inside(&self, s: &State, d: usize) -> Option<Stop> {
+        // Done now: at the character's level (what needs a higher one is left behind).
+        let here = |stop: Stop| {
+            !Self::already_done(s, stop)
+                && self.places().inside(s, stop) == Some(d)
+                && self.availability().valid(s, stop)
+                && self.gate_level(s, stop) <= s.level
+        };
+        let n = self.model.quests.len() as u32;
+        let accept = (0..n)
+            .map(|i| Stop::quest(i, Kind::Accept))
+            .find(|&stop| s.log < self.params.quest_log_size && here(stop));
+        let open = (0..n).filter(|&i| s.accepted[i as usize] && !s.turned[i as usize]);
+        accept
+            .or_else(|| {
+                open.clone().find_map(|i| {
+                    (0..self.quest(i).objectives.len() as u8)
+                        .map(|k| Stop::quest(i, Kind::Objective(k)))
+                        .find(|&stop| here(stop))
+                })
+            })
+            .or_else(|| open.map(|i| Stop::quest(i, Kind::TurnIn)).find(|&stop| here(stop)))
+    }
+
     /// The quest of dungeon `d` to pick up before its run: one that can be accepted at this level
-    /// and is worth it.
+    /// and is worth it, outside (those given inside are taken there).
     fn quest_before_dungeon(&self, s: &State, d: usize) -> Option<u32> {
         self.availability().dungeon_quests(d).find(|&i| {
             let iu = i as usize;
-            !s.accepted[iu]
+            self.places().inside(s, Stop::quest(i, Kind::Accept)).is_none()
+                && !s.accepted[iu]
                 && !s.turned[iu]
                 && s.log < self.params.quest_log_size
                 && self.quest(i).min_level <= s.level
@@ -1051,7 +1089,8 @@ impl Planner<'_> {
             let iu = i as usize;
             let stop = Stop::quest(i, Kind::Accept);
             let lower = bound.at(&self.places().pos(s, stop));
-            !s.accepted[iu]
+            self.places().inside(s, stop).is_none()
+                && !s.accepted[iu]
                 && !s.turned[iu]
                 && s.log < self.params.quest_log_size
                 && self.quest(i).min_level <= s.level

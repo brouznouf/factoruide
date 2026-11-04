@@ -680,7 +680,7 @@ fn out_of_reach(
             .chain(
                 q.objectives
                     .iter()
-                    .filter(|o| o.dungeon.is_none())
+                    .filter(|o| o.dungeon_of().is_none())
                     .map(|o| (o.text.clone(), &o.loc)),
             );
         for (what, loc) in places {
@@ -774,7 +774,7 @@ fn ambiguous_floors(world: &World, model: &Model) -> Vec<Finding> {
             .chain(q.ends.iter().map(|l| ("ends at", l)))
             .chain(
                 (q.objectives.iter())
-                    .filter(|o| o.dungeon.is_none())
+                    .filter(|o| o.dungeon_of().is_none())
                     .flat_map(|o| std::iter::once(&o.loc).chain(o.alts.iter().map(|a| &a.loc)))
                     .map(|l| ("objective at", l)),
             );
