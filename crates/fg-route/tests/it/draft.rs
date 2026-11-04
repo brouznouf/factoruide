@@ -249,3 +249,48 @@ fn a_dungeon_quest_without_its_run_is_an_error() {
     assert_eq!(inside.dungeon.as_ref().map(|d| d.0), Some(DEADMINES));
     assert_eq!(inside.places.len(), 1, "the entrance");
 }
+
+/// A guide saved when a dungeon's run did its objectives (no step inside it): opened, the
+/// objectives inside of the quests in the log follow the run, and it replays without error.
+#[test]
+fn a_guide_of_dungeon_runs_gets_the_stops_inside_them() {
+    const DEADMINES: i64 = 900;
+    let mut scenario = leveling(25)
+        .dungeon("The Deadmines", 1, 70.0, 70.0)
+        .params(|p| p.forced_dungeons = vec![DEADMINES]);
+    for (id, name) in [(300, "Red Silk Bandanas"), (301, "Collecting Memories")] {
+        scenario = scenario.quest(
+            Q::new(id, name).level(18).giver(1, 40.0, 40.0).objective(
+                Obj::kill(
+                    "Defias",
+                    18,
+                    6,
+                    At {
+                        zone: 1,
+                        x: 70.0,
+                        y: 70.0,
+                    },
+                )
+                .inside(0),
+            ),
+        );
+    }
+    let (editor, guide) = scenario.guide();
+    let names = Names::default();
+    let mut old = guide;
+    old.plan
+        .retain(|s| !matches!(s, RouteStep::Objective { quest: 300 | 301, .. }));
+    let (steps, _) = editor.steps(&old);
+    let run = (steps.iter())
+        .position(|s| matches!(s, RouteStep::Dungeon { dungeon: DEADMINES }))
+        .expect("the run");
+    let after: Vec<i64> = steps[run + 1..run + 3]
+        .iter()
+        .filter_map(|s| match s {
+            RouteStep::Objective { quest, .. } => Some(*quest),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(after, [300, 301], "{steps:?}");
+    assert_eq!(editor.simulate(&steps, &names).errors, 0);
+}

@@ -431,14 +431,99 @@ impl Editor {
     /// guide's steps (a guide computed before the editor: its time may differ a little).
     pub fn steps(&self, outcome: &PlanOutcome) -> (Vec<RouteStep>, bool) {
         if outcome.explicit {
-            return (self.migrate_children(outcome.plan.clone()), false);
+            return (self.enter_dungeons(self.migrate_children(outcome.plan.clone())), false);
         }
         let (steps, rebuilt) = if outcome.plan.is_empty() {
             (self.read_guide(&outcome.route), true)
         } else {
             (outcome.plan.clone(), false)
         };
-        (self.expand(&self.migrate_children(steps)), rebuilt)
+        (self.expand(&self.enter_dungeons(self.migrate_children(steps))), rebuilt)
+    }
+
+    /// A guide made when a dungeon's run did what is inside it: after its run, the quests taken
+    /// inside it (a boss's drop, wherever the guide took them) and the objectives inside it of
+    /// the quests in the log become steps of their own, in the order the guide shows them.
+    fn enter_dungeons(&self, mut steps: Vec<RouteStep>) -> Vec<RouteStep> {
+        let model = &self.prepared.model;
+        let quest_of = |id: i64| model.index.get(&id).map(|&i| &model.quests[i]);
+        let inside = |l: &crate::model::Loc, d: usize| l.inside.map(usize::from) == Some(d);
+        // Whether a step takes place inside dungeon `d`.
+        let in_dungeon = |s: &RouteStep, d: usize| match s {
+            RouteStep::Accept { quest } => quest_of(*quest).is_some_and(|q| q.starts.iter().all(|l| inside(l, d))),
+            RouteStep::TurnIn { quest } => quest_of(*quest).is_some_and(|q| q.ends.iter().all(|l| inside(l, d))),
+            RouteStep::Objective { quest, objective, .. } => quest_of(*quest)
+                .and_then(|q| q.objectives.get(usize::from(*objective)))
+                .is_some_and(|o| inside(&o.loc, d)),
+            _ => false,
+        };
+        let mut k = 0;
+        while k < steps.len() {
+            let RouteStep::Dungeon { dungeon: area } = steps[k] else {
+                k += 1;
+                continue;
+            };
+            let Some(d) = model.dungeons.iter().position(|x| x.area == area) else {
+                k += 1;
+                continue;
+            };
+            // Saved with its stops inside: nothing to do.
+            if steps.iter().any(|s| in_dungeon(s, d)) {
+                k += 1;
+                continue;
+            }
+            // In the log at the run: taken before it (or at the start), not handed in before it.
+            let before = &steps[..k];
+            let mut quests: Vec<i64> = (model.initial.accepted.iter())
+                .map(|&i| model.quests[i].id)
+                .chain(before.iter().filter_map(|s| match s {
+                    RouteStep::Accept { quest } => Some(*quest),
+                    _ => None,
+                }))
+                .filter(|q| {
+                    !before
+                        .iter()
+                        .any(|s| matches!(s, RouteStep::TurnIn { quest } if quest == q))
+                })
+                .collect();
+            // Taken inside wherever the guide put it: in the run.
+            let mut added = Vec::new();
+            let mut n = 0;
+            while n < steps.len() {
+                if n != k && matches!(steps[n], RouteStep::Accept { .. }) && in_dungeon(&steps[n], d) {
+                    let RouteStep::Accept { quest } = steps.remove(n) else {
+                        unreachable!()
+                    };
+                    if n < k {
+                        k -= 1;
+                    }
+                    quests.retain(|q| *q != quest);
+                    quests.push(quest);
+                    added.push(RouteStep::Accept { quest });
+                } else {
+                    n += 1;
+                }
+            }
+            for &id in &quests {
+                let Some(q) = quest_of(id) else { continue };
+                for (o, objective) in q.objectives.iter().enumerate() {
+                    if inside(&objective.loc, d) {
+                        added.push(RouteStep::Objective {
+                            quest: id,
+                            objective: o as u8,
+                            farm: false,
+                            spot: None,
+                        });
+                    }
+                }
+            }
+            let count = added.len();
+            for (n, step) in added.into_iter().enumerate() {
+                steps.insert(k + 1 + n, step);
+            }
+            k += 1 + count;
+        }
+        steps
     }
 
     /// A guide made when a child quest (Finding the Antidote, for Need for a Cure) was folded
