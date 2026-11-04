@@ -111,11 +111,12 @@ pub(crate) fn install_polestar(state: State<'_, AppState>) -> CmdResult<usize> {
 /// the guides it has, or replaces the one of its name).
 #[tauri::command(async)]
 pub(crate) fn guide_text(state: State<'_, AppState>, guide: GuideId, version: u32) -> CmdResult<String> {
-    let v = state.library().version(&guide, version)?;
-    let edition = v.request.params.as_ref().map_or_else(|| state.edition(), |p| p.edition);
-    let route = state.render(&v.outcome.route, None)?;
+    // Read once: the library, the names and the database of the same game version.
+    let edition = state.edition();
+    let v = Library::new(&state.files, edition).version(&guide, version)?;
+    let route = state.studio.render(&*state, edition, &v.outcome.route, None)?;
     let lua = job::guides_lua(
-        &state.open_db()?,
+        &Host::open_db(&*state, edition)?,
         &overrides(edition)?,
         edition,
         vec![(route, v.meta.created, version)],
