@@ -4,6 +4,7 @@ use super::Planner;
 use super::on_the_way::CAMP_AHEAD;
 use super::state::{Breakdown, Kind, Planned, State, Stop, Timed};
 use crate::world::Pos;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 /// Where a route leaves the character.
@@ -39,22 +40,6 @@ pub(crate) struct Run {
 }
 
 impl Planner<'_> {
-    /// Score added to the play time: grinding (beyond its cap even more) and farming on the
-    /// way, flights weighed, gold spent on flights, zone changes, quests given up.
-    pub(crate) fn weights(&self, spent: &Breakdown) -> f64 {
-        (self.params.grind_weight() - 1.0) * spent.grinding
-            + (self.params.grind_over_weight() - self.params.grind_weight()) * spent.grind_over
-            + (self.params.grind_weight - 1.0).max(0.0) * spent.farming
-            + (self.params.flight_weight - 1.0) * spent.flights
-            + spent.flight_gold
-            + spent.bag_overflow
-            + self.params.zone_change_weight * f64::from(spent.zone_changes)
-            + self.params.preferred_zone_weight * spent.outside_preferred
-            + self.params.abandon_weight * f64::from(spent.abandoned)
-            + self.params.unlock_delay_weight * spent.unlock_delay
-            + self.params.group_sync_weight * spent.desync
-    }
-
     /// Time to reach the target level following `route` (plus penalties), or None if invalid.
     pub fn simulate(&self, route: &[Stop], trace: Option<&mut Vec<Timed>>) -> Option<f64> {
         self.simulate_full(route, trace).map(|(t, _)| t)
@@ -116,62 +101,57 @@ impl Planner<'_> {
 
     /// The score of `route` and the character's state at its end.
     pub(super) fn simulate_state(&self, route: &[Stop], mut trace: Option<&mut Vec<Timed>>) -> Option<(f64, State)> {
-        let mut s = self.start_state(self.planned(route));
+        let mut s = self.sim().start_state(self.planned(route));
         for (k, &stop) in route.iter().enumerate() {
-            if self.ended(&s) {
+            if self.sim().ended(&s) {
                 break;
             }
             if !self.availability().valid(&s, stop) {
                 return None;
             }
             s.at = k as u32;
-            s.next = self.next_pos(&s, route, k);
-            self.apply(&mut s, stop, trace.as_deref_mut());
+            s.next = self.sim().next_pos(&s, route, k);
+            self.sim().apply(&mut s, stop, trace.as_deref_mut());
             if !s.time.is_finite() || s.completion_error.is_some() {
                 return None;
             }
         }
-        let total = self.finish(&mut s, trace);
+        let total = self.sim().finish(&mut s, trace);
         if s.completion_error.is_some() {
             return None;
         }
         Some((total, s))
     }
 
-    /// Replay a route keeping the state before each stop, for incremental evaluation.
+    /// Replay a route keeping the state before each stop, for incremental evaluation, and the
+    /// places `while_here` looked at hand meanwhile.
     pub(crate) fn run(&self, route: &[Stop]) -> Option<Run> {
-        *self.heres.borrow_mut() = Some(Vec::new());
-        let run = self.replay_states(route);
-        let heres = self.heres.borrow_mut().take().unwrap_or_default();
-        run.map(|run| Run { heres, ..run })
-    }
-
-    /// `run`, the places looked at hand recorded by `while_here` meanwhile.
-    fn replay_states(&self, route: &[Stop]) -> Option<Run> {
-        let recorded = || self.heres.borrow().as_ref().map_or(0, Vec::len) as u32;
-        let mut s = self.start_state(self.planned(route));
+        let heres = RefCell::new(Vec::new());
+        let sim = self.sim().recording_heres(&heres);
+        let recorded = || heres.borrow().len() as u32;
+        let mut s = sim.start_state(self.planned(route));
         let mut states = Vec::with_capacity(route.len() + 1);
         let mut here_at = Vec::with_capacity(route.len() + 1);
         states.push(s.clone());
         here_at.push(0);
         for (k, &stop) in route.iter().enumerate() {
-            if self.ended(&s) {
+            if sim.ended(&s) {
                 break;
             }
-            if !self.availability().valid(&s, stop) {
+            if !sim.availability().valid(&s, stop) {
                 return None;
             }
             s.at = k as u32;
-            s.next = self.next_pos(&s, route, k);
-            self.apply(&mut s, stop, None);
+            s.next = sim.next_pos(&s, route, k);
+            sim.apply(&mut s, stop, None);
             if !s.time.is_finite() || s.completion_error.is_some() {
                 return None;
             }
             states.push(s.clone());
             here_at.push(recorded());
         }
-        let reached = self.ended(&s);
-        let total = self.finish(&mut s, None);
+        let reached = sim.ended(&s);
+        let total = sim.finish(&mut s, None);
         if s.completion_error.is_some() {
             return None;
         }
@@ -180,7 +160,7 @@ impl Planner<'_> {
             total,
             play: s.spent.total,
             reached,
-            heres: Vec::new(),
+            heres: heres.into_inner(),
             here_at,
         })
     }
@@ -285,14 +265,14 @@ impl Planner<'_> {
             return Some((run.total, true)); // after the target level: no effect
         }
         let (mut s, mut k) = if restart {
-            (self.start_state(planned), 0)
+            (self.sim().start_state(planned), 0)
         } else {
             let mut s = run.states[start].clone();
             s.planned = planned;
             (s, start)
         };
         while k < candidate.len() {
-            if self.ended(&s) {
+            if self.sim().ended(&s) {
                 break;
             }
             if window == Some(k)
@@ -304,8 +284,8 @@ impl Planner<'_> {
                 return None;
             }
             s.at = k as u32;
-            s.next = self.next_pos(&s, candidate, k);
-            self.apply(&mut s, candidate[k], None);
+            s.next = self.sim().next_pos(&s, candidate, k);
+            self.sim().apply(&mut s, candidate[k], None);
             if !s.time.is_finite() || s.completion_error.is_some() {
                 return None;
             }
@@ -352,12 +332,12 @@ impl Planner<'_> {
                     && Self::same_timers(&s, old)
                     && s.together == old.together
                 {
-                    let extra = self.weights(&s.spent) - self.weights(&old.spent);
+                    let extra = self.sim().weights(&s.spent) - self.sim().weights(&old.spent);
                     return Some((run.total + s.time - old.time + extra, true));
                 }
             }
         }
-        let total = self.finish(&mut s, None);
+        let total = self.sim().finish(&mut s, None);
         s.completion_error.is_none().then_some((total, true))
     }
 
@@ -368,7 +348,7 @@ impl Planner<'_> {
     fn estimate(&self, run: &Run, s: &State) -> Option<f64> {
         let rules = self.rules();
         let total_xp = |st: &State| (1..st.level).map(|l| rules.to_next_level(l)).sum::<i64>() + st.xp;
-        let score = |st: &State| st.time + self.weights(&st.spent);
+        let score = |st: &State| st.time + self.sim().weights(&st.spent);
         let xp = total_xp(s);
         let j = run.states.partition_point(|st| total_xp(st) < xp);
         let after = run.states.get(j)?;
@@ -387,11 +367,6 @@ impl Planner<'_> {
         Some(run.total + score(s) - at)
     }
 
-    /// Where stop `k` of `route` is followed: the next stop's place (see `State::next`).
-    pub(crate) fn next_pos(&self, s: &State, route: &[Stop], k: usize) -> Option<Pos> {
-        route.get(k + 1).map(|&next| self.places().pos(s, next))
-    }
-
     /// Whether the timed quests of both states have the same time left (the rest of the route is
     /// shifted in time: their deadlines are compared to each state's time). Exact, so that a
     /// rounding difference only makes the evaluation replay the rest.
@@ -405,9 +380,9 @@ impl Planner<'_> {
     /// First stop that makes a route invalid, with the reason. Replayed as `simulate` does: with
     /// the route's plan (the quests taken and turned in at hand), up to the target level.
     pub fn diagnose(&self, route: &[Stop]) -> Option<(usize, String)> {
-        let mut s = self.start_state(self.planned(route));
+        let mut s = self.sim().start_state(self.planned(route));
         for (n, &stop) in route.iter().enumerate() {
-            if self.ended(&s) {
+            if self.sim().ended(&s) {
                 break;
             }
             let label = if stop.is_quest() {
@@ -433,8 +408,8 @@ impl Planner<'_> {
                 return Some((n, format!("{label}: {reason}")));
             }
             s.at = n as u32;
-            s.next = self.next_pos(&s, route, n);
-            self.apply(&mut s, stop, None);
+            s.next = self.sim().next_pos(&s, route, n);
+            self.sim().apply(&mut s, stop, None);
             if let Some((quest, member, level)) = s.completion_error {
                 let q = self.quest(quest);
                 return Some((

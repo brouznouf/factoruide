@@ -447,16 +447,16 @@ fn movement_training_waits_for_a_nearby_trainer() {
     trainer.pos.x += 1000.0;
     p.model.trainers = vec![trainer];
     let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
-    let mut state = plan.initial_state();
+    let mut state = plan.sim().initial_state();
     let mut events = Vec::new();
-    plan.train(&mut state, &mut |_, e| events.push(e));
+    plan.sim().train(&mut state, &mut |_, e| events.push(e));
     assert!(
         events.is_empty(),
         "a movement gain alone does not justify a dedicated trip"
     );
     p.model.trainers[0].pos = p.model.start.pos;
     let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
-    plan.train(&mut state, &mut |_, e| events.push(e));
+    plan.sim().train(&mut state, &mut |_, e| events.push(e));
     assert!(
         events.iter().any(|e| matches!(e, Event::Train { .. })),
         "learn Cheetah at a nearby trainer"
@@ -546,8 +546,8 @@ fn a_trainer_detour_returns_with_the_new_movement_spell() {
     p.world.terrain = crate::terrain::movement_test_ground(crate::terrain::TestGround::Dry);
     (p.params.run_speed, p.params.detour, p.params.train_radius) = (7.0, 1.0, 200.0);
     let plan = planner(&p);
-    let mut state = plan.initial_state();
-    plan.train_at(&mut state, 0, &mut |_, _| {});
+    let mut state = plan.sim().initial_state();
+    plan.sim().train_at(&mut state, 0, &mut |_, _| {});
     assert_eq!(state.pos, a, "a detour returns to where it started");
     assert!(
         (state.spent.travel - (100.0 / 7.0 + 100.0 / 9.1)).abs() < 1e-6,

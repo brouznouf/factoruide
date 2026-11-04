@@ -3,7 +3,7 @@
 //! detour as soon as the game lets the rank be learned; a trainer far away is a trip, once the
 //! skill has passed what the rank before allows. The time is the route's.
 
-use super::Planner;
+use super::Simulator;
 use super::state::{Event, Landed, State};
 
 /// A rank of a profession (apprentice to artisan): what the game asks to learn it, the skill cap it
@@ -45,7 +45,7 @@ pub(crate) const RANKS: [Rank; 4] = [
     },
 ];
 
-impl Planner<'_> {
+impl Simulator<'_> {
     /// The ranks a character starting at `level` already knows: its skill (the curve at that level,
     /// which goes through the skill of a character met in game) asks the first rank once it has
     /// any, and each next rank once it is past the cap of the one before. A new character knows none.

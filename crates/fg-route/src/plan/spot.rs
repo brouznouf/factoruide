@@ -5,11 +5,11 @@
 //! stop when the route is known (`State::next`, a replay: its places come out on the way between
 //! two stops), else the quest's turn-in (a route being built stop by stop).
 
-use super::Planner;
+use super::Simulator;
 use super::state::{Kind, State, Stop};
 use crate::model::{Objective, Quest};
 
-impl Planner<'_> {
+impl Simulator<'_> {
     /// Objective `k` of `quest` at the place the character goes to from `s`.
     pub(crate) fn spot(&self, s: &State, quest: u32, k: u8) -> &Objective {
         let q = self.quest(quest);

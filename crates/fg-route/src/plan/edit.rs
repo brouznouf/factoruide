@@ -2,8 +2,10 @@
 //! and skipped), what each one did, and the time of the whole, as the optimizer counts it.
 
 use super::Planner;
+use super::Simulator;
 use super::state::{Breakdown, Event, Kind, Landed, State, Stop, Timed};
 use super::step::recorder;
+use std::cell::Cell;
 use std::ops::Range;
 
 /// A step of a route edited by hand: one thing done (`Planner::explicit` does nothing else).
@@ -120,7 +122,7 @@ impl Planner<'_> {
                 _ => None,
             })
             .collect();
-        let mut s = self.start_state(self.planned(&stops));
+        let mut s = self.sim().start_state(self.planned(&stops));
         let mut trace = Vec::new();
         let mut route = Vec::new();
         let mut steps = Vec::with_capacity(edits.len());
@@ -145,8 +147,12 @@ impl Planner<'_> {
             let farm_xp = s.spent.farm_xp;
             let mut farm_all = None;
             let mut warning = None;
+            // Walks through the zones too strong for the character: only when the step cannot
+            // be made otherwise.
+            let mut open = false;
             let outcome = loop {
-                let outcome = if self.ended(&s) {
+                let sim = self.sim().opening_walks(open);
+                let outcome = if sim.ended(&s) {
                     Outcome::Skipped("target level reached")
                 } else {
                     match *edit {
@@ -158,25 +164,25 @@ impl Planner<'_> {
                                 _ => None,
                             };
                             if !farm && let Kind::Objective(_) = stop.kind {
-                                farm_all = self.farm_all_estimate(&s, stop);
+                                farm_all = Self::farm_all_estimate(sim, &s, stop);
                             }
-                            let outcome = self.edit_stop(&mut s, stop, farm, &mut trace);
+                            let outcome = self.edit_stop(sim, &mut s, stop, farm, &mut trace);
                             s.spot = None;
                             if !matches!(outcome, Outcome::Invalid(_)) {
                                 route.push(stop);
                             }
                             outcome
                         }
-                        Edit::Fly { from, to } => self.edit_fly(&mut s, from, to, &mut trace),
-                        Edit::Link { first, last } => self.edit_link(&mut s, first, last, &mut trace),
+                        Edit::Fly { from, to } => self.edit_fly(sim, &mut s, from, to, &mut trace),
+                        Edit::Link { first, last } => self.edit_link(sim, &mut s, first, last, &mut trace),
                         Edit::Teleport { to } => self.edit_teleport(&mut s, to, &mut trace),
-                        Edit::DeathSkip => self.edit_death_skip(&mut s, &mut trace),
-                        Edit::Train { trainer } => self.edit_train(&mut s, trainer, &mut trace),
-                        Edit::Sell { vendor } => self.edit_sell(&mut s, vendor, &mut trace),
+                        Edit::DeathSkip => self.edit_death_skip(sim, &mut s, &mut trace),
+                        Edit::Train { trainer } => self.edit_train(sim, &mut s, trainer, &mut trace),
+                        Edit::Sell { vendor } => self.edit_sell(sim, &mut s, vendor, &mut trace),
                         Edit::Abandon { quest } => {
                             let i = quest as usize;
                             if s.accepted[i] && !s.turned[i] {
-                                self.abandon(&mut s, quest, &mut recorder(&mut Some(&mut trace)));
+                                sim.abandon(&mut s, quest, &mut recorder(&mut Some(&mut trace)));
                                 Outcome::Done
                             } else {
                                 Outcome::Invalid("quest not in the log")
@@ -199,7 +205,7 @@ impl Planner<'_> {
                                         zone,
                                     },
                                 );
-                                self.train(&mut s, &mut record);
+                                sim.train(&mut s, &mut record);
                                 Outcome::Done
                             }
                         }
@@ -209,8 +215,8 @@ impl Planner<'_> {
                             } else {
                                 let mut trace = Some(&mut trace);
                                 let mut record = recorder(&mut trace);
-                                self.grind_at_camps(&mut s, level, &mut record);
-                                self.train(&mut s, &mut record);
+                                sim.grind_at_camps(&mut s, level, &mut record);
+                                sim.train(&mut s, &mut record);
                                 Outcome::Done
                             }
                         }
@@ -218,14 +224,14 @@ impl Planner<'_> {
                 };
                 // A step that cannot be made only because a zone is closed to the character: the
                 // editor goes there (the planner never does), and says so.
-                if self.explicit && !self.open_walks.get() && outcome == Outcome::Invalid("unreachable") {
-                    self.open_walks.set(true);
+                if self.explicit && !open && outcome == Outcome::Invalid("unreachable") {
+                    open = true;
                     warning = Some("walks through a zone too strong for the character");
                     continue;
                 }
                 break outcome;
             };
-            if self.open_walks.replace(false) && matches!(outcome, Outcome::Invalid(_)) {
+            if open && matches!(outcome, Outcome::Invalid(_)) {
                 warning = None;
             }
             let actions: Vec<usize> = (first..trace.len()).filter(|&n| is_action(&trace[n].event)).collect();
@@ -273,7 +279,7 @@ impl Planner<'_> {
             }
         }
         let grinding = s.spent.grinding;
-        let score = self.finish(&mut s, Some(&mut trace));
+        let score = self.sim().finish(&mut s, Some(&mut trace));
         if !observe(&s) {
             return None;
         }
@@ -298,7 +304,7 @@ impl Planner<'_> {
     }
 
     /// A stop of an edited route, checked first.
-    fn edit_stop(&self, s: &mut State, stop: Stop, farm: bool, trace: &mut Vec<Timed>) -> Outcome {
+    fn edit_stop(&self, sim: Simulator<'_>, s: &mut State, stop: Stop, farm: bool, trace: &mut Vec<Timed>) -> Outcome {
         // Nothing to do rather than impossible: a flight path known, the hearthstone bound there.
         let i = stop.index as usize;
         match stop.kind {
@@ -306,7 +312,7 @@ impl Planner<'_> {
             Kind::Bind if s.bind == i => return Outcome::Skipped("hearthstone already bound there"),
             _ => {}
         }
-        if !self.availability().valid(s, stop) {
+        if !sim.availability().valid(s, stop) {
             return Outcome::Invalid(self.why_invalid(s, stop));
         }
         // A flight path at hand (on foot too): a detour to it, as one learned on the way.
@@ -314,7 +320,7 @@ impl Planner<'_> {
             && stop.kind == Kind::LearnFlight
             && s.landed == Landed::No
             && s.pos.dist(&self.world.taxi_nodes[i].pos) <= self.params.flight_learn_radius)
-            .then(|| 2.0 * self.trips().at(s).walk(&s.pos, &self.world.taxi_nodes[i].pos, s.level) + 5.0)
+            .then(|| 2.0 * sim.trips().at(s).walk(&s.pos, &self.world.taxi_nodes[i].pos, s.level) + 5.0)
             .filter(|d| d.is_finite());
         if let Some(detour) = detour {
             s.time += detour;
@@ -323,11 +329,10 @@ impl Planner<'_> {
             recorder(&mut Some(trace))(s, Event::LearnFlight { node: i });
             return Outcome::Done;
         }
-        let before = Self::already_done(s, stop);
+        let before = Simulator::already_done(s, stop);
         let (saved, mark) = (s.clone(), trace.len());
-        self.farm_all.set(farm);
-        self.apply(s, stop, Some(trace));
-        self.farm_all.set(false);
+        let once = Cell::new(farm);
+        sim.farming_all(&once).apply(s, stop, Some(trace));
         if s.completion_error.is_some() {
             *s = saved;
             trace.truncate(mark);
@@ -355,21 +360,19 @@ impl Planner<'_> {
     }
 
     /// What killing every normal mob on the way to `stop` would give.
-    fn farm_all_estimate(&self, s: &State, stop: Stop) -> Option<Farmed> {
-        if !self.availability().valid(s, stop) || Self::already_done(s, stop) {
+    fn farm_all_estimate(sim: Simulator<'_>, s: &State, stop: Stop) -> Option<Farmed> {
+        if !sim.availability().valid(s, stop) || Simulator::already_done(s, stop) {
             return None;
         }
         let mut s = s.clone();
         let mut trace = Vec::new();
         let farm_xp = s.spent.farm_xp;
-        self.farm_all.set(true);
-        self.apply(&mut s, stop, Some(&mut trace));
-        self.farm_all.set(false);
+        sim.farming_all(&Cell::new(true)).apply(&mut s, stop, Some(&mut trace));
         farmed(&trace, s.spent.farm_xp - farm_xp)
     }
 
     /// A flight of an edited route: to the flight master first.
-    fn edit_fly(&self, s: &mut State, from: usize, to: usize, trace: &mut Vec<Timed>) -> Outcome {
+    fn edit_fly(&self, sim: Simulator<'_>, s: &mut State, from: usize, to: usize, trace: &mut Vec<Timed>) -> Outcome {
         let known = |n: usize| s.known & (1u128 << n) != 0;
         if from == to {
             return Outcome::Invalid("same flight path");
@@ -380,7 +383,7 @@ impl Planner<'_> {
         if !known(to) {
             return Outcome::Invalid("destination not known");
         }
-        let table = self.trips().flight_table(s.known);
+        let table = sim.trips().flight_table(s.known);
         let (time, price) = (table.0[from][to], table.1[from][to]);
         if !time.is_finite() {
             return Outcome::Invalid("no flight between them");
@@ -391,7 +394,7 @@ impl Planner<'_> {
         // As a trip taking the flight by itself: the walk to the flight master and the flight
         // count as flying, the walk on to the next stop ends it (`State::landed`).
         let (start, end) = (nodes[from].pos, nodes[to].pos);
-        let walk = self.trips().at(s).walk(&s.pos, &start, s.level);
+        let walk = sim.trips().at(s).walk(&s.pos, &start, s.level);
         s.time += walk;
         s.spent.flights += walk;
         let seconds = time + self.params.flight_overhead;
@@ -408,13 +411,20 @@ impl Planner<'_> {
     }
 
     /// Boats, zeppelins or trams of an edited route: walking to the first one.
-    fn edit_link(&self, s: &mut State, first: usize, last: usize, trace: &mut Vec<Timed>) -> Outcome {
+    fn edit_link(
+        &self,
+        sim: Simulator<'_>,
+        s: &mut State,
+        first: usize,
+        last: usize,
+        trace: &mut Vec<Timed>,
+    ) -> Outcome {
         let links = &self.world.links;
-        let ride = self.world.link_chain(self.trips().open_links(s))[first][last];
+        let ride = self.world.link_chain(sim.trips().open_links(s))[first][last];
         if !ride.is_finite() {
             return Outcome::Invalid("no such crossing");
         }
-        let walk = self.trips().at(s).walk(&s.pos, &links[first].from, s.level);
+        let walk = sim.trips().at(s).walk(&s.pos, &links[first].from, s.level);
         if !walk.is_finite() {
             return Outcome::Invalid("unreachable");
         }
@@ -444,11 +454,11 @@ impl Planner<'_> {
 
     /// A death skip of an edited route: at the spirit healer nearest to where the character
     /// stands, while no player is past `DEATH_SKIP_UNTIL`.
-    fn edit_death_skip(&self, s: &mut State, trace: &mut Vec<Timed>) -> Outcome {
-        if !self.trips().may_die(s) {
+    fn edit_death_skip(&self, sim: Simulator<'_>, s: &mut State, trace: &mut Vec<Timed>) -> Outcome {
+        if !sim.trips().may_die(s) {
             return Outcome::Invalid("too high for a death skip");
         }
-        let Some(g) = self.trips().graveyard(s) else {
+        let Some(g) = sim.trips().graveyard(s) else {
             return Outcome::Invalid("no spirit healer");
         };
         let gy = &self.model.graveyards[g];
@@ -468,13 +478,13 @@ impl Planner<'_> {
     }
 
     /// Training of an edited route, at the trainer it says.
-    fn edit_train(&self, s: &mut State, trainer: usize, trace: &mut Vec<Timed>) -> Outcome {
+    fn edit_train(&self, sim: Simulator<'_>, s: &mut State, trainer: usize, trace: &mut Vec<Timed>) -> Outcome {
         let abilities = self.model.abilities.trained(s.abilities, s.level) & !s.abilities;
         if s.trained >= s.level && abilities == 0 {
             return Outcome::Skipped("nothing to learn");
         }
         let (saved, mark) = (s.clone(), trace.len());
-        self.train_at(s, trainer, &mut recorder(&mut Some(&mut *trace)));
+        sim.train_at(s, trainer, &mut recorder(&mut Some(&mut *trace)));
         if !s.time.is_finite() {
             *s = saved;
             trace.truncate(mark);
@@ -483,12 +493,12 @@ impl Planner<'_> {
         Outcome::Done
     }
 
-    fn edit_sell(&self, s: &mut State, vendor: usize, trace: &mut Vec<Timed>) -> Outcome {
+    fn edit_sell(&self, sim: Simulator<'_>, s: &mut State, vendor: usize, trace: &mut Vec<Timed>) -> Outcome {
         if vendor >= self.model.vendors.len() {
             return Outcome::Invalid("unknown vendor");
         }
         let (saved, mark) = (s.clone(), trace.len());
-        self.sell_at(s, vendor, &mut recorder(&mut Some(&mut *trace)));
+        sim.sell_at(s, vendor, &mut recorder(&mut Some(&mut *trace)));
         if !s.time.is_finite() {
             *s = saved;
             trace.truncate(mark);
@@ -513,7 +523,7 @@ impl Planner<'_> {
                         let farm = matches!(edit, Edit::Stop { stop: own, farm: true, .. } if *own == stop);
                         // Where it was done: replayed there.
                         let spot = match stop.kind {
-                            Kind::Objective(k) => self.spot_index(stop.index, k, &loc.pos),
+                            Kind::Objective(k) => self.sim().spot_index(stop.index, k, &loc.pos),
                             _ => None,
                         };
                         out.push(Edit::Stop { stop, farm, spot });

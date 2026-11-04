@@ -323,7 +323,7 @@ impl Planner<'_> {
         if kind == Kind::Dungeon && route.contains(&stop) {
             return None;
         }
-        let at = self.insert_near(route, &self.places().pos(&self.initial_state(), stop), 0);
+        let at = self.insert_near(route, &self.places().pos(&self.sim().initial_state(), stop), 0);
         route.insert(at, stop);
         Some(Change::edited(at, route.len()))
     }
@@ -335,7 +335,7 @@ impl Planner<'_> {
     /// trip in between may fly. A visit of the route to it later is moved there.
     fn add_flight_visit(&self, route: &mut Vec<Stop>, rng: &mut SmallRng) -> Option<Change> {
         let node = rng.random_range(0..self.world.taxi_nodes.len());
-        let s0 = self.initial_state();
+        let s0 = self.sim().initial_state();
         if s0.known & (1u128 << node) != 0 {
             return None;
         }
@@ -349,14 +349,14 @@ impl Planner<'_> {
             .position(|&st| {
                 st == visit
                     || (st.kind != Kind::LearnFlight
-                        && self.pos_from_start(&s0, st).dist(&pos) <= self.params.flight_learn_radius)
+                        && self.sim().pos_from_start(&s0, st).dist(&pos) <= self.params.flight_learn_radius)
             })
             .unwrap_or(route.len());
         if learned == 0 {
             return None;
         }
         let at = (0..learned)
-            .map(|i| (i, self.pos_from_start(&s0, route[i]).dist(&pos)))
+            .map(|i| (i, self.sim().pos_from_start(&s0, route[i]).dist(&pos)))
             .filter(|(_, d)| d.is_finite())
             .min_by(|a, b| a.1.total_cmp(&b.1))
             .map(|(i, _)| i + 1)?;
@@ -372,7 +372,7 @@ impl Planner<'_> {
     /// around it closest to the inn; or a bind of the route moved to such an inn.
     fn rebind_nearby(&self, route: &mut Vec<Stop>, rng: &mut SmallRng) -> Option<Change> {
         const AROUND: usize = 15;
-        let s0 = self.initial_state();
+        let s0 = self.sim().initial_state();
         let k = rng.random_range(0..route.len());
         let inns = self.inns_near(&self.places().pos(&s0, route[k]), INNS_TRIED);
         let inn = *inns.get(rng.random_range(0..inns.len().max(1)))?;

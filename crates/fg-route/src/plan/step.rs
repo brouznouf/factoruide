@@ -1,7 +1,8 @@
 //! Doing one stop of a route: accept, objectives (and the mobs met on the way), turn-in, visits, what is done while there.
 
+use super::Mode;
+use super::Simulator;
 use super::state::{Event, Kind, Landed, State, Stop, Timed, Together};
-use super::{Mode, Planner};
 use crate::model::{Loc, Objective};
 use crate::xp;
 
@@ -9,7 +10,7 @@ use crate::xp;
 /// is a margin for the time estimates.
 const TIMED_SHARE: f64 = 0.75;
 
-impl Planner<'_> {
+impl Simulator<'_> {
     /// Training after a step: the class, then the professions.
     pub(crate) fn train(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) {
         self.train_class(s, record);

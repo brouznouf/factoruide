@@ -76,6 +76,7 @@ pub fn build_traced(
     // The quests of the character's log the guide leaves are abandoned first.
     let model = planner.model;
     let left: HashSet<i64> = planner
+        .sim()
         .left_at_start(&planner.planned(route))
         .map(|i| model.quests[i].id)
         .collect();

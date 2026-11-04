@@ -3,7 +3,8 @@
 //! A route is an ordered list of stops: quest stops (accept, complete an objective, turn in) and
 //! visits (learn a flight path, bind the hearthstone, run a dungeon, learn a profession rank).
 //!
-//! Data (what is manipulated): `state` (stops, the character's state, the trace of a replay).
+//! Data (what is manipulated): `state` (stops, the character's state, the trace of a replay),
+//! `indexes` (what is looked up all the time, computed once from the model).
 //!
 //! Services (calculations, each one need):
 //! - `combat`: kill times, the power an objective requires, mob XP, grinding;
@@ -14,8 +15,10 @@
 //! - `growth`: XP, rewards, power, professions;
 //! - `worth`: whether a quest is worth its trip.
 //!
-//! Orchestrators (they call the services in order):
-//! - `step`: doing one stop, `on_the_way`: what happens while moving;
+//! `sim` (`Simulator`): what a stop does to the character, built on the services: `step` doing
+//! one stop, `on_the_way` what happens while moving. A planner gives its own (`Planner::sim`).
+//!
+//! Orchestrators (they call the simulator and the services in order):
 //! - `evaluate`: replaying a whole route (its time and score);
 //! - `construct`, `regions`: building a first route, `hearth`: where the hearthstone is bound;
 //! - `search` with `moves`, `acceptance`, `alns`: improving it;
@@ -41,6 +44,7 @@ mod regions;
 mod report;
 mod search;
 mod share;
+mod sim;
 mod spot;
 mod state;
 mod step;
@@ -72,13 +76,15 @@ use crate::xp;
 use availability::Availability;
 use camp::NearCamps;
 use growth::Growth;
-use on_the_way::FarmWalks;
-pub(crate) use state::State;
-use state::{Flags, Landed, Planned};
-use std::cell::{Cell, RefCell};
-use std::rc::Rc;
 use indexes::Indexes;
+use on_the_way::FarmWalks;
+pub(crate) use sim::Simulator;
+pub(crate) use state::State;
+use std::cell::RefCell;
+use std::rc::Rc;
 use travel::{FlightTables, Grounds, Legs, Trips};
+
+use worth::Worth;
 
 /// What a planner computed already, kept for its next calls. The keys hold only what changes from
 /// one call of a planner to the next (places, levels, flight paths known): a memo is for the
@@ -95,7 +101,6 @@ struct Memo {
     /// The camps nearest to each place grinding starts at (see `camp::camp`).
     near_camps: NearCamps,
 }
-use worth::Worth;
 
 /// What a planner simulates: its own routes, or an imposed route replayed as it is (no grinding
 /// before the steps it does under their level, gray quests taken as it says).
@@ -115,14 +120,6 @@ pub struct Planner<'a> {
     pub profile: &'a Profile,
     /// What it computed already: its own, its keys tell only the calls of one planner apart.
     memo: Memo,
-    /// The next walk kills every normal mob met, beyond `farm_cap` (a step of an edited route).
-    farm_all: Cell<bool>,
-    /// Walks go into the zones too strong for the character (a step of an edited route that cannot
-    /// be made otherwise: the editor allows it, with a warning).
-    open_walks: Cell<bool>,
-    /// Where `while_here` looked for quests at hand, recorded while `run` replays a route (see
-    /// `Run::heres`).
-    heres: RefCell<Option<Vec<Pos>>>,
     /// The zone changes of the last greedy construction: (level, time, from, to).
     zone_changes: RefCell<Vec<ZoneChange>>,
     mode: Mode,
@@ -151,7 +148,7 @@ impl<'a> Planner<'a> {
     pub fn new(model: &'a Model, world: &'a World, params: &'a Params, profile: &'a Profile) -> Self {
         let ix = Rc::new(Indexes::new(model, params));
         let mut planner = Self::with_indexes(model, world, params, profile, ix, Rc::from([]));
-        let s0 = planner.initial_state();
+        let s0 = planner.sim().initial_state();
         let places = planner.places();
         planner.from_start = (0..model.quests.len() as u32)
             .map(|i| {
@@ -179,9 +176,6 @@ impl<'a> Planner<'a> {
             params,
             profile,
             memo: Memo::default(),
-            farm_all: Cell::new(false),
-            open_walks: Cell::new(false),
-            heres: RefCell::new(None),
             zone_changes: RefCell::new(Vec::new()),
             mode: Mode::Plan,
             ix,
@@ -191,17 +185,6 @@ impl<'a> Planner<'a> {
             abort: None,
             share: None,
             explicit: false,
-        }
-    }
-
-    /// `Places::pos` from the initial state, without computing it again for a quest stop.
-    pub(crate) fn pos_from_start(&self, s0: &State, stop: Stop) -> Pos {
-        let at = |k: usize| self.from_start[stop.index as usize][k];
-        match stop.kind {
-            Kind::Accept => at(0),
-            Kind::TurnIn => at(1),
-            Kind::Objective(k) => at(2 + k as usize),
-            _ => self.places().pos(s0, stop),
         }
     }
 
@@ -272,172 +255,27 @@ impl<'a> Planner<'a> {
         }
     }
 
-    pub(crate) fn quest(&self, i: u32) -> &Quest {
-        &self.model.quests[i as usize]
-    }
-
-    pub(crate) fn initial_state(&self) -> State {
-        let n = self.model.quests.len();
-        let level = self.profile.from_level.max(1);
-        let init = &self.model.initial;
-        let (pos, zone) = init.pos.unwrap_or((self.model.start.pos, self.model.start.zone));
-        let mut s = State {
-            pos,
-            zone,
-            time: 0.0,
-            level,
-            xp: init.xp.min(self.rules().to_next_level(level) - 1).max(0),
-            rested: init.rested,
-            mates: std::array::from_fn(|k| {
-                init.mates.get(k).map_or_else(state::MateXp::default, |m| {
-                    let level = m.level.max(1);
-                    state::MateXp {
-                        level,
-                        xp: m.xp.min(self.rules().to_next_level(level) - 1).max(0),
-                        rested: m.rested.max(0),
-                    }
-                })
-            }),
-            order: std::array::from_fn(|k| k as u8),
-            synced: true,
-            stock: vec![0.0; self.model.loot.items.len()],
-            bags: 0.0,
-            held: 0,
-            known: init.known,
-            bind: init.bind.unwrap_or(self.model.start_inn),
-            hearth_ready: if init.unbound { f64::INFINITY } else { 0.0 },
-            recall_ready: if init.unbound { f64::INFINITY } else { 0.0 },
-            trained: init.trained.unwrap_or(level).min(level),
-            // A character met in game knows the teleports its training gives (taught anywhere).
-            taught: if init.trained.is_some() {
-                (self.model.teleports.iter().enumerate())
-                    .filter(|(_, tp)| tp.level <= level)
-                    .fold(0, |mask, (i, _)| mask | 1 << i)
-            } else {
-                0
-            },
-            abilities: init.abilities,
-            ranks: self.ranks_known_at_start(level),
-            dungeons: 0,
-            inside: None,
-            accepted: Flags::new(n),
-            turned: Flags::new(n),
-            dropped: Vec::new(),
-            objectives: vec![0; n],
-            completion_error: None,
-            timers: Vec::new(),
-            started: Vec::new(),
-            together: state::Together::default(),
-            next: None,
-            spot: None,
-            landed: Landed::No,
-            planned: Rc::new(Planned::default()),
-            at: 0,
-            class_bonus: self
-                .profile
-                .class_powers
-                .iter()
-                .enumerate()
-                .filter(|(k, _)| self.model.known_class_powers & (1 << k) != 0)
-                .map(|(_, (_, power))| Growth::class_power_levels(*power))
-                .sum(),
-            powers: self.model.known_class_powers,
-            gear: crate::power::Gear::default(),
-            bonus: 0.0,
-            gear_bonus: 0.0,
-            gear_quality: 0.0,
-            explored: Flags::new(self.model.explore.len()),
-            abandon_check: (0, 0, None),
-            log: 0,
-            grind_used: 0,
-            farm_used: 0,
-            reputation: (0..self.params.reputation_goals.len())
-                .map(|g| init.reputation.get(g).copied().unwrap_or(0.0) as f32)
-                .collect(),
-            forced_left: 0,
-            required_left: 0,
-            spent: Breakdown::default(),
-        };
-        for &i in &init.turned {
-            s.turned.set(i, true);
-            self.growth().gain_power(&mut s, i as u32);
-        }
-        for &i in &init.accepted {
-            if !s.turned[i] {
-                s.accepted.set(i, true);
-                s.log += 1;
-                s.held += u16::from(self.model.quests[i].carried);
-                for &(_, k, _) in init.progress.iter().filter(|p| p.0 == i && p.2 >= 1.0) {
-                    self.hold(&mut s, i, k);
-                }
-            }
-        }
-        // Objectives started: their share so far is done when the route gets to them.
-        for &(q, k, share) in &init.progress {
-            if s.accepted[q] && share > 0.0 && share < 1.0 {
-                s.started.push((q as u32, k, share));
-            }
-        }
-        if let Some(power) = &self.model.power {
-            for &id in &init.gear {
-                if let Some(item) = power.item(id) {
-                    power.equip(&mut s.gear, item, 1.0, level);
-                }
-            }
-        }
-        self.growth().refresh_power(&mut s);
-        s.synced = self.growth().spread(&s) <= self.params.group_sync_window;
-        s.required_left = self
-            .model
-            .quests
-            .iter()
-            .enumerate()
-            .filter(|(i, q)| q.required && !s.rewarded(*i))
-            .count() as u32;
-        s.forced_left = (self.model.quests.iter().enumerate())
-            .filter(|(i, q)| q.zone_forced && !s.turned[*i])
-            .count() as u32;
-        s
-    }
-
-    /// The initial state of a route of plan `planned`: the quests of the character's log it has
-    /// no stop of are abandoned at once (`left_at_start`), freeing their place in the log. Not
-    /// the route's choice: no penalty (`Params::abandon_weight`), no event (the guide's first
-    /// steps, `export`).
-    pub(crate) fn start_state(&self, planned: Rc<Planned>) -> State {
-        let mut s = self.initial_state();
-        for i in self.left_at_start(&planned) {
-            self.abandon(&mut s, i as u32, &mut |_, _| {});
-        }
-        s.planned = planned;
-        s
-    }
-
-    /// The quests of the character's log a route of plan `planned` has nothing to do with.
-    pub(crate) fn left_at_start<'p>(&'p self, planned: &'p Planned) -> impl Iterator<Item = usize> + 'p {
-        (self.model.initial.accepted.iter().copied()).filter(|&i| planned.left(i))
-    }
-
-    /// Whether the guide is over: the target level reached by everyone, the quests of the forced zones
-    /// done and the reputation goals met.
-    pub(crate) fn ended(&self, s: &State) -> bool {
-        self.growth().lowest_level(s) >= self.profile.to_level
-            && s.forced_left == 0
-            && s.required_left == 0
-            && self.reputation_missing(s) <= 0.0
-    }
-
-    /// Experience rules of the guide's game version.
-    /// What the character can do now: prerequisites, exclusive and gray quests, dungeons.
-    pub(crate) fn availability(&self) -> Availability<'_> {
-        Availability {
+    /// The simulator of this planner's routes.
+    pub(crate) fn sim(&self) -> Simulator<'_> {
+        Simulator {
             model: self.model,
+            world: self.world,
             params: self.params,
             profile: self.profile,
-            replaying: self.mode == Mode::Replay,
+            ix: &self.ix,
+            from_start: &self.from_start,
+            memo: &self.memo,
+            mode: self.mode,
             explicit: self.explicit,
-            followers: &self.ix.followers,
+            open_walks: false,
+            farm_all: None,
+            heres: None,
         }
+    }
+
+    /// What the character can do now: prerequisites, exclusive and gray quests, dungeons.
+    pub(crate) fn availability(&self) -> Availability<'_> {
+        self.sim().availability()
     }
 
     /// How the character grows: XP, rewards, power, professions.
@@ -451,40 +289,16 @@ impl<'a> Planner<'a> {
 
     /// Whether quests are worth their trip.
     pub(crate) fn worth(&self) -> Worth<'_> {
-        Worth {
-            model: self.model,
-            params: self.params,
-            combat: self.combat(),
-            trips: self.trips(),
-            growth: self.growth(),
-            availability: self.availability(),
-            to_level: self.profile.to_level,
-        }
+        self.sim().worth()
     }
 
     /// Trips: walking, boats, flights, the hearthstone.
     pub(crate) fn trips(&self) -> Trips<'_> {
-        Trips {
-            world: self.world,
-            params: self.params,
-            model: self.model,
-            flights: &self.memo.flights,
-            legs: &self.memo.legs,
-            grounds: &self.memo.grounds,
-            abilities: self.model.initial.abilities,
-            explicit: self.explicit,
-            open_walks: self.open_walks.get(),
-        }
+        self.sim().trips()
     }
 
-    /// The level a walk at `level` is made at: the zones closed to it (`World::walk_level`), none
-    /// when the walks are open.
-    pub(crate) fn walk_level(&self, level: i64) -> u8 {
-        if self.open_walks.get() {
-            0
-        } else {
-            self.world.walk_level(level)
-        }
+    pub(crate) fn quest(&self, i: u32) -> &Quest {
+        &self.model.quests[i as usize]
     }
 
     /// Where the stops of a route take place.

@@ -34,7 +34,7 @@ fn tailor_with_trainer(cap: i64, away: f64) -> Prepared {
 
 fn visits(planner: &Planner<'_>, s: &mut super::super::state::State) -> Vec<Event> {
     let mut events = Vec::new();
-    planner.train_professions(s, &mut |_, e| events.push(e));
+    planner.sim().train_professions(s, &mut |_, e| events.push(e));
     events
 }
 
@@ -42,7 +42,7 @@ fn visits(planner: &Planner<'_>, s: &mut super::super::state::State) -> Vec<Even
 fn a_trainer_close_by_teaches_the_first_rank_once() {
     let p = tailor_with_trainer(75, 50.0);
     let planner = planner(&p);
-    let mut s = planner.initial_state();
+    let mut s = planner.sim().initial_state();
     s.level = 10;
     let before = s.time;
     let events = visits(&planner, &mut s);
@@ -66,7 +66,7 @@ fn a_trainer_close_by_teaches_the_first_rank_once() {
 fn a_far_trainer_waits_until_the_skill_needs_the_rank_then_gets_a_trip() {
     let p = tailor_with_trainer(75, 1500.0);
     let planner = planner(&p);
-    let mut s = planner.initial_state();
+    let mut s = planner.sim().initial_state();
     // Skill 35: the apprentice rank is open and far, and not needed yet.
     s.level = 12;
     assert_eq!(visits(&planner, &mut s).len(), 0, "no trip before it is needed");
@@ -90,7 +90,7 @@ fn a_trainer_that_does_not_teach_the_rank_is_not_visited() {
     // Teaches up to the first rank only; at skill 130 the character needs the third.
     let p = tailor_with_trainer(75, 50.0);
     let planner = planner(&p);
-    let mut s = planner.initial_state();
+    let mut s = planner.sim().initial_state();
     s.level = 5 + 26;
     let events = visits(&planner, &mut s);
     assert!(
@@ -105,7 +105,7 @@ fn nothing_happens_when_the_option_is_off() {
     let mut p = tailor_with_trainer(75, 50.0);
     p.model.profession_trainers.clear();
     let planner = planner(&p);
-    let mut s = planner.initial_state();
+    let mut s = planner.sim().initial_state();
     s.level = 20;
     let before = s.time;
     assert_eq!(visits(&planner, &mut s).len(), 0);
@@ -119,12 +119,12 @@ fn a_character_met_in_game_knows_the_ranks_its_skill_needs() {
     let mut p = tailor_with_trainer(150, 50.0);
     p.profile.from_level = 25;
     let planner = planner(&p);
-    let mut s = planner.initial_state();
+    let mut s = planner.sim().initial_state();
     assert_eq!(s.ranks[0], 0b11, "skill 100: apprentice and journeyman");
     assert_eq!(visits(&planner, &mut s).len(), 0, "nothing to learn again");
     p.profile.from_level = 1;
     assert_eq!(
-        super::planner(&p).initial_state().ranks[0],
+        super::planner(&p).sim().initial_state().ranks[0],
         0,
         "a new character knows none"
     );

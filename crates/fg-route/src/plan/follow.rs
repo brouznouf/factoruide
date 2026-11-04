@@ -43,7 +43,7 @@ impl Planner<'_> {
     }
 
     fn replay(&self, wants: &[Want]) -> Followed {
-        let mut s = self.initial_state();
+        let mut s = self.sim().initial_state();
         let mut trace = Vec::new();
         let mut route = Vec::new();
         let mut dropped = Vec::new();
@@ -69,7 +69,8 @@ impl Planner<'_> {
                 }
                 Want::Grind(level) => {
                     if s.level < *level {
-                        self.grind_at_camps(&mut s, *level, &mut recorder(&mut Some(&mut trace)));
+                        self.sim()
+                            .grind_at_camps(&mut s, *level, &mut recorder(&mut Some(&mut trace)));
                     }
                 }
                 Want::Stop(stop) => {
@@ -78,7 +79,7 @@ impl Planner<'_> {
                         for k in 0..self.quest(stop.index).objectives.len() {
                             let o = Stop::quest(stop.index, Kind::Objective(k as u8));
                             if self.availability().valid(&s, o) {
-                                self.apply(&mut s, o, Some(&mut trace));
+                                self.sim().apply(&mut s, o, Some(&mut trace));
                                 route.push(o);
                             }
                         }
@@ -93,7 +94,7 @@ impl Planner<'_> {
                         trusted_accepts.push(stop.index);
                     }
                     if self.availability().valid(&s, *stop) || trusted {
-                        self.apply(&mut s, *stop, Some(&mut trace));
+                        self.sim().apply(&mut s, *stop, Some(&mut trace));
                         route.push(*stop);
                     } else {
                         dropped.push((*stop, self.why_invalid(&s, *stop)));
@@ -101,7 +102,7 @@ impl Planner<'_> {
                 }
             }
         }
-        self.finish(&mut s, Some(&mut trace));
+        self.sim().finish(&mut s, Some(&mut trace));
         Followed {
             route,
             trace,

@@ -2,7 +2,7 @@
 //! the nearest it gets to fastest, going there first; each level at its own camp. Grinding stays
 //! where the character stands only when no camp of its level is on its continent.
 
-use super::Planner;
+use super::Simulator;
 use super::state::{Event, State};
 use crate::world::Pos;
 use rustc_hash::FxHashMap;
@@ -16,7 +16,7 @@ const CAMP_MEMO: usize = 1 << 16;
 /// The nearest camps of a place for a level: (continent, bits of the coordinates, level).
 pub(crate) type NearCamps = std::cell::RefCell<FxHashMap<(i64, [u64; 2], i64), Rc<[Pos]>>>;
 
-impl Planner<'_> {
+impl Simulator<'_> {
     /// Grind until `level` (the game's cap at most), at the camp of each level, recording the
     /// trips there and the grinding at each camp (`Event::Grind`, at the camp). The character
     /// ends at the last camp.

@@ -2,7 +2,7 @@
 //! areas discovered, the mobs and objects of the log met on the way, and what it does while
 //! there (quests turned in and taken around a stop).
 
-use super::Planner;
+use super::Simulator;
 use super::state::{Event, Kind, Landed, Leg, State, Stop};
 use crate::model::{Loc, Met};
 use crate::world::Pos;
@@ -38,7 +38,7 @@ pub(crate) fn segment_dist(p: &Pos, a: &Pos, b: &Pos) -> f64 {
     ((p.x - a.x - t * dx).powi(2) + (p.y - a.y - t * dy).powi(2)).sqrt()
 }
 
-impl Planner<'_> {
+impl Simulator<'_> {
     /// Move to `target`, recording how.
     pub(crate) fn go(&self, s: &mut State, target: &Pos, zone: i64, record: &mut impl FnMut(&State, Event)) {
         let start = s.pos;
@@ -209,7 +209,7 @@ impl Planner<'_> {
     /// (the walk there, the spot itself and the walk away from it).
     pub(crate) fn farm_along(&self, s: &mut State, a: &Pos, b: &Pos, record: &mut impl FnMut(&State, Event)) {
         let p = self.params;
-        let all = self.farm_all.replace(false);
+        let all = self.farm_all.is_some_and(|once| once.replace(false));
         if !(p.farm_on_way || all) || p.farm_corridor <= 0.0 || a.continent != b.continent || a == b {
             return;
         }
@@ -309,8 +309,8 @@ impl Planner<'_> {
             return;
         }
         let here = s.pos;
-        if let Some(heres) = self.heres.borrow_mut().as_mut() {
-            heres.push(here);
+        if let Some(heres) = self.heres {
+            heres.borrow_mut().push(here);
         }
         let (cx, cy) = ((here.x / radius).floor() as i64, (here.y / radius).floor() as i64);
         loop {

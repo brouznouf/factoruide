@@ -1,6 +1,7 @@
 //! Building a first route: greedy or region by region, then repairs (class quests, pet quests first, settling).
 
 use super::Planner;
+use super::Simulator;
 use super::state::{Kind, State, Stop, fmt_time};
 use crate::params::Construction;
 use crate::world::Pos;
@@ -25,12 +26,12 @@ struct Candidate {
 impl Planner<'_> {
     /// Greedy construction: nearest worthwhile stop first.
     pub fn greedy(&self) -> Vec<Stop> {
-        let mut s = self.initial_state();
+        let mut s = self.sim().initial_state();
         // The quests of the character's log not worth finishing from here are given up (the
         // replay does it too, `start_state`): `keep_log_quests` puts back those on the way.
         for &i in &self.model.initial.accepted {
             if s.accepted[i] && !self.worth().finish_worth_it(&s, i as u32) {
-                self.abandon(&mut s, i as u32, &mut |_, _| {});
+                self.sim().abandon(&mut s, i as u32, &mut |_, _| {});
             }
         }
         let mut route = Vec::new();
@@ -41,7 +42,7 @@ impl Planner<'_> {
         let n = self.model.quests.len() as u32;
         // `Params::start_zone`: the zone gone to first, whatever is nearer.
         let mut arrived = self.params.start_zone == 0;
-        while !self.ended(&s) && !self.aborted() {
+        while !self.sim().ended(&s) && !self.aborted() {
             if !arrived && s.zone == self.params.start_zone {
                 arrived = true;
             }
@@ -75,7 +76,7 @@ impl Planner<'_> {
                             && self.availability().objectives_done(&s, i)
                         {
                             let turn = Stop::quest(i, Kind::TurnIn);
-                            let gate = self.gate_level(&s, turn);
+                            let gate = self.sim().gate_level(&s, turn);
                             if gate > s.level {
                                 options.push((gate, turn));
                             }
@@ -91,7 +92,7 @@ impl Planner<'_> {
                         }
                     } else if self.availability().can_accept(&s, i) {
                         let accept = Stop::quest(i, Kind::Accept);
-                        let gate = self.gate_level(&s, accept);
+                        let gate = self.sim().gate_level(&s, accept);
                         // Or the level its hardest objective needs (`worth_it` looks one level
                         // ahead): its giver in reach, its mobs not yet.
                         let hardest = (q.objectives.iter())
@@ -126,7 +127,7 @@ impl Planner<'_> {
             if zone != s.zone {
                 changes.push((s.level, s.time, s.zone, zone));
             }
-            self.apply(&mut s, next, None);
+            self.sim().apply(&mut s, next, None);
             route.push(next);
             if s.completion_error.is_some() {
                 break;
@@ -153,11 +154,11 @@ impl Planner<'_> {
     /// may begin instead of in the zone it stands in, `Params::start_zone`.
     pub(crate) fn start_zones(&self) -> Vec<(i64, usize)> {
         const MIN_START_QUESTS: usize = 5;
-        let s = self.initial_state();
+        let s = self.sim().initial_state();
         let mut counts: std::collections::HashMap<i64, usize> = std::collections::HashMap::new();
         for i in 0..self.model.quests.len() as u32 {
             let accept = Stop::quest(i, Kind::Accept);
-            if self.gate_level(&s, accept) <= s.level
+            if self.sim().gate_level(&s, accept) <= s.level
                 && self.availability().can_accept(&s, i)
                 && self.worth().worth_it(&s, i, s.level, 0.0)
             {
@@ -272,7 +273,8 @@ impl Planner<'_> {
             let guarded = |g| self.combat().guard_need(g) > reach;
             if s.accepted[iu] {
                 if self.availability().objectives_done(s, i) {
-                    if !guarded(&self.quest(i).end_guard) && self.gate_level(s, Stop::quest(i, Kind::TurnIn)) <= s.level
+                    if !guarded(&self.quest(i).end_guard)
+                        && self.sim().gate_level(s, Stop::quest(i, Kind::TurnIn)) <= s.level
                     {
                         let stop = Stop::quest(i, Kind::TurnIn);
                         add(stop, 0.7 * class, None, bound.at(&self.places().pos(s, stop)));
@@ -378,7 +380,7 @@ impl Planner<'_> {
         let mut candidates: Vec<Candidate> = Vec::new();
         for i in 0..n {
             // Its level, and the camp around its giver (`gate_level`).
-            if self.gate_level(s, Stop::quest(i, Kind::Accept)) <= s.level
+            if self.sim().gate_level(s, Stop::quest(i, Kind::Accept)) <= s.level
                 && self.availability().can_accept(s, i)
                 && self.worth().worth_it(s, i, s.level, 0.0)
             {
@@ -470,7 +472,7 @@ impl Planner<'_> {
     }
 
     pub(crate) fn settle_once(&self, route: &[Stop]) -> Vec<Stop> {
-        let mut s = self.start_state(self.planned(route));
+        let mut s = self.sim().start_state(self.planned(route));
         let mut dropped = vec![false; self.model.quests.len()];
         let mut out = Vec::with_capacity(route.len());
         let deadlines: Vec<_> = self
@@ -489,7 +491,7 @@ impl Planner<'_> {
             if stop.is_quest() && dropped[i] {
                 continue;
             }
-            if self.ended(&s) {
+            if self.sim().ended(&s) {
                 out.extend(
                     route[pos..]
                         .iter()
@@ -501,7 +503,7 @@ impl Planner<'_> {
             // Replaying can require more grinding than construction expected. Leave optional
             // work out when that grinding would pass an unfinished quest's deadline.
             if stop.is_quest() && !self.quest(stop.index).mandatory {
-                let gate = self.gate_level(&s, stop);
+                let gate = self.sim().gate_level(&s, stop);
                 let past_deadline = deadlines
                     .iter()
                     .any(|&(i, max, at)| !s.turned[i] && !dropped[i] && at >= pos && gate > max);
@@ -519,7 +521,7 @@ impl Planner<'_> {
                     let o = Stop::quest(stop.index, Kind::Objective(k as u8));
                     if s.objectives[i] & (1 << k) == 0 && self.availability().valid(&s, o) {
                         s.next = Some(self.places().pos(&s, stop));
-                        self.apply(&mut s, o, None);
+                        self.sim().apply(&mut s, o, None);
                         out.push(o);
                     }
                 }
@@ -532,8 +534,8 @@ impl Planner<'_> {
             }
             // Where it goes next, as `simulate` replays it: the objectives are done on that side
             // (`spot`), which changes the mobs killed on the way, the level and the log.
-            s.next = self.next_pos(&s, route, pos);
-            self.apply(&mut s, stop, None);
+            s.next = self.sim().next_pos(&s, route, pos);
+            self.sim().apply(&mut s, stop, None);
             out.push(stop);
         }
         out
@@ -715,10 +717,10 @@ impl Planner<'_> {
 
     /// Index right after the stop closest to `pos`, not before `after`.
     pub(crate) fn insert_near(&self, route: &[Stop], pos: &Pos, after: usize) -> usize {
-        let s = self.initial_state();
+        let s = self.sim().initial_state();
         // Each distance once (the first of the nearest, as `min_by` keeps).
         (after..route.len())
-            .map(|i| (i, self.pos_from_start(&s, route[i]).dist(pos)))
+            .map(|i| (i, self.sim().pos_from_start(&s, route[i]).dist(pos)))
             .min_by(|a, b| a.1.total_cmp(&b.1))
             .map_or(route.len(), |(i, _)| i + 1)
     }
@@ -938,7 +940,7 @@ impl Planner<'_> {
     pub(crate) fn insert_quest_leveled(&self, route: &mut Vec<Stop>, levels: &mut Vec<i64>, q: u32) -> usize {
         let quest = self.quest(q);
         let (lo, hi) = (quest.min_level.max(quest.level - 3), quest.level + 2);
-        let s0 = self.initial_state();
+        let s0 = self.sim().initial_state();
         let level = |levels: &Vec<i64>, p: usize| {
             if levels.is_empty() {
                 1
@@ -956,7 +958,7 @@ impl Planner<'_> {
                 let d = if p == 0 {
                     f64::INFINITY
                 } else {
-                    self.pos_from_start(&s0, route[p - 1]).dist(&giver)
+                    self.sim().pos_from_start(&s0, route[p - 1]).dist(&giver)
                 };
                 (p, d)
             })
@@ -994,7 +996,7 @@ impl Planner<'_> {
         let nearest = |route: &Vec<Stop>, pos: &Pos, from: usize| {
             let (a, b) = window(from, route);
             (a..b)
-                .map(|x| (x, self.pos_from_start(&s0, route[x]).dist(pos)))
+                .map(|x| (x, self.sim().pos_from_start(&s0, route[x]).dist(pos)))
                 .min_by(|x, y| x.1.total_cmp(&y.1))
                 .map_or(from, |(i, _)| i + 1)
         };
@@ -1012,10 +1014,10 @@ impl Planner<'_> {
     fn stop_inside(&self, s: &State, d: usize) -> Option<Stop> {
         // Done now: at the character's level (what needs a higher one is left behind).
         let here = |stop: Stop| {
-            !Self::already_done(s, stop)
+            !Simulator::already_done(s, stop)
                 && self.places().inside(s, stop) == Some(d)
                 && self.availability().valid(s, stop)
-                && self.gate_level(s, stop) <= s.level
+                && self.sim().gate_level(s, stop) <= s.level
         };
         let n = self.model.quests.len() as u32;
         let accept = (0..n)
@@ -1183,7 +1185,7 @@ mod deadline_tests {
         for need in [3, 1] {
             p.model.initial.need = vec![need, 3];
             let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
-            let state = plan.initial_state();
+            let state = plan.sim().initial_state();
             let next = plan.nearest_stop(&state, None).unwrap();
             assert_eq!(next, Stop::quest(u32::from(need != 3), Kind::Accept));
         }

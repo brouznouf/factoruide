@@ -1,6 +1,5 @@
 //! Which quests and stops the character can do now: prerequisites, exclusive quests, gray quests, dungeons, chains.
 
-use super::Planner;
 use super::state::{Kind, State, Stop};
 use crate::model::{Model, Profile, Quest};
 use crate::params::Params;
@@ -167,7 +166,7 @@ impl Availability<'_> {
         let i = stop.index as usize;
         // Inside a dungeon: there, or entering it.
         if stop.kind != Kind::Dungeon
-            && !Planner::already_done(s, stop)
+            && !super::Simulator::already_done(s, stop)
             && super::places::stop_inside(self.model, s, stop).is_some_and(|d| !self.can_be_in(s, d))
         {
             return false;
