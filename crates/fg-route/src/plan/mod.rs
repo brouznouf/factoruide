@@ -32,6 +32,7 @@ mod evaluate;
 mod follow;
 mod growth;
 mod hearth;
+mod indexes;
 mod moves;
 mod on_the_way;
 mod places;
@@ -68,7 +69,7 @@ use crate::model::{Model, Profile, Quest};
 use crate::params::Params;
 use crate::world::{Pos, World};
 use crate::xp;
-use availability::{Availability, blocks, followers};
+use availability::Availability;
 use camp::NearCamps;
 use growth::Growth;
 use on_the_way::FarmWalks;
@@ -76,7 +77,7 @@ pub(crate) use state::State;
 use state::{Flags, Landed, Planned};
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
-use step::{CampIndex, VendorIndex, camp_index, vendor_index};
+use indexes::Indexes;
 use travel::{FlightTables, Grounds, Legs, Trips};
 use worth::Worth;
 
@@ -116,22 +117,11 @@ pub struct Planner<'a> {
     /// The zone changes of the last greedy construction: (level, time, from, to).
     zone_changes: RefCell<Vec<ZoneChange>>,
     mode: Mode,
-    /// Quest givers and turn-in NPCs by cell of `camp_radius` (continent, x, y): (quest,
-    /// index in its starts or ends, giver?).
-    camp: CampIndex,
-    /// Vendors by cell of `sell_radius` (continent, x, y).
-    vendors: VendorIndex,
-    /// Quests each quest blocks once taken: those exclusive with it, the breadcrumbs to it.
-    blocks: Vec<Vec<u32>>,
-    /// The reverse: quests whose taking blocks each quest.
-    blocked_by: Vec<Vec<u32>>,
-    /// Quests that need each quest done first (the rest of its chain, one step at a time).
-    followers: Vec<Vec<u32>>,
-    /// The objectives inside each dungeon: (quest, objective).
-    in_dungeon: Vec<Vec<(u32, u8)>>,
+    /// What is looked up all the time, computed once from the model (shared with `replaying`).
+    ix: Rc<Indexes>,
     /// Where each stop takes place seen from the start (`Places::pos` from the initial state),
     /// by quest: accept, turn-in, then its objectives. The insertions ask it all the time.
-    from_start: Vec<Vec<Pos>>,
+    from_start: Rc<[Vec<Pos>]>,
     /// Check every incremental evaluation of the search against a full replay (`verified`, or
     /// the diagnostics' `verify`).
     verify: bool,
@@ -150,22 +140,31 @@ pub struct Planner<'a> {
 
 impl<'a> Planner<'a> {
     pub fn new(model: &'a Model, world: &'a World, params: &'a Params, profile: &'a Profile) -> Self {
-        let blocks = blocks(model);
-        let mut blocked_by = vec![Vec::new(); blocks.len()];
-        for (x, ys) in blocks.iter().enumerate() {
-            for &y in ys {
-                blocked_by[y as usize].push(x as u32);
-            }
-        }
-        let mut in_dungeon = vec![Vec::new(); model.dungeons.len()];
-        for (i, q) in model.quests.iter().enumerate() {
-            for (k, o) in q.objectives.iter().enumerate() {
-                if let Some(d) = o.dungeon_of() {
-                    in_dungeon[d].push((i as u32, k as u8));
-                }
-            }
-        }
-        let mut planner = Self {
+        let ix = Rc::new(Indexes::new(model, params));
+        let mut planner = Self::with_indexes(model, world, params, profile, ix, Rc::from([]));
+        let s0 = planner.initial_state();
+        let places = planner.places();
+        planner.from_start = (0..model.quests.len() as u32)
+            .map(|i| {
+                let kinds = [Kind::Accept, Kind::TurnIn]
+                    .into_iter()
+                    .chain((0..model.quests[i as usize].objectives.len()).map(|k| Kind::Objective(k as u8)));
+                kinds.map(|kind| places.pos(&s0, Stop::quest(i, kind))).collect()
+            })
+            .collect();
+        planner
+    }
+
+    /// A planner of indexes and places from the start already computed.
+    fn with_indexes(
+        model: &'a Model,
+        world: &'a World,
+        params: &'a Params,
+        profile: &'a Profile,
+        ix: Rc<Indexes>,
+        from_start: Rc<[Vec<Pos>]>,
+    ) -> Self {
+        Self {
             model,
             world,
             params,
@@ -180,30 +179,14 @@ impl<'a> Planner<'a> {
             heres: RefCell::new(None),
             zone_changes: RefCell::new(Vec::new()),
             mode: Mode::Plan,
-            camp: camp_index(model, params.camp_radius),
-            vendors: vendor_index(model, params.sell_radius),
-            blocks,
-            blocked_by,
-            followers: followers(model),
-            in_dungeon,
-            from_start: Vec::new(),
+            ix,
+            from_start,
             verify: false,
             diagnostics: &diagnostics::OFF,
             abort: None,
             share: None,
             explicit: false,
-        };
-        let s0 = planner.initial_state();
-        let places = planner.places();
-        planner.from_start = (0..model.quests.len() as u32)
-            .map(|i| {
-                let kinds = [Kind::Accept, Kind::TurnIn]
-                    .into_iter()
-                    .chain((0..model.quests[i as usize].objectives.len()).map(|k| Kind::Objective(k as u8)));
-                kinds.map(|kind| places.pos(&s0, Stop::quest(i, kind))).collect()
-            })
-            .collect();
-        planner
+        }
     }
 
     /// `Places::pos` from the initial state, without computing it again for a quest stop.
@@ -273,7 +256,14 @@ impl<'a> Planner<'a> {
     pub fn replaying(&self) -> Self {
         Self {
             mode: Mode::Replay,
-            ..Self::new(self.model, self.world, self.params, self.profile)
+            ..Self::with_indexes(
+                self.model,
+                self.world,
+                self.params,
+                self.profile,
+                Rc::clone(&self.ix),
+                Rc::clone(&self.from_start),
+            )
         }
     }
 
@@ -441,7 +431,7 @@ impl<'a> Planner<'a> {
             profile: self.profile,
             replaying: self.mode == Mode::Replay,
             explicit: self.explicit,
-            followers: &self.followers,
+            followers: &self.ix.followers,
         }
     }
 

@@ -233,7 +233,7 @@ impl Planner<'_> {
             };
             at_hand(i, from, to, &mut start);
             if (flags.0 ^ flags.1) & 1 != 0 {
-                for &x in &self.blocked_by[i] {
+                for &x in &self.ix.blocked_by[i] {
                     let x = x as usize;
                     at_hand(x, ahead(old.accept_at[x].min(new.accept_at[x])), usize::MAX, &mut start);
                 }

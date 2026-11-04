@@ -6,39 +6,6 @@ use crate::model::{Model, Profile, Quest};
 use crate::params::Params;
 use crate::xp;
 
-/// Quests needing each quest first (it is in their `pre_all` or `pre_any`, or hands an item
-/// one of their objectives asks for).
-pub(crate) fn followers(model: &Model) -> Vec<Vec<u32>> {
-    let mut out = vec![Vec::new(); model.quests.len()];
-    for (f, q) in model.quests.iter().enumerate() {
-        let handing = q.objectives.iter().flat_map(|o| &o.handed_by);
-        for id in q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held).chain(handing) {
-            if let Some(&i) = model.index.get(id)
-                && i != f
-                && !out[i].contains(&(f as u32))
-            {
-                out[i].push(f as u32);
-            }
-        }
-    }
-    out
-}
-
-/// Quests each quest blocks once taken: the quests exclusive with it, the breadcrumbs to it.
-pub(crate) fn blocks(model: &Model) -> Vec<Vec<u32>> {
-    let mut blocks = vec![Vec::new(); model.quests.len()];
-    for (y, q) in model.quests.iter().enumerate() {
-        for id in q.exclusive.iter().chain(q.breadcrumb_for.iter()) {
-            if let Some(&x) = model.index.get(id)
-                && x != y
-            {
-                blocks[x].push(y as u32);
-            }
-        }
-    }
-    blocks
-}
-
 /// What the character can do now: quests whose prerequisites are done and that nothing
 /// excludes, stops in the right state, dungeons allowed.
 #[derive(Clone, Copy)]

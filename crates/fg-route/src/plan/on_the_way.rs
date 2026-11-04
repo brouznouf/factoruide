@@ -317,7 +317,7 @@ impl Planner<'_> {
             let mut best: Option<(f64, Stop, &Loc)> = None;
             for dx in -1..=1 {
                 for dy in -1..=1 {
-                    let Some(cell) = self.camp.get(&(here.continent, cx + dx, cy + dy)) else {
+                    let Some(cell) = self.ix.camp.get(&(here.continent, cx + dx, cy + dy)) else {
                         continue;
                     };
                     // The cheap tests first: the NPC at hand, nearer than the best so far, a
@@ -359,7 +359,7 @@ impl Planner<'_> {
                         let wanted = if start {
                             s.log + 1 + CAMP_LOG_MARGIN <= self.params.quest_log_size
                                 && self.availability().can_accept(s, i)
-                                && !self.blocks[iu].iter().any(|&y| {
+                                && !self.ix.blocks[iu].iter().any(|&y| {
                                     s.planned.flags[y as usize] & 1 != 0
                                         && !s.accepted[y as usize]
                                         && !s.turned[y as usize]

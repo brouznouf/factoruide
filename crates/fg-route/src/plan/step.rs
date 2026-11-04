@@ -2,61 +2,8 @@
 
 use super::state::{Event, Kind, Landed, State, Stop, Timed, Together};
 use super::{Mode, Planner};
-use crate::model::{EntityKind, Loc, Model, Objective};
-use crate::world::Pos;
+use crate::model::{Loc, Objective};
 use crate::xp;
-use rustc_hash::FxHashMap;
-
-/// Quest NPCs by cell (continent, x, y): (quest, index in its starts or ends, giver?, and the
-/// NPC's x, y, to tell the ones at hand without reading the quest).
-pub(crate) type CampIndex = FxHashMap<(i64, i64, i64), Vec<(u32, u8, bool, f64, f64)>>;
-/// Vendors (index in `Model::vendors`) by cell of `Params::sell_radius`: (continent, x, y).
-pub(crate) type VendorIndex = FxHashMap<(i64, i64, i64), Vec<u32>>;
-
-pub(crate) fn vendor_index(model: &Model, radius: f64) -> VendorIndex {
-    let mut index = VendorIndex::default();
-    if radius > 0.0 {
-        for (i, v) in model.vendors.iter().enumerate() {
-            let cell = (
-                v.pos.continent,
-                (v.pos.x / radius).floor() as i64,
-                (v.pos.y / radius).floor() as i64,
-            );
-            index.entry(cell).or_default().push(i as u32);
-        }
-    }
-    index
-}
-
-/// Quest givers (NPCs and objects, not items) and turn-in NPCs by cell of `radius`.
-pub(crate) fn camp_index(model: &Model, radius: f64) -> CampIndex {
-    let mut index = CampIndex::default();
-    if radius <= 0.0 {
-        return index;
-    }
-    let cell = |p: &Pos| {
-        (
-            p.continent,
-            (p.x / radius).floor() as i64,
-            (p.y / radius).floor() as i64,
-        )
-    };
-    for (i, q) in model.quests.iter().enumerate() {
-        for (at, loc) in q.starts.iter().enumerate().filter(|(_, l)| l.kind != EntityKind::Item) {
-            index
-                .entry(cell(&loc.pos))
-                .or_default()
-                .push((i as u32, at as u8, true, loc.pos.x, loc.pos.y));
-        }
-        for (at, loc) in q.ends.iter().enumerate() {
-            index
-                .entry(cell(&loc.pos))
-                .or_default()
-                .push((i as u32, at as u8, false, loc.pos.x, loc.pos.y));
-        }
-    }
-    index
-}
 
 /// Share of a timed quest's limit the route may use from taking it to turning it in: the rest
 /// is a margin for the time estimates.
@@ -149,6 +96,7 @@ impl Planner<'_> {
         for dx in -1..=1 {
             for dy in -1..=1 {
                 for &i in self
+                    .ix
                     .vendors
                     .get(&(s.pos.continent, cx + dx, cy + dy))
                     .into_iter()
@@ -723,7 +671,7 @@ impl Planner<'_> {
             ),
             // A must-have quest the player asked at a level has its dungeon run from it (not the
             // default window: it only keeps the hand-in at a fair level).
-            Kind::Dungeon => self.in_dungeon[i]
+            Kind::Dungeon => self.ix.in_dungeon[i]
                 .iter()
                 .map(|&(q, _)| q as usize)
                 .filter(|&q| self.model.quests[q].mandatory && !self.model.quests[q].implicit_window && !s.turned[q])
@@ -980,7 +928,7 @@ impl Planner<'_> {
             }
         }
         // What its group does outside: done with the entry (the rest is a stop inside).
-        for &(qi, k) in &self.in_dungeon[i] {
+        for &(qi, k) in &self.ix.in_dungeon[i] {
             let qi = qi as usize;
             if s.accepted[qi] && !s.turned[qi] && self.model.quests[qi].objectives[k as usize].dungeon.is_some() {
                 self.hold(s, qi, k);
