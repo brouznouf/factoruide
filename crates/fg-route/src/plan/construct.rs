@@ -1079,7 +1079,7 @@ impl Planner<'_> {
         if s.dungeons & (1u128 << d) != 0 || s.level < dungeon.min_level || s.level > dungeon.max_level {
             return None;
         }
-        if self.quest_before_dungeon(s, d).is_some() {
+        if self.quest_before_dungeon(s, d).is_some() || self.waits_for_quests(s, d) {
             return None; // pick it up first
         }
         let needed = self.availability().dungeon_quests(d).any(|i| {
@@ -1120,13 +1120,27 @@ impl Planner<'_> {
                 && lower.is_finite()
                 && self.worth().worth_it(s, i, s.level, lower)
         });
-        Some(match pick_up {
-            Some(i) => Stop::quest(i, Kind::Accept),
-            None => Stop {
+        match pick_up {
+            Some(i) => Some(Stop::quest(i, Kind::Accept)),
+            None if self.waits_for_quests(s, d) => None,
+            None => Some(Stop {
                 index: d as u32,
                 kind: Kind::Dungeon,
-            },
-        })
+            }),
+        }
+    }
+
+    /// Whether the run of dungeon `d` waits for a quest of it the route must do (a dungeon forced
+    /// with its quests) and has not taken yet, its chain under way: entered once, the dungeon
+    /// would leave it undone. Up to the dungeon's last level.
+    fn waits_for_quests(&self, s: &State, d: usize) -> bool {
+        let dungeon = &self.model.dungeons[d];
+        s.level < dungeon.max_level
+            && self.availability().dungeon_quests(d).any(|i| {
+                let iu = i as usize;
+                let q = self.quest(i);
+                q.mandatory && !s.accepted[iu] && !s.rewarded(iu) && q.min_level <= dungeon.max_level
+            })
     }
 }
 

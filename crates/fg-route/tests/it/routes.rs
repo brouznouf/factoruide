@@ -3905,6 +3905,59 @@ fn a_dungeon_forced_with_its_quests_takes_them_all() {
         );
     }
 }
+/// A dungeon forced with its quests waits for the one whose chain ends later (taken at 19, after
+/// the others at 15): the dungeon is entered once, with all of them in the log.
+#[test]
+fn a_dungeon_forced_with_its_quests_waits_for_the_last_one() {
+    let mut scenario = with_deadmines(leveling(25)).params(|p| p.forced_dungeon_quests = vec![900]);
+    scenario = scenario
+        .quest(
+            Q::new(320, "Lead")
+                .level(19)
+                .min_level(19)
+                .giver(2, 20.0, 60.0)
+                .kill("Wolf", 19, 6, 2, 30.0, 60.0),
+        )
+        .quest(
+            Q::new(321, "Follow-up")
+                .level(19)
+                .min_level(19)
+                .after(&[320])
+                .giver(2, 40.0, 60.0)
+                .kill("Bear", 19, 6, 2, 50.0, 60.0),
+        )
+        .quest(
+            Q::new(322, "Into the mine")
+                .level(19)
+                .min_level(19)
+                .after(&[321])
+                .giver(2, 60.0, 60.0)
+                .objective(
+                    Obj::kill(
+                        "Defias",
+                        19,
+                        6,
+                        At {
+                            zone: 1,
+                            x: 70.0,
+                            y: 70.0,
+                        },
+                    )
+                    .inside(0),
+                ),
+        );
+    let (_, guide) = scenario.guide();
+    for id in [300, 301, 302, 322] {
+        assert!(
+            guide
+                .plan
+                .iter()
+                .any(|s| matches!(s, job::RouteStep::TurnIn { quest } if *quest == id)),
+            "{id} turned in"
+        );
+    }
+}
+
 /// A forced dungeon stays within the levels of its window: the route that cannot run it there is
 /// refused (GitHub #84, a forced Ragefire Chasm run at level 47). A dungeon a must-have quest
 /// needs is run past them.
