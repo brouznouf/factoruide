@@ -11,11 +11,11 @@ use crate::diagnostics::Diagnostics;
 use crate::model::{Model, Profile};
 use crate::params::{Construction, Params};
 use crate::plan::{Effort, Exchange, Member, Planner, Stop, ZoneChange, fmt_time};
-use crate::sync::{Joined, LockExt, Unpoisoned};
+use crate::sync::{Joined, LockExt};
 use crate::world::World;
 use rand::{RngExt, SeedableRng};
 use std::cell::Cell;
-use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
+use std::sync::atomic::{AtomicBool, AtomicU32, AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Mutex, OnceLock};
 use std::time::{Duration, Instant};
 
@@ -34,6 +34,13 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
     let plan = Tournament::new(planner.params);
     progress(&JobEvent::Status(&plan.announce()));
     let live = Live::new(&plan, planner.params, progress);
+    let starts: Vec<i64> = if plan.race && planner.params.construction_random && planner.params.forced_starts > 0 {
+        let mut zones: Vec<i64> = planner.start_zones().into_iter().map(|(z, _)| z).collect();
+        zones.truncate(planner.params.forced_starts);
+        zones
+    } else {
+        Vec::new()
+    };
     let searcher = Searcher {
         model: planner.model,
         world: planner.world,
@@ -43,15 +50,8 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
         live: &live,
         progress,
         interrupt,
-        changes: Mutex::new(Vec::new()),
-        mutants: Mutex::new(Vec::new()),
-        starts: if plan.race && planner.params.construction_random && planner.params.forced_starts > 0 {
-            let mut zones: Vec<i64> = planner.start_zones().into_iter().map(|(z, _)| z).collect();
-            zones.truncate(planner.params.forced_starts);
-            zones
-        } else {
-            Vec::new()
-        },
+        mutants: &[],
+        starts: &starts,
     };
     if planner.diagnostics.race {
         progress(&JobEvent::Status(&format!("forced starts: {:?}", searcher.starts)));
@@ -61,10 +61,15 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
         // The watcher ends with the searches, also when one panics: the scope waits for it
         // before passing the panic on, the job would hang.
         let _done = Done(&live.done);
-        let mut ranked = if plan.race {
+        let (mut ranked, mutants) = if plan.race {
             qualify(&searcher, &plan)
         } else {
-            Vec::new()
+            (Vec::new(), Vec::new())
+        };
+        // The rounds go on with the mutants of the race among their routes.
+        let searcher = Searcher {
+            mutants: &mutants,
+            ..searcher
         };
         for (stage, &width) in plan.stages.iter().enumerate() {
             let routes: Vec<(usize, Option<Vec<Stop>>)> = if stage == 0 && !plan.race {
@@ -254,13 +259,12 @@ struct Live<'p> {
     /// Routes built before the race (`screen`), the first ones drawing their weights.
     to_build: usize,
     draws: usize,
-    /// Best (score, play time) of the routes built so far.
-    built_best: Mutex<(f64, f64)>,
     stages: Vec<usize>,
     /// How many tries the tournament makes, for a route size.
     tries: Tries,
-    /// Time spent building candidate routes, how many were built and their stops.
-    built: Mutex<(Duration, u32, usize)>,
+    /// How many candidate routes were built, and their stops.
+    built: AtomicU32,
+    built_stops: AtomicUsize,
     /// Tries of all the searches so far.
     tried: AtomicU64,
     /// Best (score, play time) of each candidate's route so far.
@@ -268,10 +272,7 @@ struct Live<'p> {
     /// The round under way (none during the race) and its routes.
     round: Mutex<Option<(usize, Vec<usize>)>>,
     started: OnceLock<Instant>,
-    /// (best start score, its play time, best score, its play time)
-    scores: Mutex<(f64, f64, f64, f64)>,
-    /// Best route so far, and whether it changed since last drawn.
-    best_route: Mutex<(Vec<Stop>, bool)>,
+    best: Mutex<Best>,
     done: AtomicBool,
     qualified: AtomicUsize,
 }
@@ -289,16 +290,15 @@ impl<'p> Live<'p> {
                 0
             },
             draws: plan.candidates,
-            built_best: Mutex::new((f64::INFINITY, f64::INFINITY)),
             stages: plan.stages.clone(),
             tries: plan.tries(params),
-            built: Mutex::new((Duration::ZERO, 0, 0)),
+            built: AtomicU32::new(0),
+            built_stops: AtomicUsize::new(0),
             tried: AtomicU64::new(0),
             routes: Mutex::new(vec![None; (plan.candidates + plan.mutants).max(plan.threads)]),
             round: Mutex::new(None),
             started: OnceLock::new(),
-            scores: Mutex::new((f64::INFINITY, f64::INFINITY, f64::INFINITY, f64::INFINITY)),
-            best_route: Mutex::new((Vec::new(), false)),
+            best: Mutex::new(Best::default()),
             done: AtomicBool::new(false),
             qualified: AtomicUsize::new(0),
         }
@@ -359,7 +359,10 @@ impl<'p> Live<'p> {
     /// Share of the tries done (0 to 1), and where the race ends, once a route gives the size of
     /// the routes (the tries are per stop).
     fn progress(&self) -> Option<(f64, f64)> {
-        let (_, n, stops) = *self.built.locked();
+        let (n, stops) = (
+            self.built.load(Ordering::Relaxed),
+            self.built_stops.load(Ordering::Relaxed),
+        );
         if n == 0 {
             return None;
         }
@@ -374,10 +377,13 @@ impl<'p> Live<'p> {
     /// `@progress {json}`: phase, elapsed seconds, share of the tries done, play time of the best
     /// start and best route, the stage (race, round, final) and the routes followed.
     fn report(&self) {
-        let (_, start, _, best) = *self.scores.locked();
+        let (start, best, built_best) = {
+            let b = self.best.locked();
+            (b.start.1, b.route.1, b.built.1)
+        };
         let Some(t) = self.started.get() else {
-            let (_, built, _) = *self.built.locked();
-            let (_, best) = *self.built_best.locked();
+            let built = self.built.load(Ordering::Relaxed);
+            let best = built_best;
             let msg = serde_json::json!({
                 "phase": "construct",
                 "built": built,
@@ -425,12 +431,12 @@ impl<'p> Live<'p> {
             return;
         }
         let route = {
-            let mut b = self.best_route.locked();
-            if !b.1 {
+            let mut b = self.best.locked();
+            if !b.changed {
                 return;
             }
-            b.1 = false;
-            b.0.clone()
+            b.changed = false;
+            b.stops.clone()
         };
         *last = Instant::now();
         let points = planner.places().polyline(&route, 800);
@@ -439,10 +445,10 @@ impl<'p> Live<'p> {
 
     /// A route built before the race: the best so far is drawn.
     fn on_built(&self, score: f64, play: f64, route: &[Stop]) {
-        let mut best = self.built_best.locked();
-        if score < best.0 {
-            *best = (score, play);
-            *self.best_route.locked() = (route.to_vec(), true);
+        let mut best = self.best.locked();
+        if score < best.built.0 {
+            best.built = (score, play);
+            best.show(route);
         }
     }
 
@@ -453,14 +459,48 @@ impl<'p> Live<'p> {
         {
             *r = Some((score, play));
         }
-        let mut s = self.scores.locked();
-        if first.replace(false) && score < s.0 {
-            (s.0, s.1) = (score, play);
+        let mut best = self.best.locked();
+        if first.replace(false) && score < best.start.0 {
+            best.start = (score, play);
         }
-        if score < s.2 {
-            (s.2, s.3) = (score, play);
-            *self.best_route.locked() = (route.to_vec(), true);
+        if score < best.route.0 {
+            best.route = (score, play);
+            best.show(route);
         }
+    }
+}
+
+/// The best of the tournament so far, each as (score, play time).
+struct Best {
+    /// Of the routes built before the race.
+    built: (f64, f64),
+    /// Of the starts, and of the routes improved.
+    start: (f64, f64),
+    route: (f64, f64),
+    /// The route drawn, and whether it changed since last drawn.
+    stops: Vec<Stop>,
+    changed: bool,
+}
+
+impl Default for Best {
+    fn default() -> Self {
+        let none = (f64::INFINITY, f64::INFINITY);
+        Self {
+            built: none,
+            start: none,
+            route: none,
+            stops: Vec::new(),
+            changed: false,
+        }
+    }
+}
+
+impl Best {
+    /// `route` is the one to draw.
+    fn show(&mut self, route: &[Stop]) {
+        self.stops.clear();
+        self.stops.extend_from_slice(route);
+        self.changed = true;
     }
 }
 
@@ -477,6 +517,7 @@ struct Slot {
 }
 
 /// Builds and improves the route of one candidate.
+#[derive(Clone, Copy)]
 struct Searcher<'a> {
     model: &'a Model,
     world: &'a World,
@@ -487,12 +528,11 @@ struct Searcher<'a> {
     progress: Progress<'a>,
     /// The user stopping or cancelling the generation.
     interrupt: &'a Interrupt,
-    /// The zone changes of each candidate's construction (see `mutate`), and the candidates
-    /// built as another with one of them done otherwise.
-    changes: Mutex<Vec<Vec<ZoneChange>>>,
-    mutants: Mutex<Vec<Option<Mutant>>>,
+    /// The candidates built as another with one of its zone changes done otherwise (`mutate`),
+    /// by candidate.
+    mutants: &'a [Option<Mutant>],
     /// Zones rich in quests the first candidates after the first begin in (`start_zones`).
-    starts: Vec<i64>,
+    starts: &'a [i64],
 }
 
 /// A race candidate built as a better one with one zone change done otherwise.
@@ -500,6 +540,8 @@ struct Searcher<'a> {
 struct Mutant {
     params: Params,
     parent: usize,
+    /// The parent's zone changes, and which one is done otherwise.
+    parent_changes: Vec<ZoneChange>,
     what: String,
 }
 
@@ -528,11 +570,11 @@ impl Searcher<'_> {
         slot: Slot,
         needed: bool,
         member: Option<&Member<'_>>,
-    ) -> Option<(f64, Vec<Stop>)> {
+    ) -> Option<Found> {
         if self.interrupt.cancelled() {
             return None;
         }
-        let mutant = self.mutants.locked().get(k).cloned().flatten();
+        let mutant = self.mutants.get(k).and_then(Option::as_ref);
         let mut p = mutant.as_ref().map_or_else(|| self.candidate(k), |m| m.params.clone());
         if let Some((stage, search)) = slot.round {
             p.seed = round_seed(p.seed, stage, search);
@@ -549,10 +591,11 @@ impl Searcher<'_> {
         };
         // A start: built here, or a candidate of the race built beforehand (`screen`).
         let first = Cell::new(route.is_none() || slot.round.is_none());
-        let start = if let Some(route) = route {
-            route
+        let (start, changes) = if let Some(route) = route {
+            (route, None)
         } else {
-            self.build(k, &planner, mutant.as_ref(), log)?
+            let (route, changes) = self.build(k, &planner, mutant, log)?;
+            (route, Some(changes))
         };
         self.live.started.get_or_init(Instant::now);
         let tries = Tries::of(
@@ -588,26 +631,33 @@ impl Searcher<'_> {
         if self.interrupt.cancelled() {
             return None;
         }
-        Some((self.score(&route), route))
+        Some(Found {
+            score: self.score(&route),
+            k,
+            route,
+            changes,
+        })
     }
 
-    /// Build candidate `k`'s route (None when given up), keeping its zone changes.
-    fn build(&self, k: usize, planner: &Planner<'_>, mutant: Option<&Mutant>, log: impl Fn(&str)) -> Option<Vec<Stop>> {
-        let begun = Instant::now();
+    /// Build candidate `k`'s route (None when given up), with its zone changes.
+    fn build(
+        &self,
+        k: usize,
+        planner: &Planner<'_>,
+        mutant: Option<&Mutant>,
+        log: impl Fn(&str),
+    ) -> Option<(Vec<Stop>, Vec<ZoneChange>)> {
         let route = planner.construct(log);
         if planner.aborted() {
             return None;
         }
-        let mut built = self.live.built.locked();
-        built.0 += begun.elapsed();
-        built.1 += 1;
-        built.2 += route.len();
-        drop(built);
+        self.live.built.fetch_add(1, Ordering::Relaxed);
+        self.live.built_stops.fetch_add(route.len(), Ordering::Relaxed);
         let changes = planner.zone_changes();
         if let Some(m) = mutant
             && self.diagnostics.race
         {
-            let parent = &self.changes.locked()[m.parent];
+            let parent = &m.parent_changes;
             let same = changes.iter().zip(parent).take_while(|(a, b)| a == b).count();
             (self.progress)(&JobEvent::Status(&format!(
                 "candidate {k} (mutant of {}, {}): zone changes as its parent's up to {same} of {}",
@@ -616,27 +666,27 @@ impl Searcher<'_> {
                 parent.len()
             )));
         }
-        let mut all = self.changes.locked();
-        if all.len() <= k {
-            all.resize(k + 1, Vec::new());
-        }
-        all[k] = changes;
-        Some(route)
+        Some((route, changes))
     }
 
     /// Build candidate `k`'s route only, scored (None when cancelled, or stopped while building a
     /// route that is not `needed`).
-    fn build_only(&self, k: usize, needed: bool) -> Option<(f64, Vec<Stop>)> {
-        let mutant = self.mutants.locked().get(k).cloned().flatten();
+    fn build_only(&self, k: usize, needed: bool) -> Option<Found> {
+        let mutant = self.mutants.get(k).and_then(Option::as_ref);
         let p = mutant.as_ref().map_or_else(|| self.candidate(k), |m| m.params.clone());
         let give_up = || self.interrupt.cancelled() || (!needed && self.interrupt.stopping());
         let planner = Planner::new(self.model, self.world, &p, self.profile)
             .diagnosed(self.diagnostics)
             .abortable(&give_up);
-        let route = self.build(k, &planner, mutant.as_ref(), |_| {})?;
+        let (route, changes) = self.build(k, &planner, mutant, |_| {})?;
         let (score, play) = self.scored(&route);
         self.live.on_built(score, play, &route);
-        Some((score, route))
+        Some(Found {
+            score,
+            k,
+            route,
+            changes: Some(changes),
+        })
     }
 
     /// Score of a route under the request's own settings.
@@ -671,14 +721,20 @@ fn rank(mut routes: Vec<(f64, usize, Vec<Stop>)>) -> Vec<(f64, usize, Vec<Stop>)
 /// good ones. With `screen`, all are built first and only the best built routes are improved
 /// (the ranking of the built routes already tells the winner).
 /// Stopped, no new candidate starts but the first ones (there must be a route).
-fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> Vec<(f64, usize, Vec<Stop>)> {
+fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> (Ranked, Vec<Option<Mutant>>) {
     let (first, end) = (plan.candidates, plan.candidates + plan.mutants);
-    let mutants = plan.mutants;
+    // The zone changes of each candidate's construction, for the mutants.
+    let mut changes = Vec::new();
+    let mut mutants = Vec::new();
     let ranked = if plan.qualifying < end {
-        let mut built = build_all(searcher, plan, 0..first);
-        if mutants > 0 && !searcher.interrupt.stopping() {
-            mutate(searcher, &rank(built.clone()), first..end);
-            built.extend(build_all(searcher, plan, first..end));
+        let mut built = split(build_all(searcher, plan, 0..first), &mut changes);
+        if plan.mutants > 0 && !searcher.interrupt.stopping() {
+            mutants = mutate(searcher, &changes, &rank(built.clone()), first..end);
+            let with = Searcher {
+                mutants: &mutants,
+                ..*searcher
+            };
+            built.extend(split(build_all(&with, plan, first..end), &mut changes));
         }
         let built = rank(built);
         if searcher.diagnostics.race {
@@ -691,12 +747,26 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> Vec<(f64, usize, Vec<S
             .take(plan.qualifying)
             .map(|(_, k, r)| (k, Some(r)))
             .collect();
-        rank(race(searcher, plan, kept))
+        let with = Searcher {
+            mutants: &mutants,
+            ..*searcher
+        };
+        rank(split(race(&with, plan, kept), &mut changes))
     } else {
-        let mut qualified = race(searcher, plan, (0..first).map(|k| (k, None)).collect());
-        if mutants > 0 && !searcher.interrupt.stopping() {
-            mutate(searcher, &rank(qualified.clone()), first..end);
-            qualified.extend(race(searcher, plan, (first..end).map(|k| (k, None)).collect()));
+        let mut qualified = split(
+            race(searcher, plan, (0..first).map(|k| (k, None)).collect()),
+            &mut changes,
+        );
+        if plan.mutants > 0 && !searcher.interrupt.stopping() {
+            mutants = mutate(searcher, &changes, &rank(qualified.clone()), first..end);
+            let with = Searcher {
+                mutants: &mutants,
+                ..*searcher
+            };
+            qualified.extend(split(
+                race(&with, plan, (first..end).map(|k| (k, None)).collect()),
+                &mut changes,
+            ));
         }
         rank(qualified)
     };
@@ -705,31 +775,61 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> Vec<(f64, usize, Vec<S
             (searcher.progress)(&JobEvent::Status(&format!("candidate {k}: {}", fmt_time(*score))));
         }
     }
-    ranked
+    (ranked, mutants)
+}
+
+/// Routes as (score, candidate, route), the best first (`rank`).
+type Ranked = Vec<(f64, usize, Vec<Stop>)>;
+
+/// A candidate's route, built or improved.
+struct Found {
+    /// Its score under the request's own settings.
+    score: f64,
+    /// The candidate.
+    k: usize,
+    route: Vec<Stop>,
+    /// The zone changes of its construction (None when the route was given).
+    changes: Option<Vec<ZoneChange>>,
+}
+
+/// The routes found, as ranked, their zone changes kept in `changes` by candidate.
+fn split(found: Vec<Found>, changes: &mut Vec<Vec<ZoneChange>>) -> Vec<(f64, usize, Vec<Stop>)> {
+    (found.into_iter())
+        .map(|f| {
+            if let Some(c) = f.changes {
+                if changes.len() <= f.k {
+                    changes.resize(f.k + 1, Vec::new());
+                }
+                changes[f.k] = c;
+            }
+            (f.score, f.k, f.route)
+        })
+        .collect()
 }
 
 /// Candidates `ks` built only, `threads` at a time. Stopped, the first ones are still built
 /// (there must be a route).
-fn build_all(searcher: &Searcher<'_>, plan: &Tournament, ks: std::ops::Range<usize>) -> Vec<(f64, usize, Vec<Stop>)> {
+fn build_all(searcher: &Searcher<'_>, plan: &Tournament, ks: std::ops::Range<usize>) -> Vec<Found> {
     let next = AtomicUsize::new(ks.start);
-    let built: Mutex<Vec<(f64, usize, Vec<Stop>)>> = Mutex::new(Vec::new());
     std::thread::scope(|scope| {
-        for _ in 0..plan.threads {
-            scope.spawn(|| {
-                loop {
-                    let k = next.fetch_add(1, Ordering::Relaxed);
-                    let stopping = searcher.interrupt.stopping() && k >= plan.threads;
-                    if k >= ks.end || stopping || searcher.interrupt.cancelled() {
-                        break;
+        let workers: Vec<_> = (0..plan.threads)
+            .map(|_| {
+                scope.spawn(|| {
+                    let mut built = Vec::new();
+                    loop {
+                        let k = next.fetch_add(1, Ordering::Relaxed);
+                        let stopping = searcher.interrupt.stopping() && k >= plan.threads;
+                        if k >= ks.end || stopping || searcher.interrupt.cancelled() {
+                            break;
+                        }
+                        built.extend(searcher.build_only(k, k < plan.threads));
                     }
-                    if let Some((score, route)) = searcher.build_only(k, k < plan.threads) {
-                        built.locked().push((score, k, route));
-                    }
-                }
-            });
-        }
-    });
-    built.into_inner().unpoisoned()
+                    built
+                })
+            })
+            .collect();
+        workers.into_iter().flat_map(|w| w.join().joined()).collect()
+    })
 }
 
 /// Parents of the mutated candidates: the best of the first ones.
@@ -738,8 +838,12 @@ const PARENTS: usize = 4;
 /// Candidates `ks` as the best `ranked` ones in turn, with one of their zone changes done
 /// otherwise (`Params::zone_detour`): left a few levels earlier or later, or for a zone it went to
 /// later. The greedy construction gives the same route up to there.
-fn mutate(searcher: &Searcher<'_>, ranked: &[(f64, usize, Vec<Stop>)], ks: std::ops::Range<usize>) {
-    let changes = searcher.changes.locked();
+fn mutate(
+    searcher: &Searcher<'_>,
+    changes: &[Vec<ZoneChange>],
+    ranked: &[(f64, usize, Vec<Stop>)],
+    ks: std::ops::Range<usize>,
+) -> Vec<Option<Mutant>> {
     let parents: Vec<usize> = ranked
         .iter()
         .map(|(_, k, _)| *k)
@@ -747,10 +851,9 @@ fn mutate(searcher: &Searcher<'_>, ranked: &[(f64, usize, Vec<Stop>)], ks: std::
         .take(PARENTS)
         .collect();
     if parents.is_empty() {
-        return;
+        return Vec::new();
     }
-    let mut mutants = searcher.mutants.locked();
-    mutants.resize(ks.end, None);
+    let mut mutants = vec![None; ks.end];
     for (i, k) in ks.enumerate() {
         let parent = parents[i % parents.len()];
         let seed = searcher.params.seed.wrapping_add(k as u64);
@@ -759,8 +862,14 @@ fn mutate(searcher: &Searcher<'_>, ranked: &[(f64, usize, Vec<Stop>)], ks: std::
         let mut params = searcher.candidate(parent);
         params.seed = seed;
         params.zone_detour = detour;
-        mutants[k] = Some(Mutant { params, parent, what });
+        mutants[k] = Some(Mutant {
+            params,
+            parent,
+            parent_changes: changes[parent].clone(),
+            what,
+        });
     }
+    mutants
 }
 
 /// A stay in a zone shorter than this (seconds of play) is passing through: its zone changes
@@ -806,14 +915,10 @@ fn detour(changes: &[ZoneChange], rng: &mut impl RngExt) -> (Vec<i64>, String) {
 }
 
 /// Candidates of the race (their route, built when None), `threads` at a time.
-fn race(
-    searcher: &Searcher<'_>,
-    plan: &Tournament,
-    candidates: Vec<(usize, Option<Vec<Stop>>)>,
-) -> Vec<(f64, usize, Vec<Stop>)> {
+fn race(searcher: &Searcher<'_>, plan: &Tournament, candidates: Vec<(usize, Option<Vec<Stop>>)>) -> Vec<Found> {
     let next = AtomicUsize::new(0);
+    // Each taken by one search only (`next`): the lock is never waited for.
     let candidates: Vec<_> = candidates.into_iter().map(|c| Mutex::new(Some(c))).collect();
-    let qualified: Mutex<Vec<(f64, usize, Vec<Stop>)>> = Mutex::new(Vec::new());
     let slot = Slot {
         round: None,
         tries_per_stop: searcher.params.qualify_tries,
@@ -821,26 +926,30 @@ fn race(
         logs: false,
     };
     std::thread::scope(|scope| {
-        for _ in 0..plan.threads {
-            scope.spawn(|| {
-                loop {
-                    let i = next.fetch_add(1, Ordering::Relaxed);
-                    let stopping = searcher.interrupt.stopping() && i >= plan.threads;
-                    if i >= candidates.len() || stopping || searcher.interrupt.cancelled() {
-                        break;
+        let workers: Vec<_> = (0..plan.threads)
+            .map(|_| {
+                scope.spawn(|| {
+                    let mut qualified = Vec::new();
+                    loop {
+                        let i = next.fetch_add(1, Ordering::Relaxed);
+                        let stopping = searcher.interrupt.stopping() && i >= plan.threads;
+                        if i >= candidates.len() || stopping || searcher.interrupt.cancelled() {
+                            break;
+                        }
+                        let Some((k, route)) = candidates[i].locked().take() else {
+                            continue;
+                        };
+                        if let Some(found) = searcher.search(k, route, slot, i < plan.threads, None) {
+                            qualified.push(found);
+                            searcher.live.qualified.fetch_add(1, Ordering::Relaxed);
+                        }
                     }
-                    let Some((k, route)) = candidates[i].locked().take() else {
-                        continue;
-                    };
-                    if let Some((score, route)) = searcher.search(k, route, slot, i < plan.threads, None) {
-                        qualified.locked().push((score, k, route));
-                        searcher.live.qualified.fetch_add(1, Ordering::Relaxed);
-                    }
-                }
-            });
-        }
-    });
-    qualified.into_inner().unpoisoned()
+                    qualified
+                })
+            })
+            .collect();
+        workers.into_iter().flat_map(|w| w.join().joined()).collect()
+    })
 }
 
 /// Round `stage`: each route improved by its searches (`Tournament::searches`), which share their
@@ -877,7 +986,7 @@ fn round(
                     let member = exchange.member();
                     let seat = (searcher.params.share_every > 0 && searches > 1).then_some(&member);
                     let result = searcher.search(*k, route.clone(), slot, true, seat);
-                    result.map(|(score, r)| (score, *k, r))
+                    result.map(|f| (f.score, f.k, f.route))
                 }));
             }
         }
