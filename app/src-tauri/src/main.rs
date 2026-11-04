@@ -370,43 +370,47 @@ fn get_settings(state: State<'_, AppState>) -> Settings {
 }
 
 #[tauri::command]
-fn set_settings(state: State<'_, AppState>, mut settings: Settings) -> CmdResult<()> {
-    let before = state.settings();
-    // Not edited by the settings page: kept.
-    if settings.contributor.is_none() {
-        settings.contributor = before.contributor;
-    }
-    if settings.addon_installed.is_none() {
-        settings.addon_installed = before.addon_installed;
-    }
-    let wake = settings.auto_contribute && !before.auto_contribute;
-    write_settings(&state, settings)?;
+fn set_settings(state: State<'_, AppState>, settings: Settings) -> CmdResult<()> {
+    let wake = update_settings(&state, |current| {
+        let wake = settings.auto_contribute && !current.auto_contribute;
+        let before = std::mem::replace(current, settings);
+        // Not edited by the settings page: kept.
+        if current.contributor.is_none() {
+            current.contributor = before.contributor;
+        }
+        if current.addon_installed.is_none() {
+            current.addon_installed = before.addon_installed;
+        }
+        wake
+    })?;
     if wake {
         let _ = state.auto_wake.send(());
     }
     Ok(())
 }
 
-fn write_settings(state: &AppState, mut settings: Settings) -> CmdResult<()> {
-    settings.wow_dir = game_root(&settings.wow_dir);
+/// Change the settings and save them, the settings locked from the read to the write: a change
+/// made meanwhile elsewhere (the settings page, an install, a contribution) is never lost to an
+/// older copy.
+fn update_settings<T>(state: &AppState, change: impl FnOnce(&mut Settings) -> T) -> CmdResult<T> {
     let mut current = state.settings.locked();
-    // Created meanwhile by a contribution (see `contributor_id`): never lost to an older copy.
-    if settings.contributor.is_none() {
-        settings.contributor.clone_from(&current.contributor);
-    }
+    let mut settings = current.clone();
+    let out = change(&mut settings);
+    settings.wow_dir = game_root(&settings.wow_dir);
     save_settings_file(&state.config_file, &settings)?;
     *current = settings;
-    Ok(())
+    Ok(out)
 }
 
 /// Turn the automatic contributions on or off (only that setting: the pages showing it hold
 /// copies of the others).
 #[tauri::command]
 fn set_auto_contribute(state: State<'_, AppState>, on: bool) -> CmdResult<()> {
-    let mut settings = state.settings();
-    let wake = on && !settings.auto_contribute;
-    settings.auto_contribute = on;
-    write_settings(&state, settings)?;
+    let wake = update_settings(&state, |settings| {
+        let wake = on && !settings.auto_contribute;
+        settings.auto_contribute = on;
+        wake
+    })?;
     if wake {
         let _ = state.auto_wake.send(());
     }

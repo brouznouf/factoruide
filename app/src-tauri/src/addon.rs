@@ -74,13 +74,9 @@ pub(crate) fn write_data(state: &AppState) -> CmdResult<usize> {
     let after = loaded_files(&addons);
     let restart = after.iter().any(|(toc, files)| before.get(toc) != Some(files));
     *state.restart_needed.locked() = restart;
-    write_settings(
-        state,
-        Settings {
-            addon_installed: Some(addon_snapshot(&settings)),
-            ..settings
-        },
-    )?;
+    // Only what was installed: the other settings may have changed meanwhile.
+    let installed = addon_snapshot(&settings);
+    update_settings(state, |s| s.addon_installed = Some(installed))?;
     Ok(count)
 }
 

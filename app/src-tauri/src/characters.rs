@@ -7,7 +7,7 @@
 
 use super::{
     AppHandle, AppState, BTreeMap, CmdResult, Edition, HashMap, Manager, PathBuf, Serialize, StartState, State, err,
-    now, overrides, write_settings,
+    now, overrides, update_settings,
 };
 
 // Characters -------------------------------------------------------------------------
@@ -125,12 +125,9 @@ pub(crate) fn import_profile(state: State<'_, AppState>, content: String) -> Cmd
     std::fs::create_dir_all(&state.data_dir).map_err(err)?;
     std::fs::write(imported_file(&state), serde_json::to_vec(&imported).map_err(err)?).map_err(err)?;
     // Pasted again after being taken out: back.
-    let mut settings = state.settings();
-    if (settings.forgotten_characters)
-        .remove(&forgotten_key(edition, &export.character))
-        .is_some()
-    {
-        write_settings(&state, settings)?;
+    let key = forgotten_key(edition, &export.character);
+    if state.settings().forgotten_characters.contains_key(&key) {
+        update_settings(&state, |s| s.forgotten_characters.remove(&key))?;
     }
     Ok(ProfileImported {
         character: export.character,
@@ -147,11 +144,10 @@ pub(crate) fn forget_character(state: State<'_, AppState>, character: String) ->
         .into_iter()
         .find(|c| c.profile.name == character)
         .map_or(i64::MAX, |c| c.profile.time);
-    let mut settings = state.settings();
-    settings
-        .forgotten_characters
-        .insert(forgotten_key(settings.edition, &character), time);
-    write_settings(&state, settings)
+    update_settings(&state, |s| {
+        s.forgotten_characters
+            .insert(forgotten_key(s.edition, &character), time);
+    })
 }
 
 pub(crate) fn characters(state: &AppState) -> CmdResult<Vec<CharacterInfo>> {
