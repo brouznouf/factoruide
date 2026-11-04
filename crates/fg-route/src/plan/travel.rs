@@ -27,8 +27,8 @@ type PosKey = [u64; 4];
 pub(crate) type Legs = RefCell<FxHashMap<(PosKey, PosKey, u128, u64, u64), (f64, Hop)>>;
 pub(crate) type Grounds = RefCell<FxHashMap<(PosKey, PosKey, u8), bool>>;
 
-/// What a table of 2^18 buckets holds (7/8 of them): it never grows past them.
-const LEGS_MAX: usize = (1 << 18) / 8 * 7;
+/// What a table of 2^16 buckets holds (7/8 of them): it never grows past them.
+const LEGS_MAX: usize = (1 << 16) / 8 * 7;
 
 /// A `Leg` as remembered (flight path and link indexes on 16 bits).
 #[derive(Clone, Copy)]
