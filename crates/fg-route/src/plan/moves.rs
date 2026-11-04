@@ -42,6 +42,19 @@ impl Planner<'_> {
     /// what moved.
     pub(crate) fn gather_dungeons(&self, route: &mut Vec<Stop>, change: &mut Change) {
         let places = self.places();
+        // Most moves leave each dungeon's stops together: one look at the route says so.
+        let mut spans = vec![(usize::MAX, 0, 0); self.model.dungeons.len()];
+        for (k, &stop) in route.iter().enumerate() {
+            if let Some(d) = places.usual_inside(stop) {
+                let (first, last, n) = &mut spans[d];
+                *first = (*first).min(k);
+                *last = k;
+                *n += 1;
+            }
+        }
+        if spans.iter().all(|&(first, last, n)| n == 0 || last - first + 1 == n) {
+            return;
+        }
         for d in places.entered(route) {
             let d = d as usize;
             let at: Vec<usize> = (0..route.len())
