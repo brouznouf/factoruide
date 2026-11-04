@@ -270,6 +270,10 @@ impl Host for AppState {
             let _ = app.emit("plan-progress", line.to_owned());
         }
     }
+
+    fn now(&self) -> CmdResult<u64> {
+        now()
+    }
 }
 
 fn open_db(path: &Path) -> CmdResult<Connection> {

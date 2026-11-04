@@ -240,7 +240,7 @@ impl Studio {
             }
             None => (host.edition(), None),
         };
-        let now = now()?;
+        let now = host.now()?;
         let issue = fg_contrib::issue::Issue {
             format: fg_contrib::issue::FORMAT.into(),
             version: fg_contrib::issue::VERSION,
@@ -277,7 +277,15 @@ impl Studio {
         let walks = self.walks(host, edition);
         let progress = |line: &str| host.progress(line);
         let outcome = job::plan_interruptible(&conn, &overrides, request, &progress, &self.interrupt, Some(&walks))?;
-        Ok(library(host, edition).add_version(request, &outcome, data_version(&conn), Origin::COMPUTED, now()?)?)
+        Ok(
+            library(host, edition).add_version(
+                request,
+                &outcome,
+                data_version(&conn),
+                Origin::COMPUTED,
+                host.now()?,
+            )?,
+        )
     }
 
     /// The starts the character can choose from before the guide is computed. Fewer than two:
@@ -313,7 +321,7 @@ impl Studio {
         let conn = host.open_db(edition)?;
         let walks = self.walks(host, edition);
         let outcome = job::manual(&conn, &host.overrides(edition)?, request, Some(&walks))?;
-        Ok(library(host, edition).add_version(request, &outcome, data_version(&conn), Origin::EDITED, now()?)?)
+        Ok(library(host, edition).add_version(request, &outcome, data_version(&conn), Origin::EDITED, host.now()?)?)
     }
 
     /// The flight paths a character probably knows, besides those its addon recorded: its race's
@@ -484,7 +492,7 @@ impl Studio {
             &shared.outcome,
             shared.data(),
             Origin::IMPORTED,
-            now()?,
+            host.now()?,
         )?)
     }
 
@@ -595,7 +603,8 @@ impl Studio {
         let open = session.as_ref().ok_or(CmdError::NoEditor)?;
         let outcome = open.editor.save(steps, open.notes.clone())?;
         let data = data_version(&host.open_db(open.edition)?);
-        let meta = library(host, open.edition).add_version(&open.request, &outcome, data, Origin::EDITED, now()?)?;
+        let meta =
+            library(host, open.edition).add_version(&open.request, &outcome, data, Origin::EDITED, host.now()?)?;
         *session = None;
         Ok(meta)
     }

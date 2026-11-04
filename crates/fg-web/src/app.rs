@@ -48,6 +48,10 @@ impl Host for WebHost {
     fn progress(&self, line: &str) {
         host::event("plan-progress", &serde_json::Value::String(line.to_owned()));
     }
+
+    fn now(&self) -> CmdResult<u64> {
+        now()
+    }
 }
 
 static STUDIO: LazyLock<Studio> = LazyLock::new(Studio::default);
@@ -254,10 +258,11 @@ fn data_zip() -> CmdResult<serde_json::Value> {
         return Err("no guide yet".into());
     }
     let lua = job::guides_lua(&open_db(edition)?, &overrides(edition)?, edition, guides).map_err(err)?;
-    let files: Vec<(String, Vec<u8>)> = job::data_addon_files(&lua, embedded::ADDON_INTERFACE, APP_VERSION, now()?)
-        .into_iter()
-        .map(|(name, content)| (format!("{}/{name}", job::DATA_ADDON), content.into_bytes()))
-        .collect();
+    let files: Vec<(String, Vec<u8>)> =
+        job::data_addon_files(&lua, embedded::ADDON_INTERFACE, APP_VERSION, WebHost.now()?)
+            .into_iter()
+            .map(|(name, content)| (format!("{}/{name}", job::DATA_ADDON), content.into_bytes()))
+            .collect();
     Ok(serde_json::json!({
         "file": format!("{}.zip", job::DATA_ADDON),
         "base64": base64(&crate::zip::zip(&files)),
@@ -408,7 +413,7 @@ fn characters() -> CmdResult<Vec<CharacterInfo>> {
     let settings = settings();
     let edition = settings.edition;
     let races = overrides(edition)?.races;
-    let now = i64::try_from(now()?).map_err(err)?;
+    let now = i64::try_from(WebHost.now()?).map_err(err)?;
     Ok(profiles(edition)
         .into_iter()
         .filter_map(|json| serde_json::from_value::<StartState>(json).ok())
@@ -489,7 +494,7 @@ fn import_profile(content: &str) -> CmdResult<ProfileImported> {
         serde_json::to_vec(&profile).map_err(err)?,
     );
     let last = LastExport {
-        time: i64::try_from(now()?).map_err(err)?,
+        time: i64::try_from(WebHost.now()?).map_err(err)?,
         version: export.addon.unwrap_or_default(),
     };
     store::write(&last_export_file(edition), serde_json::to_vec(&last).map_err(err)?);

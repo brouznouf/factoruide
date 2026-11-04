@@ -154,12 +154,7 @@ pub(crate) fn contributor_id(state: &AppState) -> CmdResult<String> {
     {
         return Ok(id);
     }
-    let mut bytes = [0u8; 16];
-    getrandom::fill(&mut bytes).map_err(err)?;
-    let id = bytes.iter().fold(String::with_capacity(32), |mut id, b| {
-        let _ = write!(id, "{b:02x}");
-        id
-    });
+    let id = fg_contrib::contribution::random_hex(16).map_err(err)?;
     settings.contributor = Some(id.clone());
     save_settings_file(&state.config_file, &settings)?;
     Ok(id)
@@ -224,7 +219,7 @@ pub(crate) fn preview(state: &AppState) -> CmdResult<ContributionPreview> {
         more,
         url: contribution_endpoint(&settings),
         last_sent: record.last_sent,
-        retry_after: record.retry_after.filter(|&t| now().is_ok_and(|now| now < t)),
+        retry_after: record.retry_after.filter(|&t| state.now().is_ok_and(|now| now < t)),
         automatic,
     })
 }
@@ -436,7 +431,7 @@ pub(crate) async fn send_contribution(app: AppHandle) -> CmdResult<SendReport> {
         let url = contribution_endpoint(&state.settings()).ok_or("no contribution server configured")?;
         let file = send_record_file(&state.data_dir, edition);
         let mut record = read_send_record(&file)?;
-        if record.retry_after.is_some_and(|t| now().is_ok_and(|now| now < t)) {
+        if record.retry_after.is_some_and(|t| state.now().is_ok_and(|now| now < t)) {
             return Err("rate_limited".into());
         }
         let burst = send_burst(|| {
@@ -451,7 +446,7 @@ pub(crate) async fn send_contribution(app: AppHandle) -> CmdResult<SendReport> {
                 next,
                 more,
             };
-            let (posted, sent) = send(&state, &url, out, now()?, false)?;
+            let (posted, sent) = send(&state, &url, out, state.now()?, false)?;
             record = sent;
             Ok(Some((posted, more)))
         })?;
@@ -550,7 +545,7 @@ pub(crate) fn setup_of(state: &AppState) -> fg_contrib::issue::Setup {
     let status = game::status(&settings.wow_dir, settings.edition);
     let polestar = settings.edition == Edition::Forever && polestar_installed_in(&settings);
     let health = game::addon_health(&status.root, settings.edition, ADDON_VERSION);
-    let today = now().unwrap_or_default().cast_signed();
+    let today = state.now().unwrap_or_default().cast_signed();
     fg_contrib::issue::Setup {
         wow_dir: private_path(&status.root).chars().take(300).collect(),
         clients: status.clients.into_iter().take(20).collect(),
@@ -659,7 +654,7 @@ pub(crate) fn auto_contribute_loop(app: &AppHandle, wake: &std::sync::mpsc::Rece
 pub(crate) fn auto_contribute(state: &AppState) -> std::time::Duration {
     let mut next = AUTO_CHECK_EVERY;
     let settings = state.settings();
-    let (Some(url), Ok(now)) = (contribution_endpoint(&settings), now()) else {
+    let (Some(url), Ok(now)) = (contribution_endpoint(&settings), state.now()) else {
         return std::time::Duration::from_secs(next);
     };
     for edition in Edition::ALL {

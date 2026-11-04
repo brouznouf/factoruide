@@ -20,7 +20,6 @@ serde_json = "1"
 zstd = "0.14"
 fg-contrib.workspace = true
 ureq = { version = "3", features = ["json"] }
-getrandom = "0.4"
 tauri = { version = "2", features = [] }
 # Updates published with the GitHub releases (latest.json), and the restart after installing one.
 tauri-plugin-updater = "2"

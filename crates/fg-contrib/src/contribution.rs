@@ -159,13 +159,15 @@ impl SendState {
 /// random ids instead of names, events after the last one sent (at most `max_events` in all,
 /// oldest first), times relative to the first event kept, events failing validation dropped
 /// (one odd row never blocks a contribution). Returns the characters, the state to keep once
-/// they are accepted, and whether events were left for a next document.
+/// they are accepted, and whether events were left for a next document. `new_id`: the id of a
+/// character sent for the first time (random: [`random_hex`]).
 #[cfg(feature = "local")]
 pub fn anonymize(
     characters: Vec<Character>,
     state: &SendState,
     now: u64,
     max_events: usize,
+    new_id: &mut dyn FnMut() -> Result<String>,
 ) -> Result<(Vec<Character>, SendState, bool)> {
     let mut next = state.clone();
     let mut out = Vec::new();
@@ -190,7 +192,7 @@ pub fn anonymize(
         };
         let id = match sent {
             Some(s) => s.id.clone(),
-            None => random_hex(8)?,
+            None => new_id()?,
         };
         next.characters.insert(
             key,
@@ -257,7 +259,8 @@ pub fn collect(
     use crate::{collector, wdb};
     let now = now()?;
     let characters = collector::read(&collector::find_saved_variables(client_dir))?;
-    let (collector, mut next, mut more) = anonymize(characters, state, now, MAX_DOCUMENT_EVENTS)?;
+    let (collector, mut next, mut more) =
+        anonymize(characters, state, now, MAX_DOCUMENT_EVENTS, &mut || random_hex(8))?;
     let mut quest_cache = wdb::read_cache(client_dir);
     for file in &mut quest_cache {
         file.quests.retain(|&id, q| crate::validate::check_quest(id, q).is_ok());
@@ -347,6 +350,15 @@ mod tests {
 
     const NOW: u64 = 1_800_000_000;
 
+    /// Ids one after the other instead of random ones: "0000000000000001", then "...2"...
+    fn ids() -> impl FnMut() -> Result<String> {
+        let mut n = 0;
+        move || {
+            n += 1;
+            Ok(format!("{n:016x}"))
+        }
+    }
+
     #[test]
     fn characters_lose_their_name_and_time_of_day() {
         let (out, next, _) = anonymize(
@@ -357,11 +369,11 @@ mod tests {
             &SendState::default(),
             NOW,
             MAX_DOCUMENT_EVENTS,
+            &mut ids(),
         )
         .unwrap();
         let c = &out[0];
-        assert_ne!(c.character, "Brouz-Realm");
-        assert_eq!(c.character.len(), 16);
+        assert_eq!(c.character, "0000000000000001");
         assert_eq!(c.events.iter().map(|e| e.ts).collect::<Vec<_>>(), [Some(0), Some(60)]);
         assert_eq!(c.day, Some(1_790_000_100 / 86_400));
         assert_eq!(next.characters["ACCOUNT/Brouz-Realm"].id, c.character);
@@ -375,6 +387,7 @@ mod tests {
             &SendState::default(),
             NOW,
             MAX_DOCUMENT_EVENTS,
+            &mut ids(),
         )
         .unwrap();
         let (out, next, _) = anonymize(
@@ -385,6 +398,7 @@ mod tests {
             &first.1,
             NOW,
             MAX_DOCUMENT_EVENTS,
+            &mut ids(),
         )
         .unwrap();
         assert_eq!(out[0].events.len(), 1);
@@ -400,6 +414,7 @@ mod tests {
             &next,
             NOW,
             MAX_DOCUMENT_EVENTS,
+            &mut ids(),
         )
         .unwrap();
         assert!(out.is_empty());
@@ -417,6 +432,7 @@ mod tests {
             &SendState::default(),
             NOW,
             MAX_DOCUMENT_EVENTS,
+            &mut ids(),
         )
         .unwrap();
         assert_eq!(
@@ -433,12 +449,13 @@ mod tests {
             &SendState::default(),
             NOW,
             3,
+            &mut ids(),
         )
         .unwrap();
         assert!(more);
         assert_eq!(out[0].events.len(), 3);
         assert_eq!(next.characters["ACCOUNT/Brouz-Realm"].last_seq, 3);
-        let (out, _, more) = anonymize(vec![character("Brouz-Realm", events)], &next, NOW, 3).unwrap();
+        let (out, _, more) = anonymize(vec![character("Brouz-Realm", events)], &next, NOW, 3, &mut ids()).unwrap();
         assert!(!more);
         assert_eq!(
             out[0].events.iter().map(|e| e.seq).collect::<Vec<_>>(),
@@ -458,6 +475,7 @@ mod tests {
             &SendState::default(),
             NOW,
             MAX_DOCUMENT_EVENTS,
+            &mut ids(),
         )
         .unwrap();
         assert_eq!(out.len(), 2);
@@ -468,6 +486,7 @@ mod tests {
             &SendState::default(),
             NOW,
             MAX_DOCUMENT_EVENTS,
+            &mut ids(),
         )
         .unwrap();
         assert_eq!(alone.sent_by_name()["Solo-Realm"], 7);

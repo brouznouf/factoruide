@@ -1015,7 +1015,6 @@ dependencies = [
  "fg-contrib",
  "fg-library",
  "fg-route",
- "getrandom 0.4.3",
  "rusqlite",
  "serde",
  "serde_json",

@@ -6,8 +6,8 @@
 )]
 
 use super::{
-    AppHandle, AppState, BTreeMap, CmdResult, Edition, HashMap, Manager, PathBuf, Serialize, StartState, State, err,
-    now, overrides, update_settings,
+    AppHandle, AppState, BTreeMap, CmdResult, Edition, HashMap, Host, Manager, PathBuf, Serialize, StartState, State,
+    err, overrides, update_settings,
 };
 
 // Characters -------------------------------------------------------------------------
@@ -156,7 +156,7 @@ pub(crate) fn characters(state: &AppState) -> CmdResult<Vec<CharacterInfo>> {
     let files = fg_contrib::collector::find_saved_variables(&client_dir);
     let full_names = full_names(&files);
     let races = overrides(settings.edition)?.races;
-    let now = i64::try_from(now()?).map_err(err)?;
+    let now = i64::try_from(state.now()?).map_err(err)?;
     let profiles: Vec<(bool, StartState)> = fg_contrib::profile::read(&files)
         .map_err(err)?
         .into_iter()

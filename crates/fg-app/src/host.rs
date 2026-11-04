@@ -27,4 +27,11 @@ pub trait Host: Sync {
     fn overrides(&self, edition: Edition) -> Result<Overrides, CmdError>;
     /// A line of what a generation is doing (it may come from several threads).
     fn progress(&self, line: &str);
+    /// Unix seconds now: when a guide version is made, a report written... ([`crate::now`] for
+    /// the system clock; tests give a fixed time).
+    ///
+    /// # Errors
+    ///
+    /// [`CmdError`] when the clock is before 1970.
+    fn now(&self) -> Result<u64, CmdError>;
 }

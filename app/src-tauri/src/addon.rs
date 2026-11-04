@@ -7,7 +7,7 @@
 
 use super::{
     AppState, CmdError, CmdResult, DATA_ADDON, Edition, GUIDE_ADDON, GuideId, Host, Library, LockExt, Mutex,
-    PROFILE_ADDON, Path, Settings, State, WowProblem, addon_snapshot, embedded, err, game, job, loaded_files, now,
+    PROFILE_ADDON, Path, Settings, State, WowProblem, addon_snapshot, embedded, err, game, job, loaded_files,
     overrides, read_send_record, send_record_file, sent_lua, update_settings,
 };
 
@@ -71,7 +71,7 @@ pub(crate) fn write_data(state: &AppState) -> CmdResult<usize> {
         &lua,
         &interface,
         env!("CARGO_PKG_VERSION"),
-        now()?,
+        state.now()?,
     )
     .map_err(err)?;
     // A folder or a file the game does not load yet: it reads the .toc files when it starts.
