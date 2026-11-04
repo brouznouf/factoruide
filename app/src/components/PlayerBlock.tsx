@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import { api, type CharacterInfo, type Options, type ProfessionGoal, type StartState } from "../api";
 import { useGameName, useT } from "../i18n";
 import { CharacterPicker } from "./CharacterPicker";
@@ -104,6 +104,8 @@ interface Props {
   /** A character's export was pasted: the list is read again. */
   onImported: (name: string) => Promise<CharacterInfo[]>;
   onRemove?: () => void;
+  /** Under the professions (a setting that concerns them). */
+  professionExtras?: ReactNode;
 }
 
 /** Flight paths the player ticked or unticked for a character, kept between guides. */
@@ -121,7 +123,7 @@ const mergeFlights = (character: string, recorded: number[], inferred: number[])
 };
 
 /** One player of the guide: who (a recorded character or a new one), and the professions it levels. */
-export function PlayerBlock({ index, player, options, characters, group, problem, onChange, onPicked, onImported, onRemove }: Props) {
+export function PlayerBlock({ index, player, options, characters, group, problem, onChange, onPicked, onImported, onRemove, professionExtras }: Props) {
   const t = useT();
   const gameName = useGameName();
   // Flight paths: what the addon recorded, what the quests done deduce.
@@ -264,9 +266,10 @@ export function PlayerBlock({ index, player, options, characters, group, problem
         <div>
           <h3>
             {t("Métiers")}
-            <Hint text={t("Pas de temps ni d'étapes dans le guide : l'addon indique si vous êtes en avance ou en retard sur la courbe, et les quêtes du métier sont proposées (facultatives).")} />
+            <Hint text={t("Par défaut, pas de temps ni d'étapes dans le guide : l'addon indique si vous êtes en avance ou en retard sur la courbe, et les quêtes du métier sont proposées (facultatives). L'option ci-dessous ajoute les étapes chez les maîtres.")} />
           </h3>
           <ProfessionPicker goals={player.professions} onChange={(professions) => onChange({ ...player, professions })} />
+          {player.professions.length > 0 && professionExtras}
         </div>
       </div>
       {problem && <p className="error">{problem}</p>}

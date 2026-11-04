@@ -111,3 +111,21 @@ fn nothing_happens_when_the_option_is_off() {
     assert_eq!(visits(&planner, &mut s).len(), 0);
     assert_eq!(s.time, before);
 }
+
+/// A character met in game at level 25 with its tailoring at 100 knows the first two ranks: the
+/// trainers are not visited for them again; a new character, at level 1, knows none.
+#[test]
+fn a_character_met_in_game_knows_the_ranks_its_skill_needs() {
+    let mut p = tailor_with_trainer(150, 50.0);
+    p.profile.from_level = 25;
+    let planner = planner(&p);
+    let mut s = planner.initial_state();
+    assert_eq!(s.ranks[0], 0b11, "skill 100: apprentice and journeyman");
+    assert_eq!(visits(&planner, &mut s).len(), 0, "nothing to learn again");
+    p.profile.from_level = 1;
+    assert_eq!(
+        super::planner(&p).initial_state().ranks[0],
+        0,
+        "a new character knows none"
+    );
+}

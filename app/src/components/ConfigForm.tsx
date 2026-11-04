@@ -397,6 +397,14 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
               onPicked={k === 0 ? ownPicked : undefined}
               onImported={readCharacters}
               onRemove={k > 0 ? () => setPlayers((list) => list.filter((o) => o !== p)) : undefined}
+              professionExtras={
+                <Toggle
+                  label={t("Étapes chez les maîtres de métier")}
+                  help={t("Avec des métiers : une étape chez le maître pour apprendre chaque métier et, avant que le niveau de compétence atteigne le plafond de son rang, chaque rang suivant. Un maître près de la route est visité en passant ; un maître loin demande un trajet, compté dans le temps de la route. Pas d'étape pour un rang qu'aucun maître n'enseigne.")}
+                  checked={params.profession_trainers}
+                  onChange={(v) => set("profession_trainers", v)}
+                />
+              }
             />
           ))}
           {players.length < GROUP_MAX && (

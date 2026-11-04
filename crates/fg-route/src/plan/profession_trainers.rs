@@ -46,6 +46,22 @@ pub(crate) const RANKS: [Rank; 4] = [
 ];
 
 impl Planner<'_> {
+    /// The ranks a character starting at `level` already knows: its skill (the curve at that level,
+    /// which goes through the skill of a character met in game) asks the first rank once it has
+    /// any, and each next rank once it is past the cap of the one before. A new character knows none.
+    pub(crate) fn ranks_known_at_start(&self, level: i64) -> [u8; crate::profession::PROFESSIONS.len()] {
+        let mut ranks = [0u8; crate::profession::PROFESSIONS.len()];
+        for (p, plan) in self.model.professions.iter().enumerate().take(ranks.len()) {
+            let skill = plan.skill_at(level);
+            ranks[p] = RANKS
+                .iter()
+                .enumerate()
+                .filter(|(k, rank)| if *k == 0 { skill > 0 } else { skill > rank.due })
+                .fold(0, |bits, (k, _)| bits | 1 << k);
+        }
+        ranks
+    }
+
     /// Visit the profession trainers the character needs, one after the other (the trainers of a
     /// town are a few steps apart).
     pub(crate) fn train_professions(&self, s: &mut State, record: &mut impl FnMut(&State, Event)) {

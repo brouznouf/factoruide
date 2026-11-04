@@ -308,7 +308,7 @@ impl<'a> Planner<'a> {
                 0
             },
             abilities: init.abilities,
-            ranks: Default::default(),
+            ranks: self.ranks_known_at_start(level),
             dungeons: 0,
             accepted: Flags::new(n),
             turned: Flags::new(n),

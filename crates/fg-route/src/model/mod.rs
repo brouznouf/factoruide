@@ -37,8 +37,7 @@ pub use names::Names;
 pub use types::{
     ClassRequirement, CompletionWindow, Dungeon, DungeonDef, EntityKind, ExploreArea, Guard, Initial, Loc, Mate,
     MateStart, Model, Objective, ObjectiveOrder, ProfessionPlan, ProfessionTrainer, Profile, Quest, QuestOverride,
-    QuestRequirement,
-    Spots, Teleport, TeleportDef, Vendor, race_bit,
+    QuestRequirement, Spots, Teleport, TeleportDef, Vendor, race_bit,
 };
 
 use crate::params::Params;

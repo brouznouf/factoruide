@@ -1776,3 +1776,39 @@ level = 50
 npc_flags = 4096
 friendly_to = "H"
 at = [{ zone = 1497, x = 60.47, y = 46.44 }]
+
+[[npc]]
+id = 3365
+name = "Karolek"
+subname = "Expert Leatherworker"
+level = 35
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1637, x = 62.81, y = 44.15 }]
+
+[[npc]]
+id = 5784
+name = "Waldor"
+subname = "Journeyman Leatherworker"
+level = 28
+npc_flags = 19
+friendly_to = "AH"
+at = [{ zone = 17, x = 45.97, y = 35.85 }]
+
+[[npc]]
+id = 3703
+name = "Krulmoo Fullmoon"
+subname = "Expert Leatherworker"
+level = 42
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 17, x = 44.84, y = 59.46 }]
+
+[[npc]]
+id = 3008
+name = "Mak"
+subname = "Journeyman Leatherworker"
+level = 24
+npc_flags = 19
+friendly_to = "H"
+at = [{ zone = 1638, x = 42.06, y = 43.45 }]
