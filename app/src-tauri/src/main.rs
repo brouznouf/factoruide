@@ -123,14 +123,7 @@ fn err(e: impl std::fmt::Display) -> CmdError {
 
 /// Embedded overrides of an edition.
 fn overrides(edition: Edition) -> CmdResult<Overrides> {
-    Overrides::parse_edition(
-        |name| {
-            let (_, bytes) = embedded::OVERRIDES.iter().find(|(n, _)| *n == name)?;
-            Some(String::from_utf8_lossy(bytes).into_owned())
-        },
-        edition,
-    )
-    .map_err(err)
+    fg_app::embedded_overrides(embedded::OVERRIDES, edition)
 }
 
 impl AppState {
@@ -227,30 +220,13 @@ fn unpack_database(dir: &Path, edition: Edition) -> anyhow::Result<PathBuf> {
 }
 
 /// An edition the app knows: whether its data is bundled and its game client installed.
-#[derive(Serialize)]
-struct EditionInfo {
-    key: &'static str,
-    name: &'static str,
-    /// Data bundled in this build.
-    available: bool,
-    /// Game client folder found in the WoW folder.
-    installed: bool,
-    max_level: i64,
-}
-
 #[tauri::command]
-fn list_editions(state: State<'_, AppState>) -> Vec<EditionInfo> {
+fn list_editions(state: State<'_, AppState>) -> Vec<fg_app::EditionInfo> {
     let settings = state.settings();
-    Edition::ALL
-        .iter()
-        .map(|e| EditionInfo {
-            key: e.key(),
-            name: e.rules().edition_name,
-            available: embedded::DATABASES.iter().any(|(k, _)| *k == e.key()) && e.rules().known(),
-            installed: e.installed_in(&settings.wow_dir),
-            max_level: e.rules().max_level,
-        })
-        .collect()
+    fg_app::editions(
+        |e| embedded::DATABASES.iter().any(|(k, _)| *k == e.key()),
+        |e| e.installed_in(&settings.wow_dir),
+    )
 }
 
 /// Routes and results used to live in the Factoruide checkout (`workspace` setting): copy them

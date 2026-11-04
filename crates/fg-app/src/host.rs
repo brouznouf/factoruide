@@ -38,3 +38,19 @@ pub trait Host: Sync {
     /// What a developer asks the generations to tell or check (read once where the app starts).
     fn diagnostics(&self) -> &Diagnostics;
 }
+
+/// The corrections of an edition from the override files built into an app (`(name, content)`).
+///
+/// # Errors
+///
+/// [`CmdError`] when one of them does not read.
+pub fn embedded_overrides(files: &[(&str, &[u8])], edition: Edition) -> Result<Overrides, CmdError> {
+    Overrides::parse_edition(
+        |name| {
+            let (_, bytes) = files.iter().find(|(n, _)| *n == name)?;
+            Some(String::from_utf8_lossy(bytes).into_owned())
+        },
+        edition,
+    )
+    .map_err(|e| CmdError::App(format!("{e:#}")))
+}

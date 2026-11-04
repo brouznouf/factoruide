@@ -28,18 +28,6 @@ pub(crate) struct CharacterInfo {
     profile: StartState,
 }
 
-/// Rested XP gained while logged out since the profile was saved: 5% of a level every 8 hours
-/// in an inn or a city, a quarter of it elsewhere, up to a level and a half.
-pub(crate) fn rested_now(p: &StartState, now: i64) -> i64 {
-    if p.xp_max <= 0 || p.time <= 0 {
-        return p.rested;
-    }
-    let hours = (now - p.time).max(0) as f64 / 3600.0;
-    let per_hour = 0.05 / 8.0 * p.xp_max as f64 * if p.resting { 1.0 } else { 0.25 };
-    let cap = p.xp_max * 3 / 2;
-    (p.rested + (hours * per_hour) as i64).min(cap.max(p.rested))
-}
-
 /// The characters of the game client of the current edition, most recently played first.
 // Off the main thread: reading the SavedVariables can take a while.
 #[tauri::command]
@@ -70,18 +58,6 @@ pub(crate) fn full_names(files: &[PathBuf]) -> HashMap<String, Vec<String>> {
         }
     }
     out
-}
-
-/// Key of a character in `Settings::forgotten_characters`.
-pub(crate) fn forgotten_key(edition: Edition, character: &str) -> String {
-    format!("{}/{character}", edition.key())
-}
-
-/// Whether a character's profile was taken out of the list (and not played since).
-pub(crate) fn is_forgotten(forgotten: &BTreeMap<String, i64>, edition: Edition, profile: &StartState) -> bool {
-    forgotten
-        .get(&forgotten_key(edition, &profile.name))
-        .is_some_and(|&time| profile.time <= time)
 }
 
 /// Other players' characters pasted from their export (in game: /fg, "Export my character"), by
@@ -125,9 +101,8 @@ pub(crate) fn import_profile(state: State<'_, AppState>, content: String) -> Cmd
     std::fs::create_dir_all(&state.data_dir).map_err(err)?;
     std::fs::write(imported_file(&state), serde_json::to_vec(&imported).map_err(err)?).map_err(err)?;
     // Pasted again after being taken out: back.
-    let key = forgotten_key(edition, &export.character);
-    if state.settings().forgotten_characters.contains_key(&key) {
-        update_settings(&state, |s| s.forgotten_characters.remove(&key))?;
+    if state.settings().is_out(edition, &export.character) {
+        update_settings(&state, |s| s.remember(edition, &export.character))?;
     }
     Ok(ProfileImported {
         character: export.character,
@@ -145,8 +120,8 @@ pub(crate) fn forget_character(state: State<'_, AppState>, character: String) ->
         .find(|c| c.profile.name == character)
         .map_or(i64::MAX, |c| c.profile.time);
     update_settings(&state, |s| {
-        s.forgotten_characters
-            .insert(forgotten_key(s.edition, &character), time);
+        let edition = s.edition;
+        s.forget(edition, &character, time);
     })
 }
 
@@ -180,9 +155,9 @@ pub(crate) fn characters(state: &AppState) -> CmdResult<Vec<CharacterInfo>> {
     Ok(profiles
         .into_iter()
         .filter(|(shared, p)| !shared || !own.contains(&p.name))
-        .filter(|(_, profile)| !is_forgotten(&settings.forgotten_characters, settings.edition, profile))
+        .filter(|(_, profile)| !settings.is_forgotten(settings.edition, profile))
         .map(|(shared, mut profile)| {
-            profile.rested = rested_now(&profile, now);
+            profile.rested = fg_app::rested_now(&profile, now);
             // Only when the first name is not shared (two characters with the same one).
             let first = profile.name.split('-').next().unwrap_or_default();
             let full_name = match full_names.get(first).map(Vec::as_slice) {
@@ -191,45 +166,12 @@ pub(crate) fn characters(state: &AppState) -> CmdResult<Vec<CharacterInfo>> {
             };
             CharacterInfo {
                 full_name,
-                race: races
-                    .iter()
-                    .find(|(_, r)| r.id == profile.race)
-                    .map(|(key, _)| key.clone()),
+                race: fg_app::race_key(&races, &profile),
                 class: profile.class.to_lowercase(),
-                professions: profile
-                    .professions
-                    .iter()
-                    .filter_map(|s| {
-                        let def = fg_route::profession::PROFESSIONS
-                            .iter()
-                            .find(|d| d.skill_id == s.line)?;
-                        Some((def.key.to_owned(), s.rank))
-                    })
-                    .collect(),
+                professions: fg_app::profession_ranks(&profile),
                 shared,
                 profile,
             }
         })
         .collect())
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// A character taken out stays out until it is played again (a newer profile), on its game
-    /// version only.
-    #[test]
-    fn a_forgotten_character_is_back_when_played_again() {
-        let profile = |time| StartState {
-            name: "Finnagnix-ClassicBetaPvP".into(),
-            time,
-            ..StartState::default()
-        };
-        let mut forgotten = BTreeMap::new();
-        forgotten.insert(forgotten_key(Edition::Forever, "Finnagnix-ClassicBetaPvP"), 100);
-        assert!(is_forgotten(&forgotten, Edition::Forever, &profile(100)));
-        assert!(!is_forgotten(&forgotten, Edition::Forever, &profile(101)));
-        assert!(!is_forgotten(&forgotten, Edition::Classic, &profile(100)));
-    }
 }

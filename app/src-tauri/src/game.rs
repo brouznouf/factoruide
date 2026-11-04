@@ -304,20 +304,6 @@ pub struct AddonHealth {
     pub saved_variables: u32,
 }
 
-/// Whether version `a` ("0.13.0") is older than `b`; versions that do not read as numbers are
-/// never older (an addon built by hand).
-pub fn older(a: &str, b: &str) -> bool {
-    let parse = |v: &str| {
-        v.split('.')
-            .map(|p| p.trim().parse::<u32>().ok())
-            .collect::<Option<Vec<_>>>()
-    };
-    match (parse(a), parse(b)) {
-        (Some(a), Some(b)) => a < b,
-        _ => false,
-    }
-}
-
 /// What the game did with the addon of a game version (`required`: the oldest version the app
 /// works with).
 pub fn addon_health(root: &Path, edition: Edition, required: &str) -> AddonHealth {
@@ -327,7 +313,7 @@ pub fn addon_health(root: &Path, edition: Edition, required: &str) -> AddonHealt
     let installed_version = std::fs::read_to_string(&toc).ok().as_deref().and_then(toc_version);
     let mut health = AddonHealth {
         app_version: env!("CARGO_PKG_VERSION").into(),
-        outdated: installed_version.as_deref().is_some_and(|v| older(v, required)),
+        outdated: installed_version.as_deref().is_some_and(|v| fg_app::older(v, required)),
         installed_version,
         required_version: required.to_owned(),
         installed_at: modified_secs(&toc),
@@ -399,12 +385,6 @@ mod tests {
 
     /// A version's folder, a folder inside it or the folder holding the game's are taken back to
     /// the game's folder; the addon never goes where the game would not read it.
-    #[test]
-    fn versions_compare_by_their_numbers() {
-        assert!(older("0.9.1", "0.13.0") && older("0.13.0", "0.14.0") && older("1.2", "1.2.1"));
-        assert!(!older("0.14.0", "0.14.0") && !older("0.15.0", "0.14.0") && !older("dev", "0.14.0"));
-    }
-
     #[test]
     fn the_game_folder_is_found_from_a_too_precise_or_too_wide_one() {
         let base = temp("root");

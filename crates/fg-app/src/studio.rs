@@ -425,6 +425,51 @@ impl Studio {
 
     // Guides --------------------------------------------------------------------------
 
+    /// What the player pastes in game with `/fg import`: version `n` of a guide of the edition
+    /// the app is set to (the addon adds it to the guides it has, or replaces the one of its name).
+    ///
+    /// # Errors
+    ///
+    /// [`CmdError`] when the guide, the game data or the corrections cannot be read.
+    pub fn guide_text<H: Host>(&self, host: &H, guide: &GuideId, n: u32) -> Result<String> {
+        use fg_route::export::fgstring;
+        // Read once: the library, the names and the database of the same game version.
+        let edition = host.edition();
+        let v = library(host, edition).version(guide, n)?;
+        let route = self.render(host, edition, &v.outcome.route, None)?;
+        let lua = job::guides_lua(
+            &host.open_db(edition)?,
+            &host.overrides(edition)?,
+            edition,
+            vec![(route, v.meta.created, n)],
+        )?;
+        Ok(fgstring::encode(fgstring::GUIDE_PREFIX, lua.as_bytes()))
+    }
+
+    /// What the player pastes on Polestar's Import page (`/polestar import`): version `n` of a
+    /// guide, in the game's language. Polestar exists on WoW Forever only.
+    ///
+    /// # Errors
+    ///
+    /// [`CmdError`] off WoW Forever, or when the guide or the game data cannot be read.
+    pub fn polestar_string<H: Host>(
+        &self,
+        host: &H,
+        guide: &GuideId,
+        n: u32,
+    ) -> Result<fg_route::export::polestar::ImportString> {
+        if host.edition() != Edition::Forever {
+            return Err(CmdError::App("Polestar is for WoW Forever only".into()));
+        }
+        let version = library(host, Edition::Forever).version(guide, n)?;
+        let route = self.render(host, Edition::Forever, &version.outcome.route, None)?;
+        Ok(fg_route::export::polestar::import_string(
+            &job::slug(&route.name),
+            &route,
+            n,
+        ))
+    }
+
     /// Every guide of an edition in the version its page says to follow (the latest unless one is
     /// chosen), written in the language it was made in, with when that version was computed and
     /// its number; by name.

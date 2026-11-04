@@ -4,12 +4,14 @@
 
 #![warn(clippy::missing_errors_doc, clippy::missing_panics_doc)]
 
+mod characters;
 mod error;
 mod host;
 mod settings;
 mod studio;
 
+pub use characters::{EditionInfo, editions, older, profession_ranks, race_key, rested_now};
 pub use error::CmdError;
-pub use host::Host;
+pub use host::{Host, embedded_overrides};
 pub use settings::{GuideAddon, Settings, SettingsStore};
 pub use studio::{EditOpened, IssueDraft, IssueGuide, Studio, library, now, request_edition};

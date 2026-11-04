@@ -6,9 +6,9 @@
 )]
 
 use super::{
-    AppState, CmdError, CmdResult, DATA_ADDON, Edition, GUIDE_ADDON, GuideId, Host, Library, LockExt, Mutex,
-    PROFILE_ADDON, Path, Settings, State, WowProblem, addon_snapshot, embedded, err, game, job, loaded_files,
-    overrides, read_send_record, send_record_file, sent_lua, update_settings,
+    AppState, CmdError, CmdResult, DATA_ADDON, Edition, GUIDE_ADDON, GuideId, Host, LockExt, Mutex, PROFILE_ADDON,
+    Path, Settings, State, WowProblem, addon_snapshot, embedded, err, game, job, loaded_files, overrides,
+    read_send_record, send_record_file, sent_lua, update_settings,
 };
 
 /// The oldest addon this app works with (its .toc version): older ones are to be updated.
@@ -115,21 +115,7 @@ pub(crate) fn install_polestar(state: State<'_, AppState>) -> CmdResult<usize> {
 /// the guides it has, or replaces the one of its name).
 #[tauri::command(async)]
 pub(crate) fn guide_text(state: State<'_, AppState>, guide: GuideId, version: u32) -> CmdResult<String> {
-    // Read once: the library, the names and the database of the same game version.
-    let edition = state.edition();
-    let v = Library::new(&state.files, edition).version(&guide, version)?;
-    let route = state.studio.render(&*state, edition, &v.outcome.route, None)?;
-    let lua = job::guides_lua(
-        &Host::open_db(&*state, edition)?,
-        &overrides(edition)?,
-        edition,
-        vec![(route, v.meta.created, version)],
-    )
-    .map_err(err)?;
-    Ok(fg_route::export::fgstring::encode(
-        fg_route::export::fgstring::GUIDE_PREFIX,
-        lua.as_bytes(),
-    ))
+    state.studio.guide_text(&*state, &guide, version)
 }
 
 /// What the player pastes on Polestar's Import page (`/polestar import`): one guide version, in
@@ -140,15 +126,7 @@ pub(crate) fn polestar_string(
     guide: GuideId,
     version: u32,
 ) -> CmdResult<fg_route::export::polestar::ImportString> {
-    if state.edition() != Edition::Forever {
-        return Err("Polestar is for WoW Forever only".into());
-    }
-    let route = state.render(&state.library().version(&guide, version)?.outcome.route, None)?;
-    Ok(fg_route::export::polestar::import_string(
-        &job::slug(&route.name),
-        &route,
-        version,
-    ))
+    state.studio.polestar_string(&*state, &guide, version)
 }
 
 /// Whether Polestar is installed in WoW Forever (it shows guides there only).
