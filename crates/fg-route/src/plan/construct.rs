@@ -104,7 +104,7 @@ impl Planner<'_> {
                     }
                 }
                 options.sort_by_key(|(lvl, _)| *lvl);
-                if std::env::var_os("FG_DEBUG_STALL").is_some() && options.first().is_some_and(|(l, _)| *l > s.level) {
+                if self.diagnostics.stall && options.first().is_some_and(|(l, _)| *l > s.level) {
                     eprintln!(
                         "gated fallback at {} (to level {:?})",
                         fmt_time(s.time),
@@ -115,7 +115,7 @@ impl Planner<'_> {
                 if let Some((_, stop)) = options.into_iter().find(|(_, stop)| reachable(&s, *stop)) {
                     stop
                 } else {
-                    if std::env::var_os("FG_DEBUG").is_some() {
+                    if self.diagnostics.debug {
                         self.explain_stall(&s);
                     }
                     break;
@@ -133,7 +133,7 @@ impl Planner<'_> {
         }
         *self.zone_changes.borrow_mut() = changes;
 
-        if std::env::var_os("FG_DEBUG").is_some() {
+        if self.diagnostics.debug {
             eprintln!(
                 "greedy ended at level {} after {} stops ({}), replay: {:?}",
                 s.level,
@@ -443,7 +443,7 @@ impl Planner<'_> {
                 break;
             }
             let settled = self.settle_once(&route);
-            if std::env::var_os("FG_DEBUG").is_some() {
+            if self.diagnostics.debug {
                 let quests = |r: &[Stop]| r.iter().filter(|s| s.kind == Kind::TurnIn).count();
                 eprintln!(
                     "settle {round}: {} -> {} stops, {} -> {} turn-ins",
@@ -546,12 +546,12 @@ impl Planner<'_> {
         };
         let route = self.keep_log_quests(route);
         let route = self.place_hearths(self.rebind(self.place_hearths(self.power_first(route))));
-        if std::env::var_os("FG_DEBUG").is_some() {
+        if self.diagnostics.debug {
             for (reason, n) in self.explain_unused(&route) {
                 log(&format!("  unused {reason}: {n}"));
             }
         }
-        if std::env::var_os("FG_DEBUG").is_some() {
+        if self.diagnostics.debug {
             log(&format!(
                 "constructed {} stops: {:?}",
                 route.len(),

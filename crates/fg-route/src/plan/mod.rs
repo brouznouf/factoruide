@@ -63,6 +63,7 @@ pub use search::Effort;
 pub use share::{Exchange, Member};
 pub use state::{Breakdown, Event, Kind, Stop, Timed, fmt_time};
 
+use crate::diagnostics::{self, Diagnostics};
 use crate::model::{Model, Profile, Quest};
 use crate::params::Params;
 use crate::world::{Pos, World};
@@ -132,8 +133,10 @@ pub struct Planner<'a> {
     /// by quest: accept, turn-in, then its objectives. The insertions ask it all the time.
     from_start: Vec<Vec<Pos>>,
     /// Check every incremental evaluation of the search against a full replay (`verified`, or
-    /// the FG_VERIFY environment variable).
+    /// the diagnostics' `verify`).
     verify: bool,
+    /// What the job is asked to tell (`diagnosed`).
+    pub(crate) diagnostics: &'a Diagnostics,
     /// Tells the construction to give up (`abortable`).
     abort: Option<&'a dyn Fn() -> bool>,
     /// The search's seat at the meetings of the final (`sharing`).
@@ -184,7 +187,8 @@ impl<'a> Planner<'a> {
             followers: followers(model),
             in_dungeon,
             from_start: Vec::new(),
-            verify: std::env::var_os("FG_VERIFY").is_some(),
+            verify: false,
+            diagnostics: &diagnostics::OFF,
             abort: None,
             share: None,
             explicit: false,
@@ -239,6 +243,16 @@ impl<'a> Planner<'a> {
     /// The zone changes of the last greedy construction: (level, time, from, to).
     pub(crate) fn zone_changes(&self) -> Vec<ZoneChange> {
         self.zone_changes.borrow().clone()
+    }
+
+    /// The same planner telling and checking what `diagnostics` asks.
+    #[must_use]
+    pub fn diagnosed(self, diagnostics: &'a Diagnostics) -> Self {
+        Self {
+            verify: self.verify || diagnostics.verify,
+            diagnostics,
+            ..self
+        }
     }
 
     /// The same planner doing only what the route says (`explicit`).

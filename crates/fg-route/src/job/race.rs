@@ -6,6 +6,7 @@
 //! it live (`@progress` and `@route` lines).
 
 use super::Interrupt;
+use crate::diagnostics::Diagnostics;
 use crate::model::{Model, Profile};
 use crate::params::{Construction, Params};
 use crate::plan::{Effort, Exchange, Member, Planner, Stop, ZoneChange, fmt_time};
@@ -37,6 +38,7 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
         world: planner.world,
         params: planner.params,
         profile: planner.profile,
+        diagnostics: planner.diagnostics,
         live: &live,
         progress,
         interrupt,
@@ -50,7 +52,7 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
             Vec::new()
         },
     };
-    if std::env::var_os("FG_RACE_LOG").is_some() {
+    if planner.diagnostics.race {
         progress(&format!("forced starts: {:?}", searcher.starts));
     }
     let ranked = std::thread::scope(|scope| {
@@ -303,7 +305,8 @@ impl<'p> Live<'p> {
 
     /// Report every 300 ms until the tournament is over.
     fn watch(&self, searcher: &Searcher<'_>) {
-        let viewer = Planner::new(searcher.model, searcher.world, searcher.params, searcher.profile);
+        let viewer = Planner::new(searcher.model, searcher.world, searcher.params, searcher.profile)
+            .diagnosed(searcher.diagnostics);
         let mut last_route = Instant::now();
         let mut last = Instant::now();
         // Short sleeps, so that a short tournament does not wait for the next report to end.
@@ -478,6 +481,7 @@ struct Searcher<'a> {
     world: &'a World,
     params: &'a Params,
     profile: &'a Profile,
+    diagnostics: &'a Diagnostics,
     live: &'a Live<'a>,
     progress: Progress<'a>,
     /// The user stopping or cancelling the generation.
@@ -534,6 +538,7 @@ impl Searcher<'_> {
         }
         let give_up = || self.interrupt.cancelled() || (!needed && self.interrupt.stopping());
         let planner = Planner::new(self.model, self.world, &p, self.profile)
+            .diagnosed(self.diagnostics)
             .abortable(&give_up)
             .sharing(member);
         let log = |m: &str| {
@@ -557,7 +562,7 @@ impl Searcher<'_> {
         );
         // With FG_RACE_LOG, each candidate's best at doublings of its tries: how soon the race
         // ranking settles.
-        let checkpoints = slot.round.is_none() && std::env::var_os("FG_RACE_LOG").is_some();
+        let checkpoints = slot.round.is_none() && self.diagnostics.race;
         let (tried, best) = (Cell::new(0u64), Cell::new(f64::INFINITY));
         let route = planner.improve_while(
             start,
@@ -596,7 +601,7 @@ impl Searcher<'_> {
         drop(built);
         let changes = planner.zone_changes();
         if let Some(m) = mutant
-            && std::env::var_os("FG_RACE_LOG").is_some()
+            && self.diagnostics.race
         {
             let parent = &self.changes.locked()[m.parent];
             let same = changes.iter().zip(parent).take_while(|(a, b)| a == b).count();
@@ -621,7 +626,9 @@ impl Searcher<'_> {
         let mutant = self.mutants.locked().get(k).cloned().flatten();
         let p = mutant.as_ref().map_or_else(|| self.candidate(k), |m| m.params.clone());
         let give_up = || self.interrupt.cancelled() || (!needed && self.interrupt.stopping());
-        let planner = Planner::new(self.model, self.world, &p, self.profile).abortable(&give_up);
+        let planner = Planner::new(self.model, self.world, &p, self.profile)
+            .diagnosed(self.diagnostics)
+            .abortable(&give_up);
         let route = self.build(k, &planner, mutant.as_ref(), |_| {})?;
         let (score, play) = self.scored(&route);
         self.live.on_built(score, play, &route);
@@ -636,6 +643,7 @@ impl Searcher<'_> {
     /// Score and play time of a route under the request's own settings.
     fn scored(&self, route: &[Stop]) -> (f64, f64) {
         Planner::new(self.model, self.world, self.params, self.profile)
+            .diagnosed(self.diagnostics)
             .simulate_full(route, None)
             .map_or((f64::INFINITY, f64::INFINITY), |(score, spent)| (score, spent.total))
     }
@@ -669,7 +677,7 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> Vec<(f64, usize, Vec<S
             built.extend(build_all(searcher, plan, first..end));
         }
         let built = rank(built);
-        if std::env::var_os("FG_RACE_LOG").is_some() {
+        if searcher.diagnostics.race {
             for (score, k, _) in &built {
                 (searcher.progress)(&format!("built {k}: {}", fmt_time(*score)));
             }
@@ -688,7 +696,7 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> Vec<(f64, usize, Vec<S
         }
         rank(qualified)
     };
-    if std::env::var_os("FG_RACE_LOG").is_some() {
+    if searcher.diagnostics.race {
         for (score, k, _) in &ranked {
             (searcher.progress)(&format!("candidate {k}: {}", fmt_time(*score)));
         }
@@ -881,7 +889,7 @@ fn round(
         }
     }
     let ranked = rank(best);
-    if std::env::var_os("FG_RACE_LOG").is_some() {
+    if searcher.diagnostics.race {
         for (score, k, _) in &ranked {
             (searcher.progress)(&format!("round {} route {k}: {}", stage + 1, fmt_time(*score)));
         }
@@ -897,7 +905,7 @@ fn summary(planner: &Planner<'_>, ranked: &[(f64, usize, Vec<Stop>)]) -> String 
             if let Some((_, b)) = planner.simulate_full(r, None) {
                 return fmt_time(b.total);
             }
-            if std::env::var_os("FG_RACE_LOG").is_some()
+            if planner.diagnostics.race
                 && let Some((n, why)) = planner.diagnose(r)
             {
                 eprintln!("invalid route ({} stops) at stop {n}: {why}", r.len());

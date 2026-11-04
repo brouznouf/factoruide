@@ -276,7 +276,15 @@ impl Studio {
         let overrides = host.overrides(edition)?;
         let walks = self.walks(host, edition);
         let progress = |line: &str| host.progress(line);
-        let outcome = job::plan_interruptible(&conn, &overrides, request, &progress, &self.interrupt, Some(&walks))?;
+        let outcome = job::plan_interruptible(
+            &conn,
+            &overrides,
+            request,
+            &progress,
+            &self.interrupt,
+            Some(&walks),
+            host.diagnostics(),
+        )?;
         Ok(
             library(host, edition).add_version(
                 request,
@@ -307,6 +315,7 @@ impl Studio {
             &progress,
             &self.interrupt,
             Some(&walks),
+            host.diagnostics(),
         )?)
     }
 

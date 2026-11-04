@@ -3,6 +3,7 @@
 //! improved, each beginning in another zone, to show before the guide is computed.
 
 use super::{Interrupt, JobError, Overrides, PlanRequest, Prepared, optimize_interruptible, prepare};
+use crate::diagnostics::Diagnostics;
 use crate::export::{self, StepKind};
 use crate::plan::Planner;
 use crate::terrain::Walks;
@@ -71,8 +72,10 @@ pub fn preview_starts(
     progress: &(dyn Fn(&str) + Sync),
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
+    diagnostics: &Diagnostics,
 ) -> Result<StartPreview, JobError> {
-    let prepared = prepare(conn, overrides, req, &|_| {})?;
+    let mut prepared = prepare(conn, overrides, req, &|_| {})?;
+    prepared.diagnostics = diagnostics.clone();
     preview_starts_of(prepared, progress, interrupt, walks)
 }
 
@@ -102,7 +105,9 @@ pub(crate) fn preview_starts_of(
         });
     }
     let give_up = || interrupt.cancelled();
-    let base = Planner::new(&prepared.model, &prepared.world, params, &prepared.profile).abortable(&give_up);
+    let base = Planner::new(&prepared.model, &prepared.world, params, &prepared.profile)
+        .diagnosed(&prepared.diagnostics)
+        .abortable(&give_up);
     let zones = base.start_zones();
     let mut starts = vec![0];
     starts.extend(zones.iter().map(|&(zone, _)| zone).take(MAX_STARTS - 1));
@@ -135,7 +140,9 @@ pub(crate) fn preview_starts_of(
         p.start_zone = start_zone;
         p.effort = PREVIEW_EFFORT;
         p.construction_random = false;
-        let planner = Planner::new(&prepared.model, &prepared.world, &p, &prepared.profile).abortable(&give_up);
+        let planner = Planner::new(&prepared.model, &prepared.world, &p, &prepared.profile)
+            .diagnosed(&prepared.diagnostics)
+            .abortable(&give_up);
         let best = optimize_interruptible(&planner, &|_| {}, interrupt);
         if interrupt.cancelled() {
             return Err(JobError::Cancelled);

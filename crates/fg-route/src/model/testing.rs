@@ -892,6 +892,7 @@ impl Scenario {
             world,
             model,
             notes,
+            diagnostics: crate::diagnostics::Diagnostics::default(),
         })
     }
 }

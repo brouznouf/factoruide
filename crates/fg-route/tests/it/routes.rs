@@ -784,6 +784,7 @@ fn job_saves_its_walks() {
         &|_| {},
         &interrupt,
         Some(&walks),
+        &fg_route::diagnostics::Diagnostics::default(),
     )
     .unwrap();
     let memory = first.walks.clone().expect("a memory with the outcome");
@@ -798,6 +799,7 @@ fn job_saves_its_walks() {
         &|_| {},
         &interrupt,
         Some(&walks),
+        &fg_route::diagnostics::Diagnostics::default(),
     )
     .unwrap();
     assert_eq!(walks.len(), known, "paths searched again");

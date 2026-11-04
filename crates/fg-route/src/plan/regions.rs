@@ -331,7 +331,7 @@ impl Planner<'_> {
         ));
         let mut s = self.initial_state();
         let mut route = Vec::new();
-        let verbose = std::env::var_os("FG_DEBUG").is_some();
+        let verbose = self.diagnostics.debug;
         // Groups where nothing progressed, ignored until the next level.
         let mut stuck: Vec<bool> = vec![false; groups.list.len()];
         let mut stuck_level = s.level;
@@ -414,7 +414,7 @@ impl Planner<'_> {
             let reason = if impossible {
                 "prerequisite not plannable"
             } else if !self.availability().prereqs_met(s, i as u32) {
-                if std::env::var_os("FG_DEBUG_PREREQ").is_some() && q.level >= 45 {
+                if self.diagnostics.prereq && q.level >= 45 {
                     let names: Vec<String> = q
                         .pre_all
                         .iter()
@@ -440,9 +440,7 @@ impl Planner<'_> {
             } else {
                 "skipped by planner"
             };
-            if let Ok(ids) = std::env::var("FG_DEBUG_QUESTS")
-                && ids.split(',').any(|x| x.trim() == q.id.to_string())
-            {
+            if self.diagnostics.quests.contains(&q.id) {
                 let starts: Vec<String> = q
                     .starts
                     .iter()
@@ -461,7 +459,7 @@ impl Planner<'_> {
                 );
             }
             *reasons.entry(format!("{band} {reason}")).or_insert(0) += 1;
-            if reason == "prerequisites not done" && std::env::var_os("FG_DEBUG_ROOT").is_some() {
+            if reason == "prerequisites not done" && self.diagnostics.root {
                 // Walk up the chain to the first quest not done.
                 let mut j = i;
                 for _ in 0..20 {

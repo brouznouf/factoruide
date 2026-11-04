@@ -1,5 +1,6 @@
 //! What a planning job is asked, what it prepares and what it returns.
 
+use crate::diagnostics::Diagnostics;
 use crate::export::Route;
 use crate::model::{self, Profile};
 use crate::params::Params;
@@ -214,4 +215,6 @@ pub struct Prepared {
     pub world: World,
     pub model: model::Model,
     pub notes: Vec<String>,
+    /// What the job is asked to tell or check (nothing unless the caller sets it).
+    pub diagnostics: Diagnostics,
 }

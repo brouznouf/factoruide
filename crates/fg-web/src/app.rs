@@ -7,6 +7,7 @@ use crate::{embedded, host, store};
 use fg_app::{CmdError, Host, Studio, now};
 use fg_library::{GuideId, Library};
 use fg_route::Route;
+use fg_route::diagnostics::Diagnostics;
 use fg_route::export::fgstring;
 use fg_route::job::{self, Overrides, PlanRequest, RouteStep, StartState};
 use fg_route::sync::LockExt;
@@ -51,6 +52,11 @@ impl Host for WebHost {
 
     fn now(&self) -> CmdResult<u64> {
         now()
+    }
+
+    /// No `FG_*` variables in the browser: nothing to tell.
+    fn diagnostics(&self) -> &Diagnostics {
+        &fg_route::diagnostics::OFF
     }
 }
 

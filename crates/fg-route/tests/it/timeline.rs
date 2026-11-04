@@ -38,7 +38,16 @@ fn on_the_terrain() -> &'static (PlanOutcome, Timeline) {
         .unwrap();
         let interrupt = job::Interrupt::default();
         interrupt.stop();
-        let guide = job::plan_interruptible(&conn, &overrides, &request, &|_| {}, &interrupt, None).unwrap();
+        let guide = job::plan_interruptible(
+            &conn,
+            &overrides,
+            &request,
+            &|_| {},
+            &interrupt,
+            None,
+            &fg_route::diagnostics::Diagnostics::default(),
+        )
+        .unwrap();
         let editor = Editor::open(&conn, &overrides, &request, None).unwrap();
         let timeline = editor.timeline(&guide, &Names::load(&conn, "enUS").unwrap());
         (guide, timeline)

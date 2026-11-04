@@ -1,5 +1,6 @@
 use crate::CmdError;
 use fg_library::Files;
+use fg_route::diagnostics::Diagnostics;
 use fg_route::job::Overrides;
 use fg_route::xp::Edition;
 use rusqlite::Connection;
@@ -34,4 +35,6 @@ pub trait Host: Sync {
     ///
     /// [`CmdError`] when the clock is before 1970.
     fn now(&self) -> Result<u64, CmdError>;
+    /// What a developer asks the generations to tell or check (read once where the app starts).
+    fn diagnostics(&self) -> &Diagnostics;
 }

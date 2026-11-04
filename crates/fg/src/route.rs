@@ -2,8 +2,9 @@
 
 use anyhow::{Context, Result};
 use fg_route::Route;
+use fg_route::diagnostics::Diagnostics;
 use fg_route::export::StepKind;
-use fg_route::job::{self, Overrides, PlanRequest};
+use fg_route::job::{self, Overrides, PlanOutcome, PlanRequest};
 use rusqlite::Connection;
 use std::path::{Path, PathBuf};
 
@@ -96,6 +97,7 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
             &|m| eprintln!("{m}"),
             &job::Interrupt::default(),
             None,
+            &Diagnostics::from_env(),
         )?;
         eprintln!(
             "{} starts in {:.0} s",
@@ -105,11 +107,7 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
         println!("{}", serde_json::to_string_pretty(&starts)?);
         return Ok(());
     }
-    let outcome = job::plan(conn, &overrides, &request, &|m| {
-        if !m.starts_with('@') {
-            eprintln!("{m}");
-        }
-    })?;
+    let outcome = plan(conn, &overrides, &request, None)?;
     for note in &outcome.notes {
         eprintln!("  {note}");
     }
@@ -161,6 +159,29 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
 }
 
 /// A character's profile (JSON, as `--profile-out` writes it).
+/// Plan `request`, its status lines on stderr, with the diagnostics the `FG_*` variables ask.
+fn plan(
+    conn: &Connection,
+    overrides: &Overrides,
+    request: &PlanRequest,
+    walks: Option<&std::sync::Arc<fg_route::terrain::Walks>>,
+) -> Result<PlanOutcome> {
+    let progress = |m: &str| {
+        if !m.starts_with('@') {
+            eprintln!("{m}");
+        }
+    };
+    Ok(job::plan_interruptible(
+        conn,
+        overrides,
+        request,
+        &progress,
+        &job::Interrupt::default(),
+        walks,
+        &Diagnostics::from_env(),
+    )?)
+}
+
 fn read_profile(path: &Path) -> Result<job::StartState> {
     let text = std::fs::read_to_string(path).with_context(|| format!("reading {}", path.display()))?;
     serde_json::from_str(&text).with_context(|| format!("{} is not a profile", path.display()))
@@ -294,18 +315,7 @@ pub fn share(conn: &Connection, overrides_dir: &Path, opts: &ShareOptions, out: 
         start: None,
     };
     let walks = std::sync::Arc::new(fg_route::terrain::Walks::default());
-    let outcome = job::plan_interruptible(
-        conn,
-        &overrides,
-        &request,
-        &|m| {
-            if !m.starts_with('@') {
-                eprintln!("{m}");
-            }
-        },
-        &job::Interrupt::default(),
-        Some(&walks),
-    )?;
+    let outcome = plan(conn, &overrides, &request, Some(&walks))?;
     for note in &outcome.notes {
         eprintln!("  {note}");
     }
@@ -386,15 +396,12 @@ pub fn replay(
             &|m| eprintln!("{m}"),
             &job::Interrupt::default(),
             None,
+            &Diagnostics::from_env(),
         )?;
         eprintln!("{} starts of {} tried", preview.options.len(), preview.tried);
         return Ok(());
     }
-    let outcome = job::plan(conn, &overrides, &request, &|m| {
-        if !m.starts_with('@') {
-            eprintln!("{m}");
-        }
-    })?;
+    let outcome = plan(conn, &overrides, &request, None)?;
     for note in &outcome.notes {
         eprintln!("  {note}");
     }

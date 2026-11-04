@@ -9,6 +9,7 @@ use fg_app::{CmdError, EditOpened, Host, Studio, now};
 use fg_contrib::contribution::{Contribution, SendState};
 use fg_library::{Comparison, DiskFiles, GuideId, GuideSummary, GuideVersion, Library, Origin, VersionMeta};
 use fg_route::Route;
+use fg_route::diagnostics::Diagnostics;
 use fg_route::job::{self, Options, Overrides, PlanOutcome, PlanRequest, RouteStep, StartState};
 use fg_route::sync::LockExt;
 use fg_route::xp::Edition;
@@ -199,6 +200,8 @@ struct AppState {
     send_lock: Mutex<()>,
     /// Wakes the automatic contributions up (turned on in the settings).
     auto_wake: std::sync::mpsc::Sender<()>,
+    /// What the `FG_*` variables the app started with ask the generations to tell or check.
+    diagnostics: Diagnostics,
 }
 
 type CmdResult<T> = Result<T, CmdError>;
@@ -273,6 +276,10 @@ impl Host for AppState {
 
     fn now(&self) -> CmdResult<u64> {
         now()
+    }
+
+    fn diagnostics(&self) -> &Diagnostics {
+        &self.diagnostics
     }
 }
 
@@ -616,6 +623,7 @@ fn main() {
                 app: OnceLock::new(),
                 send_lock: Mutex::new(()),
                 auto_wake,
+                diagnostics: Diagnostics::from_env(),
             });
             // The events of a generation go to this window.
             let _ = app.state::<AppState>().app.set(app.handle().clone());

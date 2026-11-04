@@ -422,7 +422,9 @@ impl Editor {
     /// The planner of the edited guides: it does only what the steps say (`Planner::explicit`).
     pub(super) fn planner(&self) -> Planner<'_> {
         let p = &self.prepared;
-        Planner::new(&p.model, &p.world, &p.params, &p.profile).explicit()
+        Planner::new(&p.model, &p.world, &p.params, &p.profile)
+            .diagnosed(&p.diagnostics)
+            .explicit()
     }
 
     /// The route of a computed guide as steps to edit, and whether it was rebuilt from the
@@ -599,7 +601,7 @@ impl Editor {
     /// flights): replayed as the optimizer does, each thing its simulation did becomes a step.
     fn expand(&self, steps: &[RouteStep]) -> Vec<RouteStep> {
         let p = &self.prepared;
-        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile).diagnosed(&p.diagnostics);
         let edits: Vec<Edit> = steps.iter().filter_map(|s| s.resolve(&planner).ok()).collect();
         planner
             .expand(&edits)

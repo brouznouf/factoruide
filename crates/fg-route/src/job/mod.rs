@@ -53,6 +53,7 @@ pub(crate) use starts::preview_starts_of;
 pub use starts::{StartOption, StartPreview, preview_starts};
 pub use timeline::{InnInfo, Leg, LegMode, NodeInfo, ObjectiveInfo, QuestInfo, StartView, Timeline, TimelineStep};
 
+use crate::diagnostics::Diagnostics;
 use crate::export;
 use crate::model::Model;
 use crate::model::{self, Profile};
@@ -118,7 +119,15 @@ pub fn plan(
     req: &PlanRequest,
     progress: &(dyn Fn(&str) + Sync),
 ) -> Result<PlanOutcome, JobError> {
-    plan_interruptible(conn, overrides, req, progress, &Interrupt::default(), None)
+    plan_interruptible(
+        conn,
+        overrides,
+        req,
+        progress,
+        &Interrupt::default(),
+        None,
+        &Diagnostics::default(),
+    )
 }
 
 /// `plan`, which `interrupt` can end early from another thread. Stopped, the optimization ends
@@ -126,6 +135,7 @@ pub fn plan(
 /// none yet). Cancelled, it fails with `Cancelled` once the step under way ends (loading the
 /// data is not cut). With `walks`, the walking memory kept between jobs, the paths it already
 /// knows are not searched again, and the outcome holds those the route needed (to save with it).
+/// `diagnostics`: what a developer asks it to tell or check.
 pub fn plan_interruptible(
     conn: &Connection,
     overrides: &Overrides,
@@ -133,8 +143,10 @@ pub fn plan_interruptible(
     progress: &(dyn Fn(&str) + Sync),
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
+    diagnostics: &Diagnostics,
 ) -> Result<PlanOutcome, JobError> {
-    let prepared = prepare(conn, overrides, req, progress)?;
+    let mut prepared = prepare(conn, overrides, req, progress)?;
+    prepared.diagnostics = diagnostics.clone();
     plan_prepared(prepared, req, progress, interrupt, walks).map(|(outcome, _)| outcome)
 }
 
@@ -152,7 +164,9 @@ pub(crate) fn plan_prepared(
     if interrupt.cancelled() {
         return Err(JobError::Cancelled);
     }
-    let planner = Planner::new(&prepared.model, &prepared.world, &prepared.params, &prepared.profile);
+    notes::list_skipped(&prepared.model, &prepared.diagnostics, progress);
+    let planner = Planner::new(&prepared.model, &prepared.world, &prepared.params, &prepared.profile)
+        .diagnosed(&prepared.diagnostics);
     let best = optimize_interruptible(&planner, progress, interrupt);
     if interrupt.cancelled() {
         return Err(JobError::Cancelled);
@@ -301,7 +315,7 @@ pub fn prepare(
     required::check_start(&model, &profile, &members)?;
     model.initial.abilities = model.abilities.initial(start, profile.from_level);
     model.initial.reputation = reputation::starting(conn, &params.reputation_goals, &profile, start, &mut start_notes)?;
-    let mut notes = notes::model_notes(&model, &world, progress);
+    let mut notes = notes::model_notes(&model, &world);
     notes.extend(start_notes);
     Ok(Prepared {
         profile,
@@ -309,6 +323,7 @@ pub fn prepare(
         world,
         model,
         notes,
+        diagnostics: Diagnostics::default(),
     })
 }
 
