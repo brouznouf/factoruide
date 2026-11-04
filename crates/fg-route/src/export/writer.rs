@@ -43,7 +43,15 @@ pub(super) fn objective_phrase(o: &Objective) -> Phrase {
     let text = Arg::Text(o.text.clone());
     // Creatures acted on (healed, a spell cast on them: uses, no kills) too: talking is not it.
     let acted_on = o.loc.kind == EntityKind::Npc && o.kills <= 0.0 && o.uses > 0.0;
-    if o.dungeon_of().is_some() || o.loc.kind == EntityKind::Area || acted_on {
+    if o.dungeon.is_none() && o.loc.inside.is_some() {
+        // Inside a dungeon: what to get or kill there, with the number ("Deviate Hide x20").
+        let text = if n > 1 {
+            format!("{} x{n}", o.text)
+        } else {
+            o.text.clone()
+        };
+        Phrase::new("objective.text").arg("text", Arg::Text(text))
+    } else if o.dungeon_of().is_some() || o.loc.kind == EntityKind::Area || acted_on {
         Phrase::new("objective.text").arg("text", text)
     } else {
         let (key, counted) = match o.loc.kind {

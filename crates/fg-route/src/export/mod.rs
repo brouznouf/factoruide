@@ -142,6 +142,7 @@ pub fn build_traced(
             }
         }
     }
+    merge_inside(&mut steps, &mut xps);
     // Items in limited supply offered at the other vendors passed by on the way.
     vendors::add_tries(&writer, &mut steps, &mut xps);
     let mut checkpoints = checkpoints::checkpoints(planner, profile, &mut steps);
@@ -334,5 +335,59 @@ fn route_profession(p: &ProfessionPlan) -> RouteProfession {
         target: p.target,
         start: p.start,
         curve: p.curve.clone(),
+    }
+}
+
+/// The objectives of a quest done one after the other inside a dungeon, as one step ("Deviate
+/// Eradication: Deviate Ravager x7, Deviate Viper x7"), done once the quest is complete.
+fn merge_inside(steps: &mut Vec<Step>, xps: &mut Vec<i64>) {
+    let alike = |a: &Step, b: &Step| {
+        a.kind == StepKind::Objective && b.kind == StepKind::Objective && a.inside && b.inside && a.quest == b.quest
+    };
+    let mut k = 0;
+    while k + 1 < steps.len() {
+        if !alike(&steps[k], &steps[k + 1]) {
+            k += 1;
+            continue;
+        }
+        let next = steps.remove(k + 1);
+        xps.remove(k);
+        let step = &mut steps[k];
+        let mut texts: Vec<Arg> = Vec::new();
+        for say in step.say.iter().chain(&next.say) {
+            match (say.key.as_str(), say.args.get("text"), say.args.get("objectives")) {
+                ("objective.text", Some(text), _) => texts.push(text.clone()),
+                ("dungeon.quest", _, Some(Arg::List(list))) => texts.extend(list.iter().cloned()),
+                _ => {}
+            }
+        }
+        let quest = Arg::Quest(step.quest.unwrap_or(0), step.quest_name.clone().unwrap_or_default());
+        step.say = vec![
+            Phrase::new("dungeon.quest")
+                .arg("quest", quest)
+                .arg("objectives", Arg::List(texts)),
+        ];
+        (step.objective, step.slot) = (None, None);
+        for (id, name) in next.mob_ids.iter().zip(&next.mobs) {
+            if !step.mob_ids.contains(id) {
+                step.mob_ids.push(*id);
+                step.mobs.push(name.clone());
+            }
+        }
+        (step.time, step.level, step.xp) = (next.time, next.level, next.xp.or(step.xp));
+    }
+    // One objective: said with its quest too ("Deviate Hides: Deviate Hide x20").
+    for step in steps.iter_mut().filter(|s| s.kind == StepKind::Objective && s.inside) {
+        if let [say] = step.say.as_slice()
+            && say.key == "objective.text"
+            && let Some(text) = say.args.get("text").cloned()
+        {
+            let quest = Arg::Quest(step.quest.unwrap_or(0), step.quest_name.clone().unwrap_or_default());
+            step.say = vec![
+                Phrase::new("dungeon.quest")
+                    .arg("quest", quest)
+                    .arg("objectives", Arg::List(vec![text])),
+            ];
+        }
     }
 }

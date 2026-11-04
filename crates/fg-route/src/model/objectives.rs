@@ -320,13 +320,9 @@ impl QuestBuilder<'_> {
             ObjectiveKind::Trigger | ObjectiveKind::Other => None,
         }?;
         let dungeon = &self.sources.dungeons[d];
-        let text = text.clone().unwrap_or_else(|| {
-            format!(
-                "{}: {}",
-                dungeon.name,
-                self.sources.entities.name(kind.entity(), target)
-            )
-        });
+        let name = self.sources.entities.name(kind.entity(), target);
+        // Done by the group outside: said with the dungeon's name (`dungeon_quests`).
+        let text = text.clone().unwrap_or_else(|| format!("{}: {name}", dungeon.name));
         // An item only creatures outside the instance carry (the Miners' Union Cards of the
         // Deadmines' quarry): done with the dungeon's group, at the place they stand, which is
         // next to the entrance, not inside.
@@ -342,9 +338,10 @@ impl QuestBuilder<'_> {
                 count,
                 ..Objective::plain(place, text, 0.0)
             },
+            // Inside: what to get there, by its name ("Deviate Hide").
             None => Objective {
                 count,
-                ..Objective::plain(self.inside(d), text, 0.0)
+                ..Objective::plain(self.inside(d), row.2.clone().unwrap_or(name), 0.0)
             },
         })
     }
