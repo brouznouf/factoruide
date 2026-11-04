@@ -887,7 +887,7 @@ fn passage_areas(world: &World) -> Vec<Vec<Area>> {
         .map(|i| {
             let mut areas = passages[i].clone();
             if ends(i) {
-                for j in (0..passages.len()).filter(|&j| ends(j) && world.pass_dist[i][j].is_finite()) {
+                for j in (0..passages.len()).filter(|&j| ends(j) && world.pass_dist(i, j).is_finite()) {
                     areas.extend(passages[j].iter().filter(|a| !passages[i].contains(a)));
                 }
             }

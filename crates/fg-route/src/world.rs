@@ -122,7 +122,7 @@ thread_local! {
 /// What a table of 2^17 buckets holds (7/8 of them): it never doubles for the last ones.
 const WALKED_MAX: usize = (1 << 17) / 8 * 7;
 
-/// Walks between the passages (`World::pass_closed`): shortest distances and the next passage
+/// Walks between the passages for a level (`World::pass_walks`): shortest distances and the next passage
 /// on each.
 type PassGraph = (Vec<Vec<f64>>, Vec<Vec<usize>>);
 
@@ -200,14 +200,14 @@ pub struct World {
     pub link_quests: Vec<(i64, bool)>,
     /// Time to chain links i..j (boarding i, leaving j), walking in between, by set of opened
     /// `link_quests` (bit k: quest k taken, or in the log).
-    link_chains: Vec<Vec<Vec<f64>>>,
+    link_chains: LinkChains,
     /// Walkable passages between zones and the shortest walk between any two of them.
     pub passes: Vec<Pass>,
-    pub pass_dist: Vec<Vec<f64>>,
-    /// Next passage on the shortest walk from passage i to passage j.
-    pass_next: Vec<Vec<usize>>,
-    /// Whether the shortest walk from passage i to passage j takes a shortcut (them included).
-    pass_shortcut: Vec<Vec<bool>>,
+    /// The walks between the passages, shared with the other worlds of the same passages
+    /// (`WorldTables`): shortest distances, next passage on the shortest walk from passage i to
+    /// passage j, whether it takes a shortcut (them included), and the same for each level whose
+    /// zones too strong cost more (`pass_graph_at`).
+    pass_walks: PassWalks,
     /// Median level of the hostile mobs of each zone (`add_zone_levels`).
     zone_levels: FxHashMap<i64, u8>,
     /// Levels a zone's median hostile mob may be above the character's (the top of its band of
@@ -215,10 +215,6 @@ pub struct World {
     zone_gap: u8,
     /// The walk level of each band of 5 levels (`World::walk_level`).
     band_levels: Vec<u8>,
-    /// The same walks between passages for a character of a level (the top of its band of 5),
-    /// where crossing the zones too strong for it (`ZONE_GAP`) costs many times more: distances and next
-    /// passages. The levels with no zone closed are not here (`pass_graph`).
-    pass_closed: FxHashMap<u8, PassGraph>,
     pub zone_passes: FxHashMap<i64, Vec<usize>>,
     /// The passages joining each large terrain area (continent, area) to others: passage and
     /// index in its `areas`. Not the shortcuts nor the one-way passages (taken only on a walk
@@ -674,15 +670,12 @@ impl World {
             taxi_paths,
             links: Vec::new(),
             link_quests: Vec::new(),
-            link_chains: vec![Vec::new()],
+            link_chains: std::sync::Arc::new(vec![Vec::new()]),
             passes: Vec::new(),
-            pass_dist: Vec::new(),
-            pass_next: Vec::new(),
-            pass_shortcut: Vec::new(),
+            pass_walks: PassWalks::default(),
             zone_levels: FxHashMap::default(),
             zone_gap: 0,
             band_levels: Vec::new(),
-            pass_closed: FxHashMap::default(),
             zone_passes: FxHashMap::default(),
             taxi_by_x: Vec::new(),
             terrain: crate::terrain::Terrain::load(conn, drop_tier)?,
@@ -739,15 +732,12 @@ impl World {
             taxi_paths: HashMap::new(),
             links: Vec::new(),
             link_quests: Vec::new(),
-            link_chains: vec![Vec::new()],
+            link_chains: std::sync::Arc::new(vec![Vec::new()]),
             passes: Vec::new(),
-            pass_dist: Vec::new(),
-            pass_next: Vec::new(),
-            pass_shortcut: Vec::new(),
+            pass_walks: PassWalks::default(),
             zone_levels: FxHashMap::default(),
             zone_gap: 0,
             band_levels: Vec::new(),
-            pass_closed: FxHashMap::default(),
             zone_passes: FxHashMap::default(),
             taxi_by_x: Vec::new(),
             terrain: crate::terrain::Terrain::empty(),
@@ -1230,7 +1220,7 @@ impl World {
             world: self,
             walk_speed,
         });
-        self.link_chains.clone_from(&chains);
+        self.link_chains = chains;
     }
 
     /// The links' chain table (see `link_chains`) with the links of the quests not in `open`
@@ -1620,14 +1610,11 @@ impl World {
             }
         }
         self.walk_id = NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed);
-        let walks = tables.walks.compute(self);
-        (self.pass_dist, self.pass_next, self.pass_shortcut, self.pass_closed) =
-            (walks.0.clone(), walks.1.clone(), walks.2.clone(), walks.3.clone());
+        self.pass_walks = tables.walks.compute(self);
         Ok(warnings)
     }
 
-    /// The walks between the passages (`pass_dist`, `pass_next`, `pass_shortcut`,
-    /// `pass_closed`).
+    /// The walks between the passages (`pass_walks`).
     fn pass_walks(&self) -> PassWalks {
         // Walking from a passage to another taken from the zone it leads into, then all-pairs
         // shortest walks (one-way passages: not the same both ways). Between two passages of
@@ -1848,11 +1835,18 @@ impl World {
                 .is_some_and(|&l| l > level.saturating_add(self.zone_gap))
     }
 
-    /// The walks between passages for a character of `level` (0: no zone is closed).
+    /// The shortest walk from passage `i` to passage `j`, no zone closed (infinite: none).
+    pub fn pass_dist(&self, i: usize, j: usize) -> f64 {
+        self.pass_walks.0[i][j]
+    }
+
+    /// The walks between passages for a character of `level` (0: no zone is closed): the level of
+    /// a band of 5 where crossing the zones too strong for it (`ZONE_GAP`) costs many times more.
     fn pass_graph_at(&self, level: u8) -> (&Vec<Vec<f64>>, &Vec<Vec<usize>>) {
-        match self.pass_closed.get(&level) {
+        let (dist, next, _, closed) = &*self.pass_walks;
+        match closed.get(&level) {
             Some((d, next)) => (d, next),
-            None => (&self.pass_dist, &self.pass_next),
+            None => (dist, next),
         }
     }
 
@@ -1877,7 +1871,7 @@ impl World {
             return Vec::new();
         };
         // Most walks: no shortcut between these zones, the walk itself is not looked for.
-        if !pa.iter().any(|&i| pb.iter().any(|&j| self.pass_shortcut[i][j])) {
+        if !pa.iter().any(|&i| pb.iter().any(|&j| self.pass_walks.2[i][j])) {
             return Vec::new();
         }
         match self.through_passes(a, b, pa, pb, 0) {
