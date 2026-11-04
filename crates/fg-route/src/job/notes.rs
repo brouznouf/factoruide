@@ -1,5 +1,6 @@
 //! The planning report: how many quests can be planned, and why the others are left out.
 
+use super::{JobEvent, Watch};
 use crate::diagnostics::Diagnostics;
 use crate::model::Model;
 use crate::world::World;
@@ -26,17 +27,17 @@ pub(super) fn model_notes(model: &Model, world: &World) -> Vec<String> {
 
 /// The quests left out for the reason `diagnostics.skipped_for` asks, and why those of
 /// `diagnostics.skipped` are.
-pub(super) fn list_skipped(model: &Model, diagnostics: &Diagnostics, progress: &(dyn Fn(&str) + Sync)) {
+pub(super) fn list_skipped(model: &Model, diagnostics: &Diagnostics, progress: Watch<'_>) {
     if let Some(reason) = &diagnostics.skipped_for {
         for (id, name, why) in &model.skipped {
             if why.contains(reason.as_str()) {
-                progress(&format!("skipped {id} {name}: {why}"));
+                progress(&JobEvent::Status(&format!("skipped {id} {name}: {why}")));
             }
         }
     }
     for (id, name, reason) in &model.skipped {
         if diagnostics.skipped.contains(id) {
-            progress(&format!("skipped {name} ({id}): {reason}"));
+            progress(&JobEvent::Status(&format!("skipped {name} ({id}): {reason}")));
         }
     }
 }

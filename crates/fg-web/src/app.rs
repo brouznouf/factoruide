@@ -46,8 +46,8 @@ impl Host for WebHost {
         overrides(edition)
     }
 
-    fn progress(&self, line: &str) {
-        host::event("plan-progress", &serde_json::Value::String(line.to_owned()));
+    fn event(&self, event: &job::JobEvent<'_>) {
+        host::event("plan-progress", &serde_json::Value::String(event.to_string()));
     }
 
     fn now(&self) -> CmdResult<u64> {

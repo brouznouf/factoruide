@@ -901,7 +901,7 @@ impl Scenario {
     /// The scenario planned as a job is: with `interrupt`, `walks` and a `progress` to listen to.
     pub fn job(
         self,
-        progress: &(dyn Fn(&str) + Sync),
+        progress: crate::job::Watch<'_>,
         interrupt: &crate::job::Interrupt,
         walks: Option<&std::sync::Arc<crate::terrain::Walks>>,
     ) -> Result<crate::job::PlanOutcome, crate::job::JobError> {

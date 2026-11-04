@@ -166,9 +166,9 @@ fn plan(
     request: &PlanRequest,
     walks: Option<&std::sync::Arc<fg_route::terrain::Walks>>,
 ) -> Result<PlanOutcome> {
-    let progress = |m: &str| {
-        if !m.starts_with('@') {
-            eprintln!("{m}");
+    let progress = |event: &job::JobEvent<'_>| {
+        if let Some(line) = event.status() {
+            eprintln!("{line}");
         }
     };
     Ok(job::plan_interruptible(

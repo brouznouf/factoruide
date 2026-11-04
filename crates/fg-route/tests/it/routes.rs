@@ -813,7 +813,8 @@ fn panicking_search_ends_the_job() {
     std::thread::spawn(move || {
         let scenario = leveling(12).params(|p| (p.threads, p.effort) = (1, 0.05));
         // The search's first message, from its own thread.
-        let progress = |m: &str| assert!(!m.starts_with("start:"), "search failed");
+        let progress =
+            |e: &job::JobEvent<'_>| assert!(!e.status().is_some_and(|m| m.starts_with("start:")), "search failed");
         let interrupt = job::Interrupt::default();
         let outcome = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
             scenario.job(&progress, &interrupt, None)
@@ -866,8 +867,9 @@ fn panicking_search_does_not_hold_the_meetings() {
         });
         // The first search of the final, at its first message (the other one waits at a meeting).
         let starts = std::sync::atomic::AtomicUsize::new(0);
-        let progress = |m: &str| {
-            let final_start = m.starts_with("start:") && starts.fetch_add(1, std::sync::atomic::Ordering::Relaxed) == 1;
+        let progress = |e: &job::JobEvent<'_>| {
+            let final_start = e.status().is_some_and(|m| m.starts_with("start:"))
+                && starts.fetch_add(1, std::sync::atomic::Ordering::Relaxed) == 1;
             assert!(!final_start, "search failed");
         };
         let interrupt = job::Interrupt::default();

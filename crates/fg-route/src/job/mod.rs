@@ -6,6 +6,7 @@ pub(crate) use character::character;
 mod draft;
 mod edit;
 mod error;
+mod event;
 mod flights;
 mod group;
 mod notes;
@@ -28,6 +29,7 @@ pub use edit::{
     RouteStep, StepReport,
 };
 pub use error::{JobError, RequestError};
+pub use event::{JobEvent, Watch};
 pub use flights::inferred_flights;
 pub use options::{
     FactionOption, FlightOption, NamedId, Options, RaceOption, ZoneOption, class_quests, options, race_classes,
@@ -50,7 +52,7 @@ pub use services::{Place, Service, places, services_lua};
 pub use start::{Bind, LogObjective, LogQuest, MapPos, QuestId, Skill, Standing, StartState};
 #[cfg(any(test, feature = "testing"))]
 pub(crate) use starts::preview_starts_of;
-pub use starts::{StartOption, StartPreview, preview_starts};
+pub use starts::{StartCandidate, StartOption, StartPreview, preview_starts};
 pub use timeline::{InnInfo, Leg, LegMode, NodeInfo, ObjectiveInfo, QuestInfo, StartView, Timeline, TimelineStep};
 
 use crate::diagnostics::Diagnostics;
@@ -117,7 +119,7 @@ pub fn plan(
     conn: &Connection,
     overrides: &Overrides,
     req: &PlanRequest,
-    progress: &(dyn Fn(&str) + Sync),
+    progress: Watch<'_>,
 ) -> Result<PlanOutcome, JobError> {
     plan_interruptible(
         conn,
@@ -140,7 +142,7 @@ pub fn plan_interruptible(
     conn: &Connection,
     overrides: &Overrides,
     req: &PlanRequest,
-    progress: &(dyn Fn(&str) + Sync),
+    progress: Watch<'_>,
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
     diagnostics: &Diagnostics,
@@ -154,7 +156,7 @@ pub fn plan_interruptible(
 pub(crate) fn plan_prepared(
     mut prepared: Prepared,
     req: &PlanRequest,
-    progress: &(dyn Fn(&str) + Sync),
+    progress: Watch<'_>,
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
 ) -> Result<(PlanOutcome, Prepared), JobError> {
@@ -191,10 +193,10 @@ pub(crate) fn plan_prepared(
             .unwrap_or_default();
         return Err(JobError::NoRoute(why));
     }
-    progress(&format!(
+    progress(&JobEvent::Status(&format!(
         "{}: level {} -> {} in {} with {} quests",
         route.name, route.from_level, route.to_level, route.total_time_text, route.quests
-    ));
+    )));
     let end = planner.end_of(&best).map(|end| {
         let members = req.members(prepared.params.edition.rules());
         let start = members
@@ -239,12 +241,7 @@ pub fn manual(
 }
 
 /// Everything a route is planned from: the character, the settings, the world and the quests.
-pub fn prepare(
-    conn: &Connection,
-    overrides: &Overrides,
-    req: &PlanRequest,
-    progress: &(dyn Fn(&str) + Sync),
-) -> Result<Prepared> {
+pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, progress: Watch<'_>) -> Result<Prepared> {
     let (mut profile, mut params) = character(conn, overrides, req)?;
     profile.required_quests = required::resolve(conn, req, &profile, &params)?;
     if params.edition == crate::xp::Edition::Forever
@@ -259,11 +256,15 @@ pub fn prepare(
             window: model::CompletionWindow::default(),
         });
     }
-    progress("Loading the world");
-    progress(r#"@progress {"phase":"prepare","step":"world"}"#);
+    progress(&JobEvent::Status("Loading the world"));
+    progress(&JobEvent::Progress(
+        &serde_json::json!({ "phase": "prepare", "step": "world" }),
+    ));
     let world = load_world(conn, overrides, &profile, &params, progress)?;
-    progress("Loading quests");
-    progress(r#"@progress {"phase":"prepare","step":"quests"}"#);
+    progress(&JobEvent::Status("Loading quests"));
+    progress(&JobEvent::Progress(
+        &serde_json::json!({ "phase": "prepare", "step": "quests" }),
+    ));
     let members = req.members(params.edition.rules());
     let starts: Vec<_> = if members.is_empty() {
         req.start.iter().collect()
@@ -302,13 +303,13 @@ pub fn prepare(
                 .flatten()
                 .unwrap_or_else(|| format!("Quest {id}"));
         }
-        progress(&format!(
+        progress(&JobEvent::Status(&format!(
             "Starting from {} (level {}): {} quests done, {} in the log",
             start.name,
             start.level,
             model.initial.turned.len(),
             model.initial.log.len()
-        ));
+        )));
     } else {
         model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id));
     }
@@ -417,7 +418,7 @@ fn load_world(
     overrides: &Overrides,
     profile: &Profile,
     params: &Params,
-    progress: &(dyn Fn(&str) + Sync),
+    progress: Watch<'_>,
 ) -> Result<World> {
     world_for(conn, overrides, profile.faction, profile.race_id, params, progress)
 }
@@ -443,7 +444,7 @@ fn world_for(
     faction: crate::faction::Faction,
     race_id: i64,
     params: &Params,
-    progress: &(dyn Fn(&str) + Sync),
+    progress: Watch<'_>,
 ) -> Result<World> {
     let mut world = World::load(conn, faction, params.flight_speed, params.drop_tier())?;
     let passes: Vec<_> = overrides
@@ -454,13 +455,13 @@ fn world_for(
         .collect();
     world.add_zone_levels(conn, params.zone_gap)?;
     for warning in world.close(&overrides.closed) {
-        progress(&warning);
+        progress(&JobEvent::Status(&warning));
     }
     for warning in world.enclose(&overrides.enclosed) {
-        progress(&warning);
+        progress(&JobEvent::Status(&warning));
     }
     for warning in world.add_caves(&overrides.caves) {
-        progress(&warning);
+        progress(&JobEvent::Status(&warning));
     }
     // What the walks between the passages depend on, besides the database.
     world.stamp(&format!(
@@ -468,7 +469,7 @@ fn world_for(
         overrides.closed, overrides.enclosed, overrides.caves, passes, params.zone_gap, params.detour, params.run_speed
     ));
     for warning in world.add_passes(conn, &passes)? {
-        progress(&warning);
+        progress(&JobEvent::Status(&warning));
     }
     let links = overrides.links_of_race(race_id);
     world.add_links(&links, faction, params.run_speed / params.detour, params.link_wait);

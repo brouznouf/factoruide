@@ -3,6 +3,7 @@
 //! improved, each beginning in another zone, to show before the guide is computed.
 
 use super::{Interrupt, JobError, Overrides, PlanRequest, Prepared, optimize_interruptible, prepare};
+use super::{JobEvent, Watch};
 use crate::diagnostics::Diagnostics;
 use crate::export::{self, StepKind};
 use crate::plan::Planner;
@@ -42,7 +43,7 @@ pub struct StartOption {
 
 /// A zone a start can be forced to, known before any route is computed.
 #[derive(Debug, Clone, Serialize)]
-pub(crate) struct StartCandidate {
+pub struct StartCandidate {
     /// What to set as `Params::start_zone` (0: the planner's own choice).
     pub start_zone: i64,
     pub ui_map: i64,
@@ -69,7 +70,7 @@ pub fn preview_starts(
     conn: &Connection,
     overrides: &Overrides,
     req: &PlanRequest,
-    progress: &(dyn Fn(&str) + Sync),
+    progress: Watch<'_>,
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
     diagnostics: &Diagnostics,
@@ -82,7 +83,7 @@ pub fn preview_starts(
 /// The same for what `prepare` loaded.
 pub(crate) fn preview_starts_of(
     mut prepared: Prepared,
-    progress: &(dyn Fn(&str) + Sync),
+    progress: Watch<'_>,
     interrupt: &Interrupt,
     walks: Option<&Arc<Walks>>,
 ) -> Result<StartPreview, JobError> {
@@ -120,7 +121,7 @@ pub(crate) fn preview_starts_of(
                 quests: zones.iter().find(|z| z.0 == start_zone).map_or(0, |z| z.1),
             })
             .collect();
-        progress(&format!("@starts {}", serde_json::to_string(&candidates)?));
+        progress(&JobEvent::Starts(&candidates));
     }
     if starts.len() < 2 {
         return Ok(StartPreview {
@@ -176,7 +177,7 @@ pub(crate) fn preview_starts_of(
                 .collect::<Vec<_>>()
                 .join(" / ")
         );
-        progress(&line);
+        progress(&JobEvent::Status(&line));
         details.push(line);
         let option = StartOption {
             zone,
@@ -192,7 +193,7 @@ pub(crate) fn preview_starts_of(
                 .map(|s| s.text.clone())
                 .collect(),
         };
-        progress(&format!("@start {}", serde_json::to_string(&option)?));
+        progress(&JobEvent::Start(&option));
         found.push(option);
     }
     // One per zone (two starts that begin in the same zone are the same start), the best first,

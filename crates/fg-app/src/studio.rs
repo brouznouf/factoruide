@@ -275,7 +275,7 @@ impl Studio {
         let conn = host.open_db(edition)?;
         let overrides = host.overrides(edition)?;
         let walks = self.walks(host, edition);
-        let progress = |line: &str| host.progress(line);
+        let progress = |event: &job::JobEvent<'_>| host.event(event);
         let outcome = job::plan_interruptible(
             &conn,
             &overrides,
@@ -307,7 +307,7 @@ impl Studio {
         let edition = request_edition(host, request);
         let conn = host.open_db(edition)?;
         let walks = self.walks(host, edition);
-        let progress = |line: &str| host.progress(line);
+        let progress = |event: &job::JobEvent<'_>| host.event(event);
         Ok(job::preview_starts(
             &conn,
             &host.overrides(edition)?,

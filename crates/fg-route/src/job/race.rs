@@ -6,6 +6,7 @@
 //! it live (`@progress` and `@route` lines).
 
 use super::Interrupt;
+use super::{JobEvent, Watch};
 use crate::diagnostics::Diagnostics;
 use crate::model::{Model, Profile};
 use crate::params::{Construction, Params};
@@ -18,7 +19,7 @@ use std::sync::atomic::{AtomicBool, AtomicU64, AtomicUsize, Ordering};
 use std::sync::{Mutex, OnceLock};
 use std::time::{Duration, Instant};
 
-type Progress<'p> = &'p (dyn Fn(&str) + Sync);
+type Progress<'p> = Watch<'p>;
 
 /// Build routes and improve them in a tournament of `params.threads` searches (see the module).
 /// The best wins.
@@ -31,7 +32,7 @@ pub fn optimize(planner: &Planner<'_>, progress: Progress<'_>) -> Vec<Stop> {
 /// best route so far is returned; cancelled, the caller throws it away.
 pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, interrupt: &Interrupt) -> Vec<Stop> {
     let plan = Tournament::new(planner.params);
-    progress(&plan.announce());
+    progress(&JobEvent::Status(&plan.announce()));
     let live = Live::new(&plan, planner.params, progress);
     let searcher = Searcher {
         model: planner.model,
@@ -53,7 +54,7 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
         },
     };
     if planner.diagnostics.race {
-        progress(&format!("forced starts: {:?}", searcher.starts));
+        progress(&JobEvent::Status(&format!("forced starts: {:?}", searcher.starts)));
     }
     let ranked = std::thread::scope(|scope| {
         scope.spawn(|| live.watch(&searcher));
@@ -84,7 +85,7 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
     });
     live.report();
     if !interrupt.cancelled() {
-        progress(&summary(planner, &ranked));
+        progress(&JobEvent::Status(&summary(planner, &ranked)));
     }
     ranked.into_iter().next().map(|(_, _, r)| r).unwrap_or_default()
 }
@@ -385,7 +386,7 @@ impl<'p> Live<'p> {
                 "candidates": self.candidates,
                 "best": if best.is_finite() { Some(best) } else { None },
             });
-            (self.progress)(&format!("@progress {msg}"));
+            (self.progress)(&JobEvent::Progress(&msg));
             return;
         };
         let (routes, selected) = self.followed();
@@ -415,7 +416,7 @@ impl<'p> Live<'p> {
                 msg["searches"] = (self.threads / ids.len().max(1)).into();
             }
         }
-        (self.progress)(&format!("@progress {msg}"));
+        (self.progress)(&JobEvent::Progress(&msg));
     }
 
     /// `@route {points}` for live drawing, when the best route changed (at most every 1.5 s).
@@ -433,7 +434,7 @@ impl<'p> Live<'p> {
         };
         *last = Instant::now();
         let points = planner.places().polyline(&route, 800);
-        (self.progress)(&format!("@route {}", serde_json::json!({ "points": points })));
+        (self.progress)(&JobEvent::Route(&points));
     }
 
     /// A route built before the race: the best so far is drawn.
@@ -543,7 +544,7 @@ impl Searcher<'_> {
             .sharing(member);
         let log = |m: &str| {
             if slot.logs {
-                (self.progress)(m);
+                (self.progress)(&JobEvent::Status(m));
             }
         };
         // A start: built here, or a candidate of the race built beforehand (`screen`).
@@ -571,7 +572,10 @@ impl Searcher<'_> {
                 self.live.tried.fetch_add(1, Ordering::Relaxed);
                 let done = tried.replace(tried.get() + 1);
                 if checkpoints && (done == 0 || (done % 2500 == 0 && (done / 2500).is_power_of_two())) {
-                    (self.progress)(&format!("candidate {k} at {done} tries: {:.0}", best.get()));
+                    (self.progress)(&JobEvent::Status(&format!(
+                        "candidate {k} at {done} tries: {:.0}",
+                        best.get()
+                    )));
                 }
                 !self.interrupt.stopping()
             },
@@ -605,12 +609,12 @@ impl Searcher<'_> {
         {
             let parent = &self.changes.locked()[m.parent];
             let same = changes.iter().zip(parent).take_while(|(a, b)| a == b).count();
-            (self.progress)(&format!(
+            (self.progress)(&JobEvent::Status(&format!(
                 "candidate {k} (mutant of {}, {}): zone changes as its parent's up to {same} of {}",
                 m.parent,
                 m.what,
                 parent.len()
-            ));
+            )));
         }
         let mut all = self.changes.locked();
         if all.len() <= k {
@@ -679,7 +683,7 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> Vec<(f64, usize, Vec<S
         let built = rank(built);
         if searcher.diagnostics.race {
             for (score, k, _) in &built {
-                (searcher.progress)(&format!("built {k}: {}", fmt_time(*score)));
+                (searcher.progress)(&JobEvent::Status(&format!("built {k}: {}", fmt_time(*score))));
             }
         }
         let kept = built
@@ -698,7 +702,7 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> Vec<(f64, usize, Vec<S
     };
     if searcher.diagnostics.race {
         for (score, k, _) in &ranked {
-            (searcher.progress)(&format!("candidate {k}: {}", fmt_time(*score)));
+            (searcher.progress)(&JobEvent::Status(&format!("candidate {k}: {}", fmt_time(*score))));
         }
     }
     ranked
@@ -891,7 +895,11 @@ fn round(
     let ranked = rank(best);
     if searcher.diagnostics.race {
         for (score, k, _) in &ranked {
-            (searcher.progress)(&format!("round {} route {k}: {}", stage + 1, fmt_time(*score)));
+            (searcher.progress)(&JobEvent::Status(&format!(
+                "round {} route {k}: {}",
+                stage + 1,
+                fmt_time(*score)
+            )));
         }
     }
     ranked

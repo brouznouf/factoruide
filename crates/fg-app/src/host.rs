@@ -1,7 +1,7 @@
 use crate::CmdError;
 use fg_library::Files;
 use fg_route::diagnostics::Diagnostics;
-use fg_route::job::Overrides;
+use fg_route::job::{JobEvent, Overrides};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 
@@ -26,8 +26,8 @@ pub trait Host: Sync {
     ///
     /// [`CmdError`] when the data is not there or cannot be read.
     fn overrides(&self, edition: Edition) -> Result<Overrides, CmdError>;
-    /// A line of what a generation is doing (it may come from several threads).
-    fn progress(&self, line: &str);
+    /// What a generation tells (it may come from several threads).
+    fn event(&self, event: &JobEvent<'_>);
     /// Unix seconds now: when a guide version is made, a report written... ([`crate::now`] for
     /// the system clock; tests give a fixed time).
     ///

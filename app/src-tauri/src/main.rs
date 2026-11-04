@@ -268,9 +268,9 @@ impl Host for AppState {
         overrides(edition)
     }
 
-    fn progress(&self, line: &str) {
+    fn event(&self, event: &job::JobEvent<'_>) {
         if let Some(app) = self.app.get() {
-            let _ = app.emit("plan-progress", line.to_owned());
+            let _ = app.emit("plan-progress", event.to_string());
         }
     }
 
