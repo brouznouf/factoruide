@@ -79,6 +79,22 @@ use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use indexes::Indexes;
 use travel::{FlightTables, Grounds, Legs, Trips};
+
+/// What a planner computed already, kept for its next calls. The keys hold only what changes from
+/// one call of a planner to the next (places, levels, flight paths known): a memo is for the
+/// planner of one model, world, settings and mode (an `explicit` one does not take the same trips).
+#[derive(Default)]
+struct Memo {
+    /// Flight times and prices between known flight paths, by known set.
+    flights: FlightTables,
+    /// Trips already computed (see `travel::Legs`).
+    legs: Legs,
+    grounds: Grounds,
+    /// Mobs farmed on each walk, by level (see `on_the_way::farm_along`).
+    farm_walks: FarmWalks,
+    /// The camps nearest to each place grinding starts at (see `camp::camp`).
+    near_camps: NearCamps,
+}
 use worth::Worth;
 
 /// What a planner simulates: its own routes, or an imposed route replayed as it is (no grinding
@@ -97,15 +113,8 @@ pub struct Planner<'a> {
     pub world: &'a World,
     pub params: &'a Params,
     pub profile: &'a Profile,
-    /// Flight times and prices between known flight paths, by known set.
-    flights: FlightTables,
-    /// Trips already computed (see `travel::Legs`).
-    legs: Legs,
-    grounds: Grounds,
-    /// Mobs farmed on each walk, by level (see `on_the_way::farm_along`).
-    farm_walks: FarmWalks,
-    /// The camps nearest to each place grinding starts at (see `camp::camp`).
-    near_camps: NearCamps,
+    /// What it computed already: its own, its keys tell only the calls of one planner apart.
+    memo: Memo,
     /// The next walk kills every normal mob met, beyond `farm_cap` (a step of an edited route).
     farm_all: Cell<bool>,
     /// Walks go into the zones too strong for the character (a step of an edited route that cannot
@@ -169,11 +178,7 @@ impl<'a> Planner<'a> {
             world,
             params,
             profile,
-            flights: FlightTables::default(),
-            legs: Legs::default(),
-            grounds: Grounds::default(),
-            farm_walks: FarmWalks::default(),
-            near_camps: NearCamps::default(),
+            memo: Memo::default(),
             farm_all: Cell::new(false),
             open_walks: Cell::new(false),
             heres: RefCell::new(None),
@@ -463,9 +468,9 @@ impl<'a> Planner<'a> {
             world: self.world,
             params: self.params,
             model: self.model,
-            flights: &self.flights,
-            legs: &self.legs,
-            grounds: &self.grounds,
+            flights: &self.memo.flights,
+            legs: &self.memo.legs,
+            grounds: &self.memo.grounds,
             abilities: self.model.initial.abilities,
             explicit: self.explicit,
             open_walks: self.open_walks.get(),

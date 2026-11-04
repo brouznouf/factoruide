@@ -288,11 +288,11 @@ impl Planner<'_> {
             head,
             [a.x.to_bits(), a.y.to_bits(), b.x.to_bits(), b.y.to_bits(), heights],
         );
-        if let Some(mobs) = self.farm_walks.borrow().get(&key) {
+        if let Some(mobs) = self.memo.farm_walks.borrow().get(&key) {
             return mobs.clone();
         }
         let mobs = farm();
-        let mut memo = self.farm_walks.borrow_mut();
+        let mut memo = self.memo.farm_walks.borrow_mut();
         if memo.len() >= FARM_MEMO {
             memo.clear();
         }
