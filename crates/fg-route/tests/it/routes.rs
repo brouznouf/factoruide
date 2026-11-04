@@ -4092,3 +4092,46 @@ fn a_quest_given_in_a_dungeon_after_the_one_before_it_asks_no_second_run() {
     let route = planner.greedy();
     planner.validate_required(&route).unwrap();
 }
+
+/// A must-have quest asked at a level has its dungeon run from it (GitHub #108): the quest of the
+/// Hall of Thanes asked at level 18 does not have the dungeon run at the middle of its levels.
+#[test]
+fn a_dungeon_is_run_from_the_minimum_level_of_its_must_have_quest() {
+    let mut p = leveling(30)
+        .dungeon("The Hall of Thanes", 1, 70.0, 70.0)
+        .quest(
+            Q::new(300, "An Ancient Grudge")
+                .level(16)
+                .giver(1, 40.0, 40.0)
+                .objective(
+                    Obj::kill(
+                        "Ghost",
+                        16,
+                        4,
+                        At {
+                            zone: 1,
+                            x: 70.0,
+                            y: 70.0,
+                        },
+                    )
+                    .inside(0),
+                ),
+        )
+        .params(|p| (p.dungeon_from, p.dungeon_to, p.effort) = (-3, 3, 0.0))
+        .required(300)
+        .build();
+    let dungeon_level = |p: &Prepared| {
+        let planner = planner(p);
+        let route = planner.greedy();
+        let mut trace = Vec::new();
+        planner.simulate_full(&route, Some(&mut trace)).unwrap();
+        (trace.iter())
+            .find(|t| matches!(t.event, Event::Stop { stop, .. } if stop.kind == Kind::Dungeon))
+            .map(|t| t.level)
+            .expect("the dungeon is run")
+    };
+    assert!(dungeon_level(&p) < 18, "by itself it is run before level 18");
+    let i = p.model.index[&300];
+    p.model.quests[i].completion_window.min_level = Some(18);
+    assert!(dungeon_level(&p) >= 18, "asked at level 18: run from it");
+}

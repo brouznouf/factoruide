@@ -701,7 +701,13 @@ impl Planner<'_> {
                 spot.unwrap_or(&self.quest(stop.index).objectives[k as usize]),
                 s.might(),
             ),
-            Kind::Dungeon => self.model.dungeons[i].min_level,
+            // A must-have quest asked at a level has its dungeon run from it.
+            Kind::Dungeon => self.in_dungeon[i]
+                .iter()
+                .map(|&(q, _)| q as usize)
+                .filter(|&q| self.model.quests[q].mandatory && !s.turned[q])
+                .filter_map(|q| self.model.quests[q].completion_window.min_level)
+                .fold(self.model.dungeons[i].min_level, i64::max),
             _ => 0,
         }
     }
