@@ -36,7 +36,7 @@ local MAX_TAGS = 3
 local DROP_LINES = 6
 
 local Skin = FG.Skin
-local strip, tags, xpBar, drop, buttons, aheadBar, state
+local strip, tags, xpBar, drop, buttons, aheadBar, dungeonBar, state
 
 local function TextColor(fs, name)
     local c = Skin.colors[name]
@@ -280,6 +280,18 @@ local function CreateAhead()
     aheadBar:SetScript("OnEnter", function(self) Tooltip(self, FG.Guide.L.aheadTip) end)
     aheadBar:SetScript("OnLeave", function() GameTooltip:Hide() end)
     aheadBar:Hide()
+    -- In a dungeon: its steps left, and leaving it aside.
+    dungeonBar = FG:DragHandle(CreateFrame("Button", nil, strip, "BackdropTemplate"))
+    dungeonBar:SetHeight(20)
+    dungeonBar:SetBackdrop({ bgFile = Skin.WHITE, edgeFile = Skin.WHITE, edgeSize = 1 })
+    dungeonBar:SetBackdropColor(Skin.colors.bg[1], Skin.colors.bg[2], Skin.colors.bg[3], 0.9)
+    dungeonBar:SetBackdropBorderColor(1, 0.25, 0.25, 0.35)
+    dungeonBar.text = Skin:Text(dungeonBar, 10, "text")
+    dungeonBar.text:SetPoint("CENTER")
+    dungeonBar:SetScript("OnClick", function() FG.Guide:SkipDungeon() end)
+    dungeonBar:SetScript("OnEnter", function(self) Tooltip(self, FG.Guide.L.dungeonTip) end)
+    dungeonBar:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    dungeonBar:Hide()
 end
 
 -- The quest item and the talent: two buttons near the action bars --------------------------
@@ -589,6 +601,7 @@ function Mini:Render(view)
         drop:SetAlpha(0)
         drop:EnableMouse(false)
         aheadBar:Hide()
+        dungeonBar:Hide()
         if FG.CanLayout(buttons) then buttons:Hide() end
         return
     end
@@ -663,6 +676,16 @@ function Mini:Render(view)
         aheadBar:SetWidth((tonumber(aheadBar.text:GetStringWidth()) or 200) + 24)
         aheadBar:ClearAllPoints()
         aheadBar:SetPoint("BOTTOM", strip, "TOP", 0, 32)
+    end
+    dungeonBar:SetShown(view.dungeon ~= nil)
+    if view.dungeon then
+        local GL = FG.Guide.L
+        dungeonBar.text:SetText(
+            string.format(GL.dungeonLeft, view.dungeon.name, view.dungeon.steps) .. "  •  " .. GL.skipDungeon
+        )
+        dungeonBar:SetWidth((tonumber(dungeonBar.text:GetStringWidth()) or 200) + 24)
+        dungeonBar:ClearAllPoints()
+        dungeonBar:SetPoint("BOTTOM", strip, "TOP", 0, view.ahead and 56 or 32)
     end
     DrawButtons(view)
 end

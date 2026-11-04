@@ -46,6 +46,10 @@ local L = {
     skipped = T("quest marked as done: %s (to undo: the “Undo the last mark” key)"),
     unskipped = T("quest to do again: %s"),
     stepSkipped = T("step marked as done"),
+    dungeonSkipped = T("dungeon left aside: %s (%d steps; to undo: the “Undo the last mark” key)"),
+    dungeonLeft = T("%s: %d steps left"),
+    skipDungeon = T("Skip the dungeon"),
+    dungeonTip = T("Mark the dungeon's steps not done as done: its quests not finished are left aside."),
     stepUnskipped = T("step to do again"),
     spot = T("spot %d/%d (next: the “Next spot” key)"),
     noSpot = T("this step has no other spot"),
@@ -487,12 +491,21 @@ local function BuildGroups()
     local i = 1
     while i <= #steps do
         local start, last = steps[i], i
+        -- A dungeon: entered, then the steps done inside it (`di`), one group whatever their
+        -- places and number, shown until every one is done.
+        if start.k == "dungeon" and steps[i + 1] and steps[i + 1].di then
+            last = i + 1
+            while steps[last + 1] and steps[last + 1].di do
+                last = last + 1
+            end
+            start = nil
+        end
         -- A group opened by a checkpoint (placed where the step before it was): the step after it,
         -- when close, says where the group is.
-        local first = not Checkpoint(start) and start or nil
+        local first = start and not Checkpoint(start) and start or nil
         local size, objectives = first and 1 or 0, {}
         if first and first.k == "objective" then table.insert(objectives, first) end
-        if start.m then
+        if start and start.m then
             for j = i + 1, #steps do
                 local s = steps[j]
                 if Checkpoint(s) then
@@ -525,6 +538,21 @@ local wasOnTaxi = false
 local function GroupOf(index)
     local first = groupStart[index] or index
     return first, groupEnd[first] or first
+end
+
+--- When the current group is a dungeon (entered, then its steps inside): its entrance step and
+--- the indexes of its steps not done yet.
+local function DungeonLeft()
+    local first, last = GroupOf(state.step)
+    local entrance, inside = route.steps[first], route.steps[first + 1]
+    if not entrance or entrance.k ~= "dungeon" or not (inside and inside.di) then return nil end
+    local left = {}
+    for i = first, math.min(last, #route.steps) do
+        local step = route.steps[i]
+        if not step.bg and not IsDone(step, i) then table.insert(left, i) end
+    end
+    if #left == 0 then return nil end
+    return entrance, left
 end
 
 --- The steps of the current step's group, shown together.
@@ -793,6 +821,31 @@ function Guide:SkipAhead()
     self:Resync()
 end
 
+--- Leave the dungeon under way aside: its quests not finished (all their steps, those outside
+--- it too), and its other steps not done, are marked as done.
+function Guide:SkipDungeon()
+    if not route then return end
+    local entrance, left = DungeonLeft()
+    if not entrance then return end
+    local many = {}
+    for _, index in ipairs(left) do
+        local q = route.steps[index].q
+        if q then
+            if not state.skippedQuests[q] then
+                state.skippedQuests[q] = true
+                table.insert(many, { q = q })
+            end
+        else
+            state.marks[index] = "skip"
+            table.insert(many, { index = index })
+        end
+    end
+    lastMark = { route = route, many = many }
+    FG:Print(L.dungeonSkipped, entrance.n or entrance.t, #left)
+    FG.Group:MarksChanged()
+    self:Resync()
+end
+
 --- The guide's look of the moment (FG.Card or FG.Mini), the other hidden; nil before login.
 function Guide:UI()
     if not FG.Card or not FG.Card:Frame() then return nil end
@@ -952,6 +1005,8 @@ function Guide:Refresh()
     view.spot = hasSpots and string.format(L.spot, spot.at, #Places(route.steps[spot.index])) or nil
     local c, skip = Ahead()
     view.ahead = c and { lvl = c.lvl, steps = #skip } or nil
+    local entrance, left = DungeonLeft()
+    view.dungeon = entrance and { name = entrance.n or entrance.t, steps = #left } or nil
     view.talent = FG.Talents and FG.Talents:Pending()
     view.nextTab = FG:Get("nextTab") == "pickup" and "pickup" or "next"
 
@@ -1727,6 +1782,13 @@ end
 --- The last step or quest marked as done by hand, while it still is (nil when none).
 local function LastMark()
     if not lastMark or lastMark.route ~= route or not state then return nil end
+    -- Several at once (a dungeon left aside): while one of them still is.
+    if lastMark.many then
+        for _, m in ipairs(lastMark.many) do
+            if m.q and state.skippedQuests[m.q] or m.index and state.marks[m.index] == "skip" then return lastMark end
+        end
+        return nil
+    end
     if lastMark.q and state.skippedQuests[lastMark.q] then return lastMark end
     if lastMark.index and state.marks[lastMark.index] == "skip" then return lastMark end
     return nil
@@ -1737,7 +1799,16 @@ function Guide:UndoLastMark()
     local mark = LastMark()
     lastMark = nil
     if not mark then return end
-    if mark.q then
+    if mark.many then
+        for _, m in ipairs(mark.many) do
+            if m.q then
+                state.skippedQuests[m.q] = nil
+            elseif state.marks[m.index] == "skip" then
+                state.marks[m.index] = nil
+            end
+        end
+        FG:Print(L.stepUnskipped)
+    elseif mark.q then
         state.skippedQuests[mark.q] = nil
         local step
         for _, s in ipairs(route.steps) do

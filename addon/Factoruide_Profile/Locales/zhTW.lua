@@ -178,4 +178,8 @@ FG.Locales.zhTW = {
     ["profile sent to the party (%d messages, about %d s)"] = "已向隊伍傳送檔案（%d則訊息，約%d秒）",
     ["profile of %s received: reload the interface (/reload) for the Factoruide app to make a group guide with it"] = "已收到%s的檔案：請重新載入介面（/reload），讓Factoruide應用程式用它產生隊伍指南",
     ["not in a party: nobody to send the profile to"] = "不在隊伍中：沒有人可接收檔案",
+    ["dungeon left aside: %s (%d steps; to undo: the “Undo the last mark” key)"] = "已跳過地城：%s（%d 步；復原：「復原上一個標記」鍵）",
+    ["%s: %d steps left"] = "%s：剩餘 %d 步",
+    ["Skip the dungeon"] = "跳過地城",
+    ["Mark the dungeon's steps not done as done: its quests not finished are left aside."] = "將地城中未完成的步驟標記為完成：其未完成的任務被擱置。",
 }

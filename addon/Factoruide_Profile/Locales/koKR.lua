@@ -178,4 +178,8 @@ FG.Locales.koKR = {
     ["profile sent to the party (%d messages, about %d s)"] = "파티에 프로필 전송 (메시지 %d개, 약 %d초)",
     ["profile of %s received: reload the interface (/reload) for the Factoruide app to make a group guide with it"] = "%s 님의 프로필 수신: Factoruide 앱에서 그룹 가이드를 만들려면 UI를 다시 불러오세요 (/reload)",
     ["not in a party: nobody to send the profile to"] = "파티 없음: 프로필을 보낼 대상이 없습니다",
+    ["dungeon left aside: %s (%d steps; to undo: the “Undo the last mark” key)"] = "던전 건너뜀: %s (%d단계, 되돌리기: “마지막 표시 취소” 키)",
+    ["%s: %d steps left"] = "%s: %d단계 남음",
+    ["Skip the dungeon"] = "던전 건너뛰기",
+    ["Mark the dungeon's steps not done as done: its quests not finished are left aside."] = "던전에서 끝나지 않은 단계를 완료로 표시합니다. 끝내지 못한 퀘스트는 제외됩니다.",
 }

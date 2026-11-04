@@ -178,4 +178,8 @@ FG.Locales.esES = {
     ["profile sent to the party (%d messages, about %d s)"] = "perfil enviado al grupo (%d mensajes, unos %d s)",
     ["profile of %s received: reload the interface (/reload) for the Factoruide app to make a group guide with it"] = "perfil de %s recibido: recarga la interfaz (/reload) para que la aplicación Factoruide haga una guía de grupo con él",
     ["not in a party: nobody to send the profile to"] = "sin grupo: nadie a quien enviar el perfil",
+    ["dungeon left aside: %s (%d steps; to undo: the “Undo the last mark” key)"] = "mazmorra dejada de lado: %s (%d pasos; para deshacer: la tecla «Deshacer la última marca»)",
+    ["%s: %d steps left"] = "%s: quedan %d pasos",
+    ["Skip the dungeon"] = "Saltar la mazmorra",
+    ["Mark the dungeon's steps not done as done: its quests not finished are left aside."] = "Marca como hechos los pasos no hechos de la mazmorra: sus misiones sin terminar se dejan de lado.",
 }

@@ -178,4 +178,8 @@ FG.Locales.ruRU = {
     ["profile sent to the party (%d messages, about %d s)"] = "профиль отправлен группе (%d сообщений, около %d с)",
     ["profile of %s received: reload the interface (/reload) for the Factoruide app to make a group guide with it"] = "получен профиль %s: перезагрузите интерфейс (/reload), чтобы приложение Factoruide составило групповой гайд",
     ["not in a party: nobody to send the profile to"] = "нет группы: некому отправить профиль",
+    ["dungeon left aside: %s (%d steps; to undo: the “Undo the last mark” key)"] = "подземелье пропущено: %s (%d шагов; отменить: клавиша «Отменить последнюю отметку»)",
+    ["%s: %d steps left"] = "%s: осталось шагов: %d",
+    ["Skip the dungeon"] = "Пропустить подземелье",
+    ["Mark the dungeon's steps not done as done: its quests not finished are left aside."] = "Отмечает невыполненные шаги подземелья как выполненные: его незаконченные задания откладываются.",
 }

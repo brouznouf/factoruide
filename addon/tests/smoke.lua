@@ -1975,6 +1975,56 @@ assert(char.guide.step == 2, "an old run is done back out, step " .. char.guide.
 onQuest[8001] = nil
 print("dungeon ok")
 
+-- A dungeon's steps are one group, however far apart: shown together until each is done (out of
+-- the instance again too), or left aside at once with their quests, and taken back by undoing.
+FG.Routes["dungeon-group"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 1,
+    toLevel = 60,
+    time = 1,
+    steps = {
+        {
+            k = "dungeon",
+            t = "Dungeon: The Deadmines with a group",
+            n = "The Deadmines",
+            m = 1436,
+            x = 42,
+            y = 72,
+            lvl = 18,
+        },
+        { k = "accept", t = "Accept The Defias Brotherhood", q = 8101, di = true, m = 1436, x = 10, y = 10, lvl = 18 },
+        { k = "objective", t = "Edwin VanCleef", q = 8102, di = true, m = 1436, x = 90, y = 90, lvl = 18 },
+        { k = "turnin", t = "Turn in The Defias Brotherhood", q = 8101, di = true, m = 1436, x = 50, y = 20, lvl = 19 },
+        { k = "grind", t = "Grind", lvl = 60 },
+    },
+}
+useRoute("dungeon-group")
+do
+    local view = FG.Guide.view
+    assert(#view.tasks == 4, "the dungeon's steps shown together, " .. #view.tasks)
+    assert(view.dungeon and view.dungeon.name == "The Deadmines" and view.dungeon.steps == 4, "the dungeon bar")
+end
+inside = true
+fire("ZONE_CHANGED_NEW_AREA")
+onQuest[8101] = true
+FG.Guide:Advance()
+assert(char.guide.step == 3, "on the dungeon's next step, step " .. char.guide.step)
+assert(FG.Guide.view.dungeon.steps == 2, "two steps left, " .. FG.Guide.view.dungeon.steps)
+inside = false
+fire("ZONE_CHANGED_NEW_AREA")
+assert(char.guide.step == 3, "still in the dungeon out of the instance, step " .. char.guide.step)
+FG.Guide:SkipDungeon()
+assert(char.guide.skippedQuests[8101] and char.guide.skippedQuests[8102], "its quests left aside")
+assert(char.guide.step == 5, "past the dungeon, step " .. char.guide.step)
+assert(FG.Guide.view.dungeon == nil, "no dungeon bar after it")
+FG.Guide:UndoLastMark()
+assert(not char.guide.skippedQuests[8101] and not char.guide.skippedQuests[8102], "taken back")
+assert(char.guide.step == 3, "back in the dungeon, step " .. char.guide.step)
+onQuest[8101] = nil
+print("dungeon group ok")
+
 -- Only the guide's quests: those it still takes, not those it abandons, marked done by hand or
 -- out of it, nor escorts shared by the group (the event does not tell which quest).
 FG:Save("autoAccept", nil)

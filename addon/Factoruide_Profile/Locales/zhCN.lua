@@ -178,4 +178,8 @@ FG.Locales.zhCN = {
     ["profile sent to the party (%d messages, about %d s)"] = "已向队伍发送档案（%d条消息，约%d秒）",
     ["profile of %s received: reload the interface (/reload) for the Factoruide app to make a group guide with it"] = "已收到%s的档案：请重载界面（/reload），以便Factoruide应用用它生成队伍指南",
     ["not in a party: nobody to send the profile to"] = "不在队伍中：无人可接收档案",
+    ["dungeon left aside: %s (%d steps; to undo: the “Undo the last mark” key)"] = "已跳过地下城：%s（%d 步；撤销：“撤销上一个标记”键）",
+    ["%s: %d steps left"] = "%s：剩余 %d 步",
+    ["Skip the dungeon"] = "跳过地下城",
+    ["Mark the dungeon's steps not done as done: its quests not finished are left aside."] = "将地下城中未完成的步骤标记为完成：其未完成的任务被搁置。",
 }

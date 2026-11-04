@@ -178,4 +178,8 @@ FG.Locales.deDE = {
     ["profile sent to the party (%d messages, about %d s)"] = "Profil an die Gruppe gesendet (%d Nachrichten, etwa %d s)",
     ["profile of %s received: reload the interface (/reload) for the Factoruide app to make a group guide with it"] = "Profil von %s empfangen: Interface neu laden (/reload), damit die Factoruide-App daraus einen Gruppenleitfaden macht",
     ["not in a party: nobody to send the profile to"] = "keine Gruppe: niemand, dem das Profil gesendet werden kann",
+    ["dungeon left aside: %s (%d steps; to undo: the “Undo the last mark” key)"] = "Dungeon beiseitegelassen: %s (%d Schritte; rückgängig: Taste „Letzte Markierung rückgängig“)",
+    ["%s: %d steps left"] = "%s: noch %d Schritte",
+    ["Skip the dungeon"] = "Dungeon überspringen",
+    ["Mark the dungeon's steps not done as done: its quests not finished are left aside."] = "Markiert die nicht erledigten Schritte des Dungeons als erledigt: seine unfertigen Quests werden beiseitegelassen.",
 }
