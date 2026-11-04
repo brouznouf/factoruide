@@ -4,7 +4,7 @@
 //! the app (`import_profile`).
 
 use crate::{embedded, host, store};
-use fg_app::{CmdError, Host, Studio, now};
+use fg_app::{CmdError, Host, Settings, SettingsStore, Studio, now};
 use fg_library::{GuideId, Library};
 use fg_route::Route;
 use fg_route::diagnostics::Diagnostics;
@@ -16,7 +16,7 @@ use rusqlite::Connection;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 use std::collections::{BTreeMap, HashMap};
-use std::sync::{LazyLock, Mutex};
+use std::sync::{Arc, LazyLock, Mutex};
 
 type CmdResult<T> = Result<T, CmdError>;
 
@@ -80,59 +80,18 @@ const APP_VERSION: &str = match option_env!("FG_VERSION") {
 
 // Settings -----------------------------------------------------------------------------
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
-struct Settings {
-    /// Kept for the pages written for the desktop app: the browser has no game folder.
-    #[serde(default)]
-    wow_dir: String,
-    #[serde(default)]
-    edition: Edition,
-    #[serde(default)]
-    language: Option<String>,
-    #[serde(default)]
-    all_guides: bool,
-    #[serde(default)]
-    welcome_done: bool,
-    #[serde(default)]
-    forgotten_characters: BTreeMap<String, i64>,
-}
-
-impl Default for Settings {
-    fn default() -> Self {
-        Self {
-            wow_dir: String::new(),
-            edition: Edition::Forever,
-            language: None,
-            all_guides: false,
-            welcome_done: false,
-            forgotten_characters: BTreeMap::new(),
-        }
-    }
-}
-
 const SETTINGS_FILE: &str = "settings.json";
 
-static SETTINGS: LazyLock<Mutex<Settings>> = LazyLock::new(|| {
-    Mutex::new(
-        store::read(SETTINGS_FILE)
-            .and_then(|b| serde_json::from_slice(&b).ok())
-            .unwrap_or_default(),
-    )
-});
+/// The settings, in the browser's storage (those of older versions read the same).
+static SETTINGS: LazyLock<SettingsStore<store::Browser>> =
+    LazyLock::new(|| SettingsStore::open(store::Browser, SETTINGS_FILE).0);
 
-fn settings() -> Settings {
-    SETTINGS.locked().clone()
+fn settings() -> Arc<Settings> {
+    SETTINGS.get()
 }
 
 fn edition() -> Edition {
-    SETTINGS.locked().edition
-}
-
-fn write_settings(settings: Settings) -> CmdResult<()> {
-    let mut current = SETTINGS.locked();
-    store::write(SETTINGS_FILE, serde_json::to_vec_pretty(&settings).map_err(err)?);
-    *current = settings;
-    Ok(())
+    SETTINGS.get().edition
 }
 
 // Game data ----------------------------------------------------------------------------
@@ -454,12 +413,10 @@ fn forget_character(character: &str) -> CmdResult<()> {
         .into_iter()
         .find(|c| c.profile.name == character)
         .map_or(i64::MAX, |c| c.profile.time);
-    let mut settings = settings();
-    let edition = settings.edition;
-    settings
-        .forgotten_characters
-        .insert(forgotten_key(edition, character), time);
-    write_settings(settings)
+    SETTINGS.update(|s| {
+        let key = forgotten_key(s.edition, character);
+        s.forgotten_characters.insert(key, time);
+    })
 }
 
 /// A character's export pasted: what it was read as.
@@ -505,15 +462,9 @@ fn import_profile(content: &str) -> CmdResult<ProfileImported> {
     };
     store::write(&last_export_file(edition), serde_json::to_vec(&last).map_err(err)?);
     // Pasted again after being taken out: back.
-    let mut settings = settings();
-    if settings
-        .forgotten_characters
-        .remove(&forgotten_key(edition, &key))
-        .is_some()
-    {
-        write_settings(settings)?;
-    } else {
-        drop(settings);
+    let forgotten = forgotten_key(edition, &key);
+    if settings().forgotten_characters.contains_key(&forgotten) {
+        SETTINGS.update(|s| s.forgotten_characters.remove(&forgotten))?;
     }
     Ok(ProfileImported {
         character: key,
@@ -653,23 +604,22 @@ fn run(cmd: &str, a: serde_json::Value) -> CmdResult<serde_json::Value> {
     use serde_json::{Value, json};
     match cmd {
         "updates_enabled" => Ok(Value::Bool(false)),
-        "get_settings" => to_json(Ok(settings())),
+        "get_settings" => to_json(Ok(Settings::clone(&settings()))),
         "set_settings" => {
             #[derive(Deserialize)]
             struct A {
                 settings: Settings,
             }
             let s = args::<A>(a)?.settings;
-            to_json(write_settings(s))
+            to_json(SETTINGS.update(|current| *current = s))
         }
         "set_edition" => {
             #[derive(Deserialize)]
             struct A {
                 edition: Edition,
             }
-            let mut s = settings();
-            s.edition = args::<A>(a)?.edition;
-            to_json(write_settings(s))
+            let edition = args::<A>(a)?.edition;
+            to_json(SETTINGS.update(|s| s.edition = edition))
         }
         "list_editions" => to_json(Ok(list_editions())),
         "get_options" => {

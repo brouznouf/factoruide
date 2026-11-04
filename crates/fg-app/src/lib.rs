@@ -6,8 +6,10 @@
 
 mod error;
 mod host;
+mod settings;
 mod studio;
 
 pub use error::CmdError;
 pub use host::Host;
+pub use settings::{GuideAddon, Settings, SettingsStore};
 pub use studio::{EditOpened, IssueDraft, IssueGuide, Studio, library, now, request_edition};

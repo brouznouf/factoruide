@@ -146,18 +146,19 @@ pub(crate) fn server_endpoint(settings: &Settings, path: &str) -> Option<String>
 /// This install's contributor id, created the first time (settings locked meanwhile: the
 /// automatic sends may ask for it while the settings page saves).
 pub(crate) fn contributor_id(state: &AppState) -> CmdResult<String> {
-    let mut settings = state.settings.locked();
-    if let Some(id) = settings
-        .contributor
-        .clone()
-        .filter(|id| id.len() == 32 && id.bytes().all(|b| b.is_ascii_hexdigit()))
-    {
+    let valid = |id: &String| id.len() == 32 && id.bytes().all(|b| b.is_ascii_hexdigit());
+    if let Some(id) = state.settings().contributor.clone().filter(valid) {
         return Ok(id);
     }
-    let id = fg_contrib::contribution::random_hex(16).map_err(err)?;
-    settings.contributor = Some(id.clone());
-    save_settings_file(&state.config_file, &settings)?;
-    Ok(id)
+    let fresh = fg_contrib::contribution::random_hex(16).map_err(err)?;
+    // Another send may have made one meanwhile: that one is kept.
+    state.settings.update(|s| {
+        if let Some(id) = s.contributor.clone().filter(valid) {
+            return id;
+        }
+        s.contributor = Some(fresh.clone());
+        fresh
+    })
 }
 
 /// What is new in a game version's client folder since `sent` (one document of it), the
