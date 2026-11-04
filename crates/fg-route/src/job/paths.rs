@@ -5,7 +5,7 @@ use super::Overrides;
 use crate::export::{Route, Step, StepKind};
 use crate::faction::Faction;
 use crate::sync::Joined;
-use crate::world::{Pos, World};
+use crate::world::{Pos, World, WorldBuilder};
 use anyhow::Result;
 use rusqlite::Connection;
 use std::sync::atomic::{AtomicUsize, Ordering};
@@ -17,15 +17,16 @@ const SHORT: f64 = 40.0;
 /// the passages between zones.
 pub fn walk_world(conn: &Connection, overrides: &Overrides, faction: Faction) -> Result<World> {
     let params = &overrides.params;
-    let mut world = World::load(conn, faction, params.flight_speed, params.drop_tier())?;
-    world.close(&overrides.closed);
-    world.enclose(&overrides.enclosed);
-    world.add_caves(&overrides.caves);
     let passes: Vec<_> = (overrides.passes.iter())
         .filter(|p| params.shortcuts || !p.shortcut)
         .cloned()
         .collect();
-    world.add_passes(conn, &passes, crate::world::WorldTables::shared())?;
+    let (world, _) = WorldBuilder::load(conn, faction, params.flight_speed, params.drop_tier())?
+        .closed(&overrides.closed)
+        .enclosed(&overrides.enclosed)
+        .caves(&overrides.caves)
+        .passes(&passes, crate::world::WorldTables::shared())?
+        .build();
     Ok(world)
 }
 

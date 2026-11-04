@@ -8,7 +8,7 @@ use criterion::{Criterion, criterion_group, criterion_main};
 use fg_route::faction::Faction;
 use fg_route::job::{self, Overrides, PlanRequest};
 use fg_route::terrain::Terrain;
-use fg_route::world::{World, WorldTables};
+use fg_route::world::{World, WorldBuilder, WorldTables};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use std::hint::black_box;
@@ -61,8 +61,10 @@ fn bench(c: &mut Criterion) {
         b.iter(|| World::load(&conn, horde, params.flight_speed, params.drop_tier()).unwrap());
     });
     group.bench_function("world/zone_levels", |b| {
-        let mut world = World::load(&conn, horde, params.flight_speed, params.drop_tier()).unwrap();
-        b.iter(|| world.add_zone_levels(&conn, params.zone_gap).unwrap());
+        b.iter_with_setup(
+            || WorldBuilder::load(&conn, horde, params.flight_speed, params.drop_tier()).unwrap(),
+            |world| world.zone_levels(params.zone_gap).unwrap(),
+        );
     });
     group.bench_function("world/passes cold", |b| {
         let passes: Vec<_> = (overrides.passes.iter())
@@ -71,11 +73,12 @@ fn bench(c: &mut Criterion) {
             .collect();
         b.iter_with_setup(
             || {
-                let mut world = World::load(&conn, horde, params.flight_speed, params.drop_tier()).unwrap();
-                world.add_zone_levels(&conn, params.zone_gap).unwrap();
-                world
+                WorldBuilder::load(&conn, horde, params.flight_speed, params.drop_tier())
+                    .unwrap()
+                    .zone_levels(params.zone_gap)
+                    .unwrap()
             },
-            |mut world| world.add_passes(&conn, &passes, &WorldTables::computed()).unwrap(),
+            |world| world.passes(&passes, &WorldTables::computed()).unwrap(),
         );
     });
     group.finish();

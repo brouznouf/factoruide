@@ -367,6 +367,128 @@ impl Compute<Chaining<'_>> for LinkChainsOf {
     }
 }
 
+/// A world under construction, step by step in the order the walks depend on: the zones' levels,
+/// the ways the game keeps closed, the areas left only by boat and the caves, what else the walks
+/// depend on (`stamp`), the passages, then the transport links. A step may be left out, never
+/// taken after a later one (a bug: it panics). `build` gives the world and the warnings of the
+/// steps (a correction that found nothing to correct), in order.
+pub struct WorldBuilder<'c> {
+    conn: &'c Connection,
+    world: World,
+    step: Step,
+    warnings: Vec<String>,
+}
+
+/// The steps of a world's construction, in their order.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
+enum Step {
+    Loaded,
+    ZoneLevels,
+    Closed,
+    Enclosed,
+    Caves,
+    Stamped,
+    Passes,
+    Links,
+}
+
+impl<'c> WorldBuilder<'c> {
+    /// The zones and the flight network usable by a faction (`World::load`).
+    pub fn load(conn: &'c Connection, faction: Faction, flight_speed: f64, drop_tier: usize) -> Result<Self> {
+        Ok(Self {
+            conn,
+            world: World::load(conn, faction, flight_speed, drop_tier)?,
+            step: Step::Loaded,
+            warnings: Vec::new(),
+        })
+    }
+
+    fn at(&mut self, step: Step) {
+        assert!(self.step < step, "world step {step:?} after {:?}", self.step);
+        self.step = step;
+    }
+
+    /// The level of each zone's mobs: walks keep out of a zone `gap` levels above the character.
+    pub fn zone_levels(mut self, gap: f64) -> Result<Self> {
+        self.at(Step::ZoneLevels);
+        self.world.add_zone_levels(self.conn, gap)?;
+        Ok(self)
+    }
+
+    /// Ways the game keeps closed.
+    #[must_use]
+    pub fn closed(mut self, defs: &[ClosedDef]) -> Self {
+        self.at(Step::Closed);
+        let warnings = self.world.close(defs);
+        self.warnings.extend(warnings);
+        self
+    }
+
+    /// Areas left only by boat or teleport.
+    #[must_use]
+    pub fn enclosed(mut self, defs: &[EnclosedDef]) -> Self {
+        self.at(Step::Enclosed);
+        let warnings = self.world.enclose(defs);
+        self.warnings.extend(warnings);
+        self
+    }
+
+    /// Caves, walked into through their mouth.
+    #[must_use]
+    pub fn caves(mut self, defs: &[CaveDef]) -> Self {
+        self.at(Step::Caves);
+        let warnings = self.world.add_caves(defs);
+        self.warnings.extend(warnings);
+        self
+    }
+
+    /// What else the passages' walks depend on (`World::stamp`): with it, they are kept for the
+    /// next world with the same.
+    #[must_use]
+    pub fn stamp(mut self, what: &str) -> Self {
+        self.at(Step::Stamped);
+        self.world.stamp(what);
+        self
+    }
+
+    /// The passages between zones, and the walks between them.
+    pub fn passes(mut self, defs: &[PassDef], tables: &WorldTables) -> Result<Self> {
+        self.at(Step::Passes);
+        let warnings = self.world.add_passes(self.conn, defs, tables)?;
+        self.warnings.extend(warnings);
+        Ok(self)
+    }
+
+    /// The boats, zeppelins and portals usable by `faction` (`World::add_links`).
+    #[must_use]
+    pub fn links(
+        mut self,
+        defs: &[LinkDef],
+        faction: Faction,
+        walk_speed: f64,
+        wait: f64,
+        tables: &WorldTables,
+    ) -> Self {
+        self.at(Step::Links);
+        self.world.add_links(defs, faction, walk_speed, wait, tables);
+        self
+    }
+
+    /// The warnings of the steps so far, taken out (`build` gives those of the steps after).
+    pub fn take_warnings(&mut self) -> Vec<String> {
+        std::mem::take(&mut self.warnings)
+    }
+
+    /// The world so far, to look at between two steps.
+    pub fn world(&self) -> &World {
+        &self.world
+    }
+
+    pub fn build(self) -> (World, Vec<String>) {
+        (self.world, self.warnings)
+    }
+}
+
 /// A named place of a zone map (Ratchet, Valley of Trials...), at the center of its overlay.
 struct Landmark {
     /// Its area (AreaTable ID).
@@ -1268,7 +1390,7 @@ impl World {
     /// mobs hostile to both factions is more than `gap` levels above the top of its band of 5
     /// (0: none is). No walk goes into a closed zone (a character a flight or a teleport left
     /// in one walks out), a walk across it costs `CLOSED_COST` times more. Before the passages.
-    pub fn add_zone_levels(&mut self, conn: &Connection, gap: f64) -> Result<()> {
+    pub(crate) fn add_zone_levels(&mut self, conn: &Connection, gap: f64) -> Result<()> {
         let mut levels: FxHashMap<i64, Vec<u8>> = FxHashMap::default();
         if gap > 0.0 {
             let rows = crate::memo::rows(conn, "mob levels", 0, || {
@@ -1322,7 +1444,7 @@ impl World {
 
     /// Ways the game keeps closed (`Terrain::close`). Before the areas enclosed, the caves and
     /// the passages (their walks depend on it).
-    pub fn close(&mut self, defs: &[ClosedDef]) -> Vec<String> {
+    pub(crate) fn close(&mut self, defs: &[ClosedDef]) -> Vec<String> {
         self.walk_id = NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed);
         let mut warnings = Vec::new();
         for d in defs {
@@ -1347,7 +1469,7 @@ impl World {
 
     /// Areas left only by boat, portal or lift: no walk to or from them. Before the passages
     /// (their walks depend on it).
-    pub fn enclose(&mut self, defs: &[EnclosedDef]) -> Vec<String> {
+    pub(crate) fn enclose(&mut self, defs: &[EnclosedDef]) -> Vec<String> {
         self.walk_id = NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed);
         let mut warnings = Vec::new();
         // A valley the gaps opened join to the mainland is taken out of it first (the areas are
@@ -1376,7 +1498,7 @@ impl World {
 
     /// Caves the terrain does not hold: walks to the places inside go through their mouth. Before
     /// the passages and links (their walks depend on it).
-    pub fn add_caves(&mut self, defs: &[CaveDef]) -> Vec<String> {
+    pub(crate) fn add_caves(&mut self, defs: &[CaveDef]) -> Vec<String> {
         self.walk_id = NEXT_WORLD_ID.fetch_add(1, Ordering::Relaxed);
         let mut warnings = Vec::new();
         for d in defs {
@@ -1401,7 +1523,7 @@ impl World {
     /// terrain, the passages' definitions, the settings of the walks): `what`, described as text.
     /// With it, the walks between passages are kept to be taken again by the next world with the
     /// same source and the same `what`. A world never stamped computes them each time.
-    pub fn stamp(&mut self, what: &str) {
+    pub(crate) fn stamp(&mut self, what: &str) {
         use std::hash::{Hash, Hasher};
         self.stamp = self.source.map(|s| {
             let mut h = std::collections::hash_map::DefaultHasher::new();
@@ -1411,7 +1533,12 @@ impl World {
     }
 
     /// Register passages; subzone positions come from the map exploration overlays.
-    pub fn add_passes(&mut self, conn: &Connection, defs: &[PassDef], tables: &WorldTables) -> Result<Vec<String>> {
+    pub(crate) fn add_passes(
+        &mut self,
+        conn: &Connection,
+        defs: &[PassDef],
+        tables: &WorldTables,
+    ) -> Result<Vec<String>> {
         // Center of each explorable map area, per zone.
         let mut areas: HashMap<String, Vec<(i64, f64, f64)>> = HashMap::new();
         let query = "SELECT t.AreaName_lang, a.AreaID,

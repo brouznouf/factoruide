@@ -62,7 +62,7 @@ use crate::model::{self, Profile};
 use crate::params::Params;
 use crate::plan::Planner;
 use crate::terrain::Walks;
-use crate::world::World;
+use crate::world::{World, WorldBuilder};
 use anyhow::Result;
 use rusqlite::Connection;
 use std::sync::Arc;
@@ -446,38 +446,40 @@ fn world_for(
     params: &Params,
     progress: Watch<'_>,
 ) -> Result<World> {
-    let mut world = World::load(conn, faction, params.flight_speed, params.drop_tier())?;
     let passes: Vec<_> = overrides
         .passes
         .iter()
         .filter(|p| params.shortcuts || !p.shortcut)
         .cloned()
         .collect();
-    world.add_zone_levels(conn, params.zone_gap)?;
-    for warning in world.close(&overrides.closed) {
-        progress(&JobEvent::Status(&warning));
+    let tables = crate::world::WorldTables::shared();
+    let (world, warnings) = WorldBuilder::load(conn, faction, params.flight_speed, params.drop_tier())?
+        .zone_levels(params.zone_gap)?
+        .closed(&overrides.closed)
+        .enclosed(&overrides.enclosed)
+        .caves(&overrides.caves)
+        // What the walks between the passages depend on, besides the database.
+        .stamp(&format!(
+            "{:?}{:?}{:?}{:?}{:?}{:?}{:?}",
+            overrides.closed,
+            overrides.enclosed,
+            overrides.caves,
+            passes,
+            params.zone_gap,
+            params.detour,
+            params.run_speed
+        ))
+        .passes(&passes, tables)?
+        .links(
+            &overrides.links_of_race(race_id),
+            faction,
+            params.run_speed / params.detour,
+            params.link_wait,
+            tables,
+        )
+        .build();
+    for warning in &warnings {
+        progress(&JobEvent::Status(warning));
     }
-    for warning in world.enclose(&overrides.enclosed) {
-        progress(&JobEvent::Status(&warning));
-    }
-    for warning in world.add_caves(&overrides.caves) {
-        progress(&JobEvent::Status(&warning));
-    }
-    // What the walks between the passages depend on, besides the database.
-    world.stamp(&format!(
-        "{:?}{:?}{:?}{:?}{:?}{:?}{:?}",
-        overrides.closed, overrides.enclosed, overrides.caves, passes, params.zone_gap, params.detour, params.run_speed
-    ));
-    for warning in world.add_passes(conn, &passes, crate::world::WorldTables::shared())? {
-        progress(&JobEvent::Status(&warning));
-    }
-    let links = overrides.links_of_race(race_id);
-    world.add_links(
-        &links,
-        faction,
-        params.run_speed / params.detour,
-        params.link_wait,
-        crate::world::WorldTables::shared(),
-    );
     Ok(world)
 }

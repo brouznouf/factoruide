@@ -4,7 +4,7 @@
 
 use anyhow::{Context, Result};
 use fg_route::job::Overrides;
-use fg_route::world::World;
+use fg_route::world::{World, WorldBuilder};
 use rusqlite::Connection;
 use std::path::Path;
 
@@ -58,18 +58,14 @@ pub fn run(
     let params = &overrides.params;
     let faction =
         fg_route::faction::Faction::parse(faction).ok_or_else(|| anyhow::anyhow!("unknown faction {faction}"))?;
-    let mut world = World::load(conn, faction, params.flight_speed, params.drop_tier())?;
-    world.add_zone_levels(conn, params.zone_gap)?;
-    for w in world.close(&overrides.closed) {
-        eprintln!("{w}");
-    }
-    for w in world.enclose(&overrides.enclosed) {
-        eprintln!("{w}");
-    }
-    for w in world.add_caves(&overrides.caves) {
-        eprintln!("{w}");
-    }
-    for w in world.add_passes(conn, &overrides.passes, fg_route::world::WorldTables::shared())? {
+    let (world, warnings) = WorldBuilder::load(conn, faction, params.flight_speed, params.drop_tier())?
+        .zone_levels(params.zone_gap)?
+        .closed(&overrides.closed)
+        .enclosed(&overrides.enclosed)
+        .caves(&overrides.caves)
+        .passes(&overrides.passes, fg_route::world::WorldTables::shared())?
+        .build();
+    for w in warnings {
         eprintln!("{w}");
     }
     let (a, b) = (point(&world, from)?, point(&world, to)?);
@@ -220,17 +216,19 @@ pub fn overrides(conn: &Connection, overrides_dir: &Path, faction: &str) -> Resu
     let params = &overrides.params;
     let faction =
         fg_route::faction::Faction::parse(faction).ok_or_else(|| anyhow::anyhow!("unknown faction {faction}"))?;
-    let mut world = World::load(conn, faction, params.flight_speed, params.drop_tier())?;
-    for w in world.close(&overrides.closed) {
+    let mut builder =
+        WorldBuilder::load(conn, faction, params.flight_speed, params.drop_tier())?.closed(&overrides.closed);
+    for w in builder.take_warnings() {
         println!("{w}");
     }
+    let world = builder.world();
     let area = |world: &World, zone: i64, x: f64, y: f64| {
         let p = world.to_world(zone, x, y)?;
         let (a, size) = world.terrain.area_of(&p)?;
         Some((p.continent, a, size, world.terrain.main_area(p.continent) == Some(a)))
     };
     for d in &overrides.enclosed {
-        match area(&world, d.at.zone, d.at.x, d.at.y) {
+        match area(world, d.at.zone, d.at.x, d.at.y) {
             Some((_, _, _, true)) => println!(
                 "enclosed {}: joined to the mainland by the floors (redundant, or a way the game closes)",
                 d.name
@@ -241,8 +239,8 @@ pub fn overrides(conn: &Connection, overrides_dir: &Path, faction: &str) -> Resu
     }
     for d in &overrides.caves {
         let (mouth, inside) = (
-            area(&world, d.at.zone, d.at.x, d.at.y),
-            area(&world, d.inside.zone, d.inside.x, d.inside.y),
+            area(world, d.at.zone, d.at.x, d.at.y),
+            area(world, d.inside.zone, d.inside.x, d.inside.y),
         );
         match (mouth, inside) {
             (Some((_, m, _, _)), Some((_, i, size, _))) if m == i && size >= fg_route::terrain::LARGE_AREA => {
@@ -259,11 +257,16 @@ pub fn overrides(conn: &Connection, overrides_dir: &Path, faction: &str) -> Resu
             ),
         }
     }
-    for w in world.enclose(&overrides.enclosed) {
+    let mut builder = builder.enclosed(&overrides.enclosed);
+    for w in builder.take_warnings() {
         println!("{w}");
     }
-    world.add_caves(&overrides.caves);
-    for w in world.add_passes(conn, &overrides.passes, fg_route::world::WorldTables::shared())? {
+    let mut builder = builder.caves(&overrides.caves);
+    builder.take_warnings();
+    let (world, warnings) = builder
+        .passes(&overrides.passes, fg_route::world::WorldTables::shared())?
+        .build();
+    for w in warnings {
         println!("{w}");
     }
     for p in &world.passes {

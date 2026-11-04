@@ -5,7 +5,7 @@ use anyhow::{Context, Result};
 use fg_route::export::Route;
 use fg_route::job::{Overrides, route_walks};
 use fg_route::sync::Joined;
-use fg_route::world::World;
+use fg_route::world::WorldBuilder;
 use rusqlite::Connection;
 use std::fmt::Write as _;
 use std::path::Path;
@@ -19,16 +19,17 @@ pub fn run(conn: &Connection, overrides_dir: &Path, route: &Path, out: &Path, ce
     let params = &overrides.params;
     let route: Route =
         serde_json::from_str(&std::fs::read_to_string(route).with_context(|| format!("reading {}", route.display()))?)?;
-    let mut world = World::load(conn, route.faction, params.flight_speed, params.drop_tier())?;
-    world.add_zone_levels(conn, params.zone_gap)?;
-    world.close(&overrides.closed);
-    world.enclose(&overrides.enclosed);
-    world.add_caves(&overrides.caves);
     let passes: Vec<_> = (overrides.passes.iter())
         .filter(|p| params.shortcuts || !p.shortcut)
         .cloned()
         .collect();
-    world.add_passes(conn, &passes, fg_route::world::WorldTables::shared())?;
+    let (world, _) = WorldBuilder::load(conn, route.faction, params.flight_speed, params.drop_tier())?
+        .zone_levels(params.zone_gap)?
+        .closed(&overrides.closed)
+        .enclosed(&overrides.enclosed)
+        .caves(&overrides.caves)
+        .passes(&passes, fg_route::world::WorldTables::shared())?
+        .build();
     let walks = route_walks(&world, &route);
     let next = AtomicUsize::new(0);
     let threads = std::thread::available_parallelism().map_or(1, usize::from).min(8);

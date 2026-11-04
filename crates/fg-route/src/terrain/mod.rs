@@ -160,6 +160,8 @@ type TileLabels = (Vec<u32>, Vec<u32>);
 type SnapKey = (u32, i64, i32, i32, Option<i16>);
 /// Where a place stands for the walks: its cell and its height when known (`Pos::z`).
 type Spot = ((i32, i32), Option<i16>);
+/// Walks `MEMO` remembers in a thread, beyond which it starts over (some 80 MB).
+const MEMO_MAX: usize = 1 << 21;
 /// Cells `SNAPS` remembers, beyond which it starts over.
 const SNAPS_MAX: usize = 1 << 18;
 /// The turns of the walks already followed (`Terrain::waypoints`), by continent, pair of cells
@@ -1725,7 +1727,14 @@ impl Terrain {
             let w = self
                 .walk_cells(grid, a.continent, sa, sb)
                 .map_or(f32::NAN, |d| d as f32);
-            MEMO.with(|m| m.borrow_mut().insert(key, w));
+            MEMO.with(|m| {
+                let mut m = m.borrow_mut();
+                // The walks of older terrains stay too (their id is in the key): start over.
+                if m.len() >= MEMO_MAX {
+                    m.clear();
+                }
+                m.insert(key, w);
+            });
             w
         });
         // From or to a cave: through its mouth (two places of the same cave: straight).
@@ -1838,7 +1847,7 @@ impl Terrain {
     /// A way the floors hold that the game keeps closed (a locked gate, `[[closed]]` of
     /// `overrides/passes.toml`): the floors within `radius` yards of `p` are never stood on.
     /// Before `enclose` (the areas are labelled again). Whether there were floors there.
-    pub fn close(&mut self, p: &Pos, radius: f64) -> bool {
+    pub(crate) fn close(&mut self, p: &Pos, radius: f64) -> bool {
         let Some(grid) = self.grids.get_mut(&p.continent) else {
             return false;
         };
@@ -1871,7 +1880,7 @@ impl Terrain {
     /// The large area at `p` is left only by boat, portal or lift (Rut'theran Village, at the
     /// foot of Teldrassil): no walk between it and the other areas. Its area and size, None when
     /// `p` is not in a large area.
-    pub fn enclose(&mut self, p: &Pos, place: u32) -> Option<(u32, u32)> {
+    pub(crate) fn enclose(&mut self, p: &Pos, place: u32) -> Option<(u32, u32)> {
         let (area, size) = self.area_of(p).filter(|&(a, size)| a != 0 && size >= LARGE_AREA)?;
         // Swimming joins the shore to the mainland: enclosing it would enclose the continent.
         if self.main_area(p.continent) == Some(area) {

@@ -5,7 +5,7 @@
 use criterion::{BatchSize, Criterion, criterion_group, criterion_main};
 use fg_route::faction::Faction;
 use fg_route::job::Overrides;
-use fg_route::world::{Pos, World};
+use fg_route::world::{Pos, World, WorldBuilder};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use std::hint::black_box;
@@ -35,24 +35,25 @@ fn world() -> World {
     let conn = database();
     let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
     let params = &overrides.params;
-    let mut world = World::load(
+    let passes: Vec<_> = (overrides.passes.iter())
+        .filter(|p| params.shortcuts || !p.shortcut)
+        .cloned()
+        .collect();
+    let (world, _) = WorldBuilder::load(
         &conn,
         Faction::parse("Horde").unwrap(),
         params.flight_speed,
         params.drop_tier(),
     )
-    .unwrap();
-    world.add_zone_levels(&conn, params.zone_gap).unwrap();
-    world.close(&overrides.closed);
-    world.enclose(&overrides.enclosed);
-    world.add_caves(&overrides.caves);
-    let passes: Vec<_> = (overrides.passes.iter())
-        .filter(|p| params.shortcuts || !p.shortcut)
-        .cloned()
-        .collect();
-    world
-        .add_passes(&conn, &passes, fg_route::world::WorldTables::shared())
-        .unwrap();
+    .unwrap()
+    .zone_levels(params.zone_gap)
+    .unwrap()
+    .closed(&overrides.closed)
+    .enclosed(&overrides.enclosed)
+    .caves(&overrides.caves)
+    .passes(&passes, fg_route::world::WorldTables::shared())
+    .unwrap()
+    .build();
     world
 }
 
