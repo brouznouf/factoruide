@@ -3,6 +3,7 @@
 mod builder;
 mod chains;
 mod crowd;
+mod derive;
 mod dungeons;
 pub use dungeons::dungeon_levels;
 mod entities;
@@ -46,7 +47,6 @@ use anyhow::Result;
 use builder::QuestBuilder;
 use places::Places;
 use rusqlite::Connection;
-use rustc_hash::FxHashMap;
 use sources::Sources;
 use std::collections::{HashMap, HashSet};
 
@@ -83,11 +83,11 @@ pub fn load(
         }
     }
     let reward_quests: HashSet<_> = knowledge.keys().copied().collect();
-    let mut known_prerequisites: HashSet<_> = knowledge
+    let known_prerequisites: HashSet<_> = knowledge
         .iter()
         .filter_map(|(&q, &(_, known))| known.then_some(q))
         .collect();
-    let mut known_rewards: HashSet<_> = knowledge
+    let known_rewards: HashSet<_> = knowledge
         .into_iter()
         .filter_map(|(q, (known, _))| known.then_some(q))
         .collect();
@@ -108,30 +108,27 @@ pub fn load(
         &reward_quests,
     )?;
     let (mut quests, mut skipped) = build_quests(&sources, world, profile, params);
-    required::apply(
+    let mut known = derive::Knowledge {
+        rewards: known_rewards,
+        prerequisites: known_prerequisites,
+        reward_quests,
+        logged,
+        class_quests: std::mem::take(&mut sources.class_quest_ids),
+        assumed: starts.is_empty(),
+    };
+    let levels = dungeon_levels(conn, &profile.dungeons)?;
+    let known_names = derive::settle(
         &mut quests,
+        &mut skipped,
+        &mut sources.dungeons,
         &sources.rows,
-        &sources.class_quest_ids,
-        &skipped,
+        &mut known,
+        &levels,
         profile,
         params,
     )?;
-    if starts.is_empty() {
-        for q in quests.iter().filter(|q| q.required) {
-            known_rewards.remove(&q.id);
-            known_prerequisites.remove(&q.id);
-        }
-    }
-    let mut names_known = HashMap::<String, bool>::new();
-    for r in sources.rows.iter().filter(|r| {
-        profile.class_ids().iter().any(|c| r.of_class(*c))
-            && profile.members_of(r.races, r.classes) != 0
-            && reward_quests.contains(&r.id)
-    }) {
-        *names_known.entry(r.name.clone()).or_insert(true) &= known_rewards.contains(&r.id);
-    }
-    let known_names: HashSet<_> = names_known.into_iter().filter_map(|(n, k)| k.then_some(n)).collect();
-    chains::drop_unhanded(&mut quests, &mut skipped);
+    sources.class_quest_ids = known.class_quests;
+    let known_prerequisites = known.prerequisites;
     report_skipped_class_quests(&sources, &skipped);
     let places = Places::load(
         conn,
@@ -142,37 +139,13 @@ pub fn load(
         params.edition,
         params.profession_trainers && !profile.profession_goals().is_empty(),
     )?;
-    for q in &mut quests {
-        if known_names.contains(&q.name) && !q.required && !q.zone_forced {
-            q.mandatory = false;
-        }
-    }
-    quests.retain(|q| {
-        !known_rewards.contains(&q.id)
-            || logged.contains(&q.id)
-            || profile.completed_quests.contains(&q.id)
-            || sources.class_quest_ids.contains(&q.id)
-            || q.required
-            || q.zone_forced
-    });
-    // Class unlocks kept below the guide's levels give little XP: left to the search they come late.
-    for q in &mut quests {
-        q.late_unlock = sources.class_quest_ids.contains(&q.id)
-            && !profile.within_levels(q.level, q.min_level, params.max_quest_above);
-    }
-    settle_quests(&mut quests, &sources.dungeons, params, &known_prerequisites, profile);
     let loot = CommonLoot::load(conn, &mut quests)?;
-    let levels = dungeon_levels(conn, &profile.dungeons)?;
-    let window = (params.dungeon_from, params.dungeon_to);
-    dungeons::set_dungeon_levels(
-        &mut sources.dungeons,
-        &quests,
-        &levels,
-        window,
-        params.edition.rules().max_level,
-    );
-    settle_dungeons(&mut sources.dungeons, &quests, profile);
-    let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+    let derive::Indexes {
+        index,
+        unlocks,
+        chain_top,
+        bundles,
+    } = derive::indexes(&quests, params);
     let mut teleports = places.teleports;
     teleports.extend(places::quest_teleports(
         world,
@@ -181,8 +154,6 @@ pub fn load(
         &known_names,
         &abilities,
     ));
-    let unlocks = chains::chain_values(&quests, &index, &chains::quest_work(&quests, params));
-    let chain_top = chains::chain_tops(&quests, &index);
     let (explore, explore_by_zone) = explore::load_explore(conn, world)?;
     let farm = FarmMobs::load(conn, world, &quests)?;
     let power = crate::power::PowerModel::load(
@@ -223,12 +194,6 @@ pub fn load(
         ),
     };
     let graveyards = graveyards(conn, world, &sources)?;
-    let mut bundles = vec![Vec::new(); quests.len()];
-    for (f, q) in quests.iter().enumerate().filter(|(_, q)| q.pre_need > 1) {
-        for &i in q.pre_any.iter().filter_map(|id| index.get(id)) {
-            bundles[i].push(f as u32);
-        }
-    }
     let own_knowledge = abilities.initial(starts.first().copied(), profile.from_level);
     let known_class_powers = profile
         .class_powers

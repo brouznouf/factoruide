@@ -21,8 +21,7 @@
 
 use super::farm::MobRow;
 use super::{
-    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, Vendor, chains, required,
-    sources::QuestRow,
+    Dungeon, EntityKind, Guard, Initial, Loc, Mate, Model, Names, Objective, Profile, Quest, Vendor, sources::QuestRow,
 };
 use crate::faction::Faction;
 use crate::job::{PlanRequest, Prepared, StartState};
@@ -803,18 +802,25 @@ impl Scenario {
                     .profile
                     .within_levels(q.level, q.min_level, self.params.max_quest_above)
         });
-        required::apply(&mut quests, &rows, &HashSet::new(), &[], &self.profile, &self.params)?;
-        super::settle_quests(&mut quests, &dungeons, &self.params, &HashSet::new(), &self.profile);
+        // The same settling as a model read from a database, nothing known of the characters.
         let mut dungeons = dungeons;
-        super::dungeons::set_dungeon_levels(
+        let mut skipped = Vec::new();
+        let mut known = super::derive::Knowledge {
+            assumed: true,
+            ..super::derive::Knowledge::default()
+        };
+        super::derive::settle(
+            &mut quests,
+            &mut skipped,
             &mut dungeons,
-            &quests,
+            &rows,
+            &mut known,
             &HashMap::new(),
-            (self.params.dungeon_from, self.params.dungeon_to),
-            self.params.edition.rules().max_level,
-        );
-        super::settle_dungeons(&mut dungeons, &quests, &self.profile);
+            &self.profile,
+            &self.params,
+        )?;
         let mut model = bare(quests, dungeons, start, &self.params);
+        model.skipped = skipped;
         if let Some((abilities, power)) = self.class.take() {
             (model.abilities, model.power) = (abilities, power);
         }
@@ -988,16 +994,13 @@ pub fn profile(faction: Faction, from: i64, to: i64) -> Profile {
 /// A model of these quests and dungeons, with what the planner derives from them (indexes, the
 /// value of the chains) and nothing else: no vendors, trainers, inns, gear or farm.
 pub fn bare(quests: Vec<Quest>, dungeons: Vec<Dungeon>, start: Loc, params: &Params) -> Model {
-    let index: FxHashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
-    let unlocks = chains::chain_values(&quests, &index, &chains::quest_work(&quests, params));
-    let chain_top = chains::chain_tops(&quests, &index);
+    let super::derive::Indexes {
+        index,
+        unlocks,
+        chain_top,
+        bundles,
+    } = super::derive::indexes(&quests, params);
     let (n, d) = (quests.len(), dungeons.len());
-    let mut bundles = vec![Vec::new(); n];
-    for (f, q) in quests.iter().enumerate().filter(|(_, q)| q.pre_need > 1) {
-        for &i in q.pre_any.iter().filter_map(|id| index.get(id)) {
-            bundles[i].push(f as u32);
-        }
-    }
     Model {
         known_class_powers: 0,
         known_class_prerequisites: HashSet::new(),
