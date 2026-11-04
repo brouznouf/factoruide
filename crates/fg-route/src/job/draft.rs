@@ -311,16 +311,16 @@ impl Editor {
             if s.accepted[i] && !s.turned[i] {
                 for (k, o) in q.objectives.iter().enumerate() {
                     let k8 = k as u8;
-                    let in_run = o.dungeon.is_some_and(|d| dungeons.contains(&(d as u32)));
-                    let allowed = o.dungeon.is_none_or(|d| availability.dungeon_allowed(d));
+                    let in_run = o.dungeon_of().is_some_and(|d| dungeons.contains(&(d as u32)));
+                    let allowed = o.dungeon_of().is_none_or(|d| availability.dungeon_allowed(d));
                     if s.objectives[i] & (1 << k) == 0 && allowed && !in_run && !objectives.contains(&(n, k8)) {
                         out.objectives.push(ObjectiveAt {
                             quest: q.id,
                             objective: k8,
                             name: name(),
                             text: crate::export::objective_text(o, names),
-                            dungeon: o.dungeon.map(|d| (model.dungeons[d].area, dungeon_name(d))),
-                            places: match o.dungeon {
+                            dungeon: o.dungeon_of().map(|d| (model.dungeons[d].area, dungeon_name(d))),
+                            places: match o.dungeon_of() {
                                 Some(d) => vec![place(&model.dungeons[d].entrance)],
                                 None => o.places().map(|p| place(&p.loc)).collect(),
                             },
@@ -355,7 +355,7 @@ impl Editor {
                         name: name(),
                         level: q.level,
                         difficulty: difficulty(q.level, s.level),
-                        dungeon: q.objectives.iter().find_map(|o| o.dungeon).map(dungeon_name),
+                        dungeon: q.dungeon().map(dungeon_name),
                         places: givers,
                     });
                 }

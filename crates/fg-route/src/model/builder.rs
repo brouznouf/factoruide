@@ -139,6 +139,7 @@ impl<'a> QuestBuilder<'a> {
             kind,
             id,
             name: entities.name(kind, id),
+            inside: None,
         })
     }
 }

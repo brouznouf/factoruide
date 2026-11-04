@@ -402,7 +402,7 @@ fn release_done_dungeons(model: &mut Model, start: &StartState) {
         if !q.required || finished(i, q.id) {
             continue;
         }
-        for d in q.objectives.iter().filter_map(|o| o.dungeon) {
+        for d in q.objectives.iter().filter_map(model::Objective::dungeon_of) {
             needed[d] = true;
         }
     }

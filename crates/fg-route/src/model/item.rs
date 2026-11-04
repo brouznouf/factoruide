@@ -67,6 +67,7 @@ impl QuestBuilder<'_> {
             kind: EntityKind::Item,
             id: target,
             name: name.clone(),
+            inside: None,
         };
         // Objects giving it only now and then (random containers): bought instead when sold.
         let object_chance = places

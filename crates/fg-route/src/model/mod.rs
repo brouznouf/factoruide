@@ -264,7 +264,7 @@ pub(crate) fn settle_quests(
     let versions = chains::class_quest_versions(quests, requirements, params.all_class_quests);
     for q in quests.iter_mut() {
         let forced = |d: usize| params.forced_dungeon_quests.contains(&dungeons[d].area);
-        q.mandatory |= q.objectives.iter().any(|o| o.dungeon.is_some_and(forced));
+        q.mandatory |= q.objectives.iter().any(|o| o.dungeon_of().is_some_and(forced));
     }
     chains::require_alternatives(quests, requirements);
     chains::require_prerequisites(quests);
@@ -281,7 +281,7 @@ pub(crate) fn settle_quests(
 /// route being refused when it cannot be run there.
 pub(crate) fn settle_dungeons(dungeons: &mut [Dungeon], quests: &[Quest], profile: &Profile) {
     for q in quests.iter().filter(|q| q.required) {
-        for d in q.objectives.iter().filter_map(|o| o.dungeon) {
+        for d in q.objectives.iter().filter_map(Objective::dungeon_of) {
             dungeons[d].needed = true;
         }
     }
@@ -304,6 +304,7 @@ fn graveyards(conn: &Connection, world: &World, sources: &Sources) -> Result<Vec
                 kind: EntityKind::Npc,
                 id,
                 name: "Spirit Healer".to_owned(),
+                inside: None,
             })
         })
         .collect())

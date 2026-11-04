@@ -102,6 +102,7 @@ pub(super) fn load_dungeons(
                 kind: EntityKind::Dungeon,
                 id: area,
                 name: name.clone(),
+                inside: None,
             },
             name,
             min_level: 0,
@@ -237,7 +238,7 @@ pub(super) fn set_dungeon_levels(
 ) {
     for (d, dungeon) in dungeons.iter_mut().enumerate() {
         let mut own: Vec<i64> = (quests.iter())
-            .filter(|q| q.objectives.iter().any(|o| o.dungeon == Some(d)))
+            .filter(|q| q.objectives.iter().any(|o| o.dungeon_of() == Some(d)))
             .map(|q| q.level)
             .collect();
         if own.is_empty() {

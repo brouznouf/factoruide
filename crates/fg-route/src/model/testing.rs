@@ -351,6 +351,7 @@ impl Q {
             kind: EntityKind::Npc,
             id,
             name: name.to_owned(),
+            inside: None,
         }
     }
 

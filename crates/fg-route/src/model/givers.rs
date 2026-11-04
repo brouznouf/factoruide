@@ -217,6 +217,7 @@ impl QuestBuilder<'_> {
             kind: EntityKind::Item,
             id: item,
             name: entities.name(EntityKind::Item, item),
+            inside: None,
         };
         if let Some((pos, zone, _)) = best_cluster(&objects, Some(&start.pos)) {
             return ItemStart::Looted {

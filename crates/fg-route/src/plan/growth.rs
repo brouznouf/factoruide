@@ -337,7 +337,7 @@ impl<'g> Growth<'g> {
     /// their XP was received in game, the factor already in).
     pub(crate) fn quest_reward(self, q: &Quest, level: i64) -> i64 {
         let reward = xp::quest_xp(q.xp, q.level, level);
-        if !q.xp_observed && q.objectives.iter().any(|o| o.dungeon.is_some()) {
+        if !q.xp_observed && q.objectives.iter().any(|o| o.dungeon_of().is_some()) {
             (reward as f64 * self.rules().dungeon_quest_xp).round() as i64
         } else {
             reward

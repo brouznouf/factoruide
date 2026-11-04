@@ -234,6 +234,7 @@ fn start_place(entities: &Entities, world: &World, profile: &Profile) -> Result<
         kind: EntityKind::Npc,
         id: profile.start_npc,
         name: entities.name(EntityKind::Npc, profile.start_npc),
+        inside: None,
     })
 }
 

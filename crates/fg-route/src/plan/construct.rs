@@ -297,7 +297,7 @@ impl Planner<'_> {
                 // Dungeon quests: worth a detour only when the dungeon is close in level.
                 // Quests of a dungeon close in level: forced ones first, the others weighed by
                 // `dungeon_quest_weight` (the optimizer then keeps the runs that pay off).
-                let dungeon = match self.quest(i).objectives.iter().find_map(|o| o.dungeon) {
+                let dungeon = match self.quest(i).dungeon() {
                     Some(d) if s.level + 2 >= self.model.dungeons[d].min_level => {
                         if self.availability().dungeon_forced(d) {
                             0.25

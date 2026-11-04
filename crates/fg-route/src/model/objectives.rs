@@ -271,6 +271,7 @@ impl QuestBuilder<'_> {
             kind: EntityKind::Area,
             id: 0,
             name: name.clone(),
+            inside: None,
         };
         let text = format!("Battleground: {}", text.unwrap_or_else(|| format!("{name} x{count}")));
         Objective {
@@ -369,6 +370,7 @@ impl QuestBuilder<'_> {
             kind: EntityKind::Item,
             id: item,
             name: self.sources.entities.name(EntityKind::Item, item),
+            inside: None,
         })
     }
 
@@ -443,6 +445,7 @@ impl QuestBuilder<'_> {
             kind: EntityKind::Npc,
             id: target,
             name: name.clone(),
+            inside: None,
         };
         if friendly {
             return Ok(Objective::plain(
@@ -552,6 +555,7 @@ impl QuestBuilder<'_> {
                 kind,
                 id: target,
                 name: name.clone(),
+                inside: None,
             };
             Objective {
                 uses,
@@ -597,6 +601,7 @@ impl QuestBuilder<'_> {
             kind: EntityKind::Area,
             id: 0,
             name: text.clone().unwrap_or_default(),
+            inside: None,
         };
         Ok(Objective::plain(
             loc,

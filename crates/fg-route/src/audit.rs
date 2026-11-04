@@ -962,7 +962,7 @@ fn uncovered_source_items(model: &Model, source_items: &HashMap<i64, SourceItems
         let Some(needs) = source_items.get(&q.id) else {
             continue;
         };
-        if needs.assembled || q.objectives.iter().any(|o| o.dungeon.is_some()) {
+        if needs.assembled || q.objectives.iter().any(|o| o.dungeon_of().is_some()) {
             continue;
         }
         for (item, name, found) in &needs.items {

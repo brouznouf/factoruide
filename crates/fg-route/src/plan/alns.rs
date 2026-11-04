@@ -80,7 +80,8 @@ impl Planner<'_> {
     ) -> Option<(usize, usize, bool)> {
         let len = route.len();
         let level_at = |i: usize| run.states[i.min(run.states.len() - 1)].level;
-        let removable = |s: &Stop| s.is_quest() && self.quest(s.index).objectives.iter().all(|o| o.dungeon.is_none());
+        let removable =
+            |s: &Stop| s.is_quest() && self.quest(s.index).objectives.iter().all(|o| o.dungeon_of().is_none());
         // Gather the visits of a zone made around the same level into one stay, at the place of
         // the longest one (each keeps its order): a zone done in one go instead of coming back.
         if op == 4 {

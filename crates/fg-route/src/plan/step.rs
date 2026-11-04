@@ -247,7 +247,7 @@ impl Planner<'_> {
             let hopeless = self.availability().gray_dead_end(s, q, i as u32)
                 || q.objectives.iter().enumerate().any(|(k, o)| {
                     s.objectives[i] & (1 << k) == 0
-                        && o.dungeon.is_some_and(|d| {
+                        && o.dungeon_of().is_some_and(|d| {
                             !self.availability().dungeon_allowed(d)
                                 || s.dungeons & (1u128 << d) != 0
                                 || s.level > self.model.dungeons[d].max_level

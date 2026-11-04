@@ -366,7 +366,7 @@ impl Planner<'_> {
                                 })
                                 && q.objectives
                                     .iter()
-                                    .all(|o| o.dungeon.is_none_or(|d| self.availability().dungeon_allowed(d)))
+                                    .all(|o| o.dungeon_of().is_none_or(|d| self.availability().dungeon_allowed(d)))
                                 && at_level()
                         } else {
                             self.availability().objectives_done(s, i) && at_level()

@@ -201,6 +201,9 @@ pub struct Loc {
     pub kind: EntityKind,
     pub id: i64,
     pub name: String,
+    /// The dungeon it is inside (index in `Model::dungeons`, below 128 as `State::dungeons`):
+    /// reached by entering it.
+    pub inside: Option<u8>,
 }
 
 /// A trainer of a profession.
@@ -288,6 +291,11 @@ pub struct Vendor {
 }
 
 impl Objective {
+    /// The dungeon the objective belongs to: done by entering it (`dungeon`), or inside it.
+    pub fn dungeon_of(&self) -> Option<usize> {
+        self.dungeon
+    }
+
     /// Its places: itself, then its `alts`.
     pub fn places(&self) -> impl Iterator<Item = &Self> {
         std::iter::once(self).chain(&self.alts)
@@ -520,6 +528,11 @@ pub struct Quest {
 }
 
 impl Quest {
+    /// The dungeon one of its objectives belongs to (`Objective::dungeon_of`).
+    pub fn dungeon(&self) -> Option<usize> {
+        self.objectives.iter().find_map(Objective::dungeon_of)
+    }
+
     /// The `pre_any` quests that must be done: `pre_need` of them, at most the ones that exist.
     pub fn pre_any_needed(&self, plannable: usize) -> usize {
         self.pre_need.min(plannable.max(1))

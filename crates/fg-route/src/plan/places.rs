@@ -42,6 +42,7 @@ impl Places<'_> {
                     kind: EntityKind::Taxi,
                     id: n.id,
                     name: n.name.clone(),
+                    inside: None,
                 }
             }
             Kind::Bind => self.model.inns[stop.index as usize].clone(),

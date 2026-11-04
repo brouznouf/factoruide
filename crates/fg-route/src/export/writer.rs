@@ -753,7 +753,7 @@ impl StepWriter<'_> {
         let mut out = Vec::new();
         for q in model.quests.iter().filter(|q| turned_in(q.id)) {
             let inside: Vec<u8> = (0..q.objectives.len() as u8)
-                .filter(|&k| q.objectives[k as usize].dungeon == Some(d))
+                .filter(|&k| q.objectives[k as usize].dungeon_of() == Some(d))
                 .collect();
             if inside.is_empty() {
                 continue;

@@ -110,7 +110,7 @@ impl QuestBuilder<'_> {
     fn zone_forced(&self, r: &QuestRow, givers: &Givers, objectives: &[Objective]) -> bool {
         let zones = &self.params.forced_zones;
         if zones.is_empty()
-            || objectives.iter().any(|o| o.dungeon.is_some())
+            || objectives.iter().any(|o| o.dungeon_of().is_some())
             || self.min_level(r, givers) > self.profile.to_level
         {
             return false;

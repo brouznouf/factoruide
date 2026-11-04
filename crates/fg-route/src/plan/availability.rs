@@ -207,7 +207,7 @@ impl Availability<'_> {
                         .quest_at(stop.index)
                         .objectives
                         .iter()
-                        .all(|o| o.dungeon.is_none_or(|d| self.dungeon_allowed(d)))
+                        .all(|o| o.dungeon_of().is_none_or(|d| self.dungeon_allowed(d)))
             }
             // Done on the way already (even turned in since): the stop is skipped.
             Kind::Objective(k) => {
@@ -276,7 +276,7 @@ impl Availability<'_> {
     /// Quests with objectives inside dungeon `d`.
     pub(crate) fn dungeon_quests(&self, d: usize) -> impl Iterator<Item = u32> + '_ {
         (0..self.model.quests.len() as u32)
-            .filter(move |&i| self.quest_at(i).objectives.iter().any(|o| o.dungeon == Some(d)))
+            .filter(move |&i| self.quest_at(i).objectives.iter().any(|o| o.dungeon_of() == Some(d)))
     }
 
     /// Dungeon `d` may be run: dungeons on (or this one forced), and not excluded.

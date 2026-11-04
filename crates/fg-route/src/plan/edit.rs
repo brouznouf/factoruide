@@ -264,8 +264,9 @@ impl Planner<'_> {
                 && step.outcome == Outcome::Done
             {
                 let i = stop.index as usize;
-                let undone =
-                    |(k, o): (usize, &crate::model::Objective)| o.dungeon.is_some() && s.objectives[i] & (1 << k) == 0;
+                let undone = |(k, o): (usize, &crate::model::Objective)| {
+                    o.dungeon_of().is_some() && s.objectives[i] & (1 << k) == 0
+                };
                 if !s.turned[i] && self.model.quests[i].objectives.iter().enumerate().any(undone) {
                     step.outcome = Outcome::Invalid("dungeon quest taken but its dungeon is not run");
                 }

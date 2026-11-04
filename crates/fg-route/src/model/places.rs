@@ -118,6 +118,7 @@ pub(super) fn quest_teleports(
                     kind: EntityKind::Area,
                     id: 0,
                     name: world.zone_name(def.to.zone).to_owned(),
+                    inside: None,
                 },
             })
         })
@@ -160,6 +161,7 @@ impl NpcFinder<'_> {
             kind: EntityKind::Npc,
             id,
             name: self.entities.name(EntityKind::Npc, id),
+            inside: None,
         })
     }
 

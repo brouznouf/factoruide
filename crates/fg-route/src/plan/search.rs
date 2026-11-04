@@ -303,7 +303,8 @@ impl Planner<'_> {
         let mut left: Vec<u32> = (route.iter())
             .filter(|s| s.kind == Kind::Accept && !self.quest(s.index).mandatory)
             .filter(|s| {
-                (self.quest(s.index).objectives.iter()).any(|o| o.dungeon.is_some_and(|d| !runs.contains(&(d as u32))))
+                (self.quest(s.index).objectives.iter())
+                    .any(|o| o.dungeon_of().is_some_and(|d| !runs.contains(&(d as u32))))
             })
             .map(|s| s.index)
             .collect();
