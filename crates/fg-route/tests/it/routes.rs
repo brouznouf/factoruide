@@ -4132,6 +4132,9 @@ fn a_dungeon_is_run_from_the_minimum_level_of_its_must_have_quest() {
     };
     assert!(dungeon_level(&p) < 18, "by itself it is run before level 18");
     let i = p.model.index[&300];
+    // The default window (two levels below the quest) does not gate the dungeon: it is the player's.
+    assert!(p.model.quests[i].implicit_window);
     p.model.quests[i].completion_window.min_level = Some(18);
+    p.model.quests[i].implicit_window = false;
     assert!(dungeon_level(&p) >= 18, "asked at level 18: run from it");
 }

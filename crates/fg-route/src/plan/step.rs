@@ -701,11 +701,12 @@ impl Planner<'_> {
                 spot.unwrap_or(&self.quest(stop.index).objectives[k as usize]),
                 s.might(),
             ),
-            // A must-have quest asked at a level has its dungeon run from it.
+            // A must-have quest the player asked at a level has its dungeon run from it (not the
+            // default window: it only keeps the hand-in at a fair level).
             Kind::Dungeon => self.in_dungeon[i]
                 .iter()
                 .map(|&(q, _)| q as usize)
-                .filter(|&q| self.model.quests[q].mandatory && !s.turned[q])
+                .filter(|&q| self.model.quests[q].mandatory && !self.model.quests[q].implicit_window && !s.turned[q])
                 .filter_map(|q| self.model.quests[q].completion_window.min_level)
                 .fold(self.model.dungeons[i].min_level, i64::max),
             _ => 0,
