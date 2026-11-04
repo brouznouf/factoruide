@@ -283,9 +283,9 @@ self.onmessage = (e: MessageEvent<Init | { call: number; request: string }>) => 
       const req = new TextEncoder().encode(m.request);
       exports.fg_call(m.call, copyIn(req), req.length);
     } else {
-      start(m).catch((err) => post({ crash: `${err?.stack ?? err} (memory ${memory?.buffer.byteLength >>> 20} MiB)` }));
+      start(m).catch((err) => post({ crash: `${err}\n${err?.stack ?? ""} (memory size ${memory?.buffer.byteLength >>> 20} MiB, reserved at the start)` }));
     }
   } catch (err) {
-    post({ crash: String((err as Error)?.stack ?? err) });
+    post({ crash: `${err}\n${(err as Error)?.stack ?? ""}` });
   }
 };

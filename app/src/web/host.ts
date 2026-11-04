@@ -89,6 +89,8 @@ export class Backend {
     });
   }
 
+  /** The last lines the backend wrote on its error output. */
+  private errors: string[] = [];
   private onReady: () => void = () => {};
   private onCrash: (e: unknown) => void = () => {};
   private spawnThread: (tid: number, arg: number) => void = () => {};
@@ -111,6 +113,8 @@ export class Backend {
       this.spawnThread(m.spawn, m.arg);
     } else if ("log" in m) {
       (m.error ? console.error : console.log)(`[fg] ${m.log}`);
+      // What the backend wrote on its error output (a panic says where and why): kept for a crash.
+      if (m.error) this.errors = [...this.errors, m.log].slice(-8);
     } else if ("crash" in m) {
       this.crash(m.crash);
     }
@@ -134,7 +138,9 @@ export class Backend {
   }
 
   /** The backend stopped (a panic aborts it): every call under way fails, and the next ones. */
-  private crash(message: string) {
+  private crash(trap: string) {
+    // The panic's own message first (the stack of a trap does not carry it, in Firefox).
+    const message = this.errors.length ? `${this.errors.join("\n")}\n${trap}` : trap;
     console.error(`[fg] backend stopped: ${message}`);
     this.crashed = message;
     this.onCrash(new Error(message));
