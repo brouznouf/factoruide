@@ -161,15 +161,18 @@ type SnapKey = (u32, i64, i32, i32, Option<i16>);
 /// Where a place stands for the walks: its cell and its height when known (`Pos::z`).
 type Spot = ((i32, i32), Option<i16>);
 /// Walks `MEMO` remembers in a thread, beyond which it starts over (some 80 MB).
-const MEMO_MAX: usize = 1 << 21;
+/// What a table of 2^21 buckets holds (7/8 of them): it never doubles for the last ones.
+const MEMO_MAX: usize = (1 << 21) / 8 * 7;
 /// Cells `SNAPS` remembers, beyond which it starts over.
-const SNAPS_MAX: usize = 1 << 18;
+/// What a table of 2^18 buckets holds (7/8 of them): it never doubles for the last ones.
+const SNAPS_MAX: usize = (1 << 18) / 8 * 7;
 /// The turns of the walks already followed (`Terrain::waypoints`), by continent, pair of cells
 /// and pair of heights, in shards; a shard is emptied beyond `TURNS_MAX`. A turn: its cell and
 /// the height of the floor walked there.
 type TurnKey = (i64, i32, i32, i32, i32, Option<i16>, Option<i16>);
 type Turns = Vec<Mutex<FxHashMap<TurnKey, Arc<[(i32, i32, Option<i16>)]>>>>;
-const TURNS_MAX: usize = 1 << 16;
+/// What a table of 2^16 buckets holds (7/8 of them): it never doubles for the last ones.
+const TURNS_MAX: usize = (1 << 16) / 8 * 7;
 static NEXT_ID: AtomicU32 = AtomicU32::new(1);
 
 /// The path search's work space, kept from a search to the next in each thread: the cheapest

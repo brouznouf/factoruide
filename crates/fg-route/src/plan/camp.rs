@@ -11,7 +11,8 @@ use std::rc::Rc;
 /// Camps looked at, nearest as the crow flies first: the one the trip to is the fastest.
 const CAMP_CHOICES: usize = 3;
 /// Places whose nearest camps are remembered, beyond which the memo starts over.
-const CAMP_MEMO: usize = 1 << 16;
+/// What a table of 2^16 buckets holds (7/8 of them): it never doubles for the last ones.
+const CAMP_MEMO: usize = (1 << 16) / 8 * 7;
 
 /// The nearest camps of a place for a level: (continent, bits of the coordinates, level).
 pub(crate) type NearCamps = std::cell::RefCell<FxHashMap<(i64, [u64; 2], i64), Rc<[Pos]>>>;

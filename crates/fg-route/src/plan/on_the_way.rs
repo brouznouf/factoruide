@@ -24,7 +24,8 @@ pub(crate) type FarmKey = (u64, [u64; 5]);
 pub(crate) type FarmWalks = std::cell::RefCell<FxHashMap<FarmKey, Rc<[Met]>>>;
 
 /// Walks whose farmed mobs are remembered, beyond which the memo starts over.
-const FARM_MEMO: usize = 1 << 20;
+/// What a table of 2^20 buckets holds (7/8 of them): it never doubles for the last ones.
+const FARM_MEMO: usize = (1 << 20) / 8 * 7;
 
 /// Distance from `p` to the segment `a`-`b` (same continent).
 pub(crate) fn segment_dist(p: &Pos, a: &Pos, b: &Pos) -> f64 {

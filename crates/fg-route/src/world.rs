@@ -119,7 +119,8 @@ type WalkKey = (u64, u8, [u64; 7]);
 thread_local! {
     static WALKED: RefCell<FxHashMap<WalkKey, f64>> = RefCell::new(FxHashMap::default());
 }
-const WALKED_MAX: usize = 1 << 17;
+/// What a table of 2^17 buckets holds (7/8 of them): it never doubles for the last ones.
+const WALKED_MAX: usize = (1 << 17) / 8 * 7;
 
 /// Walks between the passages (`World::pass_closed`): shortest distances and the next passage
 /// on each.

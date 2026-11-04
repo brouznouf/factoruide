@@ -30,7 +30,8 @@ const NONE: u32 = u32::MAX;
 const SMALL_AREA: u32 = 4;
 /// Ends of walks in a tile whose costs to its gates are remembered, beyond which the tile's memo
 /// starts over.
-const ENDS_MAX: usize = 1 << 12;
+/// What a table of 2^12 buckets holds (7/8 of them): it never doubles for the last ones.
+const ENDS_MAX: usize = (1 << 12) / 8 * 7;
 
 /// The walks from a floor of a tile to its gates (or back), by floor and way, shared by the
 /// threads.
