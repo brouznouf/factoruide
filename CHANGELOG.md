@@ -41,7 +41,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - WoW Forever's Hall of Thanes: Underground Map is planned (the Dark Iron Map drops from the Dark Iron Spies and Captain Beld), and Old Ironforge Incursion after it (GitHub #98).
 - WoW Forever: the warlocks' pets and the Theramore Emissaries no longer count as hostile creatures in Stormwind (they kept low-level characters from its auction house), and A Dynamite Plan asks for its 10 Rough Dynamite.
-- The players' latest contributions: more quests seen in game, creature ranks and object names, and the Friend of the Library books no longer planned as quests to pick up (WoW Forever).
+- The players' latest contributions: more quests seen in game, creature ranks and object names (WoW Forever).
+- WoW Forever: the library's books (Friend of the Library) are planned again, the game files them with the event quests.
 
 ## 0.15.0 (2026-11-01)
 

@@ -1390,196 +1390,286 @@ ends = [{ type = "npc", id = 5905 }]
 # Library books: the book starts nothing in game; Owen Thadd or Garion Wendell offers the quest
 # while the book is in the bags (the sources list the book's object as a giver too). The book is
 # given as the quest's starting item: the planner loots it before going to the librarian.
+# The game files the library's quests (and the books Jennea Cannon and Oran Snakewrithe take) under
+# Special (-284), the category of event quests the planner leaves out: `zone_or_sort = 0` keeps
+# them in the guides, and Friend of the Library's rewards with them.
+
+[[quest]]
+# Friend of the Library
+id = 78150
+zone_or_sort = 0
+
+[[quest]]
+# Greater Friend of the Library
+id = 79536
+zone_or_sort = 0
+
+[[quest]]
+# Greater Friend of the Library
+id = 82208
+zone_or_sort = 0
+
+[[quest]]
+# Undead Potatoes
+id = 84395
+zone_or_sort = 0
+
+[[quest]]
+# Magma or Lava?
+id = 84396
+zone_or_sort = 0
+
+[[quest]]
+# Northern Kalimdor - A Comprehensive Guide
+id = 84397
+zone_or_sort = 0
+
+[[quest]]
+# A Study of the Light
+id = 84398
+zone_or_sort = 0
+
+[[quest]]
+# Ka-Boom!
+id = 84399
+zone_or_sort = 0
+
+[[quest]]
+# The Knight and the Lady
+id = 84400
+zone_or_sort = 0
+
+[[quest]]
+# Scourge: Undead Menace or Misunderstood?
+id = 84401
+zone_or_sort = 0
+
+[[quest]]
+# Necromancy 101
+id = 84402
+zone_or_sort = 0
 
 [[quest]]
 # Nar'thalas Almanac
 id = 78124
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409496 }]
 starts = [{ type = "item", id = 209843 }]
 
 [[quest]]
 # The Dalaran Digest
 id = 78127
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409501 }]
 starts = [{ type = "item", id = 209844 }]
 
 [[quest]]
 # Bewitchments and Glamours
 id = 78142
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409562 }]
 starts = [{ type = "item", id = 209845 }]
 
 [[quest]]
 # Secrets of the Dreamers
 id = 78143
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409692 }]
 starts = [{ type = "item", id = 209846 }]
 
 [[quest]]
 # Arcanic Systems Manual
 id = 78145
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409700 }]
 starts = [{ type = "item", id = 209847 }]
 
 [[quest]]
 # Goaz Scrolls
 id = 78146
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409717 }]
 starts = [{ type = "item", id = 209848 }]
 
 [[quest]]
 # Crimes Against Anatomy
 id = 78147
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409735 }]
 starts = [{ type = "item", id = 209849 }]
 
 [[quest]]
 # Runes of the Sorcerer-Kings
 id = 78148
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409731 }]
 starts = [{ type = "item", id = 209850 }]
 
 [[quest]]
 # Fury of the Land
 id = 78149
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 409711 }]
 starts = [{ type = "item", id = 209851 }]
 
 [[quest]]
 # Archmage Antonidas: The Unabridged Autobiography
 id = 79091
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 386691 }]
 starts = [{ type = "item", id = 203754 }]
 
 [[quest]]
 # Archmage Theocritus' Research Journal
 id = 79092
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 386759 }]
 starts = [{ type = "item", id = 203755 }]
 
 [[quest]]
 # Rumi of Gnomeregan: The Collected Works
 id = 79093
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 408014 }]
 starts = [{ type = "item", id = 208860 }]
 
 [[quest]]
 # The Lessons of Ta'zo
 id = 79094
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 405149 }]
 starts = [{ type = "item", id = 207972 }]
 
 [[quest]]
 # The Apothecary's Metaphysical Primer
 id = 79095
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 405879 }]
 starts = [{ type = "item", id = 208185 }]
 
 [[quest]]
 # Ataeric: On Arcane Curiosities
 id = 79096
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 410299 }]
 starts = [{ type = "item", id = 210177 }]
 
 [[quest]]
 # Baxtan: On Destructive Magics
 id = 79097
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 407566 }]
 starts = [{ type = "item", id = 208800 }]
 
 [[quest]]
 # Basilisks: Should Petrification be Feared?
 id = 79535
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 421526 }]
 starts = [{ type = "item", id = 213165 }]
 
 [[quest]]
 # Geomancy: The Stone-Cold Truth
 id = 79947
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 423895 }]
 starts = [{ type = "item", id = 215683 }]
 
 [[quest]]
 # Defensive Magics 101
 id = 79948
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 423896 }]
 starts = [{ type = "item", id = 215815 }]
 
 [[quest]]
 # A Web of Lies: Debunking Myths and Legends
 id = 79949
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 423897 }]
 starts = [{ type = "item", id = 215816 }]
 
 [[quest]]
 # Demons and You
 id = 79950
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 423898 }]
 starts = [{ type = "item", id = 215817 }]
 
 [[quest]]
 # Mummies: A Guide to the Unsavory Undead
 id = 79951
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 423899 }]
 starts = [{ type = "item", id = 215820 }]
 
 [[quest]]
 # RwlRwlRwlRwl!
 id = 79952
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 423900 }]
 starts = [{ type = "item", id = 215822 }]
 
 [[quest]]
 # A Ludite's Guide to Caring for Your Demonic Pet
 id = 79953
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 423901 }]
 starts = [{ type = "item", id = 215824 }]
 
 [[quest]]
 # Sanguine Sorcery
 id = 81947
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441247 }]
 starts = [{ type = "item", id = 220345 }]
 
 [[quest]]
 # Legends of the Tidesages
 id = 81949
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441248 }]
 starts = [{ type = "item", id = 220346 }]
 
 [[quest]]
 # The Liminal and the Arcane
 id = 81951
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441249 }]
 starts = [{ type = "item", id = 220347 }]
 
 [[quest]]
 # Everyday Etiquette
 id = 81952
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441250 }]
 starts = [{ type = "item", id = 220348 }]
 
 [[quest]]
 # Stonewrought Design
 id = 81953
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441251 }]
 starts = [{ type = "item", id = 220349 }]
 
 [[quest]]
 # Venomous Journeys
 id = 81954
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441252 }]
 starts = [{ type = "item", id = 220350 }]
 
 [[quest]]
 # A Mind of Metal
 id = 81955
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441253 }]
 starts = [{ type = "item", id = 220352 }]
 
 [[quest]]
 # Conjurer's Codex
 id = 81956
+zone_or_sort = 0
 remove_starts = [{ type = "object", id = 441254 }]
 starts = [{ type = "item", id = 220353 }]
 
