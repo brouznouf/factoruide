@@ -1,13 +1,6 @@
 # Forever-only corrections (format: ../quests.toml).
 
 [[quest]]
-# Northshire: the letter to Tordrin Sternblade, hunter trainer (Forever's new human hunter),
-# not a warrior quest as the sources record it (warriors get Simple Letter, 3100).
-id = 92479
-races_mask = 1
-classes_mask = 4
-
-[[quest]]
 # Trouble in the Valley: Benedict's Orders drop from Corporal Adamore, whose Kul Tiras marines come
 # to his help together and do not chase far (players' reports): the step says how to pull them.
 id = 95621
@@ -23,16 +16,8 @@ pre_all = [95621]
 objectives = [{ type = "creature", id = 261367, amount = 1, text = "Help Walton: defeat Terry Longdrink and the Kul Tiras marines" }]
 
 [[quest]]
-# Redridge: Tharil'zun and Shadow Magic come after Marshal Marris' Forever quests too, not only
-# Blackrock Menace as in Classic (the sources copy Classic's link): with Blackrock Menace and
-# Alther's Mill done but Blackrock Blockade abandoned, Marris offers neither (seen in game,
-# 2026-10-11). The three are in Tharil'zun's series.
-id = 19
-pre_all = [98386, 98387]
-
-[[quest]]
 id = 115
-pre_all = [98386, 98387]
+pre_all = [98386]
 
 [[quest]]
 # Darnassus: In Search of Thaelrid has no race restriction in the sources, but Dawnwatcher
@@ -40,63 +25,22 @@ pre_all = [98386, 98387]
 id = 1198
 races_mask = 4294967373 # the Alliance (Skyborne included)
 
-# Forever's new race and class pairs: their class quests have no class (nor race) in the
-# sources, so every class of the race got them. The race is the one whose start zone or
-# reputation the quest belongs to (client_charbaseinfo for the pairs that exist).
-
-[[quest]]
-# Valley of Trials: the orc mage's letter (Orgrimmar reputation); the troll mage's is Glyphic Tablet.
-id = 98576
-races_mask = 2
-classes_mask = 128
-
-[[quest]]
-# Valley of Trials: the troll warlock's letter (Darkspear reputation).
-id = 98575
-races_mask = 128
-classes_mask = 256
-
-[[quest]]
-# Coldridge Valley: the gnome priest's letter (Gnomeregan reputation).
-id = 98574
-races_mask = 64
-classes_mask = 16
-
-[[quest]]
-# Deathknell and Tirisfal: the undead paladin's letter, then Aramis Hammerhand's, Shari Stilwell's
-# and Hilda the Breaker's quests (paladin trainers). Like the other classes' letters from Shadow
-# Priest Sarvis (3095-3099), it is only offered once The Mindless Ones is done: guides sent
-# players to take it right away (GitHub #26).
-id = 98601
-races_mask = 16
-classes_mask = 2
-pre_any = [364]
+# Forever's new race and class pairs: their class quests had no class nor race in the sources,
+# so every class of the race got them. The sources give their class now; where a race is still
+# set below, it is the one whose start zone or reputation the quest belongs to
+# (client_charbaseinfo for the pairs that exist).
 
 [[quest]]
 # Rediscovering the Light (teaches Holy Light): the sources only describe its objective, so the
 # guides left it out (GitHub #17). The Injured Deathguard around Aramis Hammerhand are healed,
 # not killed.
 id = 90902
-races_mask = 16
-classes_mask = 2
 objectives = [{ type = "talk", id = 259377, amount = 5, text = "Heal Injured Deathguard with Holy Light" }]
 
 [[quest]]
 id = 91208
-races_mask = 16
-classes_mask = 2
 # Coming to Terms: offer aid to the Frightened Paladin west of Deathknell.
 objectives = [{ type = "talk", id = 246143, amount = 1, text = "Offer aid to the Frightened Paladin" }]
-
-[[quest]]
-id = 91209
-races_mask = 16
-classes_mask = 2
-
-[[quest]]
-id = 91282
-races_mask = 16
-classes_mask = 2
 
 [[quest]]
 id = 98389
@@ -127,47 +71,38 @@ pre_all = [96896]
 # caches give them the whole Alliance, and dwarves are its only shamans (client_charbaseinfo).
 id = 94449
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94465
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94466
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94467
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94468
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94472
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94473
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94494
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94495
 races_mask = 68
-classes_mask = 64
 
 [[quest]]
 # Call of Water (dwarf shaman): the waterskins are filled by using them in the water, at places no
@@ -175,32 +110,27 @@ classes_mask = 64
 # falls below Hervdana's cave, "where the fresh meets the brackish".
 id = 94497
 races_mask = 68
-classes_mask = 64
 objectives = [{ type = "trigger", text = "Fill the Unfilled Brown Waterskin at the base of the falls", at = { zone = 11, x = 65.7, y = 76.4 } }]
 
 [[quest]]
 id = 94499
 races_mask = 68
-classes_mask = 64
 objectives = [{ type = "trigger", text = "Fill the Unfilled Red Waterskin at Stonewatch Falls", at = { zone = 44, x = 73.7, y = 61.6 } }]
 
 [[quest]]
 id = 94500
 races_mask = 68
-classes_mask = 64
 objectives = [{ type = "trigger", text = "Fill the Unfilled Blue Waterskin in the waters of Astranaar", at = { zone = 331, x = 37.0, y = 51.6 } }]
 
 [[quest]]
 id = 94501
 races_mask = 68
-classes_mask = 64
 
 [[quest]]
 # Westfall, Stendel's Pond: drinking the Water Sapta summons the Corrupt Minor Manifestation of
 # Water, which drops the bracers; the sources only know Silverpine's (the Horde's chain).
 id = 94502
 races_mask = 68
-classes_mask = 64
 objectives = [{ type = "trigger", text = "Drink the Water Sapta at Stendel's Pond and defeat the Corrupt Minor Manifestation of Water for its bracers", at = { zone = 40, x = 47.5, y = 60.4 } }]
 
 [[quest]]
@@ -209,181 +139,65 @@ objectives = [{ type = "trigger", text = "Drink the Water Sapta at Stendel's Pon
 # place: put at the pond.
 id = 94503
 races_mask = 68
-classes_mask = 64
 ends = [{ type = "npc", id = 258661 }]
 remove_ends = [{ type = "npc", id = 5895 }]
 
 [[quest]]
 id = 94505
 races_mask = 68
-classes_mask = 64
 starts = [{ type = "npc", id = 258661 }]
 remove_starts = [{ type = "npc", id = 5895 }]
 
 [[quest]]
 id = 94616
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
 id = 94789
 races_mask = 4
-classes_mask = 64
 
 [[quest]]
-# Call of Earth: "Find Teo Hammerstorm in Dun Morogh", no turn-in known.
+# Call of Earth: "Find Teo Hammerstorm in Dun Morogh", for the dwarf shaman (the sources now
+# give its turn-in).
 id = 96243
 races_mask = 4
-classes_mask = 64
-ends = [{ type = "npc", id = 257446 }]
 
 [[quest]]
 # Elwynn: the pet quests of Josephine Carson, hunter trainer, for any Alliance hunter (quest
 # caches).
 id = 94792
 races_mask = 4294967308
-classes_mask = 4
 
 [[quest]]
 id = 94793
 races_mask = 4294967304
-classes_mask = 4
 
 [[quest]]
 id = 94863
 races_mask = 4294967308
-classes_mask = 4
 
 [[quest]]
 id = 94864
 races_mask = 4294967308
-classes_mask = 4
-
-[[quest]]
-# Priest trainers' quests (Divine Grace, Confounding Flash, Contingency Plan): their races are the
-# quest caches'.
-id = 94773
-classes_mask = 16
-
-[[quest]]
-id = 94774
-classes_mask = 16
-
-[[quest]]
-id = 94817
-classes_mask = 16
-
-[[quest]]
-id = 94819
-classes_mask = 16
-
-[[quest]]
-id = 94824
-classes_mask = 16
-
-[[quest]]
-# Ashenvale: Seeking the Kor Gem is a paladin quest, as in Classic (1442).
-id = 95042
-classes_mask = 2
-
-[[quest]]
-# Moonglade: the druid's cat form quests.
-id = 98340
-classes_mask = 1024
 
 [[quest]]
 # The Skyborne druid's chain (98341 -> 98404 -> 98738, back to Dendrite Starblaze) follows either
 # side's trainer quest; the quest series only shows the Horde's.
 id = 98341
-classes_mask = 1024
-pre_any = [98340, 98393]
-
-[[quest]]
-id = 98342
-classes_mask = 1024
+pre_any = [98393]
 
 [[quest]]
 id = 98362 # To Thunder Bluff
-classes_mask = 1024
 pre_any = [98738]
 
 [[quest]]
-id = 98393
-classes_mask = 1024
-
-[[quest]]
-id = 98394
-classes_mask = 1024
-
-[[quest]]
-id = 98396
-classes_mask = 1024
-
-[[quest]]
 id = 98397 # To Darnassus
-classes_mask = 1024
 pre_any = [98738]
 
 [[quest]]
 id = 98404
 classes_mask = 1024
 pre_all = [98341]
-
-[[quest]]
-id = 98405
-classes_mask = 1024
-
-[[quest]]
-id = 98731
-classes_mask = 1024
-
-[[quest]]
-id = 98738
-classes_mask = 1024
-
-[[quest]]
-id = 98739
-classes_mask = 1024
-
-[[quest]]
-# Zephras Isle: the Skyborne hunter's pet quests, recorded for every race (races_mask 0).
-id = 94007
-races_mask = 12884901888
-
-[[quest]]
-id = 94013
-races_mask = 12884901888
-
-[[quest]]
-id = 94050
-races_mask = 12884901888
-
-[[quest]]
-id = 94978
-races_mask = 12884901888
-
-[[quest]]
-id = 94979
-races_mask = 12884901888
-
-[[quest]]
-# Zephras Isle: the Windshaper Skyborne's shaman quests, recorded for every race or for the
-# Classic Horde (Windshaper Skyborne are the only Skyborne shamans). The quest caches give 92467
-# and 92468 the whole Horde: their givers are on the island, which only Skyborne start on.
-id = 97243
-races_mask = 8589934592
-
-[[quest]]
-id = 97244
-races_mask = 8589934592
-
-[[quest]]
-id = 97245
-races_mask = 8589934592
-
-[[quest]]
-id = 97257
-races_mask = 8589934592
 
 [[quest]]
 id = 92466
@@ -401,76 +215,22 @@ races_mask = 8589934592
 # Silithus: A More Fitting Reward follows the shaman's The Darkreaver Menace (8258), as in TBC.
 id = 8259
 races_mask = 8589934770 # the Horde (Skyborne included)
-classes_mask = 64
-
-[[quest]]
-# A Lesson in Divinity: the undead paladin's Redemption chain (Forever's Tome of Divinity, GitHub
-# #12), at Bandarion Keep and in the Undercity. The sources know neither its class nor its order:
-# Danitha Morr sends to Tanis Alderwood (94427), who wants linen (94434) and sends back (94435);
-# Danitha sends to Deathguard Billmuth (94436), who sends to raise Deathguard Falgan (94438), who
-# wants the attack plans (94440); Billmuth sends back to Danitha (94441), who teaches Redemption
-# (the quest series, the quests' texts).
-id = 94427
-races_mask = 16
-classes_mask = 2
 
 [[quest]]
 id = 94434
-races_mask = 16
-classes_mask = 2
 pre_all = [94427]
-
-[[quest]]
-id = 94435
-races_mask = 16
-classes_mask = 2
-pre_all = [94434]
-
-[[quest]]
-id = 94436
-races_mask = 16
-classes_mask = 2
-pre_all = [94435]
 
 [[quest]]
 # Raise Deathguard Falgan with the Symbol of Life: no source has the objective (Classic's Symbol of
 # Life quests have Narm or Henze Faulk as a creature).
 id = 94438
-races_mask = 16
-classes_mask = 2
-pre_all = [94436]
 objectives = [{ type = "creature", id = 257663, amount = 1 }]
-
-[[quest]]
-id = 94440
-races_mask = 16
-classes_mask = 2
-pre_all = [94438]
-
-[[quest]]
-id = 94441
-races_mask = 16
-classes_mask = 2
-pre_all = [94440]
-
-[[quest]]
-# Deathknell: The Adventurer (Executor Arren) has no prerequisite in the sources (marked
-# it "TBD"), so guides took it on arrival, when Arren does not offer it yet (GitHub #12). The
-# other races' Adventurer comes after their start zone's last quest before the trip to the next
-# town (Burning Blade Medallion, Skirmish at Echo Ridge...); here The Red Messenger, before
-# Vital Intelligence sends to Brill. Not checked in game yet.
-id = 96656
-pre_any = [382]
 
 [[quest]]
 # Contingency Plan, Darnassus's (Priestess Alathea): taken to High Priestess Mims in Ironforge
 # like the others (its text), a turn-in no source has.
 id = 94820
 ends = [{ type = "npc", id = 258785 }]
-
-[[quest]]
-id = 94003 # The Skybreaker Bulwark: the Skyborne warrior's (Seena Skybreaker)
-races_mask = 12884901888 # the Skyborne, both factions
 
 [[spawn]]
 # Call of Water (dwarf shaman): the Minor Manifestation of Water appears in the middle of Stendel's
@@ -1055,13 +815,6 @@ y = 49.2
 # reports and comments; each was taken by our routes before the giver offers it).
 
 [[quest]]
-# Bandarion Keep: Hadric Harlson offers it once The Cult of the Damned and Remnants of War are
-# handed in (not offered on the first visit, seen in game, players' reports). It is the first of its
-# series, so the series import cannot give it.
-id = 96899
-pre_all = [96897, 96898]
-
-[[quest]]
 # Scout Support: High Executor Darthalia offers it after Battle of Hillsbrad part II (seen in game,
 # players' reports). First of its series too.
 id = 98094
@@ -1072,12 +825,6 @@ pre_all = [528]
 # Classic (players' reports on 425 and 91921: "Allows you to start quest Ivar the Foul").
 id = 425
 pre_all = [91921]
-
-[[quest]]
-# Holy Diver: Gwennyth offers it once all nine beached sea creatures and turtles are handed in
-# (players' report, 2026-10-06).
-id = 87760
-pre_all = [4722, 4723, 4725, 4727, 4728, 4730, 4731, 4732, 4733]
 
 [[quest]]
 # Stop the Spread: Dalar Dawnweaver did not offer it to two players who had not run his Arugal's
@@ -1151,7 +898,6 @@ id = 95998
 objectives = [{ type = "object", id = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" }]
 # The Great Outdoors: Sam Sarsaparilla gives it; William Pestle (the sources') does not (Forever's
 # quest page lists Sam only).
-remove_starts = [{ type = "npc", id = 253 }]
 
 [[quest]]
 id = 96101
@@ -1264,7 +1010,6 @@ races_mask = 162
 # Orgrimmar mailbox comes from the sources).
 id = 1486
 xp = 3100
-remove_starts = [{ type = "object", id = 659159 }]
 
 [[quest]]
 # Deathstalkers in Shadowfang: 5350 (Classic 2000).
@@ -1275,11 +1020,6 @@ xp = 5350
 # Leaders of the Fang: 4300 (Classic 2200).
 id = 914
 xp = 4300
-
-[[quest]]
-# Trouble at the Docks: 2650 (Classic 1350).
-id = 959
-xp = 2650
 
 [[quest]]
 # Serpentbloom: 3300 (Classic 1700).
@@ -1312,26 +1052,6 @@ id = 1014
 xp = 8850
 
 # Givers and enders as Forever's quest pages list them (the sources' extras removed).
-[[quest]]
-# Poor Old Blanchy: Verna Furlbrow only, not the Stormwind mailbox.
-id = 151
-remove_starts = [{ type = "object", id = 696264 }]
-
-[[quest]]
-# The Power to Destroy...: Varimathras only, not the Orgrimmar mailbox.
-id = 5725
-remove_starts = [{ type = "object", id = 658924 }]
-
-[[quest]]
-# Camping 101: Cooking: Brakk gives it (seen in game), not Cook Torka (who takes it back).
-id = 96655
-remove_starts = [{ type = "npc", id = 3191 }]
-
-[[quest]]
-# This Fruit Could Bite Back: Cook Torka gives it, not Grimtak.
-id = 96825
-remove_starts = [{ type = "npc", id = 3881 }]
-
 [[quest]]
 # Speak with Dillinger: Austil de Mon only, not Baltus Fowler.
 id = 1818
