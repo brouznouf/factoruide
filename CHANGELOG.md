@@ -43,8 +43,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - WoW Forever: the warlocks' pets and the Theramore Emissaries no longer count as hostile creatures in Stormwind (they kept low-level characters from its auction house), and A Dynamite Plan asks for its 10 Rough Dynamite.
 - The players' latest contributions: more quests seen in game, creature ranks and object names (WoW Forever).
 - WoW Forever: the library's books (Friend of the Library) are planned again, the game files them with the event quests.
-- The XP players measure in game where the sources were off (TBC: Your Place In The World and Rude Awakening give 40, not 60), with the latest Questie and AllTheThings data and the game's new builds.
-- WoW Forever: the latest Questie data (the priests' Divine Grace and Confounding Flash versions exclude each other, An Enticing Offer's objectives in the game's order) and more object and creature names checked from players' reports.
+- The XP players measure in game where the quest data was off (TBC: Your Place In The World and Rude Awakening give 40, not 60), with the latest quest data and the game's new builds.
+- WoW Forever: the latest quest data (the priests' Divine Grace and Confounding Flash versions exclude each other, An Enticing Offer's objectives in the game's order) and more object and creature names checked from players' reports.
 
 ## 0.15.0 (2026-11-01)
 
