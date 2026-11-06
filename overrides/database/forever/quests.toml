@@ -1988,3 +1988,80 @@ id = 95647
 remove_ends = [{ type = "npc", id = 1480 }]
 ends = [{ type = "npc", id = 262681 }]
 objectives = [{ type = "creature", id = 262681, amount = 1, text = "Find Ardin Grassman in the Excavation Site" }]
+
+# Creatures placed in the capitals and starting towns with no side known: an elite Infernal (an
+# invasion's, at 93 places from Goldshire to Thunder Bluff), Argent Healers in Thunder Bluff and
+# the city folk of patch 1.60.1. Taken for hostile guards, they kept Marshal Dughan, Cairne
+# Bloodhoof, Tinkmaster Overspark and the Undercity's apothecaries out of the guides. None gives,
+# takes back or is the target of a quest: their places are dropped.
+[[npc]]
+id = 278863 # Infernal
+remove_spawns = true
+
+[[npc]]
+id = 31282 # Argent Healer
+remove_spawns = true
+
+[[npc]]
+id = 276795 # Anya Rince
+remove_spawns = true
+
+[[npc]]
+id = 277368 # Gevreka
+remove_spawns = true
+
+[[npc]]
+id = 274917 # Boborus Overvolt
+remove_spawns = true
+
+[[npc]]
+id = 268048 # Darkspear Emissary
+remove_spawns = true
+
+[[npc]]
+id = 276798 # Malus
+remove_spawns = true
+
+[[npc]]
+id = 271034 # Gragtharr
+remove_spawns = true
+
+[[npc]]
+id = 271035 # Nalrekk Fizzlewrench
+remove_spawns = true
+
+[[npc]]
+id = 271036 # Rorschak
+remove_spawns = true
+
+[[npc]]
+id = 277639 # Alyz
+remove_spawns = true
+
+[[npc]]
+id = 277726 # Amethryn
+remove_spawns = true
+
+[[npc]]
+id = 277062 # Ancelina
+remove_spawns = true
+
+[[npc]]
+id = 273256 # Arrgrah Stonewall
+remove_spawns = true
+
+[[npc]]
+id = 274780 # Damin Dawnshadow
+remove_spawns = true
+
+[[npc]]
+id = 261578 # Riding Striped Nightsaber
+remove_spawns = true
+
+[[npc]]
+id = 276756 # Solluna
+remove_spawns = true
+
+[[npc]]
+id = 273437 # Turlethion Moonrage
+remove_spawns = true
