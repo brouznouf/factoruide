@@ -1196,6 +1196,71 @@ fn a_quest_never_turned_in_counts_as_grinding() {
     assert!(left.grinding > done.grinding, "{} vs {}", left.grinding, done.grinding);
 }
 
+/// A town (50, 50) and boars 300 yards south: the ribs taken and turned in in town, the tools
+/// taken 20 yards away on the way back from the boars. `tools` moves the tools' giver, `ribs`
+/// where the ribs are turned in.
+fn town_and_boars(tools: (f64, f64), ribs: (f64, f64)) -> Prepared {
+    use crate::testing::{Q, Scenario};
+    Scenario::new()
+        .levels(1, 3)
+        .quest(
+            Q::new(1, "Ribs")
+                .level(1)
+                .xp(50)
+                .giver(1, 50.0, 50.0)
+                .turn_in_at(1, ribs.0, ribs.1)
+                .kill("Boar", 1, 6, 1, 50.0, 80.0),
+        )
+        .quest(
+            Q::new(2, "Tools")
+                .level(1)
+                .xp(50)
+                .giver(1, tools.0, tools.1)
+                .turn_in_at(1, 52.0, 50.0),
+        )
+        .build()
+}
+
+/// The ribs' boars killed, then the tools taken on the way back.
+fn ribs_then_tools() -> [Stop; 5] {
+    [
+        Stop::quest(0, Kind::Accept),
+        Stop::quest(0, Kind::Objective(0)),
+        Stop::quest(1, Kind::Accept),
+        Stop::quest(0, Kind::TurnIn),
+        Stop::quest(1, Kind::TurnIn),
+    ]
+}
+
+/// Whether tidying `ribs_then_tools` takes the tools before the boars.
+fn tools_taken_first(p: &Prepared) -> bool {
+    let route = ribs_then_tools();
+    let tidied = planner(p).tidy(&route).map_or(route.to_vec(), |(r, _)| r);
+    let at = |stop| tidied.iter().position(|&s| s == stop);
+    at(route[2]) < at(route[1])
+}
+
+/// A quest taken in town on the way back from a trip is taken before leaving: it costs nothing.
+#[test]
+fn a_quest_in_town_is_taken_before_leaving() {
+    assert!(tools_taken_first(&town_and_boars((52.0, 50.0), (50.0, 50.0))));
+}
+
+/// Not when it costs more than `tidy_slack` (no slack and a detour), nor when the giver is
+/// out of town (beyond `tidy_radius`).
+#[test]
+fn tidying_stays_within_its_slack_and_radius() {
+    // 40 yards north of town, the ribs turned in 100 yards north: the tools are on the way
+    // back, taking them first is a detour.
+    let mut p = town_and_boars((50.0, 46.0), (50.0, 40.0));
+    p.params.tidy_slack = 0.0;
+    assert!(!tools_taken_first(&p));
+    p.params.tidy_slack = 1000.0;
+    assert!(tools_taken_first(&p));
+    p.params.tidy_radius = 30.0;
+    assert!(!tools_taken_first(&p));
+}
+
 /// Elwynn's report: Thomas (70, 50) sends a report to Dughan (30, 50); the murlocs' bounty,
 /// given by Thomas, needs the report delivered. Quest indices: 0 the report, 1 the bounty, 2 a
 /// quest from Dughan back to Thomas.

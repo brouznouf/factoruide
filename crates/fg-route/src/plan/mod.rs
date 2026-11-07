@@ -48,6 +48,7 @@ mod sim;
 mod spot;
 mod state;
 mod step;
+mod tidy;
 mod together;
 mod travel;
 mod worth;

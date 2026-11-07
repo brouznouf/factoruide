@@ -284,6 +284,12 @@ pub struct Params {
     /// Class quests giving a pet or a form are done as soon as taken when that costs at most
     /// this many seconds: the route only counts their power in faster fights, not the safety.
     pub class_power_slack: f64,
+    /// The last tidying of a route: a stop done where the route stood before a trip elsewhere
+    /// (within `tidy_radius` yards of it) is done then, before leaving, when that costs at most
+    /// `tidy_slack` seconds (a quest taken, the hearthstone bound or an item bought in town
+    /// before going out, not on the way back).
+    pub tidy_slack: f64,
+    pub tidy_radius: f64,
     /// How the character's class fares at each level, in levels of power over the average class
     /// (`overrides/class_power.toml`, by level, empty: 0), and how much its gear counts for what it
     /// takes on (1 = average). Set from the class of the request, not read from routing.toml.
@@ -591,6 +597,8 @@ impl Default for Params {
             dungeon_loot_share: 0.35,
             gear_value: 0.5,
             class_power_slack: 600.0,
+            tidy_slack: 30.0,
+            tidy_radius: 100.0,
             class_curve: Vec::new(),
             gear_dependence: 1.0,
             power_curve: Vec::new(),

@@ -284,13 +284,14 @@ fn a_guide_of_dungeon_runs_gets_the_stops_inside_them() {
     let run = (steps.iter())
         .position(|s| matches!(s, RouteStep::Dungeon { dungeon: DEADMINES }))
         .expect("the run");
-    let after: Vec<i64> = steps[run + 1..run + 3]
+    let mut after: Vec<i64> = steps[run + 1..run + 3]
         .iter()
         .filter_map(|s| match s {
             RouteStep::Objective { quest, .. } => Some(*quest),
             _ => None,
         })
         .collect();
+    after.sort_unstable();
     assert_eq!(after, [300, 301], "{steps:?}");
     assert_eq!(editor.simulate(&steps, &names).errors, 0);
 }
