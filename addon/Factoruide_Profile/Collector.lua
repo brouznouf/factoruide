@@ -126,22 +126,14 @@ local function LastInteraction()
     return CurrentInteraction()
 end
 
+--- Race and class, sent with the rows. The quests done and in the log are the profile's
+--- (Profile.lua): the copies older versions kept here are let go.
 local function SnapshotCharacter()
-    local _, raceFile, raceID = UnitRace("player")
+    local _, raceFile = UnitRace("player")
     local _, classFile = UnitClass("player")
     char.race = raceFile
-    char.raceID = raceID
     char.class = classFile
-    char.faction = UnitFactionGroup("player")
-    char.level = UnitLevel("player")
-    local completed = QuestLog.GetAllCompletedQuestIDs()
-    if completed then char.completed = completed end
-    local log = {}
-    for i = 1, QuestLog.GetNumQuestLogEntries() do
-        local info = QuestLog.GetInfo(i)
-        if info and not info.isHeader and info.questID then table.insert(log, info.questID) end
-    end
-    char.questLog = log
+    char.raceID, char.faction, char.level, char.completed, char.questLog = nil, nil, nil, nil, nil
 end
 
 --- Last seq the app has received for this character, 0 when none: from Factoruide_Data, Sent.lua
@@ -183,10 +175,6 @@ FG:On("PLAYER_LOGIN", function()
     char = FactoruideDB.characters[key]
     Collector:Purge()
     SnapshotCharacter()
-end)
-
-FG:On("PLAYER_LOGOUT", function()
-    if char then SnapshotCharacter() end
 end)
 
 -- Quest offers: NPCs with a gossip window or a quest greeting list their available quests.

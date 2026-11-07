@@ -1,44 +1,18 @@
--- Guides as Lua text, run in a sandbox: the text of an import (Factoruide_Guide/Import.lua)
--- and the one the desktop app writes into the data addon Factoruide_Data (never published, so
--- that an update of the other addons never erases it). Factoruide_Data loads first (an optional
--- dependency) and sets two globals:
---   FactoruideData = [==[ the same Lua text as an import ]==]
+-- Factoruide_Data, the data addon the desktop app writes its guides into (never published, so
+-- that an update of the other addons never erases it). It loads first (an optional dependency)
+-- and sets two globals:
+--   FactoruideData = [==[ the same Lua text as an import (Factoruide_Guide/Import.lua) ]==]
 --   FactoruideDataTime = unix seconds it was written
 -- The text sets `Factoruide.Routes[name]` for each guide, `.Services`... and maybe
 -- `FactoruideSent = { ["Name-Realm"] = last seq }`, the rows the contribution server has: the
--- collector drops them, with or without the guide part. The text runs once, here; the guide part
--- takes what it set (`FG.DataGuide`) at its load.
+-- collector drops them, with or without the guide part.
+--
+-- Only that last table is read here, from the text, without running it. The guides are run by
+-- the guide part (Import.lua), which keeps them: the game counts memory to the addon whose code
+-- makes it, and megabytes of guides made here showed as this addon's. Without the guide part
+-- the text is let go at the login.
 
-local addonName, FG = ...
-
---- Whether `v` holds a function anywhere (keys included).
-local function HasFunction(v, seen)
-    if type(v) == "function" then return true end
-    if type(v) ~= "table" or seen[v] then return false end
-    seen[v] = true
-    for k, x in pairs(v) do
-        if HasFunction(k, seen) or HasFunction(x, seen) then return true end
-    end
-    return false
-end
-
---- Run a guide's Lua text in a sandbox holding only a fresh `Factoruide` table (no game API, no
---- globals): returns the table it filled and its FactoruideSent, or nil and the error. The text
---- may come from someone else: data only, no function.
-function FG.RunGuideText(text)
-    -- Precompiled chunks can get out of a sandbox: source text only.
-    if type(text) ~= "string" or text:byte(1) == 27 then return nil, "not Lua source" end
-    local chunk, err = loadstring(text, "=import")
-    if not chunk then return nil, err end
-    local ns = {}
-    local env = { Factoruide = ns }
-    setfenv(chunk, env)
-    local ok, runErr = pcall(chunk)
-    if not ok then return nil, runErr end
-    local sent = type(env.FactoruideSent) == "table" and env.FactoruideSent or nil
-    if HasFunction(ns, {}) or HasFunction(sent, {}) then return nil, "functions are not allowed" end
-    return ns, sent
-end
+local _, FG = ...
 
 --- The last seq of each character the server has, from `sent` (FactoruideSent of a text), the
 --- valid entries only.
@@ -51,24 +25,25 @@ function FG.SentSeqs(sent)
     return out
 end
 
--- Factoruide_Data: run now (its globals are set, the guide part is not loaded yet), its text let
--- go. FG.DataGuide = { ns, time } for the guide part, until the login; FG.DataSent = its seqs.
-FG.DataSent = {}
-if type(FactoruideData) == "string" then
-    local ns, sent = FG.RunGuideText(FactoruideData)
-    FactoruideData = nil
-    if ns then
-        FG.DataGuide = { ns = ns, time = tonumber(FactoruideDataTime) or 0 }
-        FG.DataSent = FG.SentSeqs(sent)
-    else
-        FG.DataFailed = tostring(sent)
+--- The seqs of the last `FactoruideSent = { ["Name-Realm"] = seq, ... }` of a guide text, read as
+--- text: the apps write it last, one character a line, names without quotes or backslashes.
+function FG.DataSentSeqs(text)
+    local out = {}
+    if type(text) ~= "string" then return out end
+    local at, from = nil, 1
+    while true do
+        local found = text:find("FactoruideSent", from, true)
+        if not found then break end
+        at, from = found, found + 1
     end
+    local block = at and text:match("^FactoruideSent%s*=%s*(%b{})", at)
+    for character, seq in (block or ""):gmatch('%[%s*"([^"\\]*)"%s*%]%s*=%s*(%d+)') do
+        out[character] = tonumber(seq)
+    end
+    return out
 end
 
-FG:On("ADDON_LOADED", function(name)
-    if name ~= addonName then return end
-    if FG.DataFailed then FG:Error("Factoruide_Data", FG.DataFailed) end
-end)
+FG.DataSent = FG.DataSentSeqs(FactoruideData)
 
--- Every addon is loaded at the login: what the guide part did not take is let go.
-FG:On("PLAYER_LOGIN", function() FG.DataGuide = nil end)
+-- Every addon is loaded at the login: the text the guide part did not take is let go.
+FG:On("PLAYER_LOGIN", function() FactoruideData = nil end)

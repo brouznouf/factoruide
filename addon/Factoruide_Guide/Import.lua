@@ -5,7 +5,7 @@
 -- guide version was computed) and `.version`, the places that serve the characters
 -- (`Factoruide.Services`) and maybe `FactoruideSent = { ["Name-Realm"] = last seq }`: the same text
 -- the desktop app writes into the data addon Factoruide_Data. It runs in a sandbox
--- (FG.RunGuideText, the profile part's Data.lua) and must leave data only. A `Factoruide.Config`
+-- (Import.Run) and must leave data only. A `Factoruide.Config`
 -- is ignored: the settings are chosen in game. An `.Assignments` (older apps: character -> guide)
 -- is kept as the first choice of those characters.
 --
@@ -14,8 +14,9 @@
 -- import in FactoruideDB.guideExtras = { text, time }. A guide imported again replaces the one of
 -- the same name, unless it was computed before it: then the player is asked.
 --
--- The guides in use (FG.Routes) are the union of the imported ones, Factoruide_Data's (FG.DataGuide,
--- run by the profile part) and those an older app wrote into Routes.lua: of two with the same name,
+-- The guides in use (FG.Routes) are the union of the imported ones, Factoruide_Data's (its text
+-- run here, at the first Apply, not in the profile part: the game counts their memory to the
+-- addon whose code makes them) and those an older app wrote into Routes.lua: of two with the same name,
 -- the one computed last. Each character chooses its guide in the addon's options (main page, Guides;
 -- Guide.lua keeps the choice).
 --
@@ -36,9 +37,45 @@ Import.FORMAT = 2
 --- Whether guide `r` was made for a newer addon (its format above this addon's).
 function Import.TooNew(r) return (tonumber(r.format) or 1) > Import.FORMAT end
 
---- Run a guide's Lua text in the sandbox: returns the table it filled (its `Factoruide`) and its
---- FactoruideSent, or nil and the error.
-Import.Run = FG.RunGuideText
+--- Whether `v` holds a function anywhere (keys included).
+local function HasFunction(v, seen)
+    if type(v) == "function" then return true end
+    if type(v) ~= "table" or seen[v] then return false end
+    seen[v] = true
+    for k, x in pairs(v) do
+        if HasFunction(k, seen) or HasFunction(x, seen) then return true end
+    end
+    return false
+end
+
+--- Run a guide's Lua text in a sandbox holding only a fresh `Factoruide` table (no game API, no
+--- globals): returns the table it filled and its FactoruideSent, or nil and the error. The text
+--- may come from someone else: data only, no function.
+function Import.Run(text)
+    -- Precompiled chunks can get out of a sandbox: source text only.
+    if type(text) ~= "string" or text:byte(1) == 27 then return nil, "not Lua source" end
+    local chunk, err = loadstring(text, "=import")
+    if not chunk then return nil, err end
+    local ns = {}
+    local env = { Factoruide = ns }
+    setfenv(chunk, env)
+    local ok, runErr = pcall(chunk)
+    if not ok then return nil, runErr end
+    local sent = type(env.FactoruideSent) == "table" and env.FactoruideSent or nil
+    if HasFunction(ns, {}) or HasFunction(sent, {}) then return nil, "functions are not allowed" end
+    return ns, sent
+end
+
+--- Factoruide_Data's guides, run once and its text let go: { ns, time }, nil when there is no
+--- text left to run (or it fails, the error counted).
+local function TakeData()
+    local text = FactoruideData
+    if type(text) ~= "string" then return nil end
+    FactoruideData = nil
+    local ns, err = Import.Run(text)
+    if not ns then return FG:Error("Factoruide_Data", err) end
+    return { ns = ns, time = tonumber(FactoruideDataTime) or 0 }
+end
 
 -- What a text sets besides its guides and is not kept with them.
 local NOT_EXTRA = { Routes = true, Assignments = true, Config = true }
@@ -160,10 +197,7 @@ function Import:Apply()
             services = FG.Services,
         }
     end
-    if FG.DataGuide then
-        self.data = FG.DataGuide
-        FG.DataGuide = nil
-    end
+    self.data = TakeData() or self.data
     local data = self.data
 
     local routes, info, tooNew = {}, {}, {}

@@ -118,9 +118,32 @@ local function Part(name, fn)
     return profile[name]
 end
 
---- Record everything the app needs about the character now.
-function Profile:Snapshot()
+-- The parts that cost the most to read (thousands of quests, the reputation panel opened and
+-- closed, the spell book), read again by the minute's snapshot only when the game said they
+-- changed; always on a full one (login, reload, logout). Opening the reputation headers makes
+-- the game tell every addon and its own panel, each minute, for nothing.
+local changed = { completed = true, reputation = true, spells = true }
+local CHANGED_BY = {
+    QUEST_TURNED_IN = "completed",
+    CHAT_MSG_COMBAT_FACTION_CHANGE = "reputation",
+    SPELLS_CHANGED = "spells",
+}
+for event, part in pairs(CHANGED_BY) do
+    FG:On(event, function() changed[part] = true end)
+end
+
+--- Read part `name` with `fn` when `full` or the game said it changed (else keep it as it is).
+local function Changed(name, fn, full)
+    if not (full or changed[name]) then return profile[name] end
+    changed[name] = false
+    return Part(name, fn)
+end
+
+--- Record everything the app needs about the character now; `full` false (the minute's
+--- snapshot): the costly parts only when they changed.
+function Profile:Snapshot(full)
     if not profile then return end
+    full = full ~= false
     profile.errors = nil
     profile.name = FG:CharacterKey()
     Part("character", function()
@@ -142,13 +165,13 @@ function Profile:Snapshot()
         local map, x, y = FG.PlayerPosition()
         return x and { map = map, x = x, y = y } or nil
     end)
-    profile.completed = Part("completed", CompletedQuests)
+    profile.completed = Changed("completed", CompletedQuests, full)
     profile.log = Part("log", LogQuests)
     profile.professions = Part("professions", Professions)
     profile.riding = Part("riding", function() return FG.ProfessionSkill(RIDING) or 0 end)
     profile.gear = Part("gear", Gear)
-    profile.spells = Part("spells", Spells)
-    profile.reputation = Part("reputation", FG.Reputations)
+    profile.spells = Changed("spells", Spells, full)
+    profile.reputation = Changed("reputation", FG.Reputations, full)
     profile.flights = profile.flights or {}
     Part("bind", function() UpdateBind(false) end)
     profile.time = time()
@@ -175,7 +198,7 @@ FG:On("PLAYER_LOGIN", function()
     Profile:Snapshot()
     -- Kept up to date while playing: the profile on disk is the one of the last minute even
     -- when the logout one fails.
-    C_Timer.NewTicker(60, function() Profile:Snapshot() end)
+    C_Timer.NewTicker(60, function() FG:Try("profile", Profile.Snapshot, Profile, false) end)
 end)
 
 FG:On("PLAYER_LEAVING_WORLD", function() Profile:Snapshot() end)

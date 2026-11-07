@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Lighter: the guides made in the desktop app now count in the Guide addon's memory, not this one's, and your reputations and spells are no longer read again every minute.
+
 ## 0.15.0 (2026-11-01)
 
 - Texts of the death skip steps, in every language.
