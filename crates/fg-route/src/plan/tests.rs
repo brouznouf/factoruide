@@ -1517,3 +1517,42 @@ fn a_late_training_waits_for_the_stops_at_hand() {
     );
 }
 
+/// A town (50, 50) and a camp 480 yards south (50, 98): the camp's quest taken in town, two
+/// town quests taken and turned in on a return from the camp. Quest indices: 0 the camp's,
+/// 1 and 2 the town's.
+fn town_and_camp() -> Prepared {
+    use crate::testing::{Q, Scenario};
+    let town = |id, name| {
+        Q::new(id, name)
+            .level(1)
+            .xp(10)
+            .giver(1, 51.0, 50.0)
+            .turn_in_at(1, 52.0, 50.0)
+    };
+    Scenario::new()
+        .levels(1, 10)
+        .quest(
+            Q::new(1, "Camp")
+                .level(1)
+                .xp(10)
+                .giver(1, 50.0, 50.0)
+                .turn_in_at(1, 50.0, 99.0)
+                .kill("Boar", 1, 6, 1, 50.0, 98.0),
+        )
+        .quest(town(2, "Tools"))
+        .quest(town(3, "Supplies"))
+        .build()
+}
+
+/// A return to a place for stops it could have done before is merged into the earlier visit:
+/// the town's quests are done before leaving for the camp, not on a trip back.
+#[test]
+fn a_return_to_a_place_is_merged_into_the_visit_before() {
+    let p = town_and_camp();
+    let planner = planner(&p);
+    let (a, o, t) = (Kind::Accept, Kind::Objective(0), Kind::TurnIn);
+    let route = stops(&[(0, a), (0, o), (0, t), (1, a), (2, a), (1, t), (2, t)]);
+    let (merged, cost) = planner.merge_visits(&route).expect("merged");
+    assert_eq!(merged, stops(&[(0, a), (1, a), (2, a), (1, t), (2, t), (0, o), (0, t)]));
+    assert!(cost < planner.simulate(&route, None).unwrap());
+}
