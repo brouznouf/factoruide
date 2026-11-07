@@ -14,6 +14,7 @@ of the databases keeps the sources it comes from (`sources` columns, `import_run
 | [VMaNGOS](https://github.com/vmangos/core) | GPL-2.0 | Classic 1.12 world database: exclusive quest groups, loot tables and chances, NPC titles, positions, objective amounts |
 | [CMaNGOS TBC database](https://github.com/cmangos/tbc-db) | GPL-3.0 | TBC 2.4.3 world database: the heights of creature and object spawns on the old continents and Outland, which tell the floor a place stands on |
 | [AllTheThings](https://github.com/ATTWoWAddon/AllTheThings) | MIT | Forever quests: classes and races, givers and positions, prerequisites, exclusive quests |
+| [pfQuest](https://github.com/shagu/pfQuest) | MIT (see below) | Its database, extracted from the VMaNGOS (Classic, Forever) and CMaNGOS (TBC) servers: quests, givers and turn-ins, prerequisites, objectives, NPC and object data and positions, drops and their chances; used only where no other source has the data (TBC: its quest item drop chances) |
 | [Wowhead](https://www.wowhead.com) tooltips | Wowhead's | Whether quests exist in Forever, names, levels, objective texts, NPC titles and positions; Questie's drop rates also come from Wowhead |
 | [EG Link output: World of Warcraft: Forever](https://github.com/JIVESCORP/eg-link-output-wowf), data from [Efficient Games](https://efficient.games) | CC BY 4.0 (see below) | Forever only: the quest data of players' game caches (XP rewards, objective amounts, races, levels, zones) |
 | Factoruide players | — | Quests and positions observed in game, sent through the app and accepted only when several trusted players agree |
@@ -52,6 +53,32 @@ Data from Efficient Games (<https://efficient.games>), licensed under CC BY 4.0
 <https://github.com/JIVESCORP/eg-link-output-wowf>. Changed: only the quest caches
 (`quests.<locale>.json`) are read, the newest client build's record of each quest is kept, its
 XP reward is computed with the game's XP table, and the values are merged with the other sources.
+
+## pfQuest
+
+```text
+MIT License
+
+Copyright (c) 2017-2021 Eric Mauser (Shagu)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 
 ## AllTheThings
 

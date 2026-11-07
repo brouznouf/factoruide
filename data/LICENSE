@@ -7,7 +7,8 @@ VMaNGOS's terms allow), whose text follows.
 
 This applies to the compilation and to the parts Factoruide holds rights on. Third-party parts
 stay under their own terms (../NOTICE.md): game data and names belong to Blizzard
-Entertainment; Questie's data has no stated license; AllTheThings' data is MIT.
+Entertainment; Questie's data has no stated license; AllTheThings' and pfQuest's data
+are MIT.
 
 The databases are their own source form: zstd-compressed SQLite files, readable and editable
 with any SQLite tool; each row records the sources it comes from (`sources` columns,
