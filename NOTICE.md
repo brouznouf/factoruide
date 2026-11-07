@@ -15,6 +15,7 @@ of the databases keeps the sources it comes from (`sources` columns, `import_run
 | [CMaNGOS TBC database](https://github.com/cmangos/tbc-db) | GPL-3.0 | TBC 2.4.3 world database: the heights of creature and object spawns on the old continents and Outland, which tell the floor a place stands on |
 | [AllTheThings](https://github.com/ATTWoWAddon/AllTheThings) | MIT | Forever quests: classes and races, givers and positions, prerequisites, exclusive quests |
 | [Wowhead](https://www.wowhead.com) tooltips | Wowhead's | Whether quests exist in Forever, names, levels, objective texts, NPC titles and positions; Questie's drop rates also come from Wowhead |
+| [EG Link output: World of Warcraft: Forever](https://github.com/JIVESCORP/eg-link-output-wowf), data from [Efficient Games](https://efficient.games) | CC BY 4.0 (see below) | Forever only: the quest data of players' game caches (XP rewards, objective amounts, races, levels, zones) |
 | Factoruide players | — | Quests and positions observed in game, sent through the app and accepted only when several trusted players agree |
 
 Used to build the databases but not included in them: [WoWDBDefs](https://github.com/wowdev/WoWDBDefs)
@@ -43,6 +44,14 @@ release of <https://github.com/cmangos/tbc-db> (SQLite snapshot); the build keep
 height of its creature and object spawns. Because of it, and since VMaNGOS's terms allow "any
 later version", the databases as a whole are distributed under the GPL version 3
 ([data/LICENSE](data/LICENSE)).
+
+## EG Link output
+
+Data from Efficient Games (<https://efficient.games>), licensed under CC BY 4.0
+(<https://creativecommons.org/licenses/by/4.0/>), from
+<https://github.com/JIVESCORP/eg-link-output-wowf>. Changed: only the quest caches
+(`quests.<locale>.json`) are read, the newest client build's record of each quest is kept, its
+XP reward is computed with the game's XP table, and the values are merged with the other sources.
 
 ## AllTheThings
 
