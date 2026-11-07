@@ -62,8 +62,12 @@ for addon in $changed; do
         sed -i "0,/^## Unreleased\$/s//## Unreleased\n\n## $version ($(date -u +%F))/" "addon/$addon/CHANGELOG.md"
     fi
 done
-if [ -n "$(git status --porcelain addon/*/*.toc addon/*/CHANGELOG.md)" ]; then
-    git commit -q -m "Addons $version:$changed" -- addon/*/*.toc addon/*/CHANGELOG.md
+# The published addons only: a local data addon (addon/Factoruide_Data, written by `fg route`) is not git's.
+published="addon/Factoruide_Profile addon/Factoruide_Guide"
+# shellcheck disable=SC2086
+if [ -n "$(git status --porcelain $published)" ]; then
+    # shellcheck disable=SC2086
+    git commit -q -m "Addons $version:$changed" -- $published
     git push -q origin main
     echo "addons $version:$changed"
 fi
