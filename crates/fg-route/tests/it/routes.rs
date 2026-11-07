@@ -2927,6 +2927,24 @@ fn a_delivery_filed_under_a_dungeon_has_nothing_inside() {
     assert!(found.mandatory && found.in_dungeon(deadmines), "{found:?}");
 }
 
+/// A place to reach can take a fixed time there (`seconds`): a rogue's infiltration of a dungeon
+/// alone (The Horn of Xelthos, GitHub #125), at its entrance, not a run of the dungeon.
+#[test]
+fn a_place_to_reach_takes_its_fixed_time() {
+    let conn = Fixture::new(Edition::Classic)
+        .file("classic_dungeons")
+        .toml(
+            "[[quest]]\nid = 90010\nname = \"Infiltration\"\nlevel = 18\nmin_level = 14\nraces_mask = 77\nzone = 40\nxp = 300\n\
+             starts = [{ npc = 234 }]\nends = [{ npc = 234 }]\n\
+             objectives = [{ trigger = \"Infiltrate the mine alone\", at = { zone = 40, x = 42.5, y = 71.7 }, minutes = 25 }]\n",
+        )
+        .open();
+    let p = prepare_in(&conn, "human", "warrior", 25, &[], None);
+    let o = &p.model.quests[quest(&p, 90010).unwrap() as usize].objectives;
+    assert!(o.len() == 1 && o[0].dungeon_of().is_none(), "{o:?}");
+    assert_eq!(o[0].extra, 1500.0);
+}
+
 /// Dungeons whose zone the game files under the continent (Blackrock Depths, Blackrock Spire,
 /// the Sunken Temple) are found through their instance map.
 #[test]

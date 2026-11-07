@@ -602,9 +602,16 @@ impl QuestBuilder<'_> {
     }
 
     /// Reach an area. Its points: `extra` = {zone: [[x, y], ...]}, a point `[x, y, z]` with its
-    /// height when known (its area trigger's).
+    /// height when known (its area trigger's), and `seconds` what is done there takes (a rogue's
+    /// infiltration of Shadowfang Keep alone, 25 minutes).
     fn explore(&self, quest: &QuestContext<'_>, text: Option<String>, extra: Option<&str>) -> Result<Objective, Skip> {
-        let area: HashMap<String, Vec<Vec<f64>>> = extra.and_then(|e| serde_json::from_str(e).ok()).unwrap_or_default();
+        let json: serde_json::Map<String, serde_json::Value> =
+            extra.and_then(|e| serde_json::from_str(e).ok()).unwrap_or_default();
+        let seconds = json.get("seconds").and_then(serde_json::Value::as_f64).unwrap_or(5.0);
+        let area: HashMap<String, Vec<Vec<f64>>> = (json.into_iter())
+            .filter(|(z, _)| z.parse::<i64>().is_ok())
+            .filter_map(|(z, pts)| Some((z, serde_json::from_value(pts).ok()?)))
+            .collect();
         let points: Vec<_> = area
             .iter()
             .flat_map(|(z, pts)| {
@@ -635,7 +642,7 @@ impl QuestBuilder<'_> {
         Ok(Objective::plain(
             loc,
             text.unwrap_or_else(|| "Explore the area".into()),
-            5.0,
+            seconds,
         ))
     }
 

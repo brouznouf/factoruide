@@ -105,6 +105,8 @@ struct Objective {
     text: Option<String>,
     at: Option<At>,
     amount: Option<i64>,
+    /// A trigger's fixed time (minutes): what is done at its place takes that long.
+    minutes: Option<f64>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -673,7 +675,11 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
         };
         let extra = o.at.as_ref().map(|at| {
             let z = at.z.map(|z| format!(",{z}")).unwrap_or_default();
-            format!("{{\"{}\":[[{},{}{z}]]}}", at.zone, at.x, at.y)
+            let seconds = o
+                .minutes
+                .map(|m| format!(",\"seconds\":{}", m * 60.0))
+                .unwrap_or_default();
+            format!("{{\"{}\":[[{},{}{z}]]{seconds}}}", at.zone, at.x, at.y)
         });
         conn.execute(
             "INSERT INTO m_quest_objective (quest_id, idx, type, target_id, amount, text, extra, source) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, 'fixture')",

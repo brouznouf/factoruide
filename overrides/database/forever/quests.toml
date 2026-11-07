@@ -2072,3 +2072,46 @@ remove_spawns = true
 [[npc]]
 id = 12476
 remove_spawns_in = [1637]
+
+# C's dead drop near Pyrewood (rogue class quests). The Horn of Xelthos and the Eye of Bhossca are
+# infiltrations alone, an outing of their own, not the group's run of the dungeon: Shadowfang Keep's
+# courtyard (two half-keys pick-pocketed there make the Twin Key, which opens a chest in the
+# stables), and the Scarlet Monastery (the uniform from the stables outside, the Scryer's Key
+# pick-pocketed in the Graveyard, a letter in the Library, a coffer back in the Graveyard). Their
+# follow-ups come by mail once in a capital city (the Eye's only from level 30), read at its
+# mailbox, and are handed in at the dead drop for the reward (quest pages and players' reports).
+[[quest]]
+id = 78261
+objectives = [{ type = "trigger", text = "Infiltrate Shadowfang Keep alone and take The Horn of Xelthos (the Twin Key's halves are pick-pocketed in the courtyard)", at = { zone = 130, x = 44.8, y = 67.8 }, minutes = 25 }]
+
+[[quest]]
+id = 78307
+remove_starts = [{ type = "object", id = 410369 }]
+starts = [
+  { type = "object", id = 142075 }, # Mailbox, Stormwind City
+  { type = "object", id = 32349 }, # Mailbox, Ironforge
+  { type = "object", id = 142110 }, # Mailbox, Darnassus
+  { type = "object", id = 173047 }, # Mailbox, Orgrimmar
+  { type = "object", id = 143985 }, # Mailbox, Thunder Bluff
+  { type = "object", id = 177044 }, # Mailbox, Undercity
+]
+
+[[quest]]
+id = 78676
+min_level = 30
+pre_all = [78307]
+objectives = [{ type = "trigger", text = "Infiltrate the Scarlet Monastery alone and take The Eye of Bhossca (the uniform from the stables, the Scryer's Key in the Graveyard)", at = { zone = 85, x = 82.6, y = 33.8 }, minutes = 35 }]
+
+[[quest]]
+id = 78699
+status = "available"
+reason = "given by mail once in a capital city"
+pre_all = [78676]
+starts = [
+  { type = "object", id = 142075 }, # Mailbox, Stormwind City
+  { type = "object", id = 32349 }, # Mailbox, Ironforge
+  { type = "object", id = 142110 }, # Mailbox, Darnassus
+  { type = "object", id = 173047 }, # Mailbox, Orgrimmar
+  { type = "object", id = 143985 }, # Mailbox, Thunder Bluff
+  { type = "object", id = 177044 }, # Mailbox, Undercity
+]
