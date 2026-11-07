@@ -14,7 +14,7 @@
 ## Category-zhCN: 任务
 ## Category-zhTW: 任務
 ## IconTexture: Interface\AddOns\Factoruide_Profile\Media\Logo
-## Version: 0.15.0
+## Version: 0.16.0
 ## Dependencies: Factoruide_Profile
 ## Group: Factoruide_Profile
 ## OptionalDeps: Factoruide_Data, ElvUI, EllesmereUI, SpartanUI, Poulpix_UI_Immersive, ShortestPathForever

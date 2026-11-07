@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+## 0.16.0 (2026-11-07)
+
 - WoW Forever: no more "ADDON_ACTION_BLOCKED: SetPassThroughButtons" message when the world map is open during a fight.
 - A dungeon's quests show together until each is done, even after leaving it; "Skip the dungeon" leaves the ones not finished aside.
 - WoW Forever: the Sleeping Bag XP reminder starts after its reward quest is completed.
