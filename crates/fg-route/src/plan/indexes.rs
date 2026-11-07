@@ -26,6 +26,9 @@ pub(crate) struct Indexes {
     pub(crate) blocked_by: Vec<Vec<u32>>,
     /// Quests that need each quest done first (the rest of its chain, one step at a time).
     pub(crate) followers: Vec<Vec<u32>>,
+    /// The breadcrumbs to each quest the route must do (`mandatory`): taken first, the quest
+    /// closing them once taken.
+    pub(crate) breadcrumbs: Vec<Vec<u32>>,
     /// The objectives inside each dungeon: (quest, objective).
     pub(crate) in_dungeon: Vec<Vec<(u32, u8)>>,
 }
@@ -53,6 +56,7 @@ impl Indexes {
             blocks,
             blocked_by,
             followers: followers(model),
+            breadcrumbs: mandatory_breadcrumbs(model),
             in_dungeon,
         }
     }
@@ -71,6 +75,19 @@ fn followers(model: &Model) -> Vec<Vec<u32>> {
             {
                 out[i].push(f as u32);
             }
+        }
+    }
+    out
+}
+
+/// The mandatory breadcrumbs to each quest.
+fn mandatory_breadcrumbs(model: &Model) -> Vec<Vec<u32>> {
+    let mut out = vec![Vec::new(); model.quests.len()];
+    for (b, q) in model.quests.iter().enumerate().filter(|(_, q)| q.mandatory) {
+        if let Some(&t) = q.breadcrumb_for.as_ref().and_then(|id| model.index.get(id))
+            && t != b
+        {
+            out[t].push(b as u32);
         }
     }
     out

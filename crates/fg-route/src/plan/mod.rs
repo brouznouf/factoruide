@@ -144,7 +144,8 @@ pub struct Planner<'a> {
 impl<'a> Planner<'a> {
     /// The level every stop of the forced quests can be made at from the start, by their gates
     /// (minimum levels, guards, mobs within reach, dungeons' levels); None without any. A dungeon
-    /// guide is planned at it.
+    /// guide is planned at it. A stop gated above the game's levels is never made: left out (the
+    /// guide reports its quest not planned) rather than holding every other one back.
     pub(crate) fn forced_quests_level(&self) -> Option<i64> {
         let s = self.sim().initial_state();
         (0..self.model.quests.len() as u32)
@@ -157,6 +158,7 @@ impl<'a> Planner<'a> {
                     .map(move |kind| Stop::quest(i, kind))
             })
             .map(|stop| self.sim().gate_level(&s, stop))
+            .filter(|&level| level <= self.rules().max_level)
             .max()
     }
 

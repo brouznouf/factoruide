@@ -238,10 +238,7 @@ pub(super) fn set_dungeon_levels(
     max_level: i64,
 ) {
     for (d, dungeon) in dungeons.iter_mut().enumerate() {
-        let mut own: Vec<i64> = (quests.iter())
-            .filter(|q| q.objectives.iter().any(|o| o.dungeon_of() == Some(d)))
-            .map(|q| q.level)
-            .collect();
+        let mut own: Vec<i64> = (quests.iter()).filter(|q| q.in_dungeon(d)).map(|q| q.level).collect();
         if own.is_empty() {
             // Not planned, but its levels are known when a request forces it (`check_dungeon_levels`).
             dungeon.min_level = i64::MAX;

@@ -110,6 +110,9 @@ impl Planner<'_> {
                         }
                     }
                 }
+                // A stop gated above the game's levels (a wrong spawn among its givers) is never
+                // reached: no grind for it.
+                options.retain(|&(level, _)| level <= self.rules().max_level);
                 options.sort_by_key(|(lvl, _)| *lvl);
                 if self.diagnostics.stall && options.first().is_some_and(|(l, _)| *l > s.level) {
                     eprintln!(
@@ -1173,14 +1176,20 @@ impl Planner<'_> {
 
     /// Whether the run of dungeon `d` waits for a quest of it the route must do (a dungeon forced
     /// with its quests) and has not taken yet, its chain under way: entered once, the dungeon
-    /// would leave it undone. Up to the dungeon's last level.
+    /// would leave it undone. Up to the dungeon's last level; not for a quest gated above the
+    /// game's levels (never taken).
     fn waits_for_quests(&self, s: &State, d: usize) -> bool {
         let dungeon = &self.model.dungeons[d];
         s.level < dungeon.max_level
             && self.availability().dungeon_quests(d).any(|i| {
                 let iu = i as usize;
                 let q = self.quest(i);
-                q.mandatory && !s.accepted[iu] && !s.rewarded(iu) && q.min_level <= dungeon.max_level
+                q.mandatory
+                    && !s.accepted[iu]
+                    && !s.rewarded(iu)
+                    && q.min_level <= dungeon.max_level
+                    && self.places().inside(s, Stop::quest(i, Kind::Accept)).is_none()
+                    && self.sim().gate_level(s, Stop::quest(i, Kind::Accept)) <= self.rules().max_level
             })
     }
 }

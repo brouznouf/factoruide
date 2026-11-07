@@ -231,6 +231,16 @@ impl Q {
         self
     }
 
+    /// Its giver stands among `count` hostile mobs of level `level`.
+    pub fn guarded(mut self, level: i64, count: u32) -> Self {
+        self.quest.start_guard = Guard {
+            level,
+            count,
+            elite: false,
+        };
+        self
+    }
+
     pub fn xp(mut self, xp: i64) -> Self {
         self.quest.xp = xp;
         self
@@ -299,6 +309,12 @@ impl Q {
 
     pub fn exclusive_with(mut self, quests: &[i64]) -> Self {
         self.quest.exclusive = quests.to_vec();
+        self
+    }
+
+    /// A breadcrumb to quest `id`: closed once that one is taken.
+    pub fn breadcrumb_for(mut self, id: i64) -> Self {
+        self.quest.breadcrumb_for = Some(id);
         self
     }
 

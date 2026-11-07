@@ -264,7 +264,7 @@ pub(crate) fn settle_quests(
     let versions = chains::class_quest_versions(quests, requirements, params.all_class_quests);
     for q in quests.iter_mut() {
         let forced = |d: usize| params.forced_dungeon_quests.contains(&dungeons[d].area);
-        q.mandatory |= q.objectives.iter().any(|o| o.dungeon_of().is_some_and(forced));
+        q.mandatory |= (0..dungeons.len()).any(|d| forced(d) && q.in_dungeon(d));
     }
     if let Some(area) = profile.dungeon_guide {
         force_dungeon_guide_quests(quests, dungeons, area);
@@ -279,15 +279,17 @@ pub(crate) fn settle_quests(
     chains::default_completion_windows(quests, profile, params);
 }
 
-/// The quests of a dungeon guide's dungeon (area `area`): those with an objective inside it or
+/// The quests of a dungeon guide's dungeon (area `area`): those of it (`Quest::in_dungeon`) or
 /// started there, whatever their level (the guide recommends the level they need,
 /// `job::dungeon_guide_level`). Every one of them is done, the guide going on until they are, as
 /// the quests of a forced zone (`zone_forced`, prerequisites included by
 /// `chains::require_prerequisites`).
 fn force_dungeon_guide_quests(quests: &mut [Quest], dungeons: &[Dungeon], area: i64) {
-    let of_it = |d: Option<usize>| d.is_some_and(|d| dungeons[d].area == area);
+    let Some(d) = dungeons.iter().position(|d| d.area == area) else {
+        return;
+    };
     for q in quests.iter_mut() {
-        if q.objectives.iter().any(|o| of_it(o.dungeon_of())) || of_it(q.start_dungeon) {
+        if q.in_dungeon(d) || q.start_dungeon == Some(d) {
             q.mandatory = true;
             q.zone_forced = true;
         }
@@ -300,8 +302,8 @@ fn force_dungeon_guide_quests(quests: &mut [Quest], dungeons: &[Dungeon], area: 
 /// (up to `max_level`, the game's): the player chose it.
 pub(crate) fn settle_dungeons(dungeons: &mut [Dungeon], quests: &[Quest], profile: &Profile, max_level: i64) {
     for q in quests.iter().filter(|q| q.required) {
-        for d in q.objectives.iter().filter_map(Objective::dungeon_of) {
-            dungeons[d].needed = true;
+        for (d, dungeon) in dungeons.iter_mut().enumerate() {
+            dungeon.needed |= q.in_dungeon(d);
         }
     }
     for d in dungeons.iter_mut().filter(|d| d.needed) {

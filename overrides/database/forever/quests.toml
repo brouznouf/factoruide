@@ -2065,3 +2065,10 @@ remove_spawns = true
 [[npc]]
 id = 273437 # Turlethion Moonrage
 remove_spawns = true
+
+# Emeraldon Oracle: the green dragons of Ashenvale's dream portal (elites of level 61), which the
+# sources also place 22 times in Orgrimmar. Counted as hostile guards around Thrall they put the
+# Hidden Enemies chain (Ragefire Chasm) out of reach of every Horde guide.
+[[npc]]
+id = 12476
+remove_spawns_in = [1637]

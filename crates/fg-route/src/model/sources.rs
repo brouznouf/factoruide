@@ -327,7 +327,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
                 (SELECT json_group_array(json_extract(t.value, '$[1]'))
                  FROM json_each(extra, '$.extra_objectives') e, json_each(e.value, '$.\"5\"') t
                  WHERE json_extract(t.value, '$[0]') = 'object'),
-                {reward_spell}
+                {reward_spell}, objectives_text
          FROM m_quest WHERE status = 'available'"
     ))?;
     let rows = stmt.query_map([], |r| {
@@ -359,6 +359,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
                 .and_then(|j| serde_json::from_str(&j).ok())
                 .unwrap_or_default(),
             reward_spell: r.get(24)?,
+            objectives_text: r.get(25)?,
         })
     })?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
@@ -670,6 +671,8 @@ pub(super) struct QuestRow {
     pub(super) time_limit: Option<i64>,
     /// Its objectives text has a number ("Capture 5 Deeprun Rats").
     pub(super) numbered: bool,
+    /// The quest's objectives text ("Speak with Nara Wildmane.").
+    pub(super) objectives_text: Option<String>,
     /// Objects its extra objectives are done at (Questie's): where a creature found nowhere
     /// else is summoned (The Binding's summoning circle).
     pub(super) extra_objects: Vec<i64>,
@@ -716,6 +719,17 @@ pub(super) fn parse_requirements(json: Option<String>) -> Vec<(String, f64)> {
             None => Some((r.trim().to_lowercase(), 1.0)),
         })
         .collect()
+}
+
+/// Whether a quest's objectives text only asks to go to an NPC, with word or an item ("Speak with
+/// Nara Wildmane.", "Bring the Damp Note to Je'neu Sancrea in Ashenvale."), or to travel to the one
+/// handing it in, of names `enders` ("Travel to the Wetlands and meet the Deathstalker Agent").
+pub(super) fn reads_as_delivery<'a>(text: &str, mut enders: impl Iterator<Item = &'a str>) -> bool {
+    let text = text.trim_start().to_lowercase();
+    ["speak ", "talk ", "report ", "bring ", "take ", "return ", "deliver "]
+        .iter()
+        .any(|verb| text.starts_with(verb))
+        || text.starts_with("travel ") && enders.any(|name| !name.is_empty() && text.contains(&name.to_lowercase()))
 }
 
 /// Whether a quest's requirements ask for work (mobs, items, an action), not only gold, a

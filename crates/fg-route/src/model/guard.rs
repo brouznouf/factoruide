@@ -47,7 +47,8 @@ impl Guards {
         let rows = crate::memo::rows(conn, "guards", crate::memo::setting(mine), || {
             let mut stmt = conn.prepare(
                 "SELECT s.zone_id, s.x, s.y, coalesce(n.min_level, 1), coalesce(n.max_level, n.min_level, 1),
-                        coalesce(n.rank, 0), coalesce(n.friendly_to, '')
+                        coalesce(n.rank, 0), coalesce(n.friendly_to, ''),
+                        coalesce(n.faction_id, 0) = 0 AND coalesce(n.friendly_to, '') = ''
                  FROM m_spawn s JOIN m_npc n ON n.id = s.entity_id
                  WHERE s.entity_type = 'npc' AND s.x >= 0 AND coalesce(n.friendly_to, '') NOT LIKE '%' || ?1 || '%'",
             )?;
@@ -60,6 +61,7 @@ impl Guards {
                     r.get::<_, i64>(4)?,
                     r.get::<_, i64>(5)?,
                     r.get::<_, String>(6)?,
+                    r.get::<_, bool>(7)?,
                 ))
             })?;
             Ok(rows.collect::<rusqlite::Result<Vec<_>>>()?)
@@ -68,8 +70,13 @@ impl Guards {
         let mut rivals = Cells::default();
         let mut mobs: HashMap<(i64, i64, i64), Vec<(f32, f32)>> = HashMap::new();
         let mut seen = HashSet::new();
-        for (zone, x, y, min, max, rank, friendly) in rows.iter() {
+        for (zone, x, y, min, max, rank, friendly, unknown) in rows.iter() {
             let (zone, x, y, min, max, rank) = (*zone, *x, *y, *min, *max, *rank);
+            // Neither a faction nor a side known, in a capital: a townsman the sources know little
+            // of (WoW Forever's own NPCs), not a monster guarding the givers around it.
+            if *unknown && world.is_capital(zone) {
+                continue;
+            }
             let Some(p) = world.to_world(zone, x, y) else { continue };
             let level = min.max(max).clamp(1, 255) as u8;
             if friendly.contains(other) {

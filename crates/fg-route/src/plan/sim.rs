@@ -276,6 +276,7 @@ impl<'s> Simulator<'s> {
             replaying: self.mode == Mode::Replay,
             explicit: self.explicit,
             followers: &self.ix.followers,
+            breadcrumbs: &self.ix.breadcrumbs,
         }
     }
 

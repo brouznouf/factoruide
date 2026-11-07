@@ -6,7 +6,7 @@ use super::entities::{alternatives, best_cluster};
 use super::givers::Givers;
 use super::sources::{
     ObjectiveKind, QuestRow, SourceKind, asks_for_work, count_for, on_reachable, one_place, parse_requirements,
-    talks_to, tames,
+    reads_as_delivery, talks_to, tames,
 };
 use super::types::{EntityKind, Guard, Loc, Objective, Pool, Spots};
 use crate::world::Pos;
@@ -98,6 +98,15 @@ impl QuestBuilder<'_> {
         {
             // Taken during the run of its prerequisite and handed in outside: nothing of its own.
             if self.follows_in_the_run(r.id, d) {
+                return Ok(Vec::new());
+            }
+            // Given, handed in or started from a drop inside: that stop is in the dungeon. A
+            // delivery ("Speak with Nara Wildmane", given and handed in in Thunder Bluff): nothing
+            // in it. Either way no run of its own, which would come after the quests leading to it.
+            let inside = |l: &Loc| l.inside.is_some_and(|i| usize::from(i) == d);
+            let delivery = (r.objectives_text.as_deref())
+                .is_some_and(|t| reads_as_delivery(t, givers.ends.iter().map(|l| l.name.as_str())));
+            if delivery || givers.start_dungeon == Some(d) || givers.starts.iter().chain(&givers.ends).any(inside) {
                 return Ok(Vec::new());
             }
             let name = self.sources.dungeons[d].name.clone();
@@ -289,6 +298,13 @@ impl QuestBuilder<'_> {
             .and_then(|s| self.sources.dungeon_by_area.get(&s).copied());
         let kind = *kind;
         let d = match kind {
+            // Someone to talk to who lives outside only (Earthen Echo's Muln Earthfury, in Mulgore):
+            // talked to there, the quest filed under a dungeon or not.
+            ObjectiveKind::Talk
+                if self.has_points(kind.entity(), target) && self.dungeon_of(kind.entity(), target).is_none() =>
+            {
+                None
+            }
             ObjectiveKind::Creature
             | ObjectiveKind::KillCredit
             | ObjectiveKind::Talk

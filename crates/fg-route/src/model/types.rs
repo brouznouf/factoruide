@@ -571,6 +571,13 @@ pub struct Quest {
 }
 
 impl Quest {
+    /// Whether it is a quest of dungeon `d`: an objective inside, or handed in inside (Deathstalkers
+    /// in Shadowfang, ended to Deathstalker Vincent in the keep).
+    pub fn in_dungeon(&self, d: usize) -> bool {
+        self.objectives.iter().any(|o| o.dungeon_of() == Some(d))
+            || self.ends.iter().any(|l| l.inside.is_some_and(|i| usize::from(i) == d))
+    }
+
     /// The dungeon one of its objectives belongs to (`Objective::dungeon_of`), else the one it is
     /// handed in inside.
     pub fn dungeon(&self) -> Option<usize> {

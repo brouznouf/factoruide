@@ -462,8 +462,8 @@ fn release_done_dungeons(model: &mut Model, start: &StartState) {
         if !(q.required || q.zone_forced) || finished(i, q.id) {
             continue;
         }
-        for d in q.objectives.iter().filter_map(model::Objective::dungeon_of) {
-            needed[d] = true;
+        for (d, need) in needed.iter_mut().enumerate() {
+            *need |= q.in_dungeon(d);
         }
     }
     for (d, dungeon) in model.dungeons.iter_mut().enumerate() {
