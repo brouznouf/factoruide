@@ -37,7 +37,7 @@ pub use loot::CommonLoot;
 pub use names::Names;
 pub use types::{
     ClassRequirement, CompletionWindow, Dungeon, DungeonDef, EntityKind, ExploreArea, FloorPoint, Guard, Initial, Loc,
-    Mate, MateStart, Model, Objective, ObjectiveOrder, ProfessionPlan, ProfessionTrainer, Profile, Quest,
+    Mate, MateStart, Model, Objective, ObjectiveOrder, Pool, ProfessionPlan, ProfessionTrainer, Profile, Quest,
     QuestOverride, QuestRequirement, Spots, Teleport, TeleportDef, Vendor, race_bit,
 };
 

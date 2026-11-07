@@ -1,6 +1,6 @@
 //! What a route is made of and what replaying it produces: stops, the character's state, the trace of events, the time breakdown.
 
-use crate::model::Loc;
+use crate::model::{Loc, Pool};
 use crate::world::Pos;
 use std::rc::Rc;
 
@@ -190,14 +190,60 @@ pub struct Timed {
 
 /// Objective stops done one after the other within `gather_radius` of the first one: objects
 /// gathered between the kills (resting, looking for the next mob) take `gather_overlap` of the
-/// kills' time. Their place, the time of their kills and gatherings, and what that saved. Only
-/// consecutive stops: the route says what is done together, each stop can be moved apart.
+/// kills' time, and while the mobs of one kind come back, those of the others are killed (the
+/// respawns are waited for only beyond the other kills). Their place, the time of their kills
+/// and gatherings, and what that saved; the kill time of all their mobs, the kills of each kind
+/// with its spawns (`Pool`), the first few kinds. Only consecutive stops: the route says what is
+/// done together, each stop can be moved apart.
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub(crate) struct Together {
     pub(crate) at: Option<Pos>,
     pub(crate) kills: f64,
     pub(crate) gathers: f64,
     pub(crate) saved: f64,
+    pub(crate) kill_time: f64,
+    /// Each kind of mobs (its first NPC, 0: none) with its kills and its spawns.
+    pub(crate) kinds: [(i64, f64, Pool); Together::KINDS],
+    /// The longest a kind beyond the first few takes alone, its kills and wait.
+    pub(crate) others: f64,
+}
+
+impl Together {
+    const KINDS: usize = 4;
+
+    /// Respawns waited for by the kills so far: the longest a kind takes alone, its kills and
+    /// its wait, beyond the kills of all of them.
+    pub(crate) fn wait(&self) -> f64 {
+        let longest = (self.kinds.iter())
+            .filter(|(_, mobs, _)| *mobs > 0.0)
+            .map(|(_, mobs, p)| mobs * p.each + Pool::wait_for(*mobs, p.mine, p.rate, p.each))
+            .fold(self.others, f64::max);
+        (longest - self.kill_time).max(0.0)
+    }
+
+    /// With `mobs` more kills of an objective of `pool`, its mobs' kind `kind` (0: none known):
+    /// the kills of one kind share its spawns.
+    pub(crate) fn with(&self, kind: i64, pool: &Pool, mobs: f64) -> Self {
+        let mut t = *self;
+        if mobs <= 0.0 {
+            return t;
+        }
+        t.kill_time += mobs * pool.each;
+        if let Some(k) = t
+            .kinds
+            .iter_mut()
+            .find(|(id, n, _)| *n > 0.0 && *id == kind && kind != 0)
+        {
+            k.1 += mobs;
+        } else if let Some(free) = t.kinds.iter_mut().find(|(_, n, _)| *n <= 0.0) {
+            *free = (kind, mobs, *pool);
+        } else {
+            t.others = t
+                .others
+                .max(mobs * pool.each + Pool::wait_for(mobs, pool.mine, pool.rate, pool.each));
+        }
+        t
+    }
 }
 
 /// A flag per quest (or per area), a bit each: a state is kept before every stop of a route.

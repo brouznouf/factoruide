@@ -5,7 +5,7 @@
 use super::builder::QuestBuilder;
 use super::guard::Guards;
 use super::sources::QuestRow;
-use super::types::{EntityKind, Objective};
+use super::types::{EntityKind, Objective, Pool};
 use crate::world::Pos;
 
 /// Spawns this close to an objective's place are its spot (yards).
@@ -39,7 +39,13 @@ impl QuestBuilder<'_> {
                 others: crowd * p.crowd_players,
                 dynamic: p.dynamic_respawn,
             };
-            o.extra += respawn_wait(work, f64::from(o.spawns), each, self.respawn(o, kind), crowd);
+            let pool = pool(f64::from(o.spawns), each, self.respawn(o, kind), crowd);
+            let wait = Pool::wait_for(work, pool.mine, pool.rate, each);
+            o.extra += wait;
+            // Mobs: the wait is shared with the kills done at the same place just before.
+            if kind == EntityKind::Npc {
+                o.pool = Pool { wait, ..pool };
+            }
         }
     }
 
@@ -89,21 +95,23 @@ struct Crowd {
     dynamic: f64,
 }
 
-/// Time waiting for respawns: `work` kills (or uses) of `each` seconds at a spot of `spawns`
-/// coming back in `respawn` seconds, shared with the crowd. Once the spot is cleared, one comes
-/// back every `respawn` / spawns seconds, sooner with players around (divided by 1 + dynamic x
-/// others); the wait is what that leaves beyond the kill itself. Nothing when the spot is
-/// unknown.
-fn respawn_wait(work: f64, spawns: f64, each: f64, respawn: f64, crowd: Crowd) -> f64 {
-    if spawns <= 0.0 {
-        return 0.0;
-    }
+/// A spot of `spawns` coming back in `respawn` seconds, kills of `each` seconds, shared with the
+/// crowd: the character's share of the spawns, and once they are cleared, how many come back
+/// each second, sooner with players around (respawns divided by 1 + dynamic x others). The wait
+/// is `Pool::wait_for`.
+fn pool(spawns: f64, each: f64, respawn: f64, crowd: Crowd) -> Pool {
     let mine = spawns / (1.0 + crowd.others);
-    if work <= mine {
-        return 0.0;
-    }
     let respawn = respawn / (1.0 + crowd.dynamic * crowd.others);
-    (respawn / mine - each).max(0.0) * (work - mine)
+    Pool {
+        mine,
+        rate: if mine > 0.0 && respawn > 0.0 {
+            mine / respawn
+        } else {
+            0.0
+        },
+        each,
+        wait: 0.0,
+    }
 }
 
 /// An escort or an event (defend someone, overhear a talk): the quest is flagged as one, or its
@@ -114,7 +122,12 @@ fn is_event(r: &QuestRow, text: &str) -> bool {
 
 #[cfg(test)]
 mod tests {
-    use super::{Crowd, respawn_wait};
+    use super::{Crowd, Pool, pool};
+
+    fn respawn_wait(work: f64, spawns: f64, each: f64, respawn: f64, crowd: Crowd) -> f64 {
+        let p = pool(spawns, each, respawn, crowd);
+        Pool::wait_for(work, p.mine, p.rate, each)
+    }
 
     const ALONE: Crowd = Crowd {
         others: 0.0,

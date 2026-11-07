@@ -5,7 +5,7 @@ use fg_route::fixture::Fixture;
 use fg_route::job::{
     self, Bind, LogObjective, LogQuest, MapPos, Overrides, PlanRequest, Prepared, RequiredQuest, StartState,
 };
-use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Spots};
+use fg_route::model::{CommonLoot, EntityKind, Guard, Initial, Objective, Pool, Spots};
 use fg_route::params::ReputationGoal;
 use fg_route::plan::{Edit, Event, Kind, Outcome, Planner, Stop};
 use fg_route::testing::{At, Obj, Q, Scenario};
@@ -1010,6 +1010,7 @@ fn gathering_next_to_kills_overlaps_them() {
             pull: 1.0,
             spawns: 0,
             pack: 1.0,
+            pool: Pool::default(),
             spots: Some(Spots {
                 continent: loc.pos.continent,
                 min: point,
@@ -2438,6 +2439,7 @@ fn kills_east_of_start(p: &Prepared, dx: f64, kills: f64, mob_level: i64) -> Obj
         pull: 1.0,
         spawns: 0,
         pack: 1.0,
+        pool: Pool::default(),
         spots: None,
         guard: Guard::default(),
         beside_giver: false,

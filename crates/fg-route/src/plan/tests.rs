@@ -3,7 +3,7 @@
 
 use super::{Kind, Planner, Stop};
 use crate::job::{self, Overrides, PlanRequest, Prepared};
-use crate::model::{Guard, Initial, Objective};
+use crate::model::{Guard, Initial, Objective, Pool};
 use crate::xp::Edition;
 use rusqlite::Connection;
 use std::path::PathBuf;
@@ -183,6 +183,7 @@ fn quests_at_hand_are_looked_for_where_the_stop_went() {
         pull: 1.0,
         spawns: 1,
         pack: 1.0,
+        pool: Pool::default(),
         spots: None,
         guard: Guard::default(),
         beside_giver: false,
@@ -244,6 +245,7 @@ fn objective_started_counts_its_share_at_another_place() {
         pull: 1.0,
         spawns: 20,
         pack: 1.0,
+        pool: Pool::default(),
         spots: None,
         guard: Guard::default(),
         beside_giver: false,
@@ -293,6 +295,79 @@ fn gathering_next_to_kills_saves_time_when_consecutive() {
     assert!((apart - (k + g)).abs() < 1e-6, "{apart} with a stop between");
 }
 
+/// A small spot of `spawns` mobs of kind `mob`, back in `respawn` seconds, killed in 20 s each,
+/// for `kills` kills: the objective's pool, its wait alone in its fixed time (as the model sets it).
+fn small_spot(o: &mut Objective, mob: i64, spawns: f64, respawn: f64, kills: f64) {
+    let rate = spawns / respawn;
+    let wait = Pool::wait_for(kills, spawns, rate, 20.0);
+    (o.kills, o.count, o.mobs) = (kills, kills, vec![(mob, format!("mob {mob}"))]);
+    o.pool = Pool {
+        mine: spawns,
+        rate,
+        each: 20.0,
+        wait,
+    };
+    o.extra = wait;
+}
+
+/// Two kill objectives at one camp (the Defias and the Riverpaw of Gold Coast Quarry), each asking
+/// more kills than its mobs' spawns: alone, each waits for its respawns; one after the other,
+/// the mobs of one are killed while the other's come back. A rare mob's long wait is not spared
+/// by the kills of others beyond their time. With another stop between them, each waits on its
+/// own again.
+#[test]
+fn kills_at_one_camp_wait_for_respawns_together() {
+    let mut p = camp_of_two_objectives();
+    let mut second = p.model.quests[0].objectives[0].clone();
+    small_spot(&mut p.model.quests[0].objectives[0], 1, 9.0, 300.0, 15.0);
+    small_spot(&mut second, 2, 9.0, 300.0, 15.0);
+    p.model.quests[1].objectives = vec![second];
+    let alone = p.model.quests[0].objectives[0].pool.wait;
+    assert!(alone > 60.0, "{alone}");
+    let planner = planner(&p);
+    let waiting = |route: &[Stop]| planner.simulate_full(route, None).unwrap().1.waiting;
+    let (a, b) = (Stop::quest(0, Kind::Objective(0)), Stop::quest(1, Kind::Objective(0)));
+    assert!((waiting(&[a]) - alone).abs() < 1e-6);
+    // 30 kills among 18 spawns coming back every 17 s, quicker than a kill: no wait left.
+    let together = waiting(&[a, b]);
+    assert!(together.abs() < 1e-6, "{together} waited together");
+    let apart = waiting(&[a, Stop::quest(2, Kind::Accept), b]);
+    assert!((apart - 2.0 * alone).abs() < 1e-6, "{apart} with a stop between");
+    // A rare mob instead (3 spawns back in 10 minutes): its wait less the other's 300 s of kills.
+    small_spot(&mut p.model.quests[1].objectives[0], 2, 3.0, 600.0, 15.0);
+    let rare = p.model.quests[1].objectives[0].pool.wait;
+    let planner = super::tests::planner(&p);
+    let waiting = |route: &[Stop]| planner.simulate_full(route, None).unwrap().1.waiting;
+    let together = waiting(&[a, b]);
+    assert!((together - (rare - 300.0)).abs() < 1e-6, "{together} {rare}");
+}
+
+/// An objective whose mobs live in a large group far off and a small one at the camp where the
+/// character just killed another quest's mobs: alone, the small group's respawns cost more than
+/// the walk to the large one; after the kills at the camp, they came back meanwhile and the
+/// objective is done there.
+#[test]
+fn an_objective_is_done_where_the_kills_just_done_share_its_wait() {
+    let mut p = camp_of_two_objectives();
+    let camp = p.model.quests[0].objectives[0].loc.clone();
+    small_spot(&mut p.model.quests[0].objectives[0], 1, 40.0, 300.0, 30.0);
+    let mut far = p.model.quests[0].objectives[0].clone();
+    small_spot(&mut far, 2, 30.0, 300.0, 15.0);
+    far.loc.pos.x += 600.0;
+    let mut here = far.clone();
+    here.loc = camp.clone();
+    // Alone: 10 respawns to wait for, 40 s each beyond the kill; after 30 kills (10 minutes), none.
+    small_spot(&mut here, 2, 5.0, 300.0, 15.0);
+    far.alts = vec![here];
+    p.model.quests[1].objectives = vec![far];
+    let planner = planner(&p);
+    let sim = planner.sim();
+    let mut s = sim.initial_state();
+    assert_ne!(sim.spot(&s, 1, 0).loc.pos, camp.pos, "alone, the large group far off");
+    sim.apply(&mut s, Stop::quest(0, Kind::Objective(0)), None);
+    assert_eq!(sim.spot(&s, 1, 0).loc.pos, camp.pos, "after the kills at the camp");
+}
+
 /// The fighting of `route` with the quests whose objective it does turned in at its end: a quest
 /// left in the log is grinding (`Planner::count_unfinished_as_grind`), not fighting.
 fn fighting_with_turn_ins(planner: &Planner<'_>, route: &[Stop]) -> f64 {
@@ -328,6 +403,7 @@ fn camp_of_two_objectives() -> Prepared {
         pull: 1.0,
         spawns: 10,
         pack: 1.0,
+        pool: Pool::default(),
         spots: None,
         guard: Guard::default(),
         beside_giver: false,
@@ -529,6 +605,7 @@ fn road_of_mobs() -> (Prepared, crate::world::Pos, crate::world::Pos) {
         pull: 1.0,
         spawns: 3,
         pack: 1.0,
+        pool: Pool::default(),
         spots: None,
         guard: Guard::default(),
         beside_giver: false,
@@ -637,6 +714,7 @@ fn greedy_grinds_to_the_mobs_of_a_quest_in_reach() {
         pull: 1.0,
         spawns: 1,
         pack: 1.0,
+        pool: Pool::default(),
         spots: None,
         guard: Guard::default(),
         beside_giver: false,
@@ -862,6 +940,7 @@ fn timed_quest_taken_once_strong_enough_for_its_objectives() {
         pull: 1.0,
         spawns: 1,
         pack: 1.0,
+        pool: Pool::default(),
         spots: None,
         guard: Guard::default(),
         beside_giver: false,

@@ -1,6 +1,7 @@
 //! Where an objective is done when its mobs or objects live in several places (`Objective::alts`):
 //! the place that costs the least between where the character is and where it goes next, counting
-//! the trips, the work there (the level of its mobs, the wait for respawns) and the levels to grind
+//! the trips, the work there (the level of its mobs, the wait for respawns, shared with the kills
+//! done there just before) and the levels to grind
 //! first when its mobs or the guards around are too strong. Where it goes next: the route's next
 //! stop when the route is known (`State::next`, a replay: its places come out on the way between
 //! two stops), else the quest's turn-in (a route being built stop by stop).
@@ -62,7 +63,8 @@ impl Simulator<'_> {
         }
     }
 
-    /// Time of the work at a place, with the grinding to the level it requires.
+    /// Time of the work at a place, with the grinding to the level it requires; its respawns
+    /// waited for with the kills done there just before (`Together`).
     fn spot_work(&self, s: &State, q: &Quest, o: &Objective) -> f64 {
         let gate = self.combat().level_at(q, o, s.might());
         let grind = if gate > s.level {
@@ -71,5 +73,7 @@ impl Simulator<'_> {
             0.0
         };
         grind + o.kills * self.combat().kill_time(s.level, s.bonus, o) + o.uses * self.params.object_time + o.extra
+            - o.pool.wait
+            + self.shared_wait(&s.together, o, o.kills)
     }
 }

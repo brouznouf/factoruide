@@ -254,6 +254,9 @@ pub struct Objective {
     /// come in each pull there (1: they stand alone).
     pub spawns: u32,
     pub pack: f64,
+    /// Its normal mobs' respawns at its spot, for the wait shared with the objectives done
+    /// there just before (`Pool`): default (none) for the others.
+    pub pool: Pool,
     /// Hostile mobs around where it is done.
     pub guard: Guard,
     /// An object used right beside the quest's giver or turn-in, no elite around (the campfire
@@ -286,6 +289,32 @@ pub struct Objective {
     /// Seconds the item it gets lasts (a Fresh Zhevra Carcass rots in 30 minutes): the
     /// objectives using it are done before.
     pub lasts: Option<f64>,
+}
+
+/// The mobs of a kill objective at its spot, as the respawn wait sees them: the spawns the
+/// character has for itself (shared with the crowd), how many of them come back each second,
+/// the kill time the wait was measured with, and the wait when the objective is done alone
+/// (part of `Objective::extra`). Kill objectives done one after the other at one place wait for
+/// the respawns of all their mobs together (`plan::Together`): while some come back, the
+/// others are killed.
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct Pool {
+    pub mine: f64,
+    pub rate: f64,
+    pub each: f64,
+    pub wait: f64,
+}
+
+impl Pool {
+    /// Seconds waited for respawns killing `work` mobs of `each` seconds among `mine` spawns
+    /// coming back `rate` a second: once those are killed, the time between two respawns beyond
+    /// the kill itself, for each mob left. Nothing at an unknown spot.
+    pub fn wait_for(work: f64, mine: f64, rate: f64, each: f64) -> f64 {
+        if mine <= 0.0 || rate <= 0.0 || work <= mine {
+            return 0.0;
+        }
+        (1.0 / rate - each).max(0.0) * (work - mine)
+    }
 }
 
 /// A vendor selling an objective's item: where it stands, and its supply when limited (how many

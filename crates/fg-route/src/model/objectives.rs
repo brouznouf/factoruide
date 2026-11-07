@@ -8,7 +8,7 @@ use super::sources::{
     ObjectiveKind, QuestRow, SourceKind, asks_for_work, count_for, on_reachable, one_place, parse_requirements,
     talks_to, tames,
 };
-use super::types::{EntityKind, Guard, Loc, Objective, Spots};
+use super::types::{EntityKind, Guard, Loc, Objective, Pool, Spots};
 use crate::world::Pos;
 use std::collections::HashMap;
 
@@ -70,6 +70,7 @@ impl Objective {
             pull: 1.0,
             spawns: 0,
             pack: 1.0,
+            pool: Pool::default(),
             spots: None,
             guard: Guard::default(),
             beside_giver: false,
