@@ -1195,3 +1195,195 @@ fn a_quest_never_turned_in_counts_as_grinding() {
     assert!(left.fighting < 1.0, "never turned in: grinding {left:?}");
     assert!(left.grinding > done.grinding, "{} vs {}", left.grinding, done.grinding);
 }
+
+/// Elwynn as the group guide did it. Goldshire (Dughan and the trainer, 30, 50) to the west,
+/// Thomas (70, 50) to the east, 400 yards apart. Quest indices:
+/// 0 Report to Thomas (Dughan to Thomas), 1 Deliver Thomas' Report (Thomas to Dughan, after 0),
+/// 2 Protect the Frontier (Thomas, wolves at 75, 40), 3 Bounty on Murlocs (Thomas, after 1,
+/// murlocs at 75, 65), 4 Westbrook (Dughan to Westbrook, 10, 50, once 3 is done), 5 Defias (Dughan once 0 is
+/// done, at 65, 45).
+fn elwynn_trips() -> Prepared {
+    use crate::model::testing::At;
+    use crate::testing::{Obj, Q, Scenario};
+    let (dughan, thomas) = ((30.0, 50.0), (70.0, 50.0));
+    let q = |id, name, from: (f64, f64), to: (f64, f64)| {
+        Q::new(id, name)
+            .level(1)
+            .xp(10)
+            .giver(1, from.0, from.1)
+            .turn_in_at(1, to.0, to.1)
+    };
+    Scenario::new()
+        .levels(1, 10)
+        .trainer(1, dughan.0, dughan.1)
+        .quest(q(1, "Report to Thomas", dughan, thomas).xp(3000))
+        .quest(q(2, "Deliver Thomas' Report", thomas, dughan).after(&[1]))
+        .quest(q(3, "Protect the Frontier", thomas, thomas).kill("Wolf", 1, 8, 1, 75.0, 40.0))
+        .quest(
+            q(4, "Bounty on Murlocs", thomas, thomas)
+                .after(&[2])
+                .kill("Murloc", 1, 8, 1, 75.0, 65.0),
+        )
+        .quest(q(5, "Westbrook", dughan, (10.0, 50.0)).after(&[4]))
+        .quest(q(6, "Defias", dughan, dughan).after(&[1]).objective(Obj::kill(
+            "Defias",
+            1,
+            8,
+            At {
+                zone: 1,
+                x: 65.0,
+                y: 45.0,
+            },
+        )))
+        .build()
+}
+
+fn stops(list: &[(u32, Kind)]) -> Vec<Stop> {
+    list.iter().map(|&(q, k)| Stop::quest(q, k)).collect()
+}
+
+/// The guide's route: east, west, east (the report taken late), west to deliver it, east again
+/// for the murlocs (the frontier turned in only then), west.
+fn elwynn_three_trips() -> Vec<Stop> {
+    use Kind::{Accept as A, Objective as O, TurnIn as T};
+    stops(&[
+        (0, A),
+        (0, T),
+        (2, A),
+        (2, O(0)), // east
+        (5, A),    // west
+        (5, O(0)),
+        (1, A), // east
+        (5, T),
+        (1, T), // west
+        (3, A),
+        (2, T),
+        (3, O(0)),
+        (3, T), // east
+        (4, A),
+        (4, T), // west
+    ])
+}
+
+/// The same quests in two trips: the report taken at once and delivered on the first way back.
+fn elwynn_two_trips() -> Vec<Stop> {
+    use Kind::{Accept as A, Objective as O, TurnIn as T};
+    stops(&[
+        (0, A),
+        (0, T),
+        (1, A),
+        (2, A),
+        (2, O(0)), // east
+        (1, T),
+        (5, A), // west
+        (3, A),
+        (5, O(0)),
+        (2, T),
+        (3, O(0)),
+        (3, T), // east
+        (5, T),
+        (4, A),
+        (4, T), // west
+    ])
+}
+
+/// The route best moving one stop, or a block of up to four, anywhere; with its cost.
+fn best_block_move(planner: &Planner<'_>, route: &[Stop]) -> (f64, Vec<Stop>) {
+    let mut best = (planner.simulate(route, None).unwrap(), route.to_vec());
+    for len in 1..=4.min(route.len()) {
+        for from in 0..=route.len() - len {
+            for to in 0..=route.len() - len {
+                let mut r = route.to_vec();
+                let block: Vec<Stop> = r.drain(from..from + len).collect();
+                r.splice(to..to, block);
+                if let Some(c) = planner.simulate(&r, None)
+                    && c < best.0 - 0.5
+                {
+                    best = (c, r);
+                }
+            }
+        }
+    }
+    best
+}
+
+/// The group guide's Elwynn: the report to Thomas levels the character up with its training
+/// late. When the trip to the trainer left at once, taking Thomas' report right then cost a trip
+/// there and back: every route that took it later was better, and the murlocs it opens took a
+/// third trip east no move of one stop or a few could save. The trip now leaves with the route:
+/// moving stops from the guide's three trips finds the report taken at once, and two trips.
+#[test]
+fn moves_from_the_guides_three_trips_find_two() {
+    let mut p = elwynn_trips();
+    p.params.hearth_min_saving = f64::INFINITY;
+    let planner = planner(&p);
+    let mut route = elwynn_three_trips();
+    loop {
+        let (_, better) = best_block_move(&planner, &route);
+        if better == route {
+            break;
+        }
+        route = better;
+    }
+    let at = |stop| route.iter().position(|&s| s == stop).unwrap();
+    assert_eq!(
+        at(Stop::quest(1, Kind::Accept)),
+        at(Stop::quest(0, Kind::TurnIn)) + 1,
+        "{route:?}"
+    );
+    let best = planner.simulate(&route, None).unwrap();
+    assert!(
+        best < planner.simulate(&elwynn_two_trips(), None).unwrap() + 0.5,
+        "{route:?}"
+    );
+}
+
+/// Thomas (70, 50) and the trainer in Goldshire (30, 50), 400 yards apart: the report to Thomas
+/// takes the character three levels up (its training late), the next quest is taken from
+/// Thomas too and handed in at Goldshire. Quest indices: 0 the report, 1 the next quest.
+fn late_training_at_thomas() -> Prepared {
+    use crate::testing::{Q, Scenario};
+    Scenario::new()
+        .levels(1, 10)
+        .trainer(1, 30.0, 50.0)
+        .quest(
+            Q::new(1, "Report to Thomas")
+                .level(1)
+                .xp(3000)
+                .giver(1, 30.0, 50.0)
+                .turn_in_at(1, 70.0, 50.0),
+        )
+        .quest(
+            Q::new(2, "Deliver Thomas' Report")
+                .level(1)
+                .xp(10)
+                .giver(1, 70.0, 50.0)
+                .turn_in_at(1, 30.0, 50.0),
+        )
+        .build()
+}
+
+/// A training trip due where the route has another stop at hand waits for it: the trip to the
+/// trainer leaves with the route, it does not go there and back first.
+#[test]
+fn a_late_training_waits_for_the_stops_at_hand() {
+    let p = late_training_at_thomas();
+    let planner = planner(&p);
+    let route = [
+        Stop::quest(0, Kind::Accept),
+        Stop::quest(0, Kind::TurnIn),
+        Stop::quest(1, Kind::Accept),
+        Stop::quest(1, Kind::TurnIn),
+    ];
+    let mut trace = Vec::new();
+    planner.simulate(&route, Some(&mut trace)).unwrap();
+    let at = |f: &dyn Fn(&super::Event) -> bool| trace.iter().position(|t| f(&t.event));
+    let train = at(&|e| matches!(e, super::Event::Train { .. })).expect("trained");
+    let taken = at(&|e| matches!(e, super::Event::Stop { stop, .. } if *stop == route[2])).unwrap();
+    assert!(
+        train > taken,
+        "{:?}",
+        trace.iter().map(|t| &t.event).collect::<Vec<_>>()
+    );
+}
+

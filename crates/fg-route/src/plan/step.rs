@@ -10,6 +10,10 @@ use crate::xp;
 /// is a margin for the time estimates.
 const TIMED_SHARE: f64 = 0.75;
 
+/// A stop this close (yards) to where the character stands is at hand: a training trip waits
+/// for it.
+const AT_HAND: f64 = 100.0;
+
 impl Simulator<'_> {
     /// Training after a step: the class, then the professions. Not inside a dungeon (its steps
     /// of unknown places stand at its entrance, maybe by a trainer): once out of it.
@@ -67,9 +71,12 @@ impl Simulator<'_> {
             .enumerate()
             .min_by(|a, b| s.pos.dist(&a.1.pos).total_cmp(&s.pos.dist(&b.1.pos)))
             .expect("the model has trainers");
+        // A trip waits while the route's next stop is at hand: the character leaves for the
+        // trainer with the route, not there and back before the stops of the place it is at.
+        let at_hand = s.next.is_some_and(|next| s.pos.dist(&next) <= AT_HAND);
         let i = if s.pos.dist(&trainer.pos) <= self.params.train_radius {
             near
-        } else if late {
+        } else if late && !at_hand {
             // Nearest trainer by travel time (it may be worth a flight or the hearthstone).
             self.model
                 .trainers
