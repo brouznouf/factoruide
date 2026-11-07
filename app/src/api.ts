@@ -221,6 +221,9 @@ export interface PlanRequest {
   mates?: StartState[];
   /** The professions each of `mates` levels, in their order. */
   mate_professions?: ProfessionGoal[][];
+  /** A dungeon guide (the dungeon's instance area): from `start`, every quest of the dungeon with
+   * those leading to them, nothing else, planned at the level they need. */
+  dungeon?: number | null;
 }
 
 export type RequiredQuest = number | string | { quest: number | string; min_level?: number | null; max_level?: number | null };

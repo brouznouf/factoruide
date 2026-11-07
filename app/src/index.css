@@ -4812,3 +4812,24 @@ button.link.cmp-jump {
   margin-left: 0;
   vertical-align: middle;
 }
+
+/* Dungeon guide page: the recorded characters, the dungeons at the character's level. */
+.dungeon-page .panel {
+  margin-bottom: 14px;
+}
+.dungeon-characters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.dungeon-characters button.active,
+.dungeon-characters button.active:hover:not(:disabled) {
+  border-color: var(--accent-edge);
+  background: var(--accent-fill);
+}
+button.dungeon.near:not(.forced) {
+  border-color: var(--accent-edge);
+}
+.dungeon-paste {
+  margin-top: 8px;
+}

@@ -12,6 +12,7 @@ import { ChangelogPage } from "./pages/ChangelogPage";
 import { ContributePage } from "./pages/ContributePage";
 import { HomePage } from "./pages/HomePage";
 import { NeedHelpPage } from "./pages/NeedHelpPage";
+import { DungeonPage } from "./pages/DungeonPage";
 import { exampleGuide, hasExample } from "./example";
 import { IssueForm } from "./components/IssueForm";
 import { UpdateBanner } from "./components/UpdateBanner";
@@ -25,11 +26,12 @@ const ISSUES_URL = "https://github.com/brouznouf/factoruide/issues";
 
 const EDITION_LABELS: Record<Edition, string> = { forever: "Forever", classic: "Classic", tbc: "TBC" };
 
-type Page = "home" | "plan" | "results" | "contribute" | "help" | "settings" | "changelog" | "report";
+type Page = "home" | "plan" | "dungeon" | "results" | "contribute" | "help" | "settings" | "changelog" | "report";
 
 const PAGES: { id: Page; label: string }[] = [
   { id: "home", label: "Accueil" },
   { id: "plan", label: "Nouveau guide" },
+  { id: "dungeon", label: "Donjon" },
   { id: "results", label: "Guides" },
   // The addon is installed, updated and set up in game (CurseForge, its page in the game's options: /fg).
   // In a browser, nothing is sent anywhere and the settings are in the menu.
@@ -105,7 +107,14 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
     setOpened(await exampleGuide());
     setPage("results");
   };
+  // The dungeon guide page, on a dungeon guide's configuration when one is edited.
+  const [dungeonStart, setDungeonStart] = useState<{ key: number; initial: PlanRequest | null }>({ key: 0, initial: null });
   const openWizard = (start: WizardStart) => {
+    if (start.initial?.dungeon != null && !start.rerun) {
+      setDungeonStart((d) => ({ key: d.key + 1, initial: start.initial }));
+      setPage("dungeon");
+      return;
+    }
     if (!busy) setWizard((w) => ({ key: w.key + 1, start }));
     setPage("plan");
   };
@@ -231,6 +240,7 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
               start={wizard.start}
               onBusy={setBusy}
               onDraft={saveDraft}
+              onDungeon={(request) => openWizard({ initial: request, rerun: false })}
               onDone={(meta, notice, edit) => {
                 // Not over a guide being edited: the new guide waits in "Mes guides".
                 if (unsaved.current) return;
@@ -274,6 +284,21 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
             onAddon={openAddonSite}
           />
         )}
+        {page === "dungeon" &&
+          (options ? (
+            <DungeonPage
+              key={`${edition ?? ""}-${dungeonStart.key}`}
+              options={options}
+              initial={dungeonStart.initial}
+              busy={busy}
+              onGenerate={(request) => {
+                if (!busy) setWizard((w) => ({ key: w.key + 1, start: { initial: request, rerun: true } }));
+                setPage("plan");
+              }}
+            />
+          ) : (
+            <div className="empty">{t("Chargement…")}</div>
+          ))}
         {page === "changelog" && <ChangelogPage />}
         {page === "report" && (
           <div className="report-page">

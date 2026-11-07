@@ -37,13 +37,15 @@ interface Props {
   onDraft?: (request: PlanRequest) => void;
   /** The guide is saved: show it (with a notice when the optimization was stopped early), in the editor when created by hand. */
   onDone: (meta: VersionMeta, notice: string | null, edit?: boolean) => void;
+  /** Back to the dungeon guide page with a dungeon guide's configuration (cancelled or refused). */
+  onDungeon?: (request: PlanRequest) => void;
 }
 
 /**
  * New route in two steps: configure, then watch the generation live; the saved guide opens at the end.
  * Created by hand instead, the guide is saved with no step and opens in the editor.
  */
-export function NewRoutePage({ options, start, onBusy, onDraft, onDone }: Props) {
+export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onDungeon }: Props) {
   const t = useT();
   const lang = useLang();
   const [step, setStep] = useState<Step>("config");
@@ -291,7 +293,15 @@ export function NewRoutePage({ options, start, onBusy, onDraft, onDone }: Props)
           <span className="spinner" role="status" aria-hidden /> {t("Création du guide…")}
         </div>
       )}
-      {step === "config" && (
+      {/* A dungeon guide is configured on its own page. */}
+      {step === "config" && initial?.dungeon != null && (
+        <div className="actions">
+          <button className="primary" onClick={() => onDungeon?.(initial)}>
+            {t("Retour au guide de donjon")}
+          </button>
+        </div>
+      )}
+      {step === "config" && initial?.dungeon == null && (
         <ConfigForm
           key={JSON.stringify(initial)}
           options={options}

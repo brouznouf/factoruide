@@ -173,6 +173,14 @@ export function ResultView({ version, edition, onRerun, onEdit, onClone, onSaved
             {meta.edited && <> · {t("modifié à la main")}</>}
             {meta.character && <> · {t("depuis {name}", { name: meta.character })}</>}
           </div>
+          {version.request.dungeon != null && version.request.start && route.from_level > version.request.start.level && (
+            <div className="notice">
+              {t("Niveau {n} recommandé pour ce guide : votre personnage était niveau {level} quand il a été calculé. Il est fait comme au niveau {n}, à vous de voir.", {
+                n: route.from_level,
+                level: version.request.start.level,
+              })}
+            </div>
+          )}
         </div>
         <div className="actions compact">
           <ExportMenu
