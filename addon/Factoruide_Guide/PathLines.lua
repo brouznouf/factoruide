@@ -64,6 +64,7 @@ end
 -- World map ----------------------------------------------------------------------------------
 
 FGWalkDotMixin = CreateFromMixins and CreateFromMixins(MapCanvasPinMixin or {}) or {}
+FGWalkDotMixin.CheckMouseButtonPassthrough = FG.PinPassthrough -- not in combat (MapPins.lua)
 
 function FGWalkDotMixin:OnLoad() self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI") end
 

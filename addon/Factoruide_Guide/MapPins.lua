@@ -4,6 +4,17 @@ local FG = Factoruide
 
 FGStepPinMixin = CreateFromMixins and CreateFromMixins(MapCanvasPinMixin or {}) or {}
 
+--- For our pins' CheckMouseButtonPassthrough. The map calls it on each pin it acquires (WoW
+--- Forever; Classic Era and TBC have none) to let right clicks through (zoom out), with
+--- SetPassThroughButtons, a protected function: from our code during a fight (the map drawn
+--- again), the game blocks it (ADDON_ACTION_BLOCKED). Skipped then: the pin keeps what it had.
+function FG.PinPassthrough(pin, ...)
+    if InCombatLockdown() or not (MapCanvasPinMixin and MapCanvasPinMixin.CheckMouseButtonPassthrough) then return end
+    MapCanvasPinMixin.CheckMouseButtonPassthrough(pin, ...)
+end
+
+FGStepPinMixin.CheckMouseButtonPassthrough = FG.PinPassthrough
+
 function FGStepPinMixin:OnLoad() self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI") end
 
 --- `kind`: "current" (the step to do), "spot" (another place of its mobs, `shown` the one the

@@ -3283,6 +3283,24 @@ UIErrorsFrame, UnitHealth, UnitHealthMax, UnitIsDeadOrGhost = nil, nil, nil, nil
 StaticPopup_Hide = nil
 print("whole addon hide and show ok")
 
+-- WoW Forever's map sets each pin it acquires to let right clicks through, with a function the
+-- game blocks from our code in combat: not done then, on the steps' pins and the walk's dots.
+do
+    local passthrough = 0
+    MapCanvasPinMixin = { CheckMouseButtonPassthrough = function() passthrough = passthrough + 1 end }
+    InCombatLockdown = function() return true end
+    FGStepPinMixin.CheckMouseButtonPassthrough({}, "RightButton")
+    FGWalkDotMixin.CheckMouseButtonPassthrough({}, "RightButton")
+    assert(passthrough == 0, "not in combat")
+    InCombatLockdown = function() return false end
+    FGStepPinMixin.CheckMouseButtonPassthrough({}, "RightButton")
+    FGWalkDotMixin.CheckMouseButtonPassthrough({}, "RightButton")
+    assert(passthrough == 2, "done out of combat")
+    MapCanvasPinMixin = nil
+    FGStepPinMixin.CheckMouseButtonPassthrough({}, "RightButton")
+    assert(passthrough == 2, "Classic Era and TBC: nothing to do")
+end
+
 -- XP buffs the guide counts on (WoW Forever): a warning when one is missing, not in combat, not
 -- twice within ten minutes, nothing when the game hides the aura.
 do
