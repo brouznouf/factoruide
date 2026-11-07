@@ -39,6 +39,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### WoW data
 
+- WoW Forever: the latest quest data and the game's new build, with 26 more contributions from players (quests seen in game, measured XP, creature places) and 90 contributed facts checked: Spanish and French names, seven Lordaeron and Undercity quests open at level 15, Khan Hratha asks only for the Maraudine Key Fragment.
 - WoW Forever's Hall of Thanes: Underground Map is planned (the Dark Iron Map drops from the Dark Iron Spies and Captain Beld), and Old Ironforge Incursion after it (GitHub #98).
 - WoW Forever: the warlocks' pets and the Theramore Emissaries no longer count as hostile creatures in Stormwind (they kept low-level characters from its auction house), and A Dynamite Plan asks for its 10 Rough Dynamite.
 - The players' latest contributions: more quests seen in game, creature ranks and object names (WoW Forever).
