@@ -142,6 +142,24 @@ pub struct Planner<'a> {
 }
 
 impl<'a> Planner<'a> {
+    /// The level every stop of the forced quests can be made at from the start, by their gates
+    /// (minimum levels, guards, mobs within reach, dungeons' levels); None without any. A dungeon
+    /// guide is planned at it.
+    pub(crate) fn forced_quests_level(&self) -> Option<i64> {
+        let s = self.sim().initial_state();
+        (0..self.model.quests.len() as u32)
+            .filter(|&i| self.model.quests[i as usize].zone_forced && !s.turned[i as usize])
+            .flat_map(|i| {
+                let objectives = self.model.quests[i as usize].objectives.len();
+                [Kind::Accept, Kind::TurnIn]
+                    .into_iter()
+                    .chain((0..objectives).map(|k| Kind::Objective(k as u8)))
+                    .map(move |kind| Stop::quest(i, kind))
+            })
+            .map(|stop| self.sim().gate_level(&s, stop))
+            .max()
+    }
+
     pub fn new(model: &'a Model, world: &'a World, params: &'a Params, profile: &'a Profile) -> Self {
         let ix = Rc::new(Indexes::new(model, params));
         let mut planner = Self::with_indexes(model, world, params, profile, ix, Rc::from([]));

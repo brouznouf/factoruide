@@ -596,6 +596,14 @@ impl Scenario {
         self
     }
 
+    /// A dungeon guide of dungeon `area` (`PlanRequest::dungeon`), ending at level `to` at least.
+    pub fn dungeon_guide(mut self, area: i64, to: i64) -> Self {
+        self.profile.dungeon_guide = Some(area);
+        self.profile.to_level = to;
+        self.params.for_dungeon_guide(area);
+        self
+    }
+
     pub fn levels(mut self, from: i64, to: i64) -> Self {
         self.profile.from_level = from;
         self.profile.to_level = to;
@@ -804,9 +812,11 @@ impl Scenario {
                 }
             }
         }
-        // Quests outside the levels of the character are not built, but for the must-haves.
+        // Quests outside the levels of the character are not built, but for the must-haves (and in
+        // a dungeon guide, `QuestBuilder::any_level`).
         quests.retain(|q| {
             self.required.contains(&q.id)
+                || self.profile.dungeon_guide.is_some()
                 || self
                     .profile
                     .within_levels(q.level, q.min_level, self.params.max_quest_above)
@@ -897,10 +907,19 @@ impl Scenario {
         crate::job::check_dungeon_levels(&model, &self.params, &self.profile)?;
         let mut notes = Vec::new();
         crate::job::check_exclusive_choices(&model, &members)?;
-        if let Some(start) = first {
-            let mates: Vec<StartState> = members.iter().skip(1).copied().cloned().collect();
+        let mates: Vec<StartState> = members.iter().skip(1).copied().cloned().collect();
+        let mut start = first.cloned();
+        if let Some(start) = &start {
             crate::job::start_from(&mut model, &world, &mut self.params, start, &mates, &mut notes);
         }
+        crate::job::raise_dungeon_guide(
+            &mut model,
+            &world,
+            &mut self.params,
+            &mut self.profile,
+            start.as_mut().map(|s| (s, mates.as_slice())),
+            &mut notes,
+        )?;
         model.initial.abilities = model.abilities.initial(first, self.profile.from_level);
         Ok(Prepared {
             profile: self.profile,
@@ -997,6 +1016,7 @@ pub fn profile(faction: Faction, from: i64, to: i64) -> Profile {
         locale: None,
         mates: Vec::new(),
         player: String::new(),
+        dungeon_guide: None,
     }
 }
 

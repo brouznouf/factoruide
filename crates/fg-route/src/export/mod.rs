@@ -91,7 +91,8 @@ pub fn build_traced(
             }
         })
     };
-    if let Some(first) = trace.first() {
+    // A dungeon guide leaves the rest of the log alone: the character goes on with it after.
+    if let Some(first) = trace.first().filter(|_| planner.profile.dungeon_guide.is_none()) {
         for (id, name) in model.initial.log.iter().filter(|(id, _)| !kept(id)) {
             steps.push(writer.abandon_unused(first, *id, name));
             xps.push(planner.model.initial.xp);

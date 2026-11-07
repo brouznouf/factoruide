@@ -90,6 +90,12 @@ pub struct PlanRequest {
     /// character).
     #[serde(default)]
     pub mate_professions: Vec<Vec<crate::profession::ProfessionGoal>>,
+    /// A dungeon guide (instance area of the dungeon): from `start`, every quest of the dungeon
+    /// the character can take, with what they need first, the run and the turn-ins, nothing else.
+    /// `to_level` is left aside: the guide reaches the dungeon's first level if the character is
+    /// below it. No class quest, profession or other goal (`Params::for_dungeon_guide`).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub dungeon: Option<i64>,
 }
 
 /// A quest ID or an exact name, resolved before planning.

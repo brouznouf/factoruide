@@ -19,6 +19,9 @@ pub(super) struct QuestBuilder<'a> {
     pub(super) excluded_sorts: HashSet<i64>,
     /// Quest items each group member must loot for themselves (unless drops are shared).
     pub(super) per_player: f64,
+    /// Quests of any level concern the character (a dungeon guide's: its quests and what leads
+    /// to them, above the levels it ends at).
+    pub(super) any_level: bool,
 }
 
 impl<'a> QuestBuilder<'a> {
@@ -35,6 +38,7 @@ impl<'a> QuestBuilder<'a> {
             } else {
                 params.group_size.clamp(1, 5) as f64
             },
+            any_level: false,
         }
     }
 

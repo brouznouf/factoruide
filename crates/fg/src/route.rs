@@ -39,6 +39,8 @@ pub struct RouteOptions {
     pub params: Vec<String>,
     pub professions: Vec<fg_route::profession::ProfessionGoal>,
     pub required_quests: Vec<String>,
+    /// A dungeon guide's dungeon (instance area ID).
+    pub dungeon: Option<i64>,
     /// Language of the guide texts.
     pub locale: Option<String>,
     /// Profiles (JSON) of the character and of the other players of a group guide, and where to
@@ -86,6 +88,7 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
         start: opts.start.as_deref().map(read_profile).transpose()?,
         mates: opts.mates.iter().map(|p| read_profile(p)).collect::<Result<_>>()?,
         mate_professions: vec![],
+        dungeon: opts.dungeon,
     };
     // FG_PREVIEW_STARTS: the starts the app offers to choose from, as JSON (not a guide).
     if std::env::var_os("FG_PREVIEW_STARTS").is_some() {
@@ -312,6 +315,7 @@ pub fn share(conn: &Connection, overrides_dir: &Path, opts: &ShareOptions, out: 
         locale: Some(opts.locale.clone()),
         mates: vec![],
         mate_professions: vec![],
+        dungeon: None,
         start: None,
     };
     let walks = std::sync::Arc::new(fg_route::terrain::Walks::default());

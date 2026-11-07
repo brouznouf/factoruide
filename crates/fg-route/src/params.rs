@@ -416,6 +416,20 @@ pub struct Params {
 pub struct ParamsBuilder(Params);
 
 impl Params {
+    /// The settings of a dungeon guide of dungeon `area` (instance area): the guide does its
+    /// quests (`Profile::dungeon_guide`), so no other dungeon, no zone forced or preferred, no
+    /// reputation goal, no start chosen.
+    pub fn for_dungeon_guide(&mut self, area: i64) {
+        self.dungeons = false;
+        self.forced_dungeons.clear();
+        self.forced_dungeon_quests.clear();
+        self.excluded_dungeons.retain(|&d| d != area);
+        self.forced_zones.clear();
+        self.preferred_zones.clear();
+        self.reputation_goals.clear();
+        self.start_zone = 0;
+    }
+
     /// Settings to change from these.
     pub fn builder(self) -> ParamsBuilder {
         ParamsBuilder(self)

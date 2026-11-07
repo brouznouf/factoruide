@@ -249,6 +249,7 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
     profile.required_quests = required::resolve(conn, req, &profile, &params)?;
     if params.edition == crate::xp::Edition::Forever
         && params.sleeping_bag
+        && req.dungeon.is_none()
         && !profile
             .required_quests
             .iter()
@@ -280,22 +281,36 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
     check_exclusive_choices(&model, &members)?;
     // A group is planned for the member with the least XP.
     let start = members.first().copied().or(req.start.as_ref());
-    if let Some(start) = start {
-        // Its race's flight paths and those of the towns it did quests in count as learned,
-        // unless the list was settled by hand.
-        let with_deduced = |s: &StartState| {
-            let found = if s.flights_final {
-                None
-            } else {
-                s.faction
-                    .and_then(|side| inferred_flights(conn, side, &s.completed).ok())
-            };
-            s.with_deduced_flights(overrides.start_flights(s.race), found)
+    // Its race's flight paths and those of the towns it did quests in count as learned, unless
+    // the list was settled by hand.
+    let with_deduced = |s: &StartState| {
+        let found = if s.flights_final {
+            None
+        } else {
+            s.faction
+                .and_then(|side| inferred_flights(conn, side, &s.completed).ok())
         };
-        let deduced = with_deduced(start);
-        let start = &deduced;
-        let mates: Vec<StartState> = members.iter().skip(1).map(|m| with_deduced(m)).collect();
-        start_from(&mut model, &world, &mut params, start, &mates, &mut start_notes);
+        s.with_deduced_flights(overrides.start_flights(s.race), found)
+    };
+    let mut starting: Option<(StartState, Vec<StartState>)> = start.map(|s| {
+        (
+            with_deduced(s),
+            members.iter().skip(1).map(|m| with_deduced(m)).collect(),
+        )
+    });
+    match &starting {
+        Some((start, mates)) => start_from(&mut model, &world, &mut params, start, mates, &mut start_notes),
+        None => model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id)),
+    }
+    raise_dungeon_guide(
+        &mut model,
+        &world,
+        &mut params,
+        &mut profile,
+        starting.as_mut().map(|(s, m)| (s, m.as_slice())),
+        &mut start_notes,
+    )?;
+    if let Some((start, _)) = &starting {
         // Quests of the log the model does not have: named from the database, for their abandon.
         for (id, name) in model.initial.log.iter_mut().filter(|(_, name)| name.is_empty()) {
             *name = conn
@@ -313,8 +328,6 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
             model.initial.turned.len(),
             model.initial.log.len()
         )));
-    } else {
-        model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id));
     }
     required::check_start(&model, &profile, &members)?;
     model.initial.abilities = model.abilities.initial(start, profile.from_level);
@@ -329,6 +342,50 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
         notes,
         diagnostics: Diagnostics::default(),
     })
+}
+
+/// A dungeon guide is planned at the level its quests need (`dungeon_guide_level`; the app warns
+/// a character below it): the profile and the start raised to it, the model started again from
+/// there. The guide ends at that level (no level to reach).
+pub(crate) fn raise_dungeon_guide(
+    model: &mut Model,
+    world: &World,
+    params: &mut Params,
+    profile: &mut Profile,
+    start: Option<(&mut StartState, &[StartState])>,
+    notes: &mut Vec<String>,
+) -> Result<()> {
+    let Some(area) = profile.dungeon_guide else {
+        return Ok(());
+    };
+    let level = dungeon_guide_level(model, world, params, profile, area)?;
+    if level > profile.from_level {
+        notes.push(format!(
+            "dungeon guide planned at level {level}, the level its quests need (the character is level {})",
+            profile.from_level
+        ));
+        profile.from_level = level;
+        if let Some((start, mates)) = start {
+            (start.level, start.xp) = (level, 0);
+            start_from(model, world, params, start, mates, &mut Vec::new());
+        }
+    }
+    profile.to_level = profile.from_level;
+    Ok(())
+}
+
+/// The level a dungeon guide of dungeon `area` is planned at: the one every stop of its quests
+/// can be made at (`Planner::forced_quests_level`), the character's when higher. Refused when the
+/// character has no quest of the dungeon left.
+fn dungeon_guide_level(model: &Model, world: &World, params: &Params, profile: &Profile, area: i64) -> Result<i64> {
+    use anyhow::Context as _;
+    let dungeon = (model.dungeons.iter())
+        .find(|d| d.area == area)
+        .with_context(|| format!("dungeon {area}: not a dungeon of this edition"))?;
+    let Some(level) = Planner::new(model, world, params, profile).forced_quests_level() else {
+        anyhow::bail!("{}: no quest of this dungeon left for this character", dungeon.name);
+    };
+    Ok(level.max(profile.from_level))
 }
 
 /// Every dungeon the character could run has levels to run it at, and a dungeon the player
@@ -395,14 +452,14 @@ pub(crate) fn start_from(
     }
 }
 
-/// A dungeon only needed by must-have quests the character has already turned in, or finished
-/// in its log, is not needed any more: its objectives are done.
+/// A dungeon only needed by must-have quests (or a dungeon guide's) the character has already
+/// turned in, or finished in its log, is not needed any more: its objectives are done.
 fn release_done_dungeons(model: &mut Model, start: &StartState) {
     let finished =
         |i: usize, id: i64| model.initial.turned.contains(&i) || start.log.iter().any(|l| l.id.0 == id && l.complete);
     let mut needed = vec![false; model.dungeons.len()];
     for (i, q) in model.quests.iter().enumerate() {
-        if !q.required || finished(i, q.id) {
+        if !(q.required || q.zone_forced) || finished(i, q.id) {
             continue;
         }
         for d in q.objectives.iter().filter_map(model::Objective::dungeon_of) {

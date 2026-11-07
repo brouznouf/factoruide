@@ -46,6 +46,9 @@ pub struct Profile {
     pub mates: Vec<Mate>,
     /// The character's "Name-Realm" in a group guide (empty alone).
     pub player: String,
+    /// A dungeon guide's dungeon (instance area): the guide does every quest of it the character
+    /// can take by `to_level`, and what they need first, nothing else (`PlanRequest::dungeon`).
+    pub dungeon_guide: Option<i64>,
 }
 
 /// A class quest the route must do (`m_class_requirement`): the quests teaching a spell, or the

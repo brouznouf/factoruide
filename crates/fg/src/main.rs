@@ -95,6 +95,9 @@ enum Command {
         /// A must-have quest ID, exact name, or JSON {"quest":21,"min_level":3,"max_level":4} (repeatable); includes prerequisites
         #[arg(long = "required-quest")]
         required_quests: Vec<String>,
+        /// A dungeon guide: every quest of this dungeon (instance area ID) the character can take, with what leads to them, and nothing else
+        #[arg(long)]
+        dungeon: Option<i64>,
         /// Planner parameters, as key=value (repeatable)
         #[arg(long = "param")]
         params: Vec<String>,
@@ -288,6 +291,7 @@ fn main() -> Result<()> {
             name,
             profession,
             required_quests,
+            dungeon,
             allow_elite,
             no_dungeons,
             pvp_quests,
@@ -311,6 +315,7 @@ fn main() -> Result<()> {
                 progression,
                 params,
                 required_quests,
+                dungeon,
                 locale,
                 start: players.start,
                 mates: players.mates,

@@ -68,6 +68,7 @@ fn request(race: &str, class: &str, to_level: i64, params: &[&str]) -> PlanReque
         locale: None,
         mates: vec![],
         mate_professions: vec![],
+        dungeon: None,
         start: None,
     }
 }
@@ -3815,6 +3816,7 @@ fn a_group_guide_levels_each_players_professions() {
         professions: vec![skinning()],
         mates: vec![player("B-Realm", 2, "warrior", 10)],
         mate_professions: vec![vec![]],
+        dungeon: None,
         ..request("orc", "warrior", 13, &["effort=0"])
     };
     let p = prepare_request(&request);
@@ -3849,6 +3851,7 @@ fn new_characters_level_together_from_the_start() {
         start: Some(orc),
         mates: vec![troll],
         mate_professions: vec![vec![]],
+        dungeon: None,
         ..request("orc", "warrior", 4, &["effort=0"])
     };
     let route = job::plan(&fixture(&["classic_valley"]), &overrides(), &request, &|_| {})
@@ -3907,6 +3910,87 @@ fn a_dungeon_forced_with_its_quests_takes_them_all() {
         );
     }
 }
+/// A dungeon guide (`PlanRequest::dungeon`) from a level-18 character met in game does every quest
+/// of the dungeon, whatever its level, with the chain leading to one, enters once and turns them
+/// in: nothing else (no quest of another zone, no grinding), the rest of the log left alone. It is
+/// planned at the level its quests need, 28 here (the app warns the player).
+#[test]
+fn a_dungeon_guide_does_the_dungeon_quests_and_nothing_else() {
+    let inside = || {
+        Obj::kill(
+            "Defias",
+            18,
+            6,
+            At {
+                zone: 1,
+                x: 70.0,
+                y: 70.0,
+            },
+        )
+        .inside(0)
+    };
+    let scenario = with_deadmines(leveling(25))
+        .start(StartState {
+            level: 18,
+            log: vec![LogQuest {
+                id: job::QuestId(330),
+                complete: false,
+                objectives: vec![],
+            }],
+            ..StartState::default()
+        })
+        .levels(18, 18)
+        .dungeon_guide(900, 18)
+        .quest(
+            Q::new(310, "Lead")
+                .level(17)
+                .giver(2, 20.0, 60.0)
+                .kill("Wolf", 17, 6, 2, 30.0, 60.0),
+        )
+        .quest(
+            Q::new(311, "Into the mine")
+                .level(18)
+                .after(&[310])
+                .giver(2, 40.0, 60.0)
+                .objective(inside()),
+        )
+        .quest(
+            Q::new(330, "Elsewhere")
+                .level(18)
+                .giver(2, 25.0, 60.0)
+                .kill("Bear", 18, 6, 2, 35.0, 60.0),
+        )
+        .quest(
+            Q::new(340, "Later")
+                .level(30)
+                .min_level(28)
+                .giver(1, 45.0, 40.0)
+                .objective(inside()),
+        );
+    let (_, guide) = scenario.guide();
+    let dungeon = [300, 301, 302, 310, 311, 340];
+    for id in dungeon {
+        assert!(
+            (guide.plan.iter()).any(|s| matches!(s, job::RouteStep::TurnIn { quest } if *quest == id)),
+            "{id} turned in"
+        );
+    }
+    let others = (guide.plan.iter())
+        .filter_map(|s| match s {
+            job::RouteStep::Accept { quest } | job::RouteStep::TurnIn { quest } => Some(*quest),
+            _ => None,
+        })
+        .filter(|q| !dungeon.contains(q))
+        .collect::<Vec<_>>();
+    assert!(others.is_empty(), "only the dungeon's quests: {others:?}");
+    assert_eq!((guide.route.from_level, guide.route.to_level), (28, 28));
+    assert_eq!(guide.route.breakdown.grinding, 0.0);
+    assert!(
+        !(guide.route.steps.iter()).any(|s| s.quest == Some(330)),
+        "the quest of the log not in the guide is left alone"
+    );
+}
+
 /// A dungeon forced with its quests waits for the one whose chain ends later (taken at 19, after
 /// the others at 15): the dungeon is entered once, with all of them in the log.
 #[test]

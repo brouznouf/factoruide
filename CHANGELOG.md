@@ -10,6 +10,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### App
 
+- A Dungeon tab: pick a character and a dungeon for a short guide of every quest of that dungeon, with the quests leading to them, and nothing else. A character below the level its quests need gets a warning.
 - The steps inside a dungeon are a block of their own on the guide page, shown on the map of the dungeon's floor they are on (Classic and WoW Forever dungeons, from the game's own dungeon maps).
 - The first guide of a game version no longer fails now and then because another command removed its data while unpacking it.
 - A settings change made while the addon installs, or while a character is added back or forgotten, is no longer lost.

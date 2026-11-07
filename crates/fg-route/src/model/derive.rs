@@ -80,6 +80,10 @@ pub(crate) fn settle(
             && !profile.within_levels(q.level, q.min_level, params.max_quest_above);
     }
     super::settle_quests(quests, dungeons, params, &knowledge.prerequisites, profile);
+    // A dungeon guide plans its dungeon's quests and what leads to them, nothing else.
+    if profile.dungeon_guide.is_some() {
+        quests.retain(|q| q.zone_forced);
+    }
     dungeons::set_dungeon_levels(
         dungeons,
         quests,
@@ -87,7 +91,7 @@ pub(crate) fn settle(
         (params.dungeon_from, params.dungeon_to),
         params.edition.rules().max_level,
     );
-    super::settle_dungeons(dungeons, quests, profile);
+    super::settle_dungeons(dungeons, quests, profile, params.edition.rules().max_level);
     Ok(known_names)
 }
 
