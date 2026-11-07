@@ -1166,12 +1166,67 @@ impl Planner<'_> {
         });
         match pick_up {
             Some(i) => Some(Stop::quest(i, Kind::Accept)),
-            None if self.waits_for_quests(s, d) => None,
+            None if self.waits_for_quests(s, d) => self.toward_waited_quest(s, d),
             None => Some(Stop {
                 index: d as u32,
                 kind: Kind::Dungeon,
             }),
         }
+    }
+
+    /// The next stop of the chain leading to a quest forced dungeon `d` waits for
+    /// (`waits_for_quests`): a quest of it to take, finish or hand in, its own last (Dragonmaw
+    /// Rumors before Open the Maw). Left to the weighing of the stops, a delivery far away worth
+    /// little comes after the dungeon's levels. None when no step of it can be made now, and in a
+    /// dungeon: what is left there comes first (it is not entered again).
+    fn toward_waited_quest(&self, s: &State, d: usize) -> Option<Stop> {
+        if s.inside.is_some() {
+            return None;
+        }
+        let bound = self.trips().bound(s);
+        let doable = |stop: Stop| {
+            self.sim().gate_level(s, stop) <= s.level
+                && self.places().inside(s, stop).is_none()
+                && bound.at(&self.places().pos(s, stop)).is_finite()
+        };
+        let mut stack: Vec<u32> = (self.availability().dungeon_quests(d))
+            .filter(|&i| {
+                let iu = i as usize;
+                self.quest(i).mandatory && !s.accepted[iu] && !s.rewarded(iu)
+            })
+            .collect();
+        let mut seen = std::collections::HashSet::new();
+        while let Some(i) = stack.pop() {
+            let iu = i as usize;
+            if !seen.insert(i) || s.rewarded(iu) {
+                continue;
+            }
+            let q = self.quest(i);
+            if s.accepted[iu] {
+                let next = if self.availability().objectives_done(s, i) {
+                    Some(Stop::quest(i, Kind::TurnIn)).filter(|&t| doable(t))
+                } else {
+                    (0..q.objectives.len())
+                        .filter(|&k| self.availability().objective_open(s, i, k))
+                        .map(|k| Stop::quest(i, Kind::Objective(k as u8)))
+                        .find(|&o| doable(o))
+                };
+                if next.is_some() {
+                    return next;
+                }
+                continue;
+            }
+            let accept = Stop::quest(i, Kind::Accept);
+            if self.availability().can_accept(s, i) && doable(accept) {
+                return Some(accept);
+            }
+            stack.extend(
+                (q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held))
+                    .filter_map(|id| self.model.index.get(id))
+                    .map(|&j| j as u32),
+            );
+        }
+        None
     }
 
     /// Whether the run of dungeon `d` waits for a quest of it the route must do (a dungeon forced
@@ -1272,5 +1327,69 @@ mod deadline_tests {
             let next = plan.nearest_stop(&state, None).unwrap();
             assert_eq!(next, Stop::quest(u32::from(need != 3), Kind::Accept));
         }
+    }
+}
+
+#[cfg(test)]
+mod forced_dungeon_tests {
+    use super::*;
+    use crate::testing::{At, Obj, Q, Scenario};
+
+    /// A dungeon forced with its quests, at its level, waits for one of them whose prerequisite is
+    /// a delivery far away (Dragonmaw Rumors before Open the Maw, GitHub #125): the next stop is
+    /// that delivery, not the quest at hand, else the dungeon's levels go by without it.
+    #[test]
+    fn a_waiting_forced_dungeon_goes_for_what_unlocks_its_quest() {
+        let p = Scenario::new()
+            .levels(19, 22)
+            .zone(1, "Westfall")
+            .dungeon("The Deadmines", 1, 70.0, 70.0)
+            .params(|p| p.forced_dungeon_quests = vec![900])
+            .quest(
+                Q::new(330, "Rumors")
+                    .level(18)
+                    .xp(50)
+                    .giver(1, 90.0, 10.0)
+                    .turn_in_at(1, 92.0, 10.0),
+            )
+            .quest(
+                Q::new(331, "Into the maw")
+                    .level(18)
+                    .after(&[330])
+                    .giver(1, 92.0, 10.0)
+                    .objective(
+                        Obj::kill(
+                            "Defias",
+                            18,
+                            6,
+                            At {
+                                zone: 1,
+                                x: 70.0,
+                                y: 70.0,
+                            },
+                        )
+                        .inside(0),
+                    ),
+            )
+            .quest(
+                Q::new(302, "At hand")
+                    .level(19)
+                    .giver(1, 50.0, 50.0)
+                    .objective(Obj::kill(
+                        "Murloc",
+                        19,
+                        4,
+                        At {
+                            zone: 1,
+                            x: 52.0,
+                            y: 52.0,
+                        },
+                    )),
+            )
+            .build();
+        let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let s = plan.sim().initial_state();
+        let rumors = Stop::quest(p.model.index[&330] as u32, Kind::Accept);
+        assert_eq!(plan.nearest_stop(&s, None), Some(rumors));
     }
 }

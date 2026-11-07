@@ -23,6 +23,9 @@ impl QuestBuilder<'_> {
         let (pre_all, pre_any) = self.prerequisites(r.id, &givers.item_pre);
         let guard = |locs: &[super::types::Loc]| {
             locs.iter()
+                // Inside a dungeon (an item dropped there, an NPC there): done during the group's
+                // run, the creatures around its entrance outside guard nothing of it.
+                .filter(|l| l.inside.is_none())
                 // A creature gives the quest in a town its own side's guards watch; an item is
                 // found where it lies, among the camps of the other side too.
                 .map(|l| {

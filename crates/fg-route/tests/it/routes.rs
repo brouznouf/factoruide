@@ -2945,6 +2945,27 @@ fn a_place_to_reach_takes_its_fixed_time() {
     assert_eq!(o[0].extra, 1500.0);
 }
 
+/// A quest started by an item dropped inside a dungeon is taken during the group's run: the
+/// creatures standing outside, around its entrance, guard nothing of it (Elder Knowledge's elite
+/// Dragonmaw, Grime-Encrusted Ring's level 40 creatures, GitHub #125).
+#[test]
+fn a_quest_started_inside_a_dungeon_is_not_guarded_from_outside() {
+    let conn = Fixture::new(Edition::Classic)
+        .file("classic_dungeons")
+        .toml(
+            "[[npc]]\nid = 90200\nname = \"Ogre\"\nlevel = 40\nfaction = 14\n\
+             at = [{ zone = 40, x = 42.5, y = 72.5 }, { zone = 40, x = 43.3, y = 71.7 }, { zone = 40, x = 41.7, y = 71.7 }]\n\
+             [[item]]\nid = 90201\nname = \"Strange Letter\"\nlevel = 1\nclass = 12\nstart_quest = 90202\ndrops = [{ npc = 639, chance = 1.0 }]\n\
+             [[quest]]\nid = 90202\nname = \"Strange Letter\"\nlevel = 20\nmin_level = 15\nraces_mask = 77\nzone = 1581\nxp = 300\n\
+             objectives_text = \"Bring the letter to Gryan Stoutmantle.\"\nstarts = [{ item = 90201 }]\nends = [{ npc = 234 }]\n",
+        )
+        .open();
+    let p = prepare_in(&conn, "human", "warrior", 25, &[], None);
+    let q = &p.model.quests[quest(&p, 90202).unwrap() as usize];
+    assert!(q.start_dungeon.is_some(), "{q:?}");
+    assert!(q.start_guard.level < 40, "{:?}", q.start_guard);
+}
+
 /// Dungeons whose zone the game files under the continent (Blackrock Depths, Blackrock Spire,
 /// the Sunken Temple) are found through their instance map.
 #[test]
