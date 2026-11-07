@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+## 0.16.0 (2026-11-07)
+
+A guide for one dungeon from your character, dungeons as zones with their steps on their floor maps, every quest of a dungeon forced with its quests, and the fixes of your reports (GitHub #97 to #125).
+
 ### App
 
 - A Dungeon tab: pick a character and a dungeon for a short guide of every quest of that dungeon, with the quests leading to them, and nothing else. A character below the level its quests need gets a warning.
@@ -32,6 +36,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - A quest started by an item found in a dungeon's object is planned with the run and taken in it: WoW Forever's The Treaty of Understanding, from the Hall of Thanes.
 - Dungeons run above their monsters' level: the level-60 dungeons are run at 60 instead of leaving the guide impossible to make (GitHub #99).
 - "Profession trainer stops" option (under the professions of a player of the new guide, off by default): with professions, the route goes to the trainer to learn each profession and, before the skill reaches the cap of its rank, each next rank. A trainer near the route is a detour, a far one a trip, both counted in the route's time; a rank no trainer teaches has no stop (GitHub #106).
+- A dungeon forced with its quests does all of them: a delivery filed under a dungeon ("Speak with Nara Wildmane") no longer asks for a run of its own, a breadcrumb the guide needs comes before the quest it leads to, a quest taken inside a dungeon is no longer held back by the creatures at its entrance, and the quest unlocking one of the dungeon's is done before its last level (GitHub #125).
+- WoW Forever: the rogue quests of C's dead drop near Pyrewood (The Horn of Xelthos, The Eye of Bhossca) can be in a guide: the infiltration alone at the dungeon's entrance, then the letter at a capital's mailbox and the reward at the dead drop (GitHub #125).
 - "Buy at the auction house" option (advanced settings, off by default): the items a quest asks for that nothing else gives, made by a profession like Rough Dynamite, are bought at the nearest auction house instead of leaving the quest out (GitHub #97).
 
 ### Addon
@@ -40,6 +46,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### WoW data
 
+- WoW Forever: the Emeraldon Oracles are no longer placed in Orgrimmar, where they kept Thrall's Hidden Enemies chain (Ragefire Chasm) out of reach of every Horde guide (GitHub #125).
 - WoW Forever: the latest quest data and the game's new build, with 26 more contributions from players (quests seen in game, measured XP, creature places) and 90 contributed facts checked: Spanish and French names, seven Lordaeron and Undercity quests open at level 15, Khan Hratha asks only for the Maraudine Key Fragment.
 - WoW Forever's Hall of Thanes: Underground Map is planned (the Dark Iron Map drops from the Dark Iron Spies and Captain Beld), and Old Ironforge Incursion after it (GitHub #98).
 - WoW Forever: the warlocks' pets and the Theramore Emissaries no longer count as hostile creatures in Stormwind (they kept low-level characters from its auction house), and A Dynamite Plan asks for its 10 Rough Dynamite.
