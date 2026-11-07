@@ -1196,6 +1196,71 @@ fn a_quest_never_turned_in_counts_as_grinding() {
     assert!(left.grinding > done.grinding, "{} vs {}", left.grinding, done.grinding);
 }
 
+/// Elwynn's report: Thomas (70, 50) sends a report to Dughan (30, 50); the murlocs' bounty,
+/// given by Thomas, needs the report delivered. Quest indices: 0 the report, 1 the bounty, 2 a
+/// quest from Dughan back to Thomas.
+fn report_then_bounty() -> Prepared {
+    use crate::testing::{Q, Scenario};
+    Scenario::new()
+        .levels(1, 5)
+        .quest(
+            Q::new(1, "Report")
+                .level(1)
+                .giver(1, 70.0, 50.0)
+                .turn_in_at(1, 30.0, 50.0),
+        )
+        .quest(
+            Q::new(2, "Bounty")
+                .level(1)
+                .giver(1, 70.0, 50.0)
+                .turn_in_at(1, 70.0, 50.0)
+                .after_any(&[1])
+                .kill("Murloc", 1, 8, 1, 75.0, 60.0),
+        )
+        .quest(
+            Q::new(3, "Back east")
+                .level(1)
+                .giver(1, 30.0, 50.0)
+                .turn_in_at(1, 70.0, 50.0),
+        )
+        .build()
+}
+
+/// A quest reinserted by the large moves is taken once its prerequisites are turned in, not at
+/// the first visit of its giver: the bounty goes with the second visit to Thomas.
+#[test]
+fn a_reinserted_quest_is_taken_after_its_prerequisites() {
+    let p = report_then_bounty();
+    let planner = planner(&p);
+    let mut route = vec![
+        Stop::quest(0, Kind::Accept),
+        Stop::quest(0, Kind::TurnIn),
+        Stop::quest(2, Kind::Accept),
+        Stop::quest(2, Kind::TurnIn),
+    ];
+    let s0 = planner.sim().initial_state();
+    let mut levels = vec![1; route.len()];
+    let mut places: Vec<_> = route.iter().map(|&s| planner.sim().pos_from_start(&s0, s)).collect();
+    planner.insert_quest_leveled(&mut route, &mut levels, &mut places, &s0, 1);
+    let at = |stop| route.iter().position(|&s| s == stop).unwrap();
+    assert!(
+        at(Stop::quest(1, Kind::Accept)) > at(Stop::quest(0, Kind::TurnIn)),
+        "{route:?}"
+    );
+    assert!(planner.simulate(&route, None).is_some(), "{route:?}");
+}
+
+/// The quests a large move takes out are put back prerequisites first, whatever their order in
+/// the route.
+#[test]
+fn removed_quests_go_back_prerequisites_first() {
+    let p = report_then_bounty();
+    let mut remove = vec![1, 2, 0];
+    planner(&p).prerequisites_first(&mut remove);
+    let at = |q| remove.iter().position(|&r| r == q).unwrap();
+    assert!(at(0) < at(1), "{remove:?}");
+}
+
 /// Elwynn as the group guide did it. Goldshire (Dughan and the trainer, 30, 50) to the west,
 /// Thomas (70, 50) to the east, 400 yards apart. Quest indices:
 /// 0 Report to Thomas (Dughan to Thomas), 1 Deliver Thomas' Report (Thomas to Dughan, after 0),

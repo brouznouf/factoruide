@@ -944,8 +944,48 @@ impl Planner<'_> {
             .any(|&(i, o, share)| i == q as usize && usize::from(o) == k && share >= 1.0)
     }
 
-    /// Insert a quest: accepted where the character is around its level (closest to the giver),
-    /// objectives and turn-in at the closest places within the following stretch. `levels` and
+    /// The first index of `route` where quest `q` may be taken as far as its prerequisites go:
+    /// right after the turn-in of the last of `pre_all` and of the `pre_need`-th of `pre_any`
+    /// (those done before the route count from its start; those the route never turns in are
+    /// left to the replay to refuse).
+    pub(crate) fn after_prerequisites(&self, route: &[Stop], q: u32) -> usize {
+        let quest = self.quest(q);
+        let done_at = |id: &i64| {
+            let &j = self.model.index.get(id)?;
+            if self.model.initial.turned.contains(&j) {
+                return Some(0);
+            }
+            Self::position_of(route, j as u32, Kind::TurnIn).map(|t| t + 1)
+        };
+        let all = quest.pre_all.iter().filter_map(done_at).max().unwrap_or(0);
+        let mut any: Vec<usize> = quest.pre_any.iter().filter_map(done_at).collect();
+        any.sort_unstable();
+        let need = quest.pre_need.max(1);
+        let any = if any.len() >= need { any[need - 1] } else { 0 };
+        all.max(any)
+    }
+
+    /// `quests` (indices) reordered so that each comes after those of its prerequisites among
+    /// them, the order kept otherwise.
+    pub(crate) fn prerequisites_first(&self, quests: &mut Vec<u32>) {
+        let needs = |q: u32, p: u32| {
+            let quest = self.quest(q);
+            let id = self.quest(p).id;
+            quest.pre_all.contains(&id) || quest.pre_any.contains(&id)
+        };
+        let mut left = std::mem::take(quests);
+        while !left.is_empty() {
+            // The first quest none of the others left needs first (a cycle: the first one).
+            let k = (0..left.len())
+                .find(|&k| !left.iter().any(|&p| p != left[k] && needs(left[k], p)))
+                .unwrap_or(0);
+            quests.push(left.remove(k));
+        }
+    }
+
+    /// Insert a quest: accepted where the character is around its level (closest to the giver)
+    /// once its prerequisites are turned in, objectives and turn-in at the closest places within
+    /// the following stretch. `levels` and
     /// `places` (`Simulator::pos_from_start` of each stop, from the initial state `s0`) are kept
     /// aligned with the route.
     pub(crate) fn insert_quest_leveled(
@@ -967,9 +1007,10 @@ impl Planner<'_> {
             }
         };
         let giver = quest.starts[0].pos;
+        let ready = self.after_prerequisites(route, q);
         // Each distance once (the first of the nearest, as `min_by` keeps).
         // A quest of the log is not accepted: its stops go where they fit best.
-        let at = (0..=route.len())
+        let at = (ready..=route.len())
             .filter(|_| !in_log)
             .filter(|&p| (lo..=hi).contains(&level(levels, p)))
             .map(|p| {
@@ -987,7 +1028,7 @@ impl Planner<'_> {
         let at = if linked { None } else { at };
         let Some(mut at) = at else {
             let old = route.clone();
-            let first = self.insert_quest(route, q);
+            let first = self.insert_quest_after(route, q, ready);
             // Keep levels aligned (approximate: copy the neighbour's level): the stops that came
             // in, a partner's too.
             let mut j = 0;

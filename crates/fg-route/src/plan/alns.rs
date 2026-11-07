@@ -179,6 +179,7 @@ impl Planner<'_> {
         }
         *route = kept;
         remove.sort_by_key(|&q| self.quest(q).level);
+        self.prerequisites_first(&mut remove);
         let mut changed = first;
         for q in remove {
             let at = self.insert_quest_leveled(route, &mut levels, &mut places, &s0, q);
