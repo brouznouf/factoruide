@@ -2706,6 +2706,32 @@ FG:Save("guideMode", nil)
 onQuest[9001] = nil
 print("minimal strip on a done step ok")
 
+do
+    -- A step done with mobs to kill on the way to it: their line stays, greyed with it (the XP
+    -- bar's box still holds their XP).
+    FG.Routes["farm-done-test"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 1,
+        toLevel = 60,
+        time = 1,
+        steps = {
+            { k = "accept", t = "Accept A", q = 9111, id = 1, m = 1426, x = 10, y = 10, lvl = 1, fk = 10, fx = 2093 },
+            { k = "grind", t = "Grind", lvl = 60 },
+        },
+    }
+    onQuest[9111] = true
+    useRoute("farm-done-test")
+    FG.Guide:Go(1)
+    local farmRow = FG.Guide.view.tasks[1]
+    assert(farmRow.kind == "farm" and farmRow.done, "the mobs on the way, listed as done")
+    assert(farmRow.count == "~2,093 XP", "their planned XP: " .. farmRow.count)
+    assert(FG.Guide.view.tasks[2].index == 1 and FG.Guide.view.tasks[2].done, "then the step, done")
+    onQuest[9111] = nil
+    print("mobs on the way of a done step ok")
+end
+
 -- The next steps show those done already (greyed), not hidden.
 FG.Routes["next-test"] = {
     race = 7,
