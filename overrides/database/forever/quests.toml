@@ -1000,56 +1000,7 @@ races_mask = 162
 [[quest]]
 id = 1521
 races_mask = 162
-# --- Dungeon quest XP, givers seen on Forever's quest pages, library books (data wave 2) ---
-
-# Dungeon quests: Forever's own XP, received in game after the build that halved the dungeon
-# bonus (players' reports; Wailing Caverns about 1.94 times Classic's, Shadowfang Keep about
-# 2.675). The sources have Classic's.
-[[quest]]
-# Deviate Hides: 3100 in game (Classic 1600). No mailbox starts it in game: Nalpak only (the
-# Orgrimmar mailbox comes from the sources).
-id = 1486
-xp = 3100
-
-[[quest]]
-# Deathstalkers in Shadowfang: 5350 (Classic 2000).
-id = 1098
-xp = 5350
-
-[[quest]]
-# Leaders of the Fang: 4300 (Classic 2200).
-id = 914
-xp = 4300
-
-[[quest]]
-# Serpentbloom: 3300 (Classic 1700).
-id = 962
-xp = 3300
-
-[[quest]]
-# Deviate Eradication: 4000 (Classic 2050).
-id = 1487
-xp = 4000
-
-[[quest]]
-# Smart Drinks: 2650 (Classic 1350).
-id = 1491
-xp = 2650
-
-[[quest]]
-# The Glowing Shard: 5150 (Classic 2650).
-id = 6981
-xp = 5150
-
-[[quest]]
-# The Book of Ur: 5600 (Classic 2100).
-id = 1013
-xp = 5600
-
-[[quest]]
-# Arugal Must Die: 8850 (Classic 3300).
-id = 1014
-xp = 8850
+# --- Givers seen on Forever's quest pages, library books (data wave 2) ---
 
 # Givers and enders as Forever's quest pages list them (the sources' extras removed).
 [[quest]]
@@ -1394,13 +1345,6 @@ remove_starts = [{ type = "object", id = 441254 }]
 starts = [{ type = "item", id = 220353 }]
 
 [[quest]]
-# Mulgore: Grace of An'she and Mu'sha is timed ("before the incense burns to ash in ten minutes"),
-# which no source records: the guide did eight steps between taking and turning it in, and the
-# game failed it (GitHub #34).
-id = 95805
-time_limit = 600
-
-[[quest]]
 # Call of Earth (dwarf shaman, third step): given by the Minor Manifestation of Earth, only taken
 # back by Teo Hammerstorm (the quest page).
 id = 94375
@@ -1411,12 +1355,6 @@ remove_starts = [{ type = "npc", id = 257446 }]
 # Seeking Caitlin only sends to Caitlin Grassman, who gives Lost in the Thicket Things.
 id = 95737
 breadcrumb_for = 95647
-
-[[quest]]
-# An Enticing Offer: 6 Vials of Animal Blood and 18 Duskweed Petals (quest caches; players'
-# progress reached them).
-id = 99130
-amounts = [{ type = "item", id = 286215, amount = 6 }, { type = "item", id = 286214, amount = 18 }]
 
 [[quest]]
 # Grant's Shield, Silvia's Sword and Ira's Dagger: Darkshire quests started by an item (quest
@@ -1690,11 +1628,11 @@ friendly_to = "AH"
 id = 268047 # Theramore Emissary
 friendly_to = "A"
 
-[[quest]]
-# A Dynamite Plan: ten Rough Dynamite, made by a profession; bought at an auction house when the
-# guide is made with that option.
-id = 92749
-objectives = [{ type = "item", id = 4358, amount = 10 }]
+[[npc]]
+# Lakeshire's guards (Stormwind faction, friendly to the Alliance on Forever's NPC page): taken
+# for hostile creatures, they kept Guard Howe's and Deputy Feldon's quests out of the guides.
+id = 275075 # Lakeshire Protector
+friendly_to = "A"
 
 [[drop]]
 # Underground Map: its two droppers (Dark Iron Map quests) at the rate of the Dark Iron Map.
@@ -1920,14 +1858,6 @@ id = 4489 # Summon Felsteed: Orc,Undead
 races_mask = 8589934610
 
 [[quest]]
-id = 5638 # Desperate Prayer: Dwarf
-races_mask = 4
-
-[[quest]]
-id = 5640 # Desperate Prayer: Dwarf
-races_mask = 4
-
-[[quest]]
 id = 6081 # Training the Beast: Orc,Undead,Troll
 races_mask = 146
 
@@ -2103,9 +2033,8 @@ pre_all = [78307]
 objectives = [{ type = "trigger", text = "Infiltrate the Scarlet Monastery alone and take The Eye of Bhossca (the uniform from the stables, the Scryer's Key in the Graveyard)", at = { zone = 85, x = 82.6, y = 33.8 }, minutes = 35 }]
 
 [[quest]]
+# Given by mail once in a capital city: the mailboxes of the capitals start it.
 id = 78699
-status = "available"
-reason = "given by mail once in a capital city"
 pre_all = [78676]
 starts = [
   { type = "object", id = 142075 }, # Mailbox, Stormwind City

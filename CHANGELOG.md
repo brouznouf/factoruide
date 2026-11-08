@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### WoW data
+
+- WoW Forever: the latest quest data and the game's new build, with 26 more contributions from players (quests seen in game, measured XP, creature places) and 55 Spanish, French and English names checked; Lakeshire's guards no longer count as hostile creatures around Guard Howe and Deputy Feldon.
+
 ## 0.16.0 (2026-11-07)
 
 A guide for one dungeon from your character, dungeons as zones with their steps on their floor maps, every quest of a dungeon forced with its quests, and the fixes of your reports (GitHub #97 to #125).
