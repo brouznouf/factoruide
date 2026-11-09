@@ -3,9 +3,12 @@
 // should send.
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 const out = process.argv[2];
-const data = new URL("../data/", import.meta.url).pathname;
+// fileURLToPath, not URL.pathname: on Windows the pathname keeps its leading slash, and
+// existsSync answers false for every file (the data silently misses the build).
+const data = fileURLToPath(new URL("../data/", import.meta.url));
 for (const edition of ["forever", "classic", "tbc"]) {
   const db = join(data, `${edition}.sqlite.zst`);
   if (!existsSync(db)) continue;
