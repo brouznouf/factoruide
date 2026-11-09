@@ -45,6 +45,7 @@ mod places;
 mod profession_trainers;
 mod regions;
 mod report;
+mod reputation;
 mod search;
 mod share;
 mod sim;

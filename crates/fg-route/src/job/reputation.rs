@@ -61,13 +61,12 @@ pub fn starting(
         let points = if let Some(r) = seen {
             r.value
         } else {
-            if start.is_some_and(|s| s.reputation.is_empty()) {
-                notes.push(format!(
-                    "reputation {} of the character unknown (recorded by a newer addon): the race's start counted",
-                    goal.faction
-                ));
-            }
-            race_base(conn, goal.faction, profile.race_bit(), profile.class_bit())?.unwrap_or(0)
+            let points = race_base(conn, goal.faction, profile.race_bit(), profile.class_bit())?.unwrap_or(0);
+            notes.push(format!(
+                "reputation {}: starting value {points} is an estimated race/class baseline; no recorded standing for this faction",
+                goal.faction
+            ));
+            points
         };
         out.push(points as f64);
     }
@@ -77,6 +76,33 @@ pub fn starting(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn selected_faction_missing_from_partial_snapshot_is_labeled_estimated() {
+        let conn = Connection::open_in_memory().unwrap();
+        let profile = crate::testing::profile(crate::faction::Faction::Horde, 20, 21);
+        let start = StartState {
+            reputation: vec![crate::job::Standing { id: 68, value: 1217 }],
+            ..StartState::default()
+        };
+        let mut notes = Vec::new();
+        let values = starting(
+            &conn,
+            &[ReputationGoal {
+                faction: 67,
+                target: 100,
+            }],
+            &profile,
+            Some(&start),
+            &mut notes,
+        )
+        .unwrap();
+        assert_eq!(values, vec![0.0]);
+        assert!(
+            notes.iter().any(|n| n.contains("67") && n.contains("estimated")),
+            "{notes:?}"
+        );
+    }
 
     /// A race starts with the points of the first entry taking its race and class, others at
     /// Neutral's bottom (the client's Darnassus: humans, dwarves and gnomes 3100, the Horde

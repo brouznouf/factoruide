@@ -187,7 +187,7 @@ pub fn build_traced(
     for step in &mut steps {
         step.text = phrase::render_all(&step.say, &planner.model.names);
     }
-    route_of(planner, profile, route, (total, breakdown), checkpoints, steps)
+    route_of(planner, profile, route, trace, (total, breakdown), checkpoints, steps)
 }
 
 /// The sentence an objective's step says, in the language of `names`.
@@ -252,6 +252,7 @@ fn route_of(
     planner: &Planner<'_>,
     profile: &Profile,
     route: &[Stop],
+    trace: &[Timed],
     (total, breakdown): (f64, Breakdown),
     checkpoints: Vec<Checkpoint>,
     steps: Vec<Step>,
@@ -289,7 +290,7 @@ fn route_of(
             .map(route_profession)
             .collect(),
         checkpoints,
-        reputation: reputation_reached(planner, route),
+        reputation: reputation_reached(planner, trace),
         recommended: recommended(planner),
         players: if profile.mates.is_empty() {
             Vec::new()
@@ -369,12 +370,12 @@ fn bis_of(model: &Model) -> Vec<BisSlot> {
     })
 }
 
-fn reputation_reached(planner: &Planner<'_>, route: &[Stop]) -> Vec<ReputationReached> {
+fn reputation_reached(planner: &Planner<'_>, trace: &[Timed]) -> Vec<ReputationReached> {
     let goals = &planner.params.reputation_goals;
     if goals.is_empty() {
         return Vec::new();
     }
-    let reached = planner.reputation_reached(route);
+    let reached = planner.reputation_reached_trace(trace);
     let model = &planner.model;
     goals
         .iter()
@@ -384,8 +385,8 @@ fn reputation_reached(planner: &Planner<'_>, route: &[Stop]) -> Vec<ReputationRe
             ReputationReached {
                 faction: goal.faction,
                 name: model.faction_names.get(&goal.faction).cloned().unwrap_or_default(),
-                start: start.round() as i64,
-                reached: reached.get(g).copied().unwrap_or(start).round() as i64,
+                start,
+                reached: reached.get(g).copied().unwrap_or(start),
                 target: goal.target,
             }
         })

@@ -31,7 +31,18 @@ impl Planner<'_> {
 
     /// `greedy`, with its zone changes.
     fn greedy_zones(&self) -> (Vec<Stop>, Vec<ZoneChange>) {
-        let mut s = self.sim().initial_state();
+        self.greedy_from(Vec::new())
+    }
+
+    pub(super) fn greedy_from(&self, mut route: Vec<Stop>) -> (Vec<Stop>, Vec<ZoneChange>) {
+        let mut s = if route.is_empty() {
+            self.sim().initial_state()
+        } else {
+            let Some((_, state)) = self.simulate_state(&route, None) else {
+                return (route, Vec::new());
+            };
+            state
+        };
         // The quests of the character's log not worth finishing from here are given up (the
         // replay does it too, `start_state`): `keep_log_quests` puts back those on the way.
         for &i in &self.model.initial.accepted {
@@ -39,7 +50,6 @@ impl Planner<'_> {
                 self.sim().abandon(&mut s, i as u32, &mut |_, _| {});
             }
         }
-        let mut route = Vec::new();
         let mut changes = Vec::new();
         // The detour (`Params::zone_detour`): the zone held until its level, once begun.
         let mut held: Option<i64> = None;
@@ -282,6 +292,7 @@ impl Planner<'_> {
                 if self.availability().objectives_done(s, i) {
                     if !guarded(&self.quest(i).end_guard)
                         && self.sim().gate_level(s, Stop::quest(i, Kind::TurnIn)) <= s.level
+                        && !self.availability().reputation_child_ready(s, i)
                     {
                         let stop = Stop::quest(i, Kind::TurnIn);
                         add(stop, 0.7 * class, None, bound.at(&self.places().pos(s, stop)));
@@ -572,6 +583,7 @@ impl Planner<'_> {
         let route = self.keep_log_quests(route);
         let route = self.place_hearths(self.rebind(self.place_hearths(self.power_first(route))));
         let route = self.repair_required_gear(route);
+        let route = self.repair_required_reputation(route);
         if self.diagnostics.debug {
             for (reason, n) in self.explain_unused(&route) {
                 log(&format!("  unused {reason}: {n}"));
@@ -1079,6 +1091,7 @@ impl Planner<'_> {
         // Done now: at the character's level (what needs a higher one is left behind).
         let here = |stop: Stop| {
             !Simulator::already_done(s, stop)
+                && (stop.kind != Kind::TurnIn || !self.availability().reputation_child_ready(s, stop.index))
                 && self.places().inside(s, stop) == Some(d)
                 && self.availability().valid(s, stop)
                 && self.sim().gate_level(s, stop) <= s.level

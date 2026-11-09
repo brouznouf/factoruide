@@ -1252,4 +1252,23 @@ export const CATALOG: Record<string, Entry> = {
   "Niveau {n} requis": { en: "Requires Level {n}", de: "Benötigt Stufe {n}", es: "Requiere nivel {n}", pt: "Requer nível {n}", ru: "Требуется уровень {n}", ko: "요구 레벨 {n}", zhCN: "需要等级 {n}", zhTW: "需要等級 {n}" },
   "Prix de vente :": { en: "Sell Price:", de: "Verkaufspreis:", es: "Precio de venta:", pt: "Preço de venda:", ru: "Цена продажи:", ko: "판매 가격:", zhCN: "出售价格：", zhTW: "出售價格：" },
   "Équipement": { en: "Gear", de: "Ausrüstung", es: "Equipo", pt: "Equipamento", ru: "Экипировка", ko: "장비", zhCN: "装备", zhTW: "裝備" },
+  "Les objectifs de réputation choisis sont obligatoires, même avec des détours ou après le niveau visé. Si aucune route ne les atteint avec les données et règles prises en charge, le calcul signale les points manquants. Aucun par défaut.": {
+    en: "Selected reputation targets are required, including detours and work after the target level. If no route meeting them is found with the supported data and rules, calculation reports the shortfall. None by default.",
+    de: "Gewählte Rufziele sind verbindlich, auch mit Umwegen oder nach der Zielstufe. Wird mit den unterstützten Daten und Regeln keine passende Route gefunden, meldet die Berechnung die fehlenden Punkte. Standardmäßig keine.",
+    es: "Los objetivos de reputación elegidos son obligatorios, incluso con desvíos o después del nivel objetivo. Si no se encuentra una ruta que los alcance con los datos y reglas compatibles, el cálculo indica los puntos que faltan. Ninguno por defecto.",
+    pt: "As metas de reputação escolhidas são obrigatórias, inclusive com desvios ou após o nível desejado. Se nenhuma rota as atingir com os dados e regras suportados, o cálculo informa os pontos que faltam. Nenhuma por padrão.",
+    ru: "Выбранные цели репутации обязательны, даже с обходными путями или после целевого уровня. Если с поддерживаемыми данными и правилами подходящий маршрут не найден, расчёт сообщает недостающие очки. По умолчанию целей нет.",
+    ko: "선택한 평판 목표는 우회하거나 목표 레벨 이후에 진행하더라도 반드시 달성해야 합니다. 지원하는 데이터와 규칙으로 목표를 달성하는 경로를 찾지 못하면 부족한 점수를 알려 줍니다. 기본 목표는 없습니다.",
+    zhCN: "选定的声望目标必须达到，即使需要绕路或在目标等级后继续。若使用支持的数据和规则未找到达标路线，计算会报告缺少的点数。默认无目标。",
+    zhTW: "選定的聲望目標必須達到，即使需要繞路或在目標等級後繼續。若使用支援的資料和規則未找到達標路線，計算會回報缺少的點數。預設無目標。",
+  },
+  "valeur de race estimée : aucun rang enregistré pour cette faction": {
+    en: "estimated race baseline: no recorded standing for this faction", de: "geschätzter Rassenwert: kein Ruf für diese Fraktion erfasst", es: "valor racial estimado: no hay reputación registrada para esta facción", pt: "valor racial estimado: nenhuma reputação registrada para esta facção", ru: "оценка по расе: репутация с этой фракцией не записана", ko: "종족 기본값 추정: 이 진영의 기록된 평판이 없습니다", zhCN: "种族初始值估算：未记录此阵营的声望", zhTW: "種族初始值估算：未記錄此陣營的聲望",
+  },
+  "{n} points manquants dans ce guide : l'objectif n'est pas atteint": {
+    en: "{n} points short in this guide: the target is not reached", de: "In diesem Guide fehlen {n} Punkte: Das Ziel wird nicht erreicht", es: "faltan {n} puntos en esta guía: no se alcanza el objetivo", pt: "faltam {n} pontos neste guia: a meta não é atingida", ru: "в этом гайде не хватает {n} очков: цель не достигнута", ko: "이 가이드에서 {n}점 부족: 목표에 도달하지 못합니다", zhCN: "此指南还差 {n} 点：未达到目标", zhTW: "此指南還差 {n} 點：未達到目標",
+  },
+  "Poids des points manquants dans le score qui guide la recherche, en secondes par point (10 s par défaut). Les objectifs de réputation choisis restent obligatoires, même avec un poids nul.": {
+    en: "Weight of missing points in the search score, in seconds per point (10 s by default). Selected reputation targets remain required, even with zero weight.", de: "Gewichtung fehlender Punkte im Suchwert, in Sekunden pro Punkt (Standard: 10 s). Gewählte Rufziele bleiben auch bei Gewicht null verbindlich.", es: "Peso de los puntos que faltan en la puntuación de búsqueda, en segundos por punto (10 s por defecto). Los objetivos elegidos siguen siendo obligatorios, incluso con peso cero.", pt: "Peso dos pontos que faltam na pontuação da busca, em segundos por ponto (10 s por padrão). As metas escolhidas continuam obrigatórias, mesmo com peso zero.", ru: "Вес недостающих очков в оценке поиска, в секундах на очко (по умолчанию 10 с). Выбранные цели репутации обязательны даже при нулевом весе.", ko: "검색 점수에서 부족한 평판 1점의 가중치입니다(기본값 10초). 가중치가 0이어도 선택한 평판 목표는 필수입니다.", zhCN: "搜索评分中每点缺少声望的权重，以秒计（默认 10 秒）。即使权重为零，选定的声望目标仍须达到。", zhTW: "搜尋評分中每點缺少聲望的權重，以秒計（預設 10 秒）。即使權重為零，選定的聲望目標仍須達到。",
+  },
 };

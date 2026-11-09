@@ -25,13 +25,16 @@ pub(super) fn source_visit(model: &crate::model::Model, stop: Stop) -> Option<Op
 }
 
 /// A small terminal rank, carried instead of keeping another run's states alive.
-/// With no Required sources it is always zero, preserving ordinary scalar ordering.
+/// With neither Required sources nor reputation targets it is zero, preserving ordinary scalar ordering.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub(crate) struct HardGoals {
     pub(crate) exact: u32,
     pub(crate) dungeons: u32,
     pub(crate) zones: u32,
     pub(crate) gear: u32,
+    pub(crate) reputation: u32,
+    /// IEEE bits of the nonnegative finite deficit retain its exact numeric ordering.
+    pub(crate) reputation_deficit: u64,
 }
 
 pub(super) fn action_stop(action: BisQuestAction) -> Stop {
@@ -137,6 +140,9 @@ fn visit_source_block(i: usize, parents: &[Vec<usize>], seen: &mut [u8], order: 
 impl Simulator<'_> {
     /// Automatic nearby actions must respect residual cross-source held/breadcrumb edges.
     pub(super) fn source_action_ready(&self, s: &State, stop: Stop) -> bool {
+        if stop.kind == Kind::TurnIn && self.availability().reputation_child_ready(s, stop.index) {
+            return false;
+        }
         if self.model.bis.required_roots().is_empty() {
             return true;
         }
@@ -160,7 +166,7 @@ impl Simulator<'_> {
 
 impl Planner<'_> {
     pub(crate) fn hard_goals(&self, s: &State) -> HardGoals {
-        if self.model.bis.required_roots().is_empty() {
+        if !self.has_hard_goals() {
             return HardGoals::default();
         }
         HardGoals {
@@ -173,6 +179,11 @@ impl Planner<'_> {
                         && s.dungeons & (1u128 << d) == 0
                 })
                 .count() as u32,
+            reputation: self.sim().reputation_goals_unmet(s) as u32,
+            reputation_deficit: {
+                let deficit = self.sim().reputation_missing(s);
+                if deficit > 0.0 { deficit.to_bits() } else { 0 }
+            },
             gear: self
                 .model
                 .bis
@@ -204,8 +215,9 @@ impl Planner<'_> {
     }
 
     /// Whether a transformation preserves every previously satisfied hard goal.
-    fn preserves_goals(&self, before: &State, after: &State) -> bool {
+    pub(super) fn preserves_goals(&self, before: &State, after: &State) -> bool {
         after.forced_left <= before.forced_left
+            && self.preserves_reputation(&before.reputation, &after.reputation)
             && self
                 .model
                 .quests
@@ -225,9 +237,9 @@ impl Planner<'_> {
             })
     }
 
-    /// Keep a known hard-feasible route across cosmetic cleanup; Off does no extra replay.
+    /// Keep a known hard-feasible route across cosmetic cleanup; no goals means no extra replay.
     pub(crate) fn keep_hard_goals(&self, before: Vec<Stop>, after: Vec<Stop>) -> Vec<Stop> {
-        if self.model.bis.required_roots().is_empty() || before == after {
+        if !self.has_hard_goals() || before == after {
             return after;
         }
         let Some((_, old)) = self.simulate_state(&before, None) else {
@@ -235,7 +247,7 @@ impl Planner<'_> {
         };
         if self
             .simulate_state(&after, None)
-            .is_some_and(|(_, new)| self.preserves_goals(&old, &new))
+            .is_some_and(|(_, new)| self.preserves_goals(&old, &new) && self.hard_goals(&new) <= self.hard_goals(&old))
         {
             after
         } else {

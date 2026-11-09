@@ -173,8 +173,15 @@ pub(super) fn apply(
         })
         .map(|r| r.id)
         .collect();
+    let reputation = super::chains::reputation_candidates(quests, params);
     quests.retain(|q| {
-        !incompatible.contains(&q.id) && (q.required || class_quests.contains(&q.id) || ordinary.contains(&q.id))
+        !incompatible.contains(&q.id)
+            && (q.required
+                || class_quests.contains(&q.id)
+                || ordinary.contains(&q.id)
+                || reputation.contains(&q.id)
+                    && q.min_level <= profile.to_level
+                    && q.level <= profile.to_level + params.max_quest_above)
     });
     Ok(())
 }

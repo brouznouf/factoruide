@@ -178,6 +178,7 @@ pub(crate) fn plan_prepared(
     }
     let best = finalize_route(&planner, best)?;
     let route = export::build(&planner, &prepared.profile, &best);
+    planner.refresh_reputation_notes(&mut prepared.notes, &planner.reputation_reached(&best));
     for missing in planner.missing_mandatory_quests(&best) {
         prepared.notes.push(missing);
     }
@@ -228,7 +229,8 @@ pub(crate) fn plan_prepared(
 /// Merge returns, settle visits, group objectives, then validate required content.
 pub fn finalize_route(planner: &Planner<'_>, best: Vec<Stop>) -> Result<Vec<Stop>, JobError> {
     let best = planner.repair_required_gear(best);
-    let saved = (!planner.model.bis.required_roots().is_empty()).then(|| best.clone());
+    let best = planner.repair_required_reputation(best);
+    let saved = planner.has_hard_goals().then(|| best.clone());
     let best = planner.merge_visits(&best).map_or(best, |(merged, _)| merged);
     let best = planner.tidy(&best).map_or(best, |(tidied, _)| tidied);
     let best = planner.route_together(best);
@@ -336,6 +338,12 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
     }
     required::check_start(&model, &profile, &members)?;
     model.initial.abilities = model.abilities.initial(start, profile.from_level);
+    model.initial.reputation_recorded = params
+        .reputation_goals
+        .iter()
+        .filter(|g| start.is_some_and(|s| s.reputation.iter().any(|r| r.id == g.faction)))
+        .map(|g| g.faction)
+        .collect();
     model.initial.reputation = reputation::starting(conn, &params.reputation_goals, &profile, start, &mut start_notes)?;
     let mut notes = notes::model_notes(&model, &world);
     notes.extend(start_notes);

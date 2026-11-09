@@ -274,9 +274,9 @@ fn factions(conn: &Connection, races: &[RaceOption]) -> Result<Vec<FactionOption
         "SELECT reputation_reward FROM m_quest WHERE status = 'available' AND reputation_reward IS NOT NULL",
     )?;
     for row in stmt.query_map([], |r| r.get::<_, String>(0))? {
-        let rewards: Vec<(i64, i64)> = serde_json::from_str(&row?).unwrap_or_default();
+        let rewards: Vec<(i64, f64)> = serde_json::from_str(&row?).unwrap_or_default();
         for (faction, points) in rewards {
-            if points > 0 {
+            if points > 0.0 {
                 *counts.entry(faction).or_default() += 1;
             }
         }
@@ -436,7 +436,8 @@ mod tests {
                (529, 'Argent Dawn', 1118, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
              CREATE TABLE m_quest (status, reputation_reward);
              INSERT INTO m_quest VALUES ('available', '[[69,100]]'), ('available', '[[69,250],[529,50]]'),
-               ('removed', '[[729,500]]'), ('available', '[[891,-10]]'), ('available', NULL);",
+               ('removed', '[[729,500]]'), ('available', '[[891,-10]]'), ('available', NULL),
+               ('available', '[[69,12.5],[529,50]]');",
             columns.join(", ")
         ))
         .unwrap();
@@ -463,10 +464,10 @@ mod tests {
                 (
                     69,
                     Some(crate::faction::Faction::Alliance),
-                    2,
+                    3,
                     vec![(2, -42000), (4, 4000)]
                 ),
-                (529, None, 1, vec![(2, 0), (4, 0)]),
+                (529, None, 2, vec![(2, 0), (4, 0)]),
             ]
         );
     }

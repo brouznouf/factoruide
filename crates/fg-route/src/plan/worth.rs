@@ -100,6 +100,9 @@ impl Worth<'_> {
                 && level <= dungeon.max_level
                 && level + self.params.dungeon_pickup_ahead >= dungeon.min_level;
         }
+        if self.availability.missing_reputation(s, i) {
+            return true;
+        }
         // Past the target level (forced zones, reputation goals), XP is worth nothing: only the
         // reputation the goals still miss is.
         let past = s.level >= self.to_level;
@@ -149,6 +152,9 @@ impl Worth<'_> {
                 && level <= dungeon.max_level
                 && level + self.params.dungeon_pickup_ahead >= dungeon.min_level;
         }
+        if self.availability.missing_reputation(s, i) {
+            return true;
+        }
         let past = level >= self.to_level;
         let mobs: f64 = left.iter().map(|o| o.kills * self.combat.mob_xp(level, o)).sum();
         let worth = if past {
@@ -177,7 +183,7 @@ impl Worth<'_> {
     /// penalty when it meets a goal), at the rate grinding fills score time.
     pub(crate) fn reputation_xp(&self, s: &State, i: u32, level: i64) -> f64 {
         let goals = &self.params.reputation_goals;
-        if goals.is_empty() {
+        if goals.is_empty() || self.quest(i).members & 1 == 0 || self.model.initial.need(i as usize) & 1 == 0 {
             return 0.0;
         }
         let seconds: f64 = (goals.iter().zip(&s.reputation))
@@ -186,7 +192,7 @@ impl Worth<'_> {
                     .filter(|(f, _)| *f == goal.faction)
                     .map(|(_, v)| v)
                     .sum();
-                let missing = (goal.target as f64 - f64::from(have)).max(0.0);
+                let missing = (goal.target as f64 - have).max(0.0);
                 let met = if missing > 0.0 && gain >= missing {
                     self.params.mandatory_penalty
                 } else {

@@ -5,6 +5,35 @@ use crate::params::Params;
 use rustc_hash::FxHashMap;
 use std::collections::{HashMap, HashSet};
 
+/// Positive selected-faction rewards and their real prerequisite alternatives. This only
+/// relaxes the lower level cutoff; exclusions, supported sources and upper gates stay intact.
+pub(super) fn reputation_candidates(quests: &[Quest], params: &Params) -> HashSet<i64> {
+    if params.reputation_goals.is_empty() {
+        return HashSet::new();
+    }
+    let index: HashMap<_, _> = quests.iter().map(|q| (q.id, q)).collect();
+    let mut pending: Vec<_> = quests
+        .iter()
+        .filter(|q| {
+            q.reputation
+                .iter()
+                .any(|(f, v)| *v > 0.0 && params.reputation_goals.iter().any(|g| g.faction == *f))
+        })
+        .map(|q| q.id)
+        .collect();
+    let mut relevant = HashSet::new();
+    while let Some(id) = pending.pop() {
+        if !relevant.insert(id) {
+            continue;
+        }
+        if let Some(q) = index.get(&id) {
+            pending.extend(q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held));
+            pending.extend(q.objectives.iter().flat_map(|o| &o.handed_by));
+        }
+    }
+    relevant
+}
+
 /// QuestSort ID of each class's quests (zoneOrSort = -sort).
 pub(crate) fn class_sort(class_id: i64) -> i64 {
     match class_id {

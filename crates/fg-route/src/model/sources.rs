@@ -694,7 +694,7 @@ pub(super) struct QuestRow {
 
 impl QuestRow {
     /// The reputations its turn-in gives: (Faction ID, points).
-    pub(super) fn reputations(&self) -> Vec<(i64, i64)> {
+    pub(super) fn reputations(&self) -> Vec<(i64, f64)> {
         self.reputation
             .as_deref()
             .and_then(|j| serde_json::from_str(j).ok())
@@ -713,6 +713,22 @@ impl QuestRow {
         self.sources
             .as_deref()
             .is_some_and(|s| s.split(',').all(|s| matches!(s.trim(), "wowhead" | "att")))
+    }
+}
+
+#[cfg(test)]
+mod reputation_tests {
+    use super::QuestRow;
+
+    #[test]
+    fn fractional_component_does_not_discard_integral_rewards_in_same_row() {
+        let row = QuestRow {
+            reputation: Some("[[67,12.5],[68,50],[76,12.5]]".into()),
+            ..QuestRow::default()
+        };
+        let rewards = row.reputations();
+        assert_eq!(rewards.len(), 3);
+        assert_eq!(rewards[1].0, 68);
     }
 }
 

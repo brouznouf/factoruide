@@ -471,6 +471,24 @@ fn build_quests(
             Err(reason) => skipped.push((row.id, row.name.clone(), reason.to_owned())),
         }
     }
+    if !params.reputation_goals.is_empty() {
+        let relevant = chains::reputation_candidates(&quests, params);
+        let ordinary: HashSet<_> = sources
+            .rows
+            .iter()
+            .filter(|r| {
+                !profile.required_quests.is_empty()
+                    || sources.class_quest_ids.contains(&r.id)
+                    || profile.within_levels(
+                        r.level.unwrap_or(1).max(1),
+                        r.min_level.unwrap_or(1).max(1),
+                        params.max_quest_above,
+                    )
+            })
+            .map(|r| r.id)
+            .collect();
+        quests.retain(|q| ordinary.contains(&q.id) || relevant.contains(&q.id));
+    }
     let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
     for (&item, givers) in &sources.reward_of {
         for i in givers.iter().filter_map(|q| index.get(q)) {

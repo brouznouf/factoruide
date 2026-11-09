@@ -66,14 +66,15 @@ impl Planner<'_> {
         // Bit 8 retains recorded selected acceptance even when the parent is held only.
         // An Accept anchor is a no-op, not fabricated objective or completion work.
         for &i in &self.model.initial.accepted {
-            if self.model.bis.source_quests().contains(&(i as u32))
-                && (flags[i] != 0
-                    || self
-                        .model
-                        .quests
-                        .iter()
-                        .enumerate()
-                        .any(|(child, q)| flags[child] != 0 && q.pre_held.contains(&self.model.quests[i].id)))
+            let held_by_plan = || {
+                self.model
+                    .quests
+                    .iter()
+                    .enumerate()
+                    .any(|(child, q)| flags[child] != 0 && q.pre_held.contains(&self.model.quests[i].id))
+            };
+            if self.model.bis.source_quests().contains(&(i as u32)) && (flags[i] != 0 || held_by_plan())
+                || !self.params.reputation_goals.is_empty() && held_by_plan()
             {
                 flags[i] |= 8;
             }
@@ -144,7 +145,7 @@ impl Planner<'_> {
     /// Points with the faction of each reputation goal at the end of `route`.
     pub fn reputation_reached(&self, route: &[Stop]) -> Vec<f64> {
         self.simulate_state(route, None)
-            .map(|(_, s)| s.reputation.iter().map(|&v| f64::from(v)).collect())
+            .map(|(_, s)| s.reputation)
             .unwrap_or_default()
     }
 

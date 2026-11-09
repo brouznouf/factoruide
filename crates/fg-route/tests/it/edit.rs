@@ -18,6 +18,36 @@ fn editor() -> (Editor, Names) {
     (leveling(10).guide().0, Names::default())
 }
 
+#[test]
+fn reputation_shortfall_notes_refresh_after_the_edited_goal_is_reached() {
+    let prepared = Scenario::new()
+        .levels(20, 21)
+        .quest(
+            Q::new(1, "Reputation contribution")
+                .level(20)
+                .xp(0)
+                .reputation(68, 100.0),
+        )
+        .params(|p| {
+            p.reputation_goals = vec![fg_route::params::ReputationGoal {
+                faction: 68,
+                target: 100,
+            }];
+        })
+        .build();
+    let editor = Editor::from_prepared(prepared);
+    let partial = editor.save(&[], vec!["Keep my note".into()]).unwrap();
+    assert!(partial.notes.iter().any(|note| note.contains("deficit 100")));
+    let saved = editor
+        .save(
+            &[RouteStep::Accept { quest: 1 }, RouteStep::TurnIn { quest: 1 }],
+            partial.notes,
+        )
+        .unwrap();
+    assert_eq!(saved.notes, vec!["Keep my note"]);
+    assert_eq!(saved.route.reputation[0].reached, 100.0);
+}
+
 fn first(steps: &[RouteStep], pick: impl Fn(&RouteStep) -> bool) -> usize {
     steps.iter().position(pick).expect("such a step in the guide")
 }

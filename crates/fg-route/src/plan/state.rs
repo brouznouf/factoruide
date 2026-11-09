@@ -421,7 +421,7 @@ pub(crate) struct State {
     pub(crate) farm_used: i64,
     /// Points with the faction of each reputation goal (`Params::reputation_goals`; none
     /// without goals).
-    pub(crate) reputation: Vec<f32>,
+    pub(crate) reputation: Vec<f64>,
     /// Quests of the forced zones not done yet (nor closed by an exclusive one): the guide
     /// goes on past the target level until they are.
     pub(crate) forced_left: u32,

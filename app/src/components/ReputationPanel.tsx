@@ -41,7 +41,6 @@ interface Props {
 export function ReputationPanel({ factions, raceId, side, start, goals, onChange }: Props) {
   const t = useT();
   const offered = factions.filter((f) => !f.side || f.side === side);
-  const recorded = (start?.reputation?.length ?? 0) > 0;
   const startOf = (id: number) => start?.reputation?.find((r) => r.id === id)?.value ?? (raceId != null ? offered.find((f) => f.id === id)?.starts[raceId] : undefined) ?? 0;
   const standingText = (points: number) => {
     const s = standingOf(points);
@@ -60,10 +59,11 @@ export function ReputationPanel({ factions, raceId, side, start, goals, onChange
     <section className="panel">
       <h3>
         {t("Réputation")}
-        <Hint text={t("Le guide fait les quêtes de ces factions jusqu'au rang visé, à la fin du guide. Aucune par défaut.")} />
+        <Hint text={t("Les objectifs de réputation choisis sont obligatoires, même avec des détours ou après le niveau visé. Si aucune route ne les atteint avec les données et règles prises en charge, le calcul signale les points manquants. Aucun par défaut.")} />
       </h3>
       {goals.map((goal, i) => {
         const begin = startOf(goal.faction);
+        const recorded = start?.reputation?.some((r) => r.id === goal.faction) ?? false;
         return (
           <div key={i}>
             <div className="companion">
@@ -90,7 +90,7 @@ export function ReputationPanel({ factions, raceId, side, start, goals, onChange
             <p className="muted">
               {t("Départ : {standing}", { standing: standingText(begin) })}
               {begin >= goal.target && ` — ${t("déjà atteint")}`}
-              {start && !recorded && ` — ${t("celui de la race : l'addon n'a pas encore enregistré les réputations du personnage")}`}
+              {start && !recorded && ` — ${t("valeur de race estimée : aucun rang enregistré pour cette faction")}`}
             </p>
           </div>
         );

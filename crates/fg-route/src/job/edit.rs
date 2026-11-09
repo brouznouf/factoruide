@@ -962,8 +962,9 @@ impl Editor {
         self.outcome(vec![], &self.planner().edit(&[]), notes)
     }
 
-    fn outcome(&self, steps: Vec<RouteStep>, edited: &Edited, notes: Vec<String>) -> PlanOutcome {
+    fn outcome(&self, steps: Vec<RouteStep>, edited: &Edited, mut notes: Vec<String>) -> PlanOutcome {
         let planner = self.planner();
+        planner.refresh_reputation_notes(&mut notes, &planner.reputation_reached_trace(&edited.trace));
         let total = edited.breakdown.total;
         let route = export::build_traced(
             &planner,

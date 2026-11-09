@@ -196,7 +196,7 @@ export function RouteSummary({ route, notes, compare }: Props) {
               reached: standing(r.reached),
               target: t(standingOf(r.target).name),
             })}
-            {missing > 0 && ` — ${t("{n} points manquants : le guide n'a pas assez de quêtes de cette faction", { n: Math.round(missing) })}`}
+            {missing > 0 && ` — ${t("{n} points manquants dans ce guide : l'objectif n'est pas atteint", { n: Math.round(missing) })}`}
           </div>
         );
       })}

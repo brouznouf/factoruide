@@ -129,10 +129,47 @@ impl Availability<'_> {
     }
 
     /// Whether quest `q` gives reputation a goal still misses.
-    fn missing_reputation_of(&self, s: &State, q: &Quest) -> bool {
-        (self.params.reputation_goals.iter().zip(&s.reputation)).any(|(goal, &have)| {
-            f64::from(have) < goal.target as f64 && q.reputation.iter().any(|(f, v)| *f == goal.faction && *v > 0.0)
-        })
+    pub(crate) fn missing_reputation(&self, s: &State, i: u32) -> bool {
+        if self.params.reputation_goals.is_empty() {
+            return false;
+        }
+        let mut pending = vec![i];
+        let mut seen = std::collections::HashSet::new();
+        while let Some(i) = pending.pop() {
+            if !seen.insert(i) || s.rewarded(i as usize) {
+                continue;
+            }
+            let q = self.quest_at(i);
+            if self.blocked(s, q) {
+                continue;
+            }
+            if (self.params.reputation_goals.iter().zip(&s.reputation)).any(|(goal, &have)| {
+                q.members & 1 != 0
+                    && self.model.initial.need(i as usize) & 1 != 0
+                    && have < goal.target as f64
+                    && q.reputation.iter().any(|(f, v)| *f == goal.faction && *v > 0.0)
+            }) {
+                return true;
+            }
+            pending.extend(&self.followers[i as usize]);
+        }
+        false
+    }
+
+    /// Keep a parent held while a currently available useful child can be accepted.
+    /// Blocked alternatives, unavailable prerequisites and satisfied goals do not hold it.
+    pub(crate) fn reputation_child_ready(&self, s: &State, i: u32) -> bool {
+        !self.params.reputation_goals.is_empty()
+            && self.followers[i as usize].iter().any(|&child| {
+                // valid(Accept) also allows already-done replay no-ops. Only an actual
+                // pending acceptance needs its parent held; the child's work may need
+                // that parent's turn-in to supply an item afterwards.
+                !s.accepted[child as usize]
+                    && !s.turned[child as usize]
+                    && self.quest_at(child).pre_held.contains(&self.quest_at(i).id)
+                    && self.missing_reputation(s, child)
+                    && self.valid(s, Stop::quest(child, Kind::Accept))
+            })
     }
 
     /// A quest gray for the character (no XP worth the trip, turned in whenever the route passes
@@ -145,7 +182,7 @@ impl Availability<'_> {
         let gray = xp::Rules::gray_level(s.level);
         !q.mandatory
             && q.skill.is_none()
-            && !self.missing_reputation_of(s, q)
+            && !self.missing_reputation(s, i)
             && !self.replaying
             && !self.params.keep_gray
             && q.level <= gray

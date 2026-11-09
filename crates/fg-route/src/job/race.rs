@@ -503,6 +503,8 @@ impl Default for Best {
                 dungeons: u32::MAX,
                 zones: u32::MAX,
                 gear: u32::MAX,
+                reputation: u32::MAX,
+                reputation_deficit: u64::MAX,
             },
         );
         Self {
@@ -720,7 +722,7 @@ impl Searcher<'_> {
             .unwrap_or((
                 f64::INFINITY,
                 f64::INFINITY,
-                if self.model.bis.required_roots().is_empty() {
+                if self.model.bis.required_roots().is_empty() && self.params.reputation_goals.is_empty() {
                     HardGoals::default()
                 } else {
                     HardGoals {
@@ -728,6 +730,8 @@ impl Searcher<'_> {
                         dungeons: u32::MAX,
                         zones: u32::MAX,
                         gear: u32::MAX,
+                        reputation: u32::MAX,
+                        reputation_deficit: u64::MAX,
                     }
                 },
             ))

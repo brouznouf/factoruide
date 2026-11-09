@@ -21,7 +21,7 @@ pub(super) fn pvp_quests(conn: &Connection, rows: &[QuestRow], objectives: &Obje
     let factions = |r: &QuestRow| -> Vec<i64> {
         r.reputations()
             .into_iter()
-            .filter(|(_, v)| *v > 0)
+            .filter(|(_, v)| *v > 0.0)
             .map(|(f, _)| f)
             .collect()
     };

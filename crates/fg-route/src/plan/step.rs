@@ -342,9 +342,14 @@ impl Simulator<'_> {
             s.forced_left = s.forced_left.saturating_sub(u32::from(q.zone_forced) + closed);
         }
         for (g, goal) in self.params.reputation_goals.iter().enumerate() {
+            // Reputation goals belong to the original character, even when the group
+            // changes its lowest-level pace setter or turns in a mate-only quest.
+            if q.members & 1 == 0 || self.model.initial.need(i as usize) & 1 == 0 {
+                continue;
+            }
             for &(faction, points) in &q.reputation {
                 if faction == goal.faction {
-                    s.reputation[g] += points as f32;
+                    s.reputation[g] += points;
                 }
             }
         }
@@ -1243,14 +1248,14 @@ impl Simulator<'_> {
     /// points, so that a goal within reach is met.
     pub(crate) fn reputation_goals_unmet(&self, s: &State) -> usize {
         (self.params.reputation_goals.iter().zip(&s.reputation))
-            .filter(|(goal, have)| f64::from(**have) < goal.target as f64)
+            .filter(|(goal, have)| **have < goal.target as f64)
             .count()
     }
 
     /// Reputation points the goals miss.
     pub(crate) fn reputation_missing(&self, s: &State) -> f64 {
         (self.params.reputation_goals.iter().zip(&s.reputation))
-            .map(|(goal, &have)| (goal.target as f64 - f64::from(have)).max(0.0))
+            .map(|(goal, &have)| (goal.target as f64 - have).max(0.0))
             .sum()
     }
 }

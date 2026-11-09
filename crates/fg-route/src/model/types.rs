@@ -828,6 +828,8 @@ pub struct Initial {
     pub log: Vec<(i64, String)>,
     /// Points with the faction of each reputation goal (`Params::reputation_goals`) at the start.
     pub reputation: Vec<f64>,
+    /// Selected factions whose initial standing was measured in the character snapshot.
+    pub reputation_recorded: HashSet<i64>,
     /// The other players of a group guide, as `Profile::mates`.
     pub mates: Vec<MateStart>,
     /// In a group: the members each quest is still for (a bit each, the character's 1), not

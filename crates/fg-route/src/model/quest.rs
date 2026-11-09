@@ -106,7 +106,7 @@ impl QuestBuilder<'_> {
             reputation: r
                 .reputations()
                 .into_iter()
-                .map(|(f, v)| (f, v as f64 * self.profile.reputation_rate()))
+                .map(|(f, v)| (f, v * self.profile.reputation_rate()))
                 .collect(),
             // A profession quest is for those leveling the profession.
             members: self.profile.members_of(r.races, r.classes)

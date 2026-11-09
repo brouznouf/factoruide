@@ -378,22 +378,24 @@ impl Planner<'_> {
         if early != route
             && let Some(new) = self.run(&early)
             && new.goals <= run.2
+            && self.preserves_reputation_routes(&route, &early)
         {
             route = early;
             run = done(new);
         }
         on_cleanup(CleanupStage::PowerFirst, &route);
         let rebound = self.rebind(route.clone());
-        let rebound = if self.model.bis.required_roots().is_empty() {
-            rebound
-        } else {
+        let rebound = if self.has_hard_goals() {
             self.keep_hard_goals(route.clone(), rebound)
+        } else {
+            rebound
         };
         on_cleanup(CleanupStage::Rebind, &rebound);
         let rebound = self.place_hearths(rebound);
         if rebound != route
             && let Some(new) = self.run(&rebound)
             && new.goals <= run.2
+            && self.preserves_reputation_routes(&route, &rebound)
         {
             route = rebound;
             run = done(new);
@@ -402,6 +404,7 @@ impl Planner<'_> {
         if let Some(pruned) = self.drop_unfinished(&route, run.0)
             && let Some(new) = self.run(&pruned)
             && new.goals <= run.2
+            && self.preserves_reputation_routes(&route, &pruned)
         {
             route = pruned;
             run = done(new);
@@ -414,6 +417,7 @@ impl Planner<'_> {
         if let Some(r) = self.run(&cut)
             && r.total <= run.0 + 0.5
             && r.goals <= run.2
+            && self.preserves_reputation_routes(&route, &cut)
         {
             (route, run) = (cut, done(r));
         }
@@ -421,6 +425,7 @@ impl Planner<'_> {
         if let Some(kept) = self.drop_dungeonless(&route)
             && let Some(new) = self.run(&kept)
             && new.goals <= run.2
+            && self.preserves_reputation_routes(&route, &kept)
         {
             route = kept;
             run = done(new);
@@ -500,8 +505,15 @@ impl Planner<'_> {
     /// runs of a long route weigh tens of megabytes. Called for a candidate whose evaluation
     /// just succeeded, so it seldom fails; when it does, `run` is built again.
     pub(crate) fn replace_run(&self, run: &mut Run, route: &[Stop], candidate: &[Stop]) -> Option<Run> {
+        // Preserve each already satisfied faction, not merely their aggregate rank.
+        // Keep only its small terminal totals while releasing the full replay states.
+        let reputation = (!self.params.reputation_goals.is_empty()).then(|| self.reputation_reached(route));
         run.states = Vec::new();
-        let new = self.run(candidate);
+        let new = self.run(candidate).filter(|_| {
+            reputation
+                .as_ref()
+                .is_none_or(|before| self.preserves_reputation(before, &self.reputation_reached(candidate)))
+        });
         if new.is_none() {
             *run = self.run(route).expect("the current route was valid");
         }

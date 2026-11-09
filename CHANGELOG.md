@@ -14,6 +14,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Objective guides replace the dungeon guide: pick several dungeons, zones and quests at once, and get every quest of them with what leads to them, in the best order, whatever their level; the guide tells the level its quests ask and lists those above yours.
 - Settings dropdowns fit their options without a redundant reset button; the default remains among the choices.
 - Guides show the copper earned from quest rewards and spent on training and flights.
+- Reputation warnings describe the saved guide's shortfall, and missing starting standings are labeled as estimates for each faction.
 - Quest warnings separate class, gear and other mandatory goals, with neutral wording for older guides.
 - An item's details show on hover, as the game's tooltip: its picture beside its name colored by its quality, what it is, what it gives, the level it asks and what it sells for, in the game's own font, with the game's own money coins (the best gear's rows and a step's own tip; the picture, font and coins are the game's own, read from the client like the icons).
 - The best gear has its own tab in the guide view (Gear), laid out like the game's character sheet: one level band at a time, the game's own empty-slot pictures, the items' icons with their quality's border and details on hover, and where each comes from in the middle.
@@ -21,6 +22,9 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Guides
 
 - Finish available quests inside the current dungeon before leaving for another forced run.
+- Selected reputation targets keep useful progress, including after the target level, and report any remaining shortfall.
+- Useful low-level reputation quests and their prerequisites remain eligible when planning from a higher level.
+- Fractional quest reputation rewards are retained, including other rewards in the same quest.
 - With best gear Required, unsupported quest rewards get an explained alternative, and a guide succeeds only when every selected source is completed.
 - Required gear chains keep prerequisites, timed work and dungeon quests in order with the rest of the route.
 - Removing an unusable dungeon quest keeps its useful class-training visit when that makes the route better.

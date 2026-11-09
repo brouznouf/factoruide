@@ -19,7 +19,12 @@ impl QuestBuilder<'_> {
             && (!profile.required_quests.is_empty()
                 || self.any_level
                 || self.sources.class_quest_ids.contains(&r.id)
-                || profile.within_levels(level, min_level, self.params.max_quest_above))
+                || profile.within_levels(level, min_level, self.params.max_quest_above)
+                // Assemble old candidates so their actual item/held prerequisites are known.
+                // build_quests then retains only the ancestry of useful faction rewards.
+                || !self.params.reputation_goals.is_empty()
+                    && min_level <= profile.to_level
+                    && level <= profile.to_level + self.params.max_quest_above)
     }
 
     /// Profession quests: kept when the profile levels that profession, accepted once the skill
