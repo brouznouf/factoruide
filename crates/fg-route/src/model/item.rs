@@ -74,7 +74,7 @@ impl QuestBuilder<'_> {
         let object_chance = places
             .sources
             .iter()
-            .filter(|(t, _)| *t == SourceKind::Object)
+            .filter(|(t, id)| *t == SourceKind::Object && self.has_points(EntityKind::Object, *id))
             .map(|(_, id)| self.sources.drop_chance.get(&(target, *id)).copied().unwrap_or(1.0))
             .fold(0.0, f64::max);
         let objects = if object_chance < 0.5 && !places.vendors.is_empty() {
@@ -445,5 +445,107 @@ impl QuestBuilder<'_> {
             spots,
             ..Objective::plain(loc, text, 0.0)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{fixture::Fixture, job, xp::Edition};
+
+    fn outdoor_collection() -> job::Prepared {
+        let conn = Fixture::new(Edition::Classic)
+            .toml(
+                r#"
+[[npc]]
+id = 990001
+name = "Collector"
+npc_flags = 2
+friendly_to = "AH"
+at = [{ zone = 40, x = 56.0, y = 47.0 }]
+[[npc]]
+id = 990002
+name = "Outdoor dropper"
+level = 18
+at = [{ zone = 40, x = 42.0, y = 72.0 }]
+[[npc]]
+id = 990005
+name = "Instance dropper"
+level = 18
+at = [{ zone = 1581, x = -1.0, y = -1.0 }]
+[[object]]
+id = 990007
+name = "Outdoor container"
+at = [{ zone = 40, x = 42.0, y = 72.0 }]
+[[object]]
+id = 990008
+name = "Instance container"
+at = [{ zone = 1581, x = -1.0, y = -1.0 }]
+[[item]]
+id = 990003
+name = "Container collection"
+class = 12
+drops = [{ object = 990007, chance = 0.1 }, { object = 990008, chance = 1.0 }]
+[[item]]
+id = 990013
+name = "Creature collection"
+class = 12
+drops = [{ npc = 990002, chance = 0.25 }, { npc = 990005, chance = 0.8 }]
+[[quest]]
+id = 990004
+name = "Ordinary outdoor container quest"
+level = 18
+zone = 40
+giver = 990001
+objectives = [{ item = 990003, amount = 6 }]
+[[quest]]
+id = 990014
+name = "Ordinary outdoor creature quest"
+level = 18
+zone = 40
+giver = 990001
+objectives = [{ item = 990013, amount = 6 }]
+[[row]]
+table = "dungeon"
+values = { area = 1581, name = "The Deadmines", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "fixture" }
+"#,
+            )
+            .open();
+        let request = serde_json::from_value(serde_json::json!({
+            "race":"human", "class":"warrior", "from_level":18, "to_level":25,
+            "params":{"edition":"classic", "all_class_quests":false, "dungeons":false}
+        }))
+        .unwrap();
+        let overrides = job::Overrides::load_edition(
+            &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../overrides"),
+            Edition::Classic,
+        )
+        .unwrap();
+        job::prepare(&conn, &overrides, &request, &|_| {}).unwrap()
+    }
+
+    #[test]
+    fn outdoor_containers_use_their_own_drop_rate_without_instance_providers() {
+        let p = outdoor_collection();
+        let objective = &p.model.quests[p.model.index[&990004]].objectives[0];
+        assert_eq!(objective.dungeon_of(), None, "an ordinary outdoor quest");
+        assert_eq!(objective.loc.zone, 40);
+        assert_eq!(objective.count, 6.0);
+        assert_eq!(objective.uses, 60.0, "six items at ten percent require sixty uses");
+        assert_eq!(objective.kills, 0.0);
+    }
+
+    #[test]
+    fn outdoor_creature_drop_costs_are_unchanged_by_instance_sources() {
+        let p = outdoor_collection();
+        let objective = &p.model.quests[p.model.index[&990014]].objectives[0];
+        assert_eq!(objective.dungeon_of(), None);
+        assert_eq!(objective.loc.zone, 40);
+        assert_eq!(objective.count, 6.0);
+        assert_eq!(
+            objective.kills, 24.0,
+            "six items at twenty-five percent require twenty-four kills"
+        );
+        assert_eq!(objective.mobs, vec![(990002, "Outdoor dropper".into())]);
+        assert_eq!(objective.uses, 0.0);
     }
 }
