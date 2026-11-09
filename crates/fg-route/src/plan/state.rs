@@ -304,6 +304,13 @@ pub(crate) struct MateXp {
     pub(crate) rested: i64,
 }
 
+/// An interval of actual direct-kill work and the quests that benefited from those kills.
+#[derive(Debug, Clone, PartialEq)]
+pub(crate) struct KillWork {
+    pub(crate) quests: Vec<u32>,
+    pub(crate) seconds: f64,
+}
+
 #[derive(Clone)]
 pub(crate) struct State {
     pub(crate) pos: Pos,
@@ -355,10 +362,16 @@ pub(crate) struct State {
     pub(crate) completion_error: Option<(u32, u8, i64)>,
     /// Timed quests of the log: (quest, time by which the route must turn it in).
     pub(crate) timers: Vec<(u32, f64)>,
-    /// Objectives started before the route (a character met in game), with the share already
+    /// Objectives partially done before the route or by shared kills, with the share already
     /// done (0 to 1): (quest, objective, share). A share, not kills: the places of an objective
     /// may need different kills (their drop rates differ).
     pub(crate) started: Vec<(u32, u8, f64)>,
+    /// Actual direct-kill work still awaiting any benefiting quest's turn-in. Copy-on-write
+    /// shares this small active ledger between snapshots, rather than retaining route history.
+    pub(crate) kill_work: Rc<Vec<KillWork>>,
+    /// Direct work justified by a turn-in; nominal unfinished-work estimates must not
+    /// reclassify it as grinding, including when gathering overlapped those kills.
+    pub(crate) rewarded_kill_work: f64,
     /// The objective stops done one after the other at the same place (see `Together`).
     pub(crate) together: Together,
     /// The place of the route's next stop, when the route is known (a replay): an objective
@@ -410,6 +423,54 @@ pub(crate) struct State {
 }
 
 impl State {
+    pub(crate) fn record_kill_work(&mut self, mut quests: Vec<u32>, seconds: f64) {
+        if seconds <= 0.0 {
+            return;
+        }
+        quests.sort_unstable();
+        quests.dedup();
+        let work = Rc::make_mut(&mut self.kill_work);
+        match work.binary_search_by(|w| w.quests.cmp(&quests)) {
+            Ok(i) => work[i].seconds += seconds,
+            Err(i) => work.insert(i, KillWork { quests, seconds }),
+        }
+    }
+
+    /// A turn-in makes its work productive; an abandon leaves any other beneficiaries.
+    pub(crate) fn settle_kill_work(&mut self, quest: u32, rewarded: bool) {
+        if !self.kill_work.iter().any(|w| w.quests.contains(&quest)) {
+            return;
+        }
+        if rewarded {
+            self.rewarded_kill_work += self
+                .kill_work
+                .iter()
+                .filter(|w| w.quests.contains(&quest))
+                .map(|w| w.seconds)
+                .sum::<f64>();
+        }
+        let work = Rc::make_mut(&mut self.kill_work);
+        work.retain_mut(|w| {
+            if rewarded {
+                !w.quests.contains(&quest)
+            } else {
+                w.quests.retain(|&q| q != quest);
+                !w.quests.is_empty()
+            }
+        });
+        if !rewarded {
+            work.sort_unstable_by(|a, b| a.quests.cmp(&b.quests));
+            work.dedup_by(|later, earlier| {
+                if later.quests == earlier.quests {
+                    earlier.seconds += later.seconds;
+                    true
+                } else {
+                    false
+                }
+            });
+        }
+    }
+
     pub(crate) fn member_levels(&self, mates: usize) -> impl Iterator<Item = (u8, i64)> + '_ {
         std::iter::once((self.order[0], self.level)).chain(
             self.mates[..mates]

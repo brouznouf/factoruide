@@ -60,6 +60,7 @@ impl Objective {
             loc,
             text,
             kills: 0.0,
+            direct_kill: None,
             mob_level: 0,
             uses: 0.0,
             extra,
@@ -490,6 +491,7 @@ impl QuestBuilder<'_> {
         let at = |pos: Pos, zone: i64| Objective {
             text: text.clone().unwrap_or_else(|| format!("Kill {name} x{kills}")),
             kills,
+            direct_kill: (kind == ObjectiveKind::Creature).then_some(target),
             mob_level: entities.npc_level(target),
             elite,
             count: kills,

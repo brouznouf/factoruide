@@ -31,6 +31,8 @@ pub(crate) struct Indexes {
     pub(crate) breadcrumbs: Vec<Vec<u32>>,
     /// The objectives inside each dungeon: (quest, objective).
     pub(crate) in_dungeon: Vec<Vec<(u32, u8)>>,
+    /// Ordinary creature-kill objectives by their concrete target ID.
+    pub(crate) direct_kills: FxHashMap<i64, Vec<(u32, u8)>>,
 }
 
 impl Indexes {
@@ -43,8 +45,12 @@ impl Indexes {
             }
         }
         let mut in_dungeon = vec![Vec::new(); model.dungeons.len()];
+        let mut direct_kills: FxHashMap<i64, Vec<(u32, u8)>> = FxHashMap::default();
         for (i, q) in model.quests.iter().enumerate() {
             for (k, o) in q.objectives.iter().enumerate() {
+                if let Some(target) = o.shared_kill_target() {
+                    direct_kills.entry(target).or_default().push((i as u32, k as u8));
+                }
                 if let Some(d) = o.dungeon_of() {
                     in_dungeon[d].push((i as u32, k as u8));
                 }
@@ -58,6 +64,7 @@ impl Indexes {
             followers: followers(model),
             breadcrumbs: mandatory_breadcrumbs(model),
             in_dungeon,
+            direct_kills,
         }
     }
 }

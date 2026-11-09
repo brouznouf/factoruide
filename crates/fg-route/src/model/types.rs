@@ -257,6 +257,9 @@ pub struct Objective {
     pub text: String,
     /// Expected number of kills, their level, and object interactions.
     pub kills: f64,
+    /// A concrete creature whose deaths satisfy this objective. Proxy credits and item drops
+    /// are not direct kills, even when their estimated work includes fighting.
+    pub direct_kill: Option<i64>,
     pub mob_level: i64,
     pub uses: f64,
     /// Fixed extra time (buying, exploring).
@@ -355,6 +358,23 @@ pub struct Vendor {
 }
 
 impl Objective {
+    /// A deterministic creature-kill target whose credit can be shared with other quests.
+    pub(crate) fn shared_kill_target(&self) -> Option<i64> {
+        self.direct_kill
+            .filter(|_| self.kills > 0.0 && self.uses == 0.0 && !self.item && self.dungeon_of().is_none())
+    }
+
+    /// Remaining work after partial progress. Direct-kill counters are integral: remove
+    /// floating-point noise near an integer so one physical kill does not lose one XP.
+    pub(crate) fn kills_left(&self, done: f64) -> f64 {
+        let kills = self.kills * (1.0 - done).max(0.0);
+        if self.shared_kill_target().is_some() && (kills - kills.round()).abs() < 1e-9 {
+            kills.round()
+        } else {
+            kills
+        }
+    }
+
     /// The dungeon the objective belongs to: done by entering it (`dungeon`), or inside it.
     pub fn dungeon_of(&self) -> Option<usize> {
         self.dungeon.or(self.loc.inside.map(usize::from))

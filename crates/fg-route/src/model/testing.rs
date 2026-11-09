@@ -422,6 +422,7 @@ impl Q {
                     auction,
                     item,
                     kills: if o.dungeon.is_some() { 0.0 } else { o.kills },
+                    direct_kill: (o.kills > 0.0 && o.dungeon.is_none()).then_some(loc_id),
                     mob_level: o.mob_level,
                     uses: if o.dungeon.is_some() { 0.0 } else { o.uses },
                     elite: o.elite,

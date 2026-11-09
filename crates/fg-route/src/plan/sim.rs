@@ -157,6 +157,8 @@ impl<'s> Simulator<'s> {
             completion_error: None,
             timers: Vec::new(),
             started: Vec::new(),
+            kill_work: Rc::new(Vec::new()),
+            rewarded_kill_work: 0.0,
             together: state::Together::default(),
             next: None,
             spot: None,

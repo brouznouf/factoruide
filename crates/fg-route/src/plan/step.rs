@@ -229,6 +229,7 @@ impl Simulator<'_> {
     /// Give up quest `i` of the log.
     pub(crate) fn abandon(&self, s: &mut State, i: u32, record: &mut impl FnMut(&State, Event)) {
         self.release(s, i);
+        s.settle_kill_work(i, false);
         s.started.retain(|&(q, _, _)| q != i);
         s.timers.retain(|&(q, _)| q != i);
         s.accepted.set(i as usize, false);
@@ -319,6 +320,7 @@ impl Simulator<'_> {
         }
         let q = self.quest(i);
         self.release(s, i);
+        s.settle_kill_work(i, true);
         s.timers.retain(|&(q, _)| q != i);
         s.log -= 1;
         s.started.retain(|&(q, _, _)| q != i);
@@ -920,7 +922,7 @@ impl Simulator<'_> {
         };
         let left = (1.0 - done).max(0.0);
         let (kills, uses) = if o.kills > 0.0 {
-            (o.kills * left, o.uses)
+            (o.kills_left(done), o.uses)
         } else {
             (0.0, o.uses * left)
         };
@@ -953,8 +955,122 @@ impl Simulator<'_> {
         s.spent.waiting += extra;
         let mob_xp = (kills * self.combat().mob_xp(s.level, o)) as i64;
         s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
+        if let Some(target) = o.shared_kill_target() {
+            self.share_direct_kills(s, (quest, k), o, target, kills, (kill_work, extra));
+        }
         self.hold(s, i, k);
         (kill_work, uses * self.params.object_time)
+    }
+
+    /// Progress from actual creature deaths, never from proximity or an expected drop count.
+    /// Eligibility is fixed before any of this batch's objectives become complete.
+    fn share_direct_kills(
+        &self,
+        s: &mut State,
+        (quest, k): (u32, u8),
+        o: &Objective,
+        target: i64,
+        kills: f64,
+        (kill_seconds, extra): (f64, f64),
+    ) {
+        if kills <= 0.0 {
+            return;
+        }
+        let seconds = kill_seconds + extra;
+        let mut credits = Vec::new();
+        if let Some(objectives) = self.ix.direct_kills.get(&target) {
+            for &(q, ok) in objectives {
+                let i = q as usize;
+                if (q, ok) == (quest, k)
+                    || !s.accepted[i]
+                    || s.turned[i]
+                    || !self.availability().objective_open(s, q, ok as usize)
+                {
+                    continue;
+                }
+                // A perishable item can be used before this batch ends. Credit only the
+                // deaths that happened by its deadline; a quest-wide timer still lasts
+                // until turn-in. The aggregate work model spreads time over kills.
+                let available =
+                    s.timers
+                        .iter()
+                        .filter(|&&(timed, _)| timed == q)
+                        .fold(kills, |available, &(_, deadline)| {
+                            let in_time = self.kills_before_deadline(s, o, kills, kill_seconds, seconds, deadline);
+                            available.min(in_time)
+                        });
+                if available <= 0.0 {
+                    continue;
+                }
+                let total = self.quest(q).objectives[ok as usize].kills;
+                let done = s
+                    .started
+                    .iter()
+                    .find(|&&(sq, sk, _)| (sq, sk) == (q, ok))
+                    .map_or(0.0, |p| p.2);
+                let remaining = self.quest(q).objectives[ok as usize].kills_left(done);
+                credits.push((q, ok, total, done, remaining, available));
+            }
+        }
+        // An early-completed beneficiary did not benefit from the batch's later kills.
+        let mut boundaries: Vec<f64> = credits.iter().map(|c| c.4.min(c.5)).filter(|&v| v > 0.0).collect();
+        boundaries.push(kills);
+        boundaries.sort_by(f64::total_cmp);
+        boundaries.dedup();
+        let mut before = 0.0;
+        for end in boundaries {
+            let mut quests = vec![quest];
+            quests.extend(credits.iter().filter(|c| c.4.min(c.5) > before).map(|c| c.0));
+            s.record_kill_work(quests, seconds * ((end - before) / kills));
+            before = end;
+        }
+        for (q, ok, total, done, remaining, available) in credits {
+            s.started.retain(|&(sq, sk, _)| (sq, sk) != (q, ok));
+            if available + 1e-9 >= remaining {
+                self.hold(s, q as usize, ok);
+            } else {
+                s.started.push((q, ok, (done + available / total).min(1.0)));
+            }
+        }
+    }
+
+    /// Invert the same aggregate clock as `together`: gathering already done can overlap
+    /// the first kills until its unsaved time runs out. Fixed waits are not overlapped.
+    fn kills_before_deadline(
+        &self,
+        s: &State,
+        o: &Objective,
+        kills: f64,
+        kill_seconds: f64,
+        seconds: f64,
+        deadline: f64,
+    ) -> f64 {
+        let elapsed = deadline - (s.time - seconds);
+        if elapsed < 0.0 {
+            return 0.0;
+        }
+        if seconds <= 0.0 {
+            return kills;
+        }
+        let near = s
+            .together
+            .at
+            .is_some_and(|at| at.continent == o.loc.pos.continent && at.dist(&o.loc.pos) <= self.params.gather_radius);
+        let saving = if near {
+            (s.together.gathers - s.together.saved).max(0.0)
+        } else {
+            0.0
+        };
+        let each = seconds / kills;
+        let overlap = kill_seconds / kills * self.params.gather_overlap;
+        let possible = if saving <= 0.0 || overlap <= 0.0 {
+            elapsed / each
+        } else if each > overlap && elapsed < saving / overlap * (each - overlap) {
+            elapsed / (each - overlap)
+        } else {
+            (elapsed + saving) / each
+        };
+        (possible + 1e-9).floor().clamp(0.0, kills)
     }
 
     /// Dungeon `i` entered: its run's fixed time, its mobs' XP, the boss loot the character may
@@ -1044,18 +1160,18 @@ impl Simulator<'_> {
     /// reward): the time its done objectives took counts as grinding, in the optimizer's score and
     /// against the grind cap, instead of as a quest's fighting.
     fn count_unfinished_as_grind(&self, s: &mut State) {
-        let mut work = 0.0;
+        let mut work: f64 = s.kill_work.iter().map(|w| w.seconds).sum();
         for i in s.accepted.and_not(&s.turned) {
             let q = &self.model.quests[i];
             for (k, o) in q.objectives.iter().enumerate().take(8) {
-                if s.objectives[i] & (1 << k) != 0 {
+                if s.objectives[i] & (1 << k) != 0 && o.shared_kill_target().is_none() {
                     work += o.kills * self.params.kill_time(q.level, 0.0, o.mob_level)
                         + o.uses * self.params.object_time
                         + o.extra;
                 }
             }
         }
-        let work = work.min(s.spent.fighting.max(0.0));
+        let work = work.min((s.spent.fighting - s.rewarded_kill_work).max(0.0));
         if work <= 0.0 {
             return;
         }
