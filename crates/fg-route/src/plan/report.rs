@@ -45,6 +45,18 @@ impl Planner<'_> {
     }
 
     pub fn validate_required(&self, route: &[Stop]) -> anyhow::Result<()> {
+        let gear = self.missing_required_gear(route);
+        anyhow::ensure!(
+            gear.is_empty(),
+            "no route completing every required gear source was found: {}",
+            gear.iter()
+                .map(|&i| {
+                    let q = self.quest(i);
+                    format!("{} ({})", q.name, q.id)
+                })
+                .collect::<Vec<_>>()
+                .join(", ")
+        );
         let dungeons = self.forced_dungeons_missing(route);
         anyhow::ensure!(
             dungeons.is_empty(),
@@ -89,6 +101,23 @@ impl Planner<'_> {
             .filter(|(i, q)| q.required && !initial.rewarded(*i) && !turned.contains(i))
             .map(|(_, q)| format!("{} ({})", q.name, q.id))
             .collect();
+        let gear: Vec<_> = self
+            .model
+            .bis
+            .required_roots()
+            .iter()
+            .copied()
+            .filter(|&i| !initial.rewarded(i as usize) && !turned.contains(&(i as usize)))
+            .map(|i| {
+                let q = self.quest(i);
+                format!("{} ({})", q.name, q.id)
+            })
+            .collect();
+        anyhow::ensure!(
+            gear.is_empty(),
+            "required gear sources are missing: {}",
+            gear.join(", ")
+        );
         anyhow::ensure!(
             missing.is_empty(),
             "required quests are missing: {}",
@@ -97,14 +126,20 @@ impl Planner<'_> {
         Ok(())
     }
 
-    /// Class quests the route does not turn in, with why they could not be placed.
+    /// Historical non-zone mandatory query (includes gear and other goals, not just class).
+    /// Kept for callers of the old API; new notes use `missing_mandatory_quests`.
     pub fn missing_class_quests(&self, route: &[Stop]) -> Vec<String> {
-        self.missing_required(route, false)
+        self.missing_required(route, Some(false))
     }
 
     /// Quests of the forced zones the route does not turn in, with why.
     pub fn missing_zone_quests(&self, route: &[Stop]) -> Vec<String> {
-        self.missing_required(route, true)
+        self.missing_required(route, Some(true))
+    }
+
+    /// Missing actual mandatory representatives, labeled from modeled requirement origins.
+    pub fn missing_mandatory_quests(&self, route: &[Stop]) -> Vec<String> {
+        self.missing_required(route, None)
     }
 
     /// Timed quests the route takes but turns in after their limit (with the planner's margin):
@@ -152,26 +187,36 @@ impl Planner<'_> {
             .collect()
     }
 
-    fn missing_required(&self, route: &[Stop], zone: bool) -> Vec<String> {
-        // Done before the route (in a group: by everyone it is for), or in it.
-        let s0 = self.sim().initial_state();
-        let turned = |j: usize| s0.turned[j] || route.iter().any(|s| s.kind == Kind::TurnIn && s.index as usize == j);
+    fn missing_required(&self, route: &[Stop], zone: Option<bool>) -> Vec<String> {
+        let Some((_, state)) = self.simulate_state(route, None) else {
+            return Vec::new();
+        };
+        let sim = self.sim();
         self.model
             .quests
             .iter()
             .enumerate()
             .filter(|(i, q)| {
-                let done = |id: &i64| self.model.index.get(id).is_some_and(|&j| turned(j));
-                q.mandatory && q.zone_forced == zone && !turned(*i) && !q.exclusive.iter().any(done)
+                zone.is_none_or(|zone| q.zone_forced == zone) && sim.missing_mandatory_representative(&state, *i)
             })
             .map(|(i, q)| {
                 let mut candidate = route.to_vec();
                 self.insert_quest(&mut candidate, i as u32);
                 let why = match self.diagnose(&candidate) {
-                    Some((_, why)) => why,
-                    None => "only after the target level".into(),
+                    Some((_, why)) => format!("local insertion check: {why}"),
+                    None => "local insertion check found no invalid stop; not completed in the chosen route".into(),
                 };
-                format!("{} ({}, level {}): {why}", q.name, q.id, q.min_level)
+                let origins = sim.missing_mandatory_origins(&state, i);
+                let class = origins.contains(crate::model::MandatoryOrigins::CLASS);
+                let gear = origins.contains(crate::model::MandatoryOrigins::GEAR);
+                let label = match (class, gear, q.zone_forced) {
+                    (true, true, _) => "class and gear quest not completed",
+                    (true, false, _) => "class quest not completed",
+                    (false, true, _) => "gear quest or prerequisite not completed",
+                    (false, false, true) => "zone quest not completed",
+                    (false, false, false) => "other mandatory quest not completed",
+                };
+                format!("{label}: {} ({}, level {}): {why}", q.name, q.id, q.min_level)
             })
             .collect()
     }

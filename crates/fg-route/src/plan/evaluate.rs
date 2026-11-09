@@ -26,6 +26,7 @@ pub struct End {
 
 /// States before each stop of a route, and its total time.
 pub(crate) struct Run {
+    pub(crate) goals: super::HardGoals,
     pub(crate) states: Vec<State>,
     /// Optimizer score, and the real play time.
     pub(crate) total: f64,
@@ -60,6 +61,21 @@ impl Planner<'_> {
                 Kind::TurnIn => flags[i] |= 2,
                 Kind::Objective(_) => flags[i] |= 4,
                 _ => {}
+            }
+        }
+        // Bit 8 retains recorded selected acceptance even when the parent is held only.
+        // An Accept anchor is a no-op, not fabricated objective or completion work.
+        for &i in &self.model.initial.accepted {
+            if self.model.bis.source_quests().contains(&(i as u32))
+                && (flags[i] != 0
+                    || self
+                        .model
+                        .quests
+                        .iter()
+                        .enumerate()
+                        .any(|(child, q)| flags[child] != 0 && q.pre_held.contains(&self.model.quests[i].id)))
+            {
+                flags[i] |= 8;
             }
         }
         Rc::new(Planned {
@@ -189,6 +205,7 @@ impl Planner<'_> {
             return None;
         }
         Some(Run {
+            goals: self.hard_goals(&s),
             states,
             total,
             play: s.spent.total,
@@ -269,7 +286,7 @@ impl Planner<'_> {
     #[cfg(test)]
     pub(crate) fn evaluate(&self, run: &Run, candidate: &[Stop], a: usize, b: usize, same_set: bool) -> Option<f64> {
         self.evaluate_within(run, candidate, a, b, same_set, None)
-            .map(|(cost, _)| cost)
+            .map(|(cost, _, _)| cost)
     }
 
     /// `evaluate`, its replay ended before stop `window` (when given) with the rest estimated
@@ -283,7 +300,7 @@ impl Planner<'_> {
         b: usize,
         same_set: bool,
         window: Option<usize>,
-    ) -> Option<(f64, bool)> {
+    ) -> Option<(f64, bool, super::HardGoals)> {
         // The stop before `a` too: where it does an objective depends on the next stop.
         let a = a.saturating_sub(1);
         // The quests of the character's log given up at the start changed: from the start.
@@ -306,7 +323,7 @@ impl Planner<'_> {
             self.replanned_from(run, &planned, a)
         };
         if run.reached && start >= run.states.len() - 1 {
-            return Some((run.total, true)); // after the target level: no effect
+            return Some((run.total, true, run.goals)); // after the target level: no effect
         }
         let (mut s, mut k) = if restart {
             (self.sim().start_state(planned), 0)
@@ -322,7 +339,7 @@ impl Planner<'_> {
             if window == Some(k)
                 && let Some(cost) = self.estimate(run, &s)
             {
-                return Some((cost, false));
+                return Some((cost, false, run.goals));
             }
             if !self.availability().valid(&s, candidate[k]) {
                 return None;
@@ -381,12 +398,14 @@ impl Planner<'_> {
                     && s.together == old.together
                 {
                     let extra = self.sim().weights(&s.spent) - self.sim().weights(&old.spent);
-                    return Some((run.total + s.time - old.time + extra, true));
+                    return Some((run.total + s.time - old.time + extra, true, run.goals));
                 }
             }
         }
         let total = self.sim().finish(&mut s, None);
-        s.completion_error.is_none().then_some((total, true))
+        s.completion_error
+            .is_none()
+            .then_some((total, true, self.hard_goals(&s)))
     }
 
     /// The cost of a route whose replay reached state `s`, estimated from the evaluated route

@@ -10,7 +10,7 @@ use super::{JobEvent, Watch};
 use crate::diagnostics::Diagnostics;
 use crate::model::{Model, Profile};
 use crate::params::{Construction, Params};
-use crate::plan::{Effort, Exchange, Member, Planner, Stop, ZoneChange, fmt_time};
+use crate::plan::{Effort, Exchange, HardGoals, Member, Planner, Stop, ZoneChange, fmt_time};
 use crate::sync::{Joined, LockExt};
 use crate::world::World;
 use rand::{RngExt, SeedableRng};
@@ -81,7 +81,7 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
                 ranked
                     .iter()
                     .take(width)
-                    .map(|(_, k, r)| (*k, Some(r.clone())))
+                    .map(|(_, k, r, _)| (*k, Some(r.clone())))
                     .collect()
             };
             ranked = round(&searcher, &plan, stage, &routes);
@@ -92,7 +92,7 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
     if !interrupt.cancelled() {
         progress(&JobEvent::Status(&summary(planner, &ranked)));
     }
-    ranked.into_iter().next().map(|(_, _, r)| r).unwrap_or_default()
+    ranked.into_iter().next().map(|(_, _, r, _)| r).unwrap_or_default()
 }
 
 /// Sets its flag when dropped, unwinding included.
@@ -268,7 +268,7 @@ struct Live<'p> {
     /// Tries of all the searches so far.
     tried: AtomicU64,
     /// Best (score, play time) of each candidate's route so far.
-    routes: Mutex<Vec<Option<(f64, f64)>>>,
+    routes: Mutex<Vec<Option<(f64, f64, HardGoals)>>>,
     /// The round under way (none during the race) and its routes.
     round: Mutex<Option<(usize, Vec<usize>)>>,
     started: OnceLock<Instant>,
@@ -335,23 +335,31 @@ impl<'p> Live<'p> {
         } else {
             let mut ranked: Vec<usize> = (0..routes.len()).filter(|&k| routes[k].is_some()).collect();
             ranked.sort_by(|&a, &b| {
-                routes[a]
-                    .expect("ranked routes exist")
-                    .0
-                    .total_cmp(&routes[b].expect("ranked routes exist").0)
+                let a = routes[a].expect("ranked routes exist");
+                let b = routes[b].expect("ranked routes exist");
+                a.2.cmp(&b.2).then(a.0.total_cmp(&b.0))
             });
             ranked.truncate(self.threads);
             ranked
         };
-        let shown: Vec<(usize, f64, f64)> = ids
+        let shown: Vec<(usize, f64, f64, HardGoals)> = ids
             .into_iter()
-            .filter_map(|k| routes.get(k).copied().flatten().map(|(score, play)| (k, score, play)))
-            .filter(|(_, score, _)| score.is_finite())
+            .filter_map(|k| {
+                routes
+                    .get(k)
+                    .copied()
+                    .flatten()
+                    .map(|(score, play, goals)| (k, score, play, goals))
+            })
+            .filter(|(_, score, _, _)| score.is_finite())
             .collect();
-        let selected = shown.iter().min_by(|a, b| a.1.total_cmp(&b.1)).map(|r| r.0);
+        let selected = shown
+            .iter()
+            .min_by(|a, b| a.3.cmp(&b.3).then(a.1.total_cmp(&b.1)))
+            .map(|r| r.0);
         let list = shown
             .iter()
-            .map(|&(id, score, play)| serde_json::json!({ "id": id, "time": play, "score": score }))
+            .map(|&(id, score, play, _)| serde_json::json!({ "id": id, "time": play, "score": score }))
             .collect();
         (list, selected)
     }
@@ -444,27 +452,30 @@ impl<'p> Live<'p> {
     }
 
     /// A route built before the race: the best so far is drawn.
-    fn on_built(&self, score: f64, play: f64, route: &[Stop]) {
+    fn on_built(&self, score: f64, play: f64, route: &[Stop], goals: HardGoals) {
         let mut best = self.best.locked();
-        if score < best.built.0 {
-            best.built = (score, play);
+        if score.is_finite() && (goals < best.built.2 || goals == best.built.2 && score < best.built.0) {
+            best.built = (score, play, goals);
             best.show(route);
         }
     }
 
-    fn on_best(&self, k: usize, first: &Cell<bool>, score: f64, play: f64, route: &[Stop]) {
+    fn on_best(&self, k: usize, first: &Cell<bool>, score: f64, play: f64, route: &[Stop], goals: HardGoals) {
         // Several searches may improve the same route: its best of them.
         if let Some(r) = self.routes.locked().get_mut(k)
-            && r.is_none_or(|(s, _)| score < s)
+            && r.is_none_or(|(s, _, g)| goals < g || goals == g && score < s)
         {
-            *r = Some((score, play));
+            *r = Some((score, play, goals));
         }
         let mut best = self.best.locked();
-        if first.replace(false) && score < best.start.0 {
-            best.start = (score, play);
+        if first.replace(false)
+            && score.is_finite()
+            && (goals < best.start.2 || goals == best.start.2 && score < best.start.0)
+        {
+            best.start = (score, play, goals);
         }
-        if score < best.route.0 {
-            best.route = (score, play);
+        if score.is_finite() && (goals < best.route.2 || goals == best.route.2 && score < best.route.0) {
+            best.route = (score, play, goals);
             best.show(route);
         }
     }
@@ -473,10 +484,10 @@ impl<'p> Live<'p> {
 /// The best of the tournament so far, each as (score, play time).
 struct Best {
     /// Of the routes built before the race.
-    built: (f64, f64),
+    built: (f64, f64, HardGoals),
     /// Of the starts, and of the routes improved.
-    start: (f64, f64),
-    route: (f64, f64),
+    start: (f64, f64, HardGoals),
+    route: (f64, f64, HardGoals),
     /// The route drawn, and whether it changed since last drawn.
     stops: Vec<Stop>,
     changed: bool,
@@ -484,7 +495,16 @@ struct Best {
 
 impl Default for Best {
     fn default() -> Self {
-        let none = (f64::INFINITY, f64::INFINITY);
+        let none = (
+            f64::INFINITY,
+            f64::INFINITY,
+            HardGoals {
+                exact: u32::MAX,
+                dungeons: u32::MAX,
+                zones: u32::MAX,
+                gear: u32::MAX,
+            },
+        );
         Self {
             built: none,
             start: none,
@@ -608,7 +628,7 @@ impl Searcher<'_> {
         // ranking settles.
         let checkpoints = slot.round.is_none() && self.diagnostics.race;
         let (tried, best) = (Cell::new(0u64), Cell::new(f64::INFINITY));
-        let route = planner.improve_while(
+        let route = planner.improve_ranked_observed(
             start,
             Effort::Tries(tries),
             || {
@@ -623,16 +643,19 @@ impl Searcher<'_> {
                 !self.interrupt.stopping()
             },
             log,
-            |score, play, route| {
+            |score, play, route, goals| {
                 best.set(best.get().min(score));
-                self.live.on_best(k, &first, score, play, route);
+                self.live.on_best(k, &first, score, play, route, goals);
             },
+            |_, _| {},
         );
         if self.interrupt.cancelled() {
             return None;
         }
+        let (score, _, goals) = self.scored(&route);
         Some(Found {
-            score: self.score(&route),
+            goals,
+            score,
             k,
             route,
             changes,
@@ -678,27 +701,36 @@ impl Searcher<'_> {
             .diagnosed(self.diagnostics)
             .abortable(&give_up);
         let (route, changes) = self.build(k, &planner, mutant, |_| {})?;
-        let (score, play) = self.scored(&route);
-        self.live.on_built(score, play, &route);
+        let (score, play, goals) = self.scored(&route);
+        self.live.on_built(score, play, &route, goals);
         Some(Found {
             score,
+            goals,
             k,
             route,
             changes: Some(changes),
         })
     }
 
-    /// Score of a route under the request's own settings.
-    fn score(&self, route: &[Stop]) -> f64 {
-        self.scored(route).0
-    }
-
     /// Score and play time of a route under the request's own settings.
-    fn scored(&self, route: &[Stop]) -> (f64, f64) {
+    fn scored(&self, route: &[Stop]) -> (f64, f64, HardGoals) {
         Planner::new(self.model, self.world, self.params, self.profile)
             .diagnosed(self.diagnostics)
-            .simulate_full(route, None)
-            .map_or((f64::INFINITY, f64::INFINITY), |(score, spent)| (score, spent.total))
+            .scored_goals(route)
+            .unwrap_or((
+                f64::INFINITY,
+                f64::INFINITY,
+                if self.model.bis.required_roots().is_empty() {
+                    HardGoals::default()
+                } else {
+                    HardGoals {
+                        exact: u32::MAX,
+                        dungeons: u32::MAX,
+                        zones: u32::MAX,
+                        gear: u32::MAX,
+                    }
+                },
+            ))
     }
 }
 
@@ -709,8 +741,8 @@ fn round_seed(seed: u64, stage: usize, search: usize) -> u64 {
 }
 
 /// Routes ranked by score, then by candidate (the same tries give the same order).
-fn rank(mut routes: Vec<(f64, usize, Vec<Stop>)>) -> Vec<(f64, usize, Vec<Stop>)> {
-    routes.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)));
+fn rank(mut routes: Ranked) -> Ranked {
+    routes.sort_by(|a, b| a.3.cmp(&b.3).then(a.0.total_cmp(&b.0)).then(a.1.cmp(&b.1)));
     routes
 }
 
@@ -737,14 +769,14 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> (Ranked, Vec<Option<Mu
         }
         let built = rank(built);
         if searcher.diagnostics.race {
-            for (score, k, _) in &built {
+            for (score, k, _, _) in &built {
                 (searcher.progress)(&JobEvent::Status(&format!("built {k}: {}", fmt_time(*score))));
             }
         }
         let kept = built
             .into_iter()
             .take(plan.qualifying)
-            .map(|(_, k, r)| (k, Some(r)))
+            .map(|(_, k, r, _)| (k, Some(r)))
             .collect();
         let with = Searcher {
             mutants: &mutants,
@@ -770,7 +802,7 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> (Ranked, Vec<Option<Mu
         rank(qualified)
     };
     if searcher.diagnostics.race {
-        for (score, k, _) in &ranked {
+        for (score, k, _, _) in &ranked {
             (searcher.progress)(&JobEvent::Status(&format!("candidate {k}: {}", fmt_time(*score))));
         }
     }
@@ -778,10 +810,11 @@ fn qualify(searcher: &Searcher<'_>, plan: &Tournament) -> (Ranked, Vec<Option<Mu
 }
 
 /// Routes as (score, candidate, route), the best first (`rank`).
-type Ranked = Vec<(f64, usize, Vec<Stop>)>;
+type Ranked = Vec<(f64, usize, Vec<Stop>, HardGoals)>;
 
 /// A candidate's route, built or improved.
 struct Found {
+    goals: HardGoals,
     /// Its score under the request's own settings.
     score: f64,
     /// The candidate.
@@ -792,7 +825,7 @@ struct Found {
 }
 
 /// The routes found, as ranked, their zone changes kept in `changes` by candidate.
-fn split(found: Vec<Found>, changes: &mut Vec<Vec<ZoneChange>>) -> Vec<(f64, usize, Vec<Stop>)> {
+fn split(found: Vec<Found>, changes: &mut Vec<Vec<ZoneChange>>) -> Ranked {
     (found.into_iter())
         .map(|f| {
             if let Some(c) = f.changes {
@@ -801,7 +834,7 @@ fn split(found: Vec<Found>, changes: &mut Vec<Vec<ZoneChange>>) -> Vec<(f64, usi
                 }
                 changes[f.k] = c;
             }
-            (f.score, f.k, f.route)
+            (f.score, f.k, f.route, f.goals)
         })
         .collect()
 }
@@ -840,12 +873,12 @@ const PARENTS: usize = 4;
 fn mutate(
     searcher: &Searcher<'_>,
     changes: &[Vec<ZoneChange>],
-    ranked: &[(f64, usize, Vec<Stop>)],
+    ranked: &[(f64, usize, Vec<Stop>, HardGoals)],
     ks: std::ops::Range<usize>,
 ) -> Vec<Option<Mutant>> {
     let parents: Vec<usize> = ranked
         .iter()
-        .map(|(_, k, _)| *k)
+        .map(|(_, k, _, _)| *k)
         .filter(|&k| changes.get(k).is_some_and(|c| !c.is_empty()))
         .take(PARENTS)
         .collect();
@@ -953,12 +986,7 @@ fn race(searcher: &Searcher<'_>, plan: &Tournament, candidates: Vec<(usize, Opti
 
 /// Round `stage`: each route improved by its searches (`Tournament::searches`), which share their
 /// best (`share_every`). Each route's best, ranked.
-fn round(
-    searcher: &Searcher<'_>,
-    plan: &Tournament,
-    stage: usize,
-    routes: &[(usize, Option<Vec<Stop>>)],
-) -> Vec<(f64, usize, Vec<Stop>)> {
+fn round(searcher: &Searcher<'_>, plan: &Tournament, stage: usize, routes: &[(usize, Option<Vec<Stop>>)]) -> Ranked {
     searcher.live.enter(stage, routes.iter().map(|(k, _)| *k).collect());
     let tries_per_stop = if plan.is_final(stage) {
         searcher.params.final_tries
@@ -968,7 +996,7 @@ fn round(
     let exchanges: Vec<Exchange> = (0..routes.len())
         .map(|i| Exchange::new(plan.searches(stage, i)))
         .collect();
-    let found: Vec<(f64, usize, Vec<Stop>)> = std::thread::scope(|scope| {
+    let found: Ranked = std::thread::scope(|scope| {
         let mut handles = Vec::new();
         for (i, (k, route)) in routes.iter().enumerate() {
             let searches = plan.searches(stage, i);
@@ -985,24 +1013,24 @@ fn round(
                     let member = exchange.member();
                     let seat = (searcher.params.share_every > 0 && searches > 1).then_some(&member);
                     let result = searcher.search(*k, route.clone(), slot, true, seat);
-                    result.map(|f| (f.score, f.k, f.route))
+                    result.map(|f| (f.score, f.k, f.route, f.goals))
                 }));
             }
         }
         handles.into_iter().filter_map(|h| h.join().joined()).collect()
     });
     // Each route's best search (the first one on a tie).
-    let mut best: Vec<(f64, usize, Vec<Stop>)> = Vec::new();
-    for (score, k, route) in found {
+    let mut best: Ranked = Vec::new();
+    for (score, k, route, goals) in found {
         match best.iter_mut().find(|b| b.1 == k) {
-            Some(b) if score < b.0 => *b = (score, k, route),
+            Some(b) if goals < b.3 || goals == b.3 && score < b.0 => *b = (score, k, route, goals),
             Some(_) => {}
-            None => best.push((score, k, route)),
+            None => best.push((score, k, route, goals)),
         }
     }
     let ranked = rank(best);
     if searcher.diagnostics.race {
-        for (score, k, _) in &ranked {
+        for (score, k, _, _) in &ranked {
             (searcher.progress)(&JobEvent::Status(&format!(
                 "round {} route {k}: {}",
                 stage + 1,
@@ -1014,10 +1042,10 @@ fn round(
 }
 
 /// Play time of the routes of the last round (ranked by score).
-fn summary(planner: &Planner<'_>, ranked: &[(f64, usize, Vec<Stop>)]) -> String {
+fn summary(planner: &Planner<'_>, ranked: &[(f64, usize, Vec<Stop>, HardGoals)]) -> String {
     let times: Vec<String> = ranked
         .iter()
-        .map(|(_, _, r)| {
+        .map(|(_, _, r, _)| {
             if let Some((_, b)) = planner.simulate_full(r, None) {
                 return fmt_time(b.total);
             }
@@ -1035,6 +1063,27 @@ fn summary(planner: &Planner<'_>, ranked: &[(f64, usize, Vec<Stop>)]) -> String 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn ranking_keeps_expensive_complete_routes_and_forced_runs() {
+        let complete = HardGoals::default();
+        let routes = vec![
+            (1.0, 0, Vec::new(), HardGoals { gear: 1, ..complete }),
+            (20000.0, 1, Vec::new(), complete),
+            (
+                0.0,
+                2,
+                Vec::new(),
+                HardGoals {
+                    dungeons: 1,
+                    ..complete
+                },
+            ),
+            (20000.0, 3, Vec::new(), complete),
+        ];
+        let ranked = rank(routes);
+        assert_eq!(ranked.iter().map(|r| r.1).collect::<Vec<_>>(), vec![1, 3, 0, 2]);
+    }
 
     fn tournament(threads: usize, candidates: usize, final_routes: usize, effort: f64) -> Tournament {
         Tournament::new(&Params {

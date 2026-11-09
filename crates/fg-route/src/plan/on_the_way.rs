@@ -356,6 +356,11 @@ impl Simulator<'_> {
                         } else {
                             (&q.ends[at as usize], Kind::TurnIn)
                         };
+                        if super::gear::source_visit(self.model, Stop::quest(i, kind))
+                            .is_some_and(|v| v != loc.inside.map(usize::from) || v != s.inside.map(usize::from))
+                        {
+                            continue;
+                        }
                         // Quests the route takes soon anyway (at the hub, instead of coming
                         // back). Taking one early must not break the route: keep room in the log
                         // for the quests it takes before it, do not block a quest it takes
@@ -377,7 +382,7 @@ impl Simulator<'_> {
                         } else {
                             self.availability().objectives_done(s, i) && at_level()
                         };
-                        if wanted {
+                        if wanted && self.source_action_ready(s, Stop::quest(i, kind)) {
                             best = Some((d, Stop::quest(i, kind), loc));
                         }
                     }

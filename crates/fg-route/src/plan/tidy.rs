@@ -39,8 +39,9 @@ impl Planner<'_> {
                 let mut candidate = route.clone();
                 let stop = candidate.remove(j);
                 candidate.insert(i, stop);
-                if let Some((cost, _)) = self.evaluate_within(&run, &candidate, i, j, true, None)
+                if let Some((cost, _, goals)) = self.evaluate_within(&run, &candidate, i, j, true, None)
                     && cost <= run.total + slack
+                    && goals <= run.goals
                 {
                     found = Some(candidate);
                     break;
@@ -94,8 +95,8 @@ impl Planner<'_> {
                 let mut candidate = route.clone();
                 let visit: Vec<Stop> = candidate.drain(a..=b).collect();
                 candidate.splice((d + 1)..=d, visit);
-                let (cost, _) = self.evaluate_within(&run, &candidate, c, b, true, None)?;
-                (cost < run.total - 0.5).then_some(candidate)
+                let (cost, _, goals) = self.evaluate_within(&run, &candidate, c, b, true, None)?;
+                (cost < run.total - 0.5 && goals <= run.goals).then_some(candidate)
             });
             match found.and_then(|candidate| Some((self.replace_run(&mut run, &route, &candidate)?, candidate))) {
                 // The visits are counted again: the same index is the next visit now.

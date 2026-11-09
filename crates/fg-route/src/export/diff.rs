@@ -756,14 +756,9 @@ fn breakdown_changes(a: &Breakdown, b: &Breakdown) -> Vec<String> {
         ("training", a.training, b.training),
         ("overhead", a.overhead, b.overhead),
     ];
-    let counts = [
+    let mut counts = vec![
         ("dungeon runs", i64::from(a.dungeon_runs), i64::from(b.dungeon_runs)),
         ("hearths", i64::from(a.hearths), i64::from(b.hearths)),
-        (
-            "class quests missed",
-            i64::from(a.missing_class_quests),
-            i64::from(b.missing_class_quests),
-        ),
         (
             "zone quests missed",
             i64::from(a.missing_zone_quests),
@@ -774,6 +769,27 @@ fn breakdown_changes(a: &Breakdown, b: &Breakdown) -> Vec<String> {
         ("grind xp", a.grind_xp, b.grind_xp),
         ("farm xp", a.farm_xp, b.farm_xp),
     ];
+    if let (Some(a), Some(b)) = (a.mandatory_goal_counts, b.mandatory_goal_counts) {
+        counts.extend([
+            (
+                "class quests missed",
+                i64::from(a.class_quests),
+                i64::from(b.class_quests),
+            ),
+            ("gear quests missed", i64::from(a.bis_quests), i64::from(b.bis_quests)),
+            (
+                "other mandatory quests missed",
+                i64::from(a.other_quests),
+                i64::from(b.other_quests),
+            ),
+        ]);
+    } else {
+        counts.push((
+            "mandatory quests missed",
+            i64::from(a.missing_class_quests),
+            i64::from(b.missing_class_quests),
+        ));
+    }
     times
         .iter()
         .filter(|(_, x, y)| (x - y).abs() >= 60.0)
@@ -792,6 +808,74 @@ mod tests {
     use super::*;
     use crate::export::types::{MapPointOut, Target, TargetKind};
     use crate::faction::Faction;
+
+    #[test]
+    fn legacy_mandatory_counts_are_never_compared_as_class_counts() {
+        let old = Breakdown {
+            missing_class_quests: 25,
+            ..Breakdown::default()
+        };
+        let fresh = Breakdown {
+            mandatory_goal_counts: Some(crate::plan::MandatoryGoalCounts::default()),
+            ..Breakdown::default()
+        };
+        assert_eq!(breakdown_changes(&old, &fresh), ["mandatory quests missed 25 -> 0"]);
+        assert_eq!(breakdown_changes(&fresh, &old), ["mandatory quests missed 0 -> 25"]);
+        assert_eq!(
+            breakdown_changes(&old, &Breakdown::default()),
+            ["mandatory quests missed 25 -> 0"]
+        );
+    }
+
+    #[test]
+    fn classified_comparisons_use_only_authoritative_category_deltas() {
+        use crate::plan::MandatoryGoalCounts;
+        let old = Breakdown {
+            missing_class_quests: 25,
+            mandatory_goal_counts: Some(MandatoryGoalCounts {
+                class_quests: 3,
+                bis_quests: 4,
+                other_quests: 1,
+            }),
+            ..Breakdown::default()
+        };
+        let new = Breakdown {
+            missing_class_quests: 20,
+            mandatory_goal_counts: Some(MandatoryGoalCounts {
+                class_quests: 1,
+                bis_quests: 2,
+                other_quests: 0,
+            }),
+            ..Breakdown::default()
+        };
+        assert_eq!(
+            breakdown_changes(&old, &new),
+            [
+                "class quests missed 3 -> 1",
+                "gear quests missed 4 -> 2",
+                "other mandatory quests missed 1 -> 0"
+            ]
+        );
+    }
+
+    #[test]
+    fn old_route_and_outcome_keep_steps_time_notes_and_absent_categories() {
+        let mut guide = route(vec![step(StepKind::Accept, 179, 1), step(StepKind::TurnIn, 179, 1)]);
+        guide.breakdown.missing_class_quests = 25;
+        let value = serde_json::json!({ "route": guide, "notes": ["old class warning: 25"] });
+        let raw = serde_json::to_string(&value).unwrap();
+        let original = raw.clone();
+        let outcome = crate::job::PlanOutcome::from_json(&raw).unwrap();
+        assert_eq!(outcome.route.breakdown.mandatory_goal_counts, None);
+        assert_eq!(outcome.route.breakdown.missing_class_quests, 25);
+        let saved = serde_json::to_value(outcome).unwrap();
+        for key in ["steps", "total_time", "total_time_text", "breakdown"] {
+            assert_eq!(saved["route"][key], value["route"][key], "{key}");
+        }
+        assert_eq!(saved["notes"], value["notes"]);
+        assert!(saved["route"]["breakdown"].get("mandatory_goal_counts").is_none());
+        assert_eq!(raw, original, "reading an outcome does not rewrite its saved bytes");
+    }
 
     /// A step: kind, quest (or target for travel), zone.
     fn step(kind: StepKind, id: i64, zone: i64) -> Step {

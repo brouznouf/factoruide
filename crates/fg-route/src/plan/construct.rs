@@ -571,6 +571,7 @@ impl Planner<'_> {
         };
         let route = self.keep_log_quests(route);
         let route = self.place_hearths(self.rebind(self.place_hearths(self.power_first(route))));
+        let route = self.repair_required_gear(route);
         if self.diagnostics.debug {
             for (reason, n) in self.explain_unused(&route) {
                 log(&format!("  unused {reason}: {n}"));

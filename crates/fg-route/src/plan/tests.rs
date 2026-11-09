@@ -12,9 +12,11 @@ mod abandoned_work;
 mod cleanup_observation;
 mod cleanup_training;
 mod dungeons;
+mod mandatory_reporting;
 mod movement;
 mod moves;
 mod profession_trainers;
+mod required_gear;
 mod shared_kills;
 mod xp_buffs;
 #[test]

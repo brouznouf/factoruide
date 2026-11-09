@@ -15,12 +15,14 @@ impl Simulator<'_> {
     pub(crate) fn spot(&self, s: &State, quest: u32, k: u8) -> &Objective {
         let q = self.quest(quest);
         let o = &q.objectives[k as usize];
+        let visit = super::gear::source_visit(self.model, Stop::quest(quest, Kind::Objective(k)));
         if o.alts.is_empty() {
             return o;
         }
         if let Some((sq, sk, i)) = s.spot
             && (sq, sk) == (quest, k)
             && let Some(place) = std::iter::once(o).chain(&o.alts).nth(usize::from(i))
+            && visit.is_none_or(|v| v == place.dungeon_of())
         {
             return place;
         }
@@ -34,8 +36,12 @@ impl Simulator<'_> {
         } else {
             1.0
         };
-        let mut best = (f64::INFINITY, o);
-        for place in std::iter::once(o).chain(&o.alts) {
+        let matching = || o.places().filter(|place| visit.is_none_or(|v| v == place.dungeon_of()));
+        let mut best = (
+            f64::INFINITY,
+            matching().next().expect("selected source placement exists"),
+        );
+        for place in matching() {
             let there = self.spot_work(s, q, place, left.max(0.0));
             if there >= best.0 {
                 continue;

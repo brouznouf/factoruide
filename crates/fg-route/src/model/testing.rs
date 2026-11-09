@@ -191,6 +191,7 @@ impl Q {
             carried: false,
             late_unlock: false,
             mandatory: false,
+            mandatory_origins: super::MandatoryOrigins::default(),
             zone_forced: false,
             required: false,
             completion_window: super::CompletionWindow::default(),
@@ -347,11 +348,21 @@ impl Q {
 
     pub fn zone_forced(mut self) -> Self {
         self.quest.zone_forced = true;
+        self.quest
+            .mandatory_origins
+            .insert(super::MandatoryOrigins::FORCED_ZONE);
         self
     }
 
     pub fn mandatory(mut self) -> Self {
         self.quest.mandatory = true;
+        self
+    }
+
+    /// An explicit origin for a synthetic mandatory completion goal.
+    pub fn mandatory_from(mut self, origin: super::MandatoryOrigins) -> Self {
+        self.quest.mandatory = true;
+        self.quest.mandatory_origins.insert(origin);
         self
     }
 

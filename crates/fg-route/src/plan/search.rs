@@ -13,6 +13,48 @@ use std::collections::HashSet;
 use std::time::Duration;
 use std::time::Instant;
 
+#[cfg(test)]
+mod gear_tests {
+    use super::*;
+    use crate::{
+        model::select_test_sources,
+        testing::{Q, Scenario},
+    };
+
+    #[test]
+    fn cleanup_selects_expensive_complete_best_over_current_incomplete_route() {
+        let mut p = Scenario::new()
+            .levels(1, 10)
+            .quest(Q::new(1, "Source").xp(0))
+            .params(|p| {
+                p.stop_overhead = 1000.0;
+                p.mandatory_penalty = 1.0;
+            })
+            .build();
+        select_test_sources(&mut p, &[0], &[]);
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let complete = planner.repair_required_gear(Vec::new());
+        let (score, _, goals) = planner.scored_goals(&complete).unwrap();
+        let run = planner.run(&[]).unwrap();
+        assert!(score > run.total && goals < run.goals);
+        let search = Search {
+            route: Vec::new(),
+            candidate: Vec::new(),
+            acceptance: Acceptance::new(run.total, 0.0, 0),
+            run,
+            best: (score, complete, goals),
+            rng: SmallRng::seed_from_u64(1),
+            operators: Operators::new(),
+            started: Instant::now(),
+            effort: Effort::Tries(0),
+            tries: 0,
+            wins: 0,
+        };
+        let (route, _) = planner.clean_up(search, &|_, route| planner.validate_required(route).unwrap());
+        planner.validate_required(&route).unwrap();
+    }
+}
+
 /// How long a search tries.
 #[derive(Debug, Clone, Copy)]
 pub enum Effort {
@@ -47,7 +89,7 @@ struct Search {
     /// Reuse the candidate allocation between search attempts.
     candidate: Vec<Stop>,
     run: Run,
-    best: (f64, Vec<Stop>),
+    best: (f64, Vec<Stop>, super::HardGoals),
     rng: SmallRng,
     acceptance: Acceptance,
     operators: Operators,
@@ -113,15 +155,35 @@ impl Planner<'_> {
         on_best: impl Fn(f64, f64, &[Stop]),
         on_cleanup: impl Fn(CleanupStage, &[Stop]),
     ) -> Vec<Stop> {
+        self.improve_ranked_observed(
+            route,
+            effort,
+            keep_going,
+            log,
+            |score, play, route, _| on_best(score, play, route),
+            on_cleanup,
+        )
+    }
+
+    /// Internal tournament callback carries the already computed rank, without replays.
+    pub(crate) fn improve_ranked_observed(
+        &self,
+        route: Vec<Stop>,
+        effort: Effort,
+        keep_going: impl Fn() -> bool,
+        log: impl Fn(&str),
+        on_best: impl Fn(f64, f64, &[Stop], super::HardGoals),
+        on_cleanup: impl Fn(CleanupStage, &[Stop]),
+    ) -> Vec<Stop> {
         let Some(run) = self.run(&route) else {
             log("greedy route is invalid");
             return route;
         };
         log(&format!("start: {} stops, {}", route.len(), fmt_time(run.total)));
-        on_best(run.total, run.play, &route);
+        on_best(run.total, run.play, &route, run.goals);
         let mut search = Search {
             acceptance: Acceptance::new(run.total, self.params.anneal, self.params.lahc),
-            best: (run.total, route.clone()),
+            best: (run.total, route.clone(), run.goals),
             candidate: Vec::with_capacity(route.len()),
             route,
             run,
@@ -157,26 +219,28 @@ impl Planner<'_> {
 
     /// At a meeting of the final (`sharing`): go on from the best route of all when it beats
     /// the current one.
-    fn meet(&self, search: &mut Search, on_best: &impl Fn(f64, f64, &[Stop])) {
+    fn meet(&self, search: &mut Search, on_best: &impl Fn(f64, f64, &[Stop], super::HardGoals)) {
         let Some(member) = self.share else { return };
-        let Some((score, route)) = member.meet(self.params.seed, &search.best) else {
+        let Some((score, route, goals)) = member.meet(self.params.seed, &search.best) else {
             return;
         };
-        if score >= search.run.total - 0.5 {
+        if goals > search.run.goals || goals == search.run.goals && score >= search.run.total - 0.5 {
             return;
         }
         if let Some(run) = self.replace_run(&mut search.run, &search.route, &route) {
             search.run = run;
             search.route = route;
-            if search.run.total < search.best.0 - 0.5 {
-                search.best = (search.run.total, search.route.clone());
-                on_best(search.run.total, search.run.play, &search.route);
+            if search.run.goals < search.best.2
+                || search.run.goals == search.best.2 && search.run.total < search.best.0 - 0.5
+            {
+                search.best = (search.run.total, search.route.clone(), search.run.goals);
+                on_best(search.run.total, search.run.play, &search.route, search.run.goals);
             }
         }
     }
 
     /// Draw a move (large neighbourhood or small), evaluate it and keep it or not.
-    fn try_a_move(&self, search: &mut Search, on_best: &impl Fn(f64, f64, &[Stop])) {
+    fn try_a_move(&self, search: &mut Search, on_best: &impl Fn(f64, f64, &[Stop], super::HardGoals)) {
         search.candidate.clone_from(&search.route);
         let mut operator = None;
         let change = if self.params.alns > 0.0 && search.rng.random_bool(self.params.alns) {
@@ -203,10 +267,13 @@ impl Planner<'_> {
             .take_while(|(x, y)| x == y)
             .count();
         let last = change.last.min(search.candidate.len() - same_end);
-        let window = (self.params.eval_window > 0 && self.params.reputation_goals.is_empty())
-            .then(|| last + 1 + self.params.eval_window)
-            .filter(|_| dungeons(&search.candidate) == dungeons(&search.route));
-        let Some((estimate, exact)) = self.evaluate_change(&search.run, &search.candidate, change, window) else {
+        let window = (self.params.eval_window > 0
+            && self.params.reputation_goals.is_empty()
+            && search.run.goals == super::HardGoals::default())
+        .then(|| last + 1 + self.params.eval_window)
+        .filter(|_| dungeons(&search.candidate) == dungeons(&search.route));
+        let Some((estimate, exact, goals)) = self.evaluate_change(&search.run, &search.candidate, change, window)
+        else {
             return;
         };
         let current = search.run.total;
@@ -217,25 +284,31 @@ impl Planner<'_> {
                 .acceptance
                 .accepts(cost, current, progress, tries, &mut draw, rng)
         };
-        let cost = if !accepts(estimate, &mut search.rng) {
+        let scalar_accepts = accepts(estimate, &mut search.rng);
+        let cost = if exact && goals > search.run.goals || !(scalar_accepts || exact && goals < search.run.goals) {
             None
         } else if exact {
             Some(estimate)
         } else {
             self.evaluate_change(&search.run, &search.candidate, change, None)
-                .map(|(cost, _)| cost)
-                .filter(|&cost| accepts(cost, &mut search.rng))
+                .filter(|&(cost, _, goals)| {
+                    let scalar = accepts(cost, &mut search.rng);
+                    goals < search.run.goals || goals == search.run.goals && scalar
+                })
+                .map(|(cost, _, _)| cost)
         };
         if let Some(cost) = cost
             && let Some(run) = self.replace_run(&mut search.run, &search.route, &search.candidate)
         {
-            let improves = cost < current - 0.5;
+            let improves = run.goals < search.run.goals || cost < current - 0.5;
             search.run = run;
             std::mem::swap(&mut search.route, &mut search.candidate);
             search.wins += u64::from(improves);
-            if search.run.total < search.best.0 - 0.5 {
-                search.best = (search.run.total, search.route.clone());
-                on_best(search.run.total, search.run.play, &search.route);
+            if search.run.goals < search.best.2
+                || search.run.goals == search.best.2 && search.run.total < search.best.0 - 0.5
+            {
+                search.best = (search.run.total, search.route.clone(), search.run.goals);
+                on_best(search.run.total, search.run.play, &search.route, search.run.goals);
                 if let Some(op) = operator {
                     search.operators.reward(op, 3.0);
                 }
@@ -262,10 +335,10 @@ impl Planner<'_> {
         candidate: &[Stop],
         change: Change,
         window: Option<usize>,
-    ) -> Option<(f64, bool)> {
+    ) -> Option<(f64, bool, super::HardGoals)> {
         let evaluated = self.evaluate_within(run, candidate, change.first, change.last, change.reordered, window);
-        if self.verify && evaluated.is_none_or(|(_, exact)| exact) {
-            let cost = evaluated.map(|(cost, _)| cost);
+        if self.verify && evaluated.is_none_or(|(_, exact, _)| exact) {
+            let cost = evaluated.map(|(cost, _, _)| cost);
             let full = self.simulate(candidate, None);
             let ok = match (cost, full) {
                 (Some(x), Some(y)) => (x - y).abs() < 1e-6,
@@ -293,31 +366,45 @@ impl Planner<'_> {
     fn clean_up(&self, search: Search, on_cleanup: &impl Fn(CleanupStage, &[Stop])) -> (Vec<Stop>, f64) {
         // Only the score and the stops done of each route are kept: the states of a run weigh
         // megabytes, and the clean-up replays routes of its own.
-        let done = |run: Run| (run.total, run.states.len() - 1);
+        let done = |run: Run| (run.total, run.states.len() - 1, run.goals);
         let Search { route, run, best, .. } = search;
         let (mut route, mut run) = (route, done(run));
-        if best.0 < run.0 - 0.5 {
+        if best.2 < run.2 || best.2 == run.2 && best.0 < run.0 - 0.5 {
             route = best.1;
             run = done(self.run(&route).expect("best route was valid"));
         }
         on_cleanup(CleanupStage::SelectedInput, &route);
         let early = self.power_first(route.clone());
-        if early != route {
+        if early != route
+            && let Some(new) = self.run(&early)
+            && new.goals <= run.2
+        {
             route = early;
-            run = done(self.run(&route).expect("power_first keeps the route valid"));
+            run = done(new);
         }
         on_cleanup(CleanupStage::PowerFirst, &route);
         let rebound = self.rebind(route.clone());
+        let rebound = if self.model.bis.required_roots().is_empty() {
+            rebound
+        } else {
+            self.keep_hard_goals(route.clone(), rebound)
+        };
         on_cleanup(CleanupStage::Rebind, &rebound);
         let rebound = self.place_hearths(rebound);
-        if rebound != route {
+        if rebound != route
+            && let Some(new) = self.run(&rebound)
+            && new.goals <= run.2
+        {
             route = rebound;
-            run = done(self.run(&route).expect("rebind keeps the route valid"));
+            run = done(new);
         }
         on_cleanup(CleanupStage::PlaceHearths, &route);
-        if let Some(pruned) = self.drop_unfinished(&route, run.0) {
+        if let Some(pruned) = self.drop_unfinished(&route, run.0)
+            && let Some(new) = self.run(&pruned)
+            && new.goals <= run.2
+        {
             route = pruned;
-            run = done(self.run(&route).expect("pruned route was valid"));
+            run = done(new);
         }
         on_cleanup(CleanupStage::DropUnfinished, &route);
         // The stops after the target level are cut, unless the route needs them: the quests it
@@ -326,13 +413,17 @@ impl Planner<'_> {
         let cut = route[..run.1].to_vec();
         if let Some(r) = self.run(&cut)
             && r.total <= run.0 + 0.5
+            && r.goals <= run.2
         {
             (route, run) = (cut, done(r));
         }
         on_cleanup(CleanupStage::TrimTarget, &route);
-        if let Some(kept) = self.drop_dungeonless(&route) {
+        if let Some(kept) = self.drop_dungeonless(&route)
+            && let Some(new) = self.run(&kept)
+            && new.goals <= run.2
+        {
             route = kept;
-            run = done(self.run(&route).expect("dropped route was valid"));
+            run = done(new);
         }
         on_cleanup(CleanupStage::DropDungeonless, &route);
         (route, run.0)

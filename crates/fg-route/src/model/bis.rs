@@ -2,6 +2,7 @@
 //! which quests give one. Only the guaranteed sources count — the quest rewards and the
 //! vendors' stock, never the drops.
 
+use super::feasibility::{BisQuestAction, BisQuestPlan, Selector};
 use super::sources::Sources;
 use super::types::{EntityKind, Quest, Vendor};
 use crate::Profile;
@@ -56,9 +57,49 @@ pub struct Bis {
     /// The best items vendors sell (indexes in the power model's items), in the entries'
     /// order, each once. Built with the entries.
     vendor_items: Vec<u16>,
+    required_roots: Vec<u32>,
+    required_plans: Vec<BisQuestPlan>,
+    requires: Vec<bool>,
+    fallback_notes: Vec<String>,
+    source_actions: Vec<BisQuestAction>,
+    source_edges: Vec<(BisQuestAction, BisQuestAction)>,
+    source_quests: Vec<u32>,
+    source_visits: std::collections::BTreeMap<BisQuestAction, Option<usize>>,
 }
 
 impl Bis {
+    /// Chosen visit of a residual source action: absent, outside, or inside one dungeon.
+    pub fn source_visit(&self, action: BisQuestAction) -> Option<Option<usize>> {
+        self.source_visits.get(&action).copied()
+    }
+    /// Final coherent selected source actions in dependency order (Prefer and Required).
+    pub fn source_actions(&self) -> &[BisQuestAction] {
+        &self.source_actions
+    }
+    /// Actual cross-source ordering constraints; satisfied historical edges are absent.
+    pub fn source_edges(&self) -> &[(BisQuestAction, BisQuestAction)] {
+        &self.source_edges
+    }
+    /// Source participants, including recorded held parents needing no new action.
+    pub fn source_quests(&self) -> &[u32] {
+        &self.source_quests
+    }
+    /// Selected quest sources that Required promises to complete.
+    pub fn required_roots(&self) -> &[u32] {
+        &self.required_roots
+    }
+    /// Supported residual actions for those sources.
+    pub fn required_plans(&self) -> &[BisQuestPlan] {
+        &self.required_plans
+    }
+    /// Unsatisfied turn-in support; held-only accepts are not completion goals.
+    pub fn requires(&self, quest: usize) -> bool {
+        self.requires.get(quest).copied().unwrap_or(false)
+    }
+    /// Explained unsupported preferences, deduplicated across bands and slots.
+    pub fn fallback_notes(&self) -> &[String] {
+        &self.fallback_notes
+    }
     /// Whether quest `i` (index in `Model::quests`) gives a best item as one of its rewards
     /// (false without one, and for a quest the list does not know).
     pub fn gives(&self, i: usize) -> bool {
@@ -97,24 +138,33 @@ pub(super) fn load(
     world: &World,
     sources: &Sources,
     params: &Params,
+    skipped: &[(i64, String, String)],
+    known: &HashSet<i64>,
+    starts: &[&crate::job::StartState],
 ) -> Result<Bis> {
     let mut bis = Bis {
         entries: Vec::new(),
         gives: vec![false; quests.len()],
         sellers: Vec::new(),
         vendor_items: Vec::new(),
+        ..Bis::default()
     };
     if params.bis == BisMode::Off || power.items.is_empty() {
         return Ok(bis);
     }
-    // Which quest gives which item: the lowest quest index of each, so that the choice does not
-    // depend on the order the quests were built in.
-    let mut giver: Vec<u32> = vec![u32::MAX; power.items.len()];
+    bis.requires = vec![false; quests.len()];
+    // Preserve every giver until support is checked, with stable game-ID order within an item.
+    let mut givers: Vec<Vec<u32>> = vec![vec![]; power.items.len()];
     for (q, (fixed, choices)) in rewards.iter().enumerate() {
         for &i in fixed.iter().chain(choices) {
-            giver[i as usize] = giver[i as usize].min(q as u32);
+            givers[i as usize].push(q as u32);
         }
     }
+    for g in &mut givers {
+        g.sort_by_key(|&i| quests[i as usize].id);
+        g.dedup();
+    }
+    let mut selector = Selector::new(quests, &sources.dungeons, skipped, profile, params, known, starts);
     // The vendors' stock: which NPC sells which item, the character's side only. Vendors of the
     // other side do not sell to it.
     let hostile: &HashSet<i64> = &sources.entities.hostile;
@@ -165,7 +215,7 @@ pub(super) fn load(
             // stock, the highest value in the slot (`PowerModel::value_in`), ties to the lowest
             // item index. An item counts when it goes to the slot and can be had at the band:
             // given by a quest of the band's level or below, or sold by a vendor.
-            let mut best: Option<(f64, u16)> = None;
+            let mut candidates = Vec::new();
             for i in 0..power.items.len() as u16 {
                 if !power.slots_of(i as usize).contains(&slot) {
                     continue;
@@ -174,29 +224,73 @@ pub(super) fn load(
                 if value <= 0.0 {
                     continue;
                 }
-                let giver = giver[i as usize];
-                let gettable = giver < u32::MAX && quests[giver as usize].level <= level;
-                if (!gettable && sellers[i as usize].is_empty()) || best.is_some_and(|(b, _)| value <= b) {
+                let gettable = givers[i as usize].iter().any(|&q| quests[q as usize].level <= level);
+                if !gettable && sellers[i as usize].is_empty() {
                     continue;
                 }
-                best = Some((value, i));
+                candidates.push((value, i));
             }
-            let Some((_, item)) = best else { continue };
-            let giver = giver[item as usize];
-            let source = if giver < u32::MAX && quests[giver as usize].level <= level {
-                bis.gives[giver as usize] = true;
-                BisSource::Quest(giver)
-            } else {
-                BisSource::Vendor(sellers[item as usize].clone())
-            };
-            bis.entries.push(BisEntry {
-                level,
-                slot,
-                item,
-                source,
-            });
+            candidates.sort_by(|a, b| b.0.total_cmp(&a.0).then(a.1.cmp(&b.1)));
+            let mut rejected = Vec::new();
+            let mut chosen = None;
+            'items: for (_, item) in candidates {
+                for &giver in &givers[item as usize] {
+                    let q = &quests[giver as usize];
+                    if q.level > level {
+                        continue;
+                    }
+                    match selector.select(giver) {
+                        Ok((plan, closure)) => {
+                            selector.committed = closure;
+                            bis.gives[giver as usize] = true;
+                            if params.bis == BisMode::Required && !bis.required_roots.contains(&giver) {
+                                bis.required_roots.push(giver);
+                                for a in &plan.actions {
+                                    if let BisQuestAction::TurnIn(i) = a {
+                                        bis.requires[*i as usize] = true;
+                                    }
+                                }
+                                bis.required_plans.push(plan);
+                            }
+                            chosen = Some((item, BisSource::Quest(giver), format!("{} ({})", q.name, q.id)));
+                            break 'items;
+                        }
+                        Err(reason) => rejected.push(format!("{} ({}): {reason}", q.name, q.id)),
+                    }
+                }
+                if !sellers[item as usize].is_empty() {
+                    chosen = Some((
+                        item,
+                        BisSource::Vendor(sellers[item as usize].clone()),
+                        format!("{} from vendors (optional purchase)", power.items[item as usize].name),
+                    ));
+                    break;
+                }
+            }
+            let alternative = chosen
+                .as_ref()
+                .map_or("no supported alternative", |(_, _, name)| name.as_str());
+            for rejection in rejected {
+                let note = format!("Gear fallback: {rejection}; selected {alternative}.");
+                if !bis.fallback_notes.contains(&note) {
+                    bis.fallback_notes.push(note);
+                }
+            }
+            if let Some((item, source, _)) = chosen {
+                bis.entries.push(BisEntry {
+                    level,
+                    slot,
+                    item,
+                    source,
+                });
+            }
         }
     }
+    let graph = selector.finalize().map_err(anyhow::Error::msg)?;
+    bis.source_actions = graph.actions;
+    bis.source_edges = graph.edges;
+    bis.source_quests = graph.quests;
+    bis.source_visits = graph.visits;
     // The best items vendors sell, each once, in the entries' order: the stops the search may
     // add (`Kind::Buy`), with their sellers ready.
     let mut vendor_items = Vec::new();
@@ -212,3 +306,6 @@ pub(super) fn load(
     bis.vendor_items = vendor_items;
     Ok(bis)
 }
+
+#[cfg(test)]
+pub(crate) mod tests;

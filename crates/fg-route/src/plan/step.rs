@@ -1135,22 +1135,24 @@ impl Simulator<'_> {
             self.keep_lowest(s);
         }
         let (mut missing, mut zone) = (0, 0);
+        let mut counts = super::MandatoryGoalCounts::default();
         for (i, q) in self.model.quests.iter().enumerate() {
-            if q.mandatory && !s.rewarded(i) && !self.availability().alternative_done(s, q) {
-                // Versions of one quest (the two letters of the Felsteed) are missing once, at the first.
-                let version_before = q.exclusive.iter().any(|id| {
-                    self.model
-                        .index
-                        .get(id)
-                        .is_some_and(|&j| j < i && self.model.quests[j].mandatory)
-                });
-                if version_before {
-                    continue;
+            if self.missing_mandatory_representative(s, i) {
+                if q.zone_forced {
+                    zone += 1;
+                } else {
+                    missing += 1;
                 }
-                if q.zone_forced { zone += 1 } else { missing += 1 }
+                let origins = self.missing_mandatory_origins(s, i);
+                let class = origins.contains(crate::model::MandatoryOrigins::CLASS);
+                let gear = origins.contains(crate::model::MandatoryOrigins::GEAR);
+                counts.class_quests += u32::from(class);
+                counts.bis_quests += u32::from(gear);
+                counts.other_quests += u32::from(!q.zone_forced && !class && !gear);
             }
         }
         s.spent.missing_class_quests = missing as u32;
+        s.spent.mandatory_goal_counts = Some(counts);
         s.spent.missing_profession_quests = self.missing_profession_quests(s) as u32;
         s.spent.missing_zone_quests = zone as u32;
         let dungeons = (0..self.model.dungeons.len())
@@ -1171,6 +1173,34 @@ impl Simulator<'_> {
             + (missing + zone + dungeons + self.reputation_goals_unmet(s)) as f64 * self.params.mandatory_penalty
             + s.spent.reputation_missing * self.params.reputation_weight
             + f64::from(s.spent.missing_profession_quests) * self.params.profession_quest_weight
+    }
+
+    /// The historical scoring representative, shared by categorized totals and quest notes.
+    pub(crate) fn missing_mandatory_representative(&self, s: &State, i: usize) -> bool {
+        let q = &self.model.quests[i];
+        q.mandatory
+            && !s.rewarded(i)
+            && !self.availability().alternative_done(s, q)
+            // Versions of one quest are missing once, at the first mandatory member.
+            && !q.exclusive.iter().any(|id| {
+                self.model.index.get(id).is_some_and(|&j| j < i && self.model.quests[j].mandatory)
+            })
+    }
+
+    /// Missing versions share their existing scoring representative, but keep all origins.
+    pub(crate) fn missing_mandatory_origins(&self, s: &State, i: usize) -> crate::model::MandatoryOrigins {
+        let q = &self.model.quests[i];
+        q.exclusive
+            .iter()
+            .filter_map(|id| self.model.index.get(id))
+            .fold(q.mandatory_origins, |origins, &j| {
+                let version = &self.model.quests[j];
+                if version.mandatory && !s.rewarded(j) && !self.availability().alternative_done(s, version) {
+                    origins.union(version.mandatory_origins)
+                } else {
+                    origins
+                }
+            })
     }
 
     /// A quest the route took and never turned in is grinding in all but name (kills for XP, no

@@ -322,7 +322,10 @@ export interface Breakdown {
   overhead: number;
   training: number;
   hearths: number;
+  /** Deprecated historical aggregate of non-zone mandatory goals, not a class count. */
   missing_class_quests: number;
+  /** Authoritative missed-goal categories; absent on older saved guides. Categories may overlap. */
+  mandatory_goal_counts?: { class_quests: number; bis_quests: number; other_quests: number } | null;
   /** Quests of the forced zones the guide does not do. */
   missing_zone_quests?: number;
   dungeons: number;

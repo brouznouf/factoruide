@@ -1,6 +1,6 @@
 //! Quest chains: what finishing a quest unlocks, and the top of each chain.
 
-use super::types::{ClassRequirement, CompletionWindow, Profile, Quest};
+use super::types::{ClassRequirement, CompletionWindow, MandatoryOrigins, Profile, Quest};
 use crate::params::Params;
 use rustc_hash::FxHashMap;
 use std::collections::{HashMap, HashSet};
@@ -231,6 +231,7 @@ pub(super) fn settle_class_quest_versions(quests: &mut [Quest], versions: &[(Cla
     let release = |quests: &mut [Quest], chain: &ClassChain| {
         for i in chain.with_own_prerequisites(quests) {
             quests[i].mandatory = false;
+            quests[i].mandatory_origins.remove(MandatoryOrigins::CLASS);
         }
     };
     let doable = |c: &ClassChain, quests: &[Quest]| quests[c.last].mandatory;
@@ -350,15 +351,71 @@ pub(super) fn require_prerequisites(quests: &mut [Quest]) {
     }
 }
 
+/// Metadata only: the ordinary pass above owns mandatory flags and the first zone owner.
+/// Gear completion support is selected separately by the source graph; never infer it here
+/// from held parents or unchosen alternative branches.
+pub(super) fn propagate_mandatory_origins(quests: &mut [Quest], requirements: &[ClassRequirement]) {
+    let pos: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
+    let class_roots: HashSet<i64> = requirements
+        .iter()
+        .filter(|c| c.selected)
+        .flat_map(|c| c.quests.iter().copied())
+        .collect();
+    let mut stack: Vec<usize> = (0..quests.len()).filter(|&i| quests[i].mandatory).collect();
+    while let Some(i) = stack.pop() {
+        let q = &quests[i];
+        let mut origins = q.mandatory_origins;
+        origins.remove(MandatoryOrigins::GEAR);
+        let any: Vec<usize> = q.pre_any.iter().filter_map(|p| pos.get(p).copied()).collect();
+        let only = (any.len() == 1 && q.pre_need <= 1).then(|| quests[any[0]].id);
+        let needed: Vec<i64> = q.pre_all.iter().chain(&q.pre_held).copied().chain(only).collect();
+        // These are the alternative class versions the unchanged require_alternatives pass
+        // made mandatory. Seed only after release, from a still-active class requirement.
+        let class_alternatives = if class_roots.contains(&q.id) && origins.contains(MandatoryOrigins::CLASS) {
+            alternatives_of(q).to_vec()
+        } else {
+            Vec::new()
+        };
+        for p in needed {
+            if let Some(&j) = pos.get(&p)
+                && quests[j].mandatory
+                && quests[j].mandatory_origins.insert(origins)
+            {
+                stack.push(j);
+            }
+        }
+        for p in class_alternatives {
+            if let Some(&j) = pos.get(&p)
+                && quests[j].mandatory
+                && quests[j].mandatory_origins.insert(MandatoryOrigins::CLASS)
+            {
+                stack.push(j);
+            }
+        }
+    }
+}
+
 /// Quests asking for an item that only quests left out hand (`Objective::handed_by`) cannot be
 /// finished: left out too, until none is left (a chain of them).
-pub(super) fn drop_unhanded(quests: &mut Vec<Quest>, skipped: &mut Vec<(i64, String, String)>) {
+pub(super) fn drop_unhanded(
+    quests: &mut Vec<Quest>,
+    skipped: &mut Vec<(i64, String, String)>,
+    satisfied: &HashSet<(i64, u8)>,
+) {
     loop {
         let ids: HashSet<i64> = quests.iter().map(|q| q.id).collect();
         let before = quests.len();
         quests.retain_mut(|q| {
             let mut ok = true;
-            for o in q.objectives.iter_mut().filter(|o| !o.handed_by.is_empty()) {
+            for (k, o) in q
+                .objectives
+                .iter_mut()
+                .enumerate()
+                .filter(|(_, o)| !o.handed_by.is_empty())
+            {
+                if satisfied.contains(&(q.id, k as u8)) {
+                    continue;
+                }
                 o.handed_by.retain(|g| ids.contains(g));
                 ok &= !o.handed_by.is_empty();
             }
@@ -412,6 +469,7 @@ pub(super) fn release_impossible_class_quests(
                     }
                     q.mandatory = false;
                     q.zone_forced = false;
+                    q.mandatory_origins.remove(MandatoryOrigins::CLASS);
                 }
             }
         }

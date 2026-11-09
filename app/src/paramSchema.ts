@@ -118,7 +118,7 @@ export const sections: Section[] = [
         key: "bis",
         kind: "select",
         label: "Meilleur équipement (BiS)",
-        help: "Le meilleur objet de chaque emplacement à chaque tranche de 5 niveaux, parmi les récompenses de quêtes et le stock des marchands seulement (le butin n'est jamais garanti). Préférer : la route favorise les quêtes qui en donnent, à coût borné. Imposer : elles restent dans le guide même plus lentes.",
+        help: "Le meilleur objet de chaque emplacement à chaque tranche de 5 niveaux, parmi les récompenses de quêtes et le stock des marchands seulement (le butin n'est jamais garanti). Préférer : la route favorise les sources de quêtes prises en charge, à coût borné. Imposer : les sources de quêtes sélectionnées et prises en charge sont obligatoires, même plus lentes. Les sources non prises en charge sont écartées ; les alternatives retenues ou leur absence sont expliquées dans les notes du calcul. Les achats aux marchands restent facultatifs, si abordables et utiles.",
         options: [
           { value: "off", label: "Ne pas chercher (défaut)" },
           { value: "prefer", label: "Préférer les quêtes qui en donnent" },
@@ -160,7 +160,7 @@ export const sections: Section[] = [
       { key: "common_item_sources", kind: "number", label: "Objet courant à partir de N types de mobs", help: "Tissus, gemmes, potions… lâchés par au moins ce nombre de types de mobs : ramassés en route ou achetés, pas farmés.", min: 10, max: 1000, step: 10 },
       { key: "common_item_time", kind: "number", label: "Temps par objet courant", help: "Temps compté par unité d'un objet courant (ramassé en route ou acheté à l'hôtel des ventes).", unit: "s", min: 0, max: 300, step: 10 },
       { key: "max_object_loot", kind: "number", label: "Ignorer les coffres au trésor", help: "Les objets du monde qui donnent plus de N butins différents (coffres au trésor) ne comptent pas comme source d'un objet de quête trouvable ailleurs. 0 = tous comptent.", min: 0, max: 200, step: 5 },
-      { key: "mandatory_penalty", kind: "number", label: "Pénalité par quête obligatoire manquée", help: "Temps compté par l'optimiseur pour chaque quête de classe obligatoire laissée de côté : plus haut, elles restent dans le guide coûte que coûte.", unit: "min", scale: 60, min: 0, max: 600, step: 10 },
+      { key: "mandatory_penalty", kind: "number", label: "Pénalité par quête obligatoire manquée", help: "Temps ajouté au score pour chaque quête obligatoire manquée. Une valeur plus élevée guide l'optimiseur vers ces quêtes ; cette pénalité ne garantit pas leur réalisation.", unit: "min", scale: 60, min: 0, max: 600, step: 10 },
     ],
   },
   {

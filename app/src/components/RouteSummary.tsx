@@ -5,6 +5,7 @@ import { LevelChart } from "./LevelChart";
 import { useT } from "../i18n";
 import { Money } from "./Money";
 import { standingOf } from "./ReputationPanel";
+import { mandatoryGoalWarnings, mandatoryGoalWarningText } from "../mandatoryGoalWarnings";
 
 /** Why the planner left quests out (`fg_route` model), English as sent, French key of the catalog. */
 const SKIP_REASONS: Record<string, string> = {
@@ -177,9 +178,9 @@ export function RouteSummary({ route, notes, compare }: Props) {
           )}
         </div>
       )}
-      {b.missing_class_quests > 0 && (
-        <div className="notice warn">{t("Quêtes de classe obligatoires manquées : {n}", { n: b.missing_class_quests })}</div>
-      )}
+      {mandatoryGoalWarnings(b).map((warning) => (
+        <div key={warning.category} className="notice warn">{mandatoryGoalWarningText(warning, t)}</div>
+      ))}
       {(b.missing_zone_quests ?? 0) > 0 && <div className="notice warn">{t("Quêtes des zones forcées manquées : {n}", { n: b.missing_zone_quests ?? 0 })}</div>}
       {(route.reputation ?? []).map((r) => {
         const standing = (points: number) => {

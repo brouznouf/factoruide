@@ -15,6 +15,7 @@ pub(super) fn model_notes(model: &Model, world: &World) -> Vec<String> {
         None => format!("at {} ({})", model.start.name, world.zone_name(model.start.zone)),
     };
     let mut notes = vec![format!("{} plannable quests, start {start}", model.quests.len())];
+    notes.extend(model.bis.fallback_notes().iter().cloned());
     let mut reasons: BTreeMap<&str, usize> = BTreeMap::new();
     for (_, _, reason) in &model.skipped {
         *reasons.entry(reason).or_default() += 1;

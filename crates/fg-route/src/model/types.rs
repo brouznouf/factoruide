@@ -538,6 +538,38 @@ mod spots_tests {
     }
 }
 
+/// Independent reasons a modeled quest is a mandatory completion goal.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq)]
+pub struct MandatoryOrigins(u8);
+
+impl MandatoryOrigins {
+    pub const CLASS: Self = Self(1);
+    pub const GEAR: Self = Self(2);
+    pub const FORCED_DUNGEON: Self = Self(4);
+    pub const EXACT: Self = Self(8);
+    pub const FORCED_ZONE: Self = Self(16);
+
+    pub fn contains(self, origin: Self) -> bool {
+        self.0 & origin.0 == origin.0
+    }
+
+    #[must_use]
+    pub fn union(self, other: Self) -> Self {
+        Self(self.0 | other.0)
+    }
+
+    /// Returns whether a new origin was added, for propagation to a fixpoint.
+    pub fn insert(&mut self, origin: Self) -> bool {
+        let before = *self;
+        *self = self.union(origin);
+        *self != before
+    }
+
+    pub fn remove(&mut self, origin: Self) {
+        self.0 &= !origin.0;
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Quest {
     pub id: i64,
@@ -579,8 +611,10 @@ pub struct Quest {
     pub held: Option<i64>,
     /// An item given on accepting, carried in the bags until the turn-in.
     pub carried: bool,
-    /// Class quests: always planned, the optimizer cannot drop them.
+    /// A mandatory completion goal (class, selected gear support, exact or forced content).
     pub mandatory: bool,
+    /// Reporting provenance; never changes the legacy mandatory/zone flags or scoring.
+    pub mandatory_origins: MandatoryOrigins,
     /// A class unlock kept although it is below the guide's levels (`Params::unlock_delay_weight`).
     pub late_unlock: bool,
     /// Required because its zone is forced (`Params::forced_zones`), or as a prerequisite of

@@ -39,6 +39,20 @@ impl QuestBuilder<'_> {
         };
         let (start_guard, end_guard) = (guard(&givers.starts), guard(&givers.ends));
         let zone_forced = self.zone_forced(r, &givers, &objectives);
+        let mandatory_class = group_class_quest
+            && (self
+                .profile
+                .class_requirements
+                .iter()
+                .any(|c| c.selected && c.quests.contains(&r.id))
+                || self.params.all_class_quests && r.min_level.unwrap_or(1) <= self.profile.to_level);
+        let mut mandatory_origins = super::MandatoryOrigins::default();
+        if mandatory_class {
+            mandatory_origins.insert(super::MandatoryOrigins::CLASS);
+        }
+        if zone_forced {
+            mandatory_origins.insert(super::MandatoryOrigins::FORCED_ZONE);
+        }
         Quest {
             id: r.id,
             name: r.name.clone(),
@@ -66,14 +80,8 @@ impl QuestBuilder<'_> {
             held: givers.held,
             carried: r.source_item.is_some_and(|i| i > 0),
             late_unlock: false,
-            mandatory: zone_forced
-                || group_class_quest
-                    && (self
-                        .profile
-                        .class_requirements
-                        .iter()
-                        .any(|c| c.selected && c.quests.contains(&r.id))
-                        || self.params.all_class_quests && r.min_level.unwrap_or(1) <= self.profile.to_level),
+            mandatory: zone_forced || mandatory_class,
+            mandatory_origins,
             zone_forced,
             required: false,
             completion_window: CompletionWindow::default(),

@@ -551,6 +551,14 @@ impl State {
     }
 }
 
+/// Authoritative missing mandatory quest categories; shared origins can overlap.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct MandatoryGoalCounts {
+    pub class_quests: u32,
+    pub bis_quests: u32,
+    pub other_quests: u32,
+}
+
 /// Where the time goes.
 #[derive(Debug, Clone, Copy, Default, serde::Serialize, serde::Deserialize)]
 pub struct Breakdown {
@@ -564,7 +572,12 @@ pub struct Breakdown {
     #[serde(default)]
     pub hearths: u32,
     #[serde(default)]
+    /// Deprecated historical aggregate of missing NON-ZONE mandatory representatives,
+    /// including gear and other origins. Kept for old guides and unchanged scoring;
+    /// new class claims must use `mandatory_goal_counts`.
     pub missing_class_quests: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub mandatory_goal_counts: Option<MandatoryGoalCounts>,
     #[serde(default)]
     pub dungeons: f64,
     #[serde(default)]
@@ -671,9 +684,9 @@ pub(crate) struct Planned {
 }
 
 impl Planned {
-    /// No objective nor turn-in of quest `i`: one in the log at the start is given up.
+    /// No objective, turn-in or selected held-state retention: abandon the logged quest.
     pub(crate) fn left(&self, i: usize) -> bool {
-        self.flags[i] & 6 == 0
+        self.flags[i] & 0b1110 == 0
     }
 }
 

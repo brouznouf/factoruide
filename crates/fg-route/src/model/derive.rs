@@ -24,6 +24,8 @@ pub(crate) struct Knowledge {
     /// No character was recorded: what is known is assumed from the levels, and a must-have
     /// quest is not taken as known.
     pub(crate) assumed: bool,
+    /// Recorded objective completion, before unhanded quests are filtered.
+    pub(crate) satisfied_objectives: HashSet<(i64, u8)>,
 }
 
 /// The quests built settled: the must-haves, the class quests' versions and what they need, the
@@ -60,8 +62,13 @@ pub(crate) fn settle(
         *names_known.entry(r.name.clone()).or_insert(true) &= knowledge.rewards.contains(&r.id);
     }
     let known_names: HashSet<_> = names_known.into_iter().filter_map(|(n, k)| k.then_some(n)).collect();
-    chains::drop_unhanded(quests, skipped);
+    chains::drop_unhanded(quests, skipped, &knowledge.satisfied_objectives);
     for q in quests.iter_mut() {
+        // An exact/zone request can still require doing a known unlock again, but its class
+        // reward is already satisfied. Keep those independent reasons and the legacy flags.
+        if known_names.contains(&q.name) {
+            q.mandatory_origins.remove(super::MandatoryOrigins::CLASS);
+        }
         if known_names.contains(&q.name) && !q.required && !q.zone_forced {
             q.mandatory = false;
         }

@@ -7,6 +7,9 @@ use crate::world::{Pos, World};
 
 /// The dungeon stop `stop` takes place in from state `s` (`Places::inside`).
 pub(crate) fn stop_inside(model: &Model, s: &State, stop: Stop) -> Option<usize> {
+    if let Some(visit) = super::gear::source_visit(model, stop) {
+        return visit;
+    }
     let nearest = |locs: &[Loc]| {
         locs.iter()
             .min_by(|a, b| s.pos.dist(&a.pos).total_cmp(&s.pos.dist(&b.pos)))
@@ -37,8 +40,10 @@ impl Places<'_> {
     /// is done in several: `Planner::spot` chooses when doing it), the flight master or the
     /// innkeeper.
     pub(crate) fn loc(&self, s: &State, stop: Stop) -> Loc {
+        let visit = super::gear::source_visit(self.model, stop);
         let pick = |locs: &[Loc]| {
             locs.iter()
+                .filter(|l| visit.is_none_or(|v| v == l.inside.map(usize::from)))
                 .map(|l| (l, s.pos.dist(&l.pos)))
                 .min_by(|a, b| a.1.total_cmp(&b.1))
                 .expect("a place has locations")
@@ -49,7 +54,10 @@ impl Places<'_> {
             Kind::Accept => pick(&self.model.quests[stop.index as usize].starts),
             Kind::TurnIn => pick(&self.model.quests[stop.index as usize].ends),
             Kind::Objective(k) => self.model.quests[stop.index as usize].objectives[k as usize]
-                .nearest(&s.pos)
+                .places()
+                .filter(|o| visit.is_none_or(|v| v == o.dungeon_of()))
+                .min_by(|a, b| s.pos.dist(&a.loc.pos).total_cmp(&s.pos.dist(&b.loc.pos)))
+                .expect("selected source placement exists")
                 .loc
                 .clone(),
             Kind::LearnFlight => {
@@ -115,8 +123,10 @@ impl Places<'_> {
 
     /// Position of a stop, cheap (no allocation) for distance heuristics.
     pub(crate) fn pos(&self, s: &State, stop: Stop) -> Pos {
+        let visit = super::gear::source_visit(self.model, stop);
         let nearest = |locs: &[Loc]| {
             locs.iter()
+                .filter(|l| visit.is_none_or(|v| v == l.inside.map(usize::from)))
                 .map(|l| (l.pos, s.pos.dist(&l.pos)))
                 .min_by(|a, b| a.1.total_cmp(&b.1))
                 .expect("a place has locations")
@@ -127,7 +137,10 @@ impl Places<'_> {
             Kind::TurnIn => nearest(&self.model.quests[stop.index as usize].ends),
             Kind::Objective(k) => {
                 self.model.quests[stop.index as usize].objectives[k as usize]
-                    .nearest(&s.pos)
+                    .places()
+                    .filter(|o| visit.is_none_or(|v| v == o.dungeon_of()))
+                    .min_by(|a, b| s.pos.dist(&a.loc.pos).total_cmp(&s.pos.dist(&b.loc.pos)))
+                    .expect("selected source placement exists")
                     .loc
                     .pos
             }
@@ -161,6 +174,9 @@ impl Places<'_> {
 
     /// The dungeon a stop usually takes place in (as `usual_pos`).
     pub(crate) fn usual_inside(&self, s: Stop) -> Option<usize> {
+        if let Some(visit) = super::gear::source_visit(self.model, s) {
+            return visit;
+        }
         let i = s.index as usize;
         match s.kind {
             Kind::Accept => self.model.quests[i].starts[0].inside,
