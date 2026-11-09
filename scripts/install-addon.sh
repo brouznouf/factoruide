@@ -1,8 +1,8 @@
 #!/bin/sh
 # Copy the addon (Factoruide_Profile and Factoruide_Guide) into the WoW client. After a change:
 # /reload in game (a full client restart is needed when files are added or a .toc changes).
-# (As an addon site would; then the guides of `fg route`, addon/Factoruide_Data, when there are
-# some. Existing Config.lua, Routes.lua, Services.lua and Sent.lua written by older apps are kept.)
+# (As an addon site would; the guides of `fg route`, addon/Factoruide_Data, with FG_INSTALL_DATA=1
+# only. Existing Config.lua, Routes.lua, Services.lua and Sent.lua written by older apps are kept.)
 set -eu
 wow_dir=${FG_WOW_DIR:-"/mnt/g/Jeux/World of Warcraft"}
 client=${FG_CLIENT:-$([ -d "$wow_dir/_forever_" ] && echo _forever_ || echo _classic_beta_)}
@@ -72,8 +72,9 @@ for addon in Factoruide_Profile Factoruide_Guide; do
     fi
     echo "installed into $dest"
 done
-# The guides planned with `fg route` (the data addon it writes), when there are some.
-if [ -f "$repo/Factoruide_Data/Data.lua" ]; then
+# The guides planned with `fg route` (the data addon it writes), only when asked
+# (FG_INSTALL_DATA=1): the game's Factoruide_Data holds the guides the app wrote, never replaced.
+if [ "${FG_INSTALL_DATA:-}" = 1 ] && [ -f "$repo/Factoruide_Data/Data.lua" ]; then
     rm -rf "$addons/Factoruide_Data"
     cp -r "$repo/Factoruide_Data" "$addons/Factoruide_Data"
     echo "installed into $addons/Factoruide_Data"
