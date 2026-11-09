@@ -3991,6 +3991,13 @@ button.link.cmp-jump {
   width: 86px;
   color: var(--text-muted);
 }
+.bis-icon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  align-self: center;
+  image-rendering: pixelated;
+}
 .bis-item {
   font-weight: 600;
 }

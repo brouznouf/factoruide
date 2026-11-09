@@ -1,6 +1,7 @@
 mod audit;
 mod diff;
 mod gold;
+mod icons;
 mod route;
 mod talents;
 mod travel;
@@ -245,6 +246,9 @@ enum Command {
     /// Import the money the quests give and the prices of their items from a VMaNGOS
     /// database (db_latest) into the edition's database
     Gold(gold::Gold),
+    /// Read the icons of the items from the installed game client into a pack
+    /// the app serves with the guide (see `fg-casc`)
+    Icons(icons::Icons),
 }
 
 /// The edition's normalized database: `data/<edition>.sqlite`, unpacked from
@@ -407,6 +411,7 @@ fn main() -> Result<()> {
             edition,
         )?,
         Command::Gold(gold) => gold.run(Path::new("data"))?,
+        Command::Icons(icons) => icons.run(Path::new("data"))?,
     }
     Ok(())
 }

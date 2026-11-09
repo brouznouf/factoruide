@@ -1,4 +1,5 @@
-import type { BisSlot } from "../api";
+import { useEffect, useState } from "react";
+import { api, type BisSlot } from "../api";
 import { useT } from "../i18n";
 
 /** The equipment slots of the power model (`fg_route::power`), by index. */
@@ -20,6 +21,28 @@ const SLOTS: Record<number, string> = {
   16: "Deux mains",
   17: "À distance",
 };
+
+/** An item's icon (an object URL), fetched once: null without one. */
+function useIcon(item: number): string | null {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let alive = true;
+    let made: string | null = null;
+    api.itemIcon(item).then((fresh) => {
+      if (!alive) {
+        if (fresh) URL.revokeObjectURL(fresh);
+        return;
+      }
+      made = fresh;
+      setUrl(fresh);
+    });
+    return () => {
+      alive = false;
+      if (made) URL.revokeObjectURL(made);
+    };
+  }, [item]);
+  return url;
+}
 
 /** The best item of each slot at each level band (`Route::bis`), grouped by band: what to pick
  * up or buy and when, the drops left out (never guaranteed). */
@@ -44,20 +67,40 @@ export function BisPanel({ bis }: { bis: BisSlot[] }) {
             </h4>
             <ul>
               {entries.map((entry) => (
-                <li key={entry.slot}>
-                  <span className="bis-slot">{t(SLOTS[entry.slot] ?? "?")}</span>
-                  <strong className="bis-item">{entry.name}</strong>
-                  {entry.source.kind === "quest" ? (
-                    <small>{t("Quête : {name}", { name: entry.source.quest_name })}</small>
-                  ) : (
-                    <small>{t("Marchands : {names}", { names: entry.source.npcs.map((v) => v.name).join(", ") })}</small>
-                  )}
-                </li>
+                <BisRow key={entry.slot} entry={entry} />
               ))}
             </ul>
           </section>
         ))}
       </div>
     </details>
+  );
+}
+
+/** One best item: its slot, its icon, its name and where it comes from. */
+function BisRow({ entry }: { entry: BisSlot }) {
+  const t = useT();
+  const icon = useIcon(entry.item);
+  return (
+    <li>
+      <span className="bis-slot">{t(SLOTS[entry.slot] ?? "?")}</span>
+      {icon && (
+        <img
+          className="bis-icon"
+          src={icon}
+          alt=""
+          width={20}
+          height={20}
+          loading="lazy"
+          title={entry.name}
+        />
+      )}
+      <strong className="bis-item">{entry.name}</strong>
+      {entry.source.kind === "quest" ? (
+        <small>{t("Quête : {name}", { name: entry.source.quest_name })}</small>
+      ) : (
+        <small>{t("Marchands : {names}", { names: entry.source.npcs.map((v) => v.name).join(", ") })}</small>
+      )}
+    </li>
   );
 }

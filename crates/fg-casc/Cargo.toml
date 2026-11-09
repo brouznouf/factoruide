@@ -1,0 +1,18 @@
+[package]
+name = "fg-casc"
+publish = false
+version = "0.1.0"
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+# The game client's local CASC storage: the maps, the databases and the icons
+# of `fg icons` are read straight from the installed game (see NOTICE.md: the
+# game client is one of the data sources).
+[dependencies]
+anyhow.workspace = true
+flate2 = "1"
+image = { version = "0.25", default-features = false, features = ["png"] }
+
+[lints]
+workspace = true

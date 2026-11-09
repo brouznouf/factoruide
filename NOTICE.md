@@ -9,7 +9,7 @@ of the databases keeps the sources it comes from (`sources` columns, `import_run
 
 | Source | License | What the databases take from it |
 | --- | --- | --- |
-| World of Warcraft game client (Blizzard Entertainment) | Blizzard's | Maps and map images, zones, flight paths, races, classes, quest IDs and XP, names. World of Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. This project is not affiliated with or endorsed by Blizzard. |
+| World of Warcraft game client (Blizzard Entertainment) | Blizzard's | Maps and map images, zones, flight paths, races, classes, quest IDs and XP, names, item icons (`fg icons`, read from the installed client's storage). World of Warcraft and Blizzard Entertainment are trademarks or registered trademarks of Blizzard Entertainment, Inc. This project is not affiliated with or endorsed by Blizzard. |
 | [QuestieDB](https://github.com/Questie/QuestieDB) and [Questie](https://github.com/Questie/Questie) | None stated (see below) | Quests, givers and turn-ins, prerequisites, objectives, NPC/object/item data and positions, quest XP, drop rates, dungeon entrances, translated names, quest blacklist |
 | [VMaNGOS](https://github.com/vmangos/core) | GPL-2.0 | Classic 1.12 world database: exclusive quest groups, loot tables and chances, NPC titles, positions, objective amounts, quest money rewards and item prices (`fg gold`) |
 | [CMaNGOS TBC database](https://github.com/cmangos/tbc-db) | GPL-3.0 | TBC 2.4.3 world database: the heights of creature and object spawns on the old continents and Outland, which tell the floor a place stands on |
@@ -18,6 +18,13 @@ of the databases keeps the sources it comes from (`sources` columns, `import_run
 | [Wowhead](https://www.wowhead.com) tooltips | Wowhead's | Whether quests exist in Forever, names, levels, objective texts, NPC titles and positions; Questie's drop rates also come from Wowhead |
 | [EG Link output: World of Warcraft: Forever](https://github.com/JIVESCORP/eg-link-output-wowf), data from [Efficient Games](https://efficient.games) | CC BY 4.0 (see below) | Forever only: the quest data of players' game caches (XP rewards, objective amounts, races, levels, zones) |
 | Factoruide players | — | Quests and positions observed in game, sent through the app and accepted only when several trusted players agree |
+
+The item icon packs in `data/icons/<edition>/icons.pack` are converted game client data: which icon
+an item has comes from the Classic Era client's Item table, kept as `data/icons/item-icons.csv`
+(converted by [wow-dbc-archive](https://github.com/Vladinator/wow-dbc-archive)); the icon pictures
+themselves are read from the installed game client by `fg icons` (see `crates/fg-casc`, whose
+notes on the formats follow [wowdev.wiki](https://wowdev.wiki)'s documentation of them, and whose
+decryption keys are the client's own, from its `TactKey` tables and hotfix caches).
 
 Used to build the databases but not included in them: [WoWDBDefs](https://github.com/wowdev/WoWDBDefs)
 (client table definitions, CC BY-SA 4.0) and [TACTKeys](https://github.com/wowdev/TACTKeys).

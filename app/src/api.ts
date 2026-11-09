@@ -650,6 +650,12 @@ export const api = {
     invoke<ArrayBuffer>("minimap_image", { map, level, x, y }).then((bytes) =>
       URL.createObjectURL(new Blob([bytes], { type: "image/webp" })),
     ),
+  /** An item's icon (a PNG), as an object URL: null when it has none (or no pack is bundled). */
+  itemIcon: (item: number) =>
+    invoke<ArrayBuffer>("item_icon", { item }).then(
+      (bytes) => URL.createObjectURL(new Blob([bytes], { type: "image/png" })),
+      () => null,
+    ),
   exportRequest: (request: PlanRequest) => invoke<string | WebFile>("export_request", { request }).then(saved),
   /** Desktop: writes every guide into the game (the data addon Factoruide_Data); returns their number. */
   installAddon: () => invoke<number>("install_addon").then((n) => (settingsChanged(), n)),

@@ -12,6 +12,7 @@ path = "src/main.rs"
 
 [dependencies]
 anyhow.workspace = true
+fg-casc = { path = "../fg-casc" }
 fg-route = { path = "../fg-route" }
 clap = { version = "4", features = ["derive", "env"] }
 rusqlite = { version = "0.41", features = ["bundled", "fallible_uint"] }

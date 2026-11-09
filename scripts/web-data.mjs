@@ -1,6 +1,6 @@
 // The static data of the web app (scripts/build-web.sh): each edition's database and map images
-// as they are, its minimap pack split into tiles with their index, and the headers a host
-// should send.
+// as they are, its minimap pack split into tiles with their index, its items' icon pack copied
+// whole, and the headers a host should send.
 import { copyFileSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -15,6 +15,13 @@ for (const edition of ["forever", "classic", "tbc"]) {
   mkdirSync(join(out, "data"), { recursive: true });
   copyFileSync(db, join(out, "data", `${edition}.sqlite.zst`));
   const maps = join(data, "maps", edition);
+  // The items' icons (`fg icons`), one pack per edition, read as a whole by
+  // the page: copied whatever else the edition has.
+  const icons = join(data, "icons", edition, "icons.pack");
+  if (existsSync(icons)) {
+    mkdirSync(join(out, "data/icons", edition), { recursive: true });
+    copyFileSync(icons, join(out, "data/icons", edition, "icons.pack"));
+  }
   if (!existsSync(maps)) continue;
   mkdirSync(join(out, "data/maps", edition), { recursive: true });
   for (const f of readdirSync(maps).filter((f) => f.endsWith(".webp"))) copyFileSync(join(maps, f), join(out, "data/maps", edition, f));
