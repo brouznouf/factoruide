@@ -1,7 +1,6 @@
 import type { ReactNode } from "react";
 import { fmtTime, type Route } from "../api";
 import { BreakdownBars } from "./BreakdownBars";
-import { BisPanel } from "./BisPanel";
 import { LevelChart } from "./LevelChart";
 import { useT } from "../i18n";
 import { Money } from "./Money";
@@ -114,7 +113,7 @@ interface Props {
   compare?: ReactNode;
 }
 
-/** A guide's figures: play time, quests, dungeons, hearthstones, XP, warnings, level over time, where the time goes, the gold of the quests, the best gear by band, the planner's notes. */
+/** A guide's figures: play time, quests, dungeons, hearthstones, XP, warnings, level over time, where the time goes, the gold of the quests, the planner's notes (the best gear has its own tab). */
 export function RouteSummary({ route, notes, compare }: Props) {
   const t = useT();
   const b = route.breakdown;
@@ -178,7 +177,6 @@ export function RouteSummary({ route, notes, compare }: Props) {
           )}
         </div>
       )}
-      {(route.bis ?? []).length > 0 && <BisPanel bis={route.bis!} />}
       {b.missing_class_quests > 0 && (
         <div className="notice warn">{t("Quêtes de classe obligatoires manquées : {n}", { n: b.missing_class_quests })}</div>
       )}

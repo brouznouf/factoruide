@@ -6,6 +6,7 @@ import { REASONS } from "./editing";
 import { Money } from "./Money";
 import { NumberInput } from "./NumberInput";
 import { type Card, fmtClock, isCheckpoint, questOf, type Spans, splitOf, stepStart } from "./guideTimeline";
+import { ItemBlock } from "./ItemTip";
 import type { Segment } from "./segments";
 import { KIND_LABELS } from "./segments";
 
@@ -324,6 +325,8 @@ function StepTip({ i, at, steps, card, title, spans, quests, edit }: TipProps) {
       <strong className="sl-tip-title">{isCheckpoint(s) ? s.text : text}</strong>
       {i === card.first && title !== text && <div className="sl-tip-where">{title}</div>}
       {s.text !== text && !isCheckpoint(s) && <div className="sl-tip-text">{s.text}</div>}
+      {/* The item the step hands over: a best item bought from a vendor, the quest's picked reward. */}
+      {s.reward != null && <ItemBlock item={s.reward} />}
       {parts.length > 0 && (
         <>
           <div className="sl-tip-bar" aria-hidden>

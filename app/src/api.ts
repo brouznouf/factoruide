@@ -435,6 +435,28 @@ export interface BisSlot {
   source: { kind: "quest"; quest: number; quest_name: string } | { kind: "vendor"; npcs: { id: number; name: string }[] };
 }
 
+/** An item's details as the game's tooltip shows them; mirror of `fg_app::ItemInfo`. */
+export interface ItemInfo {
+  /** The game's name ("" when the data has none). */
+  name: string;
+  /** 0 (poor) ..= 6 (artifact): the game colors the name by it. */
+  quality: number;
+  /** Where it goes (`InventoryType`; 0: nowhere). */
+  inventoryType: number;
+  /** Level the character must have (0: none). */
+  requiredLevel: number;
+  /** Armor it gives. */
+  armor: number;
+  /** A weapon's damage per second and its speed (0 when it is not one). */
+  dps: number;
+  speed: number;
+  /** What it gives, as (the stat's code, points) in the game's order, the zeros left out. */
+  stats: [string, number][];
+  /** What a vendor sells and buys it for (copper; 0 in data built before the prices). */
+  buyPrice: number;
+  sellPrice: number;
+}
+
 export interface PlanOutcome {
   route: Route;
   notes: string[];
@@ -656,6 +678,8 @@ export const api = {
       (bytes) => URL.createObjectURL(new Blob([bytes], { type: "image/png" })),
       () => null,
     ),
+  /** An item's details as the game's tooltip shows them (null: the game's data has none of it). */
+  itemInfo: (item: number) => invoke<ItemInfo | null>("item_info", { item }).catch(() => null),
   exportRequest: (request: PlanRequest) => invoke<string | WebFile>("export_request", { request }).then(saved),
   /** Desktop: writes every guide into the game (the data addon Factoruide_Data); returns their number. */
   installAddon: () => invoke<number>("install_addon").then((n) => (settingsChanged(), n)),

@@ -40,12 +40,14 @@ for (const file of files) {
 
 // Texts t() takes from a variable, unseen by the scan above: the settings' labels, helps, titles
 // and option labels (paramSchema.ts, ConfigForm.tsx renders them through t()), the step verbs
-// (guideTimeline.ts, the step tip shows them through t()) and the equipment slots (BisPanel.tsx).
+// (guideTimeline.ts, the step tip shows them through t()), the equipment slots (BisPanel.tsx)
+// and the items' slots and stats (ItemTip.tsx, named by the data's codes).
 for (const [file, pattern] of [
   ["paramSchema.ts", /\b(?:label|help|title|verb)\s*:\s*("(?:[^"\\]|\\.)*")/g],
   ["components/guideTimeline.ts", /\bverb\s*:\s*("(?:[^"\\]|\\.)*")/g],
   ["components/ConfigForm.tsx", /\b(?:label|help)\s*:\s*("(?:[^"\\]|\\.)*")/g],
   ["components/BisPanel.tsx", /^\s*\d+:\s*("(?:[^"\\]|\\.)*")/gm],
+  ["components/ItemTip.tsx", /^\s*(?:"(?:[^"\\]|\\.)*"|\d+|\w+)\s*:\s*("(?:[^"\\]|\\.)*")/gm],
 ]) {
   const p = path.join(root, file);
   const text = fs.readFileSync(p, "utf8");

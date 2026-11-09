@@ -7,6 +7,7 @@
 mod characters;
 mod error;
 mod host;
+mod items;
 mod maps;
 mod settings;
 mod studio;
@@ -14,6 +15,7 @@ mod studio;
 pub use characters::{EditionInfo, editions, older, profession_ranks, race_key, rested_now};
 pub use error::CmdError;
 pub use host::{Host, embedded_overrides};
+pub use items::{ItemInfo, item_info};
 pub use maps::map_index;
 pub use settings::{GuideAddon, Settings, SettingsStore};
 pub use studio::{EditOpened, IssueDraft, IssueGuide, Studio, library, now, request_edition};

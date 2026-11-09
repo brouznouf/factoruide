@@ -3472,21 +3472,22 @@ button.dungeon.excluded b {
   align-items: center;
   gap: 3px;
 }
+/* The game's own money coins, read out of the game client (`fg-casc`, NOTICE.md). */
 .coin {
   display: inline-block;
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+  width: 11px;
+  height: 11px;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 .coin.gold {
-  background: radial-gradient(circle at 35% 35%, #fff1a8, #e2b33c 60%, #9c7414);
+  background-image: url("./assets/coins/gold.png");
 }
 .coin.silver {
-  background: radial-gradient(circle at 35% 35%, #ffffff, #c5ccd6 60%, #7d8693);
+  background-image: url("./assets/coins/silver.png");
 }
 .coin.copper {
-  background: radial-gradient(circle at 35% 35%, #ffc79a, #c4733a 60%, #7c3f17);
+  background-image: url("./assets/coins/copper.png");
 }
 
 /* Read by screen readers only. */
@@ -3951,57 +3952,178 @@ button.link.cmp-jump {
 .route-gold > span:first-child {
   color: var(--text-muted);
 }
-.bis-panel {
-  margin: 0 0 10px;
-  border: 1px solid var(--border, #3a3a40);
-  border-radius: 6px;
-  background: var(--bg-raised, #2a2a2e);
-  font-size: 12px;
+/* The best gear's page: the character sheet's slot layout, one level band at a time (`BisPanel`),
+   the game's own empty-slot pictures behind the planned items' icons. */
+.pd-paperdoll {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
 }
-.bis-panel > summary {
-  padding: 6px 10px;
-  cursor: pointer;
-  user-select: none;
+/* The band picker in the game's tooltip font, at its normal weight only: the font has just
+   the one, a bold would be made up. */
+.pd-bands {
+  align-self: center;
+  font-family: "Friz Quadrata TT", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
-.bis-bands {
+.pd-bands button.active {
+  font-weight: 400;
+}
+.pd-columns {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 28px;
+}
+.pd-column {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 10px;
-  padding: 0 10px 10px;
+  gap: 8px;
 }
-.bis-band h4 {
-  margin: 0 0 4px;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-.bis-band ul {
+.pd-list {
   margin: 0;
   padding: 0;
   list-style: none;
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-width: 230px;
+  max-width: 330px;
 }
-.bis-band li {
+.pd-list li {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px;
-  padding: 1px 0;
+  flex-direction: column;
+  gap: 1px;
 }
-.bis-slot {
-  flex: none;
-  width: 86px;
+/* The source under an item, past its row's 20px icon and the 4px gap of the hover. */
+.pd-list small {
+  padding-left: 24px;
   color: var(--text-muted);
 }
-.bis-icon {
+.pd-list-icon {
   flex: none;
-  width: 20px;
-  height: 20px;
   align-self: center;
   image-rendering: pixelated;
 }
-.bis-item {
-  font-weight: 600;
+.pd-list-name {
+  font-weight: 400;
 }
-.bis-band small {
+.pd-weapons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+/* A slot of the sheet: the game's empty picture, the planned item's icon over it, its quality
+   around it (46px outside, the icon the tooltip's 36). The empty ones keep their picture alone,
+   at rest. */
+.pd-slot {
+  position: relative;
+  display: block;
+  width: 46px;
+  height: 46px;
+  border: 2px solid transparent;
+  border-radius: 4px;
+}
+.pd-slot .pd-empty {
+  width: 100%;
+  height: 100%;
+  opacity: 0.45;
+  image-rendering: pixelated;
+}
+.pd-slot.has {
+  background: rgba(0, 0, 0, 0.4);
+}
+.pd-slot.has .pd-empty {
+  opacity: 0.16;
+}
+.pd-slot .pd-icon {
+  position: absolute;
+  inset: 3px;
+  width: calc(100% - 6px);
+  height: calc(100% - 6px);
+  image-rendering: pixelated;
+}
+/* An item's details as the game's tooltip shows them: over the best gear's slots and rows
+   (`ItemHover`, in a bubble of their own) and in a step's own tip (`ItemBlock`). The game's own
+   tooltip font (Friz Quadrata, `fg-casc`, NOTICE.md). */
+@font-face {
+  font-family: "Friz Quadrata TT";
+  src: url("./assets/friz-quadrata.ttf") format("truetype");
+  font-display: swap;
+}
+.item-hover {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 0;
+}
+.item-hover:focus-visible {
+  outline: 1px solid var(--accent-text);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.item-tip {
+  position: fixed;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: max-content;
+  min-width: 200px;
+  max-width: 300px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--surface-1) 96%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-tip);
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.35;
+  pointer-events: none;
+}
+.item-block {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: "Friz Quadrata TT", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+}
+.sl-tip .item-block {
+  margin-top: 4px;
+  padding-top: 5px;
+  border-top: 1px solid var(--border);
+}
+/* The item's icon beside its name, as the game's tooltip holds them. The name is not bold:
+ * the font has only its normal weight, and the game writes none. */
+.item-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.item-icon {
+  flex: none;
+  width: 36px;
+  height: 36px;
+  image-rendering: pixelated;
+}
+.item-name {
+  font-size: 14px;
+  font-weight: 400;
+}
+.item-fit {
+  color: var(--text-muted);
+}
+/* What it gives: green, as the game writes the stats it adds. */
+.item-stat {
+  color: #1eff00;
+}
+.item-price {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 2px;
   color: var(--text-muted);
 }
 .sl-row .step-check {

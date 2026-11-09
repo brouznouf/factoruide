@@ -401,3 +401,45 @@ fn calls_reading_the_game_data_at_the_same_time_all_answer() {
     call("delete_guide", &serde_json::json!({ "guide": guide })).unwrap();
     let _ = REPLIES.lock().unwrap().drain(..);
 }
+
+/// An item's details, as the game's tooltip shows them: read from the game's data of the current
+/// version, an item the data has none of says so (the page shows what it has of it).
+#[test]
+fn an_items_details_are_read_as_the_tooltip_shows_them() {
+    let _store = STORE.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
+    let mut conn = Connection::open_in_memory().unwrap();
+    conn.execute_batch(
+        "CREATE TABLE m_item(id INT, name TEXT);
+         CREATE TABLE m_item_stats(
+           id INT, quality INT, inventory_type INT, class INT, subclass INT, allowable_class INT,
+           required_level INT, str REAL, agi REAL, sta REAL, int REAL, spi REAL, armor REAL, ap REAL,
+           rap REAL, sp REAL, heal REAL, crit REAL, spell_crit REAL, hit REAL, mp5 REAL, dps REAL,
+           speed REAL, buy_price INT, sell_price INT);
+         INSERT INTO m_item VALUES (12284, 'Bronze Sword');
+         INSERT INTO m_item_stats VALUES
+           (12284, 2, 17, 2, 8, 0, 17, 6, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 32.4, 2.8, 500, 125)",
+    )
+    .unwrap();
+    let bytes = conn.serialize(rusqlite::MAIN_DB).unwrap().to_vec();
+    set_file(
+        "data/classic.sqlite.zst".into(),
+        zstd::encode_all(&bytes[..], 1).unwrap(),
+    );
+    call("set_edition", &serde_json::json!({ "edition": "classic" })).unwrap();
+
+    let info = call("item_info", &serde_json::json!({ "item": 12284 })).unwrap();
+    assert_eq!(info["name"], "Bronze Sword");
+    assert_eq!(info["quality"], 2);
+    assert_eq!(info["inventoryType"], 17);
+    assert_eq!(info["requiredLevel"], 17);
+    assert_eq!(info["dps"], 32.4);
+    assert_eq!(info["speed"], 2.8);
+    assert_eq!(info["stats"], serde_json::json!([["str", 6.0], ["sta", 5.0]]));
+    assert_eq!(info["buyPrice"], 500);
+    assert_eq!(info["sellPrice"], 125);
+    assert_eq!(
+        call("item_info", &serde_json::json!({ "item": 9999 })).unwrap(),
+        serde_json::Value::Null
+    );
+    let _ = REPLIES.lock().unwrap().drain(..);
+}

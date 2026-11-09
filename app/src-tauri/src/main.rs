@@ -51,6 +51,8 @@ use guides::{
 };
 /// The items' icons.
 mod icons;
+/// The items' details, as the game's tooltip shows them.
+mod items;
 /// The game's maps.
 mod maps;
 use contributions::{
@@ -58,6 +60,7 @@ use contributions::{
     send_record_file, sent_lua, setup_report,
 };
 use icons::item_icon;
+use items::item_info;
 use maps::{map_image, map_index, minimap_image, minimap_index};
 
 mod embedded {
@@ -572,6 +575,7 @@ fn main() {
             minimap_index,
             minimap_image,
             item_icon,
+            item_info,
             list_characters,
             import_profile,
             guide_timeline,

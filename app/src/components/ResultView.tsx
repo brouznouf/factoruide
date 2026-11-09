@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, fmtTime, type Edition, type GuideSummary, type GuideVersion, type Options, type Timeline, type VersionMeta } from "../api";
 import { Character } from "./Character";
+import { BisPanel } from "./BisPanel";
 import { EditBar, useEditedView, useUndoKeys } from "./EditMode";
 import { GuideViewer } from "./GuideViewer";
 import { useDraft } from "./useDraft";
@@ -108,8 +109,8 @@ export function ResultView({ version, edition, onRerun, onEdit, onClone, onSaved
   const [guide, setGuide] = useState<GuideSummary | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  // The map and steps, or the figures and versions.
-  const [tab, setTab] = useState<"map" | "summary">("map");
+  // The map and steps, the figures and versions, or the best gear (when the guide looks for it).
+  const [tab, setTab] = useState<"map" | "summary" | "gear">("map");
   // A problem report open, and the steps checked for it.
   const [reporting, setReporting] = useState(false);
   const [reported, setReported] = useState<Set<number>>(new Set());
@@ -262,6 +263,11 @@ export function ResultView({ version, edition, onRerun, onEdit, onClone, onSaved
             {t("Résumé")}
             {versions.length > 1 && <span className="badge">{versions.length}</span>}
           </button>
+          {(route.bis ?? []).length > 0 && (
+            <button role="tab" aria-selected={tab === "gear"} className={tab === "gear" ? "active" : ""} onClick={() => setTab("gear")}>
+              {t("Équipement")}
+            </button>
+          )}
         </div>
       </header>
       {reporting && (
@@ -314,6 +320,10 @@ export function ResultView({ version, edition, onRerun, onEdit, onClone, onSaved
             onCheck={reporting ? toggleCard : undefined}
           />
         )
+      ) : tab === "gear" ? (
+        <section className="panel">
+          <BisPanel bis={route.bis!} />
+        </section>
       ) : (
         <>
           <RouteSummary
