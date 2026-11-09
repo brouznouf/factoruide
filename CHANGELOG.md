@@ -19,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Addon
 
 - No more blocked-action errors from the quest panel during a fight; its layout catches up afterwards.
+- Guides pasted on Windows no longer fail to import on large numbers.
 
 ### WoW data
 
