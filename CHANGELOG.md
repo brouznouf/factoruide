@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### App
+
+- A web app built on Windows includes its game databases and map images.
+
 ### Guides
 
 - A forced dungeon is run even when it has no quest for your character (Shadowfang Keep for the Alliance).
