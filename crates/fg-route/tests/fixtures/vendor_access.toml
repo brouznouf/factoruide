@@ -1,0 +1,49 @@
+# Classic/Forever warlock-only merchant menus: 4782 for demon trainers, 5818 for
+# Gorzeeki. Both use VMaNGOS condition 67 (class mask 256), despite their vendor flags.
+
+[[npc]]
+id = 5749
+name = "Kayla Smithe"
+subname = "Demon Trainer"
+npc_flags = 5
+friendly_to = "H"
+at = [{ zone = 85, x = 30.8, y = 66.4 }]
+
+[[npc]]
+id = 12807
+name = "Greshka"
+subname = "Demon Master"
+npc_flags = 5
+friendly_to = "H"
+at = [{ zone = 85, x = 30.9, y = 66.4 }]
+
+[[npc]]
+id = 14437
+name = "Gorzeeki Wildeyes"
+npc_flags = 7
+friendly_to = "AH"
+at = [{ zone = 85, x = 31.0, y = 66.4 }]
+
+[[npc]]
+id = 990001
+name = "Unrestricted merchant"
+subname = "General Goods"
+npc_flags = 4
+friendly_to = "H"
+at = [{ zone = 85, x = 31.1, y = 66.4 }]
+
+[[npc]]
+id = 990002
+name = "Fishing trainer and merchant"
+subname = "Fishing Trainer & Supplies"
+npc_flags = 21
+friendly_to = "H"
+at = [{ zone = 85, x = 31.2, y = 66.4 }]
+
+[[npc]]
+id = 990003
+name = "Opposite-faction merchant"
+subname = "General Goods"
+npc_flags = 4
+friendly_to = "A"
+at = [{ zone = 85, x = 31.3, y = 66.4 }]

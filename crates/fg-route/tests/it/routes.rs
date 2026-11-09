@@ -103,6 +103,67 @@ fn fixture(files: &[&str]) -> Connection {
         .open()
 }
 
+/// Loot stops must work for everyone whose bags the shared route empties. Demon shops use
+/// a warlock-only gossip option even though their NPCs carry the ordinary vendor flag.
+#[test]
+fn loot_vendors_require_access_for_every_group_member() {
+    for edition in [Edition::Classic, Edition::Forever] {
+        for (class, mates, expected) in [
+            ("rogue", vec![], vec![990001, 990002]),
+            ("warlock", vec![], vec![5749, 12807, 14437, 990001, 990002]),
+            ("warlock", vec!["rogue"], vec![990001, 990002]),
+            ("rogue", vec!["warlock"], vec![990001, 990002]),
+            ("warlock", vec!["warlock"], vec![5749, 12807, 14437, 990001, 990002]),
+        ] {
+            let got = loot_vendors_for(edition, class, &mates);
+            assert_eq!(got, expected, "{edition:?}: {class} with {mates:?}");
+        }
+    }
+}
+
+/// TBC's NPC flags and gossip menus differ. Its snapshot does not carry the Classic class
+/// gate, so do not invent that restriction for its vendors.
+#[test]
+fn tbc_loot_vendors_keep_their_own_service_rules() {
+    assert_eq!(
+        loot_vendors_for(Edition::Tbc, "rogue", &[]),
+        [5749, 12807, 14437, 990001, 990002]
+    );
+}
+
+fn loot_vendors_for(edition: Edition, class: &str, mates: &[&str]) -> Vec<i64> {
+    let conn = Fixture::new(edition).file("vendor_access").open();
+    if edition == Edition::Tbc {
+        conn.execute_batch(
+            "UPDATE m_npc SET npc_flags = CASE id WHEN 990002 THEN 145 ELSE 129 END
+             WHERE id IN (5749, 12807, 14437, 990001, 990002, 990003)",
+        )
+        .unwrap();
+    }
+    let o = Overrides::load_edition(&repo().join("overrides"), edition).unwrap();
+    let req = PlanRequest {
+        params: Some(o.params.clone()),
+        required_class_quests: Some(vec![]),
+        start: Some(player("Lead-Realm", 5, class, 1)),
+        mates: mates
+            .iter()
+            .enumerate()
+            .map(|(i, class)| player(&format!("Mate{i}-Realm"), 5, class, 1))
+            .collect(),
+        ..request("undead", class, 10, &[])
+    };
+    let p = job::prepare(&conn, &o, &req, &|_| {}).unwrap();
+    let mut vendors: Vec<i64> = p
+        .model
+        .vendors
+        .iter()
+        .map(|v| v.id)
+        .filter(|id| [5749, 12807, 14437, 990001, 990002, 990003].contains(id))
+        .collect();
+    vendors.sort_unstable();
+    vendors
+}
+
 /// `prepare_from` on a database of fixtures.
 fn prepare_in(
     conn: &Connection,
