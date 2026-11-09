@@ -229,27 +229,32 @@ fn read_filed_levels(conn: &Connection) -> Result<HashMap<i64, i64>> {
 
 /// Each dungeon's level (`dungeon_levels`, else its planned quests' median) and the window it is
 /// run in (`window` around it, within the game's levels up to `max_level`; empty when the window
-/// leaves none), with the default run time and kills. A dungeon without quests is not planned.
+/// leaves none), with the default run time and kills. A dungeon without quests is not planned,
+/// unless the player forced it (`forced`, by area) and its level is known: it is run for its
+/// monsters (Shadowfang Keep has no quest for an Alliance priest, GitHub #131).
 pub(super) fn set_dungeon_levels(
     dungeons: &mut [Dungeon],
     quests: &[Quest],
     levels: &HashMap<i64, i64>,
+    forced: impl Fn(i64) -> bool,
     window: (i64, i64),
     max_level: i64,
 ) {
     for (d, dungeon) in dungeons.iter_mut().enumerate() {
         let mut own: Vec<i64> = (quests.iter()).filter(|q| q.in_dungeon(d)).map(|q| q.level).collect();
-        if own.is_empty() {
+        own.sort_unstable();
+        let known = levels.get(&dungeon.area).copied();
+        let Some(mob_level) = known.or_else(|| own.get(own.len() / 2).copied()) else {
+            dungeon.min_level = i64::MAX;
+            continue;
+        };
+        dungeon.mob_level = mob_level;
+        if own.is_empty() && !forced(dungeon.area) {
             // Not planned, but its levels are known when a request forces it (`check_dungeon_levels`).
             dungeon.min_level = i64::MAX;
-            if let Some(&level) = levels.get(&dungeon.area) {
-                dungeon.mob_level = level;
-                dungeon.max_level = (level + window.1).min(max_level);
-            }
+            dungeon.max_level = (mob_level + window.1).min(max_level);
             continue;
         }
-        own.sort_unstable();
-        dungeon.mob_level = levels.get(&dungeon.area).copied().unwrap_or(own[own.len() / 2]);
         // A window above the game's levels is run at its highest one (a level-60 dungeon at 60 when
         // dungeons are run above their monsters' level).
         dungeon.min_level = (dungeon.mob_level + window.0).clamp(1, max_level);
@@ -266,6 +271,49 @@ pub(super) fn set_dungeon_levels(
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::world::Pos;
+
+    fn dungeon(area: i64) -> Dungeon {
+        Dungeon {
+            area,
+            name: format!("Dungeon {area}"),
+            entrance: Loc {
+                pos: Pos {
+                    continent: 0,
+                    x: 0.0,
+                    y: 0.0,
+                    zone: 0,
+                    z: None,
+                },
+                zone: 0,
+                kind: EntityKind::Dungeon,
+                id: area,
+                name: String::new(),
+                inside: None,
+                floor: None,
+            },
+            min_level: 0,
+            max_level: 0,
+            minutes: 0.0,
+            kills: 0.0,
+            mob_level: 0,
+            content: 0,
+            needed: false,
+        }
+    }
+
+    /// A dungeon without quests for the character is left out, unless the player forced it: it is
+    /// run for its monsters, in the window around their level (GitHub #131).
+    #[test]
+    fn a_forced_dungeon_without_quests_gets_its_levels() {
+        let mut dungeons = vec![dungeon(209), dungeon(717)];
+        let levels = HashMap::from([(209, 26), (717, 26)]);
+        set_dungeon_levels(&mut dungeons, &[], &levels, |area| area == 209, (-3, 3), 60);
+        assert_eq!((dungeons[0].min_level, dungeons[0].max_level), (23, 29), "forced");
+        assert!(dungeons[0].minutes > 0.0 && dungeons[0].kills > 0.0);
+        assert_eq!(dungeons[1].min_level, i64::MAX, "not forced: not planned");
+        assert_eq!(dungeons[1].max_level, 29, "its levels known for a request forcing it");
+    }
 
     /// Each faction gets its own door of a dungeon; a dungeon without one for a faction, and a
     /// database from before the table, give nothing (the shared entrance is used).

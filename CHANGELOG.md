@@ -8,6 +8,14 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### Guides
+
+- A forced dungeon is run even when it has no quest for your character (Shadowfang Keep for the Alliance).
+
+### WoW data
+
+- WoW Forever: Corma Villard's Wetlands quests, no longer offered in game, are left out of the guides.
+
 ## 0.17.0 (2026-11-09)
 
 Objective guides: several dungeons, zones and quests at once, in the best order whatever their level, and the latest WoW Forever data.

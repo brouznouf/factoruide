@@ -91,6 +91,7 @@ pub(crate) fn settle(
         dungeons,
         quests,
         levels,
+        |area| params.forced_dungeons.contains(&area) || params.forced_dungeon_quests.contains(&area),
         (params.dungeon_from, params.dungeon_to),
         params.edition.rules().max_level,
     );
