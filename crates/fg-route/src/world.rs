@@ -122,6 +122,22 @@ thread_local! {
 /// What a table of 2^17 buckets holds (7/8 of them): it never doubles for the last ones.
 const WALKED_MAX: usize = (1 << 17) / 8 * 7;
 
+/// Gives back the memory of this thread's walks (`threads::Release`).
+pub(crate) fn release_thread_caches() {
+    let _ = WALKED.try_with(|m| std::mem::take(&mut *m.borrow_mut()));
+}
+
+#[cfg(test)]
+pub(crate) fn fill_thread_caches_for_tests() {
+    WALKED.with(|m| m.borrow_mut().insert((0, 0, [0; 7]), 1.0));
+}
+
+/// The room this thread's walks take (entries).
+#[cfg(test)]
+pub(crate) fn thread_cache_capacity() -> usize {
+    WALKED.with(|m| m.borrow().capacity())
+}
+
 /// Walks between the passages for a level (`World::pass_walks`): shortest distances and the next passage
 /// on each.
 type PassGraph = (Vec<Vec<f64>>, Vec<Vec<usize>>);

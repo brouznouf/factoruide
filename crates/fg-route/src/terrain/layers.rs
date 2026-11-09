@@ -164,6 +164,11 @@ thread_local! {
         const { std::cell::RefCell::new(None) };
 }
 
+/// Gives back this thread's compressor (`threads::Release`).
+pub(super) fn release_thread_caches() {
+    let _ = COMPRESSOR.try_with(|c| c.borrow_mut().take());
+}
+
 /// Bytes compressed as the tiles are stored (zstd, level 19).
 #[doc(hidden)]
 pub fn compress(raw: &[u8]) -> Result<Vec<u8>> {

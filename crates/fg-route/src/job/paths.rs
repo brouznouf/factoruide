@@ -49,6 +49,7 @@ pub fn add_walk_paths(world: &World, route: &mut Route) {
         let workers: Vec<_> = (0..threads)
             .map(|_| {
                 scope.spawn(|| {
+                    let _release = crate::threads::Release;
                     let mut found = Vec::new();
                     while let Some(&(k, a, b, level)) = walks.get(next.fetch_add(1, Ordering::Relaxed)) {
                         let walk = world.walk_path(&a, &b, level);

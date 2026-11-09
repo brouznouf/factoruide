@@ -184,12 +184,42 @@ struct Scratch {
     open: Vec<Vec<(u32, Node)>>,
 }
 
+impl Scratch {
+    fn new() -> Self {
+        Self {
+            best: Vec::new(),
+            current: 0,
+            open: (0..BUCKETS).map(|_| Vec::new()).collect(),
+        }
+    }
+}
+
 thread_local! {
-    static SCRATCH: RefCell<Scratch> = RefCell::new(Scratch {
-        best: Vec::new(),
-        current: 0,
-        open: (0..BUCKETS).map(|_| Vec::new()).collect(),
-    });
+    static SCRATCH: RefCell<Scratch> = RefCell::new(Scratch::new());
+}
+
+/// Gives back the memory of this thread's walks and searches (`threads::Release`).
+pub(crate) fn release_thread_caches() {
+    let _ = MEMO.try_with(|m| std::mem::take(&mut *m.borrow_mut()));
+    let _ = APART.try_with(|m| std::mem::take(&mut *m.borrow_mut()));
+    let _ = SNAPS.try_with(|m| std::mem::take(&mut *m.borrow_mut()));
+    let _ = SCRATCH.try_with(|s| *s.borrow_mut() = Scratch::new());
+    gates::release_thread_caches();
+    layers::release_thread_caches();
+}
+
+#[cfg(test)]
+pub(crate) fn fill_thread_caches_for_tests() {
+    MEMO.with(|m| m.borrow_mut().insert((0, 0, 0), 1.0));
+}
+
+/// The room this thread's walks take (entries).
+#[cfg(test)]
+pub(crate) fn thread_cache_capacity() -> usize {
+    MEMO.with(|m| m.borrow().capacity())
+        + APART.with(|m| m.borrow().capacity())
+        + SNAPS.with(|m| m.borrow().capacity())
+        + SCRATCH.with(|s| s.borrow().best.capacity())
 }
 
 /// Bits of a floor's moves (`TileNodes::moves`), by direction of `DIRECTIONS`: the step to the
@@ -760,6 +790,7 @@ impl Grid {
             let parts: Vec<_> = (0..workers)
                 .map(|w| {
                     scope.spawn(move || {
+                        let _release = crate::threads::Release;
                         (w..n)
                             .step_by(workers)
                             .map(|t| (t, this.label_tile(t)))
@@ -894,6 +925,7 @@ impl Grid {
             let parts: Vec<_> = (0..workers)
                 .map(|w| {
                     scope.spawn(move || {
+                        let _release = crate::threads::Release;
                         (w..layers.len())
                             .step_by(workers)
                             .map(|t| (t, this.link_tile(t, layers[t].as_ref())))
@@ -1415,6 +1447,7 @@ impl Terrain {
                 .chunks(rows.len().div_ceil(workers).max(1))
                 .map(|part| {
                     scope.spawn(move || {
+                        let _release = crate::threads::Release;
                         part.iter()
                             .filter_map(|(map, x, y, version, data)| {
                                 let l = TileLayers::unpack(data, *version).ok()?;

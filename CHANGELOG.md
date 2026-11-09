@@ -10,6 +10,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### App
 
+- The web app no longer runs out of memory while making a guide, nor after making a few.
 - A web app built on Windows includes its game databases and map images.
 
 ### Guides

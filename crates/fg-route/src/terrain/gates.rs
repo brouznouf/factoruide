@@ -45,6 +45,11 @@ thread_local! {
         std::cell::RefCell::new((0..super::BUCKETS).map(|_| Vec::new()).collect());
 }
 
+/// Gives back the memory of this thread's open floors (`threads::Release`).
+pub(super) fn release_thread_caches() {
+    let _ = LOCAL_OPEN.try_with(|o| o.borrow_mut().iter_mut().for_each(|v| *v = Vec::new()));
+}
+
 /// Cheapest cost found to each gate (tile, index) of a walk (`NONE`: none yet), and the gate it
 /// came from (`FROM_A`: the walk's start): the gates of a tile side by side, found by one lookup
 /// of the tile.
@@ -170,6 +175,7 @@ impl Grid {
             let parts: Vec<_> = (0..workers)
                 .map(|w| {
                     scope.spawn(move || {
+                        let _release = crate::threads::Release;
                         (w..n)
                             .step_by(workers)
                             .filter(|&t| self.tiles[t].is_some())

@@ -57,7 +57,10 @@ pub fn optimize_interruptible(planner: &Planner<'_>, progress: Progress<'_>, int
         progress(&JobEvent::Status(&format!("forced starts: {:?}", searcher.starts)));
     }
     let ranked = std::thread::scope(|scope| {
-        scope.spawn(|| live.watch(&searcher));
+        scope.spawn(|| {
+            let _release = crate::threads::Release;
+            live.watch(&searcher);
+        });
         // The watcher ends with the searches, also when one panics: the scope waits for it
         // before passing the panic on, the job would hang.
         let _done = Done(&live.done);
@@ -814,6 +817,7 @@ fn build_all(searcher: &Searcher<'_>, plan: &Tournament, ks: std::ops::Range<usi
         let workers: Vec<_> = (0..plan.threads)
             .map(|_| {
                 scope.spawn(|| {
+                    let _release = crate::threads::Release;
                     let mut built = Vec::new();
                     loop {
                         let k = next.fetch_add(1, Ordering::Relaxed);
@@ -928,6 +932,7 @@ fn race(searcher: &Searcher<'_>, plan: &Tournament, candidates: Vec<(usize, Opti
         let workers: Vec<_> = (0..plan.threads)
             .map(|_| {
                 scope.spawn(|| {
+                    let _release = crate::threads::Release;
                     let mut qualified = Vec::new();
                     loop {
                         let i = next.fetch_add(1, Ordering::Relaxed);
@@ -981,6 +986,7 @@ fn round(
                     logs: i == 0 && search == 0,
                 };
                 handles.push(scope.spawn(move || {
+                    let _release = crate::threads::Release;
                     // Dropped at the end, panic included: the others stop waiting for it.
                     let member = exchange.member();
                     let seat = (searcher.params.share_every > 0 && searches > 1).then_some(&member);
