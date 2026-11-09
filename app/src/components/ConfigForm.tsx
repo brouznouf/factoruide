@@ -141,7 +141,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   const nameMissing = triedRun && !name.trim();
   // The language the guide is first written in (shown and installed in any language later).
   const locale = initial?.locale ?? defaultLocale;
-  const [params, setParams] = useState<Params>({ ...defaults, ...(initial?.params ?? {}) });
+  const [params, setParams] = useState<Params>({ reputation_estimates: true, ...defaults, ...(initial?.params ?? {}) });
   const [classQuests, setClassQuests] = useState<string[] | null>(initial?.required_class_quests ?? null);
   const [requiredQuests, setRequiredQuests] = useState<RequiredQuest[]>(initial?.required_quests ?? []);
   const [newClassQuest, setNewClassQuest] = useState("");
@@ -483,6 +483,8 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                 start={own.start}
                 goals={params.reputation_goals}
                 onChange={(reputation_goals) => setParams((p) => ({ ...p, reputation_goals }))}
+                estimates={params.reputation_estimates ?? true}
+                onEstimatesChange={(reputation_estimates) => setParams((p) => ({ ...p, reputation_estimates }))}
               />
 
             </div>

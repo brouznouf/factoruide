@@ -92,7 +92,7 @@ pub fn write_data_addon(dir: &Path, lua: &str, interface: &str, version: &str, t
 /// 2 on, a step kind the addon does not know is shown by its text and passed: a new kind needs no
 /// bump unless the guide goes wrong when it is not played.
 /// 2: steps selling the bags' loot (`sell`); unknown step kinds passed.
-pub const GUIDE_FORMAT: u32 = 2;
+pub const GUIDE_FORMAT: u32 = 3;
 
 /// The Lua of guides for the addon (what `/fg import` and the data addon run): each route
 /// (written as it is), with when its version was computed and its number (the addon keeps the
@@ -181,6 +181,9 @@ pub fn addon_walks(
 pub fn write_polestar_pack(conn: &Connection, routes_dir: &Path, dir: &Path, version: &str) -> Result<usize> {
     let routes = render_routes(conn, &load_routes(routes_dir)?, None)?;
     let guides: Vec<(String, Route)> = routes.into_iter().map(|r| (slug(&r.name), r)).collect();
+    for (_, route) in &guides {
+        export::polestar::validate_route(route)?;
+    }
     std::fs::create_dir_all(dir)?;
     for (name, content) in export::polestar::pack(&guides, version) {
         std::fs::write(dir.join(name), content)?;
@@ -192,6 +195,9 @@ pub fn write_polestar_pack(conn: &Connection, routes_dir: &Path, dir: &Path, ver
 /// (`export::polestar::import_string`), `<guide>.txt` each in `dir`, each in its own language.
 pub fn write_polestar_strings(conn: &Connection, routes_dir: &Path, dir: &Path, _version: &str) -> Result<usize> {
     let routes = render_routes(conn, &load_routes(routes_dir)?, None)?;
+    for route in &routes {
+        export::polestar::validate_route(route)?;
+    }
     std::fs::create_dir_all(dir)?;
     for r in &routes {
         let name = slug(&r.name);
@@ -207,6 +213,9 @@ pub fn write_polestar_strings(conn: &Connection, routes_dir: &Path, dir: &Path, 
 /// every saved route: its `pack.json` and a `.guide` file each, in English.
 pub fn write_polestar_source(conn: &Connection, routes_dir: &Path, dir: &Path, version: &str) -> Result<usize> {
     let routes = render_routes(conn, &load_routes(routes_dir)?, Some("enUS"))?;
+    for route in &routes {
+        export::polestar::validate_route(route)?;
+    }
     add_polestar_source_pack(dir, version)?;
     for r in &routes {
         add_polestar_source(dir, &slug(&r.name), r, version)?;
@@ -234,6 +243,7 @@ pub fn polestar_source_dir(picked: &Path) -> PathBuf {
 /// and the pack's `pack.json` written again. A folder holding another pack is left as it is.
 /// Returns the guide's file.
 pub fn add_polestar_source(dir: &Path, id: &str, route: &Route, version: &str) -> Result<PathBuf> {
+    export::polestar::validate_route(route)?;
     add_polestar_source_pack(dir, version)?;
     let file = dir.join(format!("{}.guide", export::polestar::guide_name(id)));
     std::fs::write(&file, export::polestar::source(id, route))?;

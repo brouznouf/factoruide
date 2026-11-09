@@ -32,6 +32,7 @@ Locales\zhTW.lua
 Sent.lua
 Data.lua
 Collector.lua
+ReputationProfile.lua
 Profile.lua
 Window.lua
 Export.lua

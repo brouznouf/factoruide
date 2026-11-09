@@ -16,6 +16,7 @@ mod mandatory_reporting;
 mod movement;
 mod moves;
 mod profession_trainers;
+mod reputation_program;
 mod required_gear;
 mod required_reputation;
 mod shared_kills;

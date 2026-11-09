@@ -40,6 +40,20 @@ impl Lang {
 /// and traditional Chinese.
 pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
     (
+        "reputation.program",
+        [
+            "Reputation work: {n} activities",
+            "Réputation : {n} activités",
+            "Rufarbeit: {n} Aktivitäten",
+            "Reputación: {n} actividades",
+            "Reputação: {n} atividades",
+            "Репутация: {n} действий",
+            "평판 작업: 활동 {n}개",
+            "声望任务：{n}项活动",
+            "聲望任務：{n}項活動",
+        ],
+    ),
+    (
         "accept",
         [
             "Accept {quest} from {who}",

@@ -66,11 +66,65 @@ pub fn starting(
                 "reputation {}: starting value {points} is an estimated race/class baseline; no recorded standing for this faction",
                 goal.faction
             ));
-            points
+            points as f64
         };
-        out.push(points as f64);
+        out.push(points);
+        if start.is_some_and(|s| s.reputation_inferred) {
+            notes.push(format!(
+                "reputation {} starts from an inferred continuation forecast, not a new recorded standing",
+                goal.faction
+            ));
+        }
     }
     Ok(out)
+}
+
+/// Baselines for the small reward/gate closure used only by the combined replay.
+pub(super) fn source_starting(
+    conn: &Connection,
+    model: &crate::model::Model,
+    params: &crate::params::Params,
+    profile: &Profile,
+    start: Option<&StartState>,
+    notes: &mut Vec<String>,
+) -> Result<crate::reputation::Standings> {
+    use crate::reputation::SpilloverPolicy;
+    let mut factions = std::collections::BTreeSet::new();
+    factions.extend(params.reputation_goals.iter().map(|g| g.faction));
+    for source in &model.reputation_sources.sources {
+        factions.extend(source.descriptor.effects.awards.iter().map(|a| a.faction_id));
+        factions.extend(source.descriptor.eligibility.standing.iter().map(|r| r.faction_id));
+        if let SpilloverPolicy::Explicit(edges) = &source.descriptor.effects.spillover {
+            factions.extend(
+                edges
+                    .iter()
+                    .flat_map(|e| [e.primary_faction_id, e.recipient_faction_id]),
+            );
+        }
+    }
+    for quest in &model.quests {
+        factions.extend(quest.reputation.iter().map(|r| r.0));
+    }
+    let mut standings = crate::reputation::Standings::new();
+    let mut unknown = Vec::new();
+    for faction in factions {
+        let recorded = start
+            .and_then(|s| s.reputation.iter().find(|r| r.id == faction))
+            .map(|r| r.value);
+        let value = if let Some(value) = recorded {
+            value
+        } else if let Some(value) = race_base(conn, faction, profile.race_bit(), profile.class_bit())? {
+            value as f64
+        } else {
+            unknown.push(faction);
+            0.0
+        };
+        standings.insert(faction, value);
+    }
+    if !unknown.is_empty() {
+        notes.push(format!("Reputation source forecast: race/class baseline is unavailable for factions {}; their unrecorded standing starts at an explicitly assumed zero.", unknown.iter().map(ToString::to_string).collect::<Vec<_>>().join(", ")));
+    }
+    Ok(standings)
 }
 
 #[cfg(test)]
@@ -82,7 +136,7 @@ mod tests {
         let conn = Connection::open_in_memory().unwrap();
         let profile = crate::testing::profile(crate::faction::Faction::Horde, 20, 21);
         let start = StartState {
-            reputation: vec![crate::job::Standing { id: 68, value: 1217 }],
+            reputation: vec![crate::job::Standing { id: 68, value: 1217.0 }],
             ..StartState::default()
         };
         let mut notes = Vec::new();

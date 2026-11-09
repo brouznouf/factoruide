@@ -71,6 +71,9 @@ impl StepWriter<'_> {
     pub(super) fn step(&self, t: &Timed) -> Step {
         let mut step = self.blank(t);
         let place = match &t.event {
+            Event::ReputationProgram { program } => {
+                super::reputation::write_step(&mut step, program, self.planner.world)
+            }
             Event::Reward { .. } | Event::Farm { .. } => None,
             Event::Abandon { quest } => self.abandon(&mut step, *quest),
             Event::Fly { from, to } => self.fly(&mut step, *from, *to),
@@ -334,6 +337,7 @@ impl StepWriter<'_> {
             party: t.party.clone(),
             members: None,
             keep: false,
+            reputation_program: None,
             event: None,
         }
     }

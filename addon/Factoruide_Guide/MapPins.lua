@@ -68,7 +68,7 @@ function Provider:RefreshAllData()
     local first = FG.Guide:CurrentStep()
     local n, shown = 0, 0
     for i = first, #route.steps do
-        local step = route.steps[i]
+        local step = FG.Reputation:Presentation(route.steps[i], i)
         if not step.bg then
             n = n + 1
             local x, y = PositionOn(step, mapID)

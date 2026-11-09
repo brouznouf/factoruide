@@ -33,6 +33,7 @@ TalentBuilds_forever.lua
 TalentBuilds_classic.lua
 TalentBuilds_tbc.lua
 AcceptanceAudit.lua
+Reputation.lua
 Automation.lua
 Group.lua
 Guide.lua

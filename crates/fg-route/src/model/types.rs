@@ -676,6 +676,8 @@ impl Quest {
 }
 
 pub struct Model {
+    /// Edition-aware earning rules with exact current entity/material bindings.
+    pub(crate) reputation_sources: super::BoundReputationCatalog,
     /// Configured class powers whose reward is already known.
     pub known_class_powers: u32,
     pub abilities: crate::abilities::Abilities,
@@ -828,8 +830,12 @@ pub struct Initial {
     pub log: Vec<(i64, String)>,
     /// Points with the faction of each reputation goal (`Params::reputation_goals`) at the start.
     pub reputation: Vec<f64>,
+    /// Full faction closure baseline for terminal reputation replay (not copied in the optimizer).
+    pub reputation_all: crate::reputation::Standings,
     /// Selected factions whose initial standing was measured in the character snapshot.
     pub reputation_recorded: HashSet<i64>,
+    /// Present standings came from a continuation forecast rather than a fresh game snapshot.
+    pub reputation_inferred: bool,
     /// The other players of a group guide, as `Profile::mates`.
     pub mates: Vec<MateStart>,
     /// In a group: the members each quest is still for (a bit each, the character's 1), not

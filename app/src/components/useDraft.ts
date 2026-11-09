@@ -3,6 +3,7 @@
 // moment of it.
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api, type EditOpened, type EditView, type GuideVersion, type RouteStep, type Suggestions, type VersionMeta } from "../api";
+import { protectReputationPrograms } from "../reputationProgram";
 import { gameLocale, useLang } from "../i18n";
 
 /** A step of the draft, with a key kept while it moves (its replay is found by it). */
@@ -139,7 +140,8 @@ export function useDraft(version: GuideVersion, active: boolean): Draft {
   now.current = items;
   const change = useCallback((edit: (draft: Item[]) => Changed) => {
     const before = now.current;
-    const { items: next, touched: keys } = edit(before);
+    const { items: proposed, touched: keys } = edit(before);
+    const next = protectReputationPrograms(before, proposed);
     now.current = next;
     setHistory((h) => [...h.slice(-99), before]);
     setUndone([]);

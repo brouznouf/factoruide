@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { type Farmed, fmtTime, type QuestInfo, type RouteStep, type Step, type StepReport } from "../api";
 import { useT } from "../i18n";
@@ -344,6 +344,7 @@ function StepTip({ i, at, steps, card, title, spans, quests, edit }: TipProps) {
         </>
       )}
       {span?.estimate && <div className="sl-tip-note">{t("Durée estimée : cette étape n'a pas été retrouvée en rejouant le guide")}</div>}
+      {s.reputation_program && <div className="sl-tip-note">{t("Le programme de réputation est conservé à la fin du guide. Modifiez vos objectifs dans la configuration pour le recalculer.")}</div>}
       {s.farm ? <div className="sl-tip-note">{t("× {n} mobs tués en chemin", { n: s.farm })}</div> : null}
       {warning && <div className="sl-tip-why warn">{t("Attention : {warning}", { warning })}</div>}
       {reason && <div className={r?.status === "error" ? "sl-tip-why error" : "sl-tip-why"}>{r?.status === "error" ? t("Impossible : {reason}", { reason }) : t("Rien à faire : {reason}", { reason })}</div>}
@@ -402,6 +403,7 @@ function dragged(e: React.DragEvent): [number, number] | null {
  */
 function Row({ top, i, steps, card, spans, quests, active, found, onSelect, checked, onCheck, edit, drop, onDrop, onHover }: RowProps) {
   const t = useT();
+  const protectedHelp = useId();
   const s = steps[i];
   const head = i === card.first;
   const { kind, label, text } = lineOf(s, quests);
@@ -436,9 +438,10 @@ function Row({ top, i, steps, card, spans, quests, active, found, onSelect, chec
       role="button"
       tabIndex={0}
       aria-current={active && head ? "step" : undefined}
+      aria-describedby={edit && step?.kind === "reputation_program" ? protectedHelp : undefined}
       onMouseEnter={(e) => onHover(i, e.currentTarget)}
       onMouseLeave={() => onHover(null)}
-      draggable={!!edit}
+      draggable={!!edit && step?.kind !== "reputation_program"}
       onClick={() => onSelect(card.n)}
       onKeyDown={(e) => {
         if (e.key === "Enter") onSelect(card.n);
@@ -476,6 +479,7 @@ function Row({ top, i, steps, card, spans, quests, active, found, onSelect, chec
         onCheck && <span className="step-check" />
       )}
       <span className="sl-n">{head ? card.n + 1 : ""}</span>
+      {edit && step?.kind === "reputation_program" && <span className="sr-only" id={protectedHelp}>{t("Le programme de réputation est conservé à la fin du guide. Modifiez vos objectifs dans la configuration pour le recalculer.")}</span>}
       {isCheckpoint(s) ? (
         <span className="sl-text">{s.text}</span>
       ) : (
@@ -513,7 +517,8 @@ function Row({ top, i, steps, card, spans, quests, active, found, onSelect, chec
               e.stopPropagation();
               edit.onAdd(i, anchorOf(e.currentTarget.closest(".sl-row") ?? e.currentTarget));
             }}
-            title={t("Ajouter une étape après")}
+            disabled={step?.kind === "reputation_program"}
+            title={step?.kind === "reputation_program" ? t("Programme de réputation conservé à la fin du guide") : t("Ajouter une étape après")}
             aria-label={t("Ajouter une étape après")}
           >
             +
@@ -524,7 +529,8 @@ function Row({ top, i, steps, card, spans, quests, active, found, onSelect, chec
               e.stopPropagation();
               edit.onRemove(i);
             }}
-            title={t("Supprimer l'étape")}
+            disabled={step?.kind === "reputation_program"}
+            title={step?.kind === "reputation_program" ? t("Programme de réputation conservé à la fin du guide") : t("Supprimer l'étape")}
             aria-label={t("Supprimer l'étape")}
           >
             ×

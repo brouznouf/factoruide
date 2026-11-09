@@ -497,7 +497,37 @@ fn changes(a: &Step, b: &Step) -> Vec<Change> {
     if a.bg != b.bg {
         push("along the way", a.bg.to_string(), b.bg.to_string());
     }
+    if a.reputation_program != b.reputation_program {
+        push("reputation program", reputation_summary(a), reputation_summary(b));
+    }
     out
+}
+
+fn reputation_summary(step: &Step) -> String {
+    step.reputation_program.as_ref().map_or_else(
+        || "-".into(),
+        |program| {
+            let occurrences: u128 = program
+                .phases
+                .iter()
+                .map(|phase| {
+                    u128::from(phase.cycles)
+                        * phase
+                            .actions
+                            .iter()
+                            .map(|action| u128::from(action.units_per_cycle))
+                            .sum::<u128>()
+                })
+                .sum();
+            format!(
+                "{occurrences} activities; {:.0}s active play; {} daily windows; reached {:?}; {} warnings",
+                program.result.active_play_seconds,
+                program.result.daily_opportunities,
+                program.result.reached,
+                program.result.warnings.len()
+            )
+        },
+    )
 }
 
 fn grind_goal(s: &Step) -> String {
@@ -939,6 +969,7 @@ mod tests {
             party: Vec::new(),
             members: None,
             keep: false,
+            reputation_program: None,
             event: None,
             spots: Vec::new(),
             patrol: false,

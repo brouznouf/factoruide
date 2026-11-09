@@ -1463,6 +1463,63 @@ assert(#profile.completed == 2, "quests done")
 assert(profile.log[1].id == 233 and profile.log[1].objectives[1].done == 3, "log with its objectives")
 print("profile ok")
 
+-- Reputation supplies are real bag contents, not assumed stock; daily state uses the server clock.
+do
+    local oldContainer, oldBagCount = C_Container, NUM_BAG_SLOTS
+    local oldSlots, oldInfo, oldID = GetContainerNumSlots, GetContainerItemInfo, GetContainerItemID
+    local oldServerTime, oldResetTime = GetServerTime, GetQuestResetTime
+    local oldDateAndTime, oldFlagged = C_DateAndTime, C_QuestLog.IsQuestFlaggedCompleted
+    NUM_BAG_SLOTS = 4
+    local bags = {
+        [0] = { { itemID = 14047, stackCount = 20 }, { itemID = 264014, stackCount = 1 } },
+        [1] = { { itemID = 14047, stackCount = 40 } },
+        [4] = { { itemID = 6048, stackCount = 2 } },
+        [-1] = { { itemID = 14047, stackCount = 900 } }, -- Bank stock is not carried.
+    }
+    C_Container = {
+        GetContainerNumSlots = function(bag) return bags[bag] and #bags[bag] or 0 end,
+        GetContainerItemInfo = function(bag, slot) return bags[bag] and bags[bag][slot] end,
+    }
+    GetServerTime = function() return 1000 end
+    C_DateAndTime = { GetSecondsUntilDailyReset = function() return 4000 end }
+    C_QuestLog.IsQuestFlaggedCompleted = function(id) return id == 94004 end
+    FG.Profile:Snapshot()
+    assert(profile.inventory_valid and profile.inventory, "profile records current carried reputation materials")
+    local stock = {}
+    for _, item in ipairs(profile.inventory) do
+        stock[item.item] = item.count
+    end
+    assert(
+        stock[14047] == 60 and stock[264014] == 1 and stock[6048] == 2,
+        "stacks are combined across carried bags, without bank stock"
+    )
+    assert(profile.daily and profile.daily.reset_at == 5000, "next daily reset uses server time plus reset API")
+    assert(
+        #profile.daily.completed == 1 and profile.daily.completed[1] == 94004,
+        "only completed known daily sources are captured"
+    )
+    C_Container = nil
+    GetContainerNumSlots = function(bag) return bag == 0 and 1 or 0 end
+    GetContainerItemInfo = function() return nil, 7 end
+    GetContainerItemID = function() return 14047 end
+    C_DateAndTime = nil
+    GetQuestResetTime = function() return 4000 end
+    FG.Profile:Snapshot()
+    assert(
+        profile.inventory_valid and profile.inventory[1].item == 14047 and profile.inventory[1].count == 7,
+        "older container APIs preserve real stack counts"
+    )
+    GetContainerNumSlots, GetContainerItemInfo, GetContainerItemID = nil, nil, nil
+    FG.Profile:Snapshot()
+    assert(not profile.inventory_valid, "unavailable inventory is not usable stale stock")
+    C_Container, NUM_BAG_SLOTS = oldContainer, oldBagCount
+    GetContainerNumSlots, GetContainerItemInfo, GetContainerItemID = oldSlots, oldInfo, oldID
+    GetServerTime, GetQuestResetTime = oldServerTime, oldResetTime
+    C_DateAndTime, C_QuestLog.IsQuestFlaggedCompleted = oldDateAndTime, oldFlagged
+    FG.Profile:Snapshot()
+    print("reputation inventory and daily snapshot ok")
+end
+
 -- Window size: Ctrl + mouse wheel over a window, or the setting; saved, nothing: the default.
 FG:Save("scale", 1.3)
 assert(FG:Get("scale") == 1.3 and FactoruideDB.settings.scale == 1.3, "scale saved")
@@ -4344,7 +4401,7 @@ local function ExportImport()
     local wide = Encode([[
 Factoruide.Routes = {}
 Factoruide.Routes["wide-numbers"] = {
-    race = 7, class = 8, format = 2, created = 1000, version = 1,
+    race = 7, class = 8, format = 3, created = 1000, version = 1,
     steps = {{ k = "reputation", rp = { sources = {{ eligibility = { race_mask = 8589934770 } }} } }},
     numbers = {2147483647, 2147483648, -2147483648, -2147483649, 4294967295,
         8589934770, -8589934770, 9007199254740991, 8589934770.25},
@@ -5371,3 +5428,558 @@ function AcceptanceAuditTest()
     print("acceptance interaction audit and outdated keep protection ok")
 end
 AcceptanceAuditTest()
+
+-- These exercise the real guide/event/automation path; game inventory, clock and standings
+-- are controlled independently from the forecast in the exported programme.
+local function ReputationProgramTest()
+    local savedRep, savedItem, savedServer, savedReset = FG.Reputations, FG.ItemCount, GetServerTime, GetQuestResetTime
+    local savedPrint, savedID, savedShift = FG.Print, GetQuestID, IsShiftKeyDown
+    local savedOffers, savedActive = C_GossipInfo.GetAvailableQuests, C_GossipInfo.GetActiveQuests
+    local savedSelect, savedSelectActive = C_GossipInfo.SelectAvailableQuest, C_GossipInfo.SelectActiveQuest
+    local savedAccept, savedComplete, savedReward = AcceptQuest, CompleteQuest, GetQuestReward
+    local savedCompletable, savedChoices = IsQuestCompletable, GetNumQuestChoices
+    local oldLevel, serial = playerLevel, 0
+    local actual, stock, now, reset, shift, detail, accepts, turns, messages = 0, {}, 1000, 2000, false, 99101, 0, 0, {}
+    FG.Reputations = function() return { { id = 69, value = actual } } end
+    FG.ItemCount = function(id, includeBank)
+        assert(not includeBank, "carried materials only")
+        return stock[id] or 0
+    end
+    GetServerTime = function() return now end
+    GetQuestResetTime = function() return reset and reset - now end
+    FG.Print = function(_, fmt, ...) messages[#messages + 1] = string.format(fmt, ...) end
+    GetQuestID = function() return detail end
+    IsShiftKeyDown = function() return shift end
+    C_GossipInfo.GetAvailableQuests = function() return { { questID = detail, repeatable = true } } end
+    C_GossipInfo.GetActiveQuests = function() return { { questID = detail, isComplete = true } } end
+    C_GossipInfo.SelectAvailableQuest = function(id)
+        detail = id
+        fire("QUEST_DETAIL")
+    end
+    C_GossipInfo.SelectActiveQuest = function(id)
+        detail = id
+        fire("QUEST_PROGRESS")
+        fire("QUEST_COMPLETE")
+    end
+    AcceptQuest = function() accepts = accepts + 1 end
+    CompleteQuest = function() turns = turns + 1 end
+    GetQuestReward = function() turns = turns + 1 end
+    IsQuestCompletable = function() return true end
+    GetNumQuestChoices = function() return 0 end
+    local function source(id, quest, daily, quota)
+        return {
+            id = id,
+            name = id,
+            identity = {
+                quest_id = quest,
+                npc_id = 301,
+                ender_npc_id = 301,
+                npc_name = "Kobold",
+                ender_npc_name = "Cloth keeper",
+            },
+            input_items = {},
+            confidence = "classic_estimate",
+            reset = { kind = daily and "daily" or "none", quota_key = quota or id, units_per_reset = 1 },
+        }
+    end
+    local function action(id, src, kind, n)
+        return {
+            id = id,
+            source_id = src,
+            kind = kind or "turnin",
+            units_per_cycle = n or 1,
+            total_unit_limit = n or 1,
+            completion_targets = {},
+        }
+    end
+    local function setup(sources, phases, target, notes)
+        serial = serial + 1
+        actual, stock, now, reset, shift, detail, accepts, turns, messages = 0, {}, 1000, 2000, false, 99101, 0, 0, {}
+        onQuest[99101], completed[99101], completed[99102] = nil, nil, nil
+        playerLevel = 60
+        local program = {
+            version = 1,
+            sources = sources,
+            phases = phases,
+            result = {
+                targets = type(target) == "table" and target or { ["69"] = target or 100 },
+                warnings = notes or {},
+            },
+        }
+        local name = "reputation-playback-" .. serial
+        FG.Routes[name] = {
+            time = serial,
+            fromLevel = 1,
+            toLevel = 60,
+            steps = {
+                { k = "reputation", kp = true, lvl = 1, t = "Reputation programme", rp = program },
+                { k = "train", kp = true, lvl = 60, t = "Ordinary required work" },
+            },
+        }
+        FG:Save("autoAccept", false)
+        FG:Save("autoTurnIn", false)
+        FG:Save("routeQuestsOnly", true)
+        useRoute(name)
+        return name, program
+    end
+    local function batch(actions, cycles)
+        return { id = "batch", kind = "batch", cycles = cycles or 1, actions = actions }
+    end
+    local function daily(actions, cycles)
+        return { id = "daily", kind = "daily_circuit", cycles = cycles or 1, actions = actions }
+    end
+    local function current() return FG.Reputation and FG.Reputation:Active() end
+    local failures = {}
+    local function check(name, fn)
+        local ok, err = pcall(fn)
+        if not ok then failures[#failures + 1] = name .. ": " .. tostring(err) end
+    end
+    check("source audit notes produce one summary while estimates and runtime results stay visible", function()
+        local notes = {}
+        for i = 1, 333 do
+            notes[i] = "Unselected source audit note " .. i
+        end
+        local gather = action("gather", "cloth", "acquire", 20)
+        gather.acquisition = { kind = "exact_creature_drop", item_id = 14047, npc_id = 301 }
+        gather.completion_targets = { { kind = "inventory", item_id = 14047, count = 20 } }
+        setup(
+            { source("cloth", 99101), source("unavailable", nil) },
+            { batch({ gather, action("deliver", "cloth"), action("unavailable", "unavailable") }) },
+            100,
+            notes
+        )
+        assert(#messages <= 2, "hundreds of source notes cannot flood chat at first poll")
+        local initial = table.concat(messages, " ")
+        assert(
+            initial:find("333", 1, true) and initial:find("app", 1, true),
+            "source note count directs the player to the app"
+        )
+        assert(
+            initial:find("Classic reputation estimate", 1, true),
+            "used structured estimate confidence is visible during acquisition"
+        )
+        assert(not initial:find("Unselected source audit note", 1, true), "source audit details remain in the app")
+        local printed = #messages
+        for _ = 1, 20 do
+            FG.Guide:Advance()
+        end
+        assert(#messages == printed, "repeated activity polls do not repeat the summary or estimate notice")
+        stock[14047] = 20
+        fire("BAG_UPDATE_DELAYED")
+        stock[14047] = 0
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        local final = table.concat(messages, " ")
+        assert(final:find("unavailable or unsupported", 1, true), "actual active-source limitation remains visible")
+        assert(
+            final:find("shortfall 100", 1, true) and char.guide.step == 2,
+            "actual final deficit remains visible without trapping the guide"
+        )
+    end)
+    check("unused estimate descriptors do not warn for confirmed work", function()
+        local confirmed = source("confirmed", 99101)
+        confirmed.confidence = "confirmed"
+        setup({ confirmed, source("unused-estimate", 99102) }, { batch({ action("confirmed", "confirmed") }) })
+        assert(
+            not table.concat(messages, " "):find("Classic reputation estimate", 1, true),
+            "only sources used by programme actions require an estimate notice"
+        )
+    end)
+    check("the engine estimate warning stays visible without a phased source action", function()
+        setup({ source("prefix-estimate", 99101) }, {}, 100, {
+            "Classic-derived reputation rules are forecasts; gray-level scaling, per-kill rounding and live server behavior may differ.",
+        })
+        assert(
+            table.concat(messages, " "):find("Classic reputation estimate", 1, true),
+            "identified prefix/acquisition forecasts retain an explicit Classic notice"
+        )
+        local printed = #messages
+        FG.Guide:Advance()
+        FG.Guide:Refresh()
+        assert(#messages == printed, "engine estimate notice is not repeated after the programme finishes")
+    end)
+    check("repeatable events count active run only, across navigation and route switching", function()
+        local name = setup(
+            { source("cloth", 99101) },
+            { batch({ action("first", "cloth", "turnin", 2), action("second", "cloth") }) }
+        )
+        completed[99101] = true
+        FG.Guide:Advance()
+        assert(char.guide.step == 1, "permanent completion cannot complete a repeatable programme")
+        fire("QUEST_TURNED_IN", 123456, 0, 0)
+        assert(current() and current().action.id == "first", "unrelated turn-in ignored")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        FG.Guide:Go(2)
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        FG.Guide:Go(1)
+        useRoute("reputation")
+        useRoute(name)
+        -- Reselecting/reloading Lua retains SavedVariables rather than rebuilding counters.
+        char.guide.reputation = assert(loadstring(assert(FG.Import.Serialize(char.guide.reputation))))()
+        local register = FG.On
+        FG.On = function() end -- the harness retains the one live event bus across module reloads
+        assert(loadfile("addon/Factoruide_Guide/Reputation.lua"))()
+        FG.On = register
+        assert(current().action.id == "first", "one completion persisted")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(current().action.id == "second", "same quest in a distinct run has its own count")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(char.guide.step == 2, "planned work finishes without trapping on unmet reputation")
+        assert(table.concat(messages, " "):find("100", 1, true), "actual shortfall reported")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        FG.Guide:Go(1)
+        FG.Guide:Resync()
+        assert(char.guide.step == 2, "completed programme is stable after extra events/navigation")
+        local version = FG.Routes[name].time
+        FG.Routes[name].time = version + 1000
+        useRoute(name)
+        assert(char.guide.step == 1, "new route version cannot inherit incompatible counters")
+    end)
+    check("standing eligibility stops at its exclusive upper gate", function()
+        local src = source("repair", 99101)
+        src.eligibility = { standing = { { faction_id = 69, standing = { maximum = 0 } } } }
+        setup({ src }, { batch({ action("repair", "repair") }) })
+        assert(char.guide.step == 2, "a below-Neutral repair source is unavailable exactly at Neutral")
+    end)
+    check("a newly completed exclusive quest invalidates its active source", function()
+        local src = source("exclusive", 99101)
+        src.eligibility = { excluded_quests = { 99102 } }
+        setup({ src }, { batch({ action("exclusive", "exclusive") }) })
+        assert(char.guide.step == 1, "source initially available")
+        completed[99102] = true
+        FG.Guide:Advance()
+        assert(char.guide.step == 2, "a new exclusive alternative cannot trap an impossible reputation turn-in")
+        assert(table.concat(messages, " "):find("unavailable", 1, true), "source limitation is disclosed")
+    end)
+    check("a reward updating standings before its event still belongs to the active run", function()
+        local first, second = action("first", "one"), action("second", "two")
+        first.completion_targets = { { kind = "reputation", faction_id = 69, standing = 100 } }
+        setup(
+            { source("one", 99101), source("two", 99102) },
+            { batch({ first, second }) },
+            { ["69"] = 100, ["70"] = 100 }
+        )
+        local progress = current().state
+        actual = 100
+        fire("UPDATE_FACTION")
+        FG.Guide:Advance()
+        assert(not progress.units.first, "a standing update cannot invent a turn-in completion")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(
+            progress.units.first == 1 and not progress.units.second,
+            "event is attributed before its reward can advance the run"
+        )
+    end)
+    check("a terminal reputation checkpoint keeps delayed event attribution after the guide advances", function()
+        local delivery = action("terminal", "one")
+        delivery.completion_targets = { { kind = "reputation", faction_id = 69, standing = 100 } }
+        setup({ source("one", 99101) }, { batch({ delivery }) })
+        local progress = current().state
+        actual = 100
+        FG.Guide:Advance()
+        assert(char.guide.step == 2, "real targets finish without waiting on an event")
+        assert(not progress.units.terminal, "terminal target success is not a counted delivery")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(progress.units.terminal == 1, "late event belongs to the exposed terminal occurrence")
+    end)
+    check("standing polls never latch future occurrences that were not exposed", function()
+        local first, future, other = action("exposed", "one"), action("unexposed", "one"), action("other", "two")
+        first.completion_targets = { { kind = "reputation", faction_id = 69, standing = 100 } }
+        future.completion_targets = first.completion_targets
+        setup(
+            { source("one", 99101), source("two", 99102) },
+            { batch({ first, future, other }) },
+            { ["69"] = 100, ["70"] = 100 }
+        )
+        local progress = current().state
+        actual = 100
+        FG.Guide:Advance()
+        FG.Guide:Refresh()
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(
+            progress.units.exposed == 1 and not progress.units.unexposed,
+            "only the previously active occurrence can claim a late event"
+        )
+    end)
+    check("an old-window daily event records work without consuming fresh reset quota", function()
+        local first, second = action("old-window", "one"), action("new-window", "two")
+        first.completion_targets = { { kind = "reputation", faction_id = 69, standing = 100 } }
+        setup({ source("one", 99101, true, "shared"), source("two", 99102, true, "shared") }, {
+            daily({ first }),
+            { id = "next-window", kind = "daily_circuit", cycles = 1, actions = { second } },
+        }, { ["69"] = 100, ["70"] = 100 })
+        local progress = current().state
+        actual = 100
+        FG.Guide:Advance()
+        now, reset = 2001, 3000
+        FG.Guide:Advance()
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(progress.units["old-window"] == 1, "late daily event retains its old occurrence")
+        assert(FG.Guide:WantsQuest(99102), "old daily cannot spend the new window's shared quota")
+        fire("QUEST_TURNED_IN", 99102, 0, 0)
+        assert(char.guide.step == 2, "fresh-window daily remains executable")
+    end)
+    check("explicit navigation invalidates ambiguous pending completion attribution", function()
+        local first = action("old", "one")
+        first.completion_targets = { { kind = "reputation", faction_id = 69, standing = 100 } }
+        setup(
+            { source("one", 99101), source("two", 99102) },
+            { batch({ first, action("other", "two") }) },
+            { ["69"] = 100, ["70"] = 100 }
+        )
+        local progress = current().state
+        actual = 100
+        FG.Guide:Advance()
+        FG.Guide:Go(2)
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(not progress.units.old, "navigation cannot let an unrelated later event fund an old run")
+    end)
+    check("route version and programme changes cannot inherit pending occurrence credit", function()
+        for _, mode in ipairs({ "version", "fingerprint" }) do
+            local first = action("old", "one")
+            first.completion_targets = { { kind = "reputation", faction_id = 69, standing = 100 } }
+            local name, program = setup(
+                { source("one", 99101), source("two", 99102) },
+                { batch({ first, action("other", "two") }) },
+                { ["69"] = 100, ["70"] = 100 }
+            )
+            local previous = current().state
+            actual = 100
+            FG.Guide:Advance()
+            if mode == "version" then
+                FG.Routes[name].time = FG.Routes[name].time + 1
+            else
+                FG.Routes[name].steps[1].rp = {
+                    version = 1,
+                    sources = program.sources,
+                    result = program.result,
+                    phases = { batch({ first, action("other", "two", "turnin", 2) }) },
+                }
+            end
+            useRoute(name)
+            fire("QUEST_TURNED_IN", 99101, 0, 0)
+            assert(
+                not previous.units.old and not current().state.units.old,
+                mode .. " cannot count an old pending occurrence"
+            )
+        end
+    end)
+    check("a new same-quest interaction claims its own current occurrence", function()
+        local first = action("old", "one")
+        first.completion_targets = { { kind = "reputation", faction_id = 69, standing = 100 } }
+        setup({ source("one", 99101) }, { batch({ first, action("new", "one") }) }, { ["69"] = 100, ["70"] = 100 })
+        local progress = current().state
+        actual = 100
+        FG.Guide:Advance()
+        fire("QUEST_DETAIL")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(
+            not progress.units.old and progress.units.new == 1,
+            "new acceptance clears ambiguous old same-quest attribution"
+        )
+    end)
+    check("actual target stops unnecessary work; XP cannot prove standing", function()
+        setup({ source("kill", nil) }, { batch({ action("kills", "kill", "kill", 2) }) })
+        FG.Guide:CountKill(100000, false)
+        assert(char.guide.step == 1, "XP does not prove reputation")
+        fire("PARTY_KILL", UnitGUID("player"), "Creature-0-1-2-3-999-1")
+        assert(char.guide.step == 1, "unrelated creature ignored")
+        fire("PARTY_KILL", UnitGUID("player"), "Creature-0-1-2-3-301-1")
+        assert(current().action.id == "kills", "first exact kill remains short")
+        actual = 100
+        fire("UPDATE_FACTION")
+        FG.Guide:Advance()
+        assert(char.guide.step == 2, "actual standings stop early")
+    end)
+    check("exact kill count ends best effort with actual deficit", function()
+        setup({ source("kill", nil) }, { batch({ action("kills", "kill", "kill", 1) }) })
+        fire("PARTY_KILL", UnitGUID("player"), "Creature-0-1-2-3-301-2")
+        assert(
+            char.guide.step == 2 and table.concat(messages, " "):find("100", 1, true),
+            "kill forecast cannot award actual standing"
+        )
+    end)
+    check("batches gather only one delivery and check real carried materials", function()
+        local src = source("cloth", 99101)
+        src.input_items = { { item_id = 14047, count = 20 } }
+        local acquire = action("gather", "cloth", "acquire", 20)
+        acquire.total_unit_limit = 40
+        acquire.acquisition = { kind = "exact_creature_drop", item_id = 14047, npc_id = 301 }
+        acquire.completion_targets = { { kind = "inventory", item_id = 14047, count = 20 } }
+        local deliver = action("deliver", "cloth")
+        deliver.total_unit_limit = 2
+        setup({ src }, { batch({ acquire, deliver }, 2) })
+        assert(current().action.kind == "acquire", "forecast stock does not pass gathering")
+        stock[14047] = 20
+        fire("BAG_UPDATE_DELAYED")
+        assert(current().action.kind == "turnin", "one delivery is enough inventory")
+        stock[14047] = 0
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(current().action.kind == "acquire", "next cycle needs fresh stock")
+        stock[14047] = 20
+        fire("BAG_UPDATE_DELAYED")
+        stock[14047] = 0
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(char.guide.step == 2, "two actual deliveries completed")
+    end)
+    check("farming targets the actual acquisition NPC, then the delivery NPC", function()
+        local src = source("cloth", 99101)
+        src.location = { map_id = 1426, map_x = 20, map_y = 30, x = 900000, y = 800000 }
+        local acquire = action("gather", "cloth", "acquire", 20)
+        acquire.acquisition = {
+            kind = "exact_creature_drop",
+            item_id = 14047,
+            npc_id = 999,
+            npc_name = "Runecloth bandit",
+            location = { map_id = 1426, map_x = 41, map_y = 51 },
+        }
+        acquire.completion_targets = { { kind = "inventory", item_id = 14047, count = 20 } }
+        FG:Save("targetMacro", true)
+        setup({ src }, { batch({ acquire, action("deliver", "cloth") }) })
+        assert(FG.TargetMacro.names[1] == "Runecloth bandit", "acquisition name, not the quest title or delivery giver")
+        local place = FG.Reputation:Presentation(FG.Guide:Route().steps[1], 1)
+        assert(place.x == 41 and place.y == 51, "acquisition map percentages, not delivery or world-yard coordinates")
+        stock[14047] = 20
+        fire("BAG_UPDATE_DELAYED")
+        assert(FG.TargetMacro.names[1] == "Cloth keeper", "target changes with active delivery")
+        FG:Save("targetMacro", nil)
+    end)
+    check("daily circuits rotate all sources then wait for actual reset", function()
+        local a, b = action("a", "daily-a"), action("b", "daily-b")
+        a.total_unit_limit, b.total_unit_limit = 2, 2
+        setup({ source("daily-a", 99101, true), source("daily-b", 99102, true) }, { daily({ a, b }, 2) })
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(current().source.identity.quest_id == 99102, "second daily before another day of first")
+        fire("QUEST_TURNED_IN", 99102, 0, 0)
+        assert(current().waiting and not FG.Guide:WantsQuest(99101), "wait until next real reset")
+        FG.Guide:Advance()
+        assert(current().waiting, "tick cannot manufacture reset")
+        now, reset = 2001, 3000
+        FG.Guide:Advance()
+        assert(current().source.identity.quest_id == 99101, "next real window starts circuit")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        fire("QUEST_TURNED_IN", 99102, 0, 0)
+        assert(char.guide.step == 2, "two circuits finish")
+    end)
+    check("unknown clock cannot invent reset and quota persists across phases", function()
+        local a, b = action("first-daily", "daily-a"), action("tail", "daily-a")
+        setup(
+            { source("daily-a", 99101, true, "shared") },
+            { daily({ a }), { id = "tail-phase", kind = "daily_circuit", cycles = 1, actions = { b } } }
+        )
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        reset = nil
+        now = 999999
+        FG.Guide:Advance()
+        assert(
+            current().waiting and not FG.Guide:WantsQuest(99101),
+            "phase boundary and unknown clock cannot refill shared quota"
+        )
+        reset = 1000100
+        FG.Guide:Advance()
+        assert(FG.Guide:WantsQuest(99101), "known next reset permits tail")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(char.guide.step == 2, "tail finishes")
+    end)
+    check("daily turn-in flags changing before the event do not steal its active completion", function()
+        local a = action("daily", "daily-a")
+        a.total_unit_limit = 2
+        setup({ source("daily-a", 99101, true) }, { daily({ a }, 2) })
+        completed[99101] = true
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(current().state.units.daily == 1, "event counts despite game already flagging this daily")
+        completed[99101], now, reset = nil, 2001, 3000
+        FG.Guide:Advance()
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(char.guide.step == 2, "next reset completes second real event")
+    end)
+    check("shared quota prevents a second source spending the same daily allowance", function()
+        setup({ source("daily-a", 99101, true, "one"), source("daily-b", 99102, true, "one") }, {
+            daily({ action("a", "daily-a"), action("b", "daily-b") }),
+        })
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(char.guide.step == 2, "exhausted shared source is warned and skipped without invented completion")
+        assert(table.concat(messages, " "):find("quota", 1, true), "shared allowance limitation disclosed")
+    end)
+    check("programme fingerprint rejects counters when action meaning changes", function()
+        local name, program = setup({ source("cloth", 99101) }, { batch({ action("deliver", "cloth", "turnin", 2) }) })
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        local replacement = {
+            version = 1,
+            sources = program.sources,
+            phases = { batch({ action("deliver", "cloth", "turnin", 3) }) },
+            result = program.result,
+        }
+        FG.Routes[name].steps[1].rp = replacement
+        useRoute(name)
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(char.guide.step == 1, "same route version with changed programme requires new three events")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        assert(char.guide.step == 2, "replacement finishes on its own count")
+    end)
+    check("unsupported acquisition cannot trap the guide or create a delivery", function()
+        local acquire = action("bad-acquire", "cloth", "acquire", 20)
+        acquire.acquisition = { kind = "imaginary_supply", item_id = 14047 }
+        acquire.completion_targets = { { kind = "inventory", item_id = 14047, count = 20 } }
+        setup({ source("cloth", 99101) }, { batch({ acquire, action("deliver", "cloth") }) })
+        assert(char.guide.step == 2, "unsupported supply disclosed and source skipped")
+        assert(table.concat(messages, " "):find("unavailable", 1, true), "unsupported supply warning shown")
+    end)
+    check("repeatable automation requires active wanted quest and respects settings/Shift", function()
+        setup({ source("cloth", 99101) }, { batch({ action("deliver", "cloth") }) })
+        fire("GOSSIP_SHOW")
+        assert(accepts == 0 and turns == 0, "automation off")
+        FG:Save("autoAccept", true)
+        FG:Save("autoTurnIn", true)
+        shift = true
+        fire("GOSSIP_SHOW")
+        assert(accepts == 0 and turns == 0, "Shift bypass")
+        shift = false
+        detail = 99102
+        fire("GOSSIP_SHOW")
+        fire("QUEST_DETAIL")
+        fire("QUEST_PROGRESS")
+        fire("QUEST_COMPLETE")
+        assert(accepts == 0 and turns == 0, "unrelated dialog blocked during activity")
+        detail = 99101
+        fire("GOSSIP_SHOW")
+        assert(turns == 2, "active turn-in automation allowed")
+        fire("QUEST_DETAIL")
+        assert(accepts == 1, "active repeatable acceptance allowed")
+        assert(FG.Guide:NeedsQuestAcceptance(99101), "acceptance audit sees active repeatable")
+        fire("QUEST_TURNED_IN", 99101, 0, 0)
+        fire("QUEST_DETAIL")
+        fire("QUEST_PROGRESS")
+        fire("QUEST_COMPLETE")
+        assert(accepts == 1 and turns == 2, "count limit closes automation")
+    end)
+    check("acceptance audit still warns on an unaccepted repeated run with a permanent flag", function()
+        setup({ source("cloth", 99101) }, { batch({ action("deliver", "cloth") }) })
+        completed[99101] = true
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        fire("QUEST_FINISHED")
+        runTimers()
+        runTimers()
+        assert(
+            table.concat(messages, " "):find("#99101", 1, true),
+            "permanent first completion cannot suppress the missed repeated acceptance"
+        )
+    end)
+    FG.Reputations, FG.ItemCount, GetServerTime, GetQuestResetTime = savedRep, savedItem, savedServer, savedReset
+    FG.Print, GetQuestID, IsShiftKeyDown = savedPrint, savedID, savedShift
+    C_GossipInfo.GetAvailableQuests, C_GossipInfo.GetActiveQuests = savedOffers, savedActive
+    C_GossipInfo.SelectAvailableQuest, C_GossipInfo.SelectActiveQuest = savedSelect, savedSelectActive
+    AcceptQuest, CompleteQuest, GetQuestReward = savedAccept, savedComplete, savedReward
+    IsQuestCompletable, GetNumQuestChoices, playerLevel = savedCompletable, savedChoices, oldLevel
+    FG:Save("autoAccept", nil)
+    FG:Save("autoTurnIn", nil)
+    FG:Save("routeQuestsOnly", nil)
+    for _, failure in ipairs(failures) do
+        print("FAIL reputation programme: " .. failure)
+    end
+    assert(#failures == 0, #failures .. " reputation programme regressions failed")
+    print("reputation programme repeatables, inventory, kills, circuits and automation ok")
+end
+ReputationProgramTest()

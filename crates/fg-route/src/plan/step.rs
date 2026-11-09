@@ -341,15 +341,37 @@ impl Simulator<'_> {
                 .count() as u32;
             s.forced_left = s.forced_left.saturating_sub(u32::from(q.zone_forced) + closed);
         }
-        for (g, goal) in self.params.reputation_goals.iter().enumerate() {
-            // Reputation goals belong to the original character, even when the group
-            // changes its lowest-level pace setter or turns in a mate-only quest.
-            if q.members & 1 == 0 || self.model.initial.need(i as usize) & 1 == 0 {
-                continue;
-            }
-            for &(faction, points) in &q.reputation {
-                if faction == goal.faction {
-                    s.reputation[g] += points;
+        if !s.reputation_all.is_empty() && q.members & 1 != 0 && self.model.initial.need(i as usize) & 1 != 0 {
+            let effects = crate::reputation::ReputationEffects {
+                standing_bounds: crate::model::quest_standing_bounds(self.params.edition),
+                awards: q
+                    .reputation
+                    .iter()
+                    .map(|&(faction_id, amount)| crate::reputation::SignedAward {
+                        faction_id,
+                        amount,
+                        ..Default::default()
+                    })
+                    .collect(),
+                ..Default::default()
+            };
+            self.apply_reputation_effects(
+                s,
+                &format!("quest:{}", q.id),
+                crate::reputation::SourceConfidence::BundledResolved,
+                effects,
+            );
+        } else {
+            for (g, goal) in self.params.reputation_goals.iter().enumerate() {
+                // Reputation goals belong to the original character, even when the group
+                // changes its lowest-level pace setter or turns in a mate-only quest.
+                if q.members & 1 == 0 || self.model.initial.need(i as usize) & 1 == 0 {
+                    continue;
+                }
+                for &(faction, points) in &q.reputation {
+                    if faction == goal.faction {
+                        s.reputation[g] += points;
+                    }
                 }
             }
         }
@@ -971,7 +993,38 @@ impl Simulator<'_> {
         s.spent.fighting += kill_work + other;
         s.spent.waiting += extra;
         let mob_xp = (kills * self.combat().mob_xp(s.level, o)) as i64;
-        s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
+        if !s.reputation_all.is_empty()
+            && o.mobs.len() == 1
+            && self.model.reputation_sources.sources.iter().any(|source| {
+                source.kind == crate::model::BoundSourceKind::Kill
+                    && source.descriptor.identity.npc_id == Some(o.mobs[0].0)
+            })
+        {
+            // Keep the ordinary batch XP forecast exactly. Apportion its awarded XP
+            // across deaths only to evaluate gray reputation at each forecast level.
+            // Changing the XP model here can invalidate the already-valid prefix.
+            let npc = o.mobs[0].0;
+            let mut deaths = s.clone();
+            let rested_before = s.rested;
+            let awarded = self.growth().gain_kills(s, mob_xp);
+            s.spent.mob_xp += awarded;
+            let bonus = (rested_before - s.rested).max(0);
+            let normal = awarded - bonus;
+            let (mut normal_done, mut bonus_done) = (0, 0);
+            for kill in 0..kills.floor() as u32 {
+                let level = deaths.level;
+                self.identified_kill_reputation(&mut deaths, npc, level, 1);
+                let earned = (normal as f64 * (f64::from(kill) + 1.0) / kills).floor() as i64;
+                let rested = earned.min(bonus);
+                self.growth()
+                    .gain(&mut deaths, earned - normal_done + rested - bonus_done);
+                (normal_done, bonus_done) = (earned, rested);
+            }
+            s.reputation_all = deaths.reputation_all;
+            s.reputation_sources_used = deaths.reputation_sources_used;
+        } else {
+            s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
+        }
         if let Some(target) = o.shared_kill_target() {
             self.share_direct_kills(s, (quest, k), o, target, kills, (kill_work, extra));
         } else {
@@ -1129,7 +1182,13 @@ impl Simulator<'_> {
     }
 
     /// Final grind to the target level and the cost of class quests left out.
-    pub(crate) fn finish(&self, s: &mut State, mut trace: Option<&mut Vec<Timed>>) -> f64 {
+    pub(crate) fn finish(&self, s: &mut State, trace: Option<&mut Vec<Timed>>) -> f64 {
+        self.finish_level(s, trace);
+        self.finish_accounting(s)
+    }
+
+    /// Reach the ordinary target before reputation work, without terminal reclassification.
+    pub(crate) fn finish_level(&self, s: &mut State, mut trace: Option<&mut Vec<Timed>>) {
         let mut record = recorder(&mut trace);
         if s.level < self.profile.to_level {
             self.grind_at_camps(s, self.profile.to_level, &mut record);
@@ -1139,6 +1198,10 @@ impl Simulator<'_> {
             self.grind_at_camps(s, s.level + 1, &mut record);
             self.keep_lowest(s);
         }
+    }
+
+    /// Account for unfinished work exactly once, after the entire combined replay.
+    pub(crate) fn finish_accounting(&self, s: &mut State) -> f64 {
         let (mut missing, mut zone) = (0, 0);
         let mut counts = super::MandatoryGoalCounts::default();
         for (i, q) in self.model.quests.iter().enumerate() {

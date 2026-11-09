@@ -3,6 +3,7 @@
 
 /** Kinds of the guide's steps (French keys of the catalog). */
 export const KIND_LABELS: Record<string, string> = {
+  reputation: "Réputation",
   accept: "Prendre",
   objective: "Faire",
   turnin: "Rendre",

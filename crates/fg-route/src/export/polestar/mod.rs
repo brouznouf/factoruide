@@ -28,6 +28,18 @@ const NEEDS: &str = "0.2.5";
 /// Polestar's Interface version (WoW Forever).
 const INTERFACE: &str = "16001";
 
+/// Polestar has no occurrence/reset controller for this executable suffix.
+pub fn validate_route(route: &Route) -> anyhow::Result<()> {
+    anyhow::ensure!(
+        !route
+            .steps
+            .iter()
+            .any(|step| step.reputation_program.is_some() || step.kind == StepKind::Reputation),
+        "This guide contains repeated reputation work that Polestar cannot preserve. Export it for the Factoruide Guide addon instead."
+    );
+    Ok(())
+}
+
 /// The files of the pack's addon, (name, content), for the guides given as (id, guide written
 /// in the game's language): one leveling guide each, under the guide's name.
 pub fn pack(guides: &[(String, Route)], version: &str) -> Vec<(&'static str, String)> {

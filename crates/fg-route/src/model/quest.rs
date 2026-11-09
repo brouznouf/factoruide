@@ -103,8 +103,7 @@ impl QuestBuilder<'_> {
             reward_items: Vec::new(),
             start_guard,
             end_guard,
-            reputation: r
-                .reputations()
+            reputation: super::reputation_sources::corrected_rewards(r.id, self.params.edition, r.reputations())
                 .into_iter()
                 .map(|(f, v)| (f, v * self.profile.reputation_rate()))
                 .collect(),

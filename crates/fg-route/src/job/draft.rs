@@ -116,6 +116,7 @@ pub struct PlaceAt {
 /// The kind of guide step a step of the draft writes.
 fn kind_of(step: &RouteStep) -> StepKind {
     match step {
+        RouteStep::ReputationProgram { .. } => StepKind::Reputation,
         RouteStep::Accept { .. } => StepKind::Accept,
         RouteStep::Objective { .. } => StepKind::Objective,
         RouteStep::TurnIn { .. } => StepKind::TurnIn,
@@ -151,7 +152,8 @@ impl Editor {
         let planner = self.planner().abortable(&abort);
         let resolved: Vec<Result<Edit, &'static str>> = steps.iter().map(|s| s.resolve(&planner)).collect();
         let edits: Vec<Edit> = resolved.iter().filter_map(|r| r.ok()).collect();
-        let replay = Replay::run(self, &planner, &edits, names, Lines::Events)?;
+        let program = Self::reputation_program(steps);
+        let replay = Replay::run_with_reputation(self, &planner, &edits, names, Lines::Events, Some(&program))?;
         let report = self.report_of(&resolved, &replay.edited, &replay.event_lines, names);
         // A line per step of the draft: its own event's, else one of its kind where the step
         // before ends.
@@ -228,14 +230,19 @@ impl Editor {
         });
         let mut seen = 0;
         let mut there: Option<State> = None;
-        let _ = planner.edit_observed(&edits, &mut |s| {
-            if seen == before {
-                there = Some(s.clone());
-                return false;
-            }
-            seen += 1;
-            true
-        });
+        let _ = planner.edit_observed_with_reputation(
+            &edits,
+            &mut |s| {
+                if seen == before {
+                    there = Some(s.clone());
+                    return false;
+                }
+                seen += 1;
+                true
+            },
+            self.start.as_ref(),
+            &Self::reputation_program(steps),
+        );
         let s = there?;
         if request.superseded() {
             return None;

@@ -57,6 +57,7 @@ local L = {
 }
 
 local KINDS = {
+    reputation = { icon = "Interface\\Icons\\INV_Misc_Note_01", color = "e0b050", label = T("Reputation") },
     accept = {
         icon = "Interface\\GossipFrame\\AvailableQuestIcon",
         color = "ffd100",
@@ -265,7 +266,9 @@ function IsDone(step, index)
             if QuestLog.IsQuestFlaggedCompleted(other) or QuestLog.IsOnQuest(other) then return true, true end
         end
     end
-    if step.k == "accept" then
+    if step.k == "reputation" then
+        return FG.Reputation:Poll(step, index or state.step)
+    elseif step.k == "accept" then
         if QuestLog.IsOnQuest(q) or QuestLog.IsQuestFlaggedCompleted(q) then return true end
         if step.hd and Held(step) then return true end
         -- Profession quest (optional): skipped without the skill it needs.
@@ -485,7 +488,7 @@ local function Together(s, o)
 end
 
 --- Whether step `s` can be in a group with other steps: not a trip, nor a grind held until a level.
-local function Opens(s) return s.k ~= "fly" and s.k ~= "link" and s.k ~= "grind" end
+local function Opens(s) return s.k ~= "fly" and s.k ~= "link" and s.k ~= "grind" and s.k ~= "reputation" end
 
 --- Whether step `s` joins the group of `first` holding the objectives `objectives`.
 local function Joins(s, first, objectives)
@@ -524,7 +527,7 @@ local function BuildGroups()
         local first = start and not Checkpoint(start) and start or nil
         local size, objectives = first and 1 or 0, {}
         if first and first.k == "objective" then table.insert(objectives, first) end
-        if start and start.m then
+        if start and start.m and start.k ~= "reputation" then
             for j = i + 1, #steps do
                 local s = steps[j]
                 if Checkpoint(s) then
@@ -743,7 +746,9 @@ local function TaskView(step, index, withProgress)
     local kind = KINDS[step.k] or OTHER
     local title = QuestTitle(step)
     local v = { index = index, step = step, kind = step.k, icon = kind.icon, color = kind.color, chips = {} }
-    if step.k == "accept" or step.k == "turnin" then
+    if step.k == "reputation" then
+        v.name, v.sub, v.have, v.need = FG.Reputation:View(step, index)
+    elseif step.k == "accept" or step.k == "turnin" then
         v.name = title or step.t
         if title then v.sub = kind.label .. (step.n and (" • " .. step.n) or "") end
         -- A turn-in whose quest is not complete yet (objectives passed by hand): how far it is.
@@ -911,7 +916,7 @@ function Guide:ToggleMode() FG:Save("guideMode", FG:Get("guideMode") == "minimal
 
 --- Tooltip of a step's line: its full text, then what clicks do.
 function Guide:StepTooltip(owner, index)
-    local step = index and route and route.steps[index]
+    local step = index and route and FG.Reputation:Presentation(route.steps[index], index)
     if not step then return end
     GameTooltip:SetOwner(owner, "ANCHOR_LEFT")
     GameTooltip:AddLine(step.t, 1, 1, 1, true)
@@ -986,7 +991,7 @@ function Guide:Refresh()
             })
         end
         listed[index] = true
-        if not done then table.insert(todo, step) end
+        if not done then table.insert(todo, FG.Reputation:Presentation(step, index)) end
         local v = TaskView(step, index, true)
         v.done = done
         table.insert(view.tasks, v)
@@ -1036,6 +1041,7 @@ function Guide:Refresh()
     if pointed then
         target, targetIndex = route.steps[pointed], pointed
     end
+    target = FG.Reputation:Presentation(target, targetIndex)
     local hasSpots = target.spots ~= nil
     local place = SpotTarget(target, targetIndex)
     if detour and (Distance(detour) or math.huge) < DETOUR_ARRIVED then detour = nil end
@@ -1250,6 +1256,7 @@ end
 --- step the character was on (login), since steps the game cannot say are done (a kill count, a
 --- grind, a use) would otherwise stop the guide far behind.
 function Guide:Resync(resume)
+    FG.Reputation:Deactivate()
     if route then
         PassVisits()
         if not (resume and route.steps[state.step]) then state.step = 1 end
@@ -1333,6 +1340,7 @@ end
 
 function Guide:Go(n)
     if not route then return end
+    FG.Reputation:Deactivate()
     state.step = math.max(1, math.min(n, #route.steps + 1))
     -- Arrived on a group done already: it stays shown until the player moves on.
     arrivedDone = false
@@ -1352,6 +1360,7 @@ end
 --- marked by hand, not left behind, no exclusive alternative taken). The quests it abandons,
 --- and the others, are not.
 function Guide:WantsQuest(questID)
+    if FG.Reputation:WantsQuest(questID) then return not QuestLog.IsOnQuest(questID) end
     local at = route and questID and acceptIndex[questID]
     if not at then return false end
     -- Offered for a book in the bags: taken at its turn-in.
@@ -1365,13 +1374,14 @@ end
 --- The offered accept still needs doing. Unlike automation's WantsQuest, a held library
 --- book is already handled and does not need missed-accept advice.
 function Guide:NeedsQuestAcceptance(questID)
+    if FG.Reputation:WantsQuest(questID) then return not QuestLog.IsOnQuest(questID) end
     local at = route and questID and acceptIndex[questID]
     return at ~= nil and not IsDone(route.steps[at], at)
 end
 
 --- Fields of the guide state that belong to the route in use: the step shown, the steps
 --- marked by their index and the quests marked done by hand.
-local PROGRESS = { "step", "marks", "skippedQuests", "handedIn", "player" }
+local PROGRESS = { "step", "marks", "skippedQuests", "handedIn", "player", "reputation" }
 
 --- Progress is kept per route: another guide starts from its first step with nothing marked,
 --- coming back to a guide finds where it was. A new version of the same guide keeps the
@@ -1397,6 +1407,7 @@ local function SwitchProgress(name)
     end
     -- Saved before versions were tracked: taken as the same version.
     if state.version and state.version ~= version then
+        state.reputation = nil
         state.marks = {}
         state.step = 1 -- its steps moved
     end
@@ -1408,6 +1419,7 @@ local function SwitchProgress(name)
 end
 
 local function UseRoute(name)
+    FG.Reputation:Deactivate()
     if FG.AcceptanceAudit then FG.AcceptanceAudit:Reset() end
     route = FG.Routes and FG.Routes[name]
     name = route and name or nil
@@ -1770,7 +1782,7 @@ end
 
 --- Point the compass and the waypoint at a step until it is done (or another step is picked).
 function Guide:PointToStep(index)
-    local step = route and route.steps[index]
+    local step = route and FG.Reputation:Presentation(route.steps[index], index)
     if not step or not step.m then return end
     pointed, detour = index, nil
     self:Refresh()

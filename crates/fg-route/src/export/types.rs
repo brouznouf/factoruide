@@ -53,6 +53,8 @@ pub enum StepKind {
     Bind,
     #[serde(rename = "abandon")]
     Abandon,
+    #[serde(rename = "reputation")]
+    Reputation,
 }
 
 impl StepKind {
@@ -76,6 +78,7 @@ impl StepKind {
             Self::Dungeon => "dungeon",
             Self::Bind => "bind",
             Self::Abandon => "abandon",
+            Self::Reputation => "reputation",
         }
     }
 }
@@ -290,6 +293,9 @@ pub struct Step {
     /// quest, a planned reward, training.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub keep: bool,
+    /// Counted reputation activities and reset circuits, executed by the current addon.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reputation_program: Option<Box<crate::reputation::RepProgram>>,
     /// The event of the replay it is written from (index in its trace; not saved): ties a guide
     /// built from a replay back to it (`job::timeline`). None for the steps added after it
     /// (checkpoints, the quests of the character's log given up first).
@@ -352,6 +358,7 @@ impl Step {
             party: Vec::new(),
             members: None,
             keep: false,
+            reputation_program: None,
             event: None,
         }
     }

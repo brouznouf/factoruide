@@ -13,10 +13,18 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::sync::Arc;
 
+#[cfg(test)]
+#[path = "edit_reputation_tests.rs"]
+mod reputation_tests;
+
 /// A step of a guide's route by game IDs: what the guide editor moves, removes and adds.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
 pub enum RouteStep {
+    /// A protected completion suffix with its source and repetition metadata.
+    ReputationProgram {
+        program: Box<crate::reputation::RepProgram>,
+    },
     Accept {
         quest: i64,
     },
@@ -167,6 +175,7 @@ impl RouteStep {
             to: world.links[i].to_zone,
         };
         match edit {
+            Edit::ReputationProgram => unreachable!("programme metadata is preserved separately"),
             Edit::Stop { stop, farm, spot } => {
                 let i = stop.index as usize;
                 match stop.kind {
@@ -248,6 +257,7 @@ impl RouteStep {
                 .ok_or("unknown crossing")
         };
         Ok(match *self {
+            Self::ReputationProgram { .. } => Edit::ReputationProgram,
             Self::Accept { quest: id } => stop(quest(id)?, Kind::Accept),
             Self::Objective {
                 quest: id,
@@ -340,6 +350,7 @@ impl RouteStep {
 /// A computed guide being edited: the character, its settings and the world, loaded once.
 pub struct Editor {
     pub(super) prepared: Prepared,
+    pub(super) start: Option<super::StartState>,
 }
 
 /// A guide edited by hand as replayed.
@@ -466,14 +477,20 @@ impl Editor {
         if let Some(walks) = walks {
             prepared.world.terrain.share(Arc::clone(walks));
         }
-        Ok(Self { prepared })
+        let start = request
+            .members(prepared.params.edition.rules())
+            .first()
+            .copied()
+            .or(request.start.as_ref())
+            .cloned();
+        Ok(Self { prepared, start })
     }
 
     /// The editor of a guide computed from what `prepared` holds (a scenario built by hand, in the
     /// tests).
     #[cfg(any(test, feature = "testing"))]
     pub fn from_prepared(prepared: Prepared) -> Self {
-        Self { prepared }
+        Self { prepared, start: None }
     }
 
     /// The empty guide of a manual guide, as `manual` makes it.
@@ -488,6 +505,24 @@ impl Editor {
         Planner::new(&p.model, &p.world, &p.params, &p.profile)
             .diagnosed(&p.diagnostics)
             .explicit()
+    }
+
+    /// An absent suffix still uses the combined replay for raw quest rewards and resources.
+    pub(super) fn reputation_program(steps: &[RouteStep]) -> crate::reputation::RepProgram {
+        steps
+            .iter()
+            .find_map(|step| match step {
+                RouteStep::ReputationProgram { program } => Some((**program).clone()),
+                _ => None,
+            })
+            .unwrap_or_else(|| crate::reputation::RepProgram {
+                version: 1,
+                ..crate::reputation::RepProgram::default()
+            })
+    }
+
+    pub(super) fn replay(&self, planner: &Planner<'_>, edits: &[Edit], steps: &[RouteStep]) -> Result<Edited> {
+        planner.edit_with_reputation(edits, self.start.as_ref(), &Self::reputation_program(steps))
     }
 
     /// The route of a computed guide as steps to edit, and whether it was rebuilt from the
@@ -750,12 +785,23 @@ impl Editor {
     fn expand(&self, steps: &[RouteStep]) -> Vec<RouteStep> {
         let p = &self.prepared;
         let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile).diagnosed(&p.diagnostics);
-        let edits: Vec<Edit> = steps.iter().filter_map(|s| s.resolve(&planner).ok()).collect();
-        planner
+        let edits: Vec<Edit> = steps
+            .iter()
+            .filter(|s| !matches!(s, RouteStep::ReputationProgram { .. }))
+            .filter_map(|s| s.resolve(&planner).ok())
+            .collect();
+        let mut expanded: Vec<_> = planner
             .expand(&edits)
             .into_iter()
             .map(|edit| RouteStep::of(edit, &planner))
-            .collect()
+            .collect();
+        expanded.extend(
+            steps
+                .iter()
+                .filter(|s| matches!(s, RouteStep::ReputationProgram { .. }))
+                .cloned(),
+        );
+        expanded
     }
 
     /// The route's steps read back from a guide's: quest stops (an objective where it is
@@ -777,6 +823,7 @@ impl Editor {
             let quest = step.quest;
             let target = step.target.as_ref();
             let next = match step.kind {
+                StepKind::Reputation => step.reputation_program.as_ref().map(|program| RouteStep::ReputationProgram { program: program.clone() }),
                 StepKind::Accept => quest.map(|quest| RouteStep::Accept { quest }),
                 StepKind::TurnIn => quest.map(|quest| RouteStep::TurnIn { quest }),
                 StepKind::Objective => quest.zip(step.objective).map(|(quest, objective)| {
@@ -825,7 +872,9 @@ impl Editor {
         let planner = self.planner();
         let resolved: Vec<Result<Edit, &'static str>> = steps.iter().map(|s| s.resolve(&planner)).collect();
         let edits: Vec<Edit> = resolved.iter().filter_map(|r| r.ok()).collect();
-        let edited = planner.edit(&edits);
+        let edited = self
+            .replay(&planner, &edits, steps)
+            .unwrap_or_else(|_| planner.edit(&edits));
         let lines = export::event_steps(&planner, &edited.route, &edited.trace, names);
         self.report_of(&resolved, &edited, &lines, names)
     }
@@ -917,9 +966,13 @@ impl Editor {
             .map(|s| s.resolve(&planner))
             .collect::<Result<Vec<_>, _>>()
             .map_err(anyhow::Error::msg)?;
-        let edited = planner.edit(&edits);
+        let edited = self.replay(&planner, &edits, steps)?;
         if edited.errors() > 0 {
             bail!("{} steps of the guide are not possible", edited.errors());
+        }
+        if steps.iter().any(|s| matches!(s, RouteStep::ReputationProgram { .. })) {
+            planner.validate_required_trace(&edited.trace)?;
+            return Ok(self.outcome(steps.to_vec(), &edited, notes));
         }
         // Objectives at the same place one after the other, done at once, when that is no worse.
         let places = edited
@@ -952,7 +1005,7 @@ impl Editor {
             },
         );
         let (steps, edits): (Vec<RouteStep>, Vec<Edit>) = together.into_iter().unzip();
-        let edited = planner.edit(&edits);
+        let edited = self.replay(&planner, &edits, &steps)?;
         planner.validate_required_trace(&edited.trace)?;
         Ok(self.outcome(steps, &edited, notes))
     }
@@ -962,9 +1015,23 @@ impl Editor {
         self.outcome(vec![], &self.planner().edit(&[]), notes)
     }
 
-    fn outcome(&self, steps: Vec<RouteStep>, edited: &Edited, mut notes: Vec<String>) -> PlanOutcome {
+    fn outcome(&self, mut steps: Vec<RouteStep>, edited: &Edited, mut notes: Vec<String>) -> PlanOutcome {
         let planner = self.planner();
         planner.refresh_reputation_notes(&mut notes, &planner.reputation_reached_trace(&edited.trace));
+        if let Some(program) = &edited.reputation_program {
+            let previous = Self::reputation_program(&steps);
+            notes.retain(|note| !previous.result.warnings.contains(note));
+            for step in &mut steps {
+                if let RouteStep::ReputationProgram { program: saved } = step {
+                    **saved = program.clone();
+                }
+            }
+            for warning in &program.result.warnings {
+                if !notes.contains(warning) {
+                    notes.push(warning.clone());
+                }
+            }
+        }
         let total = edited.breakdown.total;
         let route = export::build_traced(
             &planner,
@@ -980,7 +1047,21 @@ impl Editor {
             walks: Some(self.prepared.world.terrain.memory()),
             plan: steps,
             explicit: true,
-            end: None,
+            end: edited.end.as_ref().map(|end| {
+                let start = self.start.clone().unwrap_or_else(|| super::StartState {
+                    name: self.prepared.profile.name.clone(),
+                    race: self.prepared.profile.race_id,
+                    class: self.prepared.profile.class_name.to_uppercase(),
+                    faction: Some(self.prepared.profile.faction),
+                    ..super::StartState::default()
+                });
+                start.after(
+                    &self.prepared.model,
+                    &self.prepared.world,
+                    self.prepared.params.edition.rules(),
+                    end,
+                )
+            }),
         };
         self.set_walks(&mut outcome);
         outcome

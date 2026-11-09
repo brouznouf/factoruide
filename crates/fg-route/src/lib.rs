@@ -14,6 +14,7 @@ pub mod params;
 pub mod plan;
 pub mod power;
 pub mod profession;
+pub mod reputation;
 pub mod sync;
 pub mod terrain;
 #[cfg(any(test, feature = "testing"))]

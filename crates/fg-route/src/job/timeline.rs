@@ -249,7 +249,9 @@ impl Editor {
         let planner = self.planner();
         let (steps, _) = self.steps(outcome);
         let edits: Vec<Edit> = steps.iter().filter_map(|s| s.resolve(&planner).ok()).collect();
-        let replay = Replay::run(self, &planner, &edits, names, Lines::Guide).expect("a replay nothing stops ends");
+        let program = Self::reputation_program(&steps);
+        let replay = Replay::run_with_reputation(self, &planner, &edits, names, Lines::Guide, Some(&program))
+            .expect("a replay nothing stops ends");
         let mut timeline = replay.timeline(&outcome.route.steps);
         self.add_walk_paths(&mut timeline, None);
         timeline
@@ -377,6 +379,7 @@ pub(super) struct Replay<'r> {
 impl<'r> Replay<'r> {
     /// `edits` replayed, the steps written as `lines` says. None when the planner gives up (a
     /// newer replay is asked for: `Planner::abortable`).
+    #[cfg(test)]
     pub(super) fn run(
         editor: &'r Editor,
         planner: &'r Planner<'r>,
@@ -384,8 +387,19 @@ impl<'r> Replay<'r> {
         names: &'r Names,
         lines: Lines,
     ) -> Option<Self> {
+        Self::run_with_reputation(editor, planner, edits, names, lines, None)
+    }
+
+    pub(super) fn run_with_reputation(
+        editor: &'r Editor,
+        planner: &'r Planner<'r>,
+        edits: &[Edit],
+        names: &'r Names,
+        lines: Lines,
+        program: Option<&crate::reputation::RepProgram>,
+    ) -> Option<Self> {
         let mut snaps = Vec::new();
-        let edited = planner.edit_observed(edits, &mut |s| {
+        let mut observe = |s: &crate::plan::State| {
             let log = s
                 .accepted
                 .and_not(&s.turned)
@@ -406,7 +420,11 @@ impl<'r> Replay<'r> {
                 recall_ready: s.recall_ready,
             });
             true
-        })?;
+        };
+        let edited = match program {
+            Some(program) => planner.edit_observed_with_reputation(edits, &mut observe, editor.start.as_ref(), program),
+            None => planner.edit_observed(edits, &mut observe),
+        }?;
         let mut spans: Vec<_> = edited
             .steps
             .iter()
@@ -764,6 +782,13 @@ impl<'r> Replay<'r> {
         let walk_split = |length: f64| [(length - farming).max(0.0), farming.min(length), 0.0, 0.0];
         for e in events {
             match &e.event {
+                Event::ReputationProgram { .. } => {
+                    let travel = d(|b| b.travel) + d(|b| b.flights);
+                    let wait = d(|b| b.waiting);
+                    let combat = (d(|b| b.fighting) - wait + d(|b| b.grinding) + d(|b| b.dungeons) + farming).max(0.0);
+                    let interact = (e.time - t - travel - wait - combat).max(0.0);
+                    push(out, e.time - t, &mut t, [travel, combat, interact, wait], None);
+                }
                 Event::Shortcut { pass } => {
                     let p = world.passes[*pass].pos;
                     via.push([p.x as f32, p.y as f32]);

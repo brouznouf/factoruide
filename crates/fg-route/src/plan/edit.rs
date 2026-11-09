@@ -11,6 +11,8 @@ use std::ops::Range;
 /// A step of a route edited by hand: one thing done (`Planner::explicit` does nothing else).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum Edit {
+    /// The fixed compact program passed to `edit_with_reputation`, once at the end.
+    ReputationProgram,
     /// A stop of the route; `farm`: kill every normal mob met on the way to it, beyond
     /// `farm_cap`; `spot`: an objective's place (0 its own, then its `alts`; None: the best
     /// from where the character is).
@@ -80,6 +82,8 @@ pub struct EditedStep {
 
 /// An edited route as replayed.
 pub struct Edited {
+    pub reputation_program: Option<crate::reputation::RepProgram>,
+    pub end: Option<super::End>,
     pub steps: Vec<EditedStep>,
     /// The stops done, in order (for the guide).
     pub route: Vec<Stop>,
@@ -111,10 +115,46 @@ impl Planner<'_> {
             .expect("a replay nothing stops goes to the end")
     }
 
+    pub fn edit_with_reputation(
+        &self,
+        edits: &[Edit],
+        start: Option<&crate::job::StartState>,
+        program: &crate::reputation::RepProgram,
+    ) -> anyhow::Result<Edited> {
+        self.edit_observed_inner(edits, &mut |_| true, start, Some(program))
+            .ok_or_else(|| anyhow::anyhow!("combined edited reputation replay failed or was interrupted"))
+    }
+
+    pub(crate) fn edit_observed_with_reputation(
+        &self,
+        edits: &[Edit],
+        observe: &mut dyn FnMut(&State) -> bool,
+        start: Option<&crate::job::StartState>,
+        program: &crate::reputation::RepProgram,
+    ) -> Option<Edited> {
+        self.edit_observed_inner(edits, observe, start, Some(program))
+    }
+
     /// `edit`, `observe` shown the character before the first step, after each step, and once
     /// the guide is over (the final grind done). None when `observe` says to stop (false), or
     /// the planner gives up (`abortable`: a newer replay is asked for).
     pub(crate) fn edit_observed(&self, edits: &[Edit], observe: &mut dyn FnMut(&State) -> bool) -> Option<Edited> {
+        self.edit_observed_inner(edits, observe, None, None)
+    }
+
+    fn edit_observed_inner(
+        &self,
+        edits: &[Edit],
+        observe: &mut dyn FnMut(&State) -> bool,
+        start: Option<&crate::job::StartState>,
+        program: Option<&crate::reputation::RepProgram>,
+    ) -> Option<Edited> {
+        let markers = edits.iter().filter(|e| matches!(e, Edit::ReputationProgram)).count();
+        if program.is_some_and(|p| !p.phases.is_empty()) && markers == 0 {
+            return None;
+        }
+        let valid_program = markers == 1 && matches!(edits.last(), Some(Edit::ReputationProgram)) && program.is_some();
+        let empty_program = markers == 0 && program.is_some_and(|p| p.phases.is_empty());
         let stops: Vec<Stop> = edits
             .iter()
             .filter_map(|e| match e {
@@ -123,6 +163,9 @@ impl Planner<'_> {
             })
             .collect();
         let mut s = self.sim().start_state(self.planned(&stops));
+        if program.is_some() {
+            self.seed_reputation(&mut s, start);
+        }
         let mut trace = Vec::new();
         let mut route = Vec::new();
         let mut steps = Vec::with_capacity(edits.len());
@@ -140,6 +183,27 @@ impl Planner<'_> {
             })
             .collect();
         for (e, edit) in edits.iter().enumerate() {
+            if matches!(edit, Edit::ReputationProgram) {
+                if valid_program {
+                    break;
+                }
+                steps.push(EditedStep {
+                    outcome: Outcome::Invalid("reputation program requires one trailing marker and a saved program"),
+                    event: None,
+                    events: trace.len()..trace.len(),
+                    start: s.time,
+                    end: s.time,
+                    level: s.level,
+                    xp: 0,
+                    farm: None,
+                    farm_all: None,
+                    warning: None,
+                });
+                if !observe(&s) {
+                    return None;
+                }
+                continue;
+            }
             if self.aborted() {
                 return None;
             }
@@ -156,6 +220,7 @@ impl Planner<'_> {
                     Outcome::Skipped("target level reached")
                 } else {
                     match *edit {
+                        Edit::ReputationProgram => unreachable!("handled before ordinary step replay"),
                         Edit::Stop { stop, farm, spot } => {
                             s.at = at;
                             s.next = nexts[e].map(|next| self.places().pos(&s, next));
@@ -279,10 +344,8 @@ impl Planner<'_> {
             }
         }
         let grinding = s.spent.grinding;
-        let score = self.sim().finish(&mut s, Some(&mut trace));
-        if !observe(&s) {
-            return None;
-        }
+        self.sim().finish_level(&mut s, Some(&mut trace));
+        let final_grind = s.spent.grinding - grinding;
         // Taken and never turned in by the route, left in the log or given up (those it turns in
         // after the target level are not: the guide ends there).
         let has = |i: usize, kind: Kind| stops.iter().any(|t| t.index as usize == i && t.kind == kind);
@@ -292,13 +355,67 @@ impl Planner<'_> {
             })
             .map(|i| i as u32)
             .collect();
+        let (score, breakdown, end, reputation_program) =
+            if let Some(program) = program.filter(|_| valid_program || empty_program) {
+                let program_start = s.time;
+                let program_first = trace.len();
+                let program_xp = self.total_xp(&s);
+                let completed = self.finish_reputation_state(s, trace, start, Some(program)).ok()?;
+                let state = &completed.state;
+                let event = completed
+                    .trace
+                    .iter()
+                    .enumerate()
+                    .skip(program_first)
+                    .find_map(|(i, t)| matches!(t.event, Event::ReputationProgram { .. }).then_some(i));
+                if valid_program {
+                    steps.push(EditedStep {
+                        outcome: Outcome::Done,
+                        event,
+                        events: program_first..completed.trace.len(),
+                        start: program_start,
+                        end: state.time,
+                        level: state.level,
+                        xp: (self.total_xp(state) - program_xp) as i64,
+                        farm: None,
+                        farm_all: None,
+                        warning: None,
+                    });
+                    if !observe(state) {
+                        return None;
+                    }
+                }
+                if !observe(&completed.state) {
+                    return None;
+                }
+                trace = completed.trace;
+                (
+                    completed.score,
+                    completed.breakdown,
+                    Some(completed.end),
+                    Some(completed.program),
+                )
+            } else {
+                let score = self.sim().finish_accounting(&mut s);
+                if !observe(&s) {
+                    return None;
+                }
+                (
+                    score,
+                    s.spent,
+                    Some(self.end_state(&s, std::collections::BTreeMap::new())),
+                    None,
+                )
+            };
         Some(Edited {
+            reputation_program,
+            end,
             steps,
             route,
             trace,
-            final_grind: s.spent.grinding - grinding,
-            breakdown: s.spent,
+            breakdown,
             score,
+            final_grind,
             unfinished,
         })
     }
@@ -571,6 +688,7 @@ impl Planner<'_> {
                     // Profession trainer visits belong to the planner: an edited route has none.
                     // A dungeon is entered by its first stop inside.
                     Event::Reward { .. }
+                    | Event::ReputationProgram { .. }
                     | Event::Enter { .. }
                     | Event::Farm { .. }
                     | Event::Shortcut { .. }

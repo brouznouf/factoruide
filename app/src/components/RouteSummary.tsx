@@ -6,6 +6,7 @@ import { useT } from "../i18n";
 import { Money } from "./Money";
 import { standingOf } from "./ReputationPanel";
 import { mandatoryGoalWarnings, mandatoryGoalWarningText } from "../mandatoryGoalWarnings";
+import { reputationFacts } from "../reputationProgram";
 
 /** Why the planner left quests out (`fg_route` model), English as sent, French key of the catalog. */
 const SKIP_REASONS: Record<string, string> = {
@@ -119,6 +120,7 @@ export function RouteSummary({ route, notes, compare }: Props) {
   const t = useT();
   const b = route.breakdown;
   const flights = route.steps.filter((s) => s.kind === "fly").length;
+  const reputation = reputationFacts(route.steps);
   return (
     <div className="route-summary">
       <div className="tiles">
@@ -196,10 +198,30 @@ export function RouteSummary({ route, notes, compare }: Props) {
               reached: standing(r.reached),
               target: t(standingOf(r.target).name),
             })}
-            {missing > 0 && ` — ${t("{n} points manquants dans ce guide : l'objectif n'est pas atteint", { n: Math.round(missing) })}`}
+            {missing > 0 && ` — ${t("{n} points manquants dans ce guide : l'objectif n'est pas atteint", { n: missing })}`}
           </div>
         );
       })}
+      {reputation && (
+        <section aria-label={t("Programme de réputation")}>
+          <h3>{t("Programme de réputation")}</h3>
+          <p>{t("Jeu actif estimé pour la réputation : {time}", { time: fmtTime(reputation.active_play_seconds) })}</p>
+          {reputation.daily_opportunities > 0 && (
+            <>
+              <p>{t("Au moins {days} jours de quêtes journalières, avec {resets} réinitialisations du serveur.", { days: reputation.daily_opportunities, resets: reputation.reset_transitions })}</p>
+              <p className="muted">{t("Chaque circuit fait toutes ses sources avant d'attendre le prochain reset. Ces fenêtres minimales ne donnent pas de date de fin.")}</p>
+              <p className="muted">{reputation.calendar_wait_seconds == null ? t("Attente calendaire inconnue : le premier jour disponible et l'heure du reset restent à vérifier.") : t("Attente calendaire estimée, hors jeu actif : {time}", { time: fmtTime(reputation.calendar_wait_seconds) })}</p>
+            </>
+          )}
+          {reputation.estimates && <p className="notice warn">{t("Estimation Classic : les gains prévus ne sont pas garantis. L'addon vérifie vos sacs et vos réputations réelles.")}</p>}
+          {reputation.warnings.length > 0 && (
+            <details className="notes">
+              <summary>{t("Notes du calcul ({n})", { n: reputation.warnings.length })}</summary>
+              {reputation.warnings.map((warning) => <p className="muted" key={warning}>{warning}</p>)}
+            </details>
+          )}
+        </section>
+      )}
 
       <div className="charts">
         <LevelChart steps={route.steps} fromLevel={route.from_level} toLevel={route.to_level} />

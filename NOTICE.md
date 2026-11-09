@@ -48,6 +48,12 @@ The VMaNGOS data is distributed under the terms of the GNU General Public Licens
 `db_latest` release (SQLite snapshot, <https://github.com/vmangos/core/releases>);
 the build keeps the rows up to patch 1.12 and merges them with the other sources.
 
+`data/reputation/classic.json` also normalizes signed kill awards, rank caps,
+non-recursive spillover templates and faction parent metadata from the pinned
+1.12 snapshot. Its source revisions and archive/member hashes are preserved in
+the catalog. These rules are explicitly labeled Classic estimates when used on
+Forever; see `data/reputation/README.md` for the quantitative transformation.
+
 ## CMaNGOS TBC database
 
 The CMaNGOS TBC data (`tbc-db`) is distributed under the terms of the GNU General Public
@@ -64,6 +70,11 @@ Data from Efficient Games (<https://efficient.games>), licensed under CC BY 4.0
 <https://github.com/JIVESCORP/eg-link-output-wowf>. Changed: only the quest caches
 (`quests.<locale>.json`) are read, the newest client build's record of each quest is kept, its
 XP reward is computed with the game's XP table, and the values are merged with the other sources.
+
+`data/reputation/forever.json` additionally keeps selected aggregate quest flags,
+daily schedules and explicit reputation overrides, converted from hundredths,
+with pinned cache URLs and hashes. It joins acquisition availability from the
+existing merged database without including player profiles or cache prose.
 
 ## pfQuest
 

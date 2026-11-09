@@ -242,6 +242,8 @@ pub struct Params {
     /// Seconds of the guide each reputation point missing from `reputation_goals` at its end is
     /// worth: quests giving the reputation are planned until the goal is reached.
     pub reputation_weight: f64,
+    /// Permit clearly labelled Classic earning-rule estimates on Forever.
+    pub reputation_estimates: bool,
     /// Minimum quest efficiency, relative to grinding, to be worth accepting.
     pub min_efficiency: f64,
     /// Hearthstone cooldown and cast time.
@@ -604,6 +606,7 @@ impl Default for Params {
             preferred_zone_weight: 0.5,
             reputation_goals: vec![],
             reputation_weight: 10.0,
+            reputation_estimates: true,
             min_efficiency: 0.5,
             hearth_cooldown: 3600.0,
             hearth_cast: 10.0,

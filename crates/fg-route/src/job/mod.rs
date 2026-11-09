@@ -22,6 +22,8 @@ mod routes;
 mod services;
 mod start;
 pub(crate) use start::objective_progress;
+#[cfg(test)]
+mod reputation_cancellation_tests;
 mod starts;
 mod timeline;
 
@@ -52,7 +54,9 @@ pub use routes::{
 };
 pub(crate) use services::profession_of;
 pub use services::{Place, Service, places, services_lua};
-pub use start::{Bind, LogObjective, LogQuest, MapPos, QuestId, Skill, Standing, StartState};
+pub use start::{
+    Bind, DailyState, InventoryItem, LogObjective, LogQuest, MapPos, QuestId, Skill, Standing, StartState,
+};
 #[cfg(any(test, feature = "testing"))]
 pub(crate) use starts::preview_starts_of;
 pub use starts::{StartCandidate, StartOption, StartPreview, preview_starts};
@@ -177,8 +181,36 @@ pub(crate) fn plan_prepared(
         return Err(JobError::Cancelled);
     }
     let best = finalize_route(&planner, best)?;
-    let route = export::build(&planner, &prepared.profile, &best);
-    planner.refresh_reputation_notes(&mut prepared.notes, &planner.reputation_reached(&best));
+    let members = req.members(prepared.params.edition.rules());
+    let start = members.first().copied().or(req.start.as_ref());
+    let cancelled = || interrupt.cancelled();
+    if !planner.params.reputation_goals.is_empty() {
+        progress(&JobEvent::Status("Planning reputation activities"));
+    }
+    let completed = Planner::new(&prepared.model, &prepared.world, &prepared.params, &prepared.profile)
+        .diagnosed(&prepared.diagnostics)
+        .abortable(&cancelled)
+        .complete_reputation(&best, start);
+    if interrupt.cancelled() {
+        return Err(JobError::Cancelled);
+    }
+    let completed = completed?;
+    let route = export::build_traced(
+        &planner,
+        &prepared.profile,
+        &best,
+        &completed.trace,
+        completed.total,
+        completed.breakdown,
+    );
+    let reached: Vec<f64> = prepared
+        .params
+        .reputation_goals
+        .iter()
+        .map(|g| completed.end.reputation.get(&g.faction).copied().unwrap_or(0.0))
+        .collect();
+    planner.refresh_reputation_notes(&mut prepared.notes, &reached);
+    prepared.notes.extend(completed.program.result.warnings.iter().cloned());
     for missing in planner.missing_mandatory_quests(&best) {
         prepared.notes.push(missing);
     }
@@ -196,7 +228,7 @@ pub(crate) fn plan_prepared(
         "{}: level {} -> {} in {} with {} quests",
         route.name, route.from_level, route.to_level, route.total_time_text, route.quests
     )));
-    let end = planner.end_of(&best).map(|end| {
+    let end = Some({
         let members = req.members(prepared.params.edition.rules());
         let start = members
             .first()
@@ -210,18 +242,35 @@ pub(crate) fn plan_prepared(
                 faction: Some(prepared.profile.faction),
                 ..StartState::default()
             });
-        start.after(&prepared.model, &prepared.world, prepared.params.edition.rules(), &end)
+        start.after(
+            &prepared.model,
+            &prepared.world,
+            prepared.params.edition.rules(),
+            &completed.end,
+        )
     });
+    let mut plan = edit::route_steps(&planner, &best);
+    if !completed.program.phases.is_empty() || !prepared.params.reputation_goals.is_empty() {
+        plan.push(RouteStep::ReputationProgram {
+            program: Box::new(completed.program),
+        });
+    }
     let mut outcome = PlanOutcome {
-        plan: edit::route_steps(&planner, &best),
+        plan,
         explicit: true,
         end,
         route,
         notes: prepared.notes.clone(),
         walks: walks.map(|_| prepared.world.terrain.memory()),
     };
-    let editor = Editor { prepared };
+    let editor = Editor {
+        prepared,
+        start: start.cloned(),
+    };
     editor.set_walks(&mut outcome);
+    if interrupt.cancelled() {
+        return Err(JobError::Cancelled);
+    }
     Ok((outcome, editor.prepared))
 }
 
@@ -338,6 +387,7 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
     }
     required::check_start(&model, &profile, &members)?;
     model.initial.abilities = model.abilities.initial(start, profile.from_level);
+    model.initial.reputation_inferred = start.is_some_and(|s| s.reputation_inferred);
     model.initial.reputation_recorded = params
         .reputation_goals
         .iter()
@@ -345,6 +395,8 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
         .map(|g| g.faction)
         .collect();
     model.initial.reputation = reputation::starting(conn, &params.reputation_goals, &profile, start, &mut start_notes)?;
+    model.initial.reputation_all =
+        reputation::source_starting(conn, &model, &params, &profile, start, &mut start_notes)?;
     let mut notes = notes::model_notes(&model, &world);
     notes.extend(start_notes);
     Ok(Prepared {

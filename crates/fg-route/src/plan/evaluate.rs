@@ -10,6 +10,11 @@ use std::rc::Rc;
 /// Where a route leaves the character.
 #[derive(Debug, Clone)]
 pub struct End {
+    /// Quest IDs completed by explicit sources, including quests outside the prefix model.
+    pub completed_quests: Vec<i64>,
+    pub reputation: crate::reputation::Standings,
+    pub money_copper: i64,
+    pub inventory: std::collections::BTreeMap<i64, u32>,
     pub level: i64,
     pub xp: i64,
     pub rested: i64,
@@ -124,8 +129,23 @@ impl Planner<'_> {
     /// Where `route` leaves the character (None if invalid).
     pub(crate) fn end_of(&self, route: &[Stop]) -> Option<End> {
         let (_, s) = self.simulate_state(route, None)?;
+        Some(self.end_state(&s, std::collections::BTreeMap::new()))
+    }
+
+    pub(crate) fn end_state(&self, s: &State, inventory: std::collections::BTreeMap<i64, u32>) -> End {
         let n = self.model.quests.len();
-        Some(End {
+        let mut reputation = s.reputation_all.clone();
+        for (g, value) in self.params.reputation_goals.iter().zip(&s.reputation) {
+            reputation.insert(g.faction, *value);
+        }
+        End {
+            completed_quests: (0..n)
+                .filter(|&i| s.rewarded(i))
+                .map(|i| self.model.quests[i].id)
+                .collect(),
+            reputation,
+            money_copper: s.spent.gold(),
+            inventory,
             level: s.level,
             xp: s.xp,
             rested: s.rested,
@@ -137,9 +157,9 @@ impl Planner<'_> {
             turned: (0..n).filter(|&i| s.rewarded(i)).collect(),
             log: (0..n)
                 .filter(|&i| s.accepted[i] && !s.turned[i])
-                .map(|i| (i, self.availability().objectives_done(&s, i as u32)))
+                .map(|i| (i, self.availability().objectives_done(s, i as u32)))
                 .collect(),
-        })
+        }
     }
 
     /// Points with the faction of each reputation goal at the end of `route`.

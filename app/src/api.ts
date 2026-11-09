@@ -102,6 +102,8 @@ export interface Params {
   preferred_zone_weight: number;
   /** Reputations to reach by the end of the guide (none by default: reputation weighs nothing). */
   reputation_goals: ReputationGoal[];
+  /** Allow clearly marked Classic earning-rule estimates when the edition has no confirmed rule. */
+  reputation_estimates?: boolean;
   /** Seconds each point missing from the goals at the end of the guide is worth. */
   reputation_weight: number;
   min_efficiency: number;
@@ -294,6 +296,13 @@ export interface StartState {
   spells: number[];
   /** Points with each faction the game lists (none: recorded by an older addon). */
   reputation?: { id: number; value: number }[];
+  /** Known carried materials; absent or invalid in older snapshots. */
+  inventory?: { item: number; count: number }[];
+  inventory_valid?: boolean;
+    /** Standing values forecast by a previous guide rather than a fresh game snapshot. */
+    reputation_inferred?: boolean;
+  daily?: { completed: number[]; reset_at?: number | null } | null;
+  daily_valid?: boolean;
   /** Copper. */
   money: number;
   /** When it was recorded (unix seconds). */
@@ -356,6 +365,8 @@ export interface Breakdown {
 
 export interface Step {
   kind: string;
+  /** A protected reputation-completion suffix, including sources, actions, costs and forecast limits. */
+  reputation_program?: RepProgram;
   /** Grind steps: XP to have in `level` before going on. */
   xp?: number;
   quest?: number;
@@ -471,6 +482,62 @@ export interface ReputationGoal {
   faction: number;
   target: number;
 }
+
+/** Portable reputation programme contracts, mirror of `fg_route::reputation::types`. */
+export type Standings = Record<string, number>;
+export type SourceConfidence = "confirmed" | "bundled_resolved" | "classic_estimate" | "unknown";
+export interface StandingRange { minimum: number | null; maximum: number | null }
+export type AwardCap = { kind: "pre_event_inclusive" | "hard_ceiling"; maximum: number } | { kind: "pre_event_rank_inclusive"; maximum_rank: number };
+export interface SignedAward {
+  faction_id: number; amount: number; standing: StandingRange; cap: AwardCap | null;
+  rounding: "exact_fractional" | "truncate" | "mean_forecast" | "conservative_forecast"; suppress_spillover: boolean;
+}
+export interface SpilloverRule {
+  primary_faction_id: number; recipient_faction_id: number; rate: number; standing: StandingRange;
+  cap: AwardCap | null; gate: "primary_award" | "independent"; rounding: SignedAward["rounding"];
+}
+export interface ReputationEffects {
+  encoding: "resolved_vector" | "primary_awards";
+  awards: SignedAward[];
+  modifiers: { human_bonus: number; gain_multiplier: number; gray_multiplier: number };
+  spillover: { kind: "none" } | { kind: "explicit"; rules: SpilloverRule[] };
+  standing_bounds: StandingRange;
+}
+export interface SourceLocation {
+  world_id: number | null; map_id: number | null; zone_id: number | null;
+  /** World-yard coordinates, distinct from UI map percentages. */
+  x: number | null; y: number | null; z: number | null;
+  map_x: number | null; map_y: number | null;
+}
+export interface SourceAcquisition {
+  kind: "known_inventory" | "exact_creature_drop" | "priced_vendor" | "unsupported";
+  item_id: number; units_per_acquisition: number; npc_id: number | null; npc_name?: string;
+  location: SourceLocation | null; unit_price_copper: number | null; drop_chance: number | null;
+}
+export interface SourceDescriptor {
+  id: string; name: string; edition: string;
+  identity: { quest_id: number | null; npc_id: number | null; giver_npc_id: number | null; ender_npc_id: number | null; npc_name?: string; giver_npc_name?: string; ender_npc_name?: string };
+  repeatable: boolean; effects: ReputationEffects;
+  input_items: { item_id: number; count: number; starter: boolean }[];
+  costs: { travel_seconds: number; combat_seconds: number; respawn_seconds: number; interaction_seconds: number; money_cost_copper: number; money_reward_copper: number; xp_reward: number };
+  eligibility: { side: string | null; race_mask: number | null; class_mask: number | null; minimum_level: number | null; maximum_level: number | null; prerequisite_quests: number[]; excluded_quests: number[]; standing: { faction_id: number; standing: StandingRange }[] };
+  reset: { kind: "none" | "daily"; quota_key: string | null; units_per_reset: number };
+  group_policy: "solo" | "shared_credit" | "individual_credit" | "unsupported";
+  confidence: SourceConfidence;
+  provenance: { url: string; build: string | null; revision: string | null; sha256: string | null; license: string | null; note: string | null }[];
+  location: SourceLocation | null; acquisition: SourceAcquisition[];
+}
+export interface RepAction {
+  id: string; source_id: string; kind: "turnin" | "kill" | "acquire";
+  units_per_cycle: number; total_unit_limit: number; location: SourceLocation | null; acquisition: SourceAcquisition | null;
+  completion_targets: ({ kind: "reputation"; faction_id: number; standing: number } | { kind: "inventory"; item_id: number; count: number })[];
+}
+export interface RepPhase { id: string; kind: "batch" | "daily_circuit"; cycles: number; actions: RepAction[] }
+export interface RepProgramResult {
+  start: Standings; reached: Standings; targets: Standings; deficits: Standings; status: "satisfied" | "best_found";
+  active_play_seconds: number; daily_opportunities: number; reset_transitions: number; calendar_wait_seconds: number | null; warnings: string[];
+}
+export interface RepProgram { version: number; requested_edition: string; effective_edition: string; sources: SourceDescriptor[]; phases: RepPhase[]; result: RepProgramResult }
 
 /** A faction quests give reputation with: its side (null: neutral) and each race's start. */
 export interface FactionOption {
@@ -980,6 +1047,7 @@ export interface ContributionPreview {
 
 /** A step of a guide's route by game IDs, what the guide editor changes; mirror of `fg_route::job::RouteStep`. */
 export type RouteStep =
+  | { kind: "reputation_program"; program: RepProgram }
   | { kind: "accept"; quest: number }
   /** `farm`: kill every normal mob met on the way to it (beyond the farming cap). */
   | { kind: "objective"; quest: number; objective: number; farm?: boolean; spot?: number }

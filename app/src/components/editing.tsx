@@ -52,6 +52,7 @@ export const REASONS: Record<string, string> = {
 
 /** Step type of the guide (its color, see .kind-*) and label of each step kind. */
 export const KINDS: Record<RouteStep["kind"], { css: string; label: string }> = {
+  reputation_program: { css: "reputation", label: "Réputation" },
   accept: { css: "accept", label: "Prendre" },
   objective: { css: "objective", label: "Faire" },
   turn_in: { css: "turnin", label: "Rendre" },
@@ -90,6 +91,8 @@ export function useNames(catalog: EditCatalog | undefined) {
     const node = (id: number) => nodes.get(id)?.name ?? `#${id}`;
     const label = (s: RouteStep, t: (fr: string, vars?: Record<string, string | number>) => string): string => {
       switch (s.kind) {
+        case "reputation_program":
+          return t("Programme de réputation");
         case "accept":
           return quest(s.quest);
         case "objective":
@@ -142,6 +145,8 @@ export function draftLine(step: RouteStep, label: string, at: Step | null): Step
     text: label,
     quest,
     objective: step.kind === "objective" ? step.objective : undefined,
+    reputation_program: step.kind === "reputation_program" ? step.program : undefined,
+    keep: step.kind === "reputation_program" || undefined,
     level: at?.level ?? 1,
     time: at?.time ?? 0,
   };

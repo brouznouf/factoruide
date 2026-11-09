@@ -9,22 +9,25 @@ local function Skip() return IsShiftKeyDown() end
 --- still takes.
 local function Wanted(questID)
     if not FG:Get("autoAccept") then return false end
+    if not FG.Reputation:AutomationAllowed(questID) then return false end
     if FG:Get("routeQuestsOnly") then return FG.Guide ~= nil and FG.Guide:WantsQuest(questID) end
     return true
 end
+
+local function TurninWanted(id) return FG.Reputation:AutomationAllowed(id) end
 
 FG:On("GOSSIP_SHOW", function()
     if Skip() then return end
     if FG:Get("autoTurnIn") then
         for _, q in ipairs(C_GossipInfo.GetActiveQuests()) do
-            if q.isComplete then
+            if q.isComplete and TurninWanted(q.questID) then
                 C_GossipInfo.SelectActiveQuest(q.questID)
                 return
             end
         end
     end
     for _, q in ipairs(C_GossipInfo.GetAvailableQuests()) do
-        if Wanted(q.questID) and not q.repeatable then
+        if Wanted(q.questID) and (not q.repeatable or FG.Reputation:WantsQuest(q.questID)) then
             C_GossipInfo.SelectAvailableQuest(q.questID)
             return
         end
@@ -36,7 +39,8 @@ FG:On("QUEST_GREETING", function()
     if FG:Get("autoTurnIn") then
         for i = 1, GetNumActiveQuests() do
             local _, isComplete = GetActiveTitle(i)
-            if isComplete then
+            local questID = GetActiveQuestID and GetActiveQuestID(i)
+            if isComplete and TurninWanted(questID) then
                 SelectActiveQuest(i)
                 return
             end
@@ -46,8 +50,8 @@ FG:On("QUEST_GREETING", function()
         local _, _, isRepeatable, _, questID = GetAvailableQuestInfo(i)
         -- Without the quest's ID (older clients), it is opened: its dialog tells whether to take it.
         local known = questID and questID > 0
-        local open = (known and Wanted(questID)) or (not known and FG:Get("autoAccept"))
-        if open and not isRepeatable then
+        local open = (known and Wanted(questID)) or (not known and FG:Get("autoAccept") and not FG.Reputation:Active())
+        if open and (not isRepeatable or known and FG.Reputation:WantsQuest(questID)) then
             SelectAvailableQuest(i)
             return
         end
@@ -56,6 +60,7 @@ end)
 
 FG:On("QUEST_DETAIL", function()
     if Skip() then return end
+    if QuestIsRepeatable and QuestIsRepeatable() and not FG.Reputation:WantsQuest(GetQuestID()) then return end
     -- Quests taken on sight came with Cataclysm: Classic and TBC have neither the case nor the function.
     if QuestGetAutoAccept and QuestGetAutoAccept() then
         AcknowledgeAutoAcceptQuest()
@@ -67,11 +72,15 @@ end)
 -- Escort quests shared by a party member (the event does not tell which quest: not with "only
 -- the guide's quests").
 FG:On("QUEST_ACCEPT_CONFIRM", function()
-    if FG:Get("autoAccept") and not FG:Get("routeQuestsOnly") and not Skip() then ConfirmAcceptQuest() end
+    if FG:Get("autoAccept") and not FG:Get("routeQuestsOnly") and not Skip() and not FG.Reputation:Active() then
+        ConfirmAcceptQuest()
+    end
 end)
 
 FG:On("QUEST_PROGRESS", function()
-    if FG:Get("autoTurnIn") and not Skip() and IsQuestCompletable() then CompleteQuest() end
+    if FG:Get("autoTurnIn") and not Skip() and TurninWanted(GetQuestID()) and IsQuestCompletable() then
+        CompleteQuest()
+    end
 end)
 
 --- Reward choice with the best vendor price, or nil when item data is not loaded yet.
@@ -89,7 +98,7 @@ local function BestReward(choices)
 end
 
 FG:On("QUEST_COMPLETE", function()
-    if not FG:Get("autoTurnIn") or Skip() then return end
+    if not FG:Get("autoTurnIn") or Skip() or not TurninWanted(GetQuestID()) then return end
     local choices = GetNumQuestChoices()
     if choices <= 1 then
         GetQuestReward(choices)

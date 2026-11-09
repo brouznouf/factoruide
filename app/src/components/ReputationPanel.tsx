@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { type FactionOption, type ReputationGoal, type StartState } from "../api";
 import { useT } from "../i18n";
 import { Hint } from "./Hint";
@@ -35,11 +36,14 @@ interface Props {
   start: StartState | null;
   goals: ReputationGoal[];
   onChange: (goals: ReputationGoal[]) => void;
+  estimates: boolean;
+  onEstimatesChange: (allow: boolean) => void;
 }
 
 /** Reputation goals: factions the guide does quests for until the standing aimed at (none by default). */
-export function ReputationPanel({ factions, raceId, side, start, goals, onChange }: Props) {
+export function ReputationPanel({ factions, raceId, side, start, goals, onChange, estimates, onEstimatesChange }: Props) {
   const t = useT();
+  const estimateHelp = useId();
   const offered = factions.filter((f) => !f.side || f.side === side);
   const startOf = (id: number) => start?.reputation?.find((r) => r.id === id)?.value ?? (raceId != null ? offered.find((f) => f.id === id)?.starts[raceId] : undefined) ?? 0;
   const standingText = (points: number) => {
@@ -59,8 +63,14 @@ export function ReputationPanel({ factions, raceId, side, start, goals, onChange
     <section className="panel">
       <h3>
         {t("Réputation")}
-        <Hint text={t("Les objectifs de réputation choisis sont obligatoires, même avec des détours ou après le niveau visé. Si aucune route ne les atteint avec les données et règles prises en charge, le calcul signale les points manquants. Aucun par défaut.")} />
+        <Hint text={t("Le guide cherche à améliorer les réputations choisies, même après le niveau visé. Un objectif inaccessible ne bloque pas le guide : le résultat indique les points manquants et les limites des sources. Aucun par défaut.")} />
       </h3>
+      <label className={`toggle${estimates ? " on" : ""}`}>
+        <input type="checkbox" checked={estimates} aria-describedby={estimateHelp} onChange={(e) => onEstimatesChange(e.target.checked)} />
+        <span className="toggle-switch" aria-hidden />
+        <span className="toggle-text"><strong>{t("Autoriser les estimations de réputation de Classic")}</strong></span>
+      </label>
+      <p className="muted" id={estimateHelp}>{t("Utilise les règles de Classic quand cette édition n'a pas de règle confirmée. Ces estimations sont signalées ; les désactiver conserve vos objectifs.")}</p>
       {goals.map((goal, i) => {
         const begin = startOf(goal.faction);
         const recorded = start?.reputation?.some((r) => r.id === goal.faction) ?? false;

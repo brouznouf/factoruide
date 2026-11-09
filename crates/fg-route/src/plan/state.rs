@@ -79,6 +79,10 @@ pub(crate) struct Via {
 /// What happened while replaying a route, for export.
 #[derive(Debug, Clone)]
 pub enum Event {
+    /// Compact, occurrence-aware source work appended to the ordinary leveling prefix.
+    ReputationProgram {
+        program: Box<crate::reputation::RepProgram>,
+    },
     Hearth {
         inn: usize,
         /// Astral Recall rather than the hearthstone.
@@ -422,6 +426,9 @@ pub(crate) struct State {
     /// Points with the faction of each reputation goal (`Params::reputation_goals`; none
     /// without goals).
     pub(crate) reputation: Vec<f64>,
+    /// Populated only for a combined replay; ordinary search keeps its small goal vector.
+    pub(crate) reputation_all: crate::reputation::Standings,
+    pub(crate) reputation_sources_used: Option<Rc<std::collections::BTreeSet<String>>>,
     /// Quests of the forced zones not done yet (nor closed by an exclusive one): the guide
     /// goes on past the target level until they are.
     pub(crate) forced_left: u32,

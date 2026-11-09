@@ -35,7 +35,7 @@ local function Reconcile(token)
             not token.confirmed[id]
             and not token.turnedIn[id]
             and not FG.QuestLog.IsOnQuest(id)
-            and not FG.QuestLog.IsQuestFlaggedCompleted(id)
+            and (FG.Reputation and FG.Reputation:WantsQuest(id) or not FG.QuestLog.IsQuestFlaggedCompleted(id))
             and FG.Guide:NeedsQuestAcceptance(id)
         then
             local name = token.names[id] or FG.QuestLog.GetTitleForQuestID(id)

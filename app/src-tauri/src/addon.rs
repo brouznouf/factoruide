@@ -103,6 +103,9 @@ pub(crate) fn install_polestar(state: State<'_, AppState>) -> CmdResult<usize> {
         .addons_dir(Edition::Forever)
         .join(fg_route::export::polestar::ADDON);
     let files = fg_route::export::polestar::pack(&guides, env!("CARGO_PKG_VERSION"));
+    for (_, route) in &guides {
+        fg_route::export::polestar::validate_route(route).map_err(err)?;
+    }
     let _ = std::fs::remove_dir_all(&pack);
     std::fs::create_dir_all(&pack).map_err(err)?;
     for (name, content) in files {

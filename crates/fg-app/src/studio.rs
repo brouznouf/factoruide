@@ -489,6 +489,7 @@ impl Studio {
         }
         let version = library(host, Edition::Forever).version(guide, n)?;
         let route = self.render(host, Edition::Forever, &version.outcome.route, None)?;
+        fg_route::export::polestar::validate_route(&route)?;
         Ok(fg_route::export::polestar::import_string(
             &job::slug(&route.name),
             &route,

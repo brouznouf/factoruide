@@ -1057,6 +1057,7 @@ pub fn bare(quests: Vec<Quest>, dungeons: Vec<Dungeon>, start: Loc, params: &Par
     } = super::derive::indexes(&quests, params);
     let (n, d) = (quests.len(), dungeons.len());
     Model {
+        reputation_sources: super::BoundReputationCatalog::default(),
         known_class_powers: 0,
         known_class_prerequisites: HashSet::new(),
         abilities: crate::abilities::Abilities::default(),

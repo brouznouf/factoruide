@@ -10,6 +10,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
 - Pasted guides preserve wide numeric metadata and table keys instead of failing on clients with a 32-bit integer formatter.
 - After leaving a quest giver, a yellow reminder names offered guide quests you did not accept, even when automatic acceptance is disabled.
+- Repeated reputation deliveries, material farming and daily circuits now follow your actual progress across reloads; unmet goals are reported without blocking the rest of the guide.
+- Reputation activity automation follows only the current source and stops at its planned count; Classic estimates are clearly marked.
 - WoW Forever: the automatic purchase of food, water and ammo works (the client lost the old item count API).
 - Steps that buy the guide's gear at a vendor: the item's picture in the step, done once the item is in the bags or worn.
 - At a merchant, the guide's gear is bought for you, like the items its quests ask for (hold Shift to skip).

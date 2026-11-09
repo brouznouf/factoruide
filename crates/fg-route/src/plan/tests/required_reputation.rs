@@ -91,7 +91,7 @@ fn unsupported_target_returns_leveling_guide_with_named_actual_shortfall() {
         "target 100",
         "actual 0",
         "deficit 100",
-        "no supported",
+        "supported sources",
         "best-found",
     ] {
         assert!(warning.contains(expected), "missing {expected:?}: {warning}");

@@ -91,6 +91,7 @@ fn every_thing_done_is_a_step_of_its_own() {
             panic!("step {k} ({step:?}) did nothing: {r:?}");
         };
         let kind = match step {
+            RouteStep::ReputationProgram { .. } => StepKind::Reputation,
             RouteStep::Accept { .. } => StepKind::Accept,
             RouteStep::Objective { .. } => StepKind::Objective,
             RouteStep::TurnIn { .. } => StepKind::TurnIn,

@@ -188,6 +188,8 @@ impl<'s> Simulator<'s> {
             reputation: (0..self.params.reputation_goals.len())
                 .map(|g| init.reputation.get(g).copied().unwrap_or(0.0))
                 .collect(),
+            reputation_all: std::collections::BTreeMap::new(),
+            reputation_sources_used: None,
             forced_left: 0,
             required_left: 0,
             spent: Breakdown {

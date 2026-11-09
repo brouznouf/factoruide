@@ -75,6 +75,15 @@ pub struct StartState {
     /// Points with each faction the game lists for the character (none: recorded by an older
     /// addon).
     pub reputation: Vec<Standing>,
+    /// The continuation uses forecast standings, rather than an actual new addon observation.
+    pub reputation_inferred: bool,
+    /// Carried bag supplies, aggregated by item ID; never includes bank or equipped items.
+    pub inventory: Vec<InventoryItem>,
+    /// False for older snapshots or a failed inventory read: stale stock cannot fund turn-ins.
+    pub inventory_valid: bool,
+    /// Daily quest/reset observations, when the client supplied them.
+    pub daily: Option<DailyState>,
+    pub daily_valid: bool,
     /// When it was recorded (unix seconds).
     pub time: i64,
 }
@@ -84,7 +93,23 @@ pub struct StartState {
 #[serde(default)]
 pub struct Standing {
     pub id: i64,
-    pub value: i64,
+    pub value: f64,
+}
+
+/// A known carried quantity, not an assumed future supply.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct InventoryItem {
+    pub item: i64,
+    pub count: u32,
+}
+
+/// Daily completions from the same snapshot and the next observed server reset timestamp.
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct DailyState {
+    pub completed: Vec<QuestId>,
+    pub reset_at: Option<i64>,
 }
 
 /// A quest of the log.
@@ -250,6 +275,13 @@ impl StartState {
                 completed.push(id);
             }
         }
+        for &id in &end.completed_quests {
+            if !completed.contains(&QuestId(id)) {
+                completed.push(QuestId(id));
+            }
+        }
+        let mut reputation: crate::reputation::Standings = self.reputation.iter().map(|r| (r.id, r.value)).collect();
+        reputation.extend(end.reputation.iter().map(|(&id, &value)| (id, value)));
         let map = |zone: i64, pos: &crate::world::Pos| {
             world.to_map(zone, pos).map(|p| MapPos {
                 map: p.ui_map,
@@ -267,6 +299,22 @@ impl StartState {
         spells.sort_unstable();
         spells.dedup();
         Self {
+            reputation: reputation
+                .into_iter()
+                .map(|(id, value)| Standing { id, value })
+                .collect(),
+            reputation_inferred: true,
+            money: end.money_copper,
+            inventory: end
+                .inventory
+                .iter()
+                .filter(|(_, count)| **count > 0)
+                .map(|(&item, &count)| InventoryItem { item, count })
+                .collect(),
+            inventory_valid: true,
+            // The old daily snapshot belongs to the recorded character, not its forecast.
+            daily: None,
+            daily_valid: false,
             level: end.level,
             xp: end.xp,
             xp_max: rules.to_next_level(end.level),

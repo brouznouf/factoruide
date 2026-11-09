@@ -292,6 +292,12 @@ pub fn to_lua(routes: &[Route]) -> String {
             if s.keep {
                 fields.push("kp = true".into());
             }
+            if let Some(program) = &s.reputation_program {
+                fields.push(format!(
+                    "rp = {}",
+                    lua_value(&serde_json::to_value(program).expect("finite reputation programme"))
+                ));
+            }
             fields.push(format!("lvl = {}", s.level));
             if duration >= 1.0 {
                 fields.push(format!("d = {duration}"));
@@ -321,6 +327,27 @@ pub fn to_lua(routes: &[Route]) -> String {
         out.push_str("} }\n");
     }
     out
+}
+
+/// JSON maps retain string keys: faction IDs must not become positional Lua array entries.
+fn lua_value(value: &serde_json::Value) -> String {
+    match value {
+        serde_json::Value::Null => "nil".into(),
+        serde_json::Value::Bool(value) => value.to_string(),
+        serde_json::Value::Number(value) => value.to_string(),
+        serde_json::Value::String(value) => lua_str(value),
+        serde_json::Value::Array(values) => {
+            format!("{{ {} }}", values.iter().map(lua_value).collect::<Vec<_>>().join(", "))
+        }
+        serde_json::Value::Object(values) => format!(
+            "{{ {} }}",
+            values
+                .iter()
+                .map(|(key, value)| format!("[{}] = {}", lua_str(key), lua_value(value)))
+                .collect::<Vec<_>>()
+                .join(", ")
+        ),
+    }
 }
 
 /// Yards a walk may stray from the one the guide keeps once written for the addon.
@@ -374,7 +401,17 @@ fn lighten_walk(step: &Step) -> Vec<[f64; 2]> {
 
 #[cfg(test)]
 mod tests {
-    use super::lua_str;
+    use super::{lua_str, lua_value};
+
+    #[test]
+    fn reputation_lua_preserves_fractional_faction_keys_and_daily_counts() {
+        let value = serde_json::json!({ "reached": { "68": 99.75 }, "phases": [{ "kind": "daily_circuit", "cycles": 3 }], "name": "NPC \"quoted\"\\path\nnext" });
+        let lua = lua_value(&value);
+        assert!(lua.contains("[\"68\"] = 99.75"));
+        assert!(lua.contains("[\"cycles\"] = 3"));
+        assert!(lua.contains("[\"kind\"] = \"daily_circuit\""));
+        assert!(lua.contains("NPC \\\"quoted\\\"\\\\path\\nnext"));
+    }
 
     /// Lua 5.1 reads `\ddd` (always three digits here: a digit after one stays a digit) and no
     /// `\u{..}`: a no-break space or a zero-width space go as they are.

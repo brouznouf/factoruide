@@ -9,6 +9,7 @@ pub mod groups;
 mod lua;
 mod phrase;
 pub mod polestar;
+mod reputation;
 mod templates;
 mod types;
 mod vendors;
@@ -35,6 +36,9 @@ pub fn render(route: &Route, names: &Names) -> Route {
     let lang = Lang::of(&names.locale);
     for step in out.steps.iter_mut().filter(|s| !s.say.is_empty()) {
         render_step(step, names);
+        if let Some(program) = &mut step.reputation_program {
+            reputation::render_program(program, names);
+        }
     }
     for p in &mut out.professions {
         if let Some(name) = templates::profession_name(&p.key, lang) {
