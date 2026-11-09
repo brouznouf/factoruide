@@ -62,7 +62,7 @@ use crate::export;
 use crate::model::Model;
 use crate::model::{self, Profile};
 use crate::params::Params;
-use crate::plan::Planner;
+use crate::plan::{Planner, Stop};
 use crate::terrain::Walks;
 use crate::world::{World, WorldBuilder};
 use anyhow::Result;
@@ -175,12 +175,7 @@ pub(crate) fn plan_prepared(
     if interrupt.cancelled() {
         return Err(JobError::Cancelled);
     }
-    // The returns to a place merged into an earlier visit, what can be done in a place before
-    // leaving it, then objectives at the same place one after the other, done at once.
-    let best = planner.merge_visits(&best).map_or(best, |(merged, _)| merged);
-    let best = planner.tidy(&best).map_or(best, |(tidied, _)| tidied);
-    let best = planner.route_together(best);
-    planner.validate_required(&best)?;
+    let best = finalize_route(&planner, best)?;
     let route = export::build(&planner, &prepared.profile, &best);
     for missing in planner.missing_class_quests(&best) {
         prepared.notes.push(format!("required quest not planned: {missing}"));
@@ -229,6 +224,16 @@ pub(crate) fn plan_prepared(
     let editor = Editor { prepared };
     editor.set_walks(&mut outcome);
     Ok((outcome, editor.prepared))
+}
+
+/// Shared production finalization, also used by the single-start comparison harness.
+/// Merge returns, settle visits, group objectives, then validate required content.
+pub fn finalize_route(planner: &Planner<'_>, best: Vec<Stop>) -> Result<Vec<Stop>, JobError> {
+    let best = planner.merge_visits(&best).map_or(best, |(merged, _)| merged);
+    let best = planner.tidy(&best).map_or(best, |(tidied, _)| tidied);
+    let best = planner.route_together(best);
+    planner.validate_required(&best)?;
+    Ok(best)
 }
 
 /// A guide of no steps, to write by hand in the guide editor: the character starts as `plan`

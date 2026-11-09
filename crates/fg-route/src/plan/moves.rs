@@ -101,6 +101,13 @@ impl Planner<'_> {
 impl Planner<'_> {
     /// One of the small moves, drawn at random.
     pub(crate) fn random_move(&self, route: &mut Vec<Stop>, run: &Run, rng: &mut SmallRng) -> Option<Change> {
+        // Gate before drawing: disabled experiments preserve the production RNG stream.
+        if self.params.chain_insert > 0.0 && rng.random_bool(self.params.chain_insert.min(1.0)) {
+            return self.add_optional_chain(route, run, rng);
+        }
+        if self.params.hub_repair > 0.0 && rng.random_bool(self.params.hub_repair.min(1.0)) {
+            return self.repair_nearby_quests(route, run, rng);
+        }
         // Vendor buys get their own slot; without them, keep the existing draws.
         let choices = if self.model.bis.vendor_items().is_empty() {
             25

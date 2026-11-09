@@ -210,6 +210,12 @@ pub struct Params {
     pub anneal: f64,
     /// Share of local search moves that ruin and rebuild a part of the route (0 = off).
     pub alns: f64,
+    /// Experimental share of small-move calls that insert a bounded missing quest chain.
+    /// Zero preserves the existing dispatcher and random draws.
+    pub chain_insert: f64,
+    /// Experimental share of small-move calls that exactly repair a nearby quest collection.
+    /// Zero preserves the existing dispatcher and random draws.
+    pub hub_repair: f64,
     /// Late acceptance history length (0 = only improvements).
     pub lahc: usize,
     /// Stops replayed past a move's last changed stop before its cost is estimated from the
@@ -584,6 +590,8 @@ impl Default for Params {
             efficiency_power: 0.0,
             anneal: 0.0,
             alns: 0.25,
+            chain_insert: 0.0,
+            hub_repair: 0.0,
             lahc: 0,
             eval_window: 150,
             excluded_sorts: vec![

@@ -170,3 +170,48 @@ fn without_vendor_candidates_class_versions_remain_reachable() {
     assert_eq!(p.model.bis.vendor_items().len(), 0);
     assert!(dispatched_route(&p, &far_version_route(), has_other_version).is_some());
 }
+
+/// A compact snapshot of proposals and RNG state from the corrected dispatcher.
+/// Experimental operators disabled must preserve both, including vendor draws.
+#[test]
+fn experimental_moves_off_preserve_dispatch_and_rng() {
+    use rand::RngExt;
+    let mut fingerprints = Vec::new();
+    for p in [quests_at_start(2), with_vendor_item(2)] {
+        let planner = planner(&p);
+        let route = one_quest_route();
+        let run = planner.run(&route).unwrap();
+        let mut rng = SmallRng::seed_from_u64(20261107);
+        let mut fingerprint = 0xcbf29ce484222325_u64;
+        let mut record = |value: u64| {
+            for byte in value.to_le_bytes() {
+                fingerprint = (fingerprint ^ u64::from(byte)).wrapping_mul(0x100000001b3);
+            }
+        };
+        for _ in 0..128 {
+            let mut candidate = route.clone();
+            if let Some(change) = planner.random_move(&mut candidate, &run, &mut rng) {
+                record(1);
+                record(change.first as u64);
+                record(change.last as u64);
+                record(u64::from(change.reordered));
+            } else {
+                record(0);
+            }
+            record(candidate.len() as u64);
+            for stop in candidate {
+                record(u64::from(stop.index));
+                let kind = match stop.kind {
+                    Kind::Accept => 1,
+                    Kind::TurnIn => 2,
+                    Kind::Objective(i) => 100 + u64::from(i),
+                    _ => 1000,
+                };
+                record(kind);
+            }
+            record(rng.random::<u64>());
+        }
+        fingerprints.push(fingerprint);
+    }
+    assert_eq!(fingerprints, [8630436502940397851, 8474989223404584315]);
+}

@@ -110,7 +110,7 @@ impl Planner<'_> {
     /// Timed quests the route takes but turns in after their limit (with the planner's margin):
     /// the guide gives them up instead, the game fails them. The planner avoids it when it can;
     /// one left is a quest whose limit the route cannot keep.
-    pub(crate) fn late_timed_quests(&self, route: &[Stop]) -> Vec<String> {
+    pub fn late_timed_quests(&self, route: &[Stop]) -> Vec<String> {
         let mut trace = Vec::new();
         if self.simulate(route, Some(&mut trace)).is_none() {
             return Vec::new();
