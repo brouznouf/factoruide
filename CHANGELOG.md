@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+## 0.17.0 (2026-11-09)
+
+Objective guides: several dungeons, zones and quests at once, in the best order whatever their level, and the latest WoW Forever data.
+
 ### App
 
 - Objective guides replace the dungeon guide: pick several dungeons, zones and quests at once, and get every quest of them with what leads to them, in the best order, whatever their level; the guide tells the level its quests ask and lists those above yours.
@@ -15,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Addon
 
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
+- World map pins and the walk's dots keep their size on a map enlarged by another addon.
 
 ### WoW data
 

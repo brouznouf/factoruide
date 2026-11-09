@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- The objective guide's level warning in every language of the game.
+
 ## 0.16.0 (2026-11-07)
 
 - Lighter: the guides made in the desktop app now count in the Guide addon's memory, not this one's, and your reputations and spells are no longer read again every minute.
