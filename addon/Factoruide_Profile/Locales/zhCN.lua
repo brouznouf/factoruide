@@ -1,6 +1,7 @@
 -- Simplified Chinese texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.zhCN = {
+    ["Not accepted: %s. Return to the quest giver and accept them manually."] = "未接受：%s。请返回任务给予者处手动接受这些任务。",
     ["take from the bank: %s"] = "从银行取出：%s",
     ["can stay in the bank: %s"] = "可留在银行：%s",
     ["NOW"] = "当前",

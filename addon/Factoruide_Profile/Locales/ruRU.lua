@@ -1,6 +1,7 @@
 -- Russian texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.ruRU = {
+    ["Not accepted: %s. Return to the quest giver and accept them manually."] = "Не приняты: %s. Вернитесь к тому, кто выдаёт задания, и примите их вручную.",
     ["take from the bank: %s"] = "взять из банка: %s",
     ["can stay in the bank: %s"] = "может остаться в банке: %s",
     ["NOW"] = "СЕЙЧАС",

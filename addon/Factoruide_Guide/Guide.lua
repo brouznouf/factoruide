@@ -249,7 +249,12 @@ function IsDone(step, index)
     end
     -- Planned well below our level: left behind (a character resuming the route, a quest
     -- added to the game after we went through that zone), unless the quest is in the log.
-    if step.lvl and UnitLevel("player") - step.lvl >= OUTDATED_LEVELS and not (q and QuestLog.IsOnQuest(q)) then
+    if
+        not step.kp
+        and step.lvl
+        and UnitLevel("player") - step.lvl >= OUTDATED_LEVELS
+        and not (q and QuestLog.IsOnQuest(q))
+    then
         return true, true
     end
     -- An exclusive alternative (or the quest a breadcrumb leads to) is done or in progress:
@@ -1320,6 +1325,13 @@ function Guide:WantsQuest(questID)
     return not IsDone(step, at)
 end
 
+--- The offered accept still needs doing. Unlike automation's WantsQuest, a held library
+--- book is already handled and does not need missed-accept advice.
+function Guide:NeedsQuestAcceptance(questID)
+    local at = route and questID and acceptIndex[questID]
+    return at ~= nil and not IsDone(route.steps[at], at)
+end
+
 --- Fields of the guide state that belong to the route in use: the step shown, the steps
 --- marked by their index and the quests marked done by hand.
 local PROGRESS = { "step", "marks", "skippedQuests", "handedIn", "player" }
@@ -1359,6 +1371,7 @@ local function SwitchProgress(name)
 end
 
 local function UseRoute(name)
+    if FG.AcceptanceAudit then FG.AcceptanceAudit:Reset() end
     route = FG.Routes and FG.Routes[name]
     name = route and name or nil
     SwitchProgress(name)

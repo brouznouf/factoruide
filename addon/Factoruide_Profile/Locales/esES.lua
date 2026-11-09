@@ -1,6 +1,7 @@
 -- Spanish (also Mexican Spanish) texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.esES = {
+    ["Not accepted: %s. Return to the quest giver and accept them manually."] = "Sin aceptar: %s. Vuelve con quien ofrece las misiones y acéptalas manualmente.",
     ["take from the bank: %s"] = "sacar del banco: %s",
     ["can stay in the bank: %s"] = "puede quedarse en el banco: %s",
     ["NOW"] = "AHORA",

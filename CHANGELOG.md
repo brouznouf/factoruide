@@ -14,6 +14,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Addon
 
+- After leaving a quest giver, a yellow reminder names offered guide quests you did not accept, even when automatic acceptance is disabled.
+
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
 
 ### WoW data

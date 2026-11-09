@@ -32,6 +32,7 @@ Options.lua
 TalentBuilds_forever.lua
 TalentBuilds_classic.lua
 TalentBuilds_tbc.lua
+AcceptanceAudit.lua
 Automation.lua
 Group.lua
 Guide.lua

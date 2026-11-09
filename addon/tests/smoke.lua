@@ -387,6 +387,10 @@ C_GossipInfo = {
 }
 GetQuestID = function() return 179 end
 SlashCmdList = {}
+-- Modern clients provide these at addon load, so the observer may safely register the
+-- optional manager event. Audit cases below also exercise their absence at runtime.
+Enum = { PlayerInteractionType = { Gossip = 3, QuestGiver = 4 } }
+C_PlayerInteractionManager = { IsInteractingWithNpcOfType = function() return false end }
 
 -- Each addon gets its own private table; the guide uses the profile's, the global `Factoruide`.
 local function load(addon)
@@ -4669,3 +4673,500 @@ local function SettingsTest()
     print("settings ok")
 end
 SettingsTest()
+
+-- Acceptance audit uses real guide eligibility and event dispatch. Only the game's clock,
+-- dialogs and notification sinks are replaced so closure/grace ordering is deterministic.
+function AcceptanceAuditTest()
+    runTimers()
+    local savedManager = C_PlayerInteractionManager
+    C_PlayerInteractionManager = nil
+    local savedAfter, savedTime, savedGUID, savedID = C_Timer.After, GetTime, UnitGUID, GetQuestID
+    local savedPrint, savedShift, savedOffers = FG.Print, IsShiftKeyDown, C_GossipInfo.GetAvailableQuests
+    local savedGreeting, savedGreetingInfo, savedTitle = GetNumAvailableQuests, GetAvailableQuestInfo, GetAvailableTitle
+    local savedDetailTitle, savedLevel = GetTitleText, playerLevel
+    local now, queue, notices, chats, offers = 0, {}, {}, {}, {}
+    local npc, detail, shift, sequence = "Creature-0-1-2-3-658-1111", 99001, false, 0
+    local failures = {}
+    local priorErrors = {}
+    for message, count in pairs(FactoruideDB.errors or {}) do
+        priorErrors[message] = count
+    end
+    C_Timer.After = function(delay, fn) queue[#queue + 1] = { at = now + delay, fn = fn } end
+    GetTime = function() return now end
+    UnitGUID = function(unit)
+        if unit == "npc" then return npc end
+        return savedGUID(unit)
+    end
+    GetQuestID = function() return detail end
+    GetTitleText = function() return "Detail " .. detail end
+    IsShiftKeyDown = function() return shift end
+    C_GossipInfo.GetAvailableQuests = function() return offers end
+    GetNumAvailableQuests = function() return #offers end
+    GetAvailableQuestInfo = function(i) return false, 1, false, false, offers[i].questID end
+    GetAvailableTitle = function(i) return offers[i].title end
+    FG.Print = function(_, fmt, ...) chats[#chats + 1] = string.format(fmt, ...) end
+    UIErrorsFrame = {
+        AddMessage = function(_, text, r, g, b)
+            notices[#notices + 1] = text
+            assert(r == 1 and g >= 0.8 and b < 0.3, "acceptance advice is yellow")
+        end,
+    }
+    local function elapse(seconds)
+        local untilTime = now + seconds
+        for _ = 1, 10000 do
+            local first
+            for i, timer in ipairs(queue) do
+                if timer.at <= untilTime and (not first or timer.at < queue[first].at) then first = i end
+            end
+            if not first then
+                now = untilTime
+                return
+            end
+            local timer = table.remove(queue, first)
+            now = timer.at
+            timer.fn()
+        end
+        error("audit timer loop")
+    end
+    local function setup(steps)
+        fire("PLAYER_LEAVING_WORLD")
+        sequence = sequence + 1
+        playerLevel, shift = 1, false
+        npc, detail = "Creature-0-1-2-3-658-1111", 99001
+        offers = { { questID = 99001, title = "First offer" }, { questID = 99002, title = "Second offer" } }
+        for q = 99001, 99004 do
+            onQuest[q], completed[q] = nil, nil
+        end
+        local name = "acceptance-audit-" .. sequence
+        FG.Routes[name] = {
+            steps = steps or {
+                { k = "accept", q = 99001, n = "First offer", lvl = 1 },
+                { k = "accept", q = 99002, n = "Second offer", lvl = 1 },
+            },
+        }
+        FG.Routes[name].fromLevel, FG.Routes[name].toLevel = 1, 60
+        for _, step in ipairs(FG.Routes[name].steps) do
+            step.lvl, step.t = step.lvl or 1, step.t or "Acceptance test"
+        end
+        FG:Save("autoAccept", false)
+        FG:Save("autoTurnIn", false)
+        FG:Save("uiShown", true)
+        useRoute(name)
+        notices, chats = {}, {}
+        return name
+    end
+    local function check(name, fn)
+        local ok, err = pcall(fn)
+        C_PlayerInteractionManager, GossipFrame, QuestFrame = nil, nil, nil
+        if not ok then failures[#failures + 1] = name .. ": " .. tostring(err) end
+    end
+    local function close()
+        fire("GOSSIP_CLOSED", false)
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+    end
+    check("keep flag protects outdated automatic advancement without a checkpoint", function()
+        setup({ { k = "accept", q = 99001, kp = true, lvl = 1 }, { k = "accept", q = 99002, lvl = 1 } })
+        playerLevel = 5
+        FG.Guide:Resync()
+        assert(char.guide.step == 1 and FG.Guide:WantsQuest(99001), "protected old acceptance remains needed")
+    end)
+    check("two offered one accepted warns only missing, independently of automation", function()
+        setup()
+        fire("GOSSIP_SHOW")
+        onQuest[99001] = true
+        fire("QUEST_ACCEPTED", 99001)
+        close()
+        assert(#notices == 1, "one warning for the offered missing quest")
+        assert(
+            notices[1]:find("Second offer", 1, true) and not notices[1]:find("First offer", 1, true),
+            "only missing quest named"
+        )
+        assert(#chats == 1 and chats[1] == notices[1], "matching chat history")
+        fire("QUEST_FINISHED")
+        fire("GOSSIP_CLOSED", false)
+        fire("QUEST_LOG_UPDATE")
+        elapse(2)
+        assert(#notices == 1, "duplicate close/log events do not repeat")
+    end)
+    check("failed automatic acceptance warns and leaves normal advancement pending", function()
+        setup()
+        FG:Save("autoAccept", true)
+        fire("QUEST_DETAIL", 0)
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(#notices == 1 and char.guide.step == 1, "lost accept warns without passing the step")
+        FG.Guide:NextGroup()
+        assert(char.guide.step > 1, "manual navigation remains available")
+    end)
+    check("Shift and non-guide-only modes still capture all actual offers", function()
+        setup()
+        shift = true
+        FG:Save("autoAccept", true)
+        FG:Save("routeQuestsOnly", false)
+        fire("GOSSIP_SHOW")
+        close()
+        assert(
+            #notices == 1 and notices[1]:find("First offer", 1, true) and notices[1]:find("Second offer", 1, true),
+            "manual Shift omissions included"
+        )
+        FG:Save("routeQuestsOnly", nil)
+    end)
+    check("grace accommodates delayed log and edition acceptance payloads", function()
+        for _, edition in ipairs({ "forever", "classic", "tbc" }) do
+            setup()
+            fire("GOSSIP_SHOW")
+            fire("GOSSIP_CLOSED", false)
+            elapse(0.5)
+            onQuest[99001] = true
+            if edition == "forever" then
+                fire("QUEST_ACCEPTED", 99002)
+            else
+                fire("QUEST_ACCEPTED", 7, 99002)
+            end
+            elapse(0.6)
+            assert(#notices == 0, edition .. " delayed log plus normalized positive event confirms")
+        end
+        setup()
+        fire("GOSSIP_SHOW")
+        fire("QUEST_ACCEPTED", 99001)
+        fire("QUEST_REMOVED", 99001)
+        close()
+        assert(#notices == 1 and notices[1]:find("First offer", 1, true), "removal revokes accepted evidence")
+    end)
+    check("gossip continuation retains union while detail stays open", function()
+        setup()
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", true)
+        fire("QUEST_DETAIL", 0)
+        elapse(10)
+        assert(#notices == 0, "no countdown against open detail")
+        fire("GOSSIP_CLOSED", false)
+        elapse(2)
+        assert(#notices == 0, "late gossip close cannot close quest detail")
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(#notices == 1 and notices[1]:find("Second offer", 1, true), "original offers survive transition")
+    end)
+    check("item and unidentified quest panels retain explicit progress continuation", function()
+        setup()
+        npc = nil
+        fire("QUEST_DETAIL", 99004)
+        fire("QUEST_PROGRESS")
+        elapse(2)
+        assert(#notices == 0, "item detail is not closed by its progress phase")
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(#notices == 1, "item interaction closes once")
+        setup()
+        npc = nil
+        fire("QUEST_DETAIL", 0)
+        fire("QUEST_COMPLETE")
+        elapse(2)
+        assert(#notices == 0, "unknown-source quest progress retains explicit panel continuation")
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(#notices == 1, "unknown detail still identifies its actual quest")
+    end)
+    check("unknown source gossip or greeting to detail before close keeps offer union open", function()
+        for _, event in ipairs({ "GOSSIP_SHOW", "QUEST_GREETING" }) do
+            setup()
+            npc = nil
+            fire(event)
+            fire("QUEST_DETAIL", 0)
+            fire("GOSSIP_CLOSED", false)
+            elapse(2)
+            assert(#notices == 0, event .. " explicit transition has no premature warning")
+            fire("QUEST_FINISHED")
+            elapse(1.1)
+            assert(
+                #notices == 1 and notices[1]:find("Second offer", 1, true),
+                "unknown source transition retains offered union"
+            )
+        end
+    end)
+    check("missing NPC GUID during detail and manager opening preserve explicit continuation", function()
+        setup()
+        fire("GOSSIP_SHOW")
+        npc = nil
+        fire("GOSSIP_CLOSED", true)
+        fire("QUEST_DETAIL", 0)
+        elapse(2)
+        assert(#notices == 0, "GUID disappearing during continuation does not close previous snapshot")
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(#notices == 1 and notices[1]:find("Second offer", 1, true), "source snapshot and offers retained")
+        setup()
+        npc = nil
+        Enum.PlayerInteractionType = { Gossip = 3, QuestGiver = 4 }
+        C_PlayerInteractionManager = { IsInteractingWithNpcOfType = function() return true end }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", true)
+        fire("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", 4)
+        fire("QUEST_DETAIL", 0)
+        elapse(2)
+        assert(#notices == 0, "manager opening and detail are phases of unknown-source interaction")
+        C_PlayerInteractionManager.IsInteractingWithNpcOfType = function() return false end
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(#notices == 1 and notices[1]:find("Second offer", 1, true), "manager transition retained original union")
+    end)
+    check("repeatable turn-in remains confirmed across removed events in either order", function()
+        for _, removeFirst in ipairs({ true, false }) do
+            setup()
+            offers = { { questID = 99001, title = "Repeatable", repeatable = true } }
+            fire("GOSSIP_SHOW")
+            if removeFirst then fire("QUEST_REMOVED", 99001) end
+            fire("QUEST_TURNED_IN", 99001, 0, 0)
+            if not removeFirst then fire("QUEST_REMOVED", 99001) end
+            close()
+            assert(#notices == 0, "repeatable turn-in resolves observed offer even without permanent completion flag")
+        end
+    end)
+    check("unknown source becomes readable through explicit detail transition without premature close", function()
+        for _, opening in ipairs({ "GOSSIP_SHOW", "QUEST_GREETING", "continuing", "manager" }) do
+            setup()
+            npc = nil
+            fire(opening == "QUEST_GREETING" and opening or "GOSSIP_SHOW")
+            if opening == "continuing" or opening == "manager" then fire("GOSSIP_CLOSED", true) end
+            npc = "Creature-0-1-2-3-658-3333"
+            if opening == "manager" then
+                Enum.PlayerInteractionType = { Gossip = 3, QuestGiver = 4 }
+                C_PlayerInteractionManager = { IsInteractingWithNpcOfType = function() return true end }
+                fire("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", 4)
+            end
+            fire("QUEST_DETAIL", 0)
+            elapse(1.1)
+            assert(#notices == 0, opening .. " nil-to-known detail stays open without advice")
+            C_PlayerInteractionManager = nil
+            fire("QUEST_FINISHED")
+            elapse(1.1)
+            assert(
+                #notices == 1 and notices[1]:find("Second offer", 1, true),
+                opening .. " final close retains original offered union"
+            )
+            fire("GOSSIP_SHOW")
+            elapse(1.1)
+            assert(#notices == 1, "promoted source snapshot has no stale duplicate")
+        end
+    end)
+    check("same NPC reopen cancels close and unions offers, later visit warns again", function()
+        setup()
+        offers = { { questID = 99001, title = "First offer" } }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        elapse(0.5)
+        offers = { { questID = 99002, title = "Second offer" } }
+        fire("GOSSIP_SHOW")
+        elapse(2)
+        assert(#notices == 0, "reopened conversation stays open")
+        close()
+        assert(
+            #notices == 1 and notices[1]:find("First offer", 1, true) and notices[1]:find("Second offer", 1, true),
+            "true offered union"
+        )
+        fire("GOSSIP_SHOW")
+        close()
+        assert(#notices == 2, "new visit can warn again")
+    end)
+    check("different NPC does not cancel previous closing audit", function()
+        setup()
+        offers = { { questID = 99001, title = "First offer" } }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        elapse(0.2)
+        npc = "Creature-0-1-2-3-658-2222" -- same creature entry, distinct spawn
+        offers = { { questID = 99002, title = "Second offer" } }
+        fire("GOSSIP_SHOW")
+        elapse(1)
+        assert(#notices == 1 and notices[1]:find("First offer", 1, true), "old NPC audit survives new source")
+        close()
+        assert(#notices == 2 and notices[2]:find("Second offer", 1, true), "new source has independent warning")
+    end)
+    check("A B A reopen resumes A pending union while preserving B deadline", function()
+        setup({ { k = "accept", q = 99001 }, { k = "accept", q = 99002 }, { k = "accept", q = 99003 } })
+        local sourceA = npc
+        offers = { { questID = 99001, title = "Original A offer" } }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        elapse(0.2)
+        npc = "Creature-0-1-2-3-658-4444"
+        offers = { { questID = 99002, title = "B offer" } }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        elapse(0.2)
+        npc = sourceA
+        offers = { { questID = 99003, title = "New A offer" } }
+        fire("GOSSIP_SHOW")
+        elapse(0.7)
+        assert(#notices == 0, "A's old deadline cannot warn during reopened A")
+        elapse(0.2)
+        assert(#notices == 1 and notices[1]:find("B offer", 1, true), "B's independent deadline still warns once")
+        fire("GOSSIP_CLOSED", false)
+        elapse(1.1)
+        assert(
+            #notices == 2 and notices[2]:find("Original A offer", 1, true) and notices[2]:find("New A offer", 1, true),
+            "one final A warning preserves original and reopened offers"
+        )
+        elapse(2)
+        assert(#notices == 2, "no stale A callback duplicates final warning")
+    end)
+    check("route switch away and back or same-name replacement cancels stale audit", function()
+        local name = setup()
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        elapse(0.2)
+        FG.Routes["audit-other"] = { fromLevel = 1, toLevel = 60, steps = {} }
+        useRoute("audit-other")
+        useRoute(name)
+        elapse(2)
+        assert(#notices == 0, "switch away/back invalidates context")
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        elapse(0.2)
+        FG.Routes[name] =
+            { fromLevel = 1, toLevel = 60, steps = { { k = "accept", q = 99001, lvl = 1, t = "Replacement" } } }
+        useRoute(name)
+        elapse(2)
+        assert(#notices == 0, "same-name route replacement invalidates context")
+    end)
+    check("marks completion alternatives profession and held books suppress warnings", function()
+        setup()
+        fire("GOSSIP_SHOW")
+        FG.Guide:ToggleSkip(1)
+        completed[99002] = true
+        notices, chats = {}, {}
+        close()
+        assert(#notices == 0, "marked/completed offers no longer needed")
+        setup({ { k = "accept", q = 99001, alt = { 99003 } }, { k = "accept", q = 99002, hd = true, id = 99004 } })
+        fire("GOSSIP_SHOW")
+        onQuest[99003], bags[99004] = true, 1
+        close()
+        assert(#notices == 0, "exclusive alternative and held book are resolved")
+        bags[99004] = nil
+        setup({ { k = "accept", q = 99001, line = 999999, sk = 100 } })
+        fire("GOSSIP_SHOW")
+        close()
+        assert(#notices == 0, "ineligible profession accept ignored")
+    end)
+    check("legacy greeting never guesses IDs and detail safely identifies selected offer", function()
+        setup()
+        offers = { { title = "First offer" }, { title = "First offer" } }
+        fire("QUEST_GREETING")
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(#notices == 0, "unidentified or ambiguous titles are not inferred")
+        fire("QUEST_GREETING")
+        fire("QUEST_DETAIL", 0)
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        assert(
+            #notices == 1 and notices[1]:find("Detail 99001", 1, true),
+            "detail identifies the selected legacy offer"
+        )
+    end)
+    check("interaction manager guards actual open phase and hide wakes closure", function()
+        setup()
+        local interacting = true
+        Enum.PlayerInteractionType = { Gossip = 3, QuestGiver = 4 }
+        C_PlayerInteractionManager = { IsInteractingWithNpcOfType = function() return interacting end }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", true)
+        elapse(2)
+        assert(#notices == 0, "continuing manager interaction stays open")
+        interacting = false
+        fire("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", 3)
+        elapse(1.1)
+        assert(#notices == 1, "manager hide reconciles continuing close")
+        C_PlayerInteractionManager, Enum.PlayerInteractionType = nil, nil
+    end)
+    check("manager show cancels a closing phase before the offer UI event arrives", function()
+        setup()
+        local interacting = false
+        Enum.PlayerInteractionType = { Gossip = 3, QuestGiver = 4 }
+        C_PlayerInteractionManager = { IsInteractingWithNpcOfType = function() return interacting end }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        elapse(0.5)
+        interacting = true
+        fire("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", 4)
+        elapse(2)
+        assert(#notices == 0, "manager opening cancels stale close")
+        interacting = false
+        fire("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", 4)
+        elapse(1.1)
+        assert(#notices == 1, "later manager close delivers retained offers")
+        C_PlayerInteractionManager, Enum.PlayerInteractionType = nil, nil
+    end)
+    check("legacy existing frames guard continuation and hide wakes closure", function()
+        setup()
+        local shown, hide = true
+        GossipFrame = { IsShown = function() return shown end, HookScript = function(_, _, fn) hide = fn end }
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", true)
+        elapse(2)
+        assert(#notices == 0, "legacy visible frame holds interaction open")
+        shown = false
+        hide()
+        elapse(1.1)
+        assert(#notices == 1, "legacy frame hide settles the conversation")
+        GossipFrame = nil
+    end)
+    check("capture precedes synchronous automation and ignores unrelated quests", function()
+        setup()
+        FG:Save("autoAccept", true)
+        offers[#offers + 1] = { questID = 1234567, title = "Unrelated" }
+        local savedSelect = C_GossipInfo.SelectAvailableQuest
+        C_GossipInfo.SelectAvailableQuest = function(id)
+            offers = {}
+            detail = id
+            fire("GOSSIP_CLOSED", true)
+            fire("QUEST_DETAIL", 0)
+        end
+        fire("GOSSIP_SHOW")
+        fire("QUEST_ACCEPTED", 1234567)
+        fire("QUEST_FINISHED")
+        elapse(1.1)
+        C_GossipInfo.SelectAvailableQuest = savedSelect
+        assert(
+            #notices == 1 and notices[1]:find("Second offer", 1, true),
+            "second offer captured before selection consumed list"
+        )
+        assert(not notices[1]:find("Unrelated", 1, true), "unrelated offer and acceptance ignored")
+    end)
+    check("hidden guide discards warning and logout cancels pending work", function()
+        setup()
+        fire("GOSSIP_SHOW")
+        FG:Save("uiShown", false)
+        close()
+        assert(#notices == 0 and #chats == 0, "hidden advice is discarded")
+        FG:Save("uiShown", true)
+        elapse(2)
+        assert(#notices == 0, "no hidden warning backlog")
+        setup()
+        fire("GOSSIP_SHOW")
+        fire("GOSSIP_CLOSED", false)
+        fire("PLAYER_LOGOUT")
+        elapse(2)
+        assert(#notices == 0, "logout invalidates audit")
+    end)
+    fire("PLAYER_LEAVING_WORLD")
+    C_PlayerInteractionManager = savedManager
+    C_Timer.After, GetTime, UnitGUID, GetQuestID = savedAfter, savedTime, savedGUID, savedID
+    FG.Print, IsShiftKeyDown, C_GossipInfo.GetAvailableQuests = savedPrint, savedShift, savedOffers
+    GetNumAvailableQuests, GetAvailableQuestInfo, GetAvailableTitle = savedGreeting, savedGreetingInfo, savedTitle
+    GetTitleText, playerLevel, UIErrorsFrame = savedDetailTitle, savedLevel, nil
+    FG:Save("autoAccept", nil)
+    FG:Save("autoTurnIn", nil)
+    FG:Save("uiShown", nil)
+    FG:Save("routeQuestsOnly", nil)
+    for message, count in pairs(FactoruideDB.errors or {}) do
+        if count ~= priorErrors[message] then failures[#failures + 1] = "event error: " .. message end
+    end
+    for _, failure in ipairs(failures) do
+        print("FAIL acceptance audit: " .. failure)
+    end
+    assert(#failures == 0, #failures .. " acceptance audit regressions failed")
+    print("acceptance interaction audit and outdated keep protection ok")
+end
+AcceptanceAuditTest()

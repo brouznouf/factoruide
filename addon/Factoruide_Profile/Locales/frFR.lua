@@ -1,6 +1,7 @@
 -- French texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.frFR = {
+    ["Not accepted: %s. Return to the quest giver and accept them manually."] = "Quêtes non acceptées : %s. Retournez voir le donneur de quêtes et acceptez-les manuellement.",
     ["take from the bank: %s"] = "à prendre à la banque : %s",
     ["can stay in the bank: %s"] = "peut rester à la banque : %s",
     ["NOW"] = "MAINTENANT",
