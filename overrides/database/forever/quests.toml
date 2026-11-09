@@ -1634,6 +1634,17 @@ friendly_to = "A"
 id = 275075 # Lakeshire Protector
 friendly_to = "A"
 
+[[npc]]
+# Supply crates by Guard Parker in Lakeshire: level 60 and neutral in game, no creature type on
+# Forever's NPC page. Taken for hostile guards, they kept A Free Lunch and its chain out of the
+# guides.
+id = 256740 # Crate of Enchanting Supplies
+friendly_to = "AH"
+
+[[npc]]
+id = 256741 # Basket of Textile Supplies
+friendly_to = "AH"
+
 [[drop]]
 # Underground Map: its two droppers (Dark Iron Map quests) at the rate of the Dark Iron Map.
 item = 274268

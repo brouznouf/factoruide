@@ -18,7 +18,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### WoW data
 
-- WoW Forever: the latest quest data and the game's new build, with 34 more contributions from players (quests seen in game, measured XP and drop rates, creature places) and 105 Spanish, French, German and English names checked; Lakeshire's guards no longer count as hostile creatures around Guard Howe and Deputy Feldon.
+- WoW Forever: the latest quest data and the game's new build, with 58 more contributions from players (quests seen in game, measured XP and drop rates, creature places) and 134 Spanish, French, German and English names checked; most of the Riverglades quests are in the guides, dungeon quests give their new, higher XP, and Lakeshire's guards and Guard Parker's supply crates no longer count as hostile creatures.
 
 ## 0.16.0 (2026-11-07)
 
