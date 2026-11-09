@@ -14,7 +14,7 @@
 ## Category-zhCN: 任务
 ## Category-zhTW: 任務
 ## IconTexture: Interface\AddOns\Factoruide_Profile\Media\Logo
-## Version: 0.16.0
+## Version: 0.17.0
 ## SavedVariables: FactoruideDB
 ## OptionalDeps: Factoruide_Data
 
