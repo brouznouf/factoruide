@@ -9,7 +9,9 @@ const REQUIRED = ["en"];
 
 const catalog = fs.readFileSync(path.join(root, "catalog.ts"), "utf8");
 const entries = new Map();
-for (const m of catalog.matchAll(/^\s*("(?:[^"\\]|\\.)*")\s*:\s*\{(.*)\},?\s*$/gm)) {
+// The entries are flat, but a long one is written over several lines, and their
+// translations hold {placeholder}s of their own.
+for (const m of catalog.matchAll(/("(?:[^"\\]|\\.)*")\s*:\s*\{((?:[^{}]|\{[^{}]*\})*)\}/g)) {
   entries.set(JSON.parse(m[1]), m[2]);
 }
 
@@ -34,6 +36,26 @@ for (const file of files) {
       }
     }
   });
+}
+
+// Texts t() takes from a variable, unseen by the scan above: the settings' labels, helps, titles
+// and option labels (paramSchema.ts, ConfigForm.tsx renders them through t()), the step verbs
+// (guideTimeline.ts, the step tip shows them through t()) and the equipment slots (BisPanel.tsx).
+for (const [file, pattern] of [
+  ["paramSchema.ts", /\b(?:label|help|title|verb)\s*:\s*("(?:[^"\\]|\\.)*")/g],
+  ["components/guideTimeline.ts", /\bverb\s*:\s*("(?:[^"\\]|\\.)*")/g],
+  ["components/ConfigForm.tsx", /\b(?:label|help)\s*:\s*("(?:[^"\\]|\\.)*")/g],
+  ["components/BisPanel.tsx", /^\s*\d+:\s*("(?:[^"\\]|\\.)*")/gm],
+]) {
+  const p = path.join(root, file);
+  const text = fs.readFileSync(p, "utf8");
+  for (const m of text.matchAll(pattern)) {
+    const key = JSON.parse(m[1]);
+    if (/^[\d\W]*$/.test(key)) continue; // option values, icons: not texts
+    if (!entries.has(key)) {
+      problems.push(`${file}: no translation for ${JSON.stringify(key.slice(0, 80))}`);
+    }
+  }
 }
 for (const [key, body] of entries) {
   const absent = REQUIRED.filter((l) => !new RegExp(`\\b${l}\\s*:`).test(body));

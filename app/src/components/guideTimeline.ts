@@ -333,6 +333,8 @@ export function activityAt(route: Route, timeline: Timeline, quests: Map<number,
       return { verb: "Vend", what: target };
     case "flight_master":
       return { verb: "Point de vol", what: target || s.text };
+    case "buy":
+      return { verb: "Achète", what: s.reward ? s.text : target };
     case "bind":
       return { verb: "Auberge", what: target };
     case "hearth":

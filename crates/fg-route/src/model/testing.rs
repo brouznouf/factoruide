@@ -1073,6 +1073,7 @@ pub fn bare(quests: Vec<Quest>, dungeons: Vec<Dungeon>, start: Loc, params: &Par
         bundles,
         dungeon_loot: vec![Vec::new(); d],
         patrols: HashMap::new(),
+        bis: super::Bis::default(),
         above_level: Vec::new(),
         levels_ignored: false,
     }

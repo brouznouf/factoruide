@@ -3951,6 +3951,52 @@ button.link.cmp-jump {
 .route-gold > span:first-child {
   color: var(--text-muted);
 }
+.bis-panel {
+  margin: 0 0 10px;
+  border: 1px solid var(--border, #3a3a40);
+  border-radius: 6px;
+  background: var(--bg-raised, #2a2a2e);
+  font-size: 12px;
+}
+.bis-panel > summary {
+  padding: 6px 10px;
+  cursor: pointer;
+  user-select: none;
+}
+.bis-bands {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  padding: 0 10px 10px;
+}
+.bis-band h4 {
+  margin: 0 0 4px;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.bis-band ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bis-band li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px;
+  padding: 1px 0;
+}
+.bis-slot {
+  flex: none;
+  width: 86px;
+  color: var(--text-muted);
+}
+.bis-item {
+  font-weight: 600;
+}
+.bis-band small {
+  color: var(--text-muted);
+}
 .sl-row .step-check {
   flex: none;
   width: 13px;

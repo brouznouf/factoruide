@@ -131,6 +131,8 @@ export interface Params {
   power_scale: number;
   dungeon_loot_share: number;
   gear_value: number;
+  /** The best item per slot at each level band: off, favoured quests, or kept like required quests. */
+  bis?: "off" | "prefer" | "required";
   mandatory_penalty: number;
   grind_weight: number;
   allow_grind: boolean;
@@ -339,6 +341,8 @@ export interface Breakdown {
   flight_cost?: number;
   /** Copper spent at the class trainers (the ranks bought on the way). */
   training_cost?: number;
+  /** Copper spent buying best items from vendors (`Params::bis`). */
+  vendor_cost?: number;
   /** Copper in the bags at the start (the addon records it; 0 from scratch). */
   gold_start?: number;
   /** Copper the quests give on their turn-ins. */
@@ -415,7 +419,20 @@ export interface Route {
   /** An objective guide's quests asking more than the character's level: the level recommended and those quests, highest first. */
   recommended?: { level: number; quests: { id: number; name: string; level: number }[] } | null;
   professions?: RouteProfession[];
+  /** The best item of each slot at each level band (empty when not looked for). */
+  bis?: BisSlot[];
   steps: Step[];
+}
+
+/** The best item of a slot at a level band (`Route::bis`), and where it comes from. */
+export interface BisSlot {
+  /** The band's top level (5, 10...). */
+  level: number;
+  /** The slot (`power` equipment slots). */
+  slot: number;
+  item: number;
+  name: string;
+  source: { kind: "quest"; quest: number; quest_name: string } | { kind: "vendor"; npcs: { id: number; name: string }[] };
 }
 
 export interface PlanOutcome {
@@ -936,6 +953,8 @@ export type RouteStep =
   | { kind: "turn_in"; quest: number }
   /** Learn a flight path (taxi node ID). */
   | { kind: "flight_master"; node: number }
+  /** Buy a best item from a vendor (`Params::bis`): the item (game ID). */
+  | { kind: "buy"; item: number }
   /** Bind the hearthstone (innkeeper ID). */
   | { kind: "bind"; inn: number }
   | { kind: "hearth"; recall?: boolean }

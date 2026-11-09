@@ -3,8 +3,13 @@
 use super::combat::Combat;
 use super::state::State;
 use crate::model::{Model, Profile, Quest};
-use crate::params::Params;
+use crate::params::{BisMode, Params};
 use crate::xp;
+
+/// `gear_value` of a quest giving a best item (`Params::bis` `Prefer`), at least: three times
+/// the default `gear_value`, a bounded push — the route favours the quest, a long detour still
+/// loses, and a `gear_value` set higher than this is kept for the ordinary quests.
+const BIS_GEAR_VALUE: f64 = 1.5;
 
 /// How the character grows: XP and levels, quest rewards worn, class powers.
 #[derive(Clone, Copy)]
@@ -310,9 +315,16 @@ impl<'g> Growth<'g> {
     }
 
     /// XP the power a quest's rewards add is worth: `gear_value` levels of XP per level of
-    /// power (it makes every fight that follows faster).
+    /// power (it makes every fight that follows faster). A quest giving a best item
+    /// (`Params::bis`) counts its gear at `BIS_GEAR_VALUE` instead: a bounded push, the route
+    /// favours it but a long detour still loses.
     pub(crate) fn gear_xp(self, s: &State, i: u32, level: i64) -> f64 {
-        if self.params.gear_value <= 0.0 {
+        let worth = if self.params.bis == BisMode::Prefer && self.model.bis.gives(i as usize) {
+            self.params.gear_value.max(BIS_GEAR_VALUE)
+        } else {
+            self.params.gear_value
+        };
+        if worth <= 0.0 {
             return 0.0;
         }
         // A quest asking for several (ten books for the library's necklace) shares its reward
@@ -325,7 +337,7 @@ impl<'g> Growth<'g> {
         if gain <= 0.0 {
             return 0.0;
         }
-        gain * self.params.gear_value * self.rules().to_next_level(level) as f64
+        gain * worth * self.rules().to_next_level(level) as f64
     }
 
     /// Time at the class trainers: every class of the group trains (one after the other).

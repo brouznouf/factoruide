@@ -674,6 +674,20 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
         ],
     ),
     (
+        "buy",
+        [
+            "Buy {item} from {who}",
+            "Acheter {item} auprès de {who}",
+            "{item} bei {who} kaufen",
+            "Comprar {item} a {who}",
+            "Comprar {item} de {who}",
+            "Купить {item} ({who})",
+            "{who}에게서 {item} 구매",
+            "从{who}处购买{item}",
+            "從{who}處購買{item}",
+        ],
+    ),
+    (
         "train.spells",
         [
             "Train with {who}: {spells}",

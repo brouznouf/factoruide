@@ -120,6 +120,7 @@ fn kind_of(step: &RouteStep) -> StepKind {
         RouteStep::Objective { .. } => StepKind::Objective,
         RouteStep::TurnIn { .. } => StepKind::TurnIn,
         RouteStep::FlightMaster { .. } => StepKind::FlightMaster,
+        RouteStep::Buy { .. } => StepKind::Buy,
         RouteStep::Bind { .. } => StepKind::Bind,
         RouteStep::Hearth { .. } => StepKind::Hearth,
         RouteStep::Fly { .. } => StepKind::Fly,

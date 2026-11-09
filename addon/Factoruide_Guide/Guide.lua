@@ -96,6 +96,7 @@ local KINDS = {
     deathskip = { icon = "Interface\\Icons\\Spell_Holy_Resurrection", color = "c0c0ff", label = T("Death skip") },
     bind = { icon = "Interface\\GossipFrame\\BinderGossipIcon", color = "40c0ff", label = T("Inn") },
     sell = { icon = "Interface\\GossipFrame\\VendorGossipIcon", color = "ffffff", label = T("Vendor") },
+    buy = { icon = "Interface\\GossipFrame\\VendorGossipIcon", color = "ffd100", label = T("Buy") },
     dungeon = { icon = "Interface\\Icons\\INV_Misc_Key_10", color = "ff4040", label = T("Dungeon") },
     profession = {
         icon = "Interface\\Icons\\Trade_BlackSmithing",
@@ -313,6 +314,18 @@ function IsDone(step, index)
         and (select(2, FG.ProfessionSkill(ProfessionLine(step))) or 0) >= step.sk
     then
         return true -- rank already learned
+    elseif step.k == "buy" then
+        -- Bought from a vendor: done once the item is had (in the bags or worn) or marked so.
+        if state.marks[index or state.step] then return true end
+        if not step.rw then return false end
+        if (FG.ItemCount(step.rw) or 0) > 0 then return true end
+        -- Worn: one of the equipment slots holds it.
+        for slot = 1, 19 do
+            local link = GetInventoryItemLink("player", slot)
+            local id = link and tonumber(link:match("item:(%d+)"))
+            if id == step.rw then return true end
+        end
+        return false
     elseif
         step.k == "flight_master"
         or step.k == "train"
@@ -705,6 +718,25 @@ local function Thousands(n)
     return sign .. table.concat(parts, ",")
 end
 
+--- The item's name (nil when the client does not know it yet).
+local function ItemName(id)
+    if not id then return nil end
+    if C_Item and C_Item.GetItemNameByID then return C_Item.GetItemNameByID(id) end
+    return GetItemInfo and (GetItemInfo(id)) or nil
+end
+
+--- The item's icon as an inline picture before a text ("" when unknown).
+local function Picture(id)
+    if not id then return "" end
+    local icon
+    if C_Item and C_Item.GetItemIconByID then
+        icon = C_Item.GetItemIconByID(id)
+    elseif GetItemIcon then
+        icon = GetItemIcon(id)
+    end
+    return icon and ("|T" .. icon .. ":14:14|t ") or ""
+end
+
 --- What the guide shows for a step: its name, the line under it (quest, NPC, why), warnings and
 --- the progress when known (`withProgress`).
 local function TaskView(step, index, withProgress)
@@ -728,8 +760,8 @@ local function TaskView(step, index, withProgress)
             end
         end
         -- Reward the guide picked (it counts on wearing it).
-        local reward = step.rw and C_Item and C_Item.GetItemNameByID and C_Item.GetItemNameByID(step.rw)
-        if reward then Chip(v, reward, "green") end
+        local reward = ItemName(step.rw)
+        if reward then Chip(v, Picture(step.rw) .. reward, "green") end
     elseif step.k == "train" and step.sp then
         -- Spells worth learning, in the game's language.
         local names = {}
@@ -766,6 +798,11 @@ local function TaskView(step, index, withProgress)
         if rank then
             v.have, v.need = rank, step.sk
         end
+    elseif step.k == "buy" and step.rw then
+        -- The gear the guide counts on wearing: its picture and name, in green like a reward.
+        v.name = step.t
+        local name = ItemName(step.rw)
+        if name then Chip(v, Picture(step.rw) .. name, "green") end
     else
         v.name = step.t
     end
@@ -1795,6 +1832,18 @@ function Guide:Purchases()
         then
             out[s.id] = math.max(out[s.id] or 0, s.c or 1)
         end
+    end
+    return out
+end
+
+--- The gear the guide still has to buy (`buy` steps not done, up to a few levels ahead): item
+--- ID -> true (one of each).
+function Guide:GearPurchases()
+    local out = {}
+    if not route or not state then return out end
+    local level = UnitLevel("player")
+    for i, s in ipairs(route.steps) do
+        if s.k == "buy" and s.rw and (s.lvl or 0) <= level + 3 and not IsDone(s, i) then out[s.rw] = true end
     end
     return out
 end

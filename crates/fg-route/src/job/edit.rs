@@ -38,6 +38,10 @@ pub enum RouteStep {
     FlightMaster {
         node: i64,
     },
+    /// Buy a best item from a vendor (`Params::bis`): the item (game ID).
+    Buy {
+        item: i64,
+    },
     /// Bind the hearthstone at an inn (its innkeeper's ID).
     Bind {
         inn: i64,
@@ -140,6 +144,9 @@ impl RouteStep {
                     Kind::LearnFlight => Self::FlightMaster {
                         node: world.taxi_nodes[i].id,
                     },
+                    Kind::Buy => Self::Buy {
+                        item: model.power.as_ref().map_or(0, |p| p.items[i].id),
+                    },
                     Kind::Bind => Self::Bind { inn: model.inns[i].id },
                     Kind::Hearth => Self::Hearth { recall: i == 1 },
                     Kind::Dungeon => Self::Dungeon {
@@ -219,6 +226,18 @@ impl RouteStep {
             }
             Self::TurnIn { quest: id } => stop(quest(id)?, Kind::TurnIn),
             Self::FlightMaster { node: id } => stop(node(id)? as u32, Kind::LearnFlight),
+            // Only the best items a vendor sells are a step: another item has no seller to go
+            // to, and the stop would stand nowhere.
+            Self::Buy { item: id } => {
+                let i = model
+                    .power
+                    .as_ref()
+                    .and_then(|p| p.item(id))
+                    .filter(|&i| !model.bis.sellers(i).is_empty())
+                    .map(u32::from)
+                    .ok_or("unknown item or no vendor sells it")?;
+                stop(i, Kind::Buy)
+            }
             Self::Bind { inn } => {
                 let i = model
                     .inns

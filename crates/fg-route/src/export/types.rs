@@ -43,6 +43,8 @@ pub enum StepKind {
     Train,
     #[serde(rename = "sell")]
     Sell,
+    #[serde(rename = "buy")]
+    Buy,
     #[serde(rename = "profession")]
     Profession,
     #[serde(rename = "dungeon")]
@@ -69,6 +71,7 @@ impl StepKind {
             Self::Teleport => "teleport",
             Self::Train => "train",
             Self::Sell => "sell",
+            Self::Buy => "buy",
             Self::Profession => "profession",
             Self::Dungeon => "dungeon",
             Self::Bind => "bind",
@@ -195,7 +198,8 @@ pub struct Step {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub floor: Option<MapPointOut>,
     /// Other places its mobs are, closest first: where to look when there is nothing at `map`
-    /// (mobs to kill or loot, the mob dropping the item that starts a quest).
+    /// (mobs to kill or loot, the mob dropping the item that starts a quest). A buy step: the
+    /// item's other sellers.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub spots: Vec<MapPointOut>,
     /// The step's NPC patrols: `spots` are places along its path (the addon points at the
@@ -235,7 +239,8 @@ pub struct Step {
     pub elite: bool,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub mob_level: Option<i64>,
-    /// Reward to pick among the quest's choices (item ID) on a turn-in.
+    /// Reward to pick among the quest's choices (item ID) on a turn-in. A buy step: the item
+    /// bought (the addon tells it apart by the step's kind).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reward: Option<i64>,
     /// Copper the quest gives on its turn-in (0: none or unknown).
@@ -418,6 +423,11 @@ pub struct Route {
     /// The spells worth learning of the group's other classes (as `spells`): class ID, spells.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub class_spells: Vec<(i64, Vec<i64>)>,
+    /// The best item of each ranked slot at each level band (`Params::bis`), and where it comes
+    /// from: a quest reward, or the vendors selling it. Empty when the best items are not
+    /// looked for, and in guides made before they were.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub bis: Vec<BisSlot>,
     /// The XP buffs the guide counts on being active (`food`, `bag`: WoW Forever): the addon warns
     /// when one is missing.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -428,6 +438,38 @@ pub struct Route {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub recommended: Option<Recommended>,
     pub steps: Vec<Step>,
+}
+
+/// The best item of a slot at a level band (`Route::bis`).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BisSlot {
+    /// The band's top level (5, 10...).
+    pub level: i64,
+    /// The slot (`crate::power` equipment slots).
+    pub slot: usize,
+    /// The item (ID).
+    pub item: i64,
+    /// The item's English name.
+    pub name: String,
+    /// Where it comes from.
+    pub source: BisSource,
+}
+
+/// Where a best item comes from (`Route::bis`): a quest giving it, or the vendors selling it.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "kind", rename_all = "lowercase")]
+pub enum BisSource {
+    /// A quest (ID and English name) giving the item as a reward.
+    Quest { quest: i64, quest_name: String },
+    /// The vendors selling it (NPC ID and English name).
+    Vendor { npcs: Vec<BisVendor> },
+}
+
+/// A vendor selling a best item.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BisVendor {
+    pub id: i64,
+    pub name: String,
 }
 
 /// The level an objective guide's quests ask, above the character's (`Route::recommended`).

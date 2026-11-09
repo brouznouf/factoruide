@@ -1,5 +1,6 @@
 //! The quests a character can do, built from the merged database (`m_*` tables).
 
+mod bis;
 mod builder;
 mod chains;
 mod crowd;
@@ -28,6 +29,8 @@ mod sources;
 #[cfg(any(test, feature = "testing"))]
 pub mod testing;
 mod types;
+
+pub use bis::{Bis, BisEntry, BisSource};
 
 pub(crate) use chains::class_sort;
 pub use farm::{FarmMobs, Met};
@@ -207,6 +210,21 @@ pub fn load(
                 .any(|id| abilities.quest(*id) & own_knowledge != 0)
         })
         .fold(0, |bits, (k, _)| bits | (1 << k));
+    // The best item of each slot at each level band (`Params::bis`): nothing without the
+    // character power data.
+    let bis = match &power {
+        Some(p) => bis::load(conn, p, &quests, &rewards, profile, world, &sources, params)?,
+        None => Bis::default(),
+    };
+    // Required: the quests giving a best item are kept even when slower, like the required class
+    // quests (they are left out with a report when they cannot be done). Their prerequisites
+    // follow, as the required quests' did above.
+    if params.bis == crate::params::BisMode::Required {
+        for (gives, q) in bis.gives.iter().zip(&mut quests) {
+            q.mandatory |= gives;
+        }
+        chains::require_prerequisites(&mut quests);
+    }
     Ok(Model {
         known_class_powers,
         abilities,
@@ -247,6 +265,7 @@ pub fn load(
         bundles,
         dungeon_loot,
         patrols,
+        bis,
         above_level: Vec::new(),
         levels_ignored: false,
     })

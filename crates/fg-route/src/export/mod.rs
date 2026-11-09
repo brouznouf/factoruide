@@ -19,10 +19,11 @@ pub use lua::{lua_str, to_lua};
 pub use phrase::{Arg, Phrase};
 pub use templates::Lang;
 pub use types::{
-    Checkpoint, MapPointOut, Player, ReputationReached, Route, RouteProfession, Step, StepKind, Target, TargetKind,
+    BisSlot, BisSource, BisVendor, Checkpoint, MapPointOut, Player, ReputationReached, Route, RouteProfession, Step,
+    StepKind, Target, TargetKind,
 };
 
-use crate::model::{Names, ProfessionPlan, Profile};
+use crate::model::{Model, Names, ProfessionPlan, Profile};
 use crate::plan::{Breakdown, Event, Kind, Planner, Stop, Timed, fmt_time};
 use std::collections::HashSet;
 use writer::StepWriter;
@@ -323,9 +324,49 @@ fn route_of(
             }
             out
         },
+        bis: bis_of(model),
         buffs: planner.params.xp_buffs(),
         steps,
     }
+}
+
+/// The best item of each slot at each level band (`Params::bis`), for the guide's panel: none
+/// without the character power data.
+fn bis_of(model: &Model) -> Vec<BisSlot> {
+    model.power.as_ref().map_or(Vec::new(), |power| {
+        model
+            .bis
+            .entries
+            .iter()
+            .map(|entry| {
+                let item = &power.items[entry.item as usize];
+                BisSlot {
+                    level: entry.level,
+                    slot: entry.slot,
+                    item: item.id,
+                    name: item.name.clone(),
+                    source: match &entry.source {
+                        crate::model::BisSource::Quest(q) => {
+                            let quest = &model.quests[*q as usize];
+                            BisSource::Quest {
+                                quest: quest.id,
+                                quest_name: quest.name.clone(),
+                            }
+                        }
+                        crate::model::BisSource::Vendor(sellers) => BisSource::Vendor {
+                            npcs: sellers
+                                .iter()
+                                .map(|v| BisVendor {
+                                    id: v.id,
+                                    name: v.name.clone(),
+                                })
+                                .collect(),
+                        },
+                    },
+                }
+            })
+            .collect()
+    })
 }
 
 fn reputation_reached(planner: &Planner<'_>, route: &[Stop]) -> Vec<ReputationReached> {

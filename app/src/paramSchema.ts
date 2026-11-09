@@ -114,6 +114,17 @@ export const sections: Section[] = [
       { key: "power_scale", kind: "number", label: "Poids de l'équipement et des sorts", help: "1 = le modèle tel quel ; 0 = la puissance est le niveau.", min: 0, max: 2, step: 0.1 },
       { key: "gear_floor", kind: "number", label: "Équipement de base sans récompenses", help: "Part d'un objet vert typique du niveau que le personnage porte de toute façon (marchands, objets trouvés).", unit: "%", scale: 0.01, min: 30, max: 120, step: 5 },
       { key: "gear_value", kind: "number", label: "Valeur d'une amélioration d'équipement", help: "XP que vaut un niveau de puissance gagné, en niveaux d'XP : favorise les quêtes à bonne récompense.", min: 0, max: 2, step: 0.1 },
+      {
+        key: "bis",
+        kind: "select",
+        label: "Meilleur équipement (BiS)",
+        help: "Le meilleur objet de chaque emplacement à chaque tranche de 5 niveaux, parmi les récompenses de quêtes et le stock des marchands seulement (le butin n'est jamais garanti). Préférer : la route favorise les quêtes qui en donnent, à coût borné. Imposer : elles restent dans le guide même plus lentes.",
+        options: [
+          { value: "off", label: "Ne pas chercher (défaut)" },
+          { value: "prefer", label: "Préférer les quêtes qui en donnent" },
+          { value: "required", label: "Les imposer, même plus lentes" },
+        ],
+      },
       { key: "dungeon_loot_share", kind: "number", label: "Part du butin des donjons obtenue", help: "Chance de gagner un objet de boss qui vous sert, face aux autres joueurs du groupe.", unit: "%", scale: 0.01, min: 0, max: 100, step: 5 },
     ],
   },

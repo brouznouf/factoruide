@@ -56,6 +56,7 @@ export const KINDS: Record<RouteStep["kind"], { css: string; label: string }> = 
   objective: { css: "objective", label: "Faire" },
   turn_in: { css: "turnin", label: "Rendre" },
   flight_master: { css: "flight_master", label: "Point de vol" },
+  buy: { css: "train", label: "Acheter" },
   bind: { css: "bind", label: "Auberge" },
   hearth: { css: "hearth", label: "Pierre de foyer" },
   fly: { css: "fly", label: "Vol" },
@@ -97,6 +98,8 @@ export function useNames(catalog: EditCatalog | undefined) {
           return quest(s.quest);
         case "flight_master":
           return t("Apprendre le point de vol {name}", { name: node(s.node) });
+        case "buy":
+          return t("Acheter l'objet n° {id}", { id: s.item });
         case "bind": {
           const inn = inns.get(s.inn);
           return t("Lier la pierre de foyer : {name} ({zone})", { name: inn?.name ?? `#${s.inn}`, zone: inn?.zone ?? "?" });

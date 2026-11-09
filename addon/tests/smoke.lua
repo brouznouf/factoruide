@@ -1787,6 +1787,147 @@ FG.Guide:Advance()
 assert(char.guide.step == 2, "sold: step " .. char.guide.step)
 print("sell step ok")
 
+-- The guide's gear (`buy` steps): planned up to a few levels ahead only, shown with its picture,
+-- bought at the merchant that sells it once the purse is enough, done once the item is had.
+do
+    FG.Routes["gear-test"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 1,
+        toLevel = 60,
+        time = 1,
+        steps = {
+            {
+                k = "buy",
+                t = "Buy Bronze Sword from Andrew Kieton",
+                e = "npc",
+                id = 1255,
+                m = 1429,
+                x = 40,
+                y = 60,
+                rw = 12284,
+                lvl = 3,
+            },
+            {
+                k = "buy",
+                t = "Buy Adventurer's Bow from Andrew Kieton",
+                e = "npc",
+                id = 1255,
+                m = 1429,
+                x = 40,
+                y = 60,
+                rw = 6125,
+                lvl = 3,
+            },
+            {
+                k = "buy",
+                t = "Buy Gladius from Andrew Kieton",
+                e = "npc",
+                id = 1255,
+                m = 1429,
+                x = 40,
+                y = 60,
+                rw = 19019,
+                lvl = 20,
+            },
+            {
+                k = "buy",
+                t = "Buy Reinforced Wooden Shield from Andrew Kieton",
+                e = "npc",
+                id = 1255,
+                m = 1429,
+                x = 40,
+                y = 60,
+                rw = 2508,
+                lvl = 3,
+            },
+            { k = "accept", t = "Accept C", q = 8003, lvl = 3 },
+        },
+    }
+    GetInventoryItemLink = function() return nil end
+    C_Item.GetItemNameByID = function(id) return id == 12284 and "Bronze Sword" or "Adventurer's Bow" end
+    C_Item.GetItemIconByID = function(id)
+        return id == 12284 and "Interface\\Icons\\INV_Sword_04" or "Interface\\Icons\\INV_Weapon_Bow_01"
+    end
+    useRoute("gear-test")
+    assert(char.guide.step == 1, "on the buy step")
+    assert(
+        FG.Guide:GearPurchases()[12284] and FG.Guide:GearPurchases()[6125] and not FG.Guide:GearPurchases()[19019],
+        "the gear planned soon, not the far one"
+    )
+    FG.Guide:Refresh()
+    local gearChips = FG.Guide.view.tasks[1].chips
+    assert(
+        gearChips[1] and gearChips[1].text == "|TInterface\\Icons\\INV_Sword_04:14:14|t Bronze Sword",
+        "the gear's picture and name in the step"
+    )
+    -- The merchant buys what the purse can pay for; the rest waits for the next one (a poor
+    -- character says nothing).
+    local gearBought = 0
+    GetMoney = function() return 1000 end
+    GetMerchantNumItems = function() return 2 end
+    GetMerchantItemID = function(i) return i == 1 and 12284 or 6125 end
+    GetMerchantItemInfo = function(i) return "Item", nil, i == 1 and 500 or 5000, 1, -1 end
+    BuyMerchantItem = function(i)
+        local id = GetMerchantItemID(i)
+        bags[id] = (bags[id] or 0) + 1
+        gearBought = gearBought + 1
+    end
+    fire("MERCHANT_SHOW")
+    assert(gearBought == 1, "the affordable gear only, got " .. gearBought)
+    assert(not FG.Guide:GearPurchases()[12284], "had: not wanted anymore")
+    FG.Guide:Advance()
+    assert(char.guide.step == 2, "on to the next step: " .. char.guide.step)
+    -- The Forever client reads its offers through C_MerchantFrame: same purchase once rich.
+    GetMoney = function() return 10000 end
+    C_MerchantFrame = {
+        GetItemInfo = function(i)
+            return { name = "Item", price = i == 1 and 500 or 5000, stackCount = 1, numAvailable = -1 }
+        end,
+    }
+    fire("MERCHANT_SHOW")
+    assert(gearBought == 2, "the gear bought the Forever way too, got " .. gearBought)
+    assert(not FG.Guide:GearPurchases()[12284] and not FG.Guide:GearPurchases()[6125], "everything had")
+    FG.Guide:Advance()
+    assert(char.guide.step == 3, "on to the far gear: step " .. char.guide.step)
+    -- Out of stock: nothing bought nor said, the next merchant will try again.
+    GetMerchantNumItems = function() return 3 end
+    GetMerchantItemID = function(i) return ({ 12284, 6125, 2508 })[i] end
+    C_MerchantFrame = {
+        GetItemInfo = function(i)
+            return {
+                name = "Item",
+                price = i == 1 and 500 or i == 2 and 5000 or 300,
+                stackCount = 1,
+                numAvailable = i == 3 and 0 or -1,
+            }
+        end,
+    }
+    fire("MERCHANT_SHOW")
+    assert(gearBought == 2, "out of stock: left for the next merchant, got " .. gearBought)
+    -- The reward the guide picked for a turn-in shows its picture too.
+    FG.Routes["reward-test"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 1,
+        toLevel = 60,
+        time = 1,
+        steps = {
+            { k = "turnin", t = "Turn in Vital Utilities", q = 8101, rw = 12284, lvl = 3 },
+        },
+    }
+    useRoute("reward-test")
+    FG.Guide:Refresh()
+    local rewardChips = FG.Guide.view.tasks[1].chips
+    assert(
+        rewardChips[1] and rewardChips[1].text == "|TInterface\\Icons\\INV_Sword_04:14:14|t Bronze Sword",
+        "the reward's picture and name in the step"
+    )
+    print("gear steps ok")
+end
+
 -- A step of a kind made by a newer app is shown by its text and done right away.
 FG.Routes["other-test"] = {
     race = 7,

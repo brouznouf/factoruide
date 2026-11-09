@@ -684,6 +684,9 @@ pub struct Model {
     /// The paths NPCs who patrol walk (NPC ID -> its points in order): the guide shows places
     /// along them, the planner goes to their usual place.
     pub patrols: HashMap<i64, Vec<Pos>>,
+    /// The best item of each slot at each level band (`Params::bis`): the quest rewards and the
+    /// vendors' stock, never the drops. Empty without the character power data.
+    pub bis: super::Bis,
     /// An objective guide's quests gated above the character's level at the start (quest ID,
     /// the level it asks), highest first: the guide warns, the planner then makes no level wait
     /// (`levels_ignored`).

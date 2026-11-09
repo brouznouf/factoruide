@@ -1,5 +1,5 @@
--- At a merchant: sell grey items, repair, and buy the food, water and ammo of the character's
--- level (classic vendor items), within a budget.
+-- At a merchant: sell grey items, repair, buy the guide's gear and the items its quests ask for,
+-- and buy the food, water and ammo of the character's level (classic vendor items), within a budget.
 
 local FG = Factoruide
 local T = FG.T
@@ -48,6 +48,19 @@ local function Repair()
     end
 end
 
+--- What the merchant sells at index `i`: its price, how many one buy gives and how many it has
+--- left (-1: as many as wanted), through the client's API of the moment (the classic global is
+--- gone from the Forever client).
+local function MerchantInfo(i)
+    if C_MerchantFrame and C_MerchantFrame.GetItemInfo then
+        local info = C_MerchantFrame.GetItemInfo(i)
+        if not info then return nil end
+        return info.price, info.stackCount, info.numAvailable
+    end
+    local _, _, price, quantity, available = GetMerchantItemInfo(i)
+    return price, quantity, available
+end
+
 --- Best item of these families the character can use, among those the merchant sells:
 --- merchant index, item ID, stack size, price per unit.
 local function BestOffer(families)
@@ -62,9 +75,16 @@ local function BestOffer(families)
         for _, entry in ipairs(family) do
             local need, id = entry[1], entry[2]
             if need <= level and sold[id] and (not best or need > best.level) then
-                local _, _, price, quantity = GetMerchantItemInfo(sold[id])
-                best =
-                    { index = sold[id], id = id, level = need, unit = price / math.max(1, quantity or 1), ids = family }
+                local price, quantity = MerchantInfo(sold[id])
+                if price then
+                    best = {
+                        index = sold[id],
+                        id = id,
+                        level = need,
+                        unit = price / math.max(1, quantity or 1),
+                        ids = family,
+                    }
+                end
             end
         end
     end
@@ -78,7 +98,7 @@ local function Stock(families, want, budget)
     if not offer or want <= 0 then return 0 end
     local have = 0
     for _, entry in ipairs(offer.ids) do
-        if entry[1] >= offer.level - 10 then have = have + GetItemCount(entry[2]) end
+        if entry[1] >= offer.level - 10 then have = have + (FG.ItemCount(entry[2]) or 0) end
     end
     local missing = math.min(want - have, math.floor(budget / math.max(1, offer.unit)))
     local stack = GetMerchantItemMaxStack(offer.index)
@@ -119,7 +139,7 @@ local function QuestItems()
         local id = GetMerchantItemID and GetMerchantItemID(i)
         local want = id and wanted[id]
         if want then
-            local _, _, price, quantity, available = GetMerchantItemInfo(i)
+            local price, quantity, available = MerchantInfo(i)
             local missing = want - (FG.ItemCount(id) or 0)
             local each = math.max(1, quantity or 1)
             local buys = math.ceil(missing / each)
@@ -137,9 +157,28 @@ local function QuestItems()
     end
 end
 
+--- The guide's gear this merchant sells (whatever vendor the guide planned, like the quest
+--- items), once it can be paid for: a too short purse says nothing, the next merchant tries
+--- again.
+local function Gear()
+    local wanted = FG.Guide and FG.Guide:GearPurchases() or {}
+    if not next(wanted) then return end
+    for i = 1, GetMerchantNumItems() do
+        local id = GetMerchantItemID and GetMerchantItemID(i)
+        if id and wanted[id] then
+            local price, _, available = MerchantInfo(i)
+            if price and price <= GetMoney() and (available or -1) ~= 0 then
+                BuyMerchantItem(i)
+                FG:Print(T("bought the guide's gear: %s"), FG.ItemInfo(id) or ("item " .. id))
+            end
+        end
+    end
+end
+
 FG:On("MERCHANT_SHOW", function()
     if IsShiftKeyDown() then return end
     QuestItems()
+    Gear()
     if FG:Get("autoSellJunk") then SellJunk() end
     if FG:Get("autoRepair") then Repair() end
     if FG:Get("autoSupplies") then Supplies() end

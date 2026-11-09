@@ -361,6 +361,14 @@ fn goals(step: &Step) -> Vec<Goal> {
                 .str("npcName", name_or(&t.name, step)),
             _ => travel(step),
         },
+        // A best item bought from the vendor the step goes to (`Params::bis`): the item by its
+        // ID, so that Polestar names and counts it in the game's language.
+        StepKind::Buy => match step.reward {
+            Some(item) => Goal::new("buy", Join::Before)
+                .num("item", item)
+                .str("itemName", name_or("", step)),
+            None => travel(step),
+        },
         StepKind::Train => match target {
             Some(t) => Goal::new("train", at)
                 .num("npc", t.id)

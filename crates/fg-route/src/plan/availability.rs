@@ -174,6 +174,20 @@ impl Availability<'_> {
                 .any(|id| self.model.index.get(id).is_some_and(|&j| s.turned[j]))
     }
 
+    /// Whether a best item a vendor sells can be bought by `s` (`Kind::Buy`): the character can
+    /// wear it, it is an upgrade, and the copper is there. Without the item prices (`fg gold`)
+    /// nothing is bought: `buy_price` 0 is not a free item.
+    pub(crate) fn can_buy(&self, s: &State, item: u16) -> bool {
+        let Some(p) = &self.model.power else { return false };
+        let it = &p.items[item as usize];
+        !self.model.bis.sellers(item).is_empty()
+            && it.buy_price > 0
+            && it.required_level <= s.level
+            && it.wear_level <= s.level
+            && s.spent.gold() >= it.buy_price
+            && p.gain_of(&s.gear, item as usize, 1.0, s.level).0 > 0.0
+    }
+
     pub(crate) fn valid(&self, s: &State, stop: Stop) -> bool {
         let i = stop.index as usize;
         // Inside a dungeon: there, or entering it.
@@ -206,6 +220,9 @@ impl Availability<'_> {
             }
             Kind::TurnIn => s.accepted[i] && !s.turned[i] && self.objectives_done(s, stop.index),
             Kind::LearnFlight => s.known & (1u128 << i) == 0,
+            // A best item a vendor sells: still an upgrade once the character can wear it, and
+            // the copper to pay for it (`Params::bis`).
+            Kind::Buy => self.can_buy(s, stop.index as u16),
             // A group bound apart binds anywhere, even where the character is.
             Kind::Bind => (s.bind != i || s.hearth_ready.is_infinite()) && i != self.model.start_inn,
             Kind::Hearth => {

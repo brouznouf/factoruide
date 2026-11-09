@@ -18,6 +18,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Guides
 
 - Finish available quests inside the current dungeon before leaving for another forced run.
+- With best gear from vendors enabled, the planner can still add useful quests and choose another version of a class quest.
 
 ### Addon
 

@@ -13,6 +13,9 @@ pub enum Kind {
     LearnFlight,
     /// Bind the hearthstone (`Stop::index` is the inn).
     Bind,
+    /// Buy a best item from a vendor (`Stop::index` is the item, index in the power model's
+    /// items; the vendor is the seller nearest where the character stands).
+    Buy,
     /// Back to the inn the hearthstone is bound to: the hearthstone (`Stop::index` 0) or the
     /// shaman's Astral Recall (1). Nothing when it is not ready yet, or not learned.
     Hearth,
@@ -498,6 +501,9 @@ pub struct Breakdown {
     /// Copper spent at the class trainers (the ranks bought on the way).
     #[serde(default)]
     pub training_cost: i64,
+    /// Copper spent buying best items from vendors (`Params::bis`).
+    #[serde(default)]
+    pub vendor_cost: i64,
     /// Copper in the bags at the start (the addon records it; 0 from scratch).
     #[serde(default)]
     pub gold_start: i64,
@@ -549,6 +555,14 @@ pub struct Breakdown {
     /// `grinding`, see `Event::CatchUp`).
     #[serde(default)]
     pub catch_up: f64,
+}
+
+impl Breakdown {
+    /// The copper in the bags: what the quests gave on top of the start, less what the
+    /// flights, the trainers and the vendors took (`Params::bis`).
+    pub(crate) fn gold(&self) -> i64 {
+        self.gold_start + self.gold_earned - self.flight_cost - self.training_cost - self.vendor_cost
+    }
 }
 
 /// Quests a route accepts (bit 1), turns in (bit 2) or does an objective of (bit 4), and where

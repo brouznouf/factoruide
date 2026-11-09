@@ -8,6 +8,7 @@ export const KIND_LABELS: Record<string, string> = {
   turnin: "Rendre",
   fly: "Vol",
   flight_master: "Point de vol",
+  buy: "Acheter",
   link: "Transport",
   grind: "Farmer",
   train: "Entraîneur",

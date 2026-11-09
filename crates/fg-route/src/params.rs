@@ -281,6 +281,11 @@ pub struct Params {
     pub power_scale: f64,
     pub dungeon_loot_share: f64,
     pub gear_value: f64,
+    /// The best items for each slot at each level band (`model::Bis`): whether the route
+    /// favours the quests giving them (`Prefer`), keeps them even when slower (`Required`) or
+    /// ignores them (`Off`, the default). Only the quest rewards and the vendors' stock count:
+    /// drops are never guaranteed.
+    pub bis: BisMode,
     /// Class quests giving a pet or a form are done as soon as taken when that costs at most
     /// this many seconds: the route only counts their power in faster fights, not the safety.
     pub class_power_slack: f64,
@@ -418,7 +423,7 @@ pub struct ParamsBuilder(Params);
 impl Params {
     /// The settings of an objective guide: the guide does its objectives' quests
     /// (`Profile::objectives`), so no other dungeon, no zone forced or preferred, no reputation
-    /// goal, no start chosen.
+    /// or gear goal, no start chosen.
     pub fn for_objective_guide(&mut self, objectives: &[crate::model::GuideObjective]) {
         use crate::model::GuideObjective;
         self.dungeons = false;
@@ -430,6 +435,7 @@ impl Params {
         self.preferred_zones.clear();
         self.excluded_zones.clear();
         self.reputation_goals.clear();
+        self.bis = BisMode::Off;
         self.start_zone = 0;
     }
 
@@ -613,6 +619,7 @@ impl Default for Params {
             power_scale: 1.0,
             dungeon_loot_share: 0.35,
             gear_value: 0.5,
+            bis: BisMode::Off,
             class_power_slack: 600.0,
             tidy_slack: 30.0,
             tidy_radius: 100.0,
@@ -905,6 +912,21 @@ fn crowd_share<'de, D: serde::Deserializer<'de>>(d: D) -> Result<f64, D::Error> 
     })
 }
 
+/// What the route does with the best items for each slot at each level band (`model::Bis`):
+/// the quests giving them and the vendors selling them are guaranteed sources, drops never
+/// are.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum BisMode {
+    /// No best item is looked for: the route only follows its time.
+    #[default]
+    Off,
+    /// The quests giving a best item are favoured, up to a bounded cost.
+    Prefer,
+    /// The quests giving a best item are kept even when slower, like the required class quests.
+    Required,
+}
+
 /// How far above its power the character goes.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
@@ -993,6 +1015,23 @@ pub(crate) fn kill_factor(d: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn objective_guides_clear_inherited_gear_and_reputation_goals() {
+        for bis in [BisMode::Prefer, BisMode::Required] {
+            let mut params = Params {
+                bis,
+                reputation_goals: vec![ReputationGoal {
+                    faction: 72,
+                    target: 42000,
+                }],
+                ..Params::default()
+            };
+            params.for_objective_guide(&[crate::model::GuideObjective::Dungeon(900)]);
+            assert_eq!(params.bis, BisMode::Off, "an objective guide has no outside gear goals");
+            assert_eq!(params.reputation_goals, [] as [ReputationGoal; 0]);
+        }
+    }
 
     /// The builder changes what it is told to and nothing else.
     #[test]

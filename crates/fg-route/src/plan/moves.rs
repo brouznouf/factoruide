@@ -101,7 +101,13 @@ impl Planner<'_> {
 impl Planner<'_> {
     /// One of the small moves, drawn at random.
     pub(crate) fn random_move(&self, route: &mut Vec<Stop>, run: &Run, rng: &mut SmallRng) -> Option<Change> {
-        match rng.random_range(0..25) {
+        // Vendor buys get their own slot; without them, keep the existing draws.
+        let choices = if self.model.bis.vendor_items().is_empty() {
+            25
+        } else {
+            26
+        };
+        match rng.random_range(0..choices) {
             0..=9 => Some(Self::move_one_stop(route, rng)),
             10..=13 => Some(Self::move_block(route, rng)),
             14 | 15 => self.drop_quest_or_visit(route, rng),
@@ -111,6 +117,7 @@ impl Planner<'_> {
             20 => self.move_zone_stay(route, rng),
             21 | 22 => self.gather_zone_visits(route, rng),
             23 | 24 => self.relocate_objective(route, run, rng),
+            25 => self.buy_visit(route, rng),
             _ => (self.swap_version(route, run, rng)).or_else(|| self.add_unused_quest(route, rng)),
         }
     }
@@ -319,6 +326,31 @@ impl Planner<'_> {
             .expect("the chain contains a stop of the route");
         route.retain(|s| !gone(s));
         Some(Change::edited(first, len))
+    }
+
+    /// A best item a vendor sells (`Params::bis`), bought where the route passes closest to one
+    /// of its vendors: never two stops for one item, the simulation decides whether it pays
+    /// (an upgrade the character can wear and pay for, at a place on the way).
+    fn buy_visit(&self, route: &mut Vec<Stop>, rng: &mut SmallRng) -> Option<Change> {
+        let items = self.model.bis.vendor_items();
+        let item = items[rng.random_range(0..items.len())];
+        let stop = Stop {
+            index: u32::from(item),
+            kind: Kind::Buy,
+        };
+        if route.contains(&stop) {
+            return None;
+        }
+        let sellers = self.model.bis.sellers(item);
+        let s0 = self.sim().initial_state();
+        let nearest = |p: &Pos| (sellers.iter()).map(|v| v.pos.dist(p)).fold(f64::INFINITY, f64::min);
+        let at = (0..route.len())
+            .map(|i| (i, nearest(&self.sim().pos_from_start(&s0, route[i]))))
+            .filter(|(_, d)| d.is_finite())
+            .min_by(|a, b| a.1.total_cmp(&b.1))
+            .map(|(i, _)| i + 1)?;
+        route.insert(at, stop);
+        Some(Change::edited(at, route.len()))
     }
 
     /// A detour to a flight master (`add_flight_visit`), a dungeon run, or the hearthstone

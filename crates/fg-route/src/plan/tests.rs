@@ -10,6 +10,7 @@ use std::path::PathBuf;
 
 mod dungeons;
 mod movement;
+mod moves;
 mod profession_trainers;
 mod xp_buffs;
 #[test]
@@ -1182,7 +1183,10 @@ fn an_unbounded_required_quest_stays_in_the_log_when_gray() {
 /// Two versions of a must-have class quest, of two steps each: taking one closes the other. The
 /// first is far away, the second at the start.
 fn far_and_near_versions() -> Prepared {
-    let mut p = quests_at_start(4);
+    class_versions(quests_at_start(4))
+}
+
+fn class_versions(mut p: Prepared) -> Prepared {
     p.world.terrain = crate::terrain::Terrain::default();
     let ids: Vec<i64> = p.model.quests.iter().map(|q| q.id).collect();
     for q in &mut p.model.quests {

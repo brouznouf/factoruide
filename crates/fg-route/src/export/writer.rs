@@ -746,7 +746,7 @@ impl StepWriter<'_> {
         self.place(&npc.pos, Some(npc.zone))
     }
 
-    /// A visit: a dungeon run, the hearthstone bound, a flight path.
+    /// A visit: a dungeon run, the hearthstone bound, a flight path, a best item bought.
     fn visit(&self, step: &mut Step, stop: Stop, loc: &Loc) -> Place {
         step.target = Some(Self::target(loc));
         match stop.kind {
@@ -759,12 +759,39 @@ impl StepWriter<'_> {
                         .arg("zone", self.zone(loc.zone)),
                 );
             }
+            // A best item bought from the vendor the stop went to (`Params::bis`): the item
+            // named, the other sellers along the way.
+            Kind::Buy => self.buy(step, stop.index as u16, loc),
             _ => {
                 step.kind = StepKind::FlightMaster;
                 step.say.push(Phrase::new("flight_master").arg("place", entity(loc)));
             }
         }
         self.place(&loc.pos, Some(loc.zone))
+    }
+
+    /// A best item bought from the vendor the stop went to (`Params::bis`): the item named,
+    /// its other sellers along the way.
+    fn buy(&self, step: &mut Step, item: u16, loc: &Loc) {
+        let Some(p) = self.planner.model.power.as_ref() else {
+            return;
+        };
+        let it = &p.items[item as usize];
+        let sellers = self.planner.model.bis.sellers(item);
+        step.kind = StepKind::Buy;
+        // The item the step buys, as a turn-in's reward.
+        step.reward = Some(it.id);
+        step.say.push(
+            Phrase::new("buy")
+                .arg("item", Arg::Item(it.id, it.name.clone()))
+                .arg("who", Arg::Npc(loc.id, loc.name.clone())),
+        );
+        // The item's other sellers: where to look when the first has moved.
+        step.spots = sellers
+            .iter()
+            .filter(|o| o.id != loc.id)
+            .filter_map(|o| self.map_point(&o.pos, o.zone))
+            .collect();
     }
 
     /// A dungeon run with a group (its quests follow as steps of their own, `dungeon_quests`).
@@ -936,7 +963,7 @@ impl StepWriter<'_> {
                 step.say.push(Phrase::new(key).arg("quest", quest).arg("who", who));
                 self.patrol(step, loc);
             }
-            Kind::LearnFlight | Kind::Bind | Kind::Dungeon | Kind::Hearth => unreachable!(),
+            Kind::LearnFlight | Kind::Bind | Kind::Dungeon | Kind::Hearth | Kind::Buy => unreachable!(),
         }
         self.place(&loc.pos, Some(loc.zone))
     }

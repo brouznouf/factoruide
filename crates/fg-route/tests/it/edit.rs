@@ -65,6 +65,7 @@ fn every_thing_done_is_a_step_of_its_own() {
             RouteStep::Objective { .. } => StepKind::Objective,
             RouteStep::TurnIn { .. } => StepKind::TurnIn,
             RouteStep::FlightMaster { .. } => StepKind::FlightMaster,
+            RouteStep::Buy { .. } => StepKind::Buy,
             RouteStep::Bind { .. } => StepKind::Bind,
             RouteStep::Hearth { .. } => StepKind::Hearth,
             RouteStep::Fly { .. } => StepKind::Fly,
