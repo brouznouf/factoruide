@@ -129,3 +129,45 @@ fn a_character_met_in_game_knows_the_ranks_its_skill_needs() {
         "a new character knows none"
     );
 }
+
+#[test]
+fn first_visit_can_learn_multiple_ranks_and_exports_the_initial_learning_instruction() {
+    let mut p = tailor_with_trainer(150, 50.0);
+    p.model.quests[0].min_level = 15;
+    let planner = planner(&p);
+    let mut s = planner.sim().initial_state();
+    assert_eq!(s.ranks[0], 0);
+    let stop = Stop::quest(0, Kind::Accept);
+    let mut trace = Vec::new();
+    // The stop's real level gate brings a new character to skill 50 before the first visit.
+    planner.sim().apply(&mut s, stop, Some(&mut trace));
+    assert_eq!(s.level, 15);
+    assert_eq!(s.ranks[0], 0b11);
+    assert_eq!(
+        s.spent.training, p.params.train_time,
+        "one visit learns both open ranks"
+    );
+    let ranks: Vec<u8> = trace
+        .iter()
+        .filter_map(|t| match t.event {
+            Event::ProfTrain { ranks, .. } => Some(ranks),
+            _ => None,
+        })
+        .collect();
+    assert_eq!(ranks, [0b11]);
+    let route = crate::export::build_traced(&planner, &p.profile, &[stop], &trace, s.time, s.spent);
+    let lessons: Vec<_> = route
+        .steps
+        .iter()
+        .filter(|step| step.kind == crate::export::StepKind::Profession)
+        .collect();
+    assert_eq!(lessons.len(), 1);
+    assert_eq!(lessons[0].line, Some(LINE));
+    assert_eq!(lessons[0].skill, Some(150));
+    assert!(
+        lessons[0].text.starts_with("Learn Tailoring from "),
+        "{}",
+        lessons[0].text
+    );
+    assert!(lessons[0].target.is_some() && lessons[0].world.is_some());
+}

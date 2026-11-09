@@ -479,12 +479,22 @@ impl Planner<'_> {
 
     /// Training of an edited route, at the trainer it says.
     fn edit_train(&self, sim: Simulator<'_>, s: &mut State, trainer: usize, trace: &mut Vec<Timed>) -> Outcome {
+        if trainer >= self.model.trainers.len() {
+            return Outcome::Invalid("unknown trainer");
+        }
         let abilities = self.model.abilities.trained(s.abilities, s.level) & !s.abilities;
         if s.trained >= s.level && abilities == 0 {
             return Outcome::Skipped("nothing to learn");
         }
         let (saved, mark) = (s.clone(), trace.len());
-        sim.train_at(s, trainer, &mut recorder(&mut Some(&mut *trace)));
+        sim.apply(
+            s,
+            Stop {
+                index: trainer as u32,
+                kind: Kind::Train,
+            },
+            Some(&mut *trace),
+        );
         if !s.time.is_finite() {
             *s = saved;
             trace.truncate(mark);
@@ -613,6 +623,9 @@ fn is_own(edit: Edit, event: &Event) -> bool {
         (Edit::Link { first, last }, Event::Link { first: a, last: b }) => (first, last) == (*a, *b),
         (Edit::Teleport { to }, Event::Teleport { to: done }) => to == *done,
         (Edit::Train { trainer }, Event::Train { trainer: done, .. }) => trainer == *done,
+        (Edit::Stop { stop, .. }, Event::Train { trainer, .. }) => {
+            stop.kind == Kind::Train && stop.index as usize == *trainer
+        }
         (Edit::Sell { vendor }, Event::Sell { vendor: done }) => vendor == *done,
         (Edit::Abandon { quest }, Event::Abandon { quest: done }) => quest as usize == *done,
         (Edit::Grind { .. }, Event::GrindMobs { .. })

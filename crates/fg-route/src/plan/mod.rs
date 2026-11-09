@@ -66,7 +66,7 @@ pub(crate) use on_the_way::segment_dist;
 pub use places::Places;
 pub(crate) use profession_trainers::RANKS;
 pub use regions::Group;
-pub use search::Effort;
+pub use search::{CleanupStage, Effort};
 pub use share::{Exchange, Member};
 pub use state::{Breakdown, Event, Kind, Stop, Timed, fmt_time};
 

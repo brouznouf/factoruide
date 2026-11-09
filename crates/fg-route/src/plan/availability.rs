@@ -220,6 +220,7 @@ impl Availability<'_> {
             }
             Kind::TurnIn => s.accepted[i] && !s.turned[i] && self.objectives_done(s, stop.index),
             Kind::LearnFlight => s.known & (1u128 << i) == 0,
+            Kind::Train => i < self.model.trainers.len(),
             // A best item a vendor sells: still an upgrade once the character can wear it, and
             // the copper to pay for it (`Params::bis`).
             Kind::Buy => self.can_buy(s, stop.index as u16),

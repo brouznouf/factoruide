@@ -117,6 +117,47 @@ pub(super) fn route_steps(planner: &Planner<'_>, route: &[Stop]) -> Vec<RouteSte
         .collect()
 }
 
+#[cfg(test)]
+#[test]
+fn cleanup_training_stop_persists_as_one_existing_train_action() {
+    let mut p = crate::plan::tests::quests_at_start(1);
+    p.profile.from_level = 2;
+    p.profile.to_level = 3;
+    p.model.initial.trained = Some(1);
+    let mut trainer = p.model.start.clone();
+    trainer.id = 12345;
+    p.model.trainers.push(trainer);
+    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let steps = route_steps(
+        &planner,
+        &[Stop {
+            index: 0,
+            kind: Kind::Train,
+        }],
+    );
+    assert_eq!(steps, [RouteStep::Train { trainer: 12345 }]);
+    let json = serde_json::to_string(&steps).unwrap();
+    let restored: Vec<RouteStep> = serde_json::from_str(&json).unwrap();
+    assert_eq!(restored, steps);
+    let edits = restored
+        .iter()
+        .map(|s| s.resolve(&planner).unwrap())
+        .collect::<Vec<_>>();
+    assert_eq!(edits, [Edit::Train { trainer: 0 }]);
+    let replay = planner.explicit().edit(&edits);
+    assert_eq!(replay.errors(), 0);
+    assert_eq!(replay.breakdown.training, p.params.train_time);
+    assert_eq!(replay.breakdown.overhead, 0.0);
+    assert_eq!(
+        replay
+            .trace
+            .iter()
+            .filter(|t| matches!(t.event, Event::Train { .. }))
+            .count(),
+        1
+    );
+}
+
 impl RouteStep {
     /// The step of a planner's edit, by game IDs.
     fn of(edit: Edit, planner: &Planner<'_>) -> Self {
@@ -148,6 +189,9 @@ impl RouteStep {
                         item: model.power.as_ref().map_or(0, |p| p.items[i].id),
                     },
                     Kind::Bind => Self::Bind { inn: model.inns[i].id },
+                    Kind::Train => Self::Train {
+                        trainer: model.trainers[i].id,
+                    },
                     Kind::Hearth => Self::Hearth { recall: i == 1 },
                     Kind::Dungeon => Self::Dungeon {
                         dungeon: model.dungeons[i].area,

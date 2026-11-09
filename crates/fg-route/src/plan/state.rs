@@ -16,6 +16,8 @@ pub enum Kind {
     /// Buy a best item from a vendor (`Stop::index` is the item, index in the power model's
     /// items; the vendor is the seller nearest where the character stands).
     Buy,
+    /// Class training (`Stop::index` is the trainer in `Model::trainers`).
+    Train,
     /// Back to the inn the hearthstone is bound to: the hearthstone (`Stop::index` 0) or the
     /// shaman's Astral Recall (1). Nothing when it is not ready yet, or not learned.
     Hearth,
@@ -369,7 +371,12 @@ pub(crate) struct State {
     /// Actual direct-kill work still awaiting any benefiting quest's turn-in. Copy-on-write
     /// shares this small active ledger between snapshots, rather than retaining route history.
     pub(crate) kill_work: Rc<Vec<KillWork>>,
-    /// Direct work justified by a turn-in; nominal unfinished-work estimates must not
+    /// Actual gross legacy objective work awaiting its quest's turn-in, one row per quest.
+    /// Imported progress has no row; settled quests leave no history in this ledger.
+    pub(crate) legacy_work: Rc<Vec<(u32, f64)>>,
+    /// Performed work whose last unrewarded beneficiary was abandoned.
+    pub(crate) orphaned_work: f64,
+    /// Direct work justified by a turn-in; unfinished-work accounting must not
     /// reclassify it as grinding, including when gathering overlapped those kills.
     pub(crate) rewarded_kill_work: f64,
     /// The objective stops done one after the other at the same place (see `Together`).
@@ -423,6 +430,27 @@ pub(crate) struct State {
 }
 
 impl State {
+    pub(crate) fn record_legacy_work(&mut self, quest: u32, seconds: f64) {
+        if seconds <= 0.0 {
+            return;
+        }
+        let work = Rc::make_mut(&mut self.legacy_work);
+        match work.binary_search_by_key(&quest, |&(q, _)| q) {
+            Ok(i) => work[i].1 += seconds,
+            Err(i) => work.insert(i, (quest, seconds)),
+        }
+    }
+
+    pub(crate) fn settle_legacy_work(&mut self, quest: u32, rewarded: bool) {
+        let Ok(i) = self.legacy_work.binary_search_by_key(&quest, |&(q, _)| q) else {
+            return;
+        };
+        let (_, seconds) = Rc::make_mut(&mut self.legacy_work).remove(i);
+        if !rewarded {
+            self.orphaned_work += seconds;
+        }
+    }
+
     pub(crate) fn record_kill_work(&mut self, mut quests: Vec<u32>, seconds: f64) {
         if seconds <= 0.0 {
             return;
@@ -450,12 +478,18 @@ impl State {
                 .sum::<f64>();
         }
         let work = Rc::make_mut(&mut self.kill_work);
+        let orphaned = &mut self.orphaned_work;
         work.retain_mut(|w| {
             if rewarded {
                 !w.quests.contains(&quest)
             } else {
                 w.quests.retain(|&q| q != quest);
-                !w.quests.is_empty()
+                if w.quests.is_empty() {
+                    *orphaned += w.seconds;
+                    false
+                } else {
+                    true
+                }
             }
         });
         if !rewarded {

@@ -158,6 +158,8 @@ impl<'s> Simulator<'s> {
             timers: Vec::new(),
             started: Vec::new(),
             kill_work: Rc::new(Vec::new()),
+            legacy_work: Rc::new(Vec::new()),
+            orphaned_work: 0.0,
             rewarded_kill_work: 0.0,
             together: state::Together::default(),
             next: None,

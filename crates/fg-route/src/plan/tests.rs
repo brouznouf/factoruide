@@ -8,6 +8,9 @@ use crate::xp::Edition;
 use rusqlite::Connection;
 use std::path::PathBuf;
 
+mod abandoned_work;
+mod cleanup_observation;
+mod cleanup_training;
 mod dungeons;
 mod movement;
 mod moves;

@@ -3410,10 +3410,18 @@ fn profession_trainer_stops_are_off_unless_chosen() {
     let on = plan(&["profession_trainers=true"]);
     let found = stops(&on);
     let lines: Vec<i64> = on.professions.iter().map(|p| p.skill_line).collect();
-    for line in &lines {
+    for profession in &on.professions {
+        let first = found
+            .iter()
+            .find(|s| s.line == Some(profession.skill_line))
+            .unwrap_or_else(|| panic!("{}: a trainer visit", profession.skill_line));
+        // A first visit can learn several open ranks together; its exported cap is the
+        // highest learned rank. The initial-learning instruction must still be present.
         assert!(
-            found.iter().any(|s| s.line == Some(*line) && s.skill == Some(75)),
-            "{line}: the profession is learned at its trainer"
+            first.text.starts_with(&format!("Learn {} from ", profession.name)),
+            "{}: the profession is first learned at its trainer: {}",
+            profession.skill_line,
+            first.text
         );
     }
     assert!(on.total_time > off.total_time, "the trips take time");

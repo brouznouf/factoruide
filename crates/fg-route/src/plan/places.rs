@@ -18,7 +18,7 @@ pub(crate) fn stop_inside(model: &Model, s: &State, stop: Stop) -> Option<usize>
         Kind::TurnIn => nearest(&model.quests[i].ends),
         Kind::Objective(k) => model.quests[i].objectives[k as usize].nearest(&s.pos).loc.inside,
         Kind::Dungeon => return Some(i),
-        Kind::LearnFlight | Kind::Bind | Kind::Hearth | Kind::Buy => None,
+        Kind::LearnFlight | Kind::Bind | Kind::Hearth | Kind::Buy | Kind::Train => None,
     }
     .map(usize::from)
 }
@@ -65,6 +65,7 @@ impl Places<'_> {
                 }
             }
             Kind::Bind => self.model.inns[stop.index as usize].clone(),
+            Kind::Train => self.model.trainers[stop.index as usize].clone(),
             Kind::Hearth => self.model.inns[s.bind].clone(),
             Kind::Dungeon => self.model.dungeons[stop.index as usize].entrance.clone(),
             // A best item bought from a vendor: the seller nearest where the character stands.
@@ -132,6 +133,8 @@ impl Places<'_> {
             }
             Kind::LearnFlight => self.world.taxi_nodes[stop.index as usize].pos,
             Kind::Bind => self.model.inns[stop.index as usize].pos,
+            // Look-ahead may inspect an invalid later slot before `valid` rejects it.
+            Kind::Train => self.model.trainers.get(stop.index as usize).map_or(s.pos, |t| t.pos),
             Kind::Hearth => self.model.inns[s.bind].pos,
             Kind::Dungeon => self.model.dungeons[stop.index as usize].entrance.pos,
             // The seller the stop would go to from where the character stands.
@@ -147,6 +150,7 @@ impl Places<'_> {
             Kind::TurnIn => self.model.quests[i].ends[0].zone,
             Kind::LearnFlight => self.world.taxi_nodes[i].pos.zone,
             Kind::Bind => self.model.inns[i].zone,
+            Kind::Train => self.model.trainers[i].zone,
             // Not a place of its own (the bound inn): a stay by itself.
             Kind::Hearth => HEARTH_ZONE,
             Kind::Dungeon => self.model.dungeons[i].entrance.zone,
@@ -163,7 +167,7 @@ impl Places<'_> {
             Kind::Objective(k) => self.model.quests[i].objectives[k as usize].loc.inside,
             Kind::TurnIn => self.model.quests[i].ends[0].inside,
             Kind::Dungeon => return Some(i),
-            Kind::LearnFlight | Kind::Bind | Kind::Hearth | Kind::Buy => None,
+            Kind::LearnFlight | Kind::Bind | Kind::Hearth | Kind::Buy | Kind::Train => None,
         }
         .map(usize::from)
     }
@@ -187,6 +191,7 @@ impl Places<'_> {
             Kind::TurnIn => self.model.quests[i].ends[0].pos,
             Kind::LearnFlight => self.world.taxi_nodes[i].pos,
             Kind::Bind => self.model.inns[i].pos,
+            Kind::Train => self.model.trainers[i].pos,
             Kind::Hearth => self.model.inns[self.model.start_inn].pos,
             Kind::Dungeon => self.model.dungeons[i].entrance.pos,
             Kind::Buy => self

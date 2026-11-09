@@ -762,6 +762,8 @@ impl StepWriter<'_> {
             // A best item bought from the vendor the stop went to (`Params::bis`): the item
             // named, the other sellers along the way.
             Kind::Buy => self.buy(step, stop.index as u16, loc),
+            // Training is represented by `Event::Train`, never by a generic stop.
+            Kind::Train => unreachable!(),
             _ => {
                 step.kind = StepKind::FlightMaster;
                 step.say.push(Phrase::new("flight_master").arg("place", entity(loc)));
@@ -963,7 +965,7 @@ impl StepWriter<'_> {
                 step.say.push(Phrase::new(key).arg("quest", quest).arg("who", who));
                 self.patrol(step, loc);
             }
-            Kind::LearnFlight | Kind::Bind | Kind::Dungeon | Kind::Hearth | Kind::Buy => unreachable!(),
+            Kind::LearnFlight | Kind::Bind | Kind::Dungeon | Kind::Hearth | Kind::Buy | Kind::Train => unreachable!(),
         }
         self.place(&loc.pos, Some(loc.zone))
     }

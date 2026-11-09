@@ -22,6 +22,25 @@ pub enum Effort {
     Tries(u64),
 }
 
+/// The route boundaries observed during the final cleanup, including unchanged passes.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum CleanupStage {
+    /// The current or best route selected to enter cleanup.
+    SelectedInput,
+    /// Class-power quests moved early.
+    PowerFirst,
+    /// Hearthstone bindings reconsidered, before placing hearthstone uses.
+    Rebind,
+    /// Hearthstone uses placed after rebinding.
+    PlaceHearths,
+    /// Unfinished optional quests removed when that does not worsen the score.
+    DropUnfinished,
+    /// Stops after reaching the target removed when that does not worsen the score.
+    TrimTarget,
+    /// Optional dungeon quests without their dungeon run removed.
+    DropDungeonless,
+}
+
 /// Where the search stands: the current route, the best one, how it decides.
 struct Search {
     route: Vec<Stop>,
@@ -79,6 +98,21 @@ impl Planner<'_> {
         log: impl Fn(&str),
         on_best: impl Fn(f64, f64, &[Stop]),
     ) -> Vec<Stop> {
+        self.improve_while_observed(route, effort, keep_going, log, on_best, |_, _| {})
+    }
+
+    /// `improve_while` with the route at every final cleanup boundary, including unchanged passes.
+    /// `on_cleanup` borrows the stops; copy them here and evaluate them after search completes to
+    /// avoid changing the planner's memo tables during cleanup. Aborted or invalid routes skip it.
+    pub fn improve_while_observed(
+        &self,
+        route: Vec<Stop>,
+        effort: Effort,
+        keep_going: impl Fn() -> bool,
+        log: impl Fn(&str),
+        on_best: impl Fn(f64, f64, &[Stop]),
+        on_cleanup: impl Fn(CleanupStage, &[Stop]),
+    ) -> Vec<Stop> {
         let Some(run) = self.run(&route) else {
             log("greedy route is invalid");
             return route;
@@ -112,7 +146,7 @@ impl Planner<'_> {
             return search.best.1;
         }
         let (tries, wins) = (search.tries, search.wins);
-        let (route, total) = self.clean_up(search);
+        let (route, total) = self.clean_up(search, &on_cleanup);
         log(&format!(
             "improved: {} stops, {} ({tries} tries, {wins} improvements)",
             route.len(),
@@ -256,7 +290,7 @@ impl Planner<'_> {
     /// (the dungeon quests go anyway); moving a pet quest early may, by up to `class_power_slack`
     /// each (on purpose: a pet or a form early is worth more to the player than the model says).
     /// Its score is returned with it.
-    fn clean_up(&self, search: Search) -> (Vec<Stop>, f64) {
+    fn clean_up(&self, search: Search, on_cleanup: &impl Fn(CleanupStage, &[Stop])) -> (Vec<Stop>, f64) {
         // Only the score and the stops done of each route are kept: the states of a run weigh
         // megabytes, and the clean-up replays routes of its own.
         let done = |run: Run| (run.total, run.states.len() - 1);
@@ -266,20 +300,26 @@ impl Planner<'_> {
             route = best.1;
             run = done(self.run(&route).expect("best route was valid"));
         }
+        on_cleanup(CleanupStage::SelectedInput, &route);
         let early = self.power_first(route.clone());
         if early != route {
             route = early;
             run = done(self.run(&route).expect("power_first keeps the route valid"));
         }
-        let rebound = self.place_hearths(self.rebind(route.clone()));
+        on_cleanup(CleanupStage::PowerFirst, &route);
+        let rebound = self.rebind(route.clone());
+        on_cleanup(CleanupStage::Rebind, &rebound);
+        let rebound = self.place_hearths(rebound);
         if rebound != route {
             route = rebound;
             run = done(self.run(&route).expect("rebind keeps the route valid"));
         }
+        on_cleanup(CleanupStage::PlaceHearths, &route);
         if let Some(pruned) = self.drop_unfinished(&route, run.0) {
             route = pruned;
             run = done(self.run(&route).expect("pruned route was valid"));
         }
+        on_cleanup(CleanupStage::DropUnfinished, &route);
         // The stops after the target level are cut, unless the route needs them: the quests it
         // plans later decide what is taken early and turned in at hand before (not a quest
         // blocking one it takes later; an XP reward lost to grinding instead).
@@ -289,10 +329,12 @@ impl Planner<'_> {
         {
             (route, run) = (cut, done(r));
         }
+        on_cleanup(CleanupStage::TrimTarget, &route);
         if let Some(kept) = self.drop_dungeonless(&route) {
             route = kept;
             run = done(self.run(&route).expect("dropped route was valid"));
         }
+        on_cleanup(CleanupStage::DropDungeonless, &route);
         (route, run.0)
     }
 
@@ -312,11 +354,52 @@ impl Planner<'_> {
         left.dedup();
         let (mut best, mut changed) = (route.to_vec(), false);
         for q in left {
+            // Trace only the removed slots from the current accepted route's pre-stop
+            // states. Training at another retained slot is not a service we removed.
+            let mut trained = Vec::new();
+            if let Some(run) = self.run(&best) {
+                for (k, &stop) in best.iter().enumerate().take(run.states.len().saturating_sub(1)) {
+                    if stop.is_quest() && stop.index == q {
+                        let mut s = run.states[k].clone();
+                        s.at = k as u32;
+                        s.next = self.sim().next_pos(&s, &best, k);
+                        let mut trace = Vec::new();
+                        self.sim().apply(&mut s, stop, Some(&mut trace));
+                        trained.push((
+                            k,
+                            trace
+                                .into_iter()
+                                .filter_map(|t| match t.event {
+                                    Event::Train { trainer, .. } => Some(Stop {
+                                        index: trainer as u32,
+                                        kind: Kind::Train,
+                                    }),
+                                    _ => None,
+                                })
+                                .collect::<Vec<_>>(),
+                        ));
+                    }
+                }
+            }
+            // The original run is released before either full candidate simulation.
             let candidate: Vec<Stop> = (best.iter().copied())
                 .filter(|s| !(s.is_quest() && s.index == q))
                 .collect();
-            if self.simulate(&candidate, None).is_some() {
-                (best, changed) = (candidate, true);
+            if let Some(bare_score) = self.simulate(&candidate, None) {
+                let mut substitute = Vec::new();
+                for (k, &stop) in best.iter().enumerate() {
+                    if stop.is_quest() && stop.index == q {
+                        if let Some((_, training)) = trained.iter().find(|(slot, _)| *slot == k) {
+                            substitute.extend_from_slice(training);
+                        }
+                    } else {
+                        substitute.push(stop);
+                    }
+                }
+                let keep_training =
+                    substitute != candidate && self.simulate(&substitute, None).is_some_and(|score| score < bare_score);
+                best = if keep_training { substitute } else { candidate };
+                changed = true;
             }
         }
         changed.then_some(best)
