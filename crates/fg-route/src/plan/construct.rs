@@ -1188,42 +1188,72 @@ impl Planner<'_> {
         }
     }
 
-    /// The next stop of the chain leading to a quest forced dungeon `d` waits for
+    /// The next stop of the chain leading to a quest dungeon `d` waits for
     /// (`waits_for_quests`): a quest of it to take, finish or hand in, its own last (Dragonmaw
     /// Rumors before Open the Maw). Left to the weighing of the stops, a delivery far away worth
-    /// little comes after the dungeon's levels. None when no step of it can be made now, and in a
-    /// dungeon: what is left there comes first (it is not entered again).
+    /// little comes after the dungeon's levels. Reputation preparation may grind to a gate within
+    /// the run's window; it holds no run without a legal, reachable step. Inside a dungeon, what
+    /// is left there comes first (it is not entered again).
     fn toward_waited_quest(&self, s: &State, d: usize) -> Option<Stop> {
         if s.inside.is_some() {
             return None;
         }
         let bound = self.trips().bound(s);
-        let doable = |stop: Stop| {
-            self.sim().gate_level(s, stop) <= s.level
+        let doable = |stop: Stop, mandatory: bool| {
+            let level = if mandatory {
+                s.level
+            } else {
+                self.model.dungeons[d].max_level.min(self.rules().max_level)
+            };
+            self.sim().gate_level(s, stop) <= level
                 && self.places().inside(s, stop).is_none()
                 && bound.at(&self.places().pos(s, stop)).is_finite()
+                && (mandatory || self.availability().valid(s, stop))
+                && (mandatory || {
+                    // Preparation must leave the one visit enterable, including XP from
+                    // its work and the trip there. A gate alone does not guarantee that.
+                    let mut after = s.clone();
+                    self.sim().apply(&mut after, stop, None);
+                    after.level <= self.model.dungeons[d].max_level
+                        && after.time.is_finite()
+                        && after.completion_error.is_none()
+                })
         };
-        let mut stack: Vec<u32> = (self.availability().dungeon_quests(d))
+        let mut stack: Vec<(u32, bool)> = (self.availability().dungeon_quests(d))
             .filter(|&i| {
                 let iu = i as usize;
-                self.quest(i).mandatory && !s.accepted[iu] && !s.rewarded(iu)
+                (self.quest(i).mandatory && s.level < self.model.dungeons[d].max_level
+                    || self.availability().missing_reputation(s, i))
+                    && !s.accepted[iu]
+                    && !s.rewarded(iu)
+                    && (self.quest(i).mandatory || self.quest(i).min_level <= self.model.dungeons[d].max_level)
+            })
+            .map(|i| {
+                (
+                    i,
+                    self.quest(i).mandatory && !self.availability().missing_reputation(s, i),
+                )
             })
             .collect();
         let mut seen = std::collections::HashSet::new();
-        while let Some(i) = stack.pop() {
+        while let Some((i, mandatory)) = stack.pop() {
             let iu = i as usize;
             if !seen.insert(i) || s.rewarded(iu) {
                 continue;
             }
             let q = self.quest(i);
+            if !mandatory && self.availability().blocked(s, q) {
+                continue;
+            }
             if s.accepted[iu] {
                 let next = if self.availability().objectives_done(s, i) {
-                    Some(Stop::quest(i, Kind::TurnIn)).filter(|&t| doable(t))
+                    Some(Stop::quest(i, Kind::TurnIn))
+                        .filter(|&t| doable(t, mandatory) && !self.availability().reputation_child_ready(s, i))
                 } else {
                     (0..q.objectives.len())
                         .filter(|&k| self.availability().objective_open(s, i, k))
                         .map(|k| Stop::quest(i, Kind::Objective(k as u8)))
-                        .find(|&o| doable(o))
+                        .find(|&o| doable(o, mandatory))
                 };
                 if next.is_some() {
                     return next;
@@ -1231,29 +1261,29 @@ impl Planner<'_> {
                 continue;
             }
             let accept = Stop::quest(i, Kind::Accept);
-            if self.availability().can_accept(s, i) && doable(accept) {
+            if self.availability().can_accept(s, i) && doable(accept, mandatory) {
                 return Some(accept);
             }
             stack.extend(
                 (q.pre_all.iter().chain(&q.pre_any).chain(&q.pre_held))
                     .filter_map(|id| self.model.index.get(id))
-                    .map(|&j| j as u32),
+                    .map(|&j| (j as u32, mandatory)),
             );
         }
         None
     }
 
-    /// Whether the run of dungeon `d` waits for a quest of it the route must do (a dungeon forced
-    /// with its quests) and has not taken yet, its chain under way: entered once, the dungeon
-    /// would leave it undone. Up to the dungeon's last level; not for a quest gated above the
-    /// game's levels (never taken).
+    /// Whether the run waits for an untaken mandatory quest or useful reputation chain with a
+    /// feasible next step: entered once, the dungeon would leave it undone. Mandatory-only work
+    /// releases at the last level; useful reputation preparation may still fit at that level.
     fn waits_for_quests(&self, s: &State, d: usize) -> bool {
         let dungeon = &self.model.dungeons[d];
-        s.level < dungeon.max_level
+        s.level <= dungeon.max_level
             && self.availability().dungeon_quests(d).any(|i| {
                 let iu = i as usize;
                 let q = self.quest(i);
-                q.mandatory
+                (q.mandatory && s.level < dungeon.max_level
+                    || self.availability().missing_reputation(s, i) && self.toward_waited_quest(s, d).is_some())
                     && !s.accepted[iu]
                     && !s.rewarded(iu)
                     && q.min_level <= dungeon.max_level
@@ -1468,5 +1498,306 @@ mod forced_dungeon_tests {
         let s = plan.sim().initial_state();
         let rumors = Stop::quest(p.model.index[&330] as u32, Kind::Accept);
         assert_eq!(plan.nearest_stop(&s, None), Some(rumors));
+    }
+}
+
+#[cfg(test)]
+mod reputation_dungeon_tests {
+    use super::*;
+    use crate::params::ReputationGoal;
+    use crate::testing::{At, Obj, Q, Scenario};
+
+    fn chain_scenario() -> Scenario {
+        Scenario::new()
+            .levels(22, 24)
+            .dungeon("Caverns", 1, 50.0, 50.0)
+            .params(|p| {
+                p.forced_dungeons = vec![900];
+                p.camp_radius = 0.0;
+                p.reputation_goals = vec![ReputationGoal {
+                    faction: 470,
+                    target: 100,
+                }];
+            })
+            .quest(
+                Q::new(10, "Horn collection")
+                    .level(20)
+                    .xp(0)
+                    .giver(1, 90.0, 10.0)
+                    .kill("Raptor", 20, 5, 1, 92.0, 10.0),
+            )
+            .quest(
+                Q::new(11, "Useful dungeon collection")
+                    .level(20)
+                    .xp(0)
+                    .after(&[10])
+                    .giver(1, 90.0, 10.0)
+                    .reputation(470, 100.0)
+                    .objective(
+                        Obj::kill(
+                            "Essence",
+                            20,
+                            6,
+                            At {
+                                zone: 1,
+                                x: 50.0,
+                                y: 50.0,
+                            },
+                        )
+                        .inside(0),
+                    ),
+            )
+    }
+
+    fn chain() -> crate::job::Prepared {
+        chain_scenario().build()
+    }
+
+    #[test]
+    fn useful_reputation_chain_is_prepared_before_its_single_dungeon_run() {
+        for initially_held in [false, true] {
+            let mut p = chain();
+            if initially_held {
+                p.model.initial.accepted = vec![0];
+            }
+            let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+            let route = planner.greedy();
+            let parent = route.iter().position(|s| *s == Stop::quest(0, Kind::TurnIn));
+            let child = route.iter().position(|s| *s == Stop::quest(1, Kind::Accept));
+            let run = route.iter().position(|s| s.kind == Kind::Dungeon).unwrap();
+            assert!(parent.is_some() && child.is_some(), "held {initially_held}: {route:?}");
+            assert!(
+                parent.unwrap() < child.unwrap() && child.unwrap() < run,
+                "held {initially_held}: {route:?}"
+            );
+            assert_eq!(route.iter().filter(|s| s.kind == Kind::Dungeon).count(), 1);
+            assert!(route.contains(&Stop::quest(1, Kind::TurnIn)), "{route:?}");
+            assert_eq!(planner.reputation_reached(&route), vec![100.0]);
+            assert!(planner.simulate(&route, None).is_some(), "{route:?}");
+        }
+    }
+
+    #[test]
+    fn satisfied_or_unselected_reputation_does_not_delay_the_run_for_a_chain() {
+        for selected in [false, true] {
+            let mut p = chain();
+            if selected {
+                p.model.initial.reputation = vec![100.0];
+            } else {
+                p.params.reputation_goals.clear();
+            }
+            let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+            let route = planner.greedy();
+            assert_eq!(
+                route.first().unwrap().kind,
+                Kind::Dungeon,
+                "selected {selected}: {route:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn reputation_preparation_can_reach_a_prerequisite_level_within_the_run_window() {
+        let mut p = chain();
+        p.model.quests[0].min_level = 23;
+        p.model.dungeons[0].max_level = 24;
+        p.params.farm_on_way = false;
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = planner.greedy();
+        let accept = route.iter().position(|s| *s == Stop::quest(1, Kind::Accept)).unwrap();
+        let run = route.iter().position(|s| s.kind == Kind::Dungeon).unwrap();
+        assert!(accept < run, "{route:?}");
+        assert_eq!(planner.reputation_reached(&route), vec![100.0]);
+    }
+
+    #[test]
+    fn useful_reputation_preparation_at_the_last_dungeon_level_survives_finalization() {
+        for (held, mandatory) in [(false, false), (true, false), (false, true), (true, true)] {
+            let mut p = chain();
+            p.model.dungeons[0].max_level = 22;
+            p.model.quests[1].mandatory = mandatory;
+            if held {
+                p.model.initial.accepted = vec![0];
+            }
+            let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+            let constructed = planner.greedy();
+            let finalized = crate::job::finalize_route(&planner, constructed.clone()).unwrap();
+            for route in [constructed, finalized] {
+                let parent = route.iter().position(|s| *s == Stop::quest(0, Kind::TurnIn));
+                let child = route.iter().position(|s| *s == Stop::quest(1, Kind::Accept));
+                let run = route.iter().position(|s| s.kind == Kind::Dungeon).unwrap();
+                assert!(
+                    parent.is_some() && child.is_some(),
+                    "held {held}, mandatory {mandatory}: {route:?}"
+                );
+                assert!(
+                    parent.unwrap() < child.unwrap() && child.unwrap() < run,
+                    "held {held}, mandatory {mandatory}: {route:?}"
+                );
+                assert_eq!(route.iter().filter(|s| s.kind == Kind::Dungeon).count(), 1);
+                assert_eq!(planner.reputation_reached(&route), vec![100.0]);
+                assert!(planner.simulate(&route, None).is_some(), "{route:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn mandatory_quests_without_missing_reputation_still_release_at_the_last_dungeon_level() {
+        let mut p = chain();
+        p.model.dungeons[0].max_level = 22;
+        p.model.quests[1].mandatory = true;
+        p.params.reputation_goals.clear();
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        assert_eq!(planner.greedy().first().unwrap().kind, Kind::Dungeon);
+    }
+
+    #[test]
+    fn reputation_preparation_that_would_outlevel_the_run_releases_it() {
+        for mandatory in [false, true] {
+            let mut p = chain();
+            p.model.dungeons[0].max_level = 22;
+            p.model.quests[1].mandatory = mandatory;
+            p.model.initial.accepted = vec![0];
+            p.model.initial.xp = p.params.edition.rules().to_next_level(22) - 1;
+            p.params.farm_on_way = false;
+            let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+            let route = planner.greedy();
+            assert_eq!(
+                route.first().unwrap().kind,
+                Kind::Dungeon,
+                "mandatory {mandatory}: {route:?}"
+            );
+            assert!(planner.simulate(&route, None).is_some(), "{route:?}");
+        }
+    }
+
+    #[test]
+    fn last_level_reputation_wait_does_not_revive_an_unrelated_mandatory_chain() {
+        let mut p = chain_scenario()
+            .quest(Q::new(20, "Mandatory-only delivery").level(20).xp(100_000))
+            .quest(
+                Q::new(21, "Mandatory-only dungeon work")
+                    .level(20)
+                    .after(&[20])
+                    .mandatory()
+                    .objective(
+                        Obj::visit(
+                            "Inside",
+                            At {
+                                zone: 1,
+                                x: 50.0,
+                                y: 50.0,
+                            },
+                        )
+                        .inside(0),
+                    ),
+            )
+            .build();
+        p.model.dungeons[0].max_level = 22;
+        p.model.initial.accepted = vec![2];
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = planner.greedy();
+        assert_eq!(route.first(), Some(&Stop::quest(0, Kind::Accept)), "{route:?}");
+        let run = route.iter().position(|s| s.kind == Kind::Dungeon).unwrap();
+        assert!(!route[..run].contains(&Stop::quest(2, Kind::TurnIn)), "{route:?}");
+        assert_eq!(planner.reputation_reached(&route), vec![100.0]);
+    }
+
+    #[test]
+    fn another_forced_run_cannot_preempt_useful_work_inside_the_current_dungeon() {
+        let mut p = chain_scenario()
+            .dungeon("Another forced run", 1, 50.0, 50.0)
+            .params(|p| p.forced_dungeons = vec![900, 901])
+            .build();
+        p.model.dungeons[0].max_level = 24;
+        p.model.dungeons[1].min_level = 20;
+        p.model.dungeons[1].max_level = 24;
+        p.model.dungeons[1].mob_level = 20;
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = planner.greedy();
+        let objective = route.iter().position(|s| *s == Stop::quest(1, Kind::Objective(0)));
+        let next_run = route
+            .iter()
+            .position(|s| s.kind == Kind::Dungeon && s.index == 1)
+            .unwrap();
+        assert!(objective.is_some_and(|at| at < next_run), "{route:?}");
+        assert_eq!(route.iter().filter(|s| s.kind == Kind::Dungeon).count(), 2);
+        assert_eq!(planner.reputation_reached(&route), vec![100.0]);
+        assert!(planner.simulate(&route, None).is_some(), "{route:?}");
+        let finalized = crate::job::finalize_route(&planner, route).unwrap();
+        assert_eq!(planner.reputation_reached(&finalized), vec![100.0]);
+    }
+
+    #[test]
+    fn an_optional_run_waits_for_its_useful_reputation_chain() {
+        let mut p = chain_scenario()
+            .quest(
+                Q::new(12, "Already held dungeon work").level(20).xp(0).objective(
+                    Obj::visit(
+                        "Inside",
+                        At {
+                            zone: 1,
+                            x: 50.0,
+                            y: 50.0,
+                        },
+                    )
+                    .inside(0),
+                ),
+            )
+            .build();
+        p.params.forced_dungeons.clear();
+        p.params.dungeons = true;
+        p.model.initial.accepted = vec![2];
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = planner.greedy();
+        let accept = route.iter().position(|s| *s == Stop::quest(1, Kind::Accept)).unwrap();
+        let run = route.iter().position(|s| s.kind == Kind::Dungeon).unwrap();
+        assert!(accept < run, "{route:?}");
+        assert_eq!(planner.reputation_reached(&route), vec![100.0]);
+        assert!(planner.simulate(&route, None).is_some(), "{route:?}");
+    }
+
+    #[test]
+    fn a_reputation_dungeon_child_is_taken_while_its_recorded_parent_is_held() {
+        let mut p = chain();
+        p.model.quests[1].pre_all.clear();
+        p.model.quests[1].pre_held = vec![10];
+        p.model.initial.accepted = vec![0];
+        let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let route = planner.greedy();
+        let accept = route.iter().position(|s| *s == Stop::quest(1, Kind::Accept)).unwrap();
+        let parent_turn = route.iter().position(|s| *s == Stop::quest(0, Kind::TurnIn)).unwrap();
+        let run = route.iter().position(|s| s.kind == Kind::Dungeon).unwrap();
+        assert!(accept < parent_turn && accept < run, "{route:?}");
+        assert_eq!(planner.reputation_reached(&route), vec![100.0]);
+        assert!(planner.simulate(&route, None).is_some(), "{route:?}");
+    }
+
+    #[test]
+    fn unavailable_reputation_chains_do_not_hold_a_useful_run() {
+        for unavailable in [
+            "blocked child",
+            "blocked parent",
+            "high child",
+            "high parent",
+            "unreachable parent",
+            "full log",
+        ] {
+            let mut p = chain();
+            match unavailable {
+                "blocked child" => p.model.quests[1].exclusive = vec![99],
+                "blocked parent" => p.model.quests[0].exclusive = vec![99],
+                "high child" => p.model.quests[1].min_level = 60,
+                "high parent" => p.model.quests[0].min_level = 60,
+                "unreachable parent" => p.model.quests[0].starts[0].pos.continent = 99,
+                "full log" => p.params.quest_log_size = 0,
+                _ => unreachable!(),
+            }
+            p.model.initial.completed = Some([99].into_iter().collect());
+            let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+            let route = planner.greedy();
+            assert_eq!(route.first().unwrap().kind, Kind::Dungeon, "{unavailable}: {route:?}");
+            assert!(planner.simulate(&route, None).is_some(), "{unavailable}: {route:?}");
+        }
     }
 }

@@ -9,7 +9,7 @@ use rustc_hash::FxHashMap;
 use std::collections::{HashMap, HashSet};
 
 /// What the characters know and have done that changes which quests the guide takes.
-#[derive(Debug, Default)]
+#[derive(Debug, Clone, Default)]
 pub(crate) struct Knowledge {
     /// Quests whose reward (a spell) every character knows already: left out unless asked for.
     pub(crate) rewards: HashSet<i64>,

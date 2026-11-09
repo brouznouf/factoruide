@@ -128,7 +128,7 @@ pub fn load(
         prerequisites: known_prerequisites,
         reward_quests,
         logged,
-        class_quests: std::mem::take(&mut sources.class_quest_ids),
+        class_quests: sources.class_quest_ids.clone(),
         assumed: starts.is_empty(),
         satisfied_objectives: if params.bis == crate::params::BisMode::Off {
             HashSet::new()
@@ -137,7 +137,9 @@ pub fn load(
         },
     };
     let levels = dungeon_levels(conn, &profile.dungeons)?;
-    let known_names = derive::settle(
+    let initial_knowledge = known.clone();
+    let initial_dungeons = sources.dungeons.clone();
+    let mut known_names = derive::settle(
         &mut quests,
         &mut skipped,
         &mut sources.dungeons,
@@ -147,6 +149,33 @@ pub fn load(
         profile,
         params,
     )?;
+    // An exact-required instance quest can force a run even with dungeons disabled. That is
+    // known only after settling. Rebuild against those actual forcing flags so mixed items
+    // retain the same run, starting all other derivation from its original inputs.
+    if !params.dungeons
+        && sources
+            .dungeons
+            .iter()
+            .any(|d| d.needed && !params.excluded_dungeons.contains(&d.area))
+    {
+        let needed: Vec<bool> = sources.dungeons.iter().map(|d| d.needed).collect();
+        sources.dungeons = initial_dungeons;
+        for (dungeon, needed) in sources.dungeons.iter_mut().zip(needed) {
+            dungeon.needed = needed;
+        }
+        (quests, skipped) = build_quests(&sources, world, profile, params);
+        known = initial_knowledge;
+        known_names = derive::settle(
+            &mut quests,
+            &mut skipped,
+            &mut sources.dungeons,
+            &sources.rows,
+            &mut known,
+            &levels,
+            profile,
+            params,
+        )?;
+    }
     sources.class_quest_ids = known.class_quests;
     let known_prerequisites = known.prerequisites;
     report_skipped_class_quests(&sources, &skipped);

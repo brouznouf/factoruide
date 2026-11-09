@@ -238,6 +238,9 @@ impl QuestBuilder<'_> {
         if self.sources.pvp.contains(&quest.row.id) {
             return Ok(Some(self.battleground(quest, row)));
         }
+        if let Some(o) = self.costed_outside_item(quest, &row) {
+            return Ok(Some(o));
+        }
         if let Some(o) = self.inside_dungeon(quest, &row) {
             return Ok(Some(o));
         }
@@ -256,6 +259,42 @@ impl QuestBuilder<'_> {
             ObjectiveKind::Trigger => self.explore(quest, text, extra.as_deref()).map(Some),
             ObjectiveKind::Other => Err("reputation/spell objective"),
         }
+    }
+
+    /// When a dungeon is disabled or excluded, a mixed inside/outside item source can still
+    /// be farmed outside. Preserve enabled and forced runs; otherwise let the ordinary item
+    /// builder verify eligibility and charge its actual work rather than approximating loot.
+    fn costed_outside_item(&self, quest: &QuestContext<'_>, row: &ObjectiveRow) -> Option<Objective> {
+        if row.0 != ObjectiveKind::Item {
+            return None;
+        }
+        let d = *self.sources.dungeon_by_area.get(&quest.row.sort?)?;
+        let area = self.sources.dungeons[d].area;
+        let enabled = self.params.dungeons
+            || self.sources.dungeons[d].needed
+            || self.params.forced_dungeons.contains(&area)
+            || self.params.forced_dungeon_quests.contains(&area)
+            || self.profile.objectives.contains(&super::GuideObjective::Dungeon(area));
+        if enabled && !self.params.excluded_dungeons.contains(&area) {
+            return None;
+        }
+        let target = row.1?;
+        let sources = self.item_sources(target, &quest.parts);
+        let inside = sources
+            .iter()
+            .any(|(t, id)| t.entity().is_some_and(|e| self.dungeon_of(e, *id).is_some()));
+        let outside = sources
+            .iter()
+            .any(|(t, id)| t.entity().is_some_and(|e| self.has_points(e, *id)));
+        if !inside || !outside {
+            return None;
+        }
+        let amount = row.4.filter(|a| *a > 0).map(|a| a as f64);
+        let o = self.get_item(quest, target, row.2.clone(), amount).ok()??;
+        // Farming actual mobs, looting placed objects or buying from an eligible vendor proves
+        // a usable path. Common loot, auctions and inferred sources do not establish one.
+        (o.kills > 0.0 && !o.mobs.is_empty() || o.uses > 0.0 || !o.vendors.is_empty())
+            .then_some(Objective { item: true, ..o })
     }
 
     /// Battleground quests: marks and objectives are won in games, `pvp_mark_time` each, queued
@@ -287,9 +326,9 @@ impl QuestBuilder<'_> {
     }
 
     /// Objectives inside a dungeon are done by running it with a group. A quest filed under a
-    /// dungeon is done there, even when its mob or object is also placed outside (the sources put
-    /// some dungeon mobs at the entrance, or in the mine before the instance); otherwise only
-    /// targets that live nowhere else.
+    /// dungeon is done there, apart from a verified costed item path outside, even when its mob
+    /// or object is also placed outside (the sources put some dungeon mobs at the entrance, or
+    /// in the mine before the instance); otherwise only targets that live nowhere else.
     fn inside_dungeon(&self, quest: &QuestContext<'_>, row: &ObjectiveRow) -> Option<Objective> {
         let (kind, target, text, _, amount) = row;
         let target = target.unwrap_or(0);
@@ -656,5 +695,282 @@ impl QuestBuilder<'_> {
             (self.sources.relations.get(pre).into_iter().flatten())
                 .any(|(_, kind, id)| self.dungeon_of(*kind, *id) == Some(d))
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::{fixture::Fixture, job, xp::Edition};
+    use rusqlite::Connection;
+
+    fn mixed_item_fixture() -> Connection {
+        Fixture::new(Edition::Classic)
+            .toml(
+                r#"
+[[npc]]
+id = 990001
+name = "Collector"
+npc_flags = 2
+friendly_to = "AH"
+at = [{ zone = 40, x = 56.0, y = 47.0 }]
+[[npc]]
+id = 990002
+name = "Cave dropper"
+level = 18
+at = [{ zone = 40, x = 42.0, y = 72.0 }]
+[[npc]]
+id = 990005
+name = "Instance dropper"
+level = 18
+rank = 1
+at = [{ zone = 1581, x = -1.0, y = -1.0 }]
+[[object]]
+id = 990007
+name = "Outside container"
+at = [{ zone = 40, x = 42.0, y = 72.0 }]
+[[object]]
+id = 990008
+name = "Inside container"
+at = [{ zone = 1581, x = -1.0, y = -1.0 }]
+[[item]]
+id = 990003
+name = "Cave essence"
+class = 12
+drops = [{ npc = 990002, chance = 0.25 }, { npc = 990005, chance = 0.8 }]
+[[quest]]
+id = 990004
+name = "Cave collection"
+level = 18
+zone = 1581
+giver = 990001
+objectives = [{ item = 990003, amount = 6 }]
+[[quest]]
+id = 990006
+name = "Required instance creature"
+level = 18
+zone = 1581
+giver = 990001
+objectives = [{ creature = 990005, amount = 1 }]
+[[row]]
+table = "dungeon"
+values = { area = 1581, name = "The Deadmines", alt_areas = "[10029]", entrance_zone = 40, entrance_x = 42.5, entrance_y = 71.7, source = "fixture" }
+"#,
+            )
+            .open()
+    }
+
+    fn prepare_item(conn: &Connection, params: &serde_json::Value) -> job::Prepared {
+        let mut request = serde_json::json!({
+            "race":"human", "class":"warrior", "from_level":18, "to_level":25,
+            "params":{"edition":"classic", "bis":"off", "all_class_quests":false, "dungeons":false}
+        });
+        for (key, value) in params.as_object().unwrap() {
+            request["params"][key] = value.clone();
+        }
+        prepare_item_request(conn, &serde_json::from_value(request).unwrap())
+    }
+
+    fn prepare_item_request(conn: &Connection, request: &job::PlanRequest) -> job::Prepared {
+        let overrides = job::Overrides::load_edition(
+            &std::path::PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../overrides"),
+            Edition::Classic,
+        )
+        .unwrap();
+        job::prepare(conn, &overrides, request, &|_| {}).unwrap()
+    }
+
+    #[test]
+    fn dungeon_item_with_usable_outside_drop_keeps_count_cost_and_place() {
+        let conn = mixed_item_fixture();
+        let p = prepare_item(&conn, &serde_json::json!({}));
+        let q = &p.model.quests[p.model.index[&990004]];
+        let o = &q.objectives[0];
+        assert_eq!(o.dungeon_of(), None, "the cave collection needs no instance run");
+        assert!(o.item);
+        assert_eq!(o.count, 6.0);
+        assert_eq!(o.kills, 24.0, "six items at 25% need twenty-four kills");
+        assert_eq!(o.mob_level, 18);
+        assert_eq!(o.mobs, vec![(990002, "Cave dropper".into())]);
+        assert_eq!(o.loc.zone, 40);
+        let outside = p.world.to_world(40, 42.0, 72.0).unwrap();
+        assert!(o.loc.pos.dist(&outside) < 0.01);
+        assert!(
+            q.starts[0].pos.dist(&o.loc.pos) > 100.0,
+            "collection still needs travel"
+        );
+        assert_eq!(o.spawns, 1, "only the verified outdoor spawn is counted");
+    }
+
+    #[test]
+    fn dungeon_item_keeps_an_enabled_or_forced_instance_path() {
+        for sort in [1581, 10029] {
+            for params in [
+                serde_json::json!({"dungeons":true}),
+                serde_json::json!({"forced_dungeons":[1581]}),
+                serde_json::json!({"forced_dungeon_quests":[1581]}),
+            ] {
+                let conn = mixed_item_fixture();
+                conn.execute("UPDATE m_quest SET zone_or_sort = ?1 WHERE id = 990004", [sort])
+                    .unwrap();
+                let p = prepare_item(&conn, &params);
+                let q = &p.model.quests[p.model.index[&990004]];
+                let o = &q.objectives[0];
+                assert!(o.loc.inside.is_some(), "sort={sort}, settings={params}");
+                assert!(q.in_dungeon(0));
+                assert_eq!(o.count, 6.0);
+                assert_eq!(o.kills, 0.0, "collection is accounted for by the instance run");
+            }
+        }
+    }
+
+    #[test]
+    fn dungeon_guide_keeps_the_mixed_item_collection_in_its_run() {
+        let conn = mixed_item_fixture();
+        let request = serde_json::from_value(serde_json::json!({
+            "race":"human", "class":"warrior", "from_level":18, "to_level":25,
+            "dungeon":1581,
+            "params":{"edition":"classic", "bis":"off", "all_class_quests":false}
+        }))
+        .unwrap();
+        let p = prepare_item_request(&conn, &request);
+        let q = &p.model.quests[p.model.index[&990004]];
+        assert!(q.in_dungeon(0));
+        assert!(q.mandatory);
+        assert_eq!(q.objectives[0].kills, 0.0);
+    }
+
+    #[test]
+    fn distinct_required_instance_quest_preserves_mixed_collection_in_the_run() {
+        let conn = mixed_item_fixture();
+        let request = serde_json::from_value(serde_json::json!({
+            "race":"human", "class":"warrior", "from_level":18, "to_level":25,
+            "required_quests":[990006],
+            "params":{"edition":"classic", "bis":"off", "all_class_quests":false, "dungeons":false}
+        }))
+        .unwrap();
+        let p = prepare_item_request(&conn, &request);
+        assert!(p.model.dungeons[0].needed);
+        assert!(p.model.quests[p.model.index[&990006]].required);
+        let q = &p.model.quests[p.model.index[&990004]];
+        assert!(
+            q.in_dungeon(0),
+            "the distinct exact-required quest already forces this instance run"
+        );
+        assert_eq!(q.objectives[0].kills, 0.0);
+        assert_eq!(q.objectives[0].count, 6.0);
+    }
+
+    #[test]
+    fn only_required_mixed_collection_with_dungeons_off_keeps_costed_outside_work() {
+        let conn = mixed_item_fixture();
+        let request = serde_json::from_value(serde_json::json!({
+            "race":"human", "class":"warrior", "from_level":18, "to_level":25,
+            "required_quests":[990004],
+            "params":{"edition":"classic", "bis":"off", "all_class_quests":false, "dungeons":false}
+        }))
+        .unwrap();
+        let p = prepare_item_request(&conn, &request);
+        let q = &p.model.quests[p.model.index[&990004]];
+        assert!(q.required);
+        assert!(!p.model.dungeons[0].needed);
+        assert_eq!(q.objectives[0].dungeon_of(), None);
+        assert_eq!(q.objectives[0].count, 6.0);
+        assert_eq!(q.objectives[0].kills, 24.0);
+    }
+
+    #[test]
+    fn excluded_instance_allows_costed_outside_collection_despite_forcing_flags() {
+        let conn = mixed_item_fixture();
+        let p = prepare_item(
+            &conn,
+            &serde_json::json!({"dungeons":true, "excluded_dungeons":[1581],
+                                "forced_dungeons":[1581], "forced_dungeon_quests":[1581]}),
+        );
+        let o = &p.model.quests[p.model.index[&990004]].objectives[0];
+        assert_eq!(o.dungeon_of(), None);
+        assert_eq!(o.count, 6.0);
+        assert_eq!(o.kills, 24.0);
+    }
+
+    #[test]
+    fn dungeon_item_with_only_inside_drop_stays_in_the_instance() {
+        let conn = mixed_item_fixture();
+        conn.execute("DELETE FROM m_spawn WHERE entity_id = 990002 AND zone_id = 40", [])
+            .unwrap();
+        let p = prepare_item(&conn, &serde_json::json!({}));
+        let o = &p.model.quests[p.model.index[&990004]].objectives[0];
+        assert!(o.loc.inside.is_some());
+        assert!(o.dungeon_of().is_some());
+        assert_eq!(o.count, 6.0);
+        assert_eq!(o.kills, 0.0, "the instance run accounts for its work");
+    }
+
+    #[test]
+    fn outside_item_container_uses_its_own_drop_rate_without_instance_sources() {
+        let conn = mixed_item_fixture();
+        conn.execute_batch(
+            "UPDATE m_item_source SET from_type = 'object',
+                from_id = CASE from_id WHEN 990002 THEN 990007 ELSE 990008 END,
+                chance = CASE from_id WHEN 990002 THEN 0.1 ELSE 1.0 END
+             WHERE item_id = 990003;",
+        )
+        .unwrap();
+        let p = prepare_item(&conn, &serde_json::json!({}));
+        let o = &p.model.quests[p.model.index[&990004]].objectives[0];
+        assert_eq!(o.dungeon_of(), None);
+        assert_eq!(o.count, 6.0);
+        assert_eq!(o.uses, 60.0, "six items from 10% outside containers require sixty uses");
+        assert_eq!(o.kills, 0.0);
+        let outside = p.world.to_world(40, 42.0, 72.0).unwrap();
+        assert!(o.loc.pos.dist(&outside) < 0.01);
+    }
+
+    #[test]
+    fn dungeon_item_with_eligible_outside_elite_retains_group_drop_cost() {
+        let conn = mixed_item_fixture();
+        conn.execute("UPDATE m_npc SET rank = 1 WHERE id = 990002", []).unwrap();
+        let request = serde_json::from_value(serde_json::json!({
+            "race":"human", "class":"warrior", "from_level":18, "to_level":25,
+            "start":{"name":"Collector-A", "race":1, "class":"WARRIOR", "level":18},
+            "mates":[{"name":"Collector-B", "race":1, "class":"WARRIOR", "level":18}],
+            "params":{"edition":"classic", "bis":"off", "all_class_quests":false,
+                      "allow_elite":true, "group_shared_drops":false, "dungeons":false}
+        }))
+        .unwrap();
+        let p = prepare_item_request(&conn, &request);
+        let o = &p.model.quests[p.model.index[&990004]].objectives[0];
+        assert_eq!(o.dungeon_of(), None);
+        assert!(o.elite);
+        assert_eq!(o.count, 6.0);
+        assert_eq!(o.kills, 48.0, "two players each loot six items at 25%");
+        assert_eq!(o.mobs, vec![(990002, "Cave dropper".into())]);
+    }
+
+    #[test]
+    fn dungeon_item_with_unusable_outside_drop_keeps_the_instance_fallback() {
+        for change in [
+            "UPDATE m_npc SET rank = 1 WHERE id = 990002",
+            "UPDATE m_npc SET npc_flags = 1, friendly_to = 'AH' WHERE id = 990002",
+        ] {
+            let conn = mixed_item_fixture();
+            conn.execute(change, []).unwrap();
+            let p = prepare_item(
+                &conn,
+                &serde_json::json!({"allow_elite": false, "approx_sources": true}),
+            );
+            let o = &p.model.quests[p.model.index[&990004]].objectives[0];
+            assert!(
+                o.loc.inside.is_some(),
+                "{change}: unusable outdoor points do not prove an acquisition path"
+            );
+            assert_eq!(o.count, 6.0);
+        }
+        let conn = mixed_item_fixture();
+        let p = prepare_item(&conn, &serde_json::json!({"common_item_sources": 1}));
+        let o = &p.model.quests[p.model.index[&990004]].objectives[0];
+        assert!(
+            o.loc.inside.is_some(),
+            "common loot does not verify an outdoor acquisition path"
+        );
     }
 }
