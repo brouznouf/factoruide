@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- No more blocked-action errors from the quest panel during a fight; its layout catches up afterwards.
+
 ## 0.17.0 (2026-11-09)
 
 - An objective guide done below the level its quests ask says so on the current step until you reach it.

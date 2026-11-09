@@ -16,6 +16,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - A forced dungeon is run even when it has no quest for your character (Shadowfang Keep for the Alliance).
 
+### Addon
+
+- No more blocked-action errors from the quest panel during a fight; its layout catches up afterwards.
+
 ### WoW data
 
 - WoW Forever: Corma Villard's Wetlands quests, no longer offered in game, are left out of the guides.

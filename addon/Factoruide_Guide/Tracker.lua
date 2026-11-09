@@ -259,6 +259,23 @@ local function Line(i)
     return line
 end
 
+--- A line-shaped button no one sees, outside the panel: what a refresh writes into when it cannot
+--- grow the panel's lines (in combat a new one would be born protected, on the newer clients).
+local sink
+local function Sink()
+    if not sink then
+        sink = CreateFrame("Button", nil)
+        sink:Hide()
+        sink.icon = sink:CreateTexture(nil, "ARTWORK")
+        sink.right = Skin:Text(sink, 10, "text2")
+        sink.text = Skin:Text(sink, 11, "text")
+        sink.track = Skin:Fill(sink, "ARTWORK", "text", 0.08)
+        sink.fill = Skin:Fill(sink, "OVERLAY", "accent", 1)
+        sink.mark = Skin:Fill(sink, "OVERLAY", "gold", 1)
+    end
+    return sink
+end
+
 --- Secure buttons to use quest items (only re-assigned out of combat).
 local function ItemButton(i)
     local b = buttons[i]
@@ -347,7 +364,9 @@ local function Create()
     FG.Skin:Style(frame, "panel")
     rows, buttons = {}, {}
     frame:SetScale(FG:Get("scale"))
-    FG:OnSetting("scale", function(v) frame:SetScale(v) end)
+    FG:OnSetting("scale", function(v)
+        if FG.CanLayout(frame) then frame:SetScale(v) end
+    end)
     FG:Zoomable(frame)
 end
 
@@ -401,7 +420,8 @@ function Tracker:Refresh()
     dirty = false
     if not frame then return end
     -- During combat, a tracker holding quest item buttons (secure) keeps its size and visibility;
-    -- its lines still update (see `FG.CanLayout`, refreshed again after the fight).
+    -- its lines and tabs still update, except those that inherited that protection (the newer
+    -- clients): they keep their place and visibility too, refreshed after the fight (`FG.CanLayout`).
     local resize = FG.CanLayout(frame)
     local shown = FG:Get("trackerShown") and (FG:Get("questPanel") or bankTab ~= nil)
     Tracker.visible = shown
@@ -410,6 +430,8 @@ function Tracker:Refresh()
     if resize then
         Place()
         frame:SetWidth(Minimal() and 270 or WIDTH)
+        -- A zoom taken during combat is applied once the fight is over.
+        frame:SetScale(FG:Get("scale"))
     end
     local canAssign = not InCombatLockdown()
     local followed = FG.Guide and FG.Guide.Route and FG.Guide:Route()
@@ -427,28 +449,41 @@ function Tracker:Refresh()
     local x = 4
     for _, key in ipairs(TABS) do
         local b = tabs[key]
-        b:SetShown(available[key] and true or false)
+        local place = FG.CanLayout(b)
+        if place then b:SetShown(available[key] and true or false) end
         if available[key] then
             local label = TAB_LABELS[key] .. (counts[key] and ("  " .. counts[key]) or "")
             b.label:SetText(label)
             local c = Skin.colors[key == tab and "text" or "muted"]
             b.label:SetTextColor(c[1], c[2], c[3])
             b.line:SetShown(key == tab)
-            b:SetWidth((tonumber(b.label:GetStringWidth()) or 40) + 12)
-            b:ClearAllPoints()
-            b:SetPoint("TOPLEFT", x, -3)
+            if place then
+                b:SetWidth((tonumber(b.label:GetStringWidth()) or 40) + 12)
+                b:ClearAllPoints()
+                b:SetPoint("TOPLEFT", x, -3)
+            end
             x = x + (tonumber(b:GetWidth()) or 50)
         end
     end
 
     local n, itemIndex, y = 0, 0, -30
     local function add(height)
+        if not rows[n + 1] and InCombatLockdown() then
+            -- The lines the pool has yet to grow wait for the end of the fight: their text goes
+            -- to a frame no one sees.
+            return Sink()
+        end
         n = n + 1
         local line = Line(n)
-        line:ClearAllPoints()
-        line:SetPoint("TOPLEFT", 10, y)
-        line:SetPoint("RIGHT", -10, 0)
-        line:SetHeight(height)
+        -- A line that inherited the quest item buttons' protection (the newer clients) keeps its
+        -- place and visibility in combat: only its texts change.
+        local place = FG.CanLayout(line)
+        if place then
+            line:ClearAllPoints()
+            line:SetPoint("TOPLEFT", 10, y)
+            line:SetPoint("RIGHT", -10, 0)
+            line:SetHeight(height)
+        end
         line.questID, line.itemID, line.tooltip, line.toggleItems = nil, nil, nil, nil
         line.icon:Hide()
         line.track:Hide()
@@ -460,7 +495,7 @@ function Tracker:Refresh()
         line.right:ClearAllPoints()
         line.right:SetPoint("TOPRIGHT", 0, -2)
         line.right:SetText("")
-        line:Show()
+        if place then line:Show() end
         y = y - height
         return line
     end
@@ -524,8 +559,9 @@ function Tracker:Refresh()
                 itemIndex = itemIndex + 1
                 line.right:ClearAllPoints()
                 line.right:SetPoint("TOPRIGHT", -18, -2)
-                local b = ItemButton(itemIndex)
                 if canAssign then
+                    -- The button is secure: made, as everything about it, out of combat only.
+                    local b = ItemButton(itemIndex)
                     b:ClearAllPoints()
                     b:SetPoint("TOPRIGHT", line, "TOPRIGHT", 0, -1)
                     b:SetAttribute("type", "item")
@@ -638,7 +674,7 @@ function Tracker:Refresh()
     end
 
     for i = n + 1, #rows do
-        rows[i]:Hide()
+        if FG.CanLayout(rows[i]) then rows[i]:Hide() end
     end
     Tracker.lines, Tracker.tab = n, tab
     if canAssign then
