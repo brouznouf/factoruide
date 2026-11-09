@@ -3,6 +3,7 @@ import { createPortal } from "react-dom";
 import { type Farmed, fmtTime, type QuestInfo, type RouteStep, type Step, type StepReport } from "../api";
 import { useT } from "../i18n";
 import { REASONS } from "./editing";
+import { Money } from "./Money";
 import { NumberInput } from "./NumberInput";
 import { type Card, fmtClock, isCheckpoint, questOf, type Spans, splitOf, stepStart } from "./guideTimeline";
 import type { Segment } from "./segments";
@@ -496,6 +497,11 @@ function Row({ top, i, steps, card, spans, quests, active, found, onSelect, chec
         </span>
       )}
       {ding && <span className="sl-ding">{t("NIV. {n}", { n: ding })}</span>}
+      {s.money ? (
+        <span className="sl-money" title={t("Or donné par la quête")}>
+          +<Money copper={s.money} />
+        </span>
+      ) : null}
       {edit ? (
         <span className="sl-tools">
           <button

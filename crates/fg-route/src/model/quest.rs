@@ -46,6 +46,7 @@ impl QuestBuilder<'_> {
             min_level: self.min_level(r, &givers),
             xp: self.xp(r, level),
             xp_observed: r.xp_observed,
+            reward_money: r.reward_money,
             time_limit: r.time_limit.filter(|t| *t > 0).map(|t| t as f64),
             starts: givers.starts,
             ends: givers.ends,

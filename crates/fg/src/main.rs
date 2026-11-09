@@ -1,5 +1,6 @@
 mod audit;
 mod diff;
+mod gold;
 mod route;
 mod talents;
 mod travel;
@@ -10,6 +11,9 @@ use clap::{Parser, Subcommand};
 use fg_route::xp::Edition;
 use rusqlite::Connection;
 use std::path::{Path, PathBuf};
+
+/// The level the repository's packed databases (data/<edition>.sqlite.zst) are written at.
+const PACK_LEVEL: i32 = 19;
 
 #[derive(Parser)]
 #[command(
@@ -238,11 +242,14 @@ enum Command {
         #[arg(long)]
         out: Option<PathBuf>,
     },
+    /// Import the money the quests give and the prices of their items from a VMaNGOS
+    /// database (db_latest) into the edition's database
+    Gold(gold::Gold),
 }
 
 /// The edition's normalized database: `data/<edition>.sqlite`, unpacked from
 /// `data/<edition>.sqlite.zst` when missing or older.
-fn database(edition: Edition) -> Result<PathBuf> {
+pub(crate) fn database(edition: Edition) -> Result<PathBuf> {
     let packed = PathBuf::from(format!("data/{}.sqlite.zst", edition.key()));
     let path = PathBuf::from(format!("data/{}.sqlite", edition.key()));
     let modified = |p: &Path| std::fs::metadata(p).and_then(|m| m.modified()).ok();
@@ -399,6 +406,7 @@ fn main() -> Result<()> {
             &out.unwrap_or_else(|| PathBuf::from(format!("addon/Factoruide_Guide/TalentBuilds_{}.lua", edition.key()))),
             edition,
         )?,
+        Command::Gold(gold) => gold.run(Path::new("data"))?,
     }
     Ok(())
 }

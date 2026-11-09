@@ -527,6 +527,8 @@ pub struct Quest {
     pub xp: i64,
     /// `xp` was received in game (without level penalty), not taken from Classic data.
     pub xp_observed: bool,
+    /// Copper the turn-in gives on top of its items and XP (0: none or unknown).
+    pub reward_money: i64,
     /// Timed quest: seconds from taking it to turn it in, else it fails.
     pub time_limit: Option<f64>,
     pub starts: Vec<Loc>,
@@ -777,6 +779,9 @@ pub struct Initial {
     /// In a group whose hearthstones are bound to different inns: none can be used before
     /// everyone binds it at the same inn.
     pub unbound: bool,
+    /// Copper in the bags at the start (the addon records it): what the route's gold
+    /// projection starts from.
+    pub money: i64,
 }
 
 /// Where another player of a group guide starts.

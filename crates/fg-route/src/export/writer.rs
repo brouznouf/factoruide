@@ -319,6 +319,7 @@ impl StepWriter<'_> {
             elite: false,
             mob_level: None,
             reward: None,
+            money: None,
             reward_xp: None,
             party_reward_xp: Vec::new(),
             route_xp: None,
@@ -928,6 +929,9 @@ impl StepWriter<'_> {
             }
             Kind::TurnIn => {
                 step.kind = StepKind::TurnIn;
+                if q.reward_money > 0 {
+                    step.money = Some(q.reward_money);
+                }
                 let key = if q.held.is_some() { "turnin.held" } else { "turnin" };
                 step.say.push(Phrase::new(key).arg("quest", quest).arg("who", who));
                 self.patrol(step, loc);

@@ -3923,6 +3923,26 @@ button.link.cmp-jump {
   font-weight: 700;
   letter-spacing: 0.04em;
 }
+.sl-money {
+  flex: none;
+  color: var(--gold, #d8a731);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.route-gold {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px;
+  margin: 0 0 10px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: var(--bg-raised, #2a2a2e);
+  font-size: 12px;
+}
+.route-gold > span:first-child {
+  color: var(--text-muted);
+}
 .sl-row .step-check {
   flex: none;
   width: 13px;

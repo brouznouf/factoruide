@@ -320,6 +320,13 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
         |r| r.get(0),
     )?;
     let reward_spell = if has_reward_spell { "reward_spell" } else { "NULL" };
+    // Nor the copper its turn-in gives (`fg gold`).
+    let has_money: bool = conn.query_row(
+        "SELECT count(*) > 0 FROM pragma_table_info('m_quest') WHERE name = 'reward_money'",
+        [],
+        |r| r.get(0),
+    )?;
+    let money = if has_money { "coalesce(reward_money, 0)" } else { "0" };
     let mut stmt = conn.prepare(&format!(
         "SELECT id, coalesce(name, ''), level, min_level, coalesce(xp, 0), zone_or_sort, races_mask, classes_mask,
                 special_flags, required_skill_id, required_min_rep_faction, required_spell, breadcrumb_for,
@@ -329,7 +336,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
                 (SELECT json_group_array(json_extract(t.value, '$[1]'))
                  FROM json_each(extra, '$.extra_objectives') e, json_each(e.value, '$.\"5\"') t
                  WHERE json_extract(t.value, '$[0]') = 'object'),
-                {reward_spell}, objectives_text
+                {reward_spell}, objectives_text, {money}
          FROM m_quest WHERE status = 'available'"
     ))?;
     let rows = stmt.query_map([], |r| {
@@ -362,6 +369,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
                 .unwrap_or_default(),
             reward_spell: r.get(24)?,
             objectives_text: r.get(25)?,
+            reward_money: r.get(26)?,
         })
     })?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
@@ -680,6 +688,8 @@ pub(super) struct QuestRow {
     pub(super) extra_objects: Vec<i64>,
     /// The spell its turn-in teaches (a pet, a totem...).
     pub(super) reward_spell: Option<i64>,
+    /// Copper its turn-in gives (VMaNGOS `quest_template.RewOrReqMoney`): 0 without the column.
+    pub(super) reward_money: i64,
 }
 
 impl QuestRow {
@@ -1002,5 +1012,35 @@ mod links_tests {
         assert!(kept.contains(&(LinkKind::Exclusive, 2)));
         assert!(kept.contains(&(LinkKind::Child, 2)));
         assert!(kept.contains(&(LinkKind::Other, 1)));
+    }
+}
+
+#[cfg(test)]
+mod money_column_tests {
+    use super::quest_rows;
+    use crate::{fixture::Fixture, xp::Edition};
+
+    #[test]
+    fn money_columns_preserve_objective_text_and_legacy_database_loading() {
+        for with_money in [false, true] {
+            let conn = Fixture::new(Edition::Classic)
+                .toml("[[quest]]\nid = 995101\nname = \"Paid collection\"\nlevel = 1\n")
+                .open();
+            conn.execute(
+                "UPDATE m_quest SET objectives_text = 'Gather 5 horns' WHERE id = 995101",
+                [],
+            )
+            .unwrap();
+            if with_money {
+                conn.execute("ALTER TABLE m_quest ADD COLUMN reward_money INTEGER", [])
+                    .unwrap();
+                conn.execute("UPDATE m_quest SET reward_money = 1200 WHERE id = 995101", [])
+                    .unwrap();
+            }
+            let rows = quest_rows(&conn).unwrap();
+            let row = rows.iter().find(|q| q.id == 995101).unwrap();
+            assert_eq!(row.objectives_text.as_deref(), Some("Gather 5 horns"));
+            assert_eq!(row.reward_money, if with_money { 1200 } else { 0 });
+        }
     }
 }

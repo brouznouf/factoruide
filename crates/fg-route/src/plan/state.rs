@@ -495,6 +495,15 @@ pub struct Breakdown {
     /// Copper spent on flights.
     #[serde(default)]
     pub flight_cost: i64,
+    /// Copper spent at the class trainers (the ranks bought on the way).
+    #[serde(default)]
+    pub training_cost: i64,
+    /// Copper in the bags at the start (the addon records it; 0 from scratch).
+    #[serde(default)]
+    pub gold_start: i64,
+    /// Copper the quests give on their turn-ins (on top of their items).
+    #[serde(default)]
+    pub gold_earned: i64,
     /// What that gold weighs for the optimizer, each flight at the level it is taken
     /// (`Params::gold_weight_at`), in seconds.
     #[serde(skip)]

@@ -74,6 +74,38 @@ pub(crate) fn quests_at_start(n: usize) -> Prepared {
     )
 }
 
+#[test]
+fn quest_gold_projection_keeps_starting_copper_and_exports_the_reward() {
+    let mut p = quests_at_start(1);
+    p.model.initial.money = 250;
+    p.model.quests[0].reward_money = 1200;
+    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let route = [Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)];
+    let (_, spent) = planner.simulate_full(&route, None).unwrap();
+    assert_eq!(spent.gold_start, 250);
+    assert_eq!(spent.gold_earned, 1200);
+    let guide = crate::export::build(&planner, &p.profile, &route);
+    assert!(
+        guide
+            .steps
+            .iter()
+            .any(|s| s.quest == Some(900_000) && s.money == Some(1200))
+    );
+}
+
+#[test]
+fn quest_gold_projection_does_not_pay_an_already_completed_quest_again() {
+    let mut p = quests_at_start(1);
+    p.model.initial.money = 250;
+    p.model.initial.turned = vec![0];
+    p.model.quests[0].reward_money = 1200;
+    let planner = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+    let route = [Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)];
+    let (_, spent) = planner.simulate_full(&route, None).unwrap();
+    assert_eq!(spent.gold_start, 250);
+    assert_eq!(spent.gold_earned, 0);
+}
+
 fn at_start(mut p: Prepared, n: usize) -> Prepared {
     let here = p.model.start.clone();
     let template = p.model.quests[0].clone();
