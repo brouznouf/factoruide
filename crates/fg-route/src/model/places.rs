@@ -232,10 +232,9 @@ impl NpcFinder<'_> {
         let rows: Vec<(i64, String)> = stmt
             .query_map(rusqlite::params![flag, self.faction], |r| Ok((r.get(0)?, r.get(1)?)))?
             .collect::<rusqlite::Result<_>>()?;
-        // Classic gossip menus 4782 (demon shops) and 5818 (Gorzeeki, who has no title)
-        // gate their merchant option on condition 67: Warlock class mask 256. The merged
-        // NPC data retains the vendor flag but not this gate. Keep TBC unchanged: its
-        // source menus do not corroborate the same class restriction.
+        // The demon trainers' shops (and Gorzeeki's, who has no title) open for warlocks only,
+        // though the NPCs carry the vendor flag; seen in game on WoW Forever. TBC's data does not
+        // show the same restriction.
         let can_use_warlock_shops =
             edition == crate::xp::Edition::Tbc || profile.class_ids().into_iter().all(|class| class == 9);
         Ok(rows

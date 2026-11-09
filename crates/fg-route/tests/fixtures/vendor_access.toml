@@ -1,5 +1,5 @@
-# Classic/Forever warlock-only merchant menus: 4782 for demon trainers, 5818 for
-# Gorzeeki. Both use VMaNGOS condition 67 (class mask 256), despite their vendor flags.
+# Classic and Forever shops open to warlocks only (the demon trainers, Gorzeeki), despite their
+# vendor flags.
 
 [[npc]]
 id = 5749
