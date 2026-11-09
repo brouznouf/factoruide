@@ -558,7 +558,15 @@ end
 assert(char.guide.route == "gnome-mage", "assigned route followed: " .. tostring(char.guide.route))
 
 --- Choose a route for the character, as in the settings window's guides page, and follow it.
-local function useRoute(name) FG.Guide:Choose(name) end
+local function useRoute(name)
+    -- Synthetic guides below focus on their steps; give them the test character's profile.
+    local route = name and FG.Routes and FG.Routes[name]
+    if route then
+        route.race = route.race or select(3, UnitRace("player"))
+        route.class = route.class or select(3, UnitClass("player"))
+    end
+    FG.Guide:Choose(name)
+end
 assert(char.guide.step == 1)
 assert(waypoint and waypoint.m == 1426, "waypoint set")
 
@@ -1840,9 +1848,9 @@ do
         return out
     end
     FG.Routes["area-test"] = {
-        race = 5,
-        class = 2,
-        faction = "Horde",
+        race = 7,
+        class = 8,
+        faction = "Alliance",
         fromLevel = 1,
         toLevel = 10,
         time = 1,
@@ -4183,6 +4191,217 @@ local function ExportImport()
     loop.self = loop
     assert(FG.Import.Serialize(loop) == nil, "loops refused")
 
+    -- A stale choice from another profile must not hide this character's guide. These use
+    -- complete profiles, unlike the step-only fixtures above: Tauren Warrior, Undead Warrior,
+    -- and Tauren Rogue distinguish a race mismatch from a class mismatch.
+    do
+        local race, class, faction = UnitRace, UnitClass, UnitFactionGroup
+        local failures = {}
+        local function Identity(r, c)
+            UnitRace = function() return "Test race", "TestRace", r end
+            UnitClass = function() return "Test class", c == 1 and "WARRIOR" or "ROGUE", c end
+            UnitFactionGroup = function() return "Horde" end
+        end
+        local function Route(r, c)
+            return {
+                race = r,
+                class = c,
+                faction = "Horde",
+                time = 12,
+                steps = {
+                    { k = "grind", t = "Reach level 60", lvl = 60 },
+                    { k = "grind", t = "Reach level 61", lvl = 61 },
+                    { k = "grind", t = "Reach level 62", lvl = 62 },
+                },
+            }
+        end
+        local function Load(routes, assigned)
+            Identity(6, 1)
+            wipe(char.guide)
+            FactoruideDB.guides, FactoruideDB.guideAssignments = {}, nil
+            FG.Import.file = {
+                routes = routes,
+                assignments = assigned and { ["Brouz-Realm"] = assigned } or {},
+            }
+            FG.Import.data = nil
+            FG.Import:Apply()
+        end
+        local function Check(name, run)
+            local ok, err = pcall(run)
+            if not ok then failures[#failures + 1] = name .. ": " .. tostring(err) end
+        end
+        for _, mismatch in ipairs({
+            { name = "wrong race", race = 5, class = 1 },
+            { name = "wrong class", race = 6, class = 4 },
+        }) do
+            Check(mismatch.name .. " saved choice recovers", function()
+                Load({ warrior = Route(6, 1), stale = Route(mismatch.race, mismatch.class) })
+                char.guide.route, char.guide.step = "stale", 3
+                char.guide.marks = { [1] = "skip", [2] = "skip" }
+                char.guide.skippedQuests, char.guide.handedIn = { [9101] = true }, { [9102] = true }
+                char.guide.saved = {
+                    warrior = { step = 2, marks = { [1] = "skip" }, skippedQuests = { [9201] = true } },
+                }
+                FG.Guide:FollowChoice()
+                assert(
+                    char.guide.route == "warrior",
+                    "unique Tauren Warrior guide followed: " .. tostring(char.guide.route)
+                )
+                assert(
+                    char.guide.step == 2 and char.guide.skippedQuests[9201],
+                    "matching guide resumes its own progress"
+                )
+                local old = char.guide.saved.stale
+                assert(old and old.step == 3 and old.marks[2] == "skip", "stale guide's step and marks preserved")
+                assert(old.skippedQuests[9101] and old.handedIn[9102], "stale guide's quest progress preserved")
+                Identity(mismatch.race, mismatch.class)
+                FG.Guide:FollowChoice()
+                assert(
+                    char.guide.route == "stale" and char.guide.step == 3,
+                    "returning to the other profile restores its progress"
+                )
+                assert(
+                    char.guide.skippedQuests[9101] and char.guide.handedIn[9102],
+                    "other profile keeps its quest progress"
+                )
+            end)
+        end
+        Check("login rejects persisted Undead Rogue choice", function()
+            Load({ warrior = Route(6, 1), rogue = Route(5, 4) })
+            char.guide.route, char.guide.step = "rogue", 2
+            char.guide.marks = { [1] = "skip" }
+            fire("PLAYER_LOGIN")
+            assert(char.guide.route == "warrior", "login follows the logged-in Tauren Warrior profile")
+            assert(char.guide.saved.rogue.step == 2, "login preserves the other guide's progress")
+        end)
+        Check("import refresh recovers stale choice", function()
+            Load({ rogue = Route(5, 4) })
+            char.guide.route, char.guide.step = "rogue", 2
+            char.guide.marks = { [1] = "skip" }
+            local count, err = FG.Import:FromString(Encode([[
+Factoruide.Routes = { warrior = { race = 6, class = 1, faction = "Horde", time = 12,
+    steps = {{ k = "grind", t = "Reach level 60", lvl = 60 }} } }
+]]))
+            assert(count == 1, "matching guide imported: " .. tostring(err))
+            FG.Import:ApplySaved()
+            FG.Guide:FollowChoice()
+            assert(char.guide.route == "warrior", "newly imported profile guide replaces the incompatible choice")
+            assert(char.guide.saved.rogue.step == 2, "import refresh keeps the old guide's progress")
+        end)
+        Check("same-name import replacement rechecks the selected profile", function()
+            Load({ warrior = Route(6, 1) })
+            local count, err = FG.Import:FromString(Encode([[
+Factoruide.Routes = { shared = { race = 6, class = 1, faction = "Horde", created = 1000, time = 12,
+    steps = {
+        { k = "grind", t = "Reach level 60", lvl = 60 },
+        { k = "grind", t = "Reach level 61", lvl = 61 },
+        { k = "grind", t = "Reach level 62", lvl = 62 },
+    } } }
+]]))
+            assert(count == 1, "original shared guide imported: " .. tostring(err))
+            FG.Import:ApplySaved()
+            FG.Guide:Choose("shared")
+            assert(char.guide.route == "shared", "compatible shared guide initially selected")
+            char.guide.step = 3
+            char.guide.marks = { [1] = "skip", [2] = "skip" }
+            char.guide.skippedQuests, char.guide.handedIn = { [9401] = true }, { [9402] = true }
+            count, err = FG.Import:FromString(Encode([[
+Factoruide.Routes = { shared = { race = 5, class = 4, faction = "Horde", created = 2000, time = 13,
+    steps = {{ k = "grind", t = "Reach level 60", lvl = 60 }} } }
+]]))
+            assert(count == 1, "newer incompatible shared guide imported: " .. tostring(err))
+            FG.Import:ApplySaved()
+            FG.Guide:FollowChoice()
+            assert(
+                FG.Routes.shared.race == 5 and FG.Routes.shared.class == 4,
+                "same name now contains the other profile"
+            )
+            assert(
+                char.guide.route == "warrior",
+                "replacement's incompatible profile triggers the unique matching guide"
+            )
+            local old = char.guide.saved.shared
+            assert(
+                old and old.version == "12:3" and old.step == 3,
+                "old progress keeps its original guide version and step"
+            )
+            assert(
+                old.marks[2] == "skip" and old.skippedQuests[9401] and old.handedIn[9402],
+                "old progress metadata survives the replacement"
+            )
+        end)
+        Check("compatible saved choice stays with several matching guides", function()
+            Load({ first = Route(6, 1), second = Route(6, 1) }, "first")
+            char.guide.route = "second"
+            FG.Guide:FollowChoice()
+            assert(char.guide.route == "second", "compatible choice wins over legacy assignment")
+        end)
+        Check("compatible legacy assignment resolves several matching guides", function()
+            Load({ first = Route(6, 1), second = Route(6, 1) }, "second")
+            FG.Guide:FollowChoice()
+            assert(char.guide.route == "second", "compatible assigned guide followed")
+        end)
+        Check("incompatible legacy assignment never selects another profile", function()
+            Load({ first = Route(6, 1), second = Route(6, 1), rogue = Route(5, 4) }, "rogue")
+            FG.Guide:FollowChoice()
+            assert(
+                char.guide.route == nil and FG.Guide:Route() == nil,
+                "multiple matches and wrong assignment leave the choice open"
+            )
+        end)
+        Check("incompatible saved choice does not guess between matching guides", function()
+            Load({ first = Route(6, 1), second = Route(6, 1), rogue = Route(5, 4) })
+            char.guide.route = "rogue"
+            FG.Guide:FollowChoice()
+            assert(char.guide.route == nil, "two matching guides require a compatible choice or assignment")
+        end)
+        Check("manual choice rejects another profile", function()
+            Load({ warrior = Route(6, 1), rogue = Route(5, 4) })
+            FG.Guide:FollowChoice()
+            char.guide.skippedQuests[9301] = true
+            FG.Guide:Choose("rogue")
+            assert(char.guide.route == "warrior", "incompatible manual choice leaves the followed guide in place")
+            assert(char.guide.skippedQuests[9301], "rejected manual choice keeps current progress")
+        end)
+        Check("another profile's Follow button is disabled", function()
+            Load({ warrior = Route(6, 1), rogue = Route(5, 4) })
+            FG.Guide:FollowChoice()
+            FG.Options:Refresh()
+            local wrong
+            for _, row in ipairs(FG.Options:GuideRows()) do
+                if row.guide and row.guide.name == "rogue" then wrong = row end
+            end
+            assert(
+                wrong and wrong:IsShown() and not wrong.follow:IsEnabled(),
+                "another character's guide stays listed with Follow disabled"
+            )
+        end)
+        Check("group member profile remains compatible", function()
+            local group = Route(5, 4)
+            group.players = {
+                { n = "Other-Realm", race = 5, class = 4 },
+                { n = "Brouz-Realm", race = 6, class = 1 },
+            }
+            Load({ group = group, rogue = Route(5, 4) })
+            char.guide.route = "rogue"
+            FG.Guide:FollowChoice()
+            assert(
+                char.guide.route == "group" and FG.Group:Active(),
+                "a matching group member qualifies for automatic selection"
+            )
+            FG.Routes.warrior = Route(6, 1)
+            FG.Guide:Choose("warrior")
+            FG.Guide:Choose("group")
+            assert(
+                char.guide.route == "group" and FG.Group:Active(),
+                "matching group member can choose the group guide"
+            )
+        end)
+        UnitRace, UnitClass, UnitFactionGroup = race, class, faction
+        wipe(char.guide)
+        assert(#failures == 0, "automatic profile guide regressions:\n" .. table.concat(failures, "\n"))
+    end
+
     -- Which guide a character follows. Only guides kept from here on (no files' guides).
     FG.Import.file = { routes = {}, assignments = {} }
     FactoruideDB.guides, FactoruideDB.guideAssignments = {}, nil
@@ -4335,6 +4554,20 @@ local function ReleasedGuides()
     local files = assert(loadfile("addon/tests/guides/index.lua"))()
     assert(#files > 0, "released guides listed")
     local level, quests, done = playerLevel, onQuest, completed
+    local race, class, faction = UnitRace, UnitClass, UnitFactionGroup
+    local classFiles = {
+        "WARRIOR",
+        "PALADIN",
+        "HUNTER",
+        "ROGUE",
+        "PRIEST",
+        "DEATHKNIGHT",
+        "SHAMAN",
+        "MAGE",
+        "WARLOCK",
+        "MONK",
+        "DRUID",
+    }
     local errors = {}
     for msg in pairs(FactoruideDB.errors or {}) do
         errors[msg] = true
@@ -4368,6 +4601,11 @@ local function ReleasedGuides()
             for _, name in ipairs(names) do
                 local what = file .. " (" .. way .. ") " .. name
                 assert(listed[name] and listed[name].source == way, what .. ": listed")
+                -- Each released guide is followed by a character of the profile it was made for.
+                local planned = FG.Routes[name]
+                UnitRace = function() return "Guide race", "GuideRace", planned.race end
+                UnitClass = function() return "Guide class", classFiles[planned.class], planned.class end
+                UnitFactionGroup = function() return planned.faction or "Alliance" end
                 -- A character at level 1 with no quest yet.
                 playerLevel, onQuest, completed = 1, {}, {}
                 local view
@@ -4411,6 +4649,7 @@ local function ReleasedGuides()
         assert(errors[msg], "no error: " .. msg)
     end
     playerLevel, onQuest, completed = level, quests, done
+    UnitRace, UnitClass, UnitFactionGroup = race, class, faction
     FactoruideDB.guides, FactoruideDB.guideExtras = {}, nil
     FG.Import.file, FG.Import.data = { routes = {}, assignments = {} }, nil
     FG.Import:ApplySaved()

@@ -6,6 +6,7 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Automatically switches an incompatible saved guide to one matching the current character; other characters' guides cannot be followed.
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
 
 ## 0.16.0 (2026-11-07)

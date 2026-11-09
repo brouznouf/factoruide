@@ -1406,12 +1406,12 @@ local function AutoRoute()
     end
     if found then return found end
     local assigned = FG.Assignments and FG.Assignments[FG:CharacterKey()]
-    if assigned and routes[assigned] then return assigned end
+    if assigned and FG.Import.Fits(routes[assigned]) then return assigned end
 end
 
---- The guide the character chose (kept in its state), while it is there; else the automatic one.
+--- Keep the character's choice while it still fits; otherwise use a matching automatic guide.
 local function PickRoute()
-    if state.route and FG.Routes and FG.Routes[state.route] then return state.route end
+    if state.route and FG.Import.Fits(FG.Routes and FG.Routes[state.route]) then return state.route end
     return AutoRoute()
 end
 
@@ -1423,7 +1423,7 @@ end
 
 --- The character follows the guide `name` from now on (nil: back to the automatic choice).
 function Guide:Choose(name)
-    if not state then return end
+    if not state or (name and not FG.Import.Fits(FG.Routes and FG.Routes[name])) then return end
     UseRoute(name)
     if not name then UseRoute(PickRoute()) end
     self:Resync()
