@@ -1,4 +1,6 @@
 //! The browser's allocator (`fg_web::alloc`) under the planner's threads, natively.
+#![cfg(any(target_os = "wasi", unix))]
+
 use fg_route::job;
 use std::path::Path;
 
