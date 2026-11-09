@@ -12,6 +12,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - Objective guides replace the dungeon guide: pick several dungeons, zones and quests at once, and get every quest of them with what leads to them, in the best order, whatever their level; the guide tells the level its quests ask and lists those above yours.
 
+### Guides
+
+- Classic and WoW Forever loot-selling stops avoid warlock-only shops when any group member cannot use them.
+
 ### Addon
 
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
