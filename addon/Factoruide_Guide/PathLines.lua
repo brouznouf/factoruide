@@ -66,7 +66,10 @@ end
 FGWalkDotMixin = CreateFromMixins and CreateFromMixins(MapCanvasPinMixin or {}) or {}
 FGWalkDotMixin.CheckMouseButtonPassthrough = FG.PinPassthrough -- not in combat (MapPins.lua)
 
-function FGWalkDotMixin:OnLoad() self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI") end
+function FGWalkDotMixin:OnLoad()
+    self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI")
+    FG.PinScale(self) -- same size on screen (MapPins.lua)
+end
 
 function FGWalkDotMixin:OnAcquired(x, y)
     self:SetPosition(x, y)

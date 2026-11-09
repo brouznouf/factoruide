@@ -15,7 +15,16 @@ end
 
 FGStepPinMixin.CheckMouseButtonPassthrough = FG.PinPassthrough
 
-function FGStepPinMixin:OnLoad() self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI") end
+--- Pins keep the same size on screen whatever the map's scale, as the game's own: without limits,
+--- a pin is sized in the map canvas and grows with it (huge on a map enlarged by another addon).
+function FG.PinScale(pin)
+    if pin.SetScalingLimits then pin:SetScalingLimits(1, 1.0, 1.2) end
+end
+
+function FGStepPinMixin:OnLoad()
+    self:UseFrameLevelType("PIN_FRAME_LEVEL_AREA_POI")
+    FG.PinScale(self)
+end
 
 --- `kind`: "current" (the step to do), "spot" (another place of its mobs, `shown` the one the
 --- compass points at), else a next step.
