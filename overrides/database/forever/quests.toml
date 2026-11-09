@@ -2104,3 +2104,21 @@ pre_all = [805]
 # Whuut's the Rush: Yelmak offers it only once Yelmak's Medley is handed in to Kor'geld.
 id = 97275
 pre_all = [97242]
+
+# Corma Villard's chain in the Wetlands (Hearts of the Lost, then Essene Villard's Accessories and
+# Sentiments of the Lost): players' reports since the launch, Corma offers no quest at any level and
+# Essene is gone (GitHub #161).
+[[quest]]
+id = 87318
+status = "removed"
+reason = "Corma Villard offers no quest in game, Essene Villard is gone"
+
+[[quest]]
+id = 88757
+status = "removed"
+reason = "Started by Essene Villard, gone"
+
+[[quest]]
+id = 88758
+status = "removed"
+reason = "Started by Essene Villard, gone"
