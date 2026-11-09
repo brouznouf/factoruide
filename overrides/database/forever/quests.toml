@@ -352,7 +352,10 @@ objectives = [
 
 [[quest]]
 # From the Ashes: only described; the four Attack Plans are objects in the Angerfang Encampment.
+# Offered with War Banners, also without Report to Captain Stoutfist (series: War Banners and
+# From the Ashes side by side).
 id = 98221
+remove_pre = [473]
 objectives = [
   { type = "object", id = 671481, amount = 1, text = "Destroy the Attack Plan: Menethil Harbor" },
   { type = "object", id = 671486, amount = 1, text = "Destroy the Attack Plan: Thelsamar" },
@@ -1036,19 +1039,16 @@ id = 94489
 amounts = [{ type = "killcredit", id = 258134, amount = 7 }]
 
 [[quest]]
-# An Alarming Request (level 30) only leads to Heart of Disruption (level 24, series:
-# An Alarming Request, Heart of Disruption, Friend of the Kirin Tor): a breadcrumb, not what
-# Starving Arcane and Heart of Disruption need first (the sources' links).
-id = 92432
-breadcrumb_for = 92458
-
-[[quest]]
+# Starving Arcane does not need An Alarming Request first (the sources' link).
 id = 92457
 remove_pre = [92432]
 
 [[quest]]
+# Heart of Disruption (Alliance) comes after An Alarming Request (level 30, series: An Alarming
+# Request, Heart of Disruption, Friend of the Kirin Tor), as the Horde's comes after Blood in the
+# Streets: in game, Image of Archmage Modera does not offer it to a level 28 character.
 id = 92458
-remove_pre = [92432]
+pre_all = [92432]
 
 [[quest]]
 # Call of Air (Skyborne shaman): taken back by Prate Cloudseer in Thousand Needles (the quest's
@@ -2055,3 +2055,52 @@ starts = [
   { type = "object", id = 143985 }, # Mailbox, Thunder Bluff
   { type = "object", id = 177044 }, # Mailbox, Undercity
 ]
+
+# Order and class checks seen in game by players (2026-11-09).
+
+[[quest]]
+# Alonso's Dragonslayer quests, Mystral Lake in Ashenvale: Warrior quests. Paladins and a Shaman
+# found no Alonso there.
+id = 78132 # Dragonslayer's Helm
+classes_mask = 1
+
+[[quest]]
+id = 78133 # Dragonslayer's Shield
+classes_mask = 1
+
+[[quest]]
+id = 78134 # Dragonslayer's Lance
+classes_mask = 1
+
+[[quest]]
+# Lightforge Ingots follows The Lost Ingots, the end of the Lightforge Iron chain (series), not
+# instead of it: Glorin Steelbrow does not offer it before.
+id = 526
+pre_all = [324]
+
+[[quest]]
+# The Broodmother: Muln Earthfury offers it only once Defending the Dead is handed in to him.
+id = 96261
+pre_all = [96259]
+
+[[quest]]
+# Daily Delivery only leads to James Halloran, who gives Young Crocolisk Skins: Einar Stonegrip
+# no longer offers it once Young Crocolisk Skins is taken.
+id = 469
+breadcrumb_for = 484
+
+[[quest]]
+# Highland Hides: James Halloran offers Young Crocolisk Skins first, Highland Hides only once it
+# is handed in.
+id = 98815
+pre_all = [484]
+
+[[quest]]
+# Forgotten Loa Idols: Master Vornal offers it only once Report to Sen'jin Village is handed in.
+id = 97225
+pre_all = [805]
+
+[[quest]]
+# Whuut's the Rush: Yelmak offers it only once Yelmak's Medley is handed in to Kor'geld.
+id = 97275
+pre_all = [97242]

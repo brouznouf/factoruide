@@ -290,8 +290,8 @@ reason = "Legacy Reward: Spectral Bear Cub: a Legacy reward, independent of the 
 
 [[accept]]
 check = "chain-order"
-key = "quest 97225"
-reason = "Forgotten Loa Idols: offered by Master Vornal to a level 5 character who had not done Lost in the Shadows (seen in game)"
+key = "quest 98221"
+reason = "From the Ashes: Captain Stoutfist offers it with War Banners, also to characters who did not take Report to Captain Stoutfist (seen in game)"
 
 [[accept]]
 check = "other-class-quests"

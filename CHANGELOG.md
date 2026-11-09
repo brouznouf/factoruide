@@ -19,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### WoW data
 
 - WoW Forever: the latest quest data and the game's new build, with 58 more contributions from players (quests seen in game, measured XP and drop rates, creature places) and 134 Spanish, French, German and English names checked; most of the Riverglades quests are in the guides, dungeon quests give their new, higher XP, and Lakeshire's guards and Guard Parker's supply crates no longer count as hostile creatures.
+- WoW Forever: quests offered only after another one in game (Heart of Disruption, The Broodmother, Lightforge Ingots, Highland Hides, Forgotten Loa Idols, Whuut's the Rush) wait for it in the guides, From the Ashes is taken with War Banners, and Alonso's Dragonslayer quests in Ashenvale are for Warriors only.
 
 ## 0.16.0 (2026-11-07)
 
