@@ -1,6 +1,7 @@
 -- Brazilian Portuguese texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.ptBR = {
+    ["Not accepted: %s. Return to the quest giver and accept them manually."] = "Não aceitas: %s. Volte a quem oferece as missões e aceite-as manualmente.",
     ["take from the bank: %s"] = "pegar no banco: %s",
     ["can stay in the bank: %s"] = "pode ficar no banco: %s",
     ["NOW"] = "AGORA",

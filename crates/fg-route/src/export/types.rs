@@ -238,6 +238,9 @@ pub struct Step {
     /// Reward to pick among the quest's choices (item ID) on a turn-in.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub reward: Option<i64>,
+    /// Copper the quest gives on its turn-in (0: none or unknown).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub money: Option<i64>,
     /// XP a turn-in gives at its planned level (the least positive reward in a group). Used
     /// by older addons; current group guides also record each player's reward below.
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -329,6 +332,7 @@ impl Step {
             elite: false,
             mob_level: None,
             reward: None,
+            money: None,
             reward_xp: None,
             party_reward_xp: Vec::new(),
             route_xp: None,

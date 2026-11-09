@@ -174,6 +174,7 @@ impl StartState {
             xp: self.xp.max(0),
             rested: self.rested.max(0),
             gear: self.gear.clone(),
+            money: self.money.max(0),
             completed: Some(self.completed.iter().map(|q| q.0).collect()),
             ..Initial::default()
         };

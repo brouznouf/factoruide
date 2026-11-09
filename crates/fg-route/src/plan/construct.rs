@@ -192,6 +192,12 @@ impl Planner<'_> {
     fn nearest_stop(&self, s: &State, pull: Option<i64>) -> Option<Stop> {
         let n = self.model.quests.len() as u32;
         let bound = self.trips().bound(s);
+        // In a dungeon: what is left to do in it, before leaving it for good.
+        if let Some(d) = s.inside
+            && let Some(stop) = self.stop_inside(s, usize::from(d))
+        {
+            return Some(stop);
+        }
         // A dungeon the player forced is run once the character reaches the middle of its levels
         // (Ragefire Chasm, 13 to 19, at 16): left to the weighing of the stops, it would be passed
         // over for nearer ones until its levels are gone, and the route refused without it.
@@ -201,12 +207,6 @@ impl Planner<'_> {
             .find(|&stop| bound.at(&self.places().pos(s, stop)).is_finite());
         if forced_now.is_some() {
             return forced_now;
-        }
-        // In a dungeon: what is left to do in it, before leaving it for good.
-        if let Some(d) = s.inside
-            && let Some(stop) = self.stop_inside(s, usize::from(d))
-        {
-            return Some(stop);
         }
         // Quest value only decides what is worth accepting. Weights favour finishing what
         // is in the log, and class quests.
@@ -1334,6 +1334,69 @@ mod deadline_tests {
 mod forced_dungeon_tests {
     use super::*;
     use crate::testing::{At, Obj, Q, Scenario};
+
+    /// Two forced runs share their level window: work and hand-ins in the first instance
+    /// must finish before the second run leaves it, since returning is not allowed.
+    #[test]
+    fn the_current_dungeon_finishes_before_another_forced_run() {
+        let mut p = Scenario::new()
+            .levels(22, 28)
+            .dungeon("First forced run", 1, 50.0, 50.0)
+            .dungeon("Second forced run", 1, 50.0, 50.0)
+            .params(|p| {
+                p.forced_dungeons = vec![900, 901];
+                p.camp_radius = 0.0;
+            })
+            .quest(
+                Q::new(340, "Work inside the first run")
+                    .level(22)
+                    .xp(1000)
+                    .giver(1, 50.0, 50.0)
+                    .objective(
+                        Obj::visit(
+                            "Inside",
+                            At {
+                                zone: 1,
+                                x: 50.0,
+                                y: 50.0,
+                            },
+                        )
+                        .inside(0),
+                    ),
+            )
+            .build();
+        for dungeon in &mut p.model.dungeons {
+            dungeon.min_level = 20;
+            dungeon.max_level = 24;
+            dungeon.mob_level = 22;
+        }
+        let qi = p.model.index[&340] as u32;
+        p.model.quests[qi as usize].ends[0].inside = Some(0);
+        let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
+        let run = |index| Stop {
+            index,
+            kind: Kind::Dungeon,
+        };
+        let objective = Stop::quest(qi, Kind::Objective(0));
+        let turn_in = Stop::quest(qi, Kind::TurnIn);
+        let mut state = plan.sim().initial_state();
+        plan.sim().apply(&mut state, Stop::quest(qi, Kind::Accept), None);
+        plan.sim().apply(&mut state, run(0), None);
+        assert_eq!(state.inside, Some(0));
+        assert_eq!(plan.nearest_stop(&state, None), Some(objective));
+        plan.sim().apply(&mut state, objective, None);
+        assert_eq!(plan.nearest_stop(&state, None), Some(turn_in));
+        plan.sim().apply(&mut state, turn_in, None);
+        assert_eq!(plan.nearest_stop(&state, None), Some(run(1)));
+
+        let route = plan.greedy();
+        let objective_at = route.iter().position(|s| *s == objective).unwrap();
+        let turn_in_at = route.iter().position(|s| *s == turn_in).unwrap();
+        let next_run_at = route.iter().position(|s| *s == run(1)).unwrap();
+        assert!(objective_at < turn_in_at && turn_in_at < next_run_at, "{route:?}");
+        assert_eq!(route.iter().filter(|s| s.kind == Kind::Dungeon).count(), 2);
+        assert!(plan.simulate(&route, None).is_some(), "{route:?}");
+    }
 
     /// A dungeon forced with its quests, at its level, waits for one of them whose prerequisite is
     /// a delivery far away (Dragonmaw Rumors before Open the Maw, GitHub #125): the next stop is

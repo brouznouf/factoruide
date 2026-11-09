@@ -42,3 +42,86 @@ id = 82208
 pre_all = [79536]
 pre_any = [78124, 78127, 78142, 78143, 78145, 78146, 78147, 78148, 78149, 79091, 79092, 79093, 79094, 79095, 79096, 79097, 79535, 79947, 79948, 79949, 79950, 79951, 79952, 81947, 81949, 81952, 81953, 81954, 81955, 81956, 84395, 84396, 84397, 84398, 84399, 84400, 84401, 84402]
 pre_count = 25
+
+# More chains the game requires and the sources list without a prerequisite (or as a mere
+# breadcrumb, an optional lead-in), verified against the wiki's chains and the route guides.
+
+[[quest]]
+# Heart of Disruption: An Alarming Request comes first (the sources have it a breadcrumb; the
+# wiki's chain is An Alarming Request → Heart of Disruption → Friend of the Kirin Tor).
+# https://warcraft.wiki.gg/wiki/Heart_of_Disruption
+id = 92458
+pre_all = [92432]
+
+[[quest]]
+# Murloc Gills: Testing the Wells comes first (the wiki's Westfall chain: Testing the Wells →
+# Murloc Gills → The State of the Mines → …).
+# https://warcraft.wiki.gg/wiki/Murloc_Gills
+id = 92744
+pre_all = [92742]
+
+[[quest]]
+# The Gurubashi Legends of Old: The Vile Reef comes first, its own tablet shard ("this piece of
+# the tablet you have brought me"; the guides' chains follow the same NPC's series).
+# https://www.wowhead.com/forever/quest=95748/the-gurubashi-legends-of-old
+id = 95748
+pre_all = [629]
+
+[[quest]]
+# Highland Hides: Young Crocolisk Skins comes first (the wiki's Wetlands chain: Daily Delivery →
+# Young Crocolisk Skins → Highland Hides and Apprentice's Duties).
+# https://warcraft.wiki.gg/wiki/Highland_Hides
+id = 98815
+pre_all = [484]
+
+# Buying Friendship: the Totem Tote comes from the Carved Centaur Totems turn-in, and the
+# quartermaster quests are accepted after it (the reputation guides' step order):
+# https://www.zockify.com/forever/gelkis-magram-reputation/
+
+[[quest]]
+# Buying Friendship: Gelkis (Captain Pentigast), after his Carved Centaur Totems.
+id = 93227
+pre_all = [93224]
+
+[[quest]]
+# Buying Friendship: Magram (Gurda Wildmane), after her Carved Centaur Totems.
+id = 94872
+pre_all = [93225]
+
+[[quest]]
+# Buying Friendship: Gelkis (Gurda Wildmane), after her Carved Centaur Totems.
+id = 94873
+pre_all = [93225]
+
+# The Great Outdoors (the camping intro): The Adventurer of its zone comes first (the sources
+# have it a breadcrumb and a next-in-chain; the wiki's chain is The Adventurer → The Great
+# Outdoors → the Camping 101s, which already require The Great Outdoors). One per zone, the
+# races of a pair matching.
+# https://warcraft.wiki.gg/wiki/The_Great_Outdoors_(Forever)
+[[quest]]
+id = 95998
+pre_all = [96627]
+
+[[quest]]
+id = 96101
+pre_all = [96638]
+
+[[quest]]
+id = 96604
+pre_all = [96652]
+
+[[quest]]
+id = 96605
+pre_all = [96659]
+
+[[quest]]
+id = 96606
+pre_all = [96630]
+
+[[quest]]
+id = 96607
+pre_all = [96656]
+
+[[quest]]
+id = 96608
+pre_all = [96628]

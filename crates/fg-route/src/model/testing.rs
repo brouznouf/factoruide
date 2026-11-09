@@ -170,6 +170,7 @@ impl Q {
             min_level: 1,
             xp: 500,
             xp_observed: false,
+            reward_money: 0,
             time_limit: None,
             starts: Vec::new(),
             ends: Vec::new(),

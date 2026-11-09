@@ -6,7 +6,10 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- The quest panel keeps protected lines and tabs in place during combat on newer clients, then updates their layout after the fight.
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
+- Pasted guides preserve wide numeric metadata and table keys instead of failing on clients with a 32-bit integer formatter.
+- After leaving a quest giver, a yellow reminder names offered guide quests you did not accept, even when automatic acceptance is disabled.
 
 ## 0.16.0 (2026-11-07)
 

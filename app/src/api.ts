@@ -337,6 +337,12 @@ export interface Breakdown {
   explore_xp?: number;
   /** Copper spent on flights (unknown for guides computed before it was kept). */
   flight_cost?: number;
+  /** Copper spent at the class trainers (the ranks bought on the way). */
+  training_cost?: number;
+  /** Copper in the bags at the start (the addon records it; 0 from scratch). */
+  gold_start?: number;
+  /** Copper the quests give on their turn-ins. */
+  gold_earned?: number;
   /** The objectives' fixed time on top of their kills (respawns, events, buying), part of `fighting`. */
   waiting?: number;
 }
@@ -348,6 +354,10 @@ export interface Step {
   quest?: number;
   quest_name?: string;
   objective?: number;
+  /** Reward to pick among the quest's choices (item ID) on a turn-in. */
+  reward?: number;
+  /** Copper the quest gives on its turn-in (0: none or unknown). */
+  money?: number;
   /** Done along the way (mobs met going to the next steps): does not stop the guide. */
   bg?: boolean;
   /** A quest done inside the dungeon of the run step before it. */

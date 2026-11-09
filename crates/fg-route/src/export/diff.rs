@@ -840,6 +840,7 @@ mod tests {
             elite: false,
             mob_level: None,
             reward: None,
+            money: None,
             reward_xp: None,
             party_reward_xp: Vec::new(),
             route_xp: None,

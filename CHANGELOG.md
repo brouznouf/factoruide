@@ -11,15 +11,24 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### App
 
 - A web app built on Windows includes its game databases and map images.
-
 - Objective guides replace the dungeon guide: pick several dungeons, zones and quests at once, and get every quest of them with what leads to them, in the best order, whatever their level; the guide tells the level its quests ask and lists those above yours.
+- Settings dropdowns fit their options without a redundant reset button; the default remains among the choices.
+- Guides show the copper earned from quest rewards and spent on training and flights.
+
+### Guides
+
+- Finish available quests inside the current dungeon before leaving for another forced run.
 
 ### Addon
 
+- The quest panel keeps protected lines and tabs in place during combat on newer clients, then updates their layout after the fight.
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
+- Pasted guides preserve wide numeric metadata and table keys instead of failing on clients with a 32-bit integer formatter.
+- After leaving a quest giver, a yellow reminder names offered guide quests you did not accept, even when automatic acceptance is disabled.
 
 ### WoW data
 
+- Quest prerequisites follow the required Blackfathom, camping and other WoW Forever chains before their follow-up quests.
 - WoW Forever: the latest quest data and the game's new build, with 58 more contributions from players (quests seen in game, measured XP and drop rates, creature places) and 134 Spanish, French, German and English names checked; most of the Riverglades quests are in the guides, dungeon quests give their new, higher XP, and Lakeshire's guards and Guard Parker's supply crates no longer count as hostile creatures.
 
 ## 0.16.0 (2026-11-07)

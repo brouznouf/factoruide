@@ -312,3 +312,81 @@ reason = "One objective (Witherbark Tusk) on the trolls' hill: no ramp the terra
 check = "terrain-gaps"
 key = "Loch Modan: Mo'grosh Stronghold"
 reason = "One objective (Chok'sul's Head) in the eastern hills: no ramp the terrain shows, walked in a straight line"
+
+# chain-order (2026-11-07): quests verified offered from the start (route guides' steps and
+# the players' recorded events; see forever/quests.toml for the chains that were not).
+
+[[accept]]
+check = "chain-order"
+key = "quest 86576"
+reason = "Bloodfury Trinkets: offered beside the giver's other quests (a route accepts it with Harpies Threaten)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 86758"
+reason = "Twisting the Knife: offered beside Crocolisk Hunting (the routes accept both together)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 92457"
+reason = "Starving Arcane: an independent dungeon quest of the City of Dalaran, no chain (the wiki lists it beside the attunement)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 94896"
+reason = "Aid For The Refugees: offered together with The Fate of a Loved One (the Skyborne guides take both from the same giver)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 94897"
+reason = "The Fate of a Loved One: offered together with Aid For The Refugees (the Skyborne guides take both from the same giver)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 95212"
+reason = "Never Saddle on Quality: offered beside Protecting the Herd (a route accepts it before Protecting the Herd)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 95697"
+reason = "Changing Tastes: an independent quest of the Excavation Site list, no chain"
+
+[[accept]]
+check = "chain-order"
+key = "quest 96988"
+reason = "Source of Power: an independent dungeon quest of the City of Dalaran, no chain (the wiki lists it beside the attunement)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 98372"
+reason = "An Unfortunate End: a one-click roadside find (the Night Watchman's Torch), no prerequisite (the item guides say so)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 98407"
+reason = "Show of Force: offered from the start (the routes accept it beside Assessing the Threat, no prerequisite tracked)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 99048"
+reason = "A Missing Hand: offered before its giver's other quests are done (seen in game: accepted while Dark Storms is in the log)"
+
+[[accept]]
+check = "chain-order"
+key = "quest 99267"
+reason = "An Unfortunate End (the other version of the same find): a one-click roadside find, no prerequisite"
+
+[[accept]]
+check = "chain-order"
+key = "quest 97558"
+reason = "Hides for the Forsaken: a collecting errand of Shelene Rhobart (who stands beside Deathguard Linnea at the Ruins of Lordaeron), no Previous on its wiki page"
+
+# islands (2026-11-07): the item data is complete: Small Eggs drop from the Strigid Owls of
+# Teldrassil too, and the Skyborne quest asking for them inherits their spawns among its
+# places. It takes them in its own Shen'dar Highlands (eleven droppers there); the places on
+# Teldrassil no Horde reaches.
+
+[[accept]]
+check = "islands"
+key = "Teldrassil: "
+reason = "Restocking the Larders' Small Eggs: the item's droppers live on Teldrassil as well, but the Skyborne takes them in the Shen'dar Highlands, its own zone"

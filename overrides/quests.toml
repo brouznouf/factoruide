@@ -1,0 +1,15 @@
+# Corrections of every edition's data; one edition's own in <edition>/quests.toml
+# (see forever/quests.toml for the format, and overrides/database for those applied when the
+# databases themselves are built).
+
+# The sources list some of the game's own prerequisites (PrevQuestId and NextQuestInChain of the
+# 1.12 quest data) as mere breadcrumbs (optional lead-ins):
+
+[[quest]]
+# Blackfathom Villainy: In Search of Thaelrid (Dawnwatcher Shaedlass, Darnassus) comes first: the
+# quest data has it (PrevQuestId), and the dungeon-quest guides list it required; Argent Guard
+# Thaelrid, inside the depths, offers it only then.
+# https://www.wowhead.com/forever/quest=1200/blackfathom-villainy
+# https://www.wowhead.com/classic/quest=1200/blackfathom-villainy
+id = 1200
+pre_all = [1198]

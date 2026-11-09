@@ -1,6 +1,7 @@
 -- Korean texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.koKR = {
+    ["Not accepted: %s. Return to the quest giver and accept them manually."] = "수락하지 않은 퀘스트: %s. 퀘스트 제공자에게 돌아가 직접 수락하세요.",
     ["take from the bank: %s"] = "은행에서 꺼낼 것: %s",
     ["can stay in the bank: %s"] = "은행에 둬도 되는 것: %s",
     ["NOW"] = "지금",

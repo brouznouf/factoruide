@@ -25,6 +25,8 @@ pub enum Effort {
 /// Where the search stands: the current route, the best one, how it decides.
 struct Search {
     route: Vec<Stop>,
+    /// Reuse the candidate allocation between search attempts.
+    candidate: Vec<Stop>,
     run: Run,
     best: (f64, Vec<Stop>),
     rng: SmallRng,
@@ -86,6 +88,7 @@ impl Planner<'_> {
         let mut search = Search {
             acceptance: Acceptance::new(run.total, self.params.anneal, self.params.lahc),
             best: (run.total, route.clone()),
+            candidate: Vec::with_capacity(route.len()),
             route,
             run,
             rng: SmallRng::seed_from_u64(self.params.seed),
@@ -140,20 +143,20 @@ impl Planner<'_> {
 
     /// Draw a move (large neighbourhood or small), evaluate it and keep it or not.
     fn try_a_move(&self, search: &mut Search, on_best: &impl Fn(f64, f64, &[Stop])) {
-        let mut candidate = search.route.clone();
+        search.candidate.clone_from(&search.route);
         let mut operator = None;
         let change = if self.params.alns > 0.0 && search.rng.random_bool(self.params.alns) {
             let op = search.operators.pick(&mut search.rng);
             operator = Some(op);
-            self.ruin_recreate(&mut candidate, &search.run, op, &mut search.rng)
+            self.ruin_recreate(&mut search.candidate, &search.run, op, &mut search.rng)
                 .map(|(first, last, reordered)| Change { first, last, reordered })
         } else {
-            self.random_move(&mut candidate, &search.run, &mut search.rng)
+            self.random_move(&mut search.candidate, &search.run, &mut search.rng)
         };
         let Some(mut change) = change else { return };
-        self.gather_dungeons(&mut candidate, &mut change);
+        self.gather_dungeons(&mut search.candidate, &mut change);
         // The start chosen (`Params::start_zone`) is kept: the route begins in that zone.
-        if self.begins_in_start_zone(&search.route) && !self.begins_in_start_zone(&candidate) {
+        if self.begins_in_start_zone(&search.route) && !self.begins_in_start_zone(&search.candidate) {
             return;
         }
         // Replayed up to a window past the change, the rest estimated; to the end only when the
@@ -161,15 +164,15 @@ impl Planner<'_> {
         let dungeons = |r: &[Stop]| self.places().entered(r);
         // The last stop changed: past it, both routes end alike (the moves that edit a route
         // only say it changes up to its end).
-        let same_end = (candidate.iter().rev())
+        let same_end = (search.candidate.iter().rev())
             .zip(search.route.iter().rev())
             .take_while(|(x, y)| x == y)
             .count();
-        let last = change.last.min(candidate.len() - same_end);
+        let last = change.last.min(search.candidate.len() - same_end);
         let window = (self.params.eval_window > 0 && self.params.reputation_goals.is_empty())
             .then(|| last + 1 + self.params.eval_window)
-            .filter(|_| dungeons(&candidate) == dungeons(&search.route));
-        let Some((estimate, exact)) = self.evaluate_change(&search.run, &candidate, change, window) else {
+            .filter(|_| dungeons(&search.candidate) == dungeons(&search.route));
+        let Some((estimate, exact)) = self.evaluate_change(&search.run, &search.candidate, change, window) else {
             return;
         };
         let current = search.run.total;
@@ -185,16 +188,16 @@ impl Planner<'_> {
         } else if exact {
             Some(estimate)
         } else {
-            self.evaluate_change(&search.run, &candidate, change, None)
+            self.evaluate_change(&search.run, &search.candidate, change, None)
                 .map(|(cost, _)| cost)
                 .filter(|&cost| accepts(cost, &mut search.rng))
         };
         if let Some(cost) = cost
-            && let Some(run) = self.replace_run(&mut search.run, &search.route, &candidate)
+            && let Some(run) = self.replace_run(&mut search.run, &search.route, &search.candidate)
         {
             let improves = cost < current - 0.5;
             search.run = run;
-            search.route = candidate;
+            std::mem::swap(&mut search.route, &mut search.candidate);
             search.wins += u64::from(improves);
             if search.run.total < search.best.0 - 0.5 {
                 search.best = (search.run.total, search.route.clone());

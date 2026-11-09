@@ -25,8 +25,8 @@ export type SettingRowProps = {
 
 /**
  * One setting on a line: its name, its control (a slider when it has bounds, with a mark at the
- * default; a switch; a list), and when changed, a dot before the name and the default to go back
- * to.
+ * default; a switch; a list), and when changed, a dot before the name. Numbers and switches
+ * also offer the default to go back to; lists include it among their options.
  */
 export function SettingRow(props: SettingRowProps) {
   const { label, help, value, initial, onChange, disabled } = props;
@@ -41,9 +41,7 @@ export function SettingRow(props: SettingRowProps) {
       ? v
         ? "✓"
         : "✕"
-      : props.kind === "select"
-        ? t(props.options.find((o) => o.value === v)?.label ?? String(v)).split(/ [(:]/)[0]
-        : `${new Intl.NumberFormat(bcp47(lang), { maximumFractionDigits: 3, useGrouping: false }).format(shown(v as number))}${unit && unit !== "×" ? " " : ""}${unit}`;
+      : `${new Intl.NumberFormat(bcp47(lang), { maximumFractionDigits: 3, useGrouping: false }).format(shown(v as number))}${unit && unit !== "×" ? " " : ""}${unit}`;
 
   let control;
   if (props.kind === "bool") {
@@ -91,13 +89,14 @@ export function SettingRow(props: SettingRowProps) {
         {help && <Hint text={t(help)} />}
       </span>
       {control}
-      {changed ? (
-        <button className="setting-reset" title={t("Valeur par défaut")} disabled={disabled} onClick={() => onChange(initial)}>
-          ↺ {text(initial)}
-        </button>
-      ) : (
-        <span className="setting-reset" />
-      )}
+      {props.kind !== "select" &&
+        (changed ? (
+          <button className="setting-reset" title={t("Valeur par défaut")} disabled={disabled} onClick={() => onChange(initial)}>
+            ↺ {text(initial)}
+          </button>
+        ) : (
+          <span className="setting-reset" />
+        ))}
     </div>
   );
 }

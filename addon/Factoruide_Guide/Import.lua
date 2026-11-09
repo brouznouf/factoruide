@@ -95,7 +95,8 @@ local function Number(v)
     if v ~= v then return "0/0" end
     if v == math.huge then return "1/0" end
     if v == -math.huge then return "-1/0" end
-    if v == math.floor(v) and math.abs(v) < 2 ^ 53 then return string.format("%d", v) end
+    -- WoW may use a 32-bit integer formatter; Lua numbers still hold wider exact masks.
+    if v == math.floor(v) and math.abs(v) < 2 ^ 53 then return string.format("%.0f", v) end
     local s = string.format("%.14g", v)
     if tonumber(s) ~= v then s = string.format("%.17g", v) end
     return s

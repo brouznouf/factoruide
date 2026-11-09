@@ -4,18 +4,6 @@
 # Answers come back as problem reports: "[need-help forever/offered-before/<quest>] yes|no".
 
 [[check]]
-quest = 99048 # A Missing Hand (Orgnil Soulscar, Durotar)
-before = [806, 823]
-
-[[check]]
-quest = 94896 # Aid For The Refugees (Ealaane Nimbuswalker, Zephras Isle)
-before = [94897]
-
-[[check]]
-quest = 94897 # The Fate of a Loved One
-before = [94896]
-
-[[check]]
 quest = 96259 # Defending the Dead (Muln Earthfury, Mulgore)
 before = [96261]
 
@@ -24,53 +12,9 @@ quest = 96261 # The Broodmother
 before = [96259]
 
 [[check]]
-quest = 86576 # Bloodfury Trinkets (Maggran Earthbinder, Stonetalon)
-before = [6282, 6283, 6284]
-
-[[check]]
-quest = 95697 # Changing Tastes (Borstan, Excavation Site: Wetlands)
-before = [97246]
-
-[[check]]
-quest = 96988 # Source of Power (Doctor Martin Felben, City of Dalaran)
-before = [97891]
-
-[[check]]
-quest = 94872 # Buying Friendship: Magram (Gurda Wildmane, Desolace)
-before = [93225]
-
-[[check]]
-quest = 94873 # Buying Friendship: Gelkis (Gurda Wildmane, Desolace)
-before = [93225]
-
-[[check]]
-quest = 93227 # Buying Friendship: Gelkis (Captain Pentigast, Desolace)
-before = [93224]
-
-[[check]]
-quest = 95212 # Never Saddle on Quality (Rudra Amberstill, Dun Morogh)
-before = [314]
-
-[[check]]
-quest = 86758 # Twisting the Knife (Marek Ironheart, Loch Modan)
-before = [385]
-
-[[check]]
-quest = 92744 # Murloc Gills (Alba Fairmoon, Westfall)
-before = [92742]
-
-[[check]]
 quest = 92909 # Harvesting the Harvesters (Ozwin Ironsprocket, Westfall)
 before = [92910, 92911]
 
 [[check]]
-quest = 98407 # Show of Force (Deputy Feldon, Redridge)
-before = [244, 246]
-
-[[check]]
 quest = 98461 # Unrequited Love (Archaeologist Hollee, Wetlands)
 before = [730, 731]
-
-[[check]]
-quest = 98815 # Highland Hides (James Halloran, Excavation Site: Wetlands)
-before = [484]

@@ -73,6 +73,10 @@ pub struct Item {
     required_level: i64,
     /// Level from which the class can wear it (mail and plate at 40).
     wear_level: i64,
+    /// Copper a vendor sells it for (`fg gold`): 0 without the column (never bought then).
+    pub buy_price: i64,
+    /// Copper a vendor pays for it (`fg gold`): 0 without the column.
+    pub sell_price: i64,
 }
 
 /// What the character wears: per slot, the item owned and possibly a better one owned with
@@ -388,14 +392,25 @@ impl PowerModel {
             .map(|l| stat_weights(class, &bases[l], l as i64, gear_floor))
             .collect();
 
-        // Items the class can wear.
+        // Items the class can wear. Prices too (`fg gold`), 0 in databases built before them.
+        let has_prices: bool = conn.query_row(
+            "SELECT count(*) > 0 FROM pragma_table_info('m_item_stats') WHERE name = 'buy_price'",
+            [],
+            |r| r.get(0),
+        )?;
+        let prices = if has_prices {
+            "coalesce(s.buy_price, 0), coalesce(s.sell_price, 0)"
+        } else {
+            "0, 0"
+        };
         let mut items = Vec::new();
         let mut uncommon = Vec::new();
-        let mut stmt = conn.prepare(
+        let mut stmt = conn.prepare(&format!(
             "SELECT s.id, quality, inventory_type, s.class, s.subclass, allowable_class, s.required_level, str, agi,
-                    sta, int, spi, armor, ap, rap, sp, heal, crit, spell_crit, hit, mp5, dps, coalesce(n.name, '')
-             FROM m_item_stats s LEFT JOIN m_item n ON n.id = s.id WHERE quality >= 1",
-        )?;
+                    sta, int, spi, armor, ap, rap, sp, heal, crit, spell_crit, hit, mp5, dps, coalesce(n.name, ''),
+                    {prices}
+             FROM m_item_stats s LEFT JOIN m_item n ON n.id = s.id WHERE quality >= 1"
+        ))?;
         let mut rows = stmt.query([])?;
         while let Some(r) = rows.next()? {
             let allowable: i64 = r.get(5)?;
@@ -426,6 +441,8 @@ impl PowerModel {
                 stats,
                 required_level: r.get(6)?,
                 wear_level,
+                buy_price: r.get(23)?,
+                sell_price: r.get(24)?,
             };
             if quality == 2 {
                 uncommon.push(items.len());

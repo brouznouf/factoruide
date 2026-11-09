@@ -154,6 +154,23 @@ export function RouteSummary({ route, notes, compare }: Props) {
         </div>
         <XpTile route={route} />
       </div>
+      {(b.gold_earned ?? 0) > 0 && (
+        <div className="route-gold">
+          <span>{t("Or des quêtes")}</span> <Money copper={b.gold_earned ?? 0} />
+          {(b.flight_cost ?? 0) > 0 && (
+            <>
+              {" · "}
+              {t("Vols")} <Money copper={b.flight_cost ?? 0} />
+            </>
+          )}
+          {(b.training_cost ?? 0) > 0 && (
+            <>
+              {" · "}
+              {t("Entraînement")} <Money copper={b.training_cost ?? 0} />
+            </>
+          )}
+        </div>
+      )}
       {b.missing_class_quests > 0 && (
         <div className="notice warn">{t("Quêtes de classe obligatoires manquées : {n}", { n: b.missing_class_quests })}</div>
       )}

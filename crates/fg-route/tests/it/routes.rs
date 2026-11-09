@@ -3338,6 +3338,47 @@ fn camping_101_is_a_profession_quest_after_the_great_outdoors() {
     assert!(quest(&p, 97935).is_none(), "Camping 101: Mining without Mining");
 }
 
+/// The chains the sources list without a prerequisite (or as a mere breadcrumb): forever/
+/// quests.toml corrects them, and the corrections reach the model (The Adventurer before The
+/// Great Outdoors of its zone, An Alarming Request before Heart of Disruption).
+#[test]
+fn the_new_chains_the_sources_list_as_breadcrumbs_reach_the_model() {
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let needs = |race: &str, file: &str, id: i64| {
+        let request = PlanRequest {
+            params: Some(overrides.params.with_overrides(&[]).unwrap()),
+            ..request(race, "warrior", 40, &[])
+        };
+        let p = job::prepare(
+            &Fixture::new(Edition::Forever)
+                .file("forever_services")
+                .file(file)
+                .open(),
+            &overrides,
+            &request,
+            &|_| {},
+        )
+        .unwrap();
+        let q = &p.model.quests[quest(&p, id).unwrap_or_else(|| panic!("{id} in the model")) as usize];
+        q.pre_all.clone()
+    };
+    assert_eq!(
+        needs("human", "forever_great_outdoors", 95998),
+        vec![96627],
+        "the Adventurer first"
+    );
+    assert_eq!(
+        needs("tauren", "forever_great_outdoors", 96605),
+        vec![96659],
+        "the Adventurer first"
+    );
+    assert_eq!(
+        needs("human", "forever_dalaran", 92458),
+        vec![92432],
+        "An Alarming Request first"
+    );
+}
+
 /// Profession trainer stops (GitHub #106): with `profession_trainers` the planner goes to the
 /// trainers to learn each profession and its next ranks, and the trips are part of the route's time;
 /// by default there are none.

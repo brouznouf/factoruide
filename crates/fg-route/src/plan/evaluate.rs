@@ -48,23 +48,56 @@ impl Planner<'_> {
     /// Quests `route` accepts (bit 1), turns in (bit 2) or does an objective of (bit 4).
     pub(crate) fn planned(&self, route: &[Stop]) -> Rc<Planned> {
         let n = self.model.quests.len();
-        let mut planned = Planned {
-            flags: vec![0; n],
-            accept_at: vec![u32::MAX; n],
-        };
+        let mut flags = vec![0; n];
+        let mut accept_at = vec![u32::MAX; n];
         for (k, stop) in route.iter().enumerate() {
             let i = stop.index as usize;
             match stop.kind {
                 Kind::Accept => {
-                    planned.flags[i] |= 1;
-                    planned.accept_at[i] = planned.accept_at[i].min(k as u32);
+                    flags[i] |= 1;
+                    accept_at[i] = accept_at[i].min(k as u32);
                 }
-                Kind::TurnIn => planned.flags[i] |= 2,
-                Kind::Objective(_) => planned.flags[i] |= 4,
+                Kind::TurnIn => flags[i] |= 2,
+                Kind::Objective(_) => flags[i] |= 4,
                 _ => {}
             }
         }
-        Rc::new(planned)
+        Rc::new(Planned {
+            flags: Rc::new(flags),
+            accept_at: Rc::new(accept_at),
+        })
+    }
+
+    /// The plan of `candidate`, which differs from the evaluated route (of plan `old`) only by
+    /// the order of the stops in `first..=last` (a change that only moved stops: outside that
+    /// range both routes hold the same stops at the same places). The quests planned are the
+    /// same ones, so the flags are shared; only where a quest is first accepted can change, and
+    /// only for a quest with an accept among the moved stops.
+    pub(crate) fn planned_moved(old: &Rc<Planned>, candidate: &[Stop], first: usize, last: usize) -> Rc<Planned> {
+        let window = (last + 1).min(candidate.len());
+        let moved = first.min(window)..window;
+        if candidate[moved.clone()].iter().all(|s| s.kind != Kind::Accept) {
+            return Rc::clone(old);
+        }
+        let mut accept_at = (*old.accept_at).clone();
+        // Where a quest was first accepted among the moved stops: its place moved (an accept
+        // before them keeps it, the ones after are farther than any of them).
+        for k in moved.clone() {
+            let i = candidate[k].index as usize;
+            if candidate[k].kind == Kind::Accept && old.accept_at[i] >= first as u32 {
+                accept_at[i] = u32::MAX;
+            }
+        }
+        for k in moved {
+            if candidate[k].kind == Kind::Accept {
+                let i = candidate[k].index as usize;
+                accept_at[i] = accept_at[i].min(k as u32);
+            }
+        }
+        Rc::new(Planned {
+            flags: Rc::clone(&old.flags),
+            accept_at: Rc::new(accept_at),
+        })
     }
 
     pub fn simulate_full(&self, route: &[Stop], trace: Option<&mut Vec<Timed>>) -> Option<(f64, Breakdown)> {
@@ -173,6 +206,13 @@ impl Planner<'_> {
     fn replanned_from(&self, run: &Run, new: &Planned, a: usize) -> usize {
         let radius = self.params.camp_radius;
         let old = &run.states[0].planned;
+        // Nothing planned moved: no stop of the route changes (most moves reorder stops, and a
+        // reorder that moves no accept takes the plan as it is).
+        if (Rc::ptr_eq(&old.flags, &new.flags) && Rc::ptr_eq(&old.accept_at, &new.accept_at))
+            || (old.flags == new.flags && old.accept_at == new.accept_at)
+        {
+            return a;
+        }
         // Stops after the target level were not done.
         let done = a.min(run.states.len() - 1);
         if radius <= 0.0 || done == 0 {
@@ -246,10 +286,14 @@ impl Planner<'_> {
     ) -> Option<(f64, bool)> {
         // The stop before `a` too: where it does an objective depends on the next stop.
         let a = a.saturating_sub(1);
-        // Positions of the accepts change even when the stops are only reordered.
-        let planned = self.planned(candidate);
         // The quests of the character's log given up at the start changed: from the start.
         let old = &run.states[0].planned;
+        // Reordered stops keep the same quests; only acceptance positions may move.
+        let planned = if same_set {
+            Self::planned_moved(old, candidate, a, b)
+        } else {
+            self.planned(candidate)
+        };
         let window = window.filter(|_| {
             (self.model.quests.iter().enumerate())
                 .all(|(i, q)| !q.mandatory || (old.flags[i] ^ planned.flags[i]) & 2 == 0)
