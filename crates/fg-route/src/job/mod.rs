@@ -7,6 +7,8 @@ mod draft;
 mod edit;
 mod error;
 mod event;
+#[cfg(test)]
+mod finalize_tests;
 mod flights;
 mod group;
 mod notes;
@@ -287,6 +289,12 @@ pub fn finalize_route(planner: &Planner<'_>, best: Vec<Stop>) -> Result<Vec<Stop
         planner.keep_hard_goals(old, best)
     } else {
         best
+    };
+    // Reputation repair can add accepts after the search's cleanup, including quests
+    // whose single dungeon visit has already passed. Remove that unused work too.
+    let best = match planner.drop_dungeonless(&best) {
+        Some(kept) => planner.keep_hard_goals(best, kept),
+        None => best,
     };
     planner.validate_required(&best)?;
     Ok(best)

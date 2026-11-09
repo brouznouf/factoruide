@@ -17,6 +17,10 @@ use std::sync::Arc;
 #[path = "edit_reputation_tests.rs"]
 mod reputation_tests;
 
+#[cfg(test)]
+#[path = "edit_orphan_tests.rs"]
+mod orphan_tests;
+
 /// A step of a guide's route by game IDs: what the guide editor moves, removes and adds.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(tag = "kind", rename_all = "snake_case")]
@@ -529,7 +533,8 @@ impl Editor {
     /// guide's steps (a guide computed before the editor: its time may differ a little).
     pub fn steps(&self, outcome: &PlanOutcome) -> (Vec<RouteStep>, bool) {
         if outcome.explicit {
-            return (self.enter_dungeons(self.migrate_children(outcome.plan.clone())), false);
+            let steps = self.enter_dungeons(self.migrate_children(outcome.plan.clone()));
+            return (self.migrate_orphan_dungeon_accepts(steps), false);
         }
         let (steps, rebuilt) = if outcome.plan.is_empty() {
             (self.read_guide(&outcome.route), true)
@@ -537,6 +542,82 @@ impl Editor {
             (outcome.plan.clone(), false)
         };
         (self.expand(&self.enter_dungeons(self.migrate_children(steps))), rebuilt)
+    }
+
+    /// Older generated reputation routes could append unused dungeon pickups after cleanup.
+    /// Repair only those accept-only leftovers on load. Draft edits themselves remain strict.
+    fn migrate_orphan_dungeon_accepts(&self, steps: Vec<RouteStep>) -> Vec<RouteStep> {
+        let model = &self.prepared.model;
+        let used: HashSet<i64> = steps
+            .iter()
+            .filter_map(|s| match s {
+                RouteStep::Objective { quest, .. } | RouteStep::TurnIn { quest } | RouteStep::Abandon { quest } => {
+                    Some(*quest)
+                }
+                _ => None,
+            })
+            .collect();
+        let candidates: HashSet<i64> = steps
+            .iter()
+            .filter_map(|s| match s {
+                RouteStep::Accept { quest } if !used.contains(quest) => {
+                    let q = &model.quests[*model.index.get(quest)?];
+                    (!q.mandatory && q.objectives.iter().any(|o| o.dungeon_of().is_some())).then_some(*quest)
+                }
+                _ => None,
+            })
+            .collect();
+        if candidates.is_empty() {
+            return steps;
+        }
+        let planner = self.planner();
+        let resolve = |steps: &[RouteStep]| steps.iter().map(|s| s.resolve(&planner)).collect::<Result<Vec<_>, _>>();
+        let Ok(edits) = resolve(&steps) else { return steps };
+        let Ok(before) = self.replay(&planner, &edits, &steps) else {
+            return steps;
+        };
+        if before.steps.len() != steps.len() {
+            return steps;
+        }
+        let remove: HashSet<i64> = steps
+            .iter()
+            .zip(&before.steps)
+            .filter_map(|(s, replayed)| match s {
+                RouteStep::Accept { quest }
+                    if candidates.contains(quest)
+                        && replayed.outcome == Outcome::Invalid("dungeon quest taken but its dungeon is not run") =>
+                {
+                    Some(*quest)
+                }
+                _ => None,
+            })
+            .collect();
+        if remove.is_empty() {
+            return steps;
+        }
+        let repaired: Vec<RouteStep> = steps
+            .iter()
+            .filter(|s| !matches!(s, RouteStep::Accept { quest } if remove.contains(quest)))
+            .cloned()
+            .collect();
+        let Ok(edits) = resolve(&repaired) else { return steps };
+        let Ok(after) = self.replay(&planner, &edits, &repaired) else {
+            return steps;
+        };
+        if after.errors() != 0 || planner.validate_required_trace(&after.trace).is_err() {
+            return steps;
+        }
+        let before_rep = planner.reputation_reached_trace(&before.trace);
+        let after_rep = planner.reputation_reached_trace(&after.trace);
+        if before_rep
+            .iter()
+            .zip(&after_rep)
+            .zip(&self.prepared.params.reputation_goals)
+            .any(|((&before, &after), goal)| after < before.min(goal.target as f64))
+        {
+            return steps;
+        }
+        repaired
     }
 
     /// A guide made when a dungeon's run did what is inside it: after its run, the quests taken

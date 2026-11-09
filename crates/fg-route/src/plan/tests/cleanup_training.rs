@@ -51,6 +51,7 @@ fn class_training_fixture(race: &str, class: &str) -> Prepared {
         )
         .build();
     p.model.dungeons = dungeon.model.dungeons;
+    p.model.dungeon_loot = dungeon.model.dungeon_loot;
     p.model.quests[0].objectives = dungeon.model.quests[0].objectives.clone();
     p.model.quests[0].level = 20;
     p.model.quests[1].level = 20;
@@ -193,6 +194,7 @@ fn cleanup_training_respects_dungeon_runs_mandatory_quests_and_prerequisites() {
             index: 0,
             kind: Kind::Dungeon,
         },
+        Stop::quest(0, Kind::Objective(0)),
         route[1],
     ];
     assert!(planner(&p).drop_dungeonless(&with_dungeon).is_none());

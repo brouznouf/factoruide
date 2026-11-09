@@ -21,6 +21,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Guides
 
+- Generated reputation guides no longer include unusable dungeon pickups; affected saved guides can be edited again.
+- Saving and reopening a guide preserves its reputation farming phases and time estimate.
 - Finish available quests inside the current dungeon before leaving for another forced run.
 - Selected reputation targets keep useful progress, including after the target level, and report any remaining shortfall.
 - Useful low-level reputation quests and their prerequisites remain eligible when planning from a higher level.

@@ -16,7 +16,8 @@ rand = "0.10"
 rusqlite = { version = "0.41", features = ["bundled"] }
 rustc-hash = "2"
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
+# Saved reputation actions must retain the exact coordinates of their bound sources.
+serde_json = { version = "1", features = ["float_roundtrip"] }
 thiserror = "2"
 toml = "1"
 zstd = "0.14"

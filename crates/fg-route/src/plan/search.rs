@@ -434,20 +434,30 @@ impl Planner<'_> {
         (route, run.0)
     }
 
-    /// The route without the dungeon quests it takes but whose dungeon it never runs (its run
-    /// cut past the target level, or never planned): they cannot be finished, so they go
+    /// The route without the optional quests whose dungeon objectives remain undone: the run
+    /// was omitted, cut past the target, or already left before the quest was taken. They go
     /// whatever they save. Those another quest needs stay. None when there is nothing to remove.
     pub(crate) fn drop_dungeonless(&self, route: &[Stop]) -> Option<Vec<Stop>> {
-        let runs = self.places().entered(route);
         let mut left: Vec<u32> = (route.iter())
             .filter(|s| s.kind == Kind::Accept && !self.quest(s.index).mandatory)
-            .filter(|s| {
-                (self.quest(s.index).objectives.iter())
-                    .any(|o| o.dungeon_of().is_some_and(|d| !runs.contains(&(d as u32))))
-            })
+            .filter(|s| self.quest(s.index).objectives.iter().any(|o| o.dungeon_of().is_some()))
             .map(|s| s.index)
             .collect();
         left.dedup();
+        if left.is_empty() {
+            return None;
+        }
+        let (_, end) = self.simulate_state(route, None)?;
+        left.retain(|&q| {
+            let i = q as usize;
+            !end.turned[i]
+                && self
+                    .quest(q)
+                    .objectives
+                    .iter()
+                    .enumerate()
+                    .any(|(k, o)| o.dungeon_of().is_some() && end.objectives[i] & (1 << k) == 0)
+        });
         let (mut best, mut changed) = (route.to_vec(), false);
         for q in left {
             // Trace only the removed slots from the current accepted route's pre-stop
