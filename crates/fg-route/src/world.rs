@@ -928,17 +928,21 @@ fn fastest_flights(time: &[Vec<f64>], price: &[Vec<f64>], known: u128) -> (Vec<V
     let mut t = vec![vec![f64::INFINITY; n]; n];
     let mut p = vec![vec![f64::INFINITY; n]; n];
     let is_known = |i: usize| known & (1u128 << i) != 0;
-    for i in (0..n).filter(|&i| is_known(i)) {
-        for j in (0..n).filter(|&j| is_known(j)) {
+    // Only the known nodes are relaxed: the rows and columns of the others stay infinite, and
+    // nothing reads them (the flights are only asked between known nodes). A route learns its
+    // flight paths one by one, each set a table: k³ relaxations with k the paths known, not n³.
+    let nodes: Vec<usize> = (0..n).filter(|&i| is_known(i)).collect();
+    for &i in &nodes {
+        for &j in &nodes {
             t[i][j] = time[i][j];
             p[i][j] = price[i][j];
         }
         t[i][i] = 0.0;
         p[i][i] = 0.0;
     }
-    for k in (0..n).filter(|&k| is_known(k)) {
-        for i in 0..n {
-            for j in 0..n {
+    for &k in &nodes {
+        for &i in &nodes {
+            for &j in &nodes {
                 let via = t[i][k] + t[k][j];
                 if via < t[i][j] {
                     t[i][j] = via;
@@ -1929,8 +1933,13 @@ impl World {
         let d = self.compute_walk(a, b, level);
         WALKED.with(|m| {
             let mut m = m.borrow_mut();
+            // Full beyond `WALKED_MAX`: half the walks go (the other half of the working set
+            // stays: starting over would lose every walk worked out so far).
             if m.len() >= WALKED_MAX {
-                m.clear();
+                m.retain(|k, _| (k.2[0] ^ k.2[2]) & 1 == 0);
+                if m.len() >= WALKED_MAX {
+                    m.clear();
+                }
             }
             m.insert(key, d);
         });

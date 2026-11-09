@@ -543,11 +543,13 @@ pub struct Breakdown {
 }
 
 /// Quests a route accepts (bit 1), turns in (bit 2) or does an objective of (bit 4), and where
-/// it first accepts each.
+/// it first accepts each. Both shared behind `Rc`: the plan of a reordered route is the same
+/// one (see `Planner::planned_moved`), and the search asks the plan of every candidate it
+/// tries.
 #[derive(Default)]
 pub(crate) struct Planned {
-    pub(crate) flags: Vec<u8>,
-    pub(crate) accept_at: Vec<u32>,
+    pub(crate) flags: Rc<Vec<u8>>,
+    pub(crate) accept_at: Rc<Vec<u32>>,
 }
 
 impl Planned {

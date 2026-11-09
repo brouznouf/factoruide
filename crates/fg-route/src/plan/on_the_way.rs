@@ -23,8 +23,9 @@ pub(crate) type FarmKey = (u64, [u64; 5]);
 /// Normal mobs met on each walk, by level (see `FarmMobs::along`).
 pub(crate) type FarmWalks = std::cell::RefCell<FxHashMap<FarmKey, Rc<[Met]>>>;
 
-/// Walks whose farmed mobs are remembered, beyond which the memo starts over.
-/// What a table of 2^20 buckets holds (7/8 of them): it never doubles for the last ones.
+/// Walks whose farmed mobs are remembered, beyond which half of them go (all only if it is
+/// still full). What a table of 2^20 buckets holds (7/8 of them): it never doubles for the
+/// last ones.
 const FARM_MEMO: usize = (1 << 20) / 8 * 7;
 
 /// Distance from `p` to the segment `a`-`b` (same continent).
@@ -294,8 +295,12 @@ impl Simulator<'_> {
         }
         let mobs = farm();
         let mut memo = self.memo.farm_walks.borrow_mut();
+        // Keep half the working set instead of starting over when the memo fills.
         if memo.len() >= FARM_MEMO {
-            memo.clear();
+            memo.retain(|k, _| (k.1[0] ^ k.1[2]) & 1 == 0);
+            if memo.len() >= FARM_MEMO {
+                memo.clear();
+            }
         }
         memo.insert(key, mobs.clone());
         mobs
