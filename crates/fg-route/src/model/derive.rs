@@ -79,9 +79,12 @@ pub(crate) fn settle(
         q.late_unlock = knowledge.class_quests.contains(&q.id)
             && !profile.within_levels(q.level, q.min_level, params.max_quest_above);
     }
-    super::settle_quests(quests, dungeons, params, &knowledge.prerequisites, profile);
-    // A dungeon guide plans its dungeon's quests and what leads to them, nothing else.
-    if profile.dungeon_guide.is_some() {
+    let released = super::settle_quests(quests, dungeons, params, &knowledge.prerequisites, profile);
+    skipped.extend(
+        (released.into_iter()).map(|(id, name)| (id, name, "a quest it needs first cannot be planned".to_owned())),
+    );
+    // An objective guide plans its objectives' quests and what leads to them, nothing else.
+    if profile.objective_guide() {
         quests.retain(|q| q.zone_forced);
     }
     dungeons::set_dungeon_levels(

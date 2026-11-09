@@ -197,7 +197,9 @@ impl Sources {
             item_origins,
             item_durations: item_durations(conn)?,
             drop_chance,
-            area_parents: if params.forced_zones.is_empty() {
+            area_parents: if params.forced_zones.is_empty()
+                && !(profile.objectives.iter()).any(|o| matches!(o, super::GuideObjective::Zone(_)))
+            {
                 HashMap::new()
             } else {
                 area_parents(conn)?

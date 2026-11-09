@@ -173,7 +173,26 @@ export function ResultView({ version, edition, onRerun, onEdit, onClone, onSaved
             {meta.edited && <> · {t("modifié à la main")}</>}
             {meta.character && <> · {t("depuis {name}", { name: meta.character })}</>}
           </div>
-          {version.request.dungeon != null && version.request.start && route.from_level > version.request.start.level && (
+          {route.recommended && version.request.start && (
+            <div className="notice">
+              {t("Niveau {n} recommandé pour ce guide : votre personnage était niveau {level} quand il a été calculé. Le guide fait quand même ces quêtes, à vous de voir.", {
+                n: route.recommended.level,
+                level: version.request.start.level,
+              })}
+              <details>
+                <summary>{t("{n} quêtes au-dessus de son niveau", { n: route.recommended.quests.length })}</summary>
+                <ul>
+                  {route.recommended.quests.map((q) => (
+                    <li key={q.id}>
+                      {q.name} <span className="muted">{t("niveau {n}", { n: q.level })}</span>
+                    </li>
+                  ))}
+                </ul>
+              </details>
+            </div>
+          )}
+          {/* A dungeon guide made before the objective guides: planned at the level its quests asked. */}
+          {!route.recommended && version.request.dungeon != null && version.request.start && route.from_level > version.request.start.level && (
             <div className="notice">
               {t("Niveau {n} recommandé pour ce guide : votre personnage était niveau {level} quand il a été calculé. Il est fait comme au niveau {n}, à vous de voir.", {
                 n: route.from_level,

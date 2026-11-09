@@ -13,6 +13,7 @@ local Guide = {}
 FG.Guide = Guide
 
 local L = {
+    recommended = T("Level %d recommended, you are %d"),
     todo = T("To do"),
     next = T("Next"),
     pickup = T("To pick up"),
@@ -764,6 +765,11 @@ local function TaskView(step, index, withProgress)
         v.name = step.t
     end
     FG.Group:Chips(step, index, function(text, color) Chip(v, text, color) end, IsDone(step, index))
+    -- An objective guide done below the level its quests ask: said on the current step until reached.
+    local recommended = route and route.recommendedLevel
+    if recommended and state and index == state.step and UnitLevel("player") < recommended then
+        Chip(v, string.format(L.recommended, recommended, UnitLevel("player")), "orange")
+    end
     return v
 end
 

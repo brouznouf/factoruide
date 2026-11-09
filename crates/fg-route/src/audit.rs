@@ -274,6 +274,7 @@ pub fn audit(
             locale: None,
             mates: Vec::new(),
             mate_professions: vec![],
+            objectives: Vec::new(),
             dungeon: None,
             start: None,
         };

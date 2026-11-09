@@ -547,6 +547,20 @@ fn run(cmd: &str, a: serde_json::Value) -> CmdResult<serde_json::Value> {
             }
             to_json(STUDIO.preview_starts(&WebHost, &args::<A>(a)?.request))
         }
+        "objective_counts" => {
+            #[derive(Deserialize)]
+            struct A {
+                start: StartState,
+            }
+            to_json(STUDIO.objective_counts(&WebHost, &args::<A>(a)?.start))
+        }
+        "objective_preview" => {
+            #[derive(Deserialize)]
+            struct A {
+                request: PlanRequest,
+            }
+            to_json(STUDIO.objective_preview(&WebHost, &args::<A>(a)?.request))
+        }
         "manual_route" => {
             #[derive(Deserialize)]
             struct A {

@@ -418,7 +418,28 @@ pub struct Route {
     /// when one is missing.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub buffs: Vec<String>,
+    /// An objective guide's quests asking more than the character's level at the start: the
+    /// level recommended (the highest) and those quests. The guide is planned at the
+    /// character's level anyway: the app and the addon warn.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub recommended: Option<Recommended>,
     pub steps: Vec<Step>,
+}
+
+/// The level an objective guide's quests ask, above the character's (`Route::recommended`).
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Recommended {
+    pub level: i64,
+    /// The quests asking more than the character's level, highest first.
+    pub quests: Vec<QuestAbove>,
+}
+
+/// A quest an objective guide does above its level: its ID, name and the level it asks.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct QuestAbove {
+    pub id: i64,
+    pub name: String,
+    pub level: i64,
 }
 
 /// A player of a group guide.

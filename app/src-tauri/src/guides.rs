@@ -115,6 +115,18 @@ pub(crate) async fn quest_choices(
     .await
 }
 
+/// The quests a character has left in each zone and dungeon (`job::objective_counts`).
+#[tauri::command]
+pub(crate) async fn objective_counts(app: AppHandle, start: StartState) -> CmdResult<job::ObjectiveCounts> {
+    blocking(app, move |state| state.studio.objective_counts(state, &start)).await
+}
+
+/// The quests a request's objectives plan, and those they cannot (`job::objective_preview`).
+#[tauri::command]
+pub(crate) async fn objective_preview(app: AppHandle, request: PlanRequest) -> CmdResult<job::ObjectivePreview> {
+    blocking(app, move |state| state.studio.objective_preview(state, &request)).await
+}
+
 /// The starts the character can choose from before the guide is computed (`job::preview_starts`),
 /// streaming `plan-progress` events (`@preview <done> <total>`). Fewer than two: nothing to choose.
 /// `cancel_plan` ends it with "cancelled".

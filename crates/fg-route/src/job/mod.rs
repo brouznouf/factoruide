@@ -10,6 +10,7 @@ mod event;
 mod flights;
 mod group;
 mod notes;
+mod objectives;
 mod options;
 mod overrides;
 mod paths;
@@ -31,6 +32,7 @@ pub use edit::{
 pub use error::{JobError, RequestError};
 pub use event::{JobEvent, Watch};
 pub use flights::inferred_flights;
+pub use objectives::{ExcludedQuest, ObjectiveCounts, ObjectivePreview, objective_counts, objective_preview};
 pub use options::{
     FactionOption, FlightOption, NamedId, Options, RaceOption, ZoneOption, class_quests, options, race_classes,
 };
@@ -249,7 +251,7 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
     profile.required_quests = required::resolve(conn, req, &profile, &params)?;
     if params.edition == crate::xp::Edition::Forever
         && params.sleeping_bag
-        && req.dungeon.is_none()
+        && !profile.objective_guide()
         && !profile
             .required_quests
             .iter()
@@ -292,7 +294,7 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
         };
         s.with_deduced_flights(overrides.start_flights(s.race), found)
     };
-    let mut starting: Option<(StartState, Vec<StartState>)> = start.map(|s| {
+    let starting: Option<(StartState, Vec<StartState>)> = start.map(|s| {
         (
             with_deduced(s),
             members.iter().skip(1).map(|m| with_deduced(m)).collect(),
@@ -302,14 +304,7 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
         Some((start, mates)) => start_from(&mut model, &world, &mut params, start, mates, &mut start_notes),
         None => model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id)),
     }
-    raise_dungeon_guide(
-        &mut model,
-        &world,
-        &mut params,
-        &mut profile,
-        starting.as_mut().map(|(s, m)| (s, m.as_slice())),
-        &mut start_notes,
-    )?;
+    settle_objective_guide(&mut model, &world, &params, &profile)?;
     if let Some((start, _)) = &starting {
         // Quests of the log the model does not have: named from the database, for their abandon.
         for (id, name) in model.initial.log.iter_mut().filter(|(_, name)| name.is_empty()) {
@@ -344,48 +339,40 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
     })
 }
 
-/// A dungeon guide is planned at the level its quests need (`dungeon_guide_level`; the app warns
-/// a character below it): the profile and the start raised to it, the model started again from
-/// there. The guide ends at that level (no level to reach).
-pub(crate) fn raise_dungeon_guide(
+/// An objective guide is planned at the character's level, its quests in the best order whatever
+/// the levels they ask: those gated above it are kept for the warning (`Model::above_level`, the
+/// guide recommending the highest), then no stop waits for a level (`Model::levels_ignored`).
+/// The guide ends with its quests (no level to reach). Refused when the character has none of
+/// them left.
+pub(crate) fn settle_objective_guide(
     model: &mut Model,
     world: &World,
-    params: &mut Params,
-    profile: &mut Profile,
-    start: Option<(&mut StartState, &[StartState])>,
-    notes: &mut Vec<String>,
+    params: &Params,
+    profile: &Profile,
 ) -> Result<()> {
-    let Some(area) = profile.dungeon_guide else {
+    if !profile.objective_guide() {
         return Ok(());
-    };
-    let level = dungeon_guide_level(model, world, params, profile, area)?;
-    if level > profile.from_level {
-        notes.push(format!(
-            "dungeon guide planned at level {level}, the level its quests need (the character is level {})",
-            profile.from_level
-        ));
-        profile.from_level = level;
-        if let Some((start, mates)) = start {
-            (start.level, start.xp) = (level, 0);
-            start_from(model, world, params, start, mates, &mut Vec::new());
-        }
     }
-    profile.to_level = profile.from_level;
+    let levels = Planner::new(model, world, params, profile).forced_quest_levels();
+    if levels.is_empty() {
+        anyhow::bail!("no quest of these objectives left for this character");
+    }
+    let mut above: Vec<(i64, i64)> = (levels.iter())
+        .filter(|&&(_, level)| level > profile.from_level)
+        .map(|&(i, level)| (model.quests[i as usize].id, level))
+        .collect();
+    above.sort_by_key(|&(id, level)| (std::cmp::Reverse(level), id));
+    model.above_level = above;
+    model.levels_ignored = true;
+    for q in &mut model.quests {
+        q.min_level = q.min_level.min(profile.from_level);
+        q.completion_window = model::CompletionWindow::default();
+    }
+    for d in &mut model.dungeons {
+        d.min_level = d.min_level.min(profile.from_level);
+        d.max_level = params.edition.rules().max_level;
+    }
     Ok(())
-}
-
-/// The level a dungeon guide of dungeon `area` is planned at: the one every stop of its quests
-/// can be made at (`Planner::forced_quests_level`), the character's when higher. Refused when the
-/// character has no quest of the dungeon left.
-fn dungeon_guide_level(model: &Model, world: &World, params: &Params, profile: &Profile, area: i64) -> Result<i64> {
-    use anyhow::Context as _;
-    let dungeon = (model.dungeons.iter())
-        .find(|d| d.area == area)
-        .with_context(|| format!("dungeon {area}: not a dungeon of this edition"))?;
-    let Some(level) = Planner::new(model, world, params, profile).forced_quests_level() else {
-        anyhow::bail!("{}: no quest of this dungeon left for this character", dungeon.name);
-    };
-    Ok(level.max(profile.from_level))
 }
 
 /// Every dungeon the character could run has levels to run it at, and a dungeon the player

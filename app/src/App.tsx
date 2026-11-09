@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { getVersion } from "@tauri-apps/api/app";
-import { api, type Edition, type EditionInfo, type GuideVersion, type Options, type PlanRequest } from "./api";
+import { api, objectivesOf, type Edition, type EditionInfo, type GuideVersion, type Options, type PlanRequest } from "./api";
 import { clearMapCache } from "./components/WorldMap";
 import { I18nProvider, LANGS, detectLang, useT, type Lang } from "./i18n";
 import { WowBanner } from "./components/WowBanner";
@@ -12,7 +12,7 @@ import { ChangelogPage } from "./pages/ChangelogPage";
 import { ContributePage } from "./pages/ContributePage";
 import { HomePage } from "./pages/HomePage";
 import { NeedHelpPage } from "./pages/NeedHelpPage";
-import { DungeonPage } from "./pages/DungeonPage";
+import { ObjectivesPage } from "./pages/ObjectivesPage";
 import { exampleGuide, hasExample } from "./example";
 import { IssueForm } from "./components/IssueForm";
 import { UpdateBanner } from "./components/UpdateBanner";
@@ -26,12 +26,12 @@ const ISSUES_URL = "https://github.com/brouznouf/factoruide/issues";
 
 const EDITION_LABELS: Record<Edition, string> = { forever: "Forever", classic: "Classic", tbc: "TBC" };
 
-type Page = "home" | "plan" | "dungeon" | "results" | "contribute" | "help" | "settings" | "changelog" | "report";
+type Page = "home" | "plan" | "objectives" | "results" | "contribute" | "help" | "settings" | "changelog" | "report";
 
 const PAGES: { id: Page; label: string }[] = [
   { id: "home", label: "Accueil" },
   { id: "plan", label: "Nouveau guide" },
-  { id: "dungeon", label: "Donjon" },
+  { id: "objectives", label: "Objectifs" },
   { id: "results", label: "Guides" },
   // The addon is installed, updated and set up in game (CurseForge, its page in the game's options: /fg).
   // In a browser, nothing is sent anywhere and the settings are in the menu.
@@ -107,12 +107,13 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
     setOpened(await exampleGuide());
     setPage("results");
   };
-  // The dungeon guide page, on a dungeon guide's configuration when one is edited.
-  const [dungeonStart, setDungeonStart] = useState<{ key: number; initial: PlanRequest | null }>({ key: 0, initial: null });
+  // The objective guide page, on an objective guide's configuration when one is edited (with the
+  // character's latest profile: what it did since is left out).
+  const [objectivesStart, setObjectivesStart] = useState<{ key: number; initial: PlanRequest | null }>({ key: 0, initial: null });
   const openWizard = (start: WizardStart) => {
-    if (start.initial?.dungeon != null && !start.rerun) {
-      setDungeonStart((d) => ({ key: d.key + 1, initial: start.initial }));
-      setPage("dungeon");
+    if (objectivesOf(start.initial).length > 0 && !start.rerun) {
+      setObjectivesStart((d) => ({ key: d.key + 1, initial: start.initial }));
+      setPage("objectives");
       return;
     }
     if (!busy) setWizard((w) => ({ key: w.key + 1, start }));
@@ -240,7 +241,7 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
               start={wizard.start}
               onBusy={setBusy}
               onDraft={saveDraft}
-              onDungeon={(request) => openWizard({ initial: request, rerun: false })}
+              onObjectives={(request) => openWizard({ initial: request, rerun: false })}
               onDone={(meta, notice, edit) => {
                 // Not over a guide being edited: the new guide waits in "Mes guides".
                 if (unsaved.current) return;
@@ -284,12 +285,12 @@ function Shell({ onLanguage }: { onLanguage: (lang: Lang) => void }) {
             onAddon={openAddonSite}
           />
         )}
-        {page === "dungeon" &&
+        {page === "objectives" &&
           (options ? (
-            <DungeonPage
-              key={`${edition ?? ""}-${dungeonStart.key}`}
+            <ObjectivesPage
+              key={`${edition ?? ""}-${objectivesStart.key}`}
               options={options}
-              initial={dungeonStart.initial}
+              initial={objectivesStart.initial}
               busy={busy}
               onGenerate={(request) => {
                 if (!busy) setWizard((w) => ({ key: w.key + 1, start: { initial: request, rerun: true } }));

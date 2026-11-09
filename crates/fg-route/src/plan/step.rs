@@ -640,6 +640,9 @@ impl Simulator<'_> {
     /// The same with the objective's place already chosen (`spot`): a stop entering a dungeon
     /// waits for the dungeon's level too.
     fn gate_level_at(&self, s: &State, stop: Stop, spot: Option<&Objective>) -> i64 {
+        if self.model.levels_ignored {
+            return 0;
+        }
         let own = self.stop_gate(s, stop, spot);
         let inside = match spot {
             Some(o) => o.loc.inside.map(usize::from),

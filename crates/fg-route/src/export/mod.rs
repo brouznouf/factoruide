@@ -40,6 +40,9 @@ pub fn render(route: &Route, names: &Names) -> Route {
             p.name = name.to_owned();
         }
     }
+    for q in out.recommended.iter_mut().flat_map(|r| &mut r.quests) {
+        q.name = names.get("quest", q.id, &q.name).to_owned();
+    }
     out.locale = Some(names.locale.clone());
     out
 }
@@ -52,6 +55,24 @@ pub fn build(planner: &Planner<'_>, profile: &Profile, route: &[Stop]) -> Route 
     // Show the real play time; the optimizer score also counts penalties.
     let total = if total.is_finite() { breakdown.total } else { total };
     build_traced(planner, profile, route, &trace, total, breakdown)
+}
+
+/// An objective guide's quests above the character's level (`Model::above_level`), named in the
+/// guide's language.
+fn recommended(planner: &Planner<'_>) -> Option<types::Recommended> {
+    let model = planner.model;
+    let level = model.above_level.first()?.1;
+    let quests = (model.above_level.iter())
+        .map(|&(id, level)| {
+            let english = model.index.get(&id).map_or("", |&i| model.quests[i].name.as_str());
+            types::QuestAbove {
+                id,
+                name: model.names.get("quest", id, english).to_owned(),
+                level,
+            }
+        })
+        .collect();
+    Some(types::Recommended { level, quests })
 }
 
 /// Route from an already simulated trace (`total`: real play time): a step per event, but the
@@ -91,8 +112,8 @@ pub fn build_traced(
             }
         })
     };
-    // A dungeon guide leaves the rest of the log alone: the character goes on with it after.
-    if let Some(first) = trace.first().filter(|_| planner.profile.dungeon_guide.is_none()) {
+    // An objective guide leaves the rest of the log alone: the character goes on with it after.
+    if let Some(first) = trace.first().filter(|_| !planner.profile.objective_guide()) {
         for (id, name) in model.initial.log.iter().filter(|(id, _)| !kept(id)) {
             steps.push(writer.abandon_unused(first, *id, name));
             xps.push(planner.model.initial.xp);
@@ -268,6 +289,7 @@ fn route_of(
             .collect(),
         checkpoints,
         reputation: reputation_reached(planner, route),
+        recommended: recommended(planner),
         players: if profile.mates.is_empty() {
             Vec::new()
         } else {

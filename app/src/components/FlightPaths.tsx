@@ -2,7 +2,7 @@ import type { Options, StartState } from "../api";
 import { useT } from "../i18n";
 
 /** Where each flight path stands on each continent (map ID), as the game names them. */
-const CONTINENTS: Record<number, string> = {
+export const CONTINENTS: Record<number, string> = {
   0: "Royaume de l'Est",
   1: "Kalimdor",
   530: "Outreterre",

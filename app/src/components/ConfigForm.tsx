@@ -42,7 +42,7 @@ const PROGRESSION = [
 ];
 
 /** One choice among a few, as a row of buttons. */
-function Segmented<T>({ label, choices, value, onChange, help }: { label: string; choices: { label: string; value: T }[]; value: T | null; onChange: (v: T) => void; help?: string }) {
+export function Segmented<T>({ label, choices, value, onChange, help }: { label: string; choices: { label: string; value: T }[]; value: T | null; onChange: (v: T) => void; help?: string }) {
   return (
     <div className="field">
       <span>

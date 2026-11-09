@@ -163,6 +163,7 @@ FG.Locales.esES = {
     ["windows locked"] = "ventanas bloqueadas",
     ["windows unlocked: drag them to move them"] = "ventanas desbloqueadas: arrástralas para moverlas",
     ["for %s"] = "para %s",
+    ["Level %d recommended, you are %d"] = "Nivel %d recomendado, eres nivel %d",
     ["marked done, waiting for %s"] = "marcada como hecha, esperando a %s",
     ["%s: step %d"] = "%s: paso %d",
     ["%s ahead: step %d"] = "%s adelantado: paso %d",

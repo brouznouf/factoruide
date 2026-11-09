@@ -264,6 +264,7 @@ FG.Locales.frFR = {
     ["Clear the recorded events"] = "Effacer les événements enregistrés",
     ["Deletes the quest events this character recorded for the app."] = "Supprime les événements de quêtes que ce personnage a enregistrés pour l'application.",
     ["for %s"] = "pour %s",
+    ["Level %d recommended, you are %d"] = "Niveau %d recommandé, tu es %d",
     ["marked done, waiting for %s"] = "marquée faite, en attente de %s",
     ["%s: step %d"] = "%s : étape %d",
     ["%s ahead: step %d"] = "%s en avance : étape %d",

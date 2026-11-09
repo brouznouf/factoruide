@@ -142,24 +142,26 @@ pub struct Planner<'a> {
 }
 
 impl<'a> Planner<'a> {
-    /// The level every stop of the forced quests can be made at from the start, by their gates
-    /// (minimum levels, guards, mobs within reach, dungeons' levels); None without any. A dungeon
-    /// guide is planned at it. A stop gated above the game's levels is never made: left out (the
-    /// guide reports its quest not planned) rather than holding every other one back.
-    pub(crate) fn forced_quests_level(&self) -> Option<i64> {
+    /// The forced quests not done yet (an objective guide's) and the level every stop of each
+    /// can be made at from the start, by their gates (minimum levels, guards, mobs within reach,
+    /// dungeons' levels). A stop gated above the game's levels is never made: not counted (the
+    /// guide reports its quest not planned).
+    pub(crate) fn forced_quest_levels(&self) -> Vec<(u32, i64)> {
         let s = self.sim().initial_state();
         (0..self.model.quests.len() as u32)
             .filter(|&i| self.model.quests[i as usize].zone_forced && !s.turned[i as usize])
-            .flat_map(|i| {
+            .map(|i| {
                 let objectives = self.model.quests[i as usize].objectives.len();
-                [Kind::Accept, Kind::TurnIn]
+                let level = [Kind::Accept, Kind::TurnIn]
                     .into_iter()
                     .chain((0..objectives).map(|k| Kind::Objective(k as u8)))
-                    .map(move |kind| Stop::quest(i, kind))
+                    .map(|kind| self.sim().gate_level(&s, Stop::quest(i, kind)))
+                    .filter(|&level| level <= self.rules().max_level)
+                    .max()
+                    .unwrap_or(0);
+                (i, level)
             })
-            .map(|stop| self.sim().gate_level(&s, stop))
-            .filter(|&level| level <= self.rules().max_level)
-            .max()
+            .collect()
     }
 
     pub fn new(model: &'a Model, world: &'a World, params: &'a Params, profile: &'a Profile) -> Self {

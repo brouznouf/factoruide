@@ -96,9 +96,14 @@ pub fn to_lua(routes: &[Route]) -> String {
                 r.buffs.iter().map(|b| lua_str(b)).collect::<Vec<_>>().join(", ")
             )
         };
+        // An objective guide's quests asking more than the character's level (`Route::recommended`).
+        let recommended = r
+            .recommended
+            .as_ref()
+            .map_or_else(String::new, |rec| format!(" recommendedLevel = {},", rec.level));
         let _ = writeln!(
             out,
-            "FG.Routes[{}] = {{ race = {}, class = {}, faction = {}, locale = {}, fromLevel = {}, toLevel = {}, time = {}, levels = {{ {} }}, professions = {{ {} }}, reputations = {{ {} }}, spells = {{ {} }}, checkpoints = {{ {} }},{players}{buffs} steps = {{",
+            "FG.Routes[{}] = {{ race = {}, class = {}, faction = {}, locale = {}, fromLevel = {}, toLevel = {}, time = {}, levels = {{ {} }}, professions = {{ {} }}, reputations = {{ {} }}, spells = {{ {} }}, checkpoints = {{ {} }},{players}{buffs}{recommended} steps = {{",
             lua_str(&r.name),
             r.race_id,
             r.class_id,

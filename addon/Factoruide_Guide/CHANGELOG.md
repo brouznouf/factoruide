@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- An objective guide done below the level its quests ask says so on the current step until you reach it.
+
 ## 0.16.0 (2026-11-07)
 
 - WoW Forever: no more "ADDON_ACTION_BLOCKED: SetPassThroughButtons" message when the world map is open during a fight.

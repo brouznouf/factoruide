@@ -713,6 +713,43 @@ Press("undo")
 assert(char.guide.step == 3, "nothing left to undo, step " .. char.guide.step)
 print("skip ok")
 
+-- An objective guide below the level its quests ask: the current step says so until it is reached.
+do
+    FG.Routes["objective-test"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 21,
+        toLevel = 21,
+        time = 1,
+        recommendedLevel = 25,
+        steps = {
+            { k = "accept", t = "Accept High Quest", q = 5101, lvl = 21 },
+            { k = "turnin", t = "Turn in High Quest", q = 5101, lvl = 21 },
+        },
+    }
+    local shown
+    local card, mini = FG.Card.Render, FG.Mini.Render
+    FG.Card.Render = function(_, view) shown = view end
+    FG.Mini.Render = FG.Card.Render
+    local function warned()
+        shown = nil
+        FG.Guide:Refresh()
+        for _, c in ipairs(shown and shown.tasks[1] and shown.tasks[1].chips or {}) do
+            if c.text == string.format(FG.T("Level %d recommended, you are %d"), 25, 21) then return true end
+        end
+        return false
+    end
+    useRoute("objective-test")
+    assert(warned(), "the level recommended on the current step")
+    playerLevel = 25
+    assert(not warned(), "nothing once the level is reached")
+    playerLevel = 21
+    FG.Card.Render, FG.Mini.Render = card, mini
+    useRoute("skip-test")
+end
+print("recommended level ok")
+
 -- Progress belongs to its guide: a quest marked done by hand in one is still to do in another,
 -- and coming back finds the marks again. A new version keeps the quests, not the step marks.
 Press("skip")

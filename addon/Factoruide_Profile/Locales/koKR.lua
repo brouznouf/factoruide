@@ -163,6 +163,7 @@ FG.Locales.koKR = {
     ["windows locked"] = "창 고정됨",
     ["windows unlocked: drag them to move them"] = "창 고정 해제: 드래그해서 옮기세요",
     ["for %s"] = "%s 전용",
+    ["Level %d recommended, you are %d"] = "%d레벨 권장, 현재 %d레벨",
     ["marked done, waiting for %s"] = "완료 표시됨, %s 대기 중",
     ["%s: step %d"] = "%s: %d단계",
     ["%s ahead: step %d"] = "%s 앞서 있음: %d단계",

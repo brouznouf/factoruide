@@ -377,8 +377,14 @@ pub(super) fn drop_unhanded(quests: &mut Vec<Quest>, skipped: &mut Vec<(i64, Str
     }
 }
 
-/// A class quest whose prerequisite cannot be planned cannot be required either.
-pub(super) fn release_impossible_class_quests(quests: &mut [Quest], known: &HashSet<i64>, completed: &HashSet<i64>) {
+/// A class quest whose prerequisite cannot be planned cannot be required either. Returns the
+/// forced quests released (a zone's, an objective guide's).
+pub(super) fn release_impossible_class_quests(
+    quests: &mut [Quest],
+    known: &HashSet<i64>,
+    completed: &HashSet<i64>,
+) -> Vec<(i64, String)> {
+    let mut released = Vec::new();
     let mut doable: HashSet<i64> = quests.iter().map(|q| q.id).collect();
     loop {
         let mut changed = false;
@@ -401,6 +407,9 @@ pub(super) fn release_impossible_class_quests(quests: &mut [Quest], known: &Hash
                         q.name,
                         q.id
                     );
+                    if q.zone_forced {
+                        released.push((q.id, q.name.clone()));
+                    }
                     q.mandatory = false;
                     q.zone_forced = false;
                 }
@@ -410,6 +419,7 @@ pub(super) fn release_impossible_class_quests(quests: &mut [Quest], known: &Hash
             break;
         }
     }
+    released
 }
 
 /// Work of each quest's objectives (kills at the quest's level, objects, fixed time).

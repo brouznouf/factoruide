@@ -163,6 +163,7 @@ FG.Locales.zhTW = {
     ["windows locked"] = "視窗已鎖定",
     ["windows unlocked: drag them to move them"] = "視窗已解鎖：拖曳即可移動",
     ["for %s"] = "僅限%s",
+    ["Level %d recommended, you are %d"] = "建議等級 %d，你是 %d 級",
     ["marked done, waiting for %s"] = "已標記完成，等待%s",
     ["%s: step %d"] = "%s：第%d步",
     ["%s ahead: step %d"] = "%s領先：第%d步",

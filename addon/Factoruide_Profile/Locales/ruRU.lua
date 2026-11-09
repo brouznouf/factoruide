@@ -163,6 +163,7 @@ FG.Locales.ruRU = {
     ["windows locked"] = "окна закреплены",
     ["windows unlocked: drag them to move them"] = "окна откреплены: перетащите их, чтобы переместить",
     ["for %s"] = "для %s",
+    ["Level %d recommended, you are %d"] = "Рекомендуется уровень %d, у вас %d",
     ["marked done, waiting for %s"] = "отмечено выполненным, ждём %s",
     ["%s: step %d"] = "%s: шаг %d",
     ["%s ahead: step %d"] = "%s впереди: шаг %d",

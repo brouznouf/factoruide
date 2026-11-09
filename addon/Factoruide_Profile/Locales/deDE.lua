@@ -163,6 +163,7 @@ FG.Locales.deDE = {
     ["windows locked"] = "Fenster gesperrt",
     ["windows unlocked: drag them to move them"] = "Fenster entsperrt: zum Verschieben ziehen",
     ["for %s"] = "für %s",
+    ["Level %d recommended, you are %d"] = "Stufe %d empfohlen, du bist %d",
     ["marked done, waiting for %s"] = "als erledigt markiert, wartet auf %s",
     ["%s: step %d"] = "%s: Schritt %d",
     ["%s ahead: step %d"] = "%s voraus: Schritt %d",

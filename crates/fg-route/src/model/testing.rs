@@ -612,11 +612,12 @@ impl Scenario {
         self
     }
 
-    /// A dungeon guide of dungeon `area` (`PlanRequest::dungeon`), ending at level `to` at least.
-    pub fn dungeon_guide(mut self, area: i64, to: i64) -> Self {
-        self.profile.dungeon_guide = Some(area);
-        self.profile.to_level = to;
-        self.params.for_dungeon_guide(area);
+    /// An objective guide of these objectives (`PlanRequest::objectives`), at the character's
+    /// level (`levels`).
+    pub fn objectives(mut self, objectives: &[crate::model::GuideObjective]) -> Self {
+        self.profile.objectives = objectives.to_vec();
+        self.profile.to_level = self.profile.from_level;
+        self.params.for_objective_guide(objectives);
         self
     }
 
@@ -829,10 +830,10 @@ impl Scenario {
             }
         }
         // Quests outside the levels of the character are not built, but for the must-haves (and in
-        // a dungeon guide, `QuestBuilder::any_level`).
+        // an objective guide, `QuestBuilder::any_level`).
         quests.retain(|q| {
             self.required.contains(&q.id)
-                || self.profile.dungeon_guide.is_some()
+                || self.profile.objective_guide()
                 || self
                     .profile
                     .within_levels(q.level, q.min_level, self.params.max_quest_above)
@@ -924,18 +925,10 @@ impl Scenario {
         let mut notes = Vec::new();
         crate::job::check_exclusive_choices(&model, &members)?;
         let mates: Vec<StartState> = members.iter().skip(1).copied().cloned().collect();
-        let mut start = first.cloned();
-        if let Some(start) = &start {
+        if let Some(start) = first {
             crate::job::start_from(&mut model, &world, &mut self.params, start, &mates, &mut notes);
         }
-        crate::job::raise_dungeon_guide(
-            &mut model,
-            &world,
-            &mut self.params,
-            &mut self.profile,
-            start.as_mut().map(|s| (s, mates.as_slice())),
-            &mut notes,
-        )?;
+        crate::job::settle_objective_guide(&mut model, &world, &self.params, &self.profile)?;
         model.initial.abilities = model.abilities.initial(first, self.profile.from_level);
         Ok(Prepared {
             profile: self.profile,
@@ -1032,7 +1025,7 @@ pub fn profile(faction: Faction, from: i64, to: i64) -> Profile {
         locale: None,
         mates: Vec::new(),
         player: String::new(),
-        dungeon_guide: None,
+        objectives: Vec::new(),
     }
 }
 
@@ -1079,5 +1072,7 @@ pub fn bare(quests: Vec<Quest>, dungeons: Vec<Dungeon>, start: Loc, params: &Par
         bundles,
         dungeon_loot: vec![Vec::new(); d],
         patrols: HashMap::new(),
+        above_level: Vec::new(),
+        levels_ignored: false,
     }
 }

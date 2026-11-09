@@ -95,9 +95,9 @@ enum Command {
         /// A must-have quest ID, exact name, or JSON {"quest":21,"min_level":3,"max_level":4} (repeatable); includes prerequisites
         #[arg(long = "required-quest")]
         required_quests: Vec<String>,
-        /// A dungeon guide: every quest of this dungeon (instance area ID) the character can take, with what leads to them, and nothing else
-        #[arg(long)]
-        dungeon: Option<i64>,
+        /// An objective guide: every quest of `dungeon:<instance area>`, `zone:<area>` or `quest:<id>` (repeatable) the character can take, with what leads to them, and nothing else, whatever their levels
+        #[arg(long = "objective", value_parser = parse_objective)]
+        objectives: Vec<fg_route::model::GuideObjective>,
         /// Planner parameters, as key=value (repeatable)
         #[arg(long = "param")]
         params: Vec<String>,
@@ -291,7 +291,7 @@ fn main() -> Result<()> {
             name,
             profession,
             required_quests,
-            dungeon,
+            objectives,
             allow_elite,
             no_dungeons,
             pvp_quests,
@@ -315,7 +315,7 @@ fn main() -> Result<()> {
                 progression,
                 params,
                 required_quests,
-                dungeon,
+                objectives,
                 locale,
                 start: players.start,
                 mates: players.mates,
@@ -401,4 +401,19 @@ fn main() -> Result<()> {
         )?,
     }
     Ok(())
+}
+
+/// An objective of an objective guide: `dungeon:<instance area>`, `zone:<area>` or `quest:<id>`.
+fn parse_objective(text: &str) -> Result<fg_route::model::GuideObjective, String> {
+    use fg_route::model::GuideObjective;
+    let (kind, id) = text
+        .split_once(':')
+        .ok_or_else(|| format!("{text}: expected dungeon:<id>, zone:<id> or quest:<id>"))?;
+    let id: i64 = id.trim().parse().map_err(|_| format!("{text}: not an ID"))?;
+    match kind.trim() {
+        "dungeon" => Ok(GuideObjective::Dungeon(id)),
+        "zone" => Ok(GuideObjective::Zone(id)),
+        "quest" => Ok(GuideObjective::Quest(id)),
+        other => Err(format!("{other}: not an objective (dungeon, zone or quest)")),
+    }
 }

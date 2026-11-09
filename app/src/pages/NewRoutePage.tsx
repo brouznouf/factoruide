@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { api, type Options, type PlanRequest, type StartCandidate, type StartOption, type VersionMeta } from "../api";
+import { api, objectivesOf, type Options, type PlanRequest, type StartCandidate, type StartOption, type VersionMeta } from "../api";
 import { ConfigForm } from "../components/ConfigForm";
 import { RACE_COLORS, type OptimizeState, type RaceMark, type RaceSeries } from "../components/OptimizeProgress";
 import { RunView } from "../components/RunView";
@@ -37,15 +37,15 @@ interface Props {
   onDraft?: (request: PlanRequest) => void;
   /** The guide is saved: show it (with a notice when the optimization was stopped early), in the editor when created by hand. */
   onDone: (meta: VersionMeta, notice: string | null, edit?: boolean) => void;
-  /** Back to the dungeon guide page with a dungeon guide's configuration (cancelled or refused). */
-  onDungeon?: (request: PlanRequest) => void;
+  /** Back to the objective guide page with an objective guide's configuration (cancelled or refused). */
+  onObjectives?: (request: PlanRequest) => void;
 }
 
 /**
  * New route in two steps: configure, then watch the generation live; the saved guide opens at the end.
  * Created by hand instead, the guide is saved with no step and opens in the editor.
  */
-export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onDungeon }: Props) {
+export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onObjectives }: Props) {
   const t = useT();
   const lang = useLang();
   const [step, setStep] = useState<Step>("config");
@@ -293,15 +293,15 @@ export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onDungeo
           <span className="spinner" role="status" aria-hidden /> {t("Création du guide…")}
         </div>
       )}
-      {/* A dungeon guide is configured on its own page. */}
-      {step === "config" && initial?.dungeon != null && (
+      {/* An objective guide is configured on its own page. */}
+      {step === "config" && initial && objectivesOf(initial).length > 0 && (
         <div className="actions">
-          <button className="primary" onClick={() => onDungeon?.(initial)}>
-            {t("Retour au guide de donjon")}
+          <button className="primary" onClick={() => onObjectives?.(initial)}>
+            {t("Retour au guide d'objectifs")}
           </button>
         </div>
       )}
-      {step === "config" && initial?.dungeon == null && (
+      {step === "config" && objectivesOf(initial).length === 0 && (
         <ConfigForm
           key={JSON.stringify(initial)}
           options={options}

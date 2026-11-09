@@ -14,8 +14,9 @@ use std::collections::HashMap;
 
 pub(crate) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequest) -> Result<(Profile, Params)> {
     let mut params = req.params.clone().unwrap_or_else(|| overrides.params.clone());
-    if let Some(area) = req.dungeon {
-        params.for_dungeon_guide(area);
+    let objectives = req.objectives();
+    if !objectives.is_empty() {
+        params.for_objective_guide(&objectives);
     }
     let members = req.members(params.edition.rules());
     check_group(overrides, req, &members)?;
@@ -62,21 +63,22 @@ pub(crate) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
     }
     let start = members.first().copied().or(req.start.as_ref());
     let from_level = start.map_or(req.from_level, |s| s.level);
-    let to_level = match req.dungeon {
-        // Raised to the level its quests need once they are known (`job::dungeon_guide_level`).
-        Some(_) => from_level,
-        None if from_level >= req.to_level => {
-            return Err(RequestError::NothingToPlan {
-                from: from_level,
-                to: req.to_level,
-            }
-            .into());
+    let to_level = if !objectives.is_empty() {
+        // No level to reach: the guide ends with its quests.
+        from_level
+    } else if from_level >= req.to_level {
+        return Err(RequestError::NothingToPlan {
+            from: from_level,
+            to: req.to_level,
         }
-        None => req.to_level,
+        .into());
+    } else {
+        req.to_level
     };
-    let professions = match req.dungeon {
-        Some(_) => Vec::new(),
-        None => start.map_or_else(|| req.professions.clone(), professions_of),
+    let professions = if objectives.is_empty() {
+        start.map_or_else(|| req.professions.clone(), professions_of)
+    } else {
+        Vec::new()
     };
     let mut completed_quests: std::collections::HashSet<_> = start
         .map(|s| s.completed.iter().map(|q| q.0).collect())
@@ -104,10 +106,10 @@ pub(crate) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
             }
         }
     }
-    let required_class_quests = if req.dungeon.is_some() {
-        Vec::new()
-    } else {
+    let required_class_quests = if objectives.is_empty() {
         required_class_quests(&super::options::class_quests(conn, overrides)?, req, &class, &group)
+    } else {
+        Vec::new()
     };
     let class_ids: Vec<i64> = std::iter::once(class_id)
         .chain(mates.iter().map(|m| m.class_id))
@@ -153,7 +155,7 @@ pub(crate) fn character(conn: &Connection, overrides: &Overrides, req: &PlanRequ
             members[0].name.clone()
         },
         mates,
-        dungeon_guide: req.dungeon,
+        objectives,
     };
     Ok((profile, params))
 }

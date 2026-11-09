@@ -90,10 +90,15 @@ pub struct PlanRequest {
     /// character).
     #[serde(default)]
     pub mate_professions: Vec<Vec<crate::profession::ProfessionGoal>>,
-    /// A dungeon guide (instance area of the dungeon): from `start`, every quest of the dungeon
-    /// the character can take, with what they need first, the run and the turn-ins, nothing else.
-    /// `to_level` is left aside: the guide reaches the dungeon's first level if the character is
-    /// below it. No class quest, profession or other goal (`Params::for_dungeon_guide`).
+    /// An objective guide: from `start`, the quests of these objectives (a dungeon's, a zone's,
+    /// a quest) the character can take, with what they need first, nothing else, in the best
+    /// order whatever their levels (`Planner::objective_guide_level` tells the level they ask).
+    /// `to_level` is left aside. No class quest, profession or other goal
+    /// (`Params::for_objective_guide`).
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub objectives: Vec<model::GuideObjective>,
+    /// The dungeon guides saved before the objective guides (instance area): read as one
+    /// dungeon objective (`objectives`), kept as it was when saved again.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub dungeon: Option<i64>,
 }
@@ -156,6 +161,19 @@ pub const GROUP_MAX: usize = 5;
 pub const GROUP_MIN_LEVEL: i64 = 10;
 
 impl PlanRequest {
+    /// The objectives of an objective guide (empty: a leveling guide), an old dungeon guide's
+    /// dungeon included.
+    pub fn objectives(&self) -> Vec<model::GuideObjective> {
+        let mut out = self.objectives.clone();
+        if let Some(area) = self
+            .dungeon
+            .filter(|a| !out.contains(&model::GuideObjective::Dungeon(*a)))
+        {
+            out.insert(0, model::GuideObjective::Dungeon(area));
+        }
+        out
+    }
+
     /// The members of a group guide (empty alone), the one with the least XP first: the route
     /// is planned for it, the others' XP followed beside (`Profile::mates`).
     /// The professions the player named `name` levels (the character's own, or a mate's).
