@@ -4174,6 +4174,46 @@ local function ExportImport()
         FG.Import.Run("os.exit(1)") == nil and FG.Import.Run(string.dump(function() end)) == nil,
         "no os, no bytecode"
     )
+    -- WoW's integer formatter can be signed 32-bit even when Lua numbers hold wider masks.
+    -- Exercise the pasted-string preparation path, then reload the text kept for that guide.
+    local wide = Encode([[
+Factoruide.Routes = {}
+Factoruide.Routes["wide-numbers"] = {
+    race = 7, class = 8, format = 2, created = 1000, version = 1,
+    steps = {{ k = "reputation", rp = { sources = {{ eligibility = { race_mask = 8589934770 } }} } }},
+    numbers = {2147483647, 2147483648, -2147483648, -2147483649, 4294967295,
+        8589934770, -8589934770, 9007199254740991, 8589934770.25},
+    [8589934770] = "wide numeric key",
+}
+]])
+    local format = string.format
+    string.format = function(pattern, ...)
+        local value = ...
+        if pattern == "%d" and type(value) == "number" and (value < -2147483648 or value > 2147483647) then
+            error("integer overflow attempting to store " .. format("%.0f", value))
+        end
+        return format(pattern, ...)
+    end
+    local ok, pending, wideErr = pcall(FG.Import.Read, FG.Import, wide)
+    string.format = format
+    assert(ok and pending, "wide-number guide import: " .. tostring(wideErr or pending))
+    local restored = assert(loadstring(pending.guides["wide-numbers"].text))()
+    assert(restored.steps[1].rp.sources[1].eligibility.race_mask == 8589934770, "race mask remains a number")
+    assert(restored[8589934770] == "wide numeric key", "wide numeric table key survives")
+    local expected = {
+        2147483647,
+        2147483648,
+        -2147483648,
+        -2147483649,
+        4294967295,
+        8589934770,
+        -8589934770,
+        9007199254740991,
+        8589934770.25,
+    }
+    for i, value in ipairs(expected) do
+        assert(restored.numbers[i] == value, "wide-number save/reload preserves value " .. i)
+    end
     -- Kept as Lua text: read back the same, a table inside itself refused.
     local value = { 1, nil, 'a\n"b"\0', x = 0.1, [1.5] = true, ["end"] = { -3, 1 / 3, 2 ^ 60 } }
     local back = assert(loadstring(assert(FG.Import.Serialize(value))))()

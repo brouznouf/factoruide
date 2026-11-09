@@ -14,6 +14,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Addon
 
+- Pasted guides preserve wide numeric metadata and table keys instead of failing on clients with a 32-bit integer formatter.
+
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
 
 ### WoW data
