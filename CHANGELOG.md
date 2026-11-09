@@ -14,6 +14,8 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Addon
 
+- The quest panel keeps protected lines and tabs in place during combat on newer clients, then updates their layout after the fight.
+
 - An objective guide done below the level its quests ask says so on the current step until you reach it.
 
 ### WoW data

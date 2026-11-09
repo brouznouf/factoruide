@@ -3072,6 +3072,26 @@ FG.Guide:Layout().trackerPoint = nil
 tracker.placed = nil
 FG.Tracker:Refresh()
 
+-- A line that inherited the quest item buttons' protection (the newer clients): in combat it keeps
+-- its place and visibility, its texts still change; all of it back once the fight ends.
+do
+    local frozenLine = childOf(tracker, function(f) return rawget(f, "track") ~= nil end)
+    local frozenMoves = 0
+    local realClear = frozenLine.ClearAllPoints
+    frozenLine.ClearAllPoints = function() frozenMoves = frozenMoves + 1 end
+    frozenLine.IsProtected = function() return true end
+    frozenLine:Hide()
+    InCombatLockdown = function() return true end
+    FG.Tracker:Refresh()
+    assert(frozenMoves == 0, "a protected line is not moved during combat")
+    assert(not frozenLine._shown, "nor shown in combat")
+    InCombatLockdown = function() return false end
+    FG.Tracker:Refresh()
+    assert(frozenMoves > 0 and frozenLine._shown, "placed and shown again after the fight: " .. frozenMoves)
+    frozenLine.IsProtected = nil
+    frozenLine.ClearAllPoints = realClear
+end
+
 -- The minimal guide: its strip, the next steps under it and the compass over it move the strip.
 Press("mode")
 local strip = FG.Mini:Frame()
