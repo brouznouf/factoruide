@@ -140,6 +140,18 @@ objectives = [
   { item = 251961, amount = 1 },
 ]
 
+# An Alarming Request: what forever/quests.toml has Heart of Disruption require. Bare (no giver
+# here): the tests assert the dungeon's doors and the model's prerequisite, not the quests' routes.
+[[quest]]
+id = 92432
+name = "An Alarming Request"
+level = 33
+min_level = 30
+races_mask = 4294967373
+zone = 36
+xp = 660
+objectives_text = "Report to the Image of Archmage Modera near the City of Dalaran."
+
 [[row]]
 table = "dungeon"
 values = { area = 16544, name = "City of Dalaran", alt_areas = "null", entrance_zone = 36, entrance_x = 8.46, entrance_y = 59.21, source = "fixture" }
