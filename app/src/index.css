@@ -4141,6 +4141,23 @@ button.link.cmp-jump {
 .gm-layers {
   position: relative;
 }
+/* How many steps are drawn from the current one. */
+.gm-ahead {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.gm-ahead input {
+  width: 120px;
+  padding: 0;
+}
+.gm-ahead span {
+  min-width: 44px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
 .gm-menu {
   position: absolute;
   top: calc(100% + 4px);
@@ -4321,6 +4338,17 @@ button.link.cmp-jump {
   stroke: #fff;
   stroke-width: 3.2;
   filter: drop-shadow(0 0 3px rgba(79, 224, 207, 0.9));
+}
+/* The way along the steps drawn: small chevrons over the lines, dark edged to show on any map. */
+.gm-arrows path {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.9));
+  pointer-events: none;
 }
 .gm-zone-label {
   fill: #fff;

@@ -892,6 +892,7 @@ export const CATALOG: Record<string, Entry> = {
   "Calques": { en: "Layers", de: "Ebenen", es: "Capas", pt: "Camadas", ru: "Слои", ko: "레이어", zhCN: "图层", zhTW: "圖層" },
   "Trajets à pied": { en: "Walks", de: "Fußwege", es: "Trayectos a pie", pt: "Trajetos a pé", ru: "Пешие маршруты", ko: "도보 이동", zhCN: "步行路线", zhTW: "步行路線" },
   "Bateaux et zeppelins": { en: "Boats and zeppelins", de: "Schiffe und Zeppeline", es: "Barcos y zepelines", pt: "Barcos e zepelins", ru: "Корабли и дирижабли", ko: "배와 비행선", zhCN: "船只和飞艇", zhTW: "船隻與飛艇" },
+  "Étapes dessinées à partir de l'étape en cours, parmi celles de la zone": { en: "Steps drawn from the current one, among the zone's", de: "Gezeichnete Schritte ab dem aktuellen, unter denen der Zone", es: "Pasos dibujados desde el actual, entre los de la zona", pt: "Etapas desenhadas a partir da atual, entre as da zona", ru: "Шаги, показанные от текущего, из шагов зоны", ko: "현재 단계부터 그려지는 단계 (지역의 단계 중)", zhCN: "从当前步骤起绘制的步骤（本区域内）", zhTW: "從目前步驟起繪製的步驟（本區域內）" },
   "Étapes sur la carte": { en: "Steps on the map", de: "Schritte auf der Karte", es: "Pasos en el mapa", pt: "Etapas no mapa", ru: "Шаги на карте", ko: "지도 위 단계", zhCN: "地图上的步骤", zhTW: "地圖上的步驟" },
   "Tout le guide": { en: "Whole guide", de: "Ganzer Guide", es: "Toda la guía", pt: "Guia inteiro", ru: "Весь гайд", ko: "가이드 전체", zhCN: "整个指南", zhTW: "整個指南" },
   "La zone en cours": { en: "Current zone", de: "Aktuelle Zone", es: "Zona actual", pt: "Zona atual", ru: "Текущая зона", ko: "현재 지역", zhCN: "当前区域", zhTW: "目前區域" },

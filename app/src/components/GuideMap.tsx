@@ -3,18 +3,21 @@ import type { Difficulty, Leg, MapInfo, RouteStep, Step, Suggestions, WorldPoint
 import { useAreaName, useT } from "../i18n";
 import { type Card, type Moves, positionAt } from "./guideTimeline";
 import type { Clock } from "./playback";
+import { aheadInZone, aheadPicked, arrowMarks, stepsShown } from "./mapSteps";
 import { labelPoint, loadImage, loadIndex, loadMinimapImage, loadMinimapIndex } from "./WorldMap";
 
-/** What the map draws: the kinds of moves, the step markers, the whole guide or the current zone only. */
+/** What the map draws: the kinds of moves, the step markers, the whole guide or the current zone only,
+ * and how many steps of the zone from the current one (null: all of them). */
 export interface MapLayers {
   walk: boolean;
   flight: boolean;
   link: boolean;
   markers: boolean;
   scope: "all" | "zone";
+  ahead: number | null;
 }
 
-export const DEFAULT_LAYERS: MapLayers = { walk: true, flight: true, link: true, markers: true, scope: "zone" };
+export const DEFAULT_LAYERS: MapLayers = { walk: true, flight: true, link: true, markers: true, scope: "zone", ahead: null };
 
 interface Props {
   steps: Step[];
@@ -62,7 +65,7 @@ interface Offer {
 /** Continents (game maps), west to east. */
 const CONTINENTS = [1, 0, 530];
 /** Zoom range: the closest, times a whole continent in view; the furthest, times all the continents in view. */
-const MAX_ZOOM = 24;
+const MAX_ZOOM = 64;
 const MIN_ZOOM = 0.6;
 /** From this zoom (times a whole continent in view) the zones' own maps, sharper, are drawn over the continent's. */
 const ZONE_DETAIL = 2;
@@ -83,6 +86,8 @@ const NEAR_BEFORE = 2;
 const NEAR_AFTER = 8;
 /** Screen pixels between the markers of steps at the same place. */
 const SAME_PLACE_GAP = 22;
+/** Screen pixels between the arrows telling the way along the route. */
+const ARROW_GAP = 70;
 
 interface View {
   k: number;
@@ -151,9 +156,12 @@ const f1 = (v: number) => Math.round(v * 10) / 10;
 /** A world point on the map (null: on a map not drawn, a dungeon's). */
 type Project = (p: WorldPoint) => [number, number] | null;
 
-/** The moves of `legs` as path data by kind, in the map's pixels: a boat or a portal from one continent to another goes straight across. */
+type Point = [number, number];
+
+/** The moves of `legs` as path data by kind, in the map's pixels: a boat or a portal from one continent to another goes straight across.
+ * `lines`: the same moves as points (what the arrows go along), but the jumps. */
 function trace(legs: Leg[], project: Project) {
-  const out = { walk: "", flight: "", link: "", jump: "" };
+  const out = { walk: "", flight: "", link: "", jump: "", lines: { walk: [] as Point[][], flight: [] as Point[][], link: [] as Point[][] } };
   for (const l of legs) {
     const from = project(l.from);
     const to = project(l.to);
@@ -162,10 +170,17 @@ function trace(legs: Leg[], project: Project) {
     const via = l.from[0] === l.to[0] ? (l.via ?? []).map(([x, y]) => project([l.from[0], x, y])!) : [];
     const pts = [...via, to];
     const d = `M${f1(x0)},${f1(y0)}${pts.map(([x, y]) => `L${f1(x)},${f1(y)}`).join("")}`;
-    if (l.mode === "walk" || l.mode === "mount") out.walk += d;
-    else if (l.mode === "flight") out.flight += d;
-    else if (l.mode === "link") out.link += d;
-    else out.jump += d;
+    const line: Point[] = [from, ...pts];
+    if (l.mode === "walk" || l.mode === "mount") {
+      out.walk += d;
+      out.lines.walk.push(line);
+    } else if (l.mode === "flight") {
+      out.flight += d;
+      out.lines.flight.push(line);
+    } else if (l.mode === "link") {
+      out.link += d;
+      out.lines.link.push(line);
+    } else out.jump += d;
   }
   return out;
 }
@@ -409,13 +424,26 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     setTimeout(() => (drag.current = null), 0);
   };
 
-  // The route: the whole guide faint, the zone under way, the card under way bright.
+  // The steps drawn: from the current one, as many as chosen among the zone's (the slider).
+  const zoneMax = Math.max(1, zone[1] - zone[0] + 1);
+  const aheadShown = stepsShown(layers.ahead, zoneMax);
+  const first = Math.min(Math.max(current, zone[0]), zone[1]);
+  const last = Math.min(zone[1], first + aheadShown - 1);
+  // Another zone under way: a count it cannot draw becomes all its steps.
+  useEffect(() => {
+    if (!cards.length) return;
+    const ahead = aheadInZone(layers.ahead, zoneMax);
+    if (ahead !== layers.ahead) onLayers({ ...layers, ahead });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoneMax, cards.length]);
+
+  // The route: the whole guide faint, the steps drawn of the zone under way, the card under way bright.
   const all = useMemo(() => (project ? trace(moves.legs, project) : null), [moves, project]);
   const span = (from: number, to: number) => moves.legs.filter((l) => l.end > from && l.start < to);
   const zoneTrace = useMemo(
-    () => (project && cards[zone[0]] ? trace(span(cards[zone[0]].start, cards[zone[1]].end), project) : null),
+    () => (project && cards[first] && cards[last] ? trace(span(cards[first].start, cards[last].end), project) : null),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [moves, project, cards, zone[0], zone[1]],
+    [moves, project, cards, first, last],
   );
   const lit = useMemo(
     () => (project && cards[current] ? trace(span(cards[current].start, currentEnd), project) : null),
@@ -429,7 +457,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
   const markers = useMemo(() => {
     if (!project || !layers.markers) return [];
     const out: { n: number; x: number; y: number; dx: number; kind: string; glyph: string; near: boolean }[] = [];
-    for (let n = zone[0]; n <= zone[1] && n < cards.length; n++) {
+    for (let n = first; n <= last && n < cards.length; n++) {
       const c = cards[n];
       const at = c.world && project(c.world);
       if (!at) continue;
@@ -445,7 +473,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     for (const same of places.values()) same.forEach((m, i) => (m.dx = (i - (same.length - 1) / 2) * SAME_PLACE_GAP));
     // The current card on top, the near ones over the dots.
     return out.sort((a, b) => Number(a.near) - Number(b.near) || Number(a.n === current) - Number(b.n === current));
-  }, [project, layers.markers, zone, cards, steps, current]);
+  }, [project, layers.markers, first, last, cards, steps, current]);
 
   // Editing: the quests not taken ("!"), the objectives forgotten (red) and the turn-ins
   // forgotten ("?" in red), on the continents.
@@ -490,6 +518,12 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
       </g>
     );
   const s = 1 / scale;
+  // The way along the steps drawn: arrows spaced on the screen, whatever the zoom.
+  const arrows = useMemo(() => {
+    if (!zoneTrace) return [];
+    const { lines } = zoneTrace;
+    return arrowMarks([...(layers.walk ? lines.walk : []), ...(layers.flight ? lines.flight : []), ...(layers.link ? lines.link : [])], ARROW_GAP / scale);
+  }, [zoneTrace, layers.walk, layers.flight, layers.link, scale]);
   const shown = useMemo(() => zones.filter((z) => shownZones.includes(z.z.id)), [zones, shownZones]);
   const hidden = useMemo(() => covers.filter((c) => shownZones.includes(c.around.z.id)), [covers, shownZones]);
 
@@ -501,6 +535,20 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
           <span aria-hidden>◎</span> {t("Suivre le personnage")}
         </button>
         <LayersMenu layers={layers} onLayers={onLayers} />
+        <label className="gm-ahead" title={t("Étapes dessinées à partir de l'étape en cours, parmi celles de la zone")}>
+          {t("Étapes")}
+          <input
+            type="range"
+            min={1}
+            max={zoneMax}
+            value={aheadShown}
+            disabled={zoneMax <= 1}
+            onChange={(e) => onLayers({ ...layers, ahead: aheadPicked(Number(e.target.value), zoneMax) })}
+          />
+          <span>
+            {aheadShown} / {zoneMax}
+          </span>
+        </label>
         <span className="gm-bar-fill" />
       </div>
       {status && <div className="gm-status">{status}</div>}
@@ -572,6 +620,11 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
             {layers.scope === "all" && routeLayer(all, "gm-all")}
             {routeLayer(zoneTrace, layers.scope === "all" ? "gm-zone" : "gm-zone only")}
             {routeLayer(lit, "gm-lit")}
+            <g className="gm-arrows">
+              {arrows.map((a, i) => (
+                <path key={i} d="M-4,-4L1,0L-4,4" transform={`translate(${f1(a.x)} ${f1(a.y)}) rotate(${Math.round((a.angle * 180) / Math.PI)}) scale(${s})`} vectorEffect="non-scaling-stroke" />
+              ))}
+            </g>
             {markers.map((m) => (
               <g
                 key={m.n}
