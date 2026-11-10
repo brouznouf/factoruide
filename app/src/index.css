@@ -4339,6 +4339,10 @@ button.link.cmp-jump {
   stroke-width: 3.2;
   filter: drop-shadow(0 0 3px rgba(79, 224, 207, 0.9));
 }
+/* The caves over the minimap: a dark rim so they read as underground. */
+.gm-caves {
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.85));
+}
 /* An island in the sky on the stitched world map: a pale glow round it, a double gold frame. */
 .gm-isle-glow {
   fill: #f4f8fc;

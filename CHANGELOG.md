@@ -14,6 +14,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - A web app built on Windows includes its game databases and map images.
 - The guide map zooms in further, draws only the steps from the current one (a slider sets how many of the zone's), and arrows show which way the route goes.
 - WoW Forever: the guide map is one seamless map of Azeroth, every zone's art blended into its neighbours, the game's minimap showing through as you zoom in; Zephras Isle floats in its frame between the continents.
+- Zoomed in on the guide map, caves, Ironforge and Undercity show as the game's minimap draws them inside.
 - The zone maps no longer miss pieces of their explored areas (Duskwood's Twilight Grove, among others).
 
 ### Guides

@@ -116,6 +116,14 @@ const WORLD_ART: [number, number][] = [
 /** The underground cities (Ironforge, Undercity): the minimap shows the mountain over them, so
  * their own plan is drawn over it when zoomed in, by zoom (times a whole continent in view). */
 const UNDERGROUND_CITIES = [1455, 1458];
+/** The caves and underground places as the game's minimap draws them inside (`fgd caves`, packed
+ * as game map `CAVES` + the continent's): over the minimap from a close zoom, by zoom (times a
+ * whole continent in view). */
+const CAVES = 100000;
+const CAVE_ART: [number, number][] = [
+  [9, 0],
+  [14, 1],
+];
 const CITY_PLAN: [number, number][] = [
   [5, 0],
   [9, 1],
@@ -393,6 +401,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
   const [shownZones, setShownZones] = useState<number[]>([]);
   const [shownTiles, setShownTiles] = useState<MinimapTile[]>([]);
   const [shownWorld, setShownWorld] = useState<MinimapTile[]>([]);
+  const [shownCaves, setShownCaves] = useState<MinimapTile[]>([]);
   // Zoomed in to the minimap: its dark sea everywhere, between the continents too.
   const [closeUp, setCloseUp] = useState(false);
   // Zooms: all the continents in view, and one (what the zooms of the details are relative to).
@@ -420,6 +429,8 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     const tiles = near ? [...panels!.values()].flatMap((p) => minimapTiles(p, minimap!, v.k, [x0, y0, x1, y1])) : [];
     const same = (a: MinimapTile[], b: MinimapTile[]) => a.map((o) => o.key).join() === b.map((o) => o.key).join();
     setShownTiles((old) => (same(old, tiles) ? old : tiles));
+    const caves = near && v.k >= unitK * CAVE_ART[0][0] ? [...panels!.values()].flatMap((p) => minimapTiles(p, minimap!, v.k, [x0, y0, x1, y1], true)) : [];
+    setShownCaves((old) => (same(old, caves) ? old : caves));
     if (world?.tiled) {
       // The stitched map's tiles in view: of the level drawn about pixel for pixel, over the
       // whole base level (the open sea the more detailed levels leave out).
@@ -795,6 +806,13 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
               ))}
             </g>
             {world?.tiled && index && <CityPlans index={index} panels={world.panels} zoom={scale / unitK} />}
+            {shownCaves.length > 0 && (
+              <g opacity={byZoom(CAVE_ART, scale / unitK)} className="gm-caves">
+                {shownCaves.map((tile) => (
+                  <MinimapImage key={tile.key} tile={tile} />
+                ))}
+              </g>
+            )}
             {scale >= 1.2 * unitK &&
               zones
                 .filter((z) => z.z.area)
@@ -934,15 +952,16 @@ interface MinimapTile {
 
 /** The minimap images of a continent over `box` (x0, y0, x1, y1 on the map) at zoom `k`: of the
  * level whose images are drawn closest to their own size. */
-function minimapTiles(panel: Panel, have: Set<string>, k: number, [x0, y0, x1, y1]: number[]): MinimapTile[] {
-  const map = panel.map;
+function minimapTiles(panel: Panel, have: Set<string>, k: number, [x0, y0, x1, y1]: number[], caves = false): MinimapTile[] {
+  // The caves (`fgd caves`) are packed as their own map, one image a game tile.
+  const map = caves ? CAVES + panel.map : panel.map;
   // A game tile (x eastwards from world y = 32 tiles, y southwards from world x = 32 tiles) on the
   // map, measured with the panel's own projection (the continent's art, or its place on the
   // stitched world map).
   const [ox, oy] = panel.project(32 * TILE, 32 * TILE);
   const sx = panel.project(32 * TILE, 31 * TILE)[0] - ox;
   const sy = panel.project(31 * TILE, 32 * TILE)[1] - oy;
-  const level = Math.max(0, Math.min(MINIMAP_LEVELS - 1, Math.round(Math.log2(MINIMAP_SIZE / (sx * k)))));
+  const level = caves ? 0 : Math.max(0, Math.min(MINIMAP_LEVELS - 1, Math.round(Math.log2(MINIMAP_SIZE / (sx * k)))));
   const span = 2 ** level;
   const [w, h] = [sx * span, sy * span];
   const out: MinimapTile[] = [];
