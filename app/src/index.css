@@ -4392,9 +4392,9 @@ path.gm-lit-glow {
 }
 /* An island in the sky on the stitched world map: a pale glow round it, a double gold frame. */
 .gm-isle-glow {
-  fill: #f4f8fc;
+  fill: #bcd6ef;
   fill-opacity: 1;
-  opacity: 0.16;
+  opacity: 0.12;
 }
 .gm-isle-frame {
   fill: none;

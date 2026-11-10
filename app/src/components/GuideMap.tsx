@@ -6,7 +6,7 @@ import { useAreaName, useT } from "../i18n";
 import { type Card, type Moves, positionAt } from "./guideTimeline";
 import type { Clock } from "./playback";
 import { aheadInZone, aheadPicked, arrowMarks, stepsShown } from "./mapSteps";
-import { decodedTile, decodeTile, labelPoint, loadImage, loadIndex, loadMinimapImage, loadMinimapIndex } from "./WorldMap";
+import { type Decoded, decodedTile, decodeTile, labelPoint, loadImage, loadIndex, loadMinimapImage, loadMinimapIndex } from "./WorldMap";
 
 /** What the map draws: the kinds of moves, the step markers, the whole guide or the current zone only,
  * and how many steps of the zone from the current one (null: all of them). */
@@ -325,6 +325,7 @@ const PANES: [string, number][] = [
   ["gm-base", 202],
   ["gm-zones", 205],
   ["gm-art", 210],
+  ["gm-isle-glow", 213],
   ["gm-isle", 215],
   ["gm-minimap", 220],
   ["gm-caves", 230],
@@ -348,29 +349,28 @@ class WorldTiles extends L.GridLayer {
       setTimeout(() => done(undefined, empty), 0);
       return empty;
     }
-    // Decoded already: shown at once (a copy of it draws from the memory).
+    // A canvas the decoded tile is drawn into: painted the moment it is placed (a copy of an image
+    // may wait for the engine to decode it again, the grey sea showing meanwhile).
+    const canvas = this.clip(document.createElement("canvas"), coords);
+    canvas.width = canvas.height = WORLD_TILE;
+    const draw = (img: Decoded) => canvas.getContext("2d")!.drawImage(img, 0, 0, WORLD_TILE, WORLD_TILE);
     const ready = decodedTile(key);
     if (ready) {
-      const img = this.clip(ready.cloneNode() as HTMLImageElement, coords);
-      setTimeout(() => done(undefined, img), 0);
-      return img;
+      draw(ready);
+      setTimeout(() => done(undefined, canvas), 0);
+      return canvas;
     }
-    const img = this.clip(document.createElement("img"), coords);
-    img.alt = "";
-    // A tile that could not be loaded is left out (no broken image drawn), the floor under it.
-    const failed = () => {
-      img.style.visibility = "hidden";
-      done(new Error("tile"), img);
-    };
-    img.onload = () => done(undefined, img);
-    img.onerror = failed;
     decodeTile(WORLD, level, coords.x, coords.y)
-      .then((d) => (img.src = d.src))
-      .catch(failed);
-    return img;
+      .then((img) => {
+        draw(img);
+        done(undefined, canvas);
+      })
+      // A tile that could not be loaded is left blank, the floor under it.
+      .catch(() => done(new Error("tile"), canvas));
+    return canvas;
   }
   /** A tile over the map's east or south edge cut there (the tiles' padding past it left out). */
-  clip(img: HTMLImageElement, coords: L.Coords) {
+  clip<T extends HTMLElement>(img: T, coords: L.Coords): T {
     const span = WORLD_TILE * 2 ** -coords.z;
     // The largest x and y (latitude is y here, the larger the further south).
     const b = (this.options as L.GridLayerOptions).bounds as L.LatLngBounds;
@@ -1061,12 +1061,13 @@ function isle(p: Panel): L.LayerGroup {
   const group = L.layerGroup();
   const [ix, iy] = [p.w * ISLE_BORDER, p.h * ISLE_BORDER * 1.5];
   const r = { x: p.dx + ix, y: p.dy + iy, w: p.w - 2 * ix, h: p.h - 2 * iy };
-  const renderer = L.svg({ pane: "gm-isle", padding: 0.5 });
-  // A pale halo, ring after ring fainter outwards.
+  // A pale halo, ring after ring fainter outwards: under the art (over it, it would pale it too).
+  const glow = L.svg({ pane: "gm-isle-glow", padding: 0.5 });
   for (let i = ISLE_HALO; i > 0; i--) {
     const g = Math.min(r.w, r.h) * 0.025 * i;
-    L.rectangle(box(r, g), { renderer, className: "gm-isle-glow", interactive: false, stroke: false }).addTo(group);
+    L.rectangle(box(r, g), { renderer: glow, className: "gm-isle-glow", interactive: false, stroke: false }).addTo(group);
   }
+  const renderer = L.svg({ pane: "gm-isle", padding: 0.5 });
   const art = L.imageOverlay(BLANK, box({ x: p.dx, y: p.dy, w: p.w, h: p.h }), { pane: "gm-isle", interactive: false }).addTo(group);
   art.on("add", () => {
     const el = art.getElement();
