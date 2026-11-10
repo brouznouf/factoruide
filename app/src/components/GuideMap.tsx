@@ -315,6 +315,8 @@ const escape = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": 
  * frame goes. */
 const WHEEL_ZOOM = 1 / 300;
 const WHEEL_GLIDE = 0.3;
+/** Share of the view's size added on each side for the images drawn by view (minimap, caves). */
+const VIEW_MARGIN = 0.25;
 /** The map's planes, bottom to top (their z-index). */
 const PANES: [string, number][] = [
   ["gm-world", 200],
@@ -541,7 +543,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     art.current = { continents: [] };
     if (world.tiled) {
       const bounds = L.latLngBounds(ll(0, 0), ll(world.width, world.height));
-      const common = { tileSize: WORLD_TILE, bounds, noWrap: true, pane: "gm-world", keepBuffer: 2, className: "gm-world-tiles", minZoom: -20, maxZoom: 20 };
+      const common = { tileSize: WORLD_TILE, bounds, noWrap: true, pane: "gm-world", keepBuffer: 4, className: "gm-world-tiles", minZoom: -20, maxZoom: 20 };
       // The coarse level under it all (the open sea the detailed levels leave out), the detailed
       // levels over it.
       new WorldTiles(minimap, { ...common, minNativeZoom: -WORLD_BASE, maxNativeZoom: -WORLD_BASE }).addTo(group);
@@ -604,10 +606,16 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     if (!world || !panels || !minimap || !size.w) return;
     const kk = 2 ** map.getZoom();
     const b = map.getBounds();
-    const view = [b.getWest(), Math.min(b.getNorth(), b.getSouth()), b.getEast(), Math.max(b.getNorth(), b.getSouth())];
+    const exact = [b.getWest(), Math.min(b.getNorth(), b.getSouth()), b.getEast(), Math.max(b.getNorth(), b.getSouth())];
+    // A margin round the view: what a pan brings is there already.
+    const [mw, mh] = [(exact[2] - exact[0]) * VIEW_MARGIN, (exact[3] - exact[1]) * VIEW_MARGIN];
+    const view = [exact[0] - mw, exact[1] - mh, exact[2] + mw, exact[3] + mh];
     const near = minimap.size > 0 && kk >= unitK * (world.tiled ? MINIMAP_MIX[0][0] : MINIMAP_DETAIL);
     const tiles = near ? [...panels.values()].flatMap((p) => minimapTiles(p, minimap, kk, view)) : [];
     syncImages(map, minimapShown.current, tiles.map((tile) => ({ key: tile.key, rect: tile.rect, pad: tile.rect.w / 512, load: () => loadMinimapImage(tile.map, tile.level, tile.x, tile.y) })), "gm-minimap");
+    // The next level in, for the view (not its margin), loaded before a zoom asks for it.
+    if (minimap.size > 0 && kk * 2 >= unitK * (world.tiled ? MINIMAP_MIX[0][0] : MINIMAP_DETAIL))
+      for (const p of panels.values()) for (const tile of minimapTiles(p, minimap, kk * 2, exact)) loadMinimapImage(tile.map, tile.level, tile.x, tile.y).catch(() => {});
     const caves = near && kk >= unitK * CAVE_ART[0][0] ? [...panels.values()].flatMap((p) => minimapTiles(p, minimap, kk, view, true)) : [];
     syncImages(map, cavesShown.current, caves.map((tile) => ({ key: tile.key, rect: tile.rect, pad: 0, load: () => loadMinimapImage(tile.map, tile.level, tile.x, tile.y) })), "gm-caves");
     // The old maps: the zones' over the continents' when zoomed in, until the minimap comes.
@@ -960,24 +968,51 @@ interface Shown {
   load: () => Promise<string>;
 }
 
-/** Bring a pane's images to `want`: those gone removed, the new ones added (their picture once loaded). */
+/** The images a pane should show now (the last asked), and those being loaded. */
+const wanted = new WeakMap<Map<string, L.ImageOverlay>, Set<string>>();
+const loading = new WeakMap<Map<string, L.ImageOverlay>, Set<string>>();
+
+/** Bring a pane's images to `want`: each new one added once its picture is loaded, and those no
+ * longer wanted kept under them until all the new ones are there (no hole showing the sea while
+ * they load). */
 function syncImages(map: L.Map, store: Map<string, L.ImageOverlay>, want: Shown[], pane: string) {
   const keys = new Set(want.map((w) => w.key));
-  for (const [key, o] of store)
-    if (!keys.has(key)) {
-      o.remove();
-      store.delete(key);
-    }
+  wanted.set(store, keys);
+  const busy = loading.get(store) ?? new Set<string>();
+  loading.set(store, busy);
+  const prune = () => {
+    const now = wanted.get(store);
+    if (!now || busy.size) return;
+    for (const [key, o] of store)
+      if (!now.has(key)) {
+        o.remove();
+        store.delete(key);
+      }
+  };
   for (const w of want) {
-    if (store.has(w.key)) continue;
-    const o = L.imageOverlay(BLANK, box(w.rect, w.pad), { pane, interactive: false }).addTo(map);
-    const el = o.getElement();
-    if (el && w.clip) el.style.clipPath = w.clip;
-    store.set(w.key, o);
+    if (store.has(w.key) || busy.has(w.key)) continue;
+    busy.add(w.key);
+    const settled = () => {
+      busy.delete(w.key);
+      prune();
+    };
     w.load()
-      .then((src) => store.get(w.key) === o && o.setUrl(src))
-      .catch(() => {});
+      .then((src) => {
+        // No longer wanted meanwhile: not added.
+        if (!wanted.get(store)?.has(w.key)) return settled();
+        const o = L.imageOverlay(src, box(w.rect, w.pad), { pane, interactive: false, opacity: 0 });
+        o.once("load error", () => {
+          o.setOpacity(1);
+          settled();
+        });
+        o.addTo(map);
+        const el = o.getElement();
+        if (el && w.clip) el.style.clipPath = w.clip;
+        store.set(w.key, o);
+      })
+      .catch(settled);
   }
+  prune();
 }
 
 /** A CSS clip of an image at `rect` to the biggest of its outline's rings (pixels of the map). */
