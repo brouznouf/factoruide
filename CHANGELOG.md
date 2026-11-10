@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+## 0.18.0 (2026-11-11)
+
+WoW Forever's guide map on one seamless map of Azeroth, and the latest WoW Forever data.
+
 ### App
 
 - The web app no longer runs out of memory while making a guide, nor after making a few.
