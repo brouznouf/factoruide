@@ -86,6 +86,8 @@ const NEAR_BEFORE = 2;
 const NEAR_AFTER = 8;
 /** Screen pixels between the markers of steps at the same place. */
 const SAME_PLACE_GAP = 22;
+/** Share of the way to the zoom asked for each frame goes (the zoom glides there). */
+const ZOOM_GLIDE = 0.22;
 /** Screen pixels between the arrows telling the way along the route. */
 const ARROW_GAP = 70;
 /** The stitched world map (`fgd worldmap`, packed with the minimap as game map 947): its tiles'
@@ -438,8 +440,15 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
   // The minimap known: drawn if zoomed in already.
   useEffect(() => refresh.current(), [minimap]);
 
+  // A zoom gliding to its target (see `zoomTo`): a jump elsewhere stops it.
+  const glide = useRef<{ k: number; cx: number; cy: number; raf: number } | null>(null);
+  const stopGlide = () => {
+    cancelAnimationFrame(glide.current?.raf ?? 0);
+    glide.current = null;
+  };
   const center = useCallback(
     (p: WorldPoint, k = view.current.k) => {
+      stopGlide();
       const at = project?.(p);
       if (!at || !size.w) return;
       const [px, py] = at;
@@ -448,6 +457,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     [project, size, apply],
   );
   const fit = useCallback(() => {
+    stopGlide();
     if (!world || !size.w) return;
     apply({ k: fitK, x: (size.w - world.width * fitK) / 2, y: (size.h - world.height * fitK) / 2 });
   }, [world, size, fitK, apply]);
@@ -504,6 +514,33 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     return clock.subscribe(draw);
   }, [clock, draw]);
 
+  // Zooms glide: each frame goes part of the way to the zoom asked for, around the same point
+  // of the screen (the wheel's pointer, the middle for the buttons and while following).
+  useEffect(() => () => cancelAnimationFrame(glide.current?.raf ?? 0), []);
+  const zoomTo = useCallback(
+    (k: number, cx: number, cy: number) => {
+      const target = Math.min(unitK * MAX_ZOOM, Math.max(fitK * MIN_ZOOM, k));
+      const g = glide.current;
+      if (g) {
+        Object.assign(g, { k: target, cx, cy });
+        return;
+      }
+      const step = () => {
+        const a = glide.current;
+        if (!a) return;
+        const v = view.current;
+        const ratio = a.k / v.k;
+        const done = Math.abs(Math.log(ratio)) < 0.003;
+        const nk = done ? a.k : v.k * ratio ** ZOOM_GLIDE;
+        apply({ k: nk, x: a.cx - ((a.cx - v.x) * nk) / v.k, y: a.cy - ((a.cy - v.y) * nk) / v.k });
+        draw();
+        if (done) glide.current = null;
+        else a.raf = requestAnimationFrame(step);
+      };
+      glide.current = { k: target, cx, cy, raf: requestAnimationFrame(step) };
+    },
+    [unitK, fitK, apply, draw],
+  );
   // Wheel zooms around the pointer (the map is the page: no Ctrl needed).
   useEffect(() => {
     const el = frame.current;
@@ -511,28 +548,23 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const rect = el.getBoundingClientRect();
-      const v = view.current;
-      const k = Math.min(unitK * MAX_ZOOM, Math.max(fitK * MIN_ZOOM, v.k * Math.exp(-e.deltaY * 0.0015)));
+      // Lines or pages (some mice) as pixels.
+      const dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? size.h : 1);
+      const from = glide.current?.k ?? view.current.k;
       // Following: the zoom keeps the character in the middle.
       const [cx, cy] = follow ? [size.w / 2, size.h / 2] : [e.clientX - rect.left, e.clientY - rect.top];
-      apply({ k, x: cx - ((cx - v.x) * k) / v.k, y: cy - ((cy - v.y) * k) / v.k });
-      draw();
+      zoomTo(from * Math.exp(-dy * 0.002), cx, cy);
     };
     el.addEventListener("wheel", onWheel, { passive: false });
     return () => el.removeEventListener("wheel", onWheel);
-  }, [fitK, unitK, follow, size, apply, draw]);
-  const zoomBy = (f: number) => {
-    const v = view.current;
-    const k = Math.min(unitK * MAX_ZOOM, Math.max(fitK * MIN_ZOOM, v.k * f));
-    const [cx, cy] = [size.w / 2, size.h / 2];
-    apply({ k, x: cx - ((cx - v.x) * k) / v.k, y: cy - ((cy - v.y) * k) / v.k });
-    draw();
-  };
+  }, [follow, size, zoomTo]);
+  const zoomBy = (f: number) => zoomTo((glide.current?.k ?? view.current.k) * f, size.w / 2, size.h / 2);
 
   // Dragging moves the map (and stops following the character).
   const drag = useRef<{ x: number; y: number; vx: number; vy: number; moved: boolean } | null>(null);
   const onPointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
+    stopGlide();
     // A text selected elsewhere would stay greyed (and grow) while the map is dragged.
     window.getSelection()?.removeAllRanges();
     drag.current = { x: e.clientX, y: e.clientY, vx: view.current.x, vy: view.current.y, moved: false };
