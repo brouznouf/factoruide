@@ -90,13 +90,13 @@ const SAME_PLACE_GAP = 22;
 const ARROW_GAP = 70;
 /** The stitched world map (`fgd worldmap`, packed with the minimap as game map 947): its tiles'
  * side, the map's pixels per pixel of the game's world map art (its most detailed level, 0), its
- * levels, and the level drawn whole under the others (the more detailed ones keep the tiles with
- * land only). */
+ * levels (the two most detailed keep the tiles with land only), and the level drawn whole,
+ * decoded at once, under the others. */
 const WORLD = 947;
 const WORLD_TILE = 512;
 const WORLD_SCALE = 16;
 const WORLD_LEVELS = 5;
-const WORLD_BASE = 2;
+const WORLD_FLOOR = 3;
 /** The minimap over the stitched map when zoomed in: its share by zoom (times a whole continent
  * in view), from the first, the painted map leading until the closest zooms. */
 const MINIMAP_MIX: [number, number][] = [
@@ -340,20 +340,52 @@ class WorldTiles extends L.GridLayer {
   }
   createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
     const level = -coords.z;
-    if (!this.have.has(`${WORLD}/${level}/${coords.x}/${coords.y}`)) {
+    const key = `${WORLD}/${level}/${coords.x}/${coords.y}`;
+    if (!this.have.has(key)) {
       const empty = document.createElement("div");
       setTimeout(() => done(undefined, empty), 0);
       return empty;
+    }
+    // Decoded already: shown at once (a copy of it draws from the memory).
+    const ready = decoded.get(key);
+    if (ready) {
+      decoded.delete(key);
+      decoded.set(key, ready);
+      const img = ready.cloneNode() as HTMLImageElement;
+      setTimeout(() => done(undefined, img), 0);
+      return img;
     }
     const img = document.createElement("img");
     img.alt = "";
     img.onload = () => done(undefined, img);
     img.onerror = () => done(new Error("tile"), img);
-    loadMinimapImage(WORLD, level, coords.x, coords.y)
-      .then((src) => (img.src = src))
+    decodeTile(key, level, coords.x, coords.y)
+      .then((d) => (img.src = d.src))
       .catch(() => done(new Error("tile"), img));
     return img;
   }
+}
+
+/** The stitched world map's tiles decoded, kept in memory: the coarse level's all (the floor shown
+ * at once wherever the detailed tiles are not loaded yet), the detailed ones last seen. */
+const decoded = new Map<string, HTMLImageElement>();
+const pinned = new Set<string>();
+const DECODED_KEPT = 120;
+
+/** A tile of the stitched world map, loaded and decoded (kept, `pin`: for good). */
+async function decodeTile(key: string, level: number, x: number, y: number, pin = false): Promise<HTMLImageElement> {
+  const have = decoded.get(key);
+  if (have) return have;
+  const img = new Image();
+  img.src = await loadMinimapImage(WORLD, level, x, y);
+  await img.decode();
+  decoded.set(key, img);
+  if (pin) pinned.add(key);
+  for (const k of decoded.keys()) {
+    if (decoded.size - pinned.size <= DECODED_KEPT) break;
+    if (!pinned.has(k)) decoded.delete(k);
+  }
+  return img;
 }
 
 /** The guide on the game's maps (a Leaflet map: panned and zoomed by the browser's compositor):
@@ -546,8 +578,15 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
       const common = { tileSize: WORLD_TILE, bounds, noWrap: true, pane: "gm-world", keepBuffer: 4, className: "gm-world-tiles", minZoom: -20, maxZoom: 20 };
       // The coarse level under it all (the open sea the detailed levels leave out), the detailed
       // levels over it.
-      new WorldTiles(minimap, { ...common, minNativeZoom: -WORLD_BASE, maxNativeZoom: -WORLD_BASE }).addTo(group);
-      new WorldTiles(minimap, { ...common, minNativeZoom: -(WORLD_LEVELS - 1), maxNativeZoom: 0, minZoom: -WORLD_BASE + 0.5 }).addTo(group);
+      // The coarse floor, decoded at once: under it all, shown wherever a detailed tile is not
+      // there yet (and where the detailed levels leave out the open sea); the detailed levels
+      // over it.
+      for (const key of minimap) {
+        const [m, level, x, y] = key.split("/").map(Number);
+        if (m === WORLD && level === WORLD_FLOOR) decodeTile(key, level, x, y, true).catch(() => {});
+      }
+      new WorldTiles(minimap, { ...common, minNativeZoom: -WORLD_FLOOR, maxNativeZoom: -WORLD_FLOOR }).addTo(group);
+      new WorldTiles(minimap, { ...common, minNativeZoom: -(WORLD_LEVELS - 1), maxNativeZoom: 0 }).addTo(group);
       const worldArt = L.imageOverlay(BLANK, bounds, { pane: "gm-art", interactive: false }).addTo(group);
       loadImage(WORLD).then((src) => worldArt.setUrl(src)).catch(() => {});
       art.current.world = worldArt;
