@@ -30,6 +30,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### WoW data
 
+- WoW Forever: the latest quest data, with 85 more quests a guide can take (Riverglades, the Duskwood Missions) and more names checked in French and Spanish.
 - WoW Forever: Corma Villard's Wetlands quests, no longer offered in game, are left out of the guides.
 - WoW Forever: Murloc Gills, The Gurubashi Legends of Old and Blackfathom Villainy come after the quest that opens them.
 
