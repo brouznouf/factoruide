@@ -847,6 +847,9 @@ export interface MapInfo {
   names?: Record<string, string>;
   /** Outline on the parent map (pixel rings, even-odd), when known. */
   shape?: [number, number][][];
+  /** The world map: where each continent lies on it (its rectangle, 0..1, and the world area it
+   * shows). */
+  placements?: { map: number; ui: [number, number, number, number]; min_x: number; max_x: number; min_y: number; max_y: number }[];
 }
 
 /** What a click on "send" did. */

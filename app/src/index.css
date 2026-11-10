@@ -4339,6 +4339,21 @@ button.link.cmp-jump {
   stroke-width: 3.2;
   filter: drop-shadow(0 0 3px rgba(79, 224, 207, 0.9));
 }
+/* An island in the sky on the stitched world map: a pale glow round it, a double gold frame. */
+.gm-isle-glow {
+  fill: #f4f8fc;
+  opacity: 0.16;
+}
+.gm-isle-frame {
+  fill: none;
+  stroke: #6b4a12;
+  stroke-width: 6;
+}
+.gm-isle-frame-in {
+  fill: none;
+  stroke: #e2b84a;
+  stroke-width: 2.5;
+}
 /* The way along the steps drawn: small chevrons over the lines, dark edged to show on any map. */
 .gm-arrows path {
   fill: none;

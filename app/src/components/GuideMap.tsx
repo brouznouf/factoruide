@@ -88,6 +88,33 @@ const NEAR_AFTER = 8;
 const SAME_PLACE_GAP = 22;
 /** Screen pixels between the arrows telling the way along the route. */
 const ARROW_GAP = 70;
+/** The stitched world map (`fgd worldmap`, packed with the minimap as game map 947): its tiles'
+ * side, the map's pixels per pixel of the game's world map art (its most detailed level, 0), its
+ * levels, and the level drawn whole under the others (the more detailed ones keep the tiles with
+ * land only). */
+const WORLD = 947;
+const WORLD_TILE = 512;
+const WORLD_SCALE = 16;
+const WORLD_LEVELS = 5;
+const WORLD_BASE = 2;
+/** The minimap over the stitched map when zoomed in: its share by zoom (times a whole continent
+ * in view), from the first, the painted map leading until the closest zooms. */
+const MINIMAP_MIX: [number, number][] = [
+  [6, 0.3],
+  [16, 0.75],
+  [MAX_ZOOM, 0.92],
+];
+/** WoW Forever's Zephras Isle, not on the world map (it floats in the sky): where its middle is
+ * drawn on the stitched map, between the continents (0..1 of the world map), at their scale. */
+const ISLE_AT: [number, number] = [0.475, 0.19];
+/** Times the continents' scale Zephras Isle is drawn at: a map of its own, it reads better a little bigger. */
+const ISLE_SCALE = 1.25;
+/** Share of an island's art its torn parchment border takes, cut off inside its frame. */
+const ISLE_BORDER = 0.035;
+/** Rings of an island's pale halo. */
+const ISLE_HALO = 6;
+/** The stitched map's open sea, past its edges. */
+const WORLD_SEA = "#7d7664";
 
 interface View {
   k: number;
@@ -108,6 +135,10 @@ interface Panel {
   w: number;
   h: number;
   project: (x: number, y: number) => [number, number];
+  /** A pixel of the continent's own art (where the zones' outlines are given) on the map. */
+  fromArt: (x: number, y: number) => [number, number];
+  /** Drawn by the stitched world map's tiles, not by its own art. */
+  tiled?: boolean;
 }
 
 /**
@@ -115,7 +146,16 @@ interface Panel {
  * after them, the zones on a game map of their own that the guide goes to (`used`: game maps),
  * WoW Forever's starting islands (Zephras Isle, the Darkspear Islands).
  */
-function layout(index: MapInfo[], used: number[]): { panels: Map<number, Panel>; width: number; height: number; unit: number } {
+interface Layout {
+  panels: Map<number, Panel>;
+  width: number;
+  height: number;
+  unit: number;
+  /** The stitched world map's tiles are drawn (the continents where the world map puts them). */
+  tiled: boolean;
+}
+
+function layout(index: MapInfo[], used: number[]): Layout {
   const biggest = (maps: MapInfo[]) => maps.sort((a, b) => b.width - a.width)[0];
   const infos = CONTINENTS.map((c) => biggest(index.filter((m) => m.kind === 2 && m.bounds?.map === c))).filter(Boolean);
   const islands = used
@@ -145,10 +185,63 @@ function layout(index: MapInfo[], used: number[]): { panels: Map<number, Panel>;
       w,
       h,
       project: (x, y) => [dx + ((b.max_y - y) / (b.max_y - b.min_y)) * w, dy + ((b.max_x - x) / (b.max_x - b.min_x)) * h],
+      fromArt: (x, y) => [dx + x * k, dy + y * k],
     });
     at += w;
   }
-  return { panels, width: Math.max(1, at), height, unit: Math.max(1, ...sized.map((p) => p.w)) };
+  return { panels, width: Math.max(1, at), height, unit: Math.max(1, ...sized.map((p) => p.w)), tiled: false };
+}
+
+/**
+ * The stitched world map's layout: the continents where the game's world map puts them, at the
+ * scale of its tiles, and the zones on a game map of their own the guide goes to (Zephras Isle)
+ * in the sea between them, framed (it floats in the sky).
+ */
+function worldLayout(index: MapInfo[], used: number[], world: MapInfo): Layout {
+  const [W, H] = [world.width * WORLD_SCALE, world.height * WORLD_SCALE];
+  const panels = new Map<number, Panel>();
+  let ypp = 1;
+  for (const pl of world.placements ?? []) {
+    const art = index.filter((m) => m.kind === 2 && m.parent === WORLD && m.bounds?.map === pl.map)[0];
+    if (!art?.bounds) continue;
+    const [dx, dy, w, h] = [pl.ui[0] * W, pl.ui[1] * H, (pl.ui[2] - pl.ui[0]) * W, (pl.ui[3] - pl.ui[1]) * H];
+    ypp = (pl.max_y - pl.min_y) / w;
+    const project = (x: number, y: number): [number, number] => [dx + ((pl.max_y - y) / (pl.max_y - pl.min_y)) * w, dy + ((pl.max_x - x) / (pl.max_x - pl.min_x)) * h];
+    const ab = art.bounds;
+    panels.set(pl.map, {
+      map: pl.map,
+      info: art,
+      dx,
+      dy,
+      k: 1,
+      w,
+      h,
+      project,
+      fromArt: (x, y) => project(ab.max_x - (y / art.height) * (ab.max_x - ab.min_x), ab.max_y - (x / art.width) * (ab.max_y - ab.min_y)),
+      tiled: true,
+    });
+  }
+  const continents = [...panels.values()];
+  for (const map of used.filter((m) => !panels.has(m))) {
+    const info = index.filter((m) => (m.kind === 3 || m.kind === 6) && m.bounds?.map === map).sort((a, b) => b.width - a.width)[0];
+    if (!info?.bounds) continue;
+    const b = info.bounds;
+    const [w, h] = [((b.max_y - b.min_y) / ypp) * ISLE_SCALE, ((b.max_x - b.min_x) / ypp) * ISLE_SCALE];
+    const [dx, dy] = [ISLE_AT[0] * W - w / 2, ISLE_AT[1] * H - h / 2];
+    const k = w / info.width;
+    panels.set(map, {
+      map,
+      info,
+      dx,
+      dy,
+      k,
+      w,
+      h,
+      project: (x, y) => [dx + ((b.max_y - y) / (b.max_y - b.min_y)) * w, dy + ((b.max_x - x) / (b.max_x - b.min_x)) * h],
+      fromArt: (x, y) => [dx + x * k, dy + y * k],
+    });
+  }
+  return { panels, width: W, height: H, unit: Math.max(1, ...continents.map((p) => p.w)), tiled: true };
 }
 
 const f1 = (v: number) => Math.round(v * 10) / 10;
@@ -212,9 +305,24 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
       .catch((e) => setError(String(e)));
   }, []);
 
-  // The game version's continents side by side (the boats between them drawn too).
+  // The minimap's tiles, and the stitched world map's (game map 947) when the game version has it.
+  const [minimap, setMinimap] = useState<Set<string> | null>(null);
+  useEffect(() => {
+    loadMinimapIndex()
+      .then(setMinimap)
+      .catch(() => setMinimap(new Set()));
+  }, []);
+
+  // The game version's continents: on the stitched world map where it has one, else side by side
+  // (the boats between them drawn too).
   const used = useMemo(() => [...new Set(steps.flatMap((s) => (s.world ? [s.world[0]] : [])))].sort((a, b) => a - b).join(), [steps]);
-  const world = useMemo(() => (index ? layout(index, used ? used.split(",").map(Number) : []) : null), [index, used]);
+  const world = useMemo(() => {
+    if (!index || !minimap) return null;
+    const maps = used ? used.split(",").map(Number) : [];
+    const worldInfo = index.find((m) => m.id === WORLD && m.placements?.length);
+    const tiled = !!worldInfo && [...minimap].some((k) => k.startsWith(`${WORLD}/`));
+    return tiled ? worldLayout(index, maps, worldInfo!) : layout(index, maps);
+  }, [index, minimap, used]);
   const panels = world?.panels;
   const project = useMemo<Project | null>(() => (panels ? (p) => panels.get(p[0])?.project(p[1], p[2]) ?? null : null), [panels]);
   // The zones' maps, and where a city is (a map mostly over a bigger zone's: Stormwind,
@@ -231,7 +339,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
         const [x2, y2] = panel.project(b.min_x, b.min_y);
         const rect = { x: Math.min(x1, x2), y: Math.min(y1, y2), w: Math.abs(x2 - x1), h: Math.abs(y2 - y1) };
         // Outlines are in the continent image's pixels.
-        const rings = z.shape?.length ? z.shape.map((r) => r.map(([x, y]) => [f1(panel.dx + x * panel.k), f1(panel.dy + y * panel.k)] as [number, number])) : null;
+        const rings = z.shape?.length ? z.shape.map((r) => r.map(([x, y]) => panel.fromArt(x, y).map(f1) as [number, number])) : null;
         const d = rings ? rings.map((r) => `M${r.map(([x, y]) => `${x},${y}`).join("L")}Z`).join("") : null;
         return { z, rect, d, label: rings ? labelPoint(rings) : ([rect.x + rect.w / 2, rect.y + rect.h / 2] as [number, number]) };
       }),
@@ -259,15 +367,10 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
   const [size, setSize] = useState({ w: 0, h: 0 });
   const [scale, setScale] = useState(1);
   const [shownZones, setShownZones] = useState<number[]>([]);
-  const [minimap, setMinimap] = useState<Set<string> | null>(null);
   const [shownTiles, setShownTiles] = useState<MinimapTile[]>([]);
+  const [shownWorld, setShownWorld] = useState<MinimapTile[]>([]);
   // Zoomed in to the minimap: its dark sea everywhere, between the continents too.
   const [closeUp, setCloseUp] = useState(false);
-  useEffect(() => {
-    loadMinimapIndex()
-      .then(setMinimap)
-      .catch(() => setMinimap(new Set()));
-  }, []);
   // Zooms: all the continents in view, and one (what the zooms of the details are relative to).
   const fitK = world && size.w ? Math.min(size.w / world.width, size.h / world.height) : 1;
   const unitK = world && size.w ? Math.min(size.w / world.unit, size.h / world.height) : 1;
@@ -289,12 +392,24 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     const v = view.current;
     setScale(2 ** (Math.round(Math.log2(v.k) * 4) / 4));
     const [x0, y0, x1, y1] = [-v.x / v.k, -v.y / v.k, (size.w - v.x) / v.k, (size.h - v.y) / v.k];
-    const near = !!(size.w && panels && minimap?.size && v.k >= unitK * MINIMAP_DETAIL);
+    const near = !!(size.w && panels && minimap?.size && v.k >= unitK * (world?.tiled ? MINIMAP_MIX[0][0] : MINIMAP_DETAIL));
     const tiles = near ? [...panels!.values()].flatMap((p) => minimapTiles(p, minimap!, v.k, [x0, y0, x1, y1])) : [];
+    const same = (a: MinimapTile[], b: MinimapTile[]) => a.map((o) => o.key).join() === b.map((o) => o.key).join();
+    setShownTiles((old) => (same(old, tiles) ? old : tiles));
+    if (world?.tiled) {
+      // The stitched map's tiles in view: of the level drawn about pixel for pixel, over the
+      // whole base level (the open sea the more detailed levels leave out).
+      const level = Math.max(0, Math.min(WORLD_LEVELS - 1, Math.round(-Math.log2(v.k))));
+      const shown = worldTiles(minimap!, Math.max(level, WORLD_BASE), [x0, y0, x1, y1]);
+      if (level < WORLD_BASE) shown.push(...worldTiles(minimap!, level, [x0, y0, x1, y1]));
+      setShownWorld((old) => (same(old, shown) ? old : shown));
+      // Its zones' art is in the tiles; the minimap over it lets it show through.
+      setCloseUp(false);
+      return setShownZones((z) => (z.length ? [] : z));
+    }
     // Where the game has no minimap (Zephras Isle), the maps stay.
     const close = near && tiles.length > 0;
     setCloseUp(close);
-    setShownTiles((old) => (old.map((o) => o.key).join() === tiles.map((o) => o.key).join() ? old : tiles));
     if (!size.w || v.k < unitK * ZONE_DETAIL || close) return setShownZones((z) => (z.length ? [] : z));
     const ids = zones.filter(({ rect: r }) => r.x < x1 && r.x + r.w > x0 && r.y < y1 && r.y + r.h > y0).map((z) => z.z.id);
     setShownZones((z) => (z.join() === ids.join() ? z : ids));
@@ -584,7 +699,20 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
             ))}
           </defs>
           <g ref={layer}>
-            {panels && [...panels.values()].map((p) => <MapImage key={p.map} id={p.info.id} x={p.dx} y={p.dy} w={p.w} h={p.h} />)}
+            {world?.tiled && <rect x={-world.width} y={-world.height} width={3 * world.width} height={3 * world.height} fill={WORLD_SEA} />}
+            {shownWorld.map((tile) => (
+              <MinimapImage key={tile.key} tile={tile} />
+            ))}
+            {panels &&
+              [...panels.values()]
+                .filter((p) => !p.tiled)
+                .map((p) =>
+                  world?.tiled ? (
+                    <Isle key={p.map} panel={p} />
+                  ) : (
+                    <MapImage key={p.map} id={p.info.id} x={p.dx} y={p.dy} w={p.w} h={p.h} />
+                  ),
+                )}
             {/* The zones' maps a little past their outlines first (biggest under), filling the
                 gaps the simplified outlines leave, then each within its outline. */}
             {[...shown]
@@ -606,9 +734,11 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
             ))}
             {/* The open sea, where the game has no minimap: its color there, not the continents' parchment. */}
             {closeUp && world && <rect x={-world.width} y={-world.height} width={3 * world.width} height={3 * world.height} fill={MINIMAP_SEA} />}
-            {shownTiles.map((tile) => (
-              <MinimapImage key={tile.key} tile={tile} />
-            ))}
+            <g opacity={world?.tiled ? minimapMix(scale / unitK) : undefined}>
+              {shownTiles.map((tile) => (
+                <MinimapImage key={tile.key} tile={tile} />
+              ))}
+            </g>
             {scale >= 1.2 * unitK &&
               zones
                 .filter((z) => z.z.area)
@@ -709,7 +839,28 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
   );
 }
 
-/** A map image of the game, loaded once. */
+/** The share of the minimap over the stitched world map at zoom `z` (times a whole continent in view). */
+function minimapMix(z: number) {
+  const i = MINIMAP_MIX.findIndex(([at]) => at > z);
+  if (i === 0) return MINIMAP_MIX[0][1];
+  if (i < 0) return MINIMAP_MIX[MINIMAP_MIX.length - 1][1];
+  const [[z0, m0], [z1, m1]] = [MINIMAP_MIX[i - 1], MINIMAP_MIX[i]];
+  return m0 + ((m1 - m0) * Math.log(z / z0)) / Math.log(z1 / z0);
+}
+
+/** The stitched world map's tiles of `level` over `box` (x0, y0, x1, y1 on the map) that it has. */
+function worldTiles(have: Set<string>, level: number, [x0, y0, x1, y1]: number[]): MinimapTile[] {
+  const side = WORLD_TILE * 2 ** level;
+  const out: MinimapTile[] = [];
+  for (let x = Math.max(0, Math.floor(x0 / side)); x <= Math.floor(x1 / side); x++) {
+    for (let y = Math.max(0, Math.floor(y0 / side)); y <= Math.floor(y1 / side); y++) {
+      const key = `${WORLD}/${level}/${x}/${y}`;
+      if (have.has(key)) out.push({ key, map: WORLD, level, x, y, rect: { x: x * side, y: y * side, w: side, h: side } });
+    }
+  }
+  return out;
+}
+
 /** A minimap image in view: its game map, level and place, and its rectangle on the continent's map. */
 interface MinimapTile {
   key: string;
@@ -757,6 +908,31 @@ const MinimapImage = memo(function MinimapImage({ tile: { map, level, x, y, rect
   const pad = rect.w / 512;
   return src ? <image href={src} x={rect.x - pad} y={rect.y - pad} width={rect.w + 2 * pad} height={rect.h + 2 * pad} preserveAspectRatio="none" className="gm-image" /> : null;
 });
+
+/** An island in the sky on the stitched world map (Zephras Isle): its art in a gold frame, a pale
+ * glow round it, its torn border cut off. */
+function Isle({ panel: p }: { panel: Panel }) {
+  const [ix, iy] = [p.w * ISLE_BORDER, p.h * ISLE_BORDER * 1.5];
+  const r = { x: p.dx + ix, y: p.dy + iy, width: p.w - 2 * ix, height: p.h - 2 * iy };
+  const round = Math.min(r.width, r.height) * 0.04;
+  return (
+    <g className="gm-isle">
+      {/* A pale halo, ring after ring fainter outwards: whatever the zoom (a blur is not). */}
+      {[...Array(ISLE_HALO).keys()].reverse().map((i) => {
+        const g = Math.min(r.width, r.height) * 0.025 * (i + 1);
+        return <rect key={i} x={r.x - g} y={r.y - g} width={r.width + 2 * g} height={r.height + 2 * g} rx={round + g} className="gm-isle-glow" />;
+      })}
+      <clipPath id={`gm-isle-${p.map}`}>
+        <rect {...r} rx={round} />
+      </clipPath>
+      <g clipPath={`url(#gm-isle-${p.map})`}>
+        <MapImage id={p.info.id} x={p.dx} y={p.dy} w={p.w} h={p.h} />
+      </g>
+      <rect {...r} rx={round} className="gm-isle-frame" vectorEffect="non-scaling-stroke" />
+      <rect {...r} rx={round} className="gm-isle-frame-in" vectorEffect="non-scaling-stroke" />
+    </g>
+  );
+}
 
 const MapImage = memo(function MapImage({ id, x, y, w, h }: { id: number; x: number; y: number; w: number; h: number }) {
   const [src, setSrc] = useState<string | null>(null);
