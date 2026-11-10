@@ -113,20 +113,14 @@ const WORLD_ART: [number, number][] = [
   [1, 1],
   [1.6, 0],
 ];
-/** The underground cities (Ironforge, Undercity): the minimap shows the mountain over them, so
- * their own plan is drawn over it when zoomed in, by zoom (times a whole continent in view). */
-const UNDERGROUND_CITIES = [1455, 1458];
 /** The caves and underground places as the game's minimap draws them inside (`fgd caves`, packed
  * as game map `CAVES` + the continent's): over the minimap from a close zoom, by zoom (times a
- * whole continent in view). */
+ * whole continent in view). Ironforge and Undercity, under the terrain, are among them: zoomed
+ * in, they show inside as the caves do. */
 const CAVES = 100000;
 const CAVE_ART: [number, number][] = [
   [9, 0],
   [14, 1],
-];
-const CITY_PLAN: [number, number][] = [
-  [5, 0],
-  [9, 1],
 ];
 /** Share of a continent art's width its parchment frame takes. */
 const ART_FRAME = 0.045;
@@ -434,9 +428,25 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     if (world?.tiled) {
       // The stitched map's tiles in view: of the level drawn about pixel for pixel, over the
       // whole base level (the open sea the more detailed levels leave out).
+      // Each image drawn costs every frame of a pan: the base level only where the detailed one
+      // leaves a hole, and no detailed level once the minimap covers it all.
       const level = Math.max(0, Math.min(WORLD_LEVELS - 1, Math.round(-Math.log2(v.k))));
-      const shown = worldTiles(minimap!, Math.max(level, WORLD_BASE), [x0, y0, x1, y1]);
-      if (level < WORLD_BASE) shown.push(...worldTiles(minimap!, level, [x0, y0, x1, y1]));
+      const box = [x0, y0, x1, y1];
+      const fine = level < WORLD_BASE && minimapMix(v.k / unitK) < 0.99 ? worldTiles(minimap!, level, box) : [];
+      const have = new Set(fine.map((f) => `${f.x}/${f.y}`));
+      const per = 2 ** (WORLD_BASE - level);
+      const base = worldTiles(minimap!, Math.max(level, WORLD_BASE), box).filter((b) => {
+        if (level >= WORLD_BASE || !fine.length) return true;
+        const side = WORLD_TILE * 2 ** level;
+        for (let x = b.x * per; x < (b.x + 1) * per; x++) {
+          for (let y = b.y * per; y < (b.y + 1) * per; y++) {
+            const inView = (x + 1) * side > x0 && x * side < x1 && (y + 1) * side > y0 && y * side < y1;
+            if (inView && !have.has(`${x}/${y}`)) return true;
+          }
+        }
+        return false;
+      });
+      const shown = [...base, ...fine];
       setShownWorld((old) => (same(old, shown) ? old : shown));
       // Its zones' art is in the tiles; the minimap over it lets it show through.
       setCloseUp(false);
@@ -699,10 +709,19 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     );
   const s = 1 / scale;
   // The way along the steps drawn: arrows spaced on the screen, whatever the zoom.
+  // One path for all of them (a few hundred elements would slow every frame of a pan).
   const arrows = useMemo(() => {
-    if (!zoneTrace) return [];
+    if (!zoneTrace) return "";
     const { lines } = zoneTrace;
-    return arrowMarks([...(layers.walk ? lines.walk : []), ...(layers.flight ? lines.flight : []), ...(layers.link ? lines.link : [])], ARROW_GAP / scale);
+    const marks = arrowMarks([...(layers.walk ? lines.walk : []), ...(layers.flight ? lines.flight : []), ...(layers.link ? lines.link : [])], ARROW_GAP / scale);
+    const k = 1 / scale;
+    return marks
+      .map(({ x, y, angle }) => {
+        const [c, n] = [Math.cos(angle) * k, Math.sin(angle) * k];
+        const at = (px: number, py: number) => `${f1(x + px * c - py * n)},${f1(y + px * n + py * c)}`;
+        return `M${at(-4, -4)}L${at(1, 0)}L${at(-4, 4)}`;
+      })
+      .join("");
   }, [zoneTrace, layers.walk, layers.flight, layers.link, scale]);
   const shown = useMemo(() => zones.filter((z) => shownZones.includes(z.z.id)), [zones, shownZones]);
   const hidden = useMemo(() => covers.filter((c) => shownZones.includes(c.around.z.id)), [covers, shownZones]);
@@ -805,7 +824,9 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
                 <MinimapImage key={tile.key} tile={tile} />
               ))}
             </g>
-            {world?.tiled && index && <CityPlans index={index} panels={world.panels} zoom={scale / unitK} />}
+            {/* The game's maps a little dimmed, as the app's other maps (a veil: a filter on each
+                image would slow every frame of a pan). */}
+            {world && <rect x={-world.width} y={-world.height} width={3 * world.width} height={3 * world.height} className="gm-veil" />}
             {shownCaves.length > 0 && (
               <g opacity={byZoom(CAVE_ART, scale / unitK)} className="gm-caves">
                 {shownCaves.map((tile) => (
@@ -823,12 +844,14 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
                 ))}
             {layers.scope === "all" && routeLayer(all, "gm-all")}
             {routeLayer(zoneTrace, layers.scope === "all" ? "gm-zone" : "gm-zone only")}
+            {routeLayer(lit, "gm-lit-glow")}
             {routeLayer(lit, "gm-lit")}
-            <g className="gm-arrows">
-              {arrows.map((a, i) => (
-                <path key={i} d="M-4,-4L1,0L-4,4" transform={`translate(${f1(a.x)} ${f1(a.y)}) rotate(${Math.round((a.angle * 180) / Math.PI)}) scale(${s})`} vectorEffect="non-scaling-stroke" />
-              ))}
-            </g>
+            {arrows && (
+              <g className="gm-arrows">
+                <path d={arrows} className="gm-arrows-under" vectorEffect="non-scaling-stroke" />
+                <path d={arrows} vectorEffect="non-scaling-stroke" />
+              </g>
+            )}
             {markers.map((m) => (
               <g
                 key={m.n}
@@ -989,39 +1012,6 @@ const MinimapImage = memo(function MinimapImage({ tile: { map, level, x, y, rect
   const pad = rect.w / 512;
   return src ? <image href={src} x={rect.x - pad} y={rect.y - pad} width={rect.w + 2 * pad} height={rect.h + 2 * pad} preserveAspectRatio="none" className="gm-image" /> : null;
 });
-
-/** The underground cities' plans over the minimap when zoomed in, their parchment frame faded out. */
-function CityPlans({ index, panels, zoom }: { index: MapInfo[]; panels: Map<number, Panel>; zoom: number }) {
-  const opacity = byZoom(CITY_PLAN, zoom);
-  if (opacity <= 0.01) return null;
-  return (
-    <g opacity={opacity}>
-      {UNDERGROUND_CITIES.map((id) => {
-        const info = index.find((m) => m.id === id);
-        const panel = info?.bounds && panels.get(info.bounds.map);
-        if (!info?.bounds || !panel) return null;
-        const b = info.bounds;
-        const [x1, y1] = panel.project(b.max_x, b.max_y);
-        const [x2, y2] = panel.project(b.min_x, b.min_y);
-        const [w, h] = [x2 - x1, y2 - y1];
-        const inset = Math.min(w, h) * 0.07;
-        return (
-          <g key={id}>
-            <filter id={`gm-city-soft-${id}`} x="-20%" y="-20%" width="140%" height="140%">
-              <feGaussianBlur stdDeviation={inset * 0.5} />
-            </filter>
-            <mask id={`gm-city-${id}`} maskUnits="userSpaceOnUse" x={x1} y={y1} width={w} height={h}>
-              <rect x={x1 + inset} y={y1 + inset} width={w - 2 * inset} height={h - 2 * inset} rx={inset} fill="#fff" filter={`url(#gm-city-soft-${id})`} />
-            </mask>
-            <g mask={`url(#gm-city-${id})`}>
-              <MapImage id={id} x={x1} y={y1} w={w} h={h} />
-            </g>
-          </g>
-        );
-      })}
-    </g>
-  );
-}
 
 /** The game's own art over the stitched map when zoomed out: the world map's, the continents'. */
 function ArtLayers({ world, zoom }: { world: Layout; zoom: number }) {

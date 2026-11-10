@@ -66,7 +66,7 @@
   --land-hover: rgba(245, 232, 200, 0.9);
   --land-hover-fill: rgba(245, 232, 200, 0.18);
   --map-bg: #0a1522;
-  --game-map: saturate(0.85) brightness(0.9) contrast(0.95);
+  --game-map-veil: rgba(0, 0, 0, 0.12);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   font-size: 13px;
   background: var(--surface-0);
@@ -119,7 +119,7 @@
   --land-hover: rgba(50, 36, 16, 0.85);
   --land-hover-fill: rgba(50, 36, 16, 0.1);
   --map-bg: #d8dee8;
-  --game-map: saturate(0.9) contrast(0.97);
+  --game-map-veil: rgba(0, 0, 0, 0.03);
 }
 /* The dark theme's sky by day: a pale blue gradient, the ultramarine light from the left edge and
    a touch of cyan from the top right, softer (no texture). */
@@ -176,7 +176,7 @@
   --land-hover: rgba(50, 36, 16, 0.85);
   --land-hover-fill: rgba(50, 36, 16, 0.1);
   --map-bg: #ddd4c1;
-  --game-map: saturate(0.9) contrast(0.97);
+  --game-map-veil: rgba(0, 0, 0, 0.03);
   --edge: linear-gradient(110deg, #9a4a10, #c98a2b);
   --edge-hover: linear-gradient(110deg, #b55a16, #dca040);
   --progress-from: rgba(154, 74, 16, 0.16);
@@ -4295,8 +4295,9 @@ button.link.cmp-jump {
   color: inherit;
 }
 /* The game's maps a little softened, as the other maps of the app. */
-.gm-image {
-  filter: var(--game-map);
+.gm-veil {
+  fill: var(--game-map-veil);
+  pointer-events: none;
 }
 .gm-walk,
 .gm-flight,
@@ -4337,11 +4338,12 @@ button.link.cmp-jump {
 .gm-lit path {
   stroke: #fff;
   stroke-width: 3.2;
-  filter: drop-shadow(0 0 3px rgba(79, 224, 207, 0.9));
 }
-/* The caves over the minimap: a dark rim so they read as underground. */
-.gm-caves {
-  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.85));
+/* Its glow: a wide soft stroke under it (a filter would slow every frame of a pan). */
+.gm-lit-glow path {
+  stroke: rgba(79, 224, 207, 0.45);
+  stroke-width: 8;
+  stroke-dasharray: none;
 }
 /* An island in the sky on the stitched world map: a pale glow round it, a double gold frame. */
 .gm-isle-glow {
@@ -4365,9 +4367,11 @@ button.link.cmp-jump {
   stroke-width: 2;
   stroke-linecap: round;
   stroke-linejoin: round;
-  paint-order: stroke;
-  filter: drop-shadow(0 0 1.5px rgba(0, 0, 0, 0.9));
   pointer-events: none;
+}
+.gm-arrows path.gm-arrows-under {
+  stroke: rgba(0, 0, 0, 0.75);
+  stroke-width: 4;
 }
 .gm-zone-label {
   fill: #fff;
