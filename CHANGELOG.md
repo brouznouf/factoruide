@@ -27,6 +27,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### WoW data
 
 - WoW Forever: Corma Villard's Wetlands quests, no longer offered in game, are left out of the guides.
+- WoW Forever: Murloc Gills, The Gurubashi Legends of Old and Blackfathom Villainy come after the quest that opens them.
 
 ## 0.17.0 (2026-11-09)
 

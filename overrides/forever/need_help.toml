@@ -55,9 +55,6 @@ before = [314]
 quest = 86758 # Twisting the Knife (Marek Ironheart, Loch Modan)
 before = [385]
 
-[[check]]
-quest = 92744 # Murloc Gills (Alba Fairmoon, Westfall)
-before = [92742]
 
 [[check]]
 quest = 92909 # Harvesting the Harvesters (Ozwin Ironsprocket, Westfall)
@@ -71,6 +68,3 @@ before = [244, 246]
 quest = 98461 # Unrequited Love (Archaeologist Hollee, Wetlands)
 before = [730, 731]
 
-[[check]]
-quest = 98815 # Highland Hides (James Halloran, Excavation Site: Wetlands)
-before = [484]

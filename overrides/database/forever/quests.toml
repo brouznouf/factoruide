@@ -2122,3 +2122,15 @@ reason = "Started by Essene Villard, gone"
 id = 88758
 status = "removed"
 reason = "Started by Essene Villard, gone"
+
+[[quest]]
+# Murloc Gills: Alba Fairmoon offers it after Testing the Wells, the step before it in her Westfall
+# storyline.
+id = 92744
+pre_all = [92742]
+
+[[quest]]
+# The Gurubashi Legends of Old: Kin'weelay speaks of "this piece of the tablet you have brought
+# me", the Tablet Shard of The Vile Reef, which comes first.
+id = 95748
+pre_all = [629]

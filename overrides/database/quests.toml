@@ -133,6 +133,12 @@ remove_sources = [{ type = "vendor", id = 12862 }]
 id = 16765
 remove_sources = [{ type = "vendor", id = 12864 }]
 
+[[quest]]
+# Blackfathom Villainy: Argent Guard Thaelrid offers it only to those sent by In Search of Thaelrid
+# (Dawnwatcher Shaedlass, Darnassus): one series, the first quest required, not a mere lead-in.
+id = 1200
+pre_all = [1198]
+
 # Class quests teaching no spell, in every edition: the requirement is the quest.
 [[class_requirement]]
 class = "druid"
