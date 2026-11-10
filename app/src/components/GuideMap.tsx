@@ -113,6 +113,13 @@ const WORLD_ART: [number, number][] = [
   [1, 1],
   [1.6, 0],
 ];
+/** The underground cities (Ironforge, Undercity): the minimap shows the mountain over them, so
+ * their own plan is drawn over it when zoomed in, by zoom (times a whole continent in view). */
+const UNDERGROUND_CITIES = [1455, 1458];
+const CITY_PLAN: [number, number][] = [
+  [5, 0],
+  [9, 1],
+];
 /** Share of a continent art's width its parchment frame takes. */
 const ART_FRAME = 0.045;
 const CONTINENT_ART: [number, number][] = [
@@ -787,6 +794,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
                 <MinimapImage key={tile.key} tile={tile} />
               ))}
             </g>
+            {world?.tiled && index && <CityPlans index={index} panels={world.panels} zoom={scale / unitK} />}
             {scale >= 1.2 * unitK &&
               zones
                 .filter((z) => z.z.area)
@@ -962,6 +970,39 @@ const MinimapImage = memo(function MinimapImage({ tile: { map, level, x, y, rect
   const pad = rect.w / 512;
   return src ? <image href={src} x={rect.x - pad} y={rect.y - pad} width={rect.w + 2 * pad} height={rect.h + 2 * pad} preserveAspectRatio="none" className="gm-image" /> : null;
 });
+
+/** The underground cities' plans over the minimap when zoomed in, their parchment frame faded out. */
+function CityPlans({ index, panels, zoom }: { index: MapInfo[]; panels: Map<number, Panel>; zoom: number }) {
+  const opacity = byZoom(CITY_PLAN, zoom);
+  if (opacity <= 0.01) return null;
+  return (
+    <g opacity={opacity}>
+      {UNDERGROUND_CITIES.map((id) => {
+        const info = index.find((m) => m.id === id);
+        const panel = info?.bounds && panels.get(info.bounds.map);
+        if (!info?.bounds || !panel) return null;
+        const b = info.bounds;
+        const [x1, y1] = panel.project(b.max_x, b.max_y);
+        const [x2, y2] = panel.project(b.min_x, b.min_y);
+        const [w, h] = [x2 - x1, y2 - y1];
+        const inset = Math.min(w, h) * 0.07;
+        return (
+          <g key={id}>
+            <filter id={`gm-city-soft-${id}`} x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation={inset * 0.5} />
+            </filter>
+            <mask id={`gm-city-${id}`} maskUnits="userSpaceOnUse" x={x1} y={y1} width={w} height={h}>
+              <rect x={x1 + inset} y={y1 + inset} width={w - 2 * inset} height={h - 2 * inset} rx={inset} fill="#fff" filter={`url(#gm-city-soft-${id})`} />
+            </mask>
+            <g mask={`url(#gm-city-${id})`}>
+              <MapImage id={id} x={x1} y={y1} w={w} h={h} />
+            </g>
+          </g>
+        );
+      })}
+    </g>
+  );
+}
 
 /** The game's own art over the stitched map when zoomed out: the world map's, the continents'. */
 function ArtLayers({ world, zoom }: { world: Layout; zoom: number }) {
