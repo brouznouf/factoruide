@@ -341,6 +341,14 @@ class WorldTiles extends L.GridLayer {
     super(options);
     this.have = have;
   }
+  // Not cleared at each view reset (Leaflet's: every zoom step of the wheel's glide, set without
+  // its animation): the tiles in place are kept, scaled, until the new ones are there, instead of
+  // the grey sea showing at once. (The reset only clears for a change of projection, never made.)
+  getEvents() {
+    const events = super.getEvents!();
+    delete events.viewprereset;
+    return events;
+  }
   createTile(coords: L.Coords, done: L.DoneCallback): HTMLElement {
     const level = -coords.z;
     const key = `${WORLD}/${level}/${coords.x}/${coords.y}`;
