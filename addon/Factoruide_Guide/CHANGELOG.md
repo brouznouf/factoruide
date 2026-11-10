@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+## 0.18.0 (2026-11-10)
+
 - No more blocked-action errors from the quest panel during a fight; its layout catches up afterwards.
 - Guides pasted on Windows no longer fail to import on large numbers.
 
