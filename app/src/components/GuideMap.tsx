@@ -100,9 +100,24 @@ const WORLD_BASE = 2;
 /** The minimap over the stitched map when zoomed in: its share by zoom (times a whole continent
  * in view), from the first, the painted map leading until the closest zooms. */
 const MINIMAP_MIX: [number, number][] = [
-  [6, 0.3],
-  [16, 0.75],
-  [MAX_ZOOM, 0.92],
+  [8, 0.15],
+  [24, 0.55],
+  [48, 1],
+];
+/** On the stitched map, the game's own art over the zones when zoomed out, by zoom (times a whole
+ * continent in view): the world map's, then the continents' (their big names over the zones a
+ * while), the zones alone from the last. Each: (zoom, opacity) points, log-interpolated. */
+const WORLD_ART: [number, number][] = [
+  [1, 1],
+  [1.6, 0],
+];
+/** Share of a continent art's width its parchment frame takes. */
+const ART_FRAME = 0.045;
+const CONTINENT_ART: [number, number][] = [
+  [1, 0],
+  [1.3, 1],
+  [1.8, 0.45],
+  [3.5, 0],
 ];
 /** WoW Forever's Zephras Isle, not on the world map (it floats in the sky): where its middle is
  * drawn on the stitched map, between the continents (0..1 of the world map), at their scale. */
@@ -703,6 +718,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
             {shownWorld.map((tile) => (
               <MinimapImage key={tile.key} tile={tile} />
             ))}
+            {world?.tiled && panels && <ArtLayers world={world} zoom={scale / unitK} />}
             {panels &&
               [...panels.values()]
                 .filter((p) => !p.tiled)
@@ -841,10 +857,15 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
 
 /** The share of the minimap over the stitched world map at zoom `z` (times a whole continent in view). */
 function minimapMix(z: number) {
-  const i = MINIMAP_MIX.findIndex(([at]) => at > z);
-  if (i === 0) return MINIMAP_MIX[0][1];
-  if (i < 0) return MINIMAP_MIX[MINIMAP_MIX.length - 1][1];
-  const [[z0, m0], [z1, m1]] = [MINIMAP_MIX[i - 1], MINIMAP_MIX[i]];
+  return byZoom(MINIMAP_MIX, z);
+}
+
+/** A value by zoom `z` from (zoom, value) points, log-interpolated, the ends held. */
+function byZoom(points: [number, number][], z: number) {
+  const i = points.findIndex(([at]) => at > z);
+  if (i === 0) return points[0][1];
+  if (i < 0) return points[points.length - 1][1];
+  const [[z0, m0], [z1, m1]] = [points[i - 1], points[i]];
   return m0 + ((m1 - m0) * Math.log(z / z0)) / Math.log(z1 / z0);
 }
 
@@ -874,12 +895,13 @@ interface MinimapTile {
 /** The minimap images of a continent over `box` (x0, y0, x1, y1 on the map) at zoom `k`: of the
  * level whose images are drawn closest to their own size. */
 function minimapTiles(panel: Panel, have: Set<string>, k: number, [x0, y0, x1, y1]: number[]): MinimapTile[] {
-  const b = panel.info.bounds!;
   const map = panel.map;
-  // A game tile (x eastwards from world y = 32 tiles, y southwards from world x = 32 tiles) on the map.
-  const sx = (panel.w / (b.max_y - b.min_y)) * TILE;
-  const sy = (panel.h / (b.max_x - b.min_x)) * TILE;
+  // A game tile (x eastwards from world y = 32 tiles, y southwards from world x = 32 tiles) on the
+  // map, measured with the panel's own projection (the continent's art, or its place on the
+  // stitched world map).
   const [ox, oy] = panel.project(32 * TILE, 32 * TILE);
+  const sx = panel.project(32 * TILE, 31 * TILE)[0] - ox;
+  const sy = panel.project(31 * TILE, 32 * TILE)[1] - oy;
   const level = Math.max(0, Math.min(MINIMAP_LEVELS - 1, Math.round(Math.log2(MINIMAP_SIZE / (sx * k)))));
   const span = 2 ** level;
   const [w, h] = [sx * span, sy * span];
@@ -908,6 +930,44 @@ const MinimapImage = memo(function MinimapImage({ tile: { map, level, x, y, rect
   const pad = rect.w / 512;
   return src ? <image href={src} x={rect.x - pad} y={rect.y - pad} width={rect.w + 2 * pad} height={rect.h + 2 * pad} preserveAspectRatio="none" className="gm-image" /> : null;
 });
+
+/** The game's own art over the stitched map when zoomed out: the world map's, the continents'. */
+function ArtLayers({ world, zoom }: { world: Layout; zoom: number }) {
+  const worldOpacity = byZoom(WORLD_ART, zoom);
+  const continentOpacity = byZoom(CONTINENT_ART, zoom);
+  const continents = [...world.panels.values()].filter((p) => p.tiled);
+  return (
+    <>
+      {continentOpacity > 0.01 && (
+        <g opacity={continentOpacity}>
+          {continents.map((p) => {
+            const b = p.info.bounds!;
+            const [x1, y1] = p.project(b.max_x, b.max_y);
+            const [x2, y2] = p.project(b.min_x, b.min_y);
+            const [w, h] = [x2 - x1, y2 - y1];
+            // Its parchment frame cut off: only its land, sea and names over the stitched map.
+            const [mx, my] = [w * ART_FRAME, h * ART_FRAME * 1.5];
+            return (
+              <g key={p.map}>
+                <clipPath id={`gm-art-${p.map}`}>
+                  <rect x={x1 + mx} y={y1 + my} width={w - 2 * mx} height={h - 2 * my} />
+                </clipPath>
+                <g clipPath={`url(#gm-art-${p.map})`}>
+                  <MapImage id={p.info.id} x={x1} y={y1} w={w} h={h} />
+                </g>
+              </g>
+            );
+          })}
+        </g>
+      )}
+      {worldOpacity > 0.01 && (
+        <g opacity={worldOpacity}>
+          <MapImage id={WORLD} x={0} y={0} w={world.width} h={world.height} />
+        </g>
+      )}
+    </>
+  );
+}
 
 /** An island in the sky on the stitched world map (Zephras Isle): its art in a gold frame, a pale
  * glow round it, its torn border cut off. */
