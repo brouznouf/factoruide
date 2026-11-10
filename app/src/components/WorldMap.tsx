@@ -54,8 +54,58 @@ export const loadMinimapImage = (map: number, level: number, x: number, y: numbe
   return p;
 };
 
+/** Minimap tiles decoded, kept in memory with their own image URLs (none revoked while kept): the
+ * pinned ones for good (the stitched world map's coarse floor), the others while among the last
+ * used. */
+const decoded = new Map<string, HTMLImageElement>();
+const pinned = new Set<string>();
+const DECODED_KEPT = 120;
+
+/** A minimap tile decoded already (marked as just used), if it is. */
+export function decodedTile(key: string) {
+  const img = decoded.get(key);
+  if (img) {
+    decoded.delete(key);
+    decoded.set(key, img);
+  }
+  return img;
+}
+
+/** A minimap tile loaded and decoded (kept, `pin`: for good). */
+export async function decodeTile(map: number, level: number, x: number, y: number, pin = false): Promise<HTMLImageElement> {
+  const key = `${map}/${level}/${x}/${y}`;
+  const have = decodedTile(key);
+  if (have) return have;
+  const img = new Image();
+  img.src = await api.minimapImage(map, level, x, y);
+  try {
+    await img.decode();
+  } catch {
+    // Some engines refuse decode() where the image still loads: wait for it instead.
+    if (!img.complete || !img.naturalWidth) {
+      await new Promise((ok, ko) => {
+        img.onload = ok;
+        img.onerror = ko;
+      });
+    }
+  }
+  decoded.set(key, img);
+  if (pin) pinned.add(key);
+  for (const [k, old] of decoded) {
+    if (decoded.size - pinned.size <= DECODED_KEPT) break;
+    if (pinned.has(k)) continue;
+    decoded.delete(k);
+    // Later: a copy of it may still be loading.
+    setTimeout(() => URL.revokeObjectURL(old.src), 30_000);
+  }
+  return img;
+}
+
 /** Forget the maps (another game version shows other maps). */
 export function clearMapCache() {
+  for (const img of decoded.values()) URL.revokeObjectURL(img.src);
+  decoded.clear();
+  pinned.clear();
   indexPromise = null;
   for (const p of images.values()) p.then(URL.revokeObjectURL, () => {});
   images.clear();

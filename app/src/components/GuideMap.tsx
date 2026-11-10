@@ -6,7 +6,7 @@ import { useAreaName, useT } from "../i18n";
 import { type Card, type Moves, positionAt } from "./guideTimeline";
 import type { Clock } from "./playback";
 import { aheadInZone, aheadPicked, arrowMarks, stepsShown } from "./mapSteps";
-import { labelPoint, loadImage, loadIndex, loadMinimapImage, loadMinimapIndex } from "./WorldMap";
+import { decodedTile, decodeTile, labelPoint, loadImage, loadIndex, loadMinimapImage, loadMinimapIndex } from "./WorldMap";
 
 /** What the map draws: the kinds of moves, the step markers, the whole guide or the current zone only,
  * and how many steps of the zone from the current one (null: all of them). */
@@ -240,7 +240,9 @@ function worldLayout(index: MapInfo[], used: number[], world: MapInfo): Layout {
     });
   }
   const continents = [...panels.values()];
-  for (const map of used.filter((m) => !panels.has(m))) {
+  // The zones of the world map the game does not place on it (Zephras Isle): always drawn.
+  const floating = index.filter((m) => m.kind === 3 && m.parent === WORLD && m.bounds && !panels.has(m.bounds.map)).map((m) => m.bounds!.map);
+  for (const map of new Set([...floating, ...used.filter((m) => !panels.has(m))])) {
     const info = index.filter((m) => (m.kind === 3 || m.kind === 6) && m.bounds?.map === map).sort((a, b) => b.width - a.width)[0];
     if (!info?.bounds) continue;
     const b = info.bounds;
@@ -347,45 +349,36 @@ class WorldTiles extends L.GridLayer {
       return empty;
     }
     // Decoded already: shown at once (a copy of it draws from the memory).
-    const ready = decoded.get(key);
+    const ready = decodedTile(key);
     if (ready) {
-      decoded.delete(key);
-      decoded.set(key, ready);
-      const img = ready.cloneNode() as HTMLImageElement;
+      const img = this.clip(ready.cloneNode() as HTMLImageElement, coords);
       setTimeout(() => done(undefined, img), 0);
       return img;
     }
-    const img = document.createElement("img");
+    const img = this.clip(document.createElement("img"), coords);
     img.alt = "";
+    // A tile that could not be loaded is left out (no broken image drawn), the floor under it.
+    const failed = () => {
+      img.style.visibility = "hidden";
+      done(new Error("tile"), img);
+    };
     img.onload = () => done(undefined, img);
-    img.onerror = () => done(new Error("tile"), img);
-    decodeTile(key, level, coords.x, coords.y)
+    img.onerror = failed;
+    decodeTile(WORLD, level, coords.x, coords.y)
       .then((d) => (img.src = d.src))
-      .catch(() => done(new Error("tile"), img));
+      .catch(failed);
     return img;
   }
-}
-
-/** The stitched world map's tiles decoded, kept in memory: the coarse level's all (the floor shown
- * at once wherever the detailed tiles are not loaded yet), the detailed ones last seen. */
-const decoded = new Map<string, HTMLImageElement>();
-const pinned = new Set<string>();
-const DECODED_KEPT = 120;
-
-/** A tile of the stitched world map, loaded and decoded (kept, `pin`: for good). */
-async function decodeTile(key: string, level: number, x: number, y: number, pin = false): Promise<HTMLImageElement> {
-  const have = decoded.get(key);
-  if (have) return have;
-  const img = new Image();
-  img.src = await loadMinimapImage(WORLD, level, x, y);
-  await img.decode();
-  decoded.set(key, img);
-  if (pin) pinned.add(key);
-  for (const k of decoded.keys()) {
-    if (decoded.size - pinned.size <= DECODED_KEPT) break;
-    if (!pinned.has(k)) decoded.delete(k);
+  /** A tile over the map's east or south edge cut there (the tiles' padding past it left out). */
+  clip(img: HTMLImageElement, coords: L.Coords) {
+    const span = WORLD_TILE * 2 ** -coords.z;
+    // The largest x and y (latitude is y here, the larger the further south).
+    const b = (this.options as L.GridLayerOptions).bounds as L.LatLngBounds;
+    const right = Math.max(0, 1 - (b.getEast() - coords.x * span) / span);
+    const bottom = Math.max(0, 1 - (b.getNorth() - coords.y * span) / span);
+    if (right > 0 || bottom > 0) img.style.clipPath = `inset(0 ${(right * 100).toFixed(3)}% ${(bottom * 100).toFixed(3)}% 0)`;
+    return img;
   }
-  return img;
 }
 
 /** The guide on the game's maps (a Leaflet map: panned and zoomed by the browser's compositor):
@@ -583,7 +576,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
       // over it.
       for (const key of minimap) {
         const [m, level, x, y] = key.split("/").map(Number);
-        if (m === WORLD && level === WORLD_FLOOR) decodeTile(key, level, x, y, true).catch(() => {});
+        if (m === WORLD && level === WORLD_FLOOR) decodeTile(m, level, x, y, true).catch(() => {});
       }
       new WorldTiles(minimap, { ...common, minNativeZoom: -WORLD_FLOOR, maxNativeZoom: -WORLD_FLOOR }).addTo(group);
       new WorldTiles(minimap, { ...common, minNativeZoom: -(WORLD_LEVELS - 1), maxNativeZoom: 0 }).addTo(group);
