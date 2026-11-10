@@ -416,8 +416,9 @@ fn loaded_files(addons: &Path) -> BTreeMap<String, Vec<String>> {
 }
 
 /// WebKitGTK renders a blank window under WSLg (no usable GPU for DMA-BUF/EGL),
-/// and its DMA-BUF renderer dies with "Error 71 (Protocol error)" on Wayland with
-/// the NVIDIA driver: fall back to its software paths in those cases.
+/// and its DMA-BUF renderer died with "Error 71 (Protocol error)" on Wayland with
+/// NVIDIA drivers before the 560 series: fall back to its software paths in those
+/// cases only (they make every page slow: the maps above all).
 #[expect(
     unsafe_code,
     reason = "set_var is unsafe in edition 2024; this runs before any thread is spawned"
@@ -426,7 +427,7 @@ fn linux_rendering_workaround() {
     let in_wsl = std::fs::read_to_string("/proc/version").is_ok_and(|v| v.to_lowercase().contains("microsoft"));
     let vars: &[&str] = if in_wsl {
         &["WEBKIT_DISABLE_DMABUF_RENDERER", "WEBKIT_DISABLE_COMPOSITING_MODE"]
-    } else if Path::new("/proc/driver/nvidia").exists() {
+    } else if nvidia_driver().is_some_and(|major| major < NVIDIA_DMABUF_SINCE) {
         &["WEBKIT_DISABLE_DMABUF_RENDERER"]
     } else {
         &[]
@@ -436,6 +437,42 @@ fn linux_rendering_workaround() {
             // SAFETY: called at startup, before any other thread exists.
             unsafe { std::env::set_var(var, "1") };
         }
+    }
+}
+
+/// The first NVIDIA driver series whose DMA-BUF works with WebKitGTK on Wayland.
+const NVIDIA_DMABUF_SINCE: u32 = 560;
+
+/// The NVIDIA driver's major version, when it is loaded ("... Kernel Module ... 615.78.08 ...").
+fn nvidia_driver() -> Option<u32> {
+    nvidia_major(&std::fs::read_to_string("/proc/driver/nvidia/version").ok()?)
+}
+
+/// The major version in the NVIDIA driver's version text: its first dotted number.
+fn nvidia_major(text: &str) -> Option<u32> {
+    text.lines()
+        .next()?
+        .split_whitespace()
+        .find(|w| w.contains('.') && w.chars().all(|c| c.is_ascii_digit() || c == '.'))?
+        .split('.')
+        .next()?
+        .parse()
+        .ok()
+}
+
+#[cfg(test)]
+mod nvidia_tests {
+    use super::nvidia_major;
+
+    #[test]
+    fn the_driver_s_major_version_is_read_from_its_version_text() {
+        let open = "NVRM version: NVIDIA UNIX Open Kernel Module for x86_64  615.78.08  Release Build  (root@)\nGCC version: gcc version 15.2.1";
+        assert_eq!(nvidia_major(open), Some(615));
+        assert_eq!(
+            nvidia_major("NVRM version: NVIDIA UNIX x86_64 Kernel Module  550.120  Fri Sep 13 2024"),
+            Some(550)
+        );
+        assert_eq!(nvidia_major("nothing here"), None);
     }
 }
 

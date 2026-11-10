@@ -311,6 +311,10 @@ const box = (r: { x: number; y: number; w: number; h: number }, pad = 0) => L.la
 const BLANK = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 const escape = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
+/** Zoom levels (each twice closer) a wheel pixel asks for, and the share of the way to it each
+ * frame goes. */
+const WHEEL_ZOOM = 1 / 300;
+const WHEEL_GLIDE = 0.3;
 /** The map's planes, bottom to top (their z-index). */
 const PANES: [string, number][] = [
   ["gm-world", 200],
@@ -441,8 +445,8 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
       maxZoom: 10,
       zoomSnap: 0,
       zoomDelta: 0.5,
-      wheelPxPerZoomLevel: 110,
-      wheelDebounceTime: 10,
+      // Our own wheel zoom (below): Leaflet's waits for the wheel to stop, then animates.
+      scrollWheelZoom: false,
       zoomControl: false,
       attributionControl: false,
       doubleClickZoom: false,
@@ -458,10 +462,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
       if (!settle.current) settle.current = window.setTimeout(() => refresh.current(), 120);
     };
     map.on("zoomstart", () => (zooming.current = true));
-    map.on("zoomend", () => {
-      zooming.current = false;
-      setZoom(map.getZoom());
-    });
+    map.on("zoomend", () => (zooming.current = false));
     map.on("moveend zoomend", schedule);
     map.on("zoomanim", (e) => opacities.current((e as L.ZoomAnimEvent).zoom));
     map.on("zoom", () => opacities.current(map.getZoom()));
@@ -484,11 +485,49 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     };
   }, []);
 
-  // Following: the wheel zooms around the middle (the character); else around the pointer.
-  useEffect(() => {
+  // The wheel's zoom glides there at once, frame by frame, around the pointer (the middle while
+  // following the character), its turns adding up while it moves.
+  const glide = useRef<{ z: number; at: L.Point | null; raf: number } | null>(null);
+  const zoomTo = useCallback((z: number, at: L.Point | null) => {
     const map = mapRef.current;
-    if (map) map.options.scrollWheelZoom = follow ? "center" : true;
-  }, [follow]);
+    if (!map) return;
+    const target = Math.max(map.getMinZoom(), Math.min(map.getMaxZoom(), z));
+    if (glide.current) {
+      Object.assign(glide.current, { z: target, at });
+      return;
+    }
+    const step = () => {
+      const g = glide.current;
+      if (!g) return;
+      const now = map.getZoom();
+      const done = Math.abs(g.z - now) < 0.01;
+      const next = done ? g.z : now + (g.z - now) * WHEEL_GLIDE;
+      if (g.at && !latest.current.follow) map.setZoomAround(g.at, next, { animate: false });
+      else map.setZoom(next, { animate: false });
+      if (done) glide.current = null;
+      else g.raf = requestAnimationFrame(step);
+    };
+    glide.current = { z: target, at, raf: requestAnimationFrame(step) };
+  }, []);
+  useEffect(() => {
+    const el = host.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const map = mapRef.current;
+      if (!map) return;
+      // Lines or pages (some mice) as pixels.
+      const dy = e.deltaY * (e.deltaMode === 1 ? 33 : e.deltaMode === 2 ? el.clientHeight : 1);
+      const from = glide.current?.z ?? map.getZoom();
+      zoomTo(from - dy * WHEEL_ZOOM, map.mouseEventToContainerPoint(e as unknown as MouseEvent));
+    };
+    el.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      el.removeEventListener("wheel", onWheel);
+      cancelAnimationFrame(glide.current?.raf ?? 0);
+      glide.current = null;
+    };
+  }, [zoomTo]);
 
   // The zoom range and the fixed layers of the map: the stitched world map's tiles and the game's
   // own art over them when zoomed out, or the continents' maps side by side; the islands.
@@ -559,7 +598,10 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
   refresh.current = () => {
     settle.current = 0;
     const map = mapRef.current;
-    if (!map || !world || !panels || !minimap || !size.w) return;
+    if (!map) return;
+    // What depends on the zoom (the arrows' spacing, the zones' names) follows it once it settles.
+    setZoom(map.getZoom());
+    if (!world || !panels || !minimap || !size.w) return;
     const kk = 2 ** map.getZoom();
     const b = map.getBounds();
     const view = [b.getWest(), Math.min(b.getNorth(), b.getSouth()), b.getEast(), Math.max(b.getNorth(), b.getSouth())];
@@ -669,7 +711,7 @@ export function GuideMap({ steps, moves, cards, titles, current, currentEnd, zon
     return clock.subscribe(draw);
   }, [clock, draw, follow]);
 
-  const zoomBy = (f: number) => mapRef.current?.setZoom(mapRef.current.getZoom() + Math.log2(f));
+  const zoomBy = (f: number) => mapRef.current && zoomTo((glide.current?.z ?? mapRef.current.getZoom()) + Math.log2(f), null);
 
   // The steps drawn: from the current one, as many as chosen among the zone's (the slider).
   const zoneMax = Math.max(1, zone[1] - zone[0] + 1);
