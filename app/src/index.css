@@ -66,7 +66,6 @@
   --land-hover: rgba(245, 232, 200, 0.9);
   --land-hover-fill: rgba(245, 232, 200, 0.18);
   --map-bg: #0a1522;
-  --game-map-veil: rgba(0, 0, 0, 0.12);
   font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
   font-size: 13px;
   background: var(--surface-0);
@@ -119,7 +118,6 @@
   --land-hover: rgba(50, 36, 16, 0.85);
   --land-hover-fill: rgba(50, 36, 16, 0.1);
   --map-bg: #d8dee8;
-  --game-map-veil: rgba(0, 0, 0, 0.03);
 }
 /* The dark theme's sky by day: a pale blue gradient, the ultramarine light from the left edge and
    a touch of cyan from the top right, softer (no texture). */
@@ -176,7 +174,6 @@
   --land-hover: rgba(50, 36, 16, 0.85);
   --land-hover-fill: rgba(50, 36, 16, 0.1);
   --map-bg: #ddd4c1;
-  --game-map-veil: rgba(0, 0, 0, 0.03);
   --edge: linear-gradient(110deg, #9a4a10, #c98a2b);
   --edge-hover: linear-gradient(110deg, #b55a16, #dca040);
   --progress-from: rgba(154, 74, 16, 0.16);
@@ -4227,17 +4224,69 @@ button.link.cmp-jump {
   touch-action: none;
   user-select: none;
 }
-.gm-frame:active {
+.gm-frame .leaflet-grab {
+  cursor: grab;
+}
+.gm-frame .leaflet-dragging .leaflet-grab {
   cursor: grabbing;
 }
-.gm-frame > svg {
+/* The Leaflet map filling the frame, our controls over it. */
+.gm-leaflet {
   position: absolute;
   inset: 0;
-  display: block;
+  z-index: 0;
+}
+.gm-leaflet.leaflet-container {
+  background: transparent;
+  font: inherit;
+  outline: none;
 }
 .gm-frame > .error {
   position: absolute;
   inset: 12px auto auto 12px;
+  z-index: 1000;
+}
+/* A seam-free tiling: each tile a hair bigger than its place. */
+.gm-world-tiles .leaflet-tile {
+  width: 513px !important;
+  height: 513px !important;
+}
+/* (Leaflet adds its tiles' colours where they overlap, against seams while they fade in: a light
+   line on these overlapping ones.) */
+.gm-leaflet.leaflet-container img.leaflet-tile {
+  mix-blend-mode: normal;
+}
+/* The map's markers: an SVG each in a Leaflet icon, nothing of Leaflet's own look. */
+.gm-icon {
+  background: none;
+  border: none;
+}
+.gm-svg {
+  display: block;
+  overflow: visible;
+}
+.gm-marker .gm-label,
+.gm-offer .gm-label {
+  display: none;
+}
+.gm-marker.current .gm-label,
+.gm-marker:hover .gm-label,
+.gm-offer:hover .gm-label {
+  display: inline;
+}
+.gm-zone-name {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-shadow:
+    0 0 3px rgba(0, 0, 0, 0.9),
+    0 0 1px #000;
+  pointer-events: none;
 }
 /* The guide's map while it is in a dungeon: the floor's map, the dungeon's steps beside it. */
 .dm-body {
@@ -4295,10 +4344,6 @@ button.link.cmp-jump {
   color: inherit;
 }
 /* The game's maps a little softened, as the other maps of the app. */
-.gm-veil {
-  fill: var(--game-map-veil);
-  pointer-events: none;
-}
 .gm-walk,
 .gm-flight,
 .gm-link,
@@ -4326,21 +4371,21 @@ button.link.cmp-jump {
   stroke-width: 1.2;
   stroke-dasharray: 2 6;
 }
-.gm-all path {
+path.gm-all {
   opacity: 0.32;
 }
-.gm-zone path {
+path.gm-zone {
   opacity: 0.8;
 }
-.gm-zone.only path {
+path.gm-zone.only {
   opacity: 0.9;
 }
-.gm-lit path {
+path.gm-lit {
   stroke: #fff;
   stroke-width: 3.2;
 }
 /* Its glow: a wide soft stroke under it (a filter would slow every frame of a pan). */
-.gm-lit-glow path {
+path.gm-lit-glow {
   stroke: rgba(79, 224, 207, 0.45);
   stroke-width: 8;
   stroke-dasharray: none;
@@ -4348,6 +4393,7 @@ button.link.cmp-jump {
 /* An island in the sky on the stitched world map: a pale glow round it, a double gold frame. */
 .gm-isle-glow {
   fill: #f4f8fc;
+  fill-opacity: 1;
   opacity: 0.16;
 }
 .gm-isle-frame {
@@ -4361,7 +4407,7 @@ button.link.cmp-jump {
   stroke-width: 2.5;
 }
 /* The way along the steps drawn: small chevrons over the lines, dark edged to show on any map. */
-.gm-arrows path {
+path.gm-arrows {
   fill: none;
   stroke: #fff;
   stroke-width: 2;
@@ -4369,7 +4415,7 @@ button.link.cmp-jump {
   stroke-linejoin: round;
   pointer-events: none;
 }
-.gm-arrows path.gm-arrows-under {
+path.gm-arrows.gm-arrows-under {
   stroke: rgba(0, 0, 0, 0.75);
   stroke-width: 4;
 }
@@ -4451,6 +4497,7 @@ button.link.cmp-jump {
 }
 .gm-legend {
   position: absolute;
+  z-index: 1000;
   top: 10px;
   left: 10px;
   display: flex;
@@ -4485,6 +4532,7 @@ button.link.cmp-jump {
 }
 .gm-zoom {
   position: absolute;
+  z-index: 1000;
   top: 10px;
   right: 10px;
   display: flex;
