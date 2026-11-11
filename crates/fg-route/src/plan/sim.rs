@@ -323,6 +323,7 @@ impl<'s> Simulator<'s> {
         (self.params.grind_weight() - 1.0) * spent.grinding
             + (self.params.grind_over_weight() - self.params.grind_weight()) * spent.grind_over
             + (self.params.grind_weight - 1.0).max(0.0) * spent.farming
+            + self.params.low_drop_extra() * spent.low_drop
             + (self.params.flight_weight - 1.0) * spent.flights
             + spent.flight_gold
             + spent.bag_overflow

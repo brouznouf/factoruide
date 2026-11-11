@@ -257,6 +257,9 @@ pub struct Objective {
     pub text: String,
     /// Expected number of kills, their level, and object interactions.
     pub kills: f64,
+    /// Of `kills`, those a drop rate under `Params::low_drop_chance` adds over what that rate
+    /// would ask (`Params::low_drop_weight`): 0 for the others.
+    pub low_drop_kills: f64,
     pub mob_level: i64,
     pub uses: f64,
     /// Fixed extra time (buying, exploring).

@@ -985,7 +985,9 @@ impl Simulator<'_> {
         let wait = self.shared_wait(&s.together, o, mobs);
         s.together = s.together.with(kind_of(o), &o.pool, mobs);
         let extra = (o.extra - o.pool.wait) * share + wait;
-        let kill_work = kills * self.combat().kill_time(s.level, s.bonus, o);
+        let kill_time = self.combat().kill_time(s.level, s.bonus, o);
+        let kill_work = kills * kill_time;
+        s.spent.low_drop += o.low_drop_kills * left * kill_time;
         let other = uses * self.params.object_time + extra;
         self.growth().gather(s, o.loc.zone, kills);
         s.time += kill_work + other;

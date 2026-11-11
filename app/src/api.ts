@@ -133,6 +133,8 @@ export interface Params {
   power_scale: number;
   dungeon_loot_share: number;
   gear_value: number;
+  low_drop_chance: number;
+  low_drop_weight: number;
   mandatory_penalty: number;
   grind_weight: number;
   allow_grind: boolean;
