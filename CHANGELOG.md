@@ -20,6 +20,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - Steps show how their quest is taken or their objective done, and a yellow, orange or red mark when a note tells more about the quest; the step's tooltip lists the notes.
 
+### WoW data
+
+- WoW Forever: the latest quest data, with 115 more quests a guide can take (most in Riverglades and Desolace), the Duskwood Missions left out again, and more names checked in Spanish and Korean.
+
 ## 0.18.0 (2026-11-11)
 
 WoW Forever's guide map on one seamless map of Azeroth, and the latest WoW Forever data.

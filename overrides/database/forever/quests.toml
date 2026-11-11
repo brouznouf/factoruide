@@ -193,7 +193,6 @@ pre_any = [98738]
 [[quest]]
 id = 98404
 classes_mask = 1024
-races_mask = 12884901888 # both Skyborne (see the Zephras Isle entries)
 pre_all = [98341]
 
 [[quest]]
@@ -257,7 +256,6 @@ objectives = [{ type = "talk", id = 249363, amount = 1, text = "Learn more about
 # jumping from the top of the watchtower where Myriaal Mistwake stands (her place).
 id = 92474
 objectives = [{ type = "trigger", text = "Jump from the watchtower and use Walk on Air to slow your fall", at = { zone = 16593, x = 43.68, y = 24.1 } }]
-races_mask = 12884901888 # both Skyborne (see the Zephras Isle entries)
 
 [[quest]]
 # The Missing Scholar (2nd): find Fillion Flamebreeze, then carry him to safety, by the Dusty
@@ -903,7 +901,7 @@ objectives = [{ type = "object", id = 460003, amount = 1, text = "Sit by the Bas
 [[quest]]
 id = 96101
 objectives = [{ type = "object", id = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" }]
-races_mask = 12884901888 # both Skyborne (see the Zephras Isle entries)
+races_mask = 12884901888 # both Skyborne: they start on Zephras Isle, the quest page shows both sides
 
 [[quest]]
 id = 96604
@@ -1036,7 +1034,6 @@ starts = [{ type = "object", id = 269 }]
 # The Wounds of Betrayal: heal 7 druids (the quest text; the sources give no amount).
 id = 94489
 amounts = [{ type = "killcredit", id = 258134, amount = 7 }]
-races_mask = 12884901888 # both Skyborne (see the Zephras Isle entries)
 
 [[quest]]
 # Starving Arcane does not need An Alarming Request first (the sources' link).
@@ -2124,89 +2121,6 @@ pre_all = [92742]
 # me", the Tablet Shard of The Vile Reef, which comes first.
 id = 95748
 pre_all = [629]
-
-# Zephras Isle and the Skyborne class quests: both Skyborne (High Order and Windshaper) start on the
-# island and take these quests (both sides on the quest page); some data gives them to High Order only.
-[[quest]]
-id = 92460 # Coming of Age
-races_mask = 12884901888
-
-[[quest]]
-id = 92461 # Harmony in Balance
-races_mask = 12884901888
-
-[[quest]]
-id = 92462 # Infestation Investigation
-races_mask = 12884901888
-
-[[quest]]
-id = 92463 # The Cirrusfly Queen
-races_mask = 12884901888
-
-[[quest]]
-id = 92472 # The Next Step
-races_mask = 12884901888
-
-[[quest]]
-id = 92516 # Hippogryph Harassment
-races_mask = 12884901888
-
-[[quest]]
-id = 92550 # Havoc in the Highlands
-races_mask = 12884901888
-
-[[quest]]
-id = 92553 # Restocking the Larders
-races_mask = 12884901888
-
-[[quest]]
-id = 92682 # Make Yourself Useful
-races_mask = 12884901888
-
-[[quest]]
-id = 92685 # The Hills Have Eyes
-races_mask = 12884901888
-
-[[quest]]
-id = 93160 # The Forest's Bounty
-races_mask = 12884901888
-
-[[quest]]
-id = 93317 # Crab Season
-races_mask = 12884901888
-
-[[quest]]
-id = 93320 # Tower Defense
-races_mask = 12884901888
-
-[[quest]]
-id = 93926 # The Western Watch
-races_mask = 12884901888
-
-[[quest]]
-id = 93951 # A Little Beauty
-races_mask = 12884901888
-
-[[quest]]
-id = 94003 # The Skybreaker Bulwark
-races_mask = 12884901888
-
-[[quest]]
-id = 94006 # The Great Ursera Spirit
-races_mask = 12884901888
-
-[[quest]]
-id = 94486 # Feathers for Binding
-races_mask = 12884901888
-
-
-[[quest]]
-id = 94568 # The Cult's True Plans
-races_mask = 12884901888
-
-[[quest]]
-id = 94897 # The Fate of a Loved One
-races_mask = 12884901888
 
 # Foal Play (94615) and Apple of My Eye (95561), Riverglades: their quest items come from objects
 # new to the game, every one opened gives it: the Pawprint Tracing from the Tracks, the Fresh
