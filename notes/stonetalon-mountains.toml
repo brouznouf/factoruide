@@ -1,0 +1,17 @@
+# Quest notes of the Stonetalon Mountains. See notes/README.md for the format.
+
+# Jin'Zil's Forest Magic: the sap drops from Sap Beasts only; the look-alike Corrosive Sap Beasts drop none.
+[[note]]
+quest = 1058
+phase = "objective"
+objective = 1
+level = "info"
+en = "Only {npc:4020} drops the sap: {npc:4021} look the same and roam among them but drop none."
+fr = "Seul {npc:4020} lâche la sève : {npc:4021} lui ressemble, rôde parmi eux mais n'en lâche jamais."
+de = "Nur {npc:4020} lässt den Saft fallen: {npc:4021} sieht gleich aus und streift zwischen ihnen umher, lässt aber keinen fallen."
+es = "Solo {npc:4020} suelta la savia: {npc:4021} tiene el mismo aspecto y deambula entre ellos, pero no la suelta nunca."
+pt = "Só {npc:4020} deixa cair a seiva: {npc:4021} tem a mesma aparência e anda entre eles, mas nunca a deixa cair."
+ru = "Сок выпадает только из {npc:4020}: {npc:4021} выглядит так же и бродит среди них, но сока не роняет."
+ko = "수액은 {npc:4020}에게서만 나옵니다. {npc:4021}은(는) 생김새가 같고 그들 사이를 돌아다니지만 수액을 떨어뜨리지 않습니다."
+zh_cn = "只有{npc:4020}会掉落树液：{npc:4021}外观相同、混在其中游荡，但从不掉落。"
+zh_tw = "只有{npc:4020}會掉落樹液：{npc:4021}外觀相同、混在其中遊蕩，但從不掉落。"

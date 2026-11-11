@@ -31,3 +31,19 @@ ru = "{npc:5768} стоит в маленькой пещере в одном и�
 ko = "{npc:5768}은(는) {zone:718} 입구 위 돌 얼굴의 한쪽 눈 안 작은 동굴에 있습니다. 뒤쪽에서 언덕을 올라 얼굴 꼭대기로 간 뒤 코 부분 바위로 뛰어내리고, 정면에서 봤을 때 왼쪽 눈으로 들어가세요."
 zh_cn = "{npc:5768}站在{zone:718}入口上方石脸一只眼睛里的小洞中。从后方爬上山丘到石脸顶部，跳到鼻子处的岩架上，再跳进正面看时左边的眼睛。"
 zh_tw = "{npc:5768}站在{zone:718}入口上方石臉一隻眼睛裡的小洞中。從後方爬上山丘到石臉頂部，跳到鼻子處的岩架上，再跳進正面看時左邊的眼睛。"
+
+# Trouble at the Docks: the goblin is stealthed in the cave before the instance, with a few spawn points.
+[[note]]
+quest = 959
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3655} is stealthed and only shows up close: search the small nook right of the cave's first bend, then the dead end before the last big room."
+fr = "{npc:3655} est camouflé et ne se voit que de près : fouillez le petit renfoncement à droite du premier virage de la grotte, puis le cul-de-sac avant la dernière grande salle."
+de = "{npc:3655} ist getarnt und nur aus der Nähe zu sehen: Durchsuche die kleine Nische rechts an der ersten Biegung der Höhle, dann die Sackgasse vor dem letzten großen Raum."
+es = "{npc:3655} está en sigilo y solo se ve de cerca: busca en el pequeño hueco a la derecha de la primera curva de la cueva y luego en el callejón sin salida antes de la última sala grande."
+pt = "{npc:3655} está furtivo e só aparece de perto: procure no pequeno nicho à direita da primeira curva da caverna e depois no beco sem saída antes do último salão grande."
+ru = "{npc:3655} в незаметности и виден только вблизи: осмотрите маленькую нишу справа у первого поворота пещеры, затем тупик перед последним большим залом."
+ko = "{npc:3655}은(는) 은신 중이라 가까이 가야 보입니다. 동굴의 첫 번째 굽이 오른쪽의 작은 구석을 살펴보고, 그다음 마지막 큰 방 앞의 막다른 곳을 찾아보세요."
+zh_cn = "{npc:3655}处于潜行状态，只有靠近才能看到：先搜查洞穴第一个拐弯处右侧的小凹处，再去最后一个大厅前的死胡同。"
+zh_tw = "{npc:3655}處於潛行狀態，只有靠近才能看到：先搜查洞穴第一個轉彎處右側的小凹處，再去最後一個大廳前的死巷。"

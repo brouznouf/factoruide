@@ -1,0 +1,229 @@
+# Quest notes of the Barrens. See notes/README.md for the format.
+
+# The Forgotten Pools: the exploration counts at the underwater fissure, not on the surface.
+[[note]]
+quest = 870
+phase = "objective"
+objective = 1
+level = "info"
+en = "Dive down to the bubbling crack at the bottom of the pool: swimming on the surface does not count."
+fr = "Plongez jusqu'à la fissure qui fait des bulles au fond du bassin : nager en surface ne compte pas."
+de = "Tauche zum blubbernden Spalt am Grund des Teichs: An der Oberfläche zu schwimmen zählt nicht."
+es = "Bucea hasta la grieta burbujeante del fondo de la poza: nadar en la superficie no cuenta."
+pt = "Mergulhe até a fenda borbulhante no fundo do lago: nadar na superfície não conta."
+ru = "Нырните к трещине с пузырями на дне пруда: плавание на поверхности не засчитывается."
+ko = "웅덩이 바닥의 거품이 올라오는 틈까지 잠수하세요. 수면에서 헤엄치는 것은 인정되지 않습니다."
+zh_cn = "潜到水池底部冒泡的裂缝处：只在水面上游泳不算数。"
+zh_tw = "潛到水池底部冒泡的裂縫處：只在水面上游泳不算數。"
+
+# Verog the Dervish: he spawns only after a centaur near the oasis calls for him, at a random kill.
+[[note]]
+quest = 851
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3395} only appears when summoned: kill centaurs around the oasis until one cries out for him, then find him at his tent south of the command tent. It can take many kills."
+fr = "{npc:3395} n'apparaît qu'une fois invoqué : tuez des centaures autour de l'oasis jusqu'à ce que l'un d'eux l'appelle, puis trouvez-le à sa tente, au sud de la tente de commandement. Cela peut demander beaucoup de victimes."
+de = "{npc:3395} erscheint erst, wenn er gerufen wird: Töte Zentauren rund um die Oase, bis einer nach ihm ruft, und finde ihn dann an seinem Zelt südlich des Kommandozelts. Das kann viele Kills dauern."
+es = "{npc:3395} solo aparece si lo invocan: mata centauros alrededor del oasis hasta que uno lo llame y luego búscalo en su tienda, al sur de la tienda de mando. Puede llevar muchas muertes."
+pt = "{npc:3395} só aparece quando é invocado: mate centauros ao redor do oásis até que um deles o chame e depois encontre-o na tenda dele, ao sul da tenda de comando. Pode levar muitas mortes."
+ru = "{npc:3395} появляется только по призыву: убивайте кентавров вокруг оазиса, пока один из них не позовёт его, затем найдите его у шатра к югу от командного шатра. Может понадобиться много убийств."
+ko = "{npc:3395}은(는) 소환되어야만 나타납니다. 오아시스 주변의 켄타우로스를 처치하다 보면 한 마리가 그를 부르니, 그때 지휘 천막 남쪽의 그의 천막으로 가세요. 많이 처치해야 할 수도 있습니다."
+zh_cn = "{npc:3395}只有被召唤后才会出现：在绿洲周围击杀半人马，直到有一个高喊召唤他，然后去指挥帐篷南边他的帐篷找他。可能需要杀很多只。"
+zh_tw = "{npc:3395}只有被召喚後才會出現：在綠洲周圍擊殺半人馬，直到有一隻高喊召喚他，然後去指揮帳篷南邊他的帳篷找他。可能需要殺很多隻。"
+
+[[icon]]
+quest = 851
+phase = "objective"
+objective = 1
+icon = "event"
+
+# Hezrul Bloodmark: spawns at the cave mouth with two guards and circles the oasis clockwise; about 7 minutes respawn.
+[[note]]
+quest = 852
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3396} spawns at the mouth of {zone:718} with his guards ({npc:3397} ×2) and walks clockwise around the oasis: follow the shore the other way to meet him. He is back about 7 minutes after a kill."
+fr = "{npc:3396} apparaît à l'entrée de {zone:718} avec ses gardes ({npc:3397} ×2) et fait le tour de l'oasis dans le sens des aiguilles d'une montre : suivez la rive dans l'autre sens pour le croiser. Il revient environ 7 minutes après sa mort."
+de = "{npc:3396} erscheint am Eingang von {zone:718} mit seinen Wachen ({npc:3397} ×2) und läuft im Uhrzeigersinn um die Oase: Folge dem Ufer in die andere Richtung, um ihn zu treffen. Er ist etwa 7 Minuten nach seinem Tod wieder da."
+es = "{npc:3396} aparece en la entrada de {zone:718} con sus guardias ({npc:3397} ×2) y rodea el oasis en el sentido de las agujas del reloj: sigue la orilla en sentido contrario para encontrarlo. Vuelve unos 7 minutos después de morir."
+pt = "{npc:3396} surge na entrada de {zone:718} com seus guardas ({npc:3397} ×2) e contorna o oásis em sentido horário: siga a margem no sentido contrário para encontrá-lo. Ele volta cerca de 7 minutos depois de morrer."
+ru = "{npc:3396} появляется у входа в {zone:718} со своей охраной ({npc:3397} ×2) и обходит оазис по часовой стрелке: идите вдоль берега в обратную сторону, чтобы встретить его. Он возвращается примерно через 7 минут после смерти."
+ko = "{npc:3396}은(는) 호위병({npc:3397} ×2)과 함께 {zone:718} 입구에 나타나 오아시스를 시계 방향으로 돕니다. 반대 방향으로 물가를 따라가면 마주칩니다. 처치 후 약 7분 뒤에 다시 나타납니다."
+zh_cn = "{npc:3396}会带着护卫（{npc:3397} ×2）在{zone:718}入口出现，并沿顺时针方向绕绿洲行走：沿岸边反方向走就能遇到他。被击杀后约7分钟重生。"
+zh_tw = "{npc:3396}會帶著護衛（{npc:3397} ×2）在{zone:718}入口出現，並沿順時針方向繞綠洲行走：沿岸邊反方向走就能遇到他。被擊殺後約7分鐘重生。"
+
+# WANTED: Baron Longshore: he has three spawn points at the shore camps and a short respawn.
+[[note]]
+quest = 895
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:3467} stands at one of the three pirate camps along the shore and respawns within minutes, maybe at another one: check each camp."
+fr = "{npc:3467} se tient à l'un des trois camps de pirates le long du rivage et réapparaît en quelques minutes, parfois dans un autre : vérifiez chaque camp."
+de = "{npc:3467} steht an einem der drei Piratenlager am Ufer und respawnt innerhalb weniger Minuten, eventuell an einem anderen: Sieh in jedem Lager nach."
+es = "{npc:3467} está en uno de los tres campamentos piratas de la costa y reaparece en pocos minutos, quizá en otro: revisa cada campamento."
+pt = "{npc:3467} fica em um dos três acampamentos piratas ao longo da costa e reaparece em poucos minutos, talvez em outro: verifique cada acampamento."
+ru = "{npc:3467} стоит в одном из трёх пиратских лагерей на берегу и возрождается через несколько минут, возможно в другом: проверьте каждый лагерь."
+ko = "{npc:3467}은(는) 해안을 따라 있는 해적 야영지 세 곳 중 한 곳에 있으며, 몇 분 안에 다른 야영지에서 다시 나타날 수도 있습니다. 야영지를 모두 확인하세요."
+zh_cn = "{npc:3467}站在海岸边三处海盗营地之一，几分钟内就会重生，可能换到另一处：逐个营地查看。"
+zh_tw = "{npc:3467}站在海岸邊三處海盜營地之一，幾分鐘內就會重生，可能換到另一處：逐個營地查看。"
+
+# Echeyakee: the horn is used up when blown and the lion attacks the closest player, not the summoner.
+[[note]]
+quest = 881
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Blowing the {item:10327} uses it up, and {npc:3475} attacks the nearest player: blow it with nobody else around. If he is lost, abandon the quest and take it again for a new horn."
+fr = "Souffler dans le {item:10327} le consomme, et {npc:3475} attaque le joueur le plus proche : soufflez-y sans personne autour. Si vous le ratez, abandonnez la quête et reprenez-la pour avoir un nouveau cor."
+de = "Das Blasen des {item:10327} verbraucht es, und {npc:3475} greift den nächsten Spieler an: Blase es nur, wenn niemand sonst in der Nähe ist. Geht er verloren, brich die Quest ab und nimm sie erneut an, um ein neues Horn zu bekommen."
+es = "Tocar el {item:10327} lo consume, y {npc:3475} ataca al jugador más cercano: tócalo sin nadie alrededor. Si lo pierdes, abandona la misión y vuelve a aceptarla para obtener un cuerno nuevo."
+pt = "Tocar o {item:10327} o consome, e {npc:3475} ataca o jogador mais próximo: toque-o sem ninguém por perto. Se perdê-lo, abandone a missão e aceite-a de novo para ganhar outra trompa."
+ru = "{item:10327} расходуется, когда в него трубят, а {npc:3475} нападает на ближайшего игрока: трубите, только когда рядом никого нет. Если вы его упустили, откажитесь от задания и возьмите его снова, чтобы получить новый рог."
+ko = "{item:10327}은(는) 불면 사라지고, {npc:3475}은(는) 가장 가까운 플레이어를 공격합니다. 주변에 아무도 없을 때 부세요. 놓쳤다면 퀘스트를 포기하고 다시 받아 새 뿔피리를 얻으세요."
+zh_cn = "吹响{item:10327}后它就会消失，而{npc:3475}会攻击离得最近的玩家：请在周围没有别人时吹响。如果错失了他，放弃任务再重新接取，以获得新的号角。"
+zh_tw = "吹響{item:10327}後它就會消失，而{npc:3475}會攻擊離得最近的玩家：請在周圍沒有別人時吹響。如果錯失了他，放棄任務再重新接取，以獲得新的號角。"
+
+# Free From the Hold: while someone escorts him the giver is gone; he is back about 18 minutes after the start.
+[[note]]
+quest = 898
+phase = "accept"
+level = "info"
+en = "If {npc:3465} is not in his tower, another player is escorting him: he is back about 18 minutes after they started."
+fr = "Si {npc:3465} n'est pas dans sa tour, un autre joueur est en train de l'escorter : il revient environ 18 minutes après le départ."
+de = "Ist {npc:3465} nicht in seinem Turm, eskortiert ihn gerade ein anderer Spieler: Er ist etwa 18 Minuten nach dessen Start wieder da."
+es = "Si {npc:3465} no está en su torre, otro jugador lo está escoltando: vuelve unos 18 minutos después de que empezaran."
+pt = "Se {npc:3465} não estiver na torre, outro jogador o está escoltando: ele volta cerca de 18 minutos depois do início."
+ru = "Если {npc:3465} нет в его башне, его сопровождает другой игрок: он вернётся примерно через 18 минут после начала сопровождения."
+ko = "{npc:3465}이(가) 탑에 없다면 다른 플레이어가 호위 중입니다. 호위가 시작된 지 약 18분 뒤에 돌아옵니다."
+zh_cn = "如果{npc:3465}不在他的塔里，说明其他玩家正在护送他：从对方开始护送算起约18分钟后他会回来。"
+zh_tw = "如果{npc:3465}不在他的塔裡，表示其他玩家正在護送他：從對方開始護送算起約18分鐘後他會回來。"
+
+# Free From the Hold: a long, slow walk to Ratchet during which he picks fights with every pirate.
+[[note]]
+quest = 898
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3465} walks slowly all the way to Ratchet and attacks every pirate on the way: stay close and take them off him. Finish your other quests in the fort first."
+fr = "{npc:3465} marche lentement jusqu'à Cabestan et attaque chaque pirate en chemin : restez près de lui et détournez-les de lui. Terminez d'abord vos autres quêtes dans le fort."
+de = "{npc:3465} läuft langsam bis nach Ratschet und greift jeden Piraten unterwegs an: Bleib nah bei ihm und zieh sie von ihm weg. Erledige vorher deine anderen Quests in der Festung."
+es = "{npc:3465} camina despacio hasta Trinquete y ataca a cada pirata del camino: quédate cerca y quítaselos de encima. Termina antes tus otras misiones en el fuerte."
+pt = "{npc:3465} anda devagar até Vila Catraca e ataca todo pirata no caminho: fique perto e tire-os de cima dele. Termine antes suas outras missões no forte."
+ru = "{npc:3465} медленно идёт до самого Кабестана и нападает на каждого пирата по пути: держитесь рядом и отвлекайте их на себя. Сначала закончите другие задания в крепости."
+ko = "{npc:3465}은(는) 톱니항까지 천천히 걸어가며 도중의 해적을 모두 공격합니다. 가까이 붙어서 적을 끌어오세요. 요새의 다른 퀘스트를 먼저 끝내세요."
+zh_cn = "{npc:3465}会慢慢走回棘齿城，并攻击沿途的每个海盗：紧跟着他，把怪物从他身上引开。请先完成堡垒里的其他任务。"
+zh_tw = "{npc:3465}會慢慢走回棘齒城，並攻擊沿途的每個海盜：緊跟著他，把怪物從他身上引開。請先完成堡壘裡的其他任務。"
+
+# Samophlange (valves): using the last valve spawns two more guards next to the machine.
+[[note]]
+quest = 900
+phase = "objective"
+level = "info"
+en = "Turning the last valve brings two more guards at once: clear the area around the machine and keep health to spare."
+fr = "Tourner la dernière vanne fait venir aussitôt deux gardes de plus : nettoyez les abords de la machine et gardez de la vie en réserve."
+de = "Das Drehen des letzten Ventils ruft sofort zwei weitere Wachen herbei: Räume die Umgebung der Maschine und behalte Gesundheit in Reserve."
+es = "Girar la última válvula hace aparecer al instante dos guardias más: despeja los alrededores de la máquina y guarda salud de sobra."
+pt = "Girar a última válvula traz na hora mais dois guardas: limpe a área ao redor da máquina e mantenha vida de sobra."
+ru = "Поворот последнего вентиля сразу вызывает ещё двух охранников: расчистите место вокруг машины и держите запас здоровья."
+ko = "마지막 밸브를 돌리면 경비병 둘이 곧바로 나타납니다. 기계 주변을 정리하고 생명력에 여유를 두세요."
+zh_cn = "转动最后一个阀门会立刻引来另外两个守卫：先清理机器周围，并保留足够的生命值。"
+zh_tw = "轉動最後一個閥門會立刻引來另外兩個守衛：先清理機器周圍，並保留足夠的生命值。"
+
+# Ishamuhale: the raptor is summoned by using the carcass (any zhevra drops it on the quest) at the dead tree.
+[[note]]
+quest = 882
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3257} only appears when you use a {item:10338} under the leafless tree on the hill north of Ratchet. Any zhevra drops the carcass while you have the quest."
+fr = "{npc:3257} n'apparaît que si vous utilisez une {item:10338} sous l'arbre sans feuilles de la colline au nord de Cabestan. N'importe quel zhévra lâche la carcasse tant que vous avez la quête."
+de = "{npc:3257} erscheint nur, wenn du einen {item:10338} unter dem blattlosen Baum auf dem Hügel nördlich von Ratschet benutzt. Jedes Zhevra lässt den Kadaver fallen, solange du die Quest hast."
+es = "{npc:3257} solo aparece si usas un {item:10338} bajo el árbol sin hojas de la colina al norte de Trinquete. Cualquier zhevra suelta el cadáver mientras tengas la misión."
+pt = "{npc:3257} só aparece se você usar uma {item:10338} sob a árvore sem folhas na colina ao norte de Vila Catraca. Qualquer zhevra deixa cair a carcaça enquanto você tiver a missão."
+ru = "{npc:3257} появляется, только если использовать {item:10338} под безлистным деревом на холме к северу от Кабестана. Тушу роняет любая зебра, пока у вас есть задание."
+ko = "{npc:3257}은(는) 톱니항 북쪽 언덕의 잎 없는 나무 아래에서 {item:10338}을(를) 사용해야만 나타납니다. 퀘스트를 받은 동안에는 어떤 얼룩말이든 사체를 떨어뜨립니다."
+zh_cn = "只有在棘齿城北边山丘上那棵没有叶子的树下使用{item:10338}，{npc:3257}才会出现。接了任务后，任何斑马都会掉落尸体。"
+zh_tw = "只有在棘齒城北邊山丘上那棵沒有葉子的樹下使用{item:10338}，{npc:3257}才會出現。接了任務後，任何斑馬都會掉落屍體。"
+
+# The Harvester: started by the head of a rare spawn with a respawn of hours.
+[[note]]
+quest = 897
+phase = "accept"
+level = "warning"
+en = "{npc:3253} is a rare that respawns only after hours: take this quest if you happen to meet it, do not wait for it."
+fr = "{npc:3253} est un monstre rare qui ne réapparaît qu'au bout de plusieurs heures : prenez cette quête si vous le croisez, ne l'attendez pas."
+de = "{npc:3253} ist ein seltener Gegner, der erst nach Stunden respawnt: Nimm diese Quest, wenn du ihm zufällig begegnest, aber warte nicht auf ihn."
+es = "{npc:3253} es un enemigo raro que tarda horas en reaparecer: acepta esta misión si te lo encuentras, no lo esperes."
+pt = "{npc:3253} é um monstro raro que só reaparece depois de horas: pegue esta missão se encontrá-lo por acaso, não espere por ele."
+ru = "{npc:3253} — редкий монстр, который возрождается лишь через несколько часов: берите это задание, если случайно встретите его, но не ждите."
+ko = "{npc:3253}은(는) 몇 시간이 지나야 다시 나타나는 희귀 몬스터입니다. 우연히 만나면 이 퀘스트를 받고, 기다리지는 마세요."
+zh_cn = "{npc:3253}是稀有怪，要过好几个小时才会重生：碰巧遇到再接这个任务，不要专门等它。"
+zh_tw = "{npc:3253}是稀有怪，要過好幾個小時才會重生：碰巧遇到再接這個任務，不要專門等它。"
+
+[[icon]]
+quest = 897
+phase = "accept"
+icon = "rare"
+
+# Ignition: the shredder is gone while someone does The Escape; back about 10 minutes after the start.
+[[note]]
+quest = 858
+phase = "accept"
+level = "info"
+en = "If {npc:3439} is not there, another player is on {quest:863} with it: it is back about 10 minutes after they started."
+fr = "Si {npc:3439} n'est pas là, un autre joueur fait {quest:863} avec lui : il revient environ 10 minutes après le départ."
+de = "Ist {npc:3439} nicht da, ist gerade ein anderer Spieler damit bei {quest:863}: Er ist etwa 10 Minuten nach dessen Start wieder da."
+es = "Si {npc:3439} no está, otro jugador está haciendo {quest:863} con él: vuelve unos 10 minutos después de que empezaran."
+pt = "Se {npc:3439} não estiver lá, outro jogador está fazendo {quest:863} com ele: ele volta cerca de 10 minutos depois do início."
+ru = "Если {npc:3439} нет на месте, другой игрок выполняет с ним {quest:863}: он вернётся примерно через 10 минут после начала."
+ko = "{npc:3439}이(가) 없다면 다른 플레이어가 {quest:863} 퀘스트를 진행 중입니다. 시작한 지 약 10분 뒤에 돌아옵니다."
+zh_cn = "如果{npc:3439}不在，说明其他玩家正在用它做{quest:863}：从对方开始算起约10分钟后它会回来。"
+zh_tw = "如果{npc:3439}不在，表示其他玩家正在用它做{quest:863}：從對方開始算起約10分鐘後它會回來。"
+
+# Gann's Reclamation: the giver walks the road of the southern Barrens instead of standing at one spot.
+[[note]]
+quest = 843
+phase = "accept"
+level = "warning"
+en = "{npc:3341} walks up and down the road near the dig site: look for him along it rather than at one spot."
+fr = "{npc:3341} fait des allers-retours sur la route près du site de fouilles : cherchez-le le long de la route plutôt qu'à un endroit précis."
+de = "{npc:3341} läuft auf der Straße nahe der Ausgrabungsstätte auf und ab: Such ihn entlang der Straße statt an einer festen Stelle."
+es = "{npc:3341} recorre el camino de ida y vuelta cerca de la excavación: búscalo a lo largo del camino y no en un punto fijo."
+pt = "{npc:3341} anda de um lado para o outro na estrada perto da escavação: procure-o ao longo da estrada, não num ponto fixo."
+ru = "{npc:3341} ходит туда-сюда по дороге возле раскопок: ищите его вдоль дороги, а не в одной точке."
+ko = "{npc:3341}은(는) 발굴지 근처 길을 오가며 걷습니다. 한 곳이 아니라 길을 따라 찾아보세요."
+zh_cn = "{npc:3341}会在挖掘场附近的大路上来回走动：沿着大路找他，而不是守在一个地方。"
+zh_tw = "{npc:3341}會在挖掘場附近的大路上來回走動：沿著大路找他，而不是守在一個地方。"
+
+# Gann's Reclamation: same walking giver at the hand-in.
+[[note]]
+quest = 843
+phase = "turnin"
+level = "warning"
+en = "{npc:3341} walks up and down the road near the dig site: look for him along it rather than at one spot."
+fr = "{npc:3341} fait des allers-retours sur la route près du site de fouilles : cherchez-le le long de la route plutôt qu'à un endroit précis."
+de = "{npc:3341} läuft auf der Straße nahe der Ausgrabungsstätte auf und ab: Such ihn entlang der Straße statt an einer festen Stelle."
+es = "{npc:3341} recorre el camino de ida y vuelta cerca de la excavación: búscalo a lo largo del camino y no en un punto fijo."
+pt = "{npc:3341} anda de um lado para o outro na estrada perto da escavação: procure-o ao longo da estrada, não num ponto fixo."
+ru = "{npc:3341} ходит туда-сюда по дороге возле раскопок: ищите его вдоль дороги, а не в одной точке."
+ko = "{npc:3341}은(는) 발굴지 근처 길을 오가며 걷습니다. 한 곳이 아니라 길을 따라 찾아보세요."
+zh_cn = "{npc:3341}会在挖掘场附近的大路上来回走动：沿着大路找他，而不是守在一个地方。"
+zh_tw = "{npc:3341}會在挖掘場附近的大路上來回走動：沿著大路找他，而不是守在一個地方。"
+
+# Revenge of Gann: same walking giver at the hand-in.
+[[note]]
+quest = 846
+phase = "turnin"
+level = "warning"
+en = "{npc:3341} walks up and down the road near the dig site: look for him along it rather than at one spot."
+fr = "{npc:3341} fait des allers-retours sur la route près du site de fouilles : cherchez-le le long de la route plutôt qu'à un endroit précis."
+de = "{npc:3341} läuft auf der Straße nahe der Ausgrabungsstätte auf und ab: Such ihn entlang der Straße statt an einer festen Stelle."
+es = "{npc:3341} recorre el camino de ida y vuelta cerca de la excavación: búscalo a lo largo del camino y no en un punto fijo."
+pt = "{npc:3341} anda de um lado para o outro na estrada perto da escavação: procure-o ao longo da estrada, não num ponto fixo."
+ru = "{npc:3341} ходит туда-сюда по дороге возле раскопок: ищите его вдоль дороги, а не в одной точке."
+ko = "{npc:3341}은(는) 발굴지 근처 길을 오가며 걷습니다. 한 곳이 아니라 길을 따라 찾아보세요."
+zh_cn = "{npc:3341}会在挖掘场附近的大路上来回走动：沿着大路找他，而不是守在一个地方。"
+zh_tw = "{npc:3341}會在挖掘場附近的大路上來回走動：沿著大路找他，而不是守在一個地方。"
