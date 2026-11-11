@@ -1,0 +1,17 @@
+# Quest notes of the Scarlet Monastery. See notes/README.md for the format.
+
+# Vorrel's Revenge: Nancy and her grandfather are elites in the same house; she regularly walks alone to the end of the dock.
+[[note]]
+quest = 1051
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3984} shares her house with {npc:3985}, both elites. Wait for her to walk out alone to the end of the dock and fight her there, away from the house, so he does not join in."
+fr = "{npc:3984} partage sa maison avec {npc:3985}, tous deux élites. Attendez qu'elle sorte seule jusqu'au bout du ponton et combattez-la là-bas, loin de la maison, pour qu'il ne s'en mêle pas."
+de = "{npc:3984} teilt ihr Haus mit {npc:3985}, beide Elite. Warte, bis sie allein ans Ende des Stegs geht, und kämpfe dort gegen sie, weg vom Haus, damit er nicht dazukommt."
+es = "{npc:3984} comparte casa con {npc:3985}, ambos de élite. Espera a que salga sola hasta el final del muelle y lucha con ella allí, lejos de la casa, para que él no intervenga."
+pt = "{npc:3984} divide a casa com {npc:3985}, ambos de elite. Espere que ela saia sozinha até o fim do píer e enfrente-a lá, longe da casa, para que ele não entre na luta."
+ru = "{npc:3984} живёт в одном доме с {npc:3985}, оба элитные. Дождитесь, когда она одна выйдет на край причала, и сражайтесь с ней там, подальше от дома, чтобы он не вмешался."
+ko = "{npc:3984}은(는) {npc:3985}와(과) 같은 집에 살며 둘 다 정예입니다. 그녀가 혼자 부두 끝으로 걸어 나올 때까지 기다렸다가 집에서 떨어진 그곳에서 싸워 그가 끼어들지 않게 하세요."
+zh_cn = "{npc:3984}和{npc:3985}住在同一间屋子里，两人都是精英。等她独自走到码头尽头，在远离屋子的地方和她战斗，以免他加入。"
+zh_tw = "{npc:3984}和{npc:3985}住在同一間屋子裡，兩人都是精英。等她獨自走到碼頭盡頭，在遠離屋子的地方和她戰鬥，以免他加入。"

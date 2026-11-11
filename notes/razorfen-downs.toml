@@ -1,0 +1,16 @@
+# Quest notes of Razorfen Downs. See notes/README.md for the format.
+
+# Scourge of the Downs: the follow-up escort starts on acceptance; party members who have not turned this one in cannot join it.
+[[note]]
+quest = 3523
+phase = "turnin"
+level = "warning"
+en = "Every party member should turn this in before anyone accepts {quest:3525}: the escort starts as soon as it is accepted, and those who have not finished this quest cannot join it."
+fr = "Chaque membre du groupe doit rendre cette quête avant que quiconque accepte {quest:3525} : l'escorte commence dès qu'elle est acceptée, et ceux qui n'ont pas terminé cette quête ne peuvent pas la rejoindre."
+de = "Jedes Gruppenmitglied sollte diese Quest abgeben, bevor jemand {quest:3525} annimmt: Die Eskorte beginnt sofort mit der Annahme, und wer diese Quest nicht abgeschlossen hat, kann nicht mitmachen."
+es = "Todos los miembros del grupo deben entregar esta misión antes de que nadie acepte {quest:3525}: la escolta empieza en cuanto se acepta, y quien no haya terminado esta misión no puede unirse."
+pt = "Todos do grupo devem entregar esta missão antes que alguém aceite {quest:3525}: a escolta começa assim que é aceita, e quem não terminou esta missão não pode participar."
+ru = "Все участники группы должны сдать это задание до того, как кто-либо возьмёт «{quest:3525}»: сопровождение начинается сразу после принятия, и те, кто не выполнил это задание, не смогут присоединиться."
+ko = "누군가 {quest:3525}을(를) 수락하기 전에 파티원 모두가 이 퀘스트를 완료하세요. 호위는 수락하는 즉시 시작되며, 이 퀘스트를 끝내지 않은 사람은 참여할 수 없습니다."
+zh_cn = "在任何人接受{quest:3525}之前，所有队员都应先交掉这个任务：护送任务一接受就会开始，没完成本任务的人无法加入。"
+zh_tw = "在任何人接受{quest:3525}之前，所有隊員都應先交掉這個任務：護送任務一接受就會開始，沒完成本任務的人無法加入。"

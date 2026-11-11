@@ -1,0 +1,17 @@
+# Quest notes of Orgrimmar. See notes/README.md for the format.
+
+# The Burning of Spirits: the Burning Gem captures the spirit when the target dies under its channel; use it at low health.
+[[note]]
+quest = 1435
+phase = "objective"
+objective = 1
+level = "info"
+en = "Bring a Burning Blade below about 20% health, then use the {item:6436} on it and let it die while you channel: each kill made that way gives an {item:6435}."
+fr = "Amenez un membre de la Lame ardente sous environ 20 % de vie, puis utilisez la {item:6436} sur lui et laissez-le mourir pendant la canalisation : chaque mort obtenue ainsi donne une {item:6435}."
+de = "Bring ein Mitglied der Brennenden Klinge unter etwa 20 % Gesundheit, benutz dann den {item:6436} auf ihn und lass ihn während der Kanalisierung sterben: Jeder so erzielte Kill gibt einen {item:6435}."
+es = "Deja a un miembro del Filo Ardiente por debajo del 20 % de salud, usa la {item:6436} sobre él y deja que muera mientras canalizas: cada muerte así te da una {item:6435}."
+pt = "Deixe um membro da Lâmina Ardente abaixo de uns 20% de vida, use a {item:6436} nele e deixe-o morrer enquanto você canaliza: cada morte assim dá uma {item:6435}."
+ru = "Опустите здоровье бойца Пылающего Клинка примерно до 20%, затем используйте на нём предмет «{item:6436}» и дайте ему умереть во время поддержания эффекта: каждое такое убийство даёт «{item:6435}»."
+ko = "불타는 칼날 단원의 생명력을 20% 정도 아래로 떨어뜨린 뒤 {item:6436}을(를) 사용하고, 정신 집중 중에 죽게 하세요. 이렇게 처치할 때마다 {item:6435}을(를) 얻습니다."
+zh_cn = "把火刃成员的生命值打到约20%以下，然后对它使用{item:6436}，让它在你引导期间死亡：每次这样击杀都会得到一个{item:6435}。"
+zh_tw = "把火刃成員的生命值打到約20%以下，然後對它使用{item:6436}，讓它在你引導期間死亡：每次這樣擊殺都會得到一個{item:6435}。"

@@ -82,3 +82,19 @@ ru = "Разбейте только один ящик «{object:20447}»: это
 ko = "{object:20447}은(는) 하나만 부수세요. 침묵을 거는 하피가 약 네 차례 몰려오고, {npc:4490}은(는) 마지막 무리와 함께 나타납니다. 더 부수면 무리만 늘어납니다."
 zh_cn = "只打破一个{object:20447}：它会引来约四波会沉默的鹰身人，{npc:4490}随最后一波出现。打破更多只会增加波数。"
 zh_tw = "只打破一個{object:20447}：它會引來約四波會沉默的鷹身人，{npc:4490}隨最後一波出現。打破更多只會增加波數。"
+
+# The Swarm Grows: Silithid Invaders spawn only in the cave, in place of Hive Drones; drones are social.
+[[note]]
+quest = 1147
+phase = "objective"
+objective = 3
+level = "info"
+en = "The {npc:4131} spawns only in the cave, taking the place of a {npc:4133}: when none are left, kill the drones inside to bring more. Drones call nearby silithids for help, so pull them away first."
+fr = "L'{npc:4131} n'apparaît que dans la grotte, à la place d'un {npc:4133} : s'il n'en reste plus, tuez les bourdons à l'intérieur pour en faire venir d'autres. Les bourdons appellent les silithides proches à l'aide, attirez-les d'abord à l'écart."
+de = "Der {npc:4131} erscheint nur in der Höhle, anstelle einer {npc:4133}: Sind keine mehr da, töte die Drohnen drinnen, damit neue erscheinen. Drohnen rufen nahe Silithiden zu Hilfe, also zieh sie zuerst weg."
+es = "El {npc:4131} solo aparece en la cueva, en lugar de un {npc:4133}: si no queda ninguno, mata a los zánganos de dentro para que salgan más. Los zánganos piden ayuda a los silítidos cercanos, así que apártalos primero."
+pt = "O {npc:4131} só surge na caverna, no lugar de um {npc:4133}: se não houver nenhum, mate os zangões lá dentro para que apareçam mais. Os zangões chamam os silitídeos próximos, então afaste-os primeiro."
+ru = "{npc:4131} появляется только в пещере, на месте противника {npc:4133}: если их не осталось, убейте трутней внутри, чтобы появились новые. Трутни зовут на помощь ближайших силитидов, поэтому сначала выманивайте их в сторону."
+ko = "{npc:4131}은(는) 동굴 안에서만 {npc:4133} 대신 나타납니다. 남은 것이 없으면 안의 일벌레를 처치해 새로 나타나게 하세요. 일벌레는 주변 실리시드를 불러 모으니 먼저 떨어진 곳으로 끌어내세요."
+zh_cn = "{npc:4131}只会在洞穴里出现，取代{npc:4133}的位置：如果一个都没有了，就杀掉洞里的雄蜂让它们刷新。雄蜂会呼叫附近的异种虫帮忙，先把它们拉开。"
+zh_tw = "{npc:4131}只會在洞穴裡出現，取代{npc:4133}的位置：如果一個都沒有了，就殺掉洞裡的雄蜂讓牠們重生。雄蜂會呼叫附近的異種蟲幫忙，先把牠們拉開。"

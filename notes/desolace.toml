@@ -1,0 +1,33 @@
+# Quest notes of Desolace. See notes/README.md for the format.
+
+# Kodo Roundup: a tamed kodo counts only once inspected (right-clicked) after Smeed asks for it.
+[[note]]
+quest = 5561
+phase = "objective"
+objective = 1
+level = "must_read"
+en = "Use the {item:13892} on an {npc:4700} or a {npc:4701}, then walk back to {npc:11596}. When he asks you to inspect the beast, right-click the kodo next to you: it only counts then."
+fr = "Utilisez le {item:13892} sur un {npc:4700} ou un {npc:4701}, puis revenez voir {npc:11596}. Quand il vous demande d'inspecter la bête, faites un clic droit sur le kodo à côté de vous : il ne compte qu'à ce moment-là."
+de = "Benutz den {item:13892} auf einen {npc:4700} oder einen {npc:4701} und geh dann zurück zu {npc:11596}. Wenn er dich bittet, das Tier zu untersuchen, klick mit rechts auf den Kodo neben dir: Erst dann zählt er."
+es = "Usa el {item:13892} sobre un {npc:4700} o un {npc:4701} y vuelve con {npc:11596}. Cuando te pida que inspecciones a la bestia, haz clic derecho en el kodo que tienes al lado: solo entonces cuenta."
+pt = "Use o {item:13892} em um {npc:4700} ou um {npc:4701} e volte até {npc:11596}. Quando ele pedir que você inspecione a fera, clique com o botão direito no kodo ao seu lado: só então ele conta."
+ru = "Используйте «{item:13892}» на кодо ({npc:4700} или {npc:4701}), затем возвращайтесь к персонажу {npc:11596}. Когда он попросит осмотреть зверя, щёлкните правой кнопкой по кодо рядом с вами: только тогда он засчитается."
+ko = "{npc:4700}이나 {npc:4701}에게 {item:13892}을(를) 사용한 뒤 {npc:11596}에게 돌아가세요. 그가 짐승을 살펴보라고 하면 옆에 있는 코도를 오른쪽 클릭하세요. 그때서야 인정됩니다."
+zh_cn = "对{npc:4700}或{npc:4701}使用{item:13892}，然后走回{npc:11596}身边。当他让你检查这头野兽时，右键点击你身旁的科多兽：只有这样才算数。"
+zh_tw = "對{npc:4700}或{npc:4701}使用{item:13892}，然後走回{npc:11596}身邊。當他要你檢查這頭野獸時，右鍵點擊你身旁的科多獸：只有這樣才算數。"
+
+# Ghost-o-plasm Round Up: ghosts walk to the placed crate and turn hostile there; they come in one after another.
+[[note]]
+quest = 6134
+phase = "objective"
+objective = 1
+level = "warning"
+en = "After placing a {item:15848}, step back: ghosts walk to it and turn hostile. Pull them one by one as they come in rather than fighting at the crate, and place another when no more come."
+fr = "Après avoir posé une {item:15848}, reculez : les fantômes marchent vers elle et deviennent hostiles. Attirez-les un par un à leur arrivée plutôt que de combattre près de la caisse, et posez-en une autre quand il n'en vient plus."
+de = "Nachdem du eine {item:15848} aufgestellt hast, geh zurück: Geister laufen darauf zu und werden feindlich. Zieh sie einzeln, während sie ankommen, statt an der Kiste zu kämpfen, und stell eine neue auf, wenn keine mehr kommen."
+es = "Tras colocar una {item:15848}, retrocede: los fantasmas caminan hacia ella y se vuelven hostiles. Atráelos de uno en uno según llegan en vez de luchar junto a la caja, y coloca otra cuando no vengan más."
+pt = "Depois de colocar uma {item:15848}, recue: os fantasmas andam até ela e ficam hostis. Puxe-os um por um conforme chegam em vez de lutar junto à caixa, e coloque outra quando não vierem mais."
+ru = "Поставив «{item:15848}», отойдите: призраки идут к ящику и становятся враждебными. Выманивайте их по одному по мере подхода, а не сражайтесь у ящика, и поставьте новый, когда они перестанут приходить."
+ko = "{item:15848}을(를) 놓은 뒤 물러나세요. 유령들이 그쪽으로 걸어오며 적대적으로 변합니다. 상자 옆에서 싸우지 말고 다가오는 대로 하나씩 끌어내고, 더 오지 않으면 새로 놓으세요."
+zh_cn = "放下{item:15848}后请后退：幽灵会走向它并变为敌对。趁它们陆续走来时一个一个地引过来，不要在箱子旁战斗；不再有幽灵出现时再放一个。"
+zh_tw = "放下{item:15848}後請後退：幽靈會走向它並變為敵對。趁牠們陸續走來時一個一個地引過來，不要在箱子旁戰鬥；不再有幽靈出現時再放一個。"
