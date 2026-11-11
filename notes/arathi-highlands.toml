@@ -90,3 +90,19 @@ ru = "{npc:2611} носит {item:4469} и бродит по зоне с тре�
 ko = "{npc:2611}는 {item:4469}을 지니고 코볼트 경비병 셋과 지역을 돌아다니며, 그중 하나는 수면을 겁니다. {object:2688}에서 퀘스트를 완료하면 정예 거인 {npc:2763}이 나타납니다. 대비하거나 그가 사라질 때까지 물러나세요."
 zh_cn = "{npc:2611}带着{item:4469}，与三名狗头人护卫在区域内游荡，其中一名会施放催眠。在{object:2688}交任务会召出精英巨人{npc:2763}：做好准备，或走开等他消失。"
 zh_tw = "{npc:2611}帶著{item:4469}，與三名狗頭人護衛在區域內遊蕩，其中一名會施放催眠。在{object:2688}交任務會召出精英巨人{npc:2763}：做好準備，或走開等他消失。"
+
+# Summoning the Princess: Myzrael is an elite who keeps summoning adds; the scroll is consumed and she despawns after about 10 minutes, a new scroll comes from re-taking the quest.
+[[note]]
+quest = 656
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:2755} is an elite who keeps calling elemental adds: bring a group, focus her and ignore the adds. {item:4472} is used up and she leaves after about 10 minutes: to try again, abandon the quest and take it again from {npc:2785} in {zone:3}."
+fr = "{npc:2755}, une élite, invoque sans cesse des élémentaires : venez en groupe et frappez-la elle seule. {item:4472} est consommé et elle part après 10 minutes environ : pour réessayer, abandonnez la quête et reprenez-la auprès de {npc:2785} ({zone:3})."
+de = "{npc:2755} ist ein Elitegegner und ruft ständig Elementare herbei: komm mit einer Gruppe, greif nur sie an und ignoriere die Helfer. {item:4472} wird verbraucht, und sie verschwindet nach etwa 10 Minuten: für einen neuen Versuch die Quest abbrechen und bei {npc:2785} ({zone:3}) neu annehmen."
+es = "{npc:2755} es una élite que no deja de invocar elementales: ve en grupo, céntrate en ella e ignora los esbirros. {item:4472} se gasta y ella se va tras unos 10 minutos: para reintentarlo, abandona la misión y vuelve a aceptarla de {npc:2785} en {zone:3}."
+pt = "{npc:2755} é uma elite que invoca elementais sem parar: vá em grupo, foque nela e ignore os ajudantes. {item:4472} é consumido e ela vai embora após uns 10 minutos: para tentar de novo, abandone a missão e pegue-a outra vez com {npc:2785} em {zone:3}."
+ru = "{npc:2755} — элитный противник, постоянно призывающий элементалей: приходите группой, бейте ее и не отвлекайтесь на помощников. {item:4472} расходуется, а она исчезает примерно через 10 минут: для новой попытки отмените задание и возьмите его снова у {npc:2785} ({zone:3})."
+ko = "{npc:2755}은(는) 정령을 계속 불러내는 정예입니다. 파티를 꾸려 그녀만 집중 공격하고 정령은 무시하세요. {item:4472}은(는) 사용하면 사라지고 그녀는 약 10분 뒤 떠납니다. 다시 하려면 퀘스트를 포기하고 {zone:3}의 {npc:2785}에게서 다시 받으세요."
+zh_cn = "{npc:2755}是精英，会不断召唤元素帮手：组队前往，集中攻击她，无视帮手。{item:4472}使用后就会消失，她约10分钟后离开：若要重试，放弃任务，再到{zone:3}找{npc:2785}重新接取。"
+zh_tw = "{npc:2755}是精英，會不斷召喚元素幫手：組隊前往，集中攻擊她，無視幫手。{item:4472}使用後就會消失，她約10分鐘後離開：若要重試，放棄任務，再到{zone:3}找{npc:2785}重新接取。"

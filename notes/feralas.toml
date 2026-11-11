@@ -113,3 +113,63 @@ ru = "Трубите в {item:9530} у маленького камня с дыр
 ko = "폐허 북쪽 끝 기둥 단상 바로 북쪽, 구멍 뚫린 작은 돌 앞에서 {item:9530}을(를) 부세요(약 40.6, 8.6). {npc:8075}의 시체가 아직 있으면 뿔피리만 헛되이 사라지니, 시체가 없어질 때까지 기다리세요."
 zh_cn = "在废墟北缘石柱平台正北的带孔小石头旁吹响{item:9530}（约40.6, 8.6）。如果{npc:8075}的尸体还在那里，号角会白白消耗：等尸体消失再吹。"
 zh_tw = "在廢墟北緣石柱平台正北的帶孔小石頭旁吹響{item:9530}（約40.6, 8.6）。如果{npc:8075}的屍體還在那裡，號角會白白消耗：等屍體消失再吹。"
+
+# Natural Materials: only the Wandering Forest Walker drops the logs; few roam, one respawns every few minutes behind the Ruins of Isildien.
+[[note]]
+quest = 3128
+phase = "objective"
+objective = 1
+level = "info"
+en = "Only {npc:7584} drops the logs, and few roam the zone: one respawns about every 5 minutes behind the Ruins of Isildien (about 58, 74). Kill the hippogryphs around it while you wait."
+fr = "Seul {npc:7584} donne les bûches, et ils sont peu nombreux : l'un réapparaît environ toutes les 5 minutes derrière les ruines d'Isildien (vers 58, 74). Tuez les hippogryphes alentour en l'attendant."
+de = "Nur {npc:7584} lässt die Holzscheite fallen, und es gibt nur wenige: einer erscheint etwa alle 5 Minuten hinter den Ruinen von Isildien (um 58, 74) neu. Töte währenddessen die Hippogryphen in der Nähe."
+es = "Solo {npc:7584} suelta los troncos, y hay pocos: uno reaparece cada 5 minutos aproximadamente detrás de las Ruinas de Isildien (hacia 58, 74). Mata los hipogrifos de alrededor mientras esperas."
+pt = "Só {npc:7584} deixa cair as toras, e há poucos: um reaparece a cada 5 minutos, mais ou menos, atrás das Ruínas de Isildien (por volta de 58, 74). Mate os hipogrifos ao redor enquanto espera."
+ru = "Бревна дает только {npc:7584}, а таких в зоне мало: один появляется примерно каждые 5 минут за руинами Исилдиэна (около 58, 74). Пока ждете, убивайте гиппогрифов вокруг."
+ko = "통나무는 {npc:7584}만 떨어뜨리며 수가 적습니다. 한 마리가 이실디엔 폐허 뒤(약 58, 74)에서 약 5분마다 다시 나타나니, 기다리는 동안 주변 히포그리프를 처치하세요."
+zh_cn = "只有{npc:7584}掉落木头，而且数量很少：其中一只大约每5分钟在伊斯迪尔废墟后方（约58, 74）重生。等待时可以顺便击杀周围的角鹰兽。"
+zh_tw = "只有{npc:7584}掉落木頭，而且數量很少：其中一隻大約每5分鐘在伊斯迪爾廢墟後方（約58, 74）重生。等待時可以順便擊殺周圍的角鷹獸。"
+
+[[icon]]
+quest = 3128
+phase = "objective"
+objective = 1
+icon = "rare"
+
+# Treant Muisek: only Wandering Forest Walkers count (not Cursed Sycamores); one respawns every few minutes behind the Ruins of Isildien.
+[[note]]
+quest = 3126
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Only {npc:7584} counts, not {npc:5881}. Few of them roam the zone: one respawns about every 5 minutes behind the Ruins of Isildien (about 58, 74), so wait there instead of searching."
+fr = "Seul {npc:7584} compte, pas {npc:5881}. Ils sont peu nombreux dans la zone : l'un réapparaît environ toutes les 5 minutes derrière les ruines d'Isildien (vers 58, 74), attendez-le là plutôt que de chercher."
+de = "Nur {npc:7584} zählt, nicht {npc:5881}. Nur wenige streifen durch das Gebiet: einer erscheint etwa alle 5 Minuten hinter den Ruinen von Isildien (um 58, 74) neu, warte also dort, statt zu suchen."
+es = "Solo cuenta {npc:7584}, no {npc:5881}. Hay pocos en la zona: uno reaparece cada 5 minutos aproximadamente detrás de las Ruinas de Isildien (hacia 58, 74), así que espera allí en lugar de buscar."
+pt = "Só {npc:7584} conta, não {npc:5881}. Há poucos na zona: um reaparece a cada 5 minutos, mais ou menos, atrás das Ruínas de Isildien (por volta de 58, 74), então espere ali em vez de procurar."
+ru = "Засчитывается только {npc:7584}, а не {npc:5881}. Их в зоне мало: один появляется примерно каждые 5 минут за руинами Исилдиэна (около 58, 74), так что ждите там, а не ищите."
+ko = "{npc:5881}이(가) 아니라 {npc:7584}만 인정됩니다. 지역에 몇 마리 없으며, 한 마리가 이실디엔 폐허 뒤(약 58, 74)에서 약 5분마다 다시 나타나니 찾아다니지 말고 그곳에서 기다리세요."
+zh_cn = "只有{npc:7584}算数，{npc:5881}不算。这片区域里数量很少：其中一只大约每5分钟在伊斯迪尔废墟后方（约58, 74）重生，与其到处找，不如在那里等。"
+zh_tw = "只有{npc:7584}算數，{npc:5881}不算。這片區域裡數量很少：其中一隻大約每5分鐘在伊斯迪爾廢墟後方（約58, 74）重生，與其到處找，不如在那裡等。"
+
+[[icon]]
+quest = 3126
+phase = "objective"
+objective = 1
+icon = "rare"
+
+# Mountain Giant Muisek: Zorbin's Ultra-Shrinker (Zapped Giants) removes the giants' elite status and the vessel still works; the coastal sea giants do not count.
+[[note]]
+quest = 3127
+phase = "objective"
+objective = 1
+level = "info"
+en = "Take {quest:7003} from {npc:14637} first: his {item:18904} makes {npc:5357} and {npc:5358} lose their elite status, and the vessel still works on their corpses. The sea giants on the coast do not count."
+fr = "Prenez d'abord {quest:7003} auprès de {npc:14637} : son {item:18904} fait perdre leur statut d'élite à {npc:5357} et {npc:5358}, et le réceptacle marche toujours sur leurs cadavres. Les géants des mers de la côte ne comptent pas."
+de = "Nimm zuerst {quest:7003} bei {npc:14637} an: sein {item:18904} nimmt {npc:5357} und {npc:5358} den Elitestatus, und das Gefäß wirkt weiterhin auf ihre Leichen. Die Meeresriesen an der Küste zählen nicht."
+es = "Acepta primero {quest:7003} de {npc:14637}: su {item:18904} hace que {npc:5357} y {npc:5358} pierdan su estatus de élite, y el recipiente sigue funcionando con sus cadáveres. Los gigantes de mar de la costa no cuentan."
+pt = "Pegue primeiro {quest:7003} com {npc:14637}: o {item:18904} dele faz {npc:5357} e {npc:5358} perderem o status de elite, e o receptáculo ainda funciona nos cadáveres. Os gigantes marinhos da costa não contam."
+ru = "Сначала возьмите задание {quest:7003} у {npc:14637}: его {item:18904} лишает {npc:5357} и {npc:5358} статуса элиты, а сосуд по-прежнему действует на их трупы. Морские великаны на побережье не подходят."
+ko = "먼저 {npc:14637}에게서 {quest:7003} 퀘스트를 받으세요. 그의 {item:18904}을(를) 쓰면 {npc:5357}, {npc:5358} 모두 정예 등급이 사라지고, 그 시체에도 그릇을 그대로 쓸 수 있습니다. 해안의 바다 거인은 해당하지 않습니다."
+zh_cn = "先从{npc:14637}那里接受{quest:7003}：他的{item:18904}能让{npc:5357}和{npc:5358}失去精英状态，而容器对它们的尸体依然有效。海岸边的海巨人不算。"
+zh_tw = "先從{npc:14637}那裡接受{quest:7003}：他的{item:18904}能讓{npc:5357}和{npc:5358}失去精英狀態，而容器對牠們的屍體依然有效。海岸邊的海巨人不算。"

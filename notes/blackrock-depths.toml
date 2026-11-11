@@ -1,0 +1,33 @@
+# Quest notes of Blackrock Depths. See notes/README.md for the format.
+
+# The Heart of the Mountain: the twelve relic coffers of the vault each take a Relic Coffer Key; opening them all releases golems and Watchman Doomgrip, after which the heart can be taken.
+[[note]]
+quest = 4123
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Loot 12 {item:11078} from the dwarves on the way: in the vault, open all 12 coffers, then four golems and {npc:9476} attack. The heart appears at the back of the vault once they are dead."
+fr = "Récupérez 12 {item:11078} sur les nains en chemin : dans la chambre forte, ouvrez les 12 coffrets, puis quatre golems et {npc:9476} attaquent. Le cœur apparaît au fond de la chambre forte une fois qu'ils sont morts."
+de = "Erbeute unterwegs 12 {item:11078} von den Zwergen: öffne im Gewölbe alle 12 Kästen, dann greifen vier Golems und {npc:9476} an. Das Herz erscheint hinten im Gewölbe, sobald sie tot sind."
+es = "Consigue 12 {item:11078} de los enanos por el camino: en la cámara, abre los 12 cofres y entonces atacan cuatro gólems y {npc:9476}. El corazón aparece al fondo de la cámara cuando mueren."
+pt = "Saqueie 12 {item:11078} dos anões pelo caminho: na câmara, abra os 12 cofres e então quatro golens e {npc:9476} atacam. O coração aparece no fundo da câmara quando eles morrem."
+ru = "По пути соберите 12 предметов {item:11078} с дворфов: в хранилище откройте все 12 сундуков, после чего нападут четыре голема и {npc:9476}. Когда они погибнут, в глубине хранилища появится сердце."
+ko = "가는 길에 드워프에게서 {item:11078} 12개를 모으세요. 금고에서 상자 12개를 모두 열면 골렘 넷과 함께 {npc:9476}이(가) 공격합니다. 그들을 처치하면 금고 안쪽에 심장이 나타납니다."
+zh_cn = "沿途从矮人身上收集12把{item:11078}：在宝库中打开全部12个箱子，随后四个魔像和{npc:9476}会发动攻击。将它们消灭后，心脏会出现在宝库深处。"
+zh_tw = "沿途從矮人身上收集12把{item:11078}：在寶庫中打開全部12個箱子，隨後四個魔像和{npc:9476}會發動攻擊。將它們消滅後，心臟會出現在寶庫深處。"
+
+# The Love Potion: the vial is filled at the small pool on top of the hill by the Un'Goro hot springs, not in the lake.
+[[note]]
+quest = 4201
+phase = "objective"
+objective = 3
+level = "info"
+en = "Fill {item:11412} at the small pool on top of the hill beside the hot springs in {zone:490} (about 31, 50), not in the big lake below."
+fr = "Remplissez {item:11412} au petit bassin au sommet de la colline près des sources chaudes de {zone:490} (vers 31, 50), pas dans le grand lac en contrebas."
+de = "Fülle {item:11412} an dem kleinen Becken oben auf dem Hügel bei den heißen Quellen in {zone:490} (um 31, 50), nicht im großen See darunter."
+es = "Llena {item:11412} en la pequeña poza de la cima de la colina junto a las aguas termales de {zone:490} (hacia 31, 50), no en el gran lago de abajo."
+pt = "Encha {item:11412} na pequena poça no alto da colina ao lado das fontes termais de {zone:490} (por volta de 31, 50), não no lago grande lá embaixo."
+ru = "Наполните {item:11412} в маленьком водоеме на вершине холма у горячих источников в зоне {zone:490} (около 31, 50), а не в большом озере внизу."
+ko = "{item:11412}은(는) {zone:490}의 온천 옆 언덕 꼭대기에 있는 작은 웅덩이(약 31, 50)에서 채우세요. 아래쪽 큰 호수가 아닙니다."
+zh_cn = "在{zone:490}温泉旁的小山顶上的小水池（约31, 50）装满{item:11412}，不是下面的大湖。"
+zh_tw = "在{zone:490}溫泉旁的小山頂上的小水池（約31, 50）裝滿{item:11412}，不是下面的大湖。"

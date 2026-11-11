@@ -1,0 +1,33 @@
+# Quest notes of Un'Goro Crater. See notes/README.md for the format.
+
+# The Scent of Lar'korwi: the mates only come when the player steps on or next to a raptor egg nest, one per nest.
+[[note]]
+quest = 4291
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:9683} only appears when you step onto or next to a raptor egg nest: clear the raptors around a nest, walk onto it and fight the mate that runs in. Each nest gives one; go to another nest for the second."
+fr = "{npc:9683} n'apparaît que si vous marchez sur un nid d'œufs de raptor ou juste à côté : nettoyez les raptors autour d'un nid, marchez dessus et combattez la compagne qui accourt. Un nid en donne une ; allez à un autre nid pour la seconde."
+de = "{npc:9683} erscheint nur, wenn du auf oder direkt neben ein Raptoreiernest trittst: säubere die Raptoren um ein Nest, lauf darauf und bekämpfe das Weibchen, das heranstürmt. Jedes Nest gibt eins; geh für das zweite zu einem anderen Nest."
+es = "{npc:9683} solo aparece cuando pisas un nido de huevos de raptor o te pones a su lado: limpia los raptores de alrededor, pisa el nido y lucha contra la compañera que llega corriendo. Cada nido da una; ve a otro para la segunda."
+pt = "{npc:9683} só aparece quando você pisa num ninho de ovos de raptor ou fica ao lado dele: limpe os raptores em volta, pise no ninho e enfrente a companheira que vem correndo. Cada ninho dá uma; vá a outro para a segunda."
+ru = "{npc:9683} появляется, только когда вы наступаете на гнездо с яйцами ящеров или стоите рядом: перебейте ящеров вокруг гнезда, встаньте на него и сразитесь с прибежавшей самкой. Одно гнездо — одна самка; за второй идите к другому."
+ko = "{npc:9683}은(는) 랩터 알 둥지를 밟거나 바로 옆에 서야 나타납니다. 둥지 주변 랩터를 정리하고 둥지를 밟은 뒤 달려오는 짝을 처치하세요. 둥지 하나에 한 마리이니 두 번째는 다른 둥지에서 찾으세요."
+zh_cn = "只有踩到迅猛龙蛋窝上或站在旁边时，{npc:9683}才会出现：先清掉蛋窝周围的迅猛龙，踩上去，再击杀冲过来的配偶。每个蛋窝只出一只，第二只要去另一个蛋窝。"
+zh_tw = "只有踩到迅猛龍蛋窩上或站在旁邊時，{npc:9683}才會出現：先清掉蛋窩周圍的迅猛龍，踩上去，再擊殺衝過來的配偶。每個蛋窩只出一隻，第二隻要去另一個蛋窩。"
+
+# Alien Ecology: the vial only works in the middle of the first chamber on the left inside the hive.
+[[note]]
+quest = 3883
+phase = "objective"
+objective = 1
+level = "info"
+en = "Use {item:11132} standing in the middle of the first chamber on the left inside the hive cave, not against its walls."
+fr = "Utilisez {item:11132} au milieu de la première salle à gauche dans la grotte de la ruche, pas contre ses parois."
+de = "Benutze {item:11132} in der Mitte der ersten Kammer links in der Höhle des Insektenstocks, nicht an ihren Wänden."
+es = "Usa {item:11132} en el centro de la primera cámara a la izquierda dentro de la cueva de la colmena, no junto a las paredes."
+pt = "Use {item:11132} no meio da primeira câmara à esquerda dentro da caverna da colmeia, não junto às paredes."
+ru = "Используйте {item:11132}, стоя в центре первой камеры слева внутри пещеры улья, а не у стен."
+ko = "{item:11132}은(는) 벌집 동굴에 들어가 왼쪽 첫 번째 방 한가운데에서 사용하세요. 벽 쪽에서는 안 됩니다."
+zh_cn = "进入虫巢洞穴后，站在左手边第一个房间的正中央使用{item:11132}，不要靠墙。"
+zh_tw = "進入蟲巢洞穴後，站在左手邊第一個房間的正中央使用{item:11132}，不要靠牆。"

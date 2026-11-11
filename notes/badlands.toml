@@ -15,3 +15,49 @@ ru = "Моллюски лежат под водой у Гнусного рифа
 ko = "조개는 정예 멀록이 있는 썩은 암초 물속에 있습니다. 멀록과 거리를 두고, 수중 호흡 물약이 있으면 챙기세요."
 zh_cn = "蛤蚌在邪恶暗礁的水下，周围有精英鱼人：与它们保持距离，有水下呼吸药水的话就带上。"
 zh_tw = "蛤蚌在邪惡暗礁的水下，周圍有精英魚人：與牠們保持距離，有水下呼吸藥水的話就帶上。"
+
+# Dreadmaul Rock: Thal'trak Proudtusk walks with the Kargath patrol at times and cannot be talked to while moving.
+[[note]]
+quest = 3821
+phase = "accept"
+level = "warning"
+en = "{npc:9082} sometimes leaves Kargath with his patrol and cannot be talked to while walking: wait until he is back by his fire."
+fr = "{npc:9082} quitte parfois Kargath avec sa patrouille et on ne peut pas lui parler pendant qu'il marche : attendez qu'il soit revenu près de son feu."
+de = "{npc:9082} verlässt Kargath manchmal mit seiner Patrouille und lässt sich unterwegs nicht ansprechen: warte, bis er wieder an seinem Feuer steht."
+es = "{npc:9082} a veces sale de Kargath con su patrulla y no se puede hablar con él mientras camina: espera a que vuelva junto a su hoguera."
+pt = "{npc:9082} às vezes sai de Kargath com a patrulha e não é possível falar com ele enquanto anda: espere até ele voltar para a fogueira."
+ru = "{npc:9082} иногда уходит из Каргата с патрулем, и пока он идет, с ним нельзя поговорить: дождитесь, когда он вернется к своему костру."
+ko = "{npc:9082}은(는) 가끔 순찰대와 함께 카르가스를 떠나며, 걷는 동안에는 대화할 수 없습니다. 모닥불 옆으로 돌아올 때까지 기다리세요."
+zh_cn = "{npc:9082}有时会随巡逻队离开卡加斯，行走时无法对话：等他回到火堆旁再说。"
+zh_tw = "{npc:9082}有時會隨巡邏隊離開卡加斯，行走時無法對話：等他回到火堆旁再說。"
+
+# Dreadmaul Rock: Sha'ni's remains lie on the altar atop the rock in the Burning Steppes, reached by the rope bridge; her ghost appears behind the player.
+[[note]]
+quest = 3821
+phase = "turnin"
+level = "info"
+en = "{npc:9136} is on a summit in eastern {zone:46} (about 80, 45): go up by the rope bridge on the northwest side (about 75, 37), click {object:160445} on the altar, then turn around: her ghost stands behind you."
+fr = "{npc:9136} se trouve au sommet d'un pic à l'est de {zone:46} (vers 80, 45) : montez par le pont de corde au nord-ouest (vers 75, 37), cliquez sur {object:160445} sur l'autel, puis retournez-vous : son fantôme est derrière vous."
+de = "{npc:9136} befindet sich auf einem Gipfel im Osten von {zone:46} (um 80, 45): steig über die Seilbrücke im Nordwesten hinauf (um 75, 37), klicke {object:160445} auf dem Altar an und dreh dich um: ihr Geist steht hinter dir."
+es = "{npc:9136} está en una cumbre al este de {zone:46} (hacia 80, 45): sube por el puente de cuerda del noroeste (hacia 75, 37), haz clic en {object:160445} sobre el altar y date la vuelta: su espíritu está detrás de ti."
+pt = "{npc:9136} fica num pico a leste de {zone:46} (por volta de 80, 45): suba pela ponte de corda a noroeste (por volta de 75, 37), clique em {object:160445} no altar e vire-se: o espírito dela está atrás de você."
+ru = "{npc:9136} находится на вершине на востоке зоны {zone:46} (около 80, 45): поднимитесь по веревочному мосту с северо-запада (около 75, 37), щелкните {object:160445} на алтаре и обернитесь: ее дух стоит позади вас."
+ko = "{npc:9136}은(는) {zone:46} 동쪽 봉우리 꼭대기(약 80, 45)에 있습니다. 북서쪽 밧줄 다리(약 75, 37)로 올라가 제단 위의 {object:160445}을(를) 클릭한 뒤 뒤를 돌아보세요. 그녀의 영혼이 뒤에 서 있습니다."
+zh_cn = "{npc:9136}在{zone:46}东部的一座山顶上（约80, 45）：从西北侧的绳桥（约75, 37）上山，点击祭坛上的{object:160445}，然后转身：她的灵魂就站在你身后。"
+zh_tw = "{npc:9136}在{zone:46}東部的一座山頂上（約80, 45）：從西北側的繩橋（約75, 37）上山，點擊祭壇上的{object:160445}，然後轉身：她的靈魂就站在你身後。"
+
+# Broken Alliances: the seal summons both elite drakes at once; backing off resets them so they can be pulled one at a time. They are no longer elite in TBC.
+[[note]]
+quest = 793
+phase = "objective"
+level = "warning"
+editions = ["classic", "forever"]
+en = "Using the seal calls {npc:2757} and {npc:2759}, two elites, at the same time. Step well back at once so they reset, then pull them one at a time; they stay up for about 10 minutes."
+fr = "Utiliser le sceau fait venir {npc:2757} et {npc:2759}, deux élites, en même temps. Reculez tout de suite assez loin pour qu'ils se réinitialisent, puis attirez-les un par un ; ils restent environ 10 minutes."
+de = "Das Siegel ruft {npc:2757} und {npc:2759}, zwei Elitegegner, gleichzeitig herbei. Geh sofort weit zurück, damit sie zurücksetzen, und zieh sie dann einzeln; sie bleiben etwa 10 Minuten."
+es = "Usar el sello hace aparecer a {npc:2757} y {npc:2759}, dos élites, a la vez. Retrocede enseguida para que se reinicien y atráelos de uno en uno; permanecen unos 10 minutos."
+pt = "Usar o selo invoca {npc:2757} e {npc:2759}, duas elites, ao mesmo tempo. Recue logo para que eles reiniciem e puxe um de cada vez; eles ficam por uns 10 minutos."
+ru = "Печать вызывает сразу двух элитных противников: {npc:2757} и {npc:2759}. Сразу отойдите подальше, чтобы они сбросились, затем выманивайте их по одному; они остаются примерно 10 минут."
+ko = "인장을 사용하면 정예 둘, {npc:2757}, {npc:2759}이(가) 동시에 나타납니다. 즉시 멀리 물러나 초기화시킨 뒤 하나씩 끌어오세요. 약 10분 동안 머무릅니다."
+zh_cn = "使用封印会同时召唤两个精英：{npc:2757}和{npc:2759}。立刻远远后退让它们重置，再一个一个拉；它们大约停留10分钟。"
+zh_tw = "使用封印會同時召喚兩個精英：{npc:2757}和{npc:2759}。立刻遠遠後退讓牠們重置，再一個一個拉；牠們大約停留10分鐘。"

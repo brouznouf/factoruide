@@ -1,0 +1,17 @@
+# Quest notes of the Undercity. See notes/README.md for the format.
+
+# A Sample of Slime...: only some tested slime samples give the corrupted sample, so 20-30 are needed; the testing equipment stops working after the turn-in.
+[[note]]
+quest = 4293
+phase = "objective"
+objective = 1
+level = "info"
+en = "Only some {item:12230} turn into the corrupted sample when tested in {zone:1497}: loot 20 to 30 before going back, and test the spares before turning in, as the testing equipment no longer works afterwards."
+fr = "Seule une partie des {item:12230} donne l'échantillon corrompu une fois testée à {zone:1497} : ramassez-en 20 à 30 avant de rentrer, et testez le surplus avant de rendre la quête, car l'équipement de test ne marche plus ensuite."
+de = "Nur ein Teil der {item:12230} ergibt beim Testen in {zone:1497} die verderbte Probe: sammle 20 bis 30, bevor du zurückgehst, und teste die übrigen vor der Abgabe, denn die Testausrüstung funktioniert danach nicht mehr."
+es = "Solo parte de {item:12230} da la muestra corrupta al analizarla en {zone:1497}: consigue de 20 a 30 antes de volver y analiza las sobrantes antes de entregar la misión, porque el equipo de pruebas deja de funcionar después."
+pt = "Só parte de {item:12230} vira a amostra corrompida ao ser testada em {zone:1497}: pegue de 20 a 30 antes de voltar e teste as que sobrarem antes de entregar, pois o equipamento de teste deixa de funcionar depois."
+ru = "Лишь часть предметов {item:12230} при проверке в зоне {zone:1497} дает оскверненный образец: соберите 20–30 штук перед возвращением и проверьте лишние до сдачи задания, потому что потом оборудование перестает работать."
+ko = "{item:12230}을(를) {zone:1497}에서 검사해도 일부만 오염된 표본이 됩니다. 돌아가기 전에 20~30개를 모으고, 퀘스트를 완료하기 전에 남는 것도 검사하세요. 완료 후에는 검사 장비를 쓸 수 없습니다."
+zh_cn = "{item:12230}在{zone:1497}检测时只有一部分会变成腐化样本：回去前收集20到30个，并在交任务前把多余的也检测掉，因为交完后检测设备就不能用了。"
+zh_tw = "{item:12230}在{zone:1497}檢測時只有一部分會變成腐化樣本：回去前收集20到30個，並在交任務前把多餘的也檢測掉，因為交完後檢測設備就不能用了。"

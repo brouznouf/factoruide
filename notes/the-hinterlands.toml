@@ -20,3 +20,83 @@ zh_tw = "藍色瓶子放在岸邊，很難從地面上分辨出來：在圖像�
 quest = 580
 phase = "objective"
 icon = "pickup"
+
+# Rin'ji is Trapped!: two ambushes of three elves on the way out of the lodge; Rin'ji walks into owlbeasts; he can be healed.
+[[note]]
+quest = 2742
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Clear the lodge before freeing {npc:7780}: on the way out, two ambushes of three elves attack, and he walks straight into owlbeasts on his path. You can heal him."
+fr = "Nettoyez le pavillon avant de libérer {npc:7780} : en sortant, deux embuscades de trois elfes attaquent, et il fonce droit sur les chouettards qui croisent sa route. Vous pouvez le soigner."
+de = "Säubere die Jagdhütte, bevor du {npc:7780} befreist: auf dem Weg hinaus greifen zwei Hinterhalte aus je drei Elfen an, und er läuft direkt in Eulenbestien auf seinem Weg. Du kannst ihn heilen."
+es = "Limpia el pabellón antes de liberar a {npc:7780}: al salir atacan dos emboscadas de tres elfos, y él se mete de lleno en los lechúcicos de su camino. Puedes curarlo."
+pt = "Limpe o pavilhão antes de libertar {npc:7780}: na saída, duas emboscadas de três elfos atacam, e ele vai direto para os corujaursos no caminho. Você pode curá-lo."
+ru = "Зачистите охотничий домик, прежде чем освободить {npc:7780}: на выходе нападут две засады по три эльфа, а сам он идет прямо на совухов по пути. Его можно лечить."
+ko = "{npc:7780}을(를) 풀어 주기 전에 오두막을 정리하세요. 나가는 길에 엘프 셋으로 된 매복이 두 번 덮치고, 그는 길에 있는 올빼미야수에게 그대로 걸어갑니다. 그를 치유할 수 있습니다."
+zh_cn = "释放{npc:7780}之前先清理小屋：出去的路上会遭遇两次伏击，每次三个精灵，而且他会直接走向路上的枭兽。你可以治疗他。"
+zh_tw = "釋放{npc:7780}之前先清理小屋：出去的路上會遭遇兩次伏擊，每次三個精靈，而且他會直接走向路上的梟獸。你可以治療他。"
+
+# Hunt the Savages: Savage Owlbeasts share spawn points with Silvermane Stalkers.
+[[note]]
+quest = 7829
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:2929} shares its spawn points with {npc:2926}: when no owlbeasts are left, kill the stalkers nearby to make new ones appear."
+fr = "{npc:2929} partage ses points d'apparition avec {npc:2926} : quand il n'y a plus de chouettards, tuez les traqueurs alentour pour en faire apparaître de nouveaux."
+de = "{npc:2929} teilt sich die Spawnpunkte mit {npc:2926}: sind keine Eulenbestien mehr da, töte die Pirscher in der Nähe, damit neue erscheinen."
+es = "{npc:2929} comparte puntos de aparición con {npc:2926}: cuando no queden lechúcicos, mata a los acechadores cercanos para que aparezcan nuevos."
+pt = "{npc:2929} compartilha pontos de surgimento com {npc:2926}: quando não restarem corujaursos, mate os espreitadores por perto para que surjam novos."
+ru = "{npc:2929} и {npc:2926} появляются в одних и тех же точках: когда совухов не осталось, убивайте ближайших охотников, чтобы появились новые."
+ko = "{npc:2929}, {npc:2926} 둘은 출현 지점을 공유합니다. 올빼미야수가 보이지 않으면 근처의 추적자를 처치해 새로 나타나게 하세요."
+zh_cn = "{npc:2929}与{npc:2926}共用刷新点：没有枭兽时，击杀附近的潜伏者，让新的刷出来。"
+zh_tw = "{npc:2929}與{npc:2926}共用重生點：沒有梟獸時，擊殺附近的潛伏者，讓新的出現。"
+
+# Lard Lost His Lunch: opening the basket spawns three kidnappers who all carry the lunch; one kill is enough, they follow into the water.
+[[note]]
+quest = 7840
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Opening {object:179910} calls an ambush ({npc:14748} ×3). Each of them carries {item:19034}: kill and loot one, then get away; they follow you into the water."
+fr = "Ouvrir {object:179910} déclenche une embuscade ({npc:14748} ×3). Chacun porte {item:19034} : tuez-en un, fouillez-le puis éloignez-vous ; ils vous suivent dans l'eau."
+de = "Das Öffnen von {object:179910} löst einen Hinterhalt aus ({npc:14748} ×3). Jeder trägt {item:19034}: töte und plündere einen und zieh dich dann zurück; sie folgen dir ins Wasser."
+es = "Abrir {object:179910} provoca una emboscada ({npc:14748} ×3). Cada uno lleva {item:19034}: mata y despoja a uno y luego aléjate; te siguen al agua."
+pt = "Abrir {object:179910} provoca uma emboscada ({npc:14748} ×3). Cada um carrega {item:19034}: mate e saqueie um e depois se afaste; eles seguem você na água."
+ru = "Открыв {object:179910}, вы вызовете засаду ({npc:14748} ×3). У каждого есть {item:19034}: убейте и обыщите одного, затем уходите; они преследуют вас и в воде."
+ko = "{object:179910}을(를) 열면 매복이 나타납니다({npc:14748} ×3). 모두 {item:19034}을(를) 지니고 있으니 하나만 처치해 전리품을 챙기고 빠지세요. 물속까지 쫓아옵니다."
+zh_cn = "打开{object:179910}会引来伏击（{npc:14748} ×3）。每个都带着{item:19034}：击杀并拾取其中一个，然后撤离；它们会追进水里。"
+zh_tw = "打開{object:179910}會引來伏擊（{npc:14748} ×3）。每個都帶著{item:19034}：擊殺並拾取其中一個，然後撤離；他們會追進水裡。"
+
+# Another Message to the Wildhammer: the feather is a tradeable trade good; in Feralas only the Frayfeather Hippogryph drops it.
+[[note]]
+quest = 7842
+phase = "objective"
+objective = 1
+level = "info"
+en = "{item:4589} is a trade good: keep any you loot before taking the quest, and check the auction house. In {zone:357}, only {npc:5300} drops it; the other hippogryphs there do not."
+fr = "{item:4589} est une marchandise : gardez celles que vous ramassez avant la quête et regardez à l'hôtel des ventes. À {zone:357}, seul {npc:5300} en laisse tomber ; les autres hippogryphes de la zone non."
+de = "{item:4589} ist ein Handwerksmaterial: behalte alle, die du vor der Quest erbeutest, und schau ins Auktionshaus. In {zone:357} lässt nur {npc:5300} sie fallen, die anderen Hippogryphen dort nicht."
+es = "{item:4589} es un material comerciable: guarda las que consigas antes de la misión y mira en la casa de subastas. En {zone:357}, solo {npc:5300} la suelta; los demás hipogrifos de allí no."
+pt = "{item:4589} é um material comercializável: guarde as que conseguir antes da missão e confira a casa de leilões. Em {zone:357}, só {npc:5300} a deixa cair; os outros hipogrifos de lá não."
+ru = "{item:4589} — хозяйственный товар: сохраняйте все, что добудете до задания, и загляните на аукцион. В зоне {zone:357} его дает только {npc:5300}, остальные гиппогрифы там — нет."
+ko = "{item:4589}은(는) 거래 가능한 재료입니다. 퀘스트를 받기 전에 얻은 것도 버리지 말고, 경매장도 확인하세요. {zone:357}에서는 {npc:5300}만 떨어뜨리며 그곳의 다른 히포그리프는 떨어뜨리지 않습니다."
+zh_cn = "{item:4589}是商业技能材料：接任务前拾取的也要留着，并看看拍卖行。在{zone:357}，只有{npc:5300}会掉落，那里的其他角鹰兽都不会。"
+zh_tw = "{item:4589}是商業技能材料：接任務前拾取的也要留著，並看看拍賣場。在{zone:357}，只有{npc:5300}會掉落，那裡的其他角鷹獸都不會。"
+
+# The Final Message to the Wildhammer: planting the spear flags the player for PvP; a guard patrols near the well.
+[[note]]
+quest = 7843
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Placing the spear by the well flags you for PvP. Wait for the patrolling guard to walk away, place it (it is instant) and leave at once."
+fr = "Planter la lance près du puits vous active le JcJ. Attendez que le garde en patrouille s'éloigne, plantez-la (c'est instantané) et partez aussitôt."
+de = "Das Platzieren des Speers am Brunnen markiert dich für PvP. Warte, bis die patrouillierende Wache weg ist, setz ihn (das geht sofort) und verschwinde gleich."
+es = "Colocar la lanza junto al pozo te activa el JcJ. Espera a que el guardia que patrulla se aleje, colócala (es instantáneo) y vete enseguida."
+pt = "Colocar a lança junto ao poço ativa seu JxJ. Espere o guarda que patrulha se afastar, coloque-a (é instantâneo) e saia logo."
+ru = "Установка копья у колодца включает режим PvP. Дождитесь, пока патрулирующий стражник отойдет, поставьте копье (это мгновенно) и сразу уходите."
+ko = "우물 옆에 창을 꽂으면 PvP가 활성화됩니다. 순찰하는 경비병이 멀어질 때를 기다렸다가 창을 꽂고(즉시 시전) 바로 떠나세요."
+zh_cn = "在井边插下长矛会让你进入PvP状态。等巡逻的卫兵走开，插下长矛（瞬发）后立刻离开。"
+zh_tw = "在井邊插下長矛會讓你進入PvP狀態。等巡邏的衛兵走開，插下長矛（瞬發）後立刻離開。"

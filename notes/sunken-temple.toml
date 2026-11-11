@@ -1,0 +1,17 @@
+# Quest notes of the Sunken Temple. See notes/README.md for the format.
+
+# Jammal'an the Prophet: he stays out of reach until the six troll spirits on the balconies of the main hall are killed; the trolls of his room join when he is attacked.
+[[note]]
+quest = 1446
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:5710} cannot be reached until the six troll spirits on the balconies around the main hall are dead: take the stairs to the upper ring and kill them first. Clear his room as well, as its trolls join the fight."
+fr = "{npc:5710} reste inaccessible tant que les six esprits trolls des balcons autour de la grande salle sont en vie : montez jusqu'à l'anneau supérieur et tuez-les d'abord. Nettoyez aussi sa salle, ses trolls se joignent au combat."
+de = "{npc:5710} ist unerreichbar, solange die sechs Trollgeister auf den Balkonen rund um die große Halle leben: steig zum oberen Ring hinauf und töte sie zuerst. Säubere auch seinen Raum, denn dessen Trolle greifen mit ein."
+es = "No se puede llegar a {npc:5710} hasta que mueran los seis espíritus trol de los balcones que rodean la sala principal: sube al anillo superior y mátalos primero. Limpia también su sala, sus trols se unen al combate."
+pt = "Não dá para alcançar {npc:5710} até que os seis espíritos trolls nas sacadas ao redor do salão principal morram: suba até o anel superior e mate-os primeiro. Limpe também a sala dele, pois os trolls de lá entram na luta."
+ru = "До {npc:5710} не добраться, пока живы шесть духов троллей на балконах вокруг главного зала: поднимитесь на верхнее кольцо и сначала убейте их. Зачистите и его зал: тролли оттуда вступают в бой."
+ko = "본당을 둘러싼 발코니의 트롤 영혼 여섯을 처치하기 전에는 {npc:5710}에게 갈 수 없습니다. 계단으로 위쪽 회랑에 올라가 먼저 처치하세요. 그의 방도 정리하세요. 방의 트롤들이 전투에 합류합니다."
+zh_cn = "必须先击杀大厅周围阳台上的六个巨魔灵魂，才能接近{npc:5710}：沿楼梯上到上层环廊先把它们杀掉。也要清理他的房间，那里的巨魔会加入战斗。"
+zh_tw = "必須先擊殺大廳周圍陽台上的六個食人妖靈魂，才能接近{npc:5710}：沿樓梯上到上層環廊先把牠們殺掉。也要清理他的房間，那裡的食人妖會加入戰鬥。"

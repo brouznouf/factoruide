@@ -1,0 +1,16 @@
+# Quest notes of the Western Plaguelands. See notes/README.md for the format.
+
+# A Call to Arms: The Plaguelands!: Harbinger Balthazad walks around the auction house ring of the Undercity.
+[[note]]
+quest = 5094
+phase = "accept"
+level = "warning"
+en = "{npc:10879} walks around the auction house ring in {zone:1497}: if he is not at his spot, follow the ring to find him."
+fr = "{npc:10879} fait le tour de l'anneau de l'hôtel des ventes de {zone:1497} : s'il n'est pas à sa place, suivez l'anneau pour le trouver."
+de = "{npc:10879} läuft im Ring um das Auktionshaus von {zone:1497} herum: ist er nicht an seinem Platz, folge dem Ring, um ihn zu finden."
+es = "{npc:10879} recorre el anillo de la casa de subastas de {zone:1497}: si no está en su sitio, sigue el anillo para encontrarlo."
+pt = "{npc:10879} anda pelo anel da casa de leilões de {zone:1497}: se ele não estiver no lugar, siga o anel para encontrá-lo."
+ru = "{npc:10879} ходит по кольцу вокруг аукциона в зоне {zone:1497}: если его нет на месте, пройдите по кольцу, чтобы его найти."
+ko = "{npc:10879}은(는) {zone:1497} 경매장 둘레를 돌아다닙니다. 제자리에 없으면 둘레를 따라가며 찾으세요."
+zh_cn = "{npc:10879}会沿着{zone:1497}拍卖行周围的环形走廊巡游：如果他不在原位，就沿环形走廊找他。"
+zh_tw = "{npc:10879}會沿著{zone:1497}拍賣場周圍的環形走廊巡遊：如果他不在原位，就沿環形走廊找他。"
