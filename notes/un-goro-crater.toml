@@ -31,3 +31,65 @@ ru = "Используйте {item:11132}, стоя в центре первой
 ko = "{item:11132}은(는) 벌집 동굴에 들어가 왼쪽 첫 번째 방 한가운데에서 사용하세요. 벽 쪽에서는 안 됩니다."
 zh_cn = "进入虫巢洞穴后，站在左手边第一个房间的正中央使用{item:11132}，不要靠墙。"
 zh_tw = "進入蟲巢洞穴後，站在左手邊第一個房間的正中央使用{item:11132}，不要靠牆。"
+
+# Chasing A-Me 01: the robot's follow-up step asks for a Mithril Casing, made by engineers or bought at the auction house.
+[[note]]
+quest = 4243
+phase = "accept"
+level = "warning"
+en = "Bring a {item:10561} before heading to the cave: {npc:9623} needs it for the next step. Engineers make it, or buy one at the auction house."
+fr = "Emportez {item:10561} avant d'aller à la grotte : {npc:9623} en a besoin pour l'étape suivante. Les ingénieurs en fabriquent ; sinon, achetez-en à l'hôtel des ventes."
+de = "Nimm {item:10561} mit, bevor du zur Höhle gehst: {npc:9623} braucht es für den nächsten Schritt. Ingenieure stellen es her, sonst kauf eins im Auktionshaus."
+es = "Lleva {item:10561} antes de ir a la cueva: {npc:9623} lo necesita para el siguiente paso. Lo fabrican los ingenieros, o cómpralo en la casa de subastas."
+pt = "Leve {item:10561} antes de ir à caverna: {npc:9623} precisa dele na próxima etapa. Engenheiros o fabricam, ou compre na casa de leilões."
+ru = "Возьмите {item:10561}, прежде чем идти в пещеру: он нужен на следующем этапе, чтобы запустить {npc:9623}. Его делают инженеры, или купите его на аукционе."
+ko = "동굴에 가기 전에 {item:10561}을(를) 챙기세요. 다음 단계에서 {npc:9623}에게 필요합니다. 기술자가 만들 수 있고, 경매장에서 살 수도 있습니다."
+zh_cn = "去洞穴之前先带上{item:10561}：下一步{npc:9623}需要它。工程师可以制造，也可以在拍卖行购买。"
+zh_tw = "去洞穴之前先帶上{item:10561}：下一步{npc:9623}需要它。工程師可以製造，也可以在拍賣場購買。"
+
+# Lost!: Ringo is a single NPC; while another player escorts him he is gone from the cave for about 15 minutes.
+[[note]]
+quest = 4492
+phase = "turnin"
+level = "info"
+en = "If {npc:9999} is not in his cave, another player is escorting him: he comes back after about 15 minutes."
+fr = "Si {npc:9999} n'est pas dans sa grotte, un autre joueur l'escorte : il revient au bout d'environ 15 minutes."
+de = "Ist {npc:9999} nicht in seiner Höhle, eskortiert ihn gerade ein anderer Spieler: Er taucht nach etwa 15 Minuten wieder auf."
+es = "Si {npc:9999} no está en su cueva, otro jugador lo está escoltando: vuelve a aparecer tras unos 15 minutos."
+pt = "Se {npc:9999} não estiver na caverna, outro jogador o está escoltando: ele volta depois de uns 15 minutos."
+ru = "Если {npc:9999} нет в его пещере, его сопровождает другой игрок: он вернётся примерно через 15 минут."
+ko = "{npc:9999}이(가) 동굴에 없다면 다른 플레이어가 호위 중입니다. 약 15분 뒤에 다시 나타납니다."
+zh_cn = "如果{npc:9999}不在洞里，说明有别的玩家正在护送他：大约15分钟后他会重新出现。"
+zh_tw = "如果{npc:9999}不在洞裡，表示有別的玩家正在護送他：大約15分鐘後他會重新出現。"
+
+# A Little Help From My Friends: Ringo follows the player and faints on the way; the canteen revives him without a target.
+[[note]]
+quest = 4491
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:9999} follows you and faints several times: when he says he feels faint, use {item:11804} (no target needed). Keep it on a bar and him in sight, he is hard to spot in the grass. You pick the route, so go around the mobs."
+fr = "{npc:9999} vous suit et s'évanouit plusieurs fois : quand il dit qu'il se sent mal, utilisez {item:11804} (pas besoin de le cibler). Gardez-la dans une barre et lui en vue, il se voit mal dans l'herbe. Vous choisissez le chemin : contournez les monstres."
+de = "{npc:9999} folgt dir und fällt mehrmals in Ohnmacht: Sagt er, dass ihm schwindlig ist, benutze {item:11804} (kein Ziel nötig). Leg sie auf eine Leiste und behalte ihn im Blick, im Gras ist er schwer zu sehen. Du wählst den Weg, also umgeh die Mobs."
+es = "{npc:9999} te sigue y se desmaya varias veces: cuando diga que se marea, usa {item:11804} (no hace falta seleccionarlo). Tenla en una barra y no lo pierdas de vista, en la hierba cuesta verlo. Tú eliges el camino, así que rodea a los enemigos."
+pt = "{npc:9999} segue você e desmaia várias vezes: quando ele disser que está passando mal, use {item:11804} (não precisa selecioná-lo). Deixe-o numa barra e não o perca de vista, ele some na grama. Você escolhe o caminho, então contorne os inimigos."
+ru = "{npc:9999} идёт за вами и несколько раз теряет сознание: когда он говорит, что ему дурно, используйте {item:11804} (цель не нужна). Держите её на панели и не теряйте его из виду: в траве его плохо видно. Путь выбираете вы, так что обходите противников."
+ko = "{npc:9999}은(는) 당신을 따라오며 여러 번 기절합니다. 어지럽다고 말하면 {item:11804}을(를) 사용하세요(대상 지정 불필요). 단축바에 올려 두고 그를 시야에서 놓치지 마세요. 풀숲에서는 잘 안 보입니다. 경로는 직접 고르니 몹을 피해 돌아가세요."
+zh_cn = "{npc:9999}会跟着你走，途中会晕倒好几次：他说自己头晕时，使用{item:11804}（无需选中他）。把它放在动作条上，别让他离开视线，他在草丛里很难找。路线由你决定，绕开怪物走。"
+zh_tw = "{npc:9999}會跟著你走，途中會暈倒好幾次：他說自己頭暈時，使用{item:11804}（無需選取他）。把它放在快捷列上，別讓他離開視線，他在草叢裡很難找。路線由你決定，繞開怪物走。"
+
+# The Bait for Lar'korwi: the meat despawns if the pheromone is not applied quickly; abandoning and retaking gives a new pouch.
+[[note]]
+quest = 4292
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Open {item:11568}, put {item:11569} on the flat black rock, then use {item:11570} right away: the meat disappears if you wait. {npc:9684} then runs in. If it fails or you die, abandon the quest and take it again for a new pouch."
+fr = "Ouvrez {item:11568}, posez {item:11569} sur le rocher noir et plat, puis utilisez aussitôt {item:11570} : la viande disparaît si vous attendez. {npc:9684} arrive alors en courant. En cas d'échec ou de mort, abandonnez la quête et reprenez-la pour une nouvelle sacoche."
+de = "Öffne {item:11568}, leg {item:11569} auf den flachen schwarzen Felsen und benutze sofort {item:11570}: Das Fleisch verschwindet, wenn du wartest. Dann stürmt {npc:9684} heran. Scheitert es oder stirbst du, brich die Quest ab und nimm sie für einen neuen Beutel neu an."
+es = "Abre {item:11568}, pon {item:11569} sobre la roca negra y plana y usa enseguida {item:11570}: la carne desaparece si esperas. Entonces llega {npc:9684} corriendo. Si falla o mueres, abandona la misión y vuelve a aceptarla para tener otra bolsa."
+pt = "Abra {item:11568}, coloque {item:11569} na rocha preta e plana e use {item:11570} logo em seguida: a carne some se você esperar. Então {npc:9684} chega correndo. Se falhar ou você morrer, abandone a missão e pegue-a de novo para ganhar outra bolsa."
+ru = "Откройте {item:11568}, положите {item:11569} на плоский чёрный камень и сразу используйте {item:11570}: если ждать, мясо исчезнет. Тогда прибежит {npc:9684}. Если не вышло или вы погибли, откажитесь от задания и возьмите его снова ради нового мешочка."
+ko = "{item:11568}을(를) 열고 평평한 검은 바위 위에 {item:11569}을(를) 놓은 뒤 바로 {item:11570}을(를) 사용하세요. 기다리면 고기가 사라집니다. 그러면 {npc:9684}이(가) 달려옵니다. 실패하거나 죽으면 퀘스트를 포기하고 다시 받아 새 주머니를 얻으세요."
+zh_cn = "打开{item:11568}，把{item:11569}放在那块平坦的黑色岩石上，然后立刻使用{item:11570}：等太久肉会消失。随后{npc:9684}会冲过来。如果失败或死亡，放弃任务再重新接取，就能拿到新的麻袋。"
+zh_tw = "打開{item:11568}，把{item:11569}放在那塊平坦的黑色岩石上，然後立刻使用{item:11570}：等太久肉會消失。隨後{npc:9684}會衝過來。如果失敗或死亡，放棄任務再重新接取，就能拿到新的麻袋。"

@@ -1,0 +1,16 @@
+# Quest notes of Felwood. See notes/README.md for the format.
+
+# Corrupted Sabers: the cat stops at Winna and must be talked to before the turn-in; it despawns about a minute later.
+[[note]]
+quest = 4506
+phase = "turnin"
+level = "must_read"
+en = "Back at {npc:9996}, the cat stops following you: talk to {npc:10042} right away to release it, then turn in. It despawns about a minute later and you would have to start over. It draws no aggro, so you can ride back mounted."
+fr = "De retour auprès de {npc:9996}, le félin cesse de vous suivre : parlez tout de suite à {npc:10042} pour le libérer, puis rendez la quête. Il disparaît environ une minute plus tard et tout serait à refaire. Il n'attire pas les monstres : rentrez sur votre monture."
+de = "Zurück bei {npc:9996} folgt dir die Katze nicht mehr: Sprich sofort mit {npc:10042}, um sie freizulassen, und gib dann ab. Sie verschwindet nach etwa einer Minute, dann müsstest du von vorn anfangen. Sie zieht keine Aggro, du kannst also beritten zurückreiten."
+es = "De vuelta con {npc:9996}, el felino deja de seguirte: habla enseguida con {npc:10042} para liberarlo y luego entrega la misión. Desaparece al cabo de un minuto y tendrías que empezar de nuevo. No atrae enemigos, así que puedes volver montado."
+pt = "De volta a {npc:9996}, o felino para de seguir você: fale logo com {npc:10042} para soltá-lo e depois entregue a missão. Ele some cerca de um minuto depois e você teria de recomeçar. Ele não atrai inimigos, então pode voltar montado."
+ru = "Возле персонажа {npc:9996} кошка перестаёт идти за вами: сразу заговорите с ней ({npc:10042}), чтобы отпустить, затем сдайте задание. Примерно через минуту она исчезнет, и придётся начинать заново. Она не привлекает противников, так что можно ехать верхом."
+ko = "{npc:9996}에게 돌아오면 고양이가 더 이상 따라오지 않습니다. 바로 {npc:10042}에게 말을 걸어 풀어 준 뒤 퀘스트를 완료하세요. 약 1분 뒤 사라지면 처음부터 다시 해야 합니다. 몹을 끌지 않으니 탈것을 타고 돌아와도 됩니다."
+zh_cn = "回到{npc:9996}身边时，猫会停下不再跟随：立刻和{npc:10042}对话把它放出来，再交任务。大约一分钟后它就会消失，那就得从头再来。它不会引怪，可以骑着坐骑回来。"
+zh_tw = "回到{npc:9996}身邊時，貓會停下不再跟隨：立刻和{npc:10042}對話把牠放出來，再交任務。大約一分鐘後牠就會消失，那就得從頭再來。牠不會引怪，可以騎著坐騎回來。"

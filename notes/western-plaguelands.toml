@@ -14,3 +14,103 @@ ru = "{npc:10879} ходит по кольцу вокруг аукциона в 
 ko = "{npc:10879}은(는) {zone:1497} 경매장 둘레를 돌아다닙니다. 제자리에 없으면 둘레를 따라가며 찾으세요."
 zh_cn = "{npc:10879}会沿着{zone:1497}拍卖行周围的环形走廊巡游：如果他不在原位，就沿环形走廊找他。"
 zh_tw = "{npc:10879}會沿著{zone:1497}拍賣場周圍的環形走廊巡遊：如果他不在原位，就沿環形走廊找他。"
+
+# Scarlet Diversions: the Flame in a Bottle is taken from a crate next to the giver, not handed over with the quest.
+[[note]]
+quest = 5096
+phase = "accept"
+level = "warning"
+en = "Take {item:12814} from the crate next to {npc:10837} before leaving: you need it to burn the tent."
+fr = "Prenez {item:12814} dans la caisse à côté de {npc:10837} avant de partir : il faut cet objet pour brûler la tente."
+de = "Nimm {item:12814} aus der Kiste neben {npc:10837}, bevor du losgehst: Du brauchst sie, um das Zelt anzuzünden."
+es = "Coge {item:12814} de la caja junto a {npc:10837} antes de irte: lo necesitas para quemar la tienda."
+pt = "Pegue {item:12814} na caixa ao lado de {npc:10837} antes de sair: você precisa dele para queimar a tenda."
+ru = "Перед уходом возьмите {item:12814} из ящика рядом с персонажем {npc:10837}: без него палатку не поджечь."
+ko = "떠나기 전에 {npc:10837} 옆 상자에서 {item:12814}을(를) 챙기세요. 천막을 태우려면 필요합니다."
+zh_cn = "出发前先从{npc:10837}旁边的箱子里拿{item:12814}：烧帐篷要用它。"
+zh_tw = "出發前先從{npc:10837}旁邊的箱子裡拿{item:12814}：燒帳篷要用它。"
+
+# Scarlet Diversions: the banner cannot be planted in combat and only while the burnt tent is down; a respawned tent needs a new bottle.
+[[note]]
+quest = 5096
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Burn the Command Tent, then plant {item:12807} at once, out of combat (it cannot be used while fighting). If the tent respawns first, you need another {item:12814} from the crate at the giver's camp."
+fr = "Brûlez la tente de commandement, puis plantez aussitôt {item:12807}, hors combat (impossible en combat). Si la tente réapparaît avant, il faut retourner chercher {item:12814} dans la caisse du camp de départ."
+de = "Zünde das Kommandozelt an und pflanze dann sofort {item:12807} auf, außerhalb des Kampfes (im Kampf nicht benutzbar). Erscheint das Zelt vorher neu, brauchst du erneut {item:12814} aus der Kiste im Lager des Auftraggebers."
+es = "Quema la tienda de mando y planta enseguida {item:12807}, fuera de combate (no se puede usar luchando). Si la tienda reaparece antes, necesitas otra vez {item:12814} de la caja del campamento de inicio."
+pt = "Queime a tenda de comando e finque {item:12807} logo em seguida, fora de combate (não dá para usar lutando). Se a tenda reaparecer antes, você precisa de novo de {item:12814} da caixa no acampamento inicial."
+ru = "Подожгите командную палатку и сразу установите {item:12807} вне боя (в бою его не использовать). Если палатка появится снова раньше, придётся опять взять {item:12814} из ящика в лагере, где выдают задание."
+ko = "지휘 천막을 태운 뒤 곧바로 전투가 아닐 때 {item:12807}을(를) 꽂으세요(전투 중에는 사용 불가). 그 전에 천막이 다시 생기면 퀘스트를 준 진영의 상자에서 {item:12814}을(를) 다시 가져와야 합니다."
+zh_cn = "烧掉指挥帐篷后，立刻在脱战状态下插上{item:12807}（战斗中无法使用）。如果帐篷先刷新了，就得回任务发布处的箱子里再拿一个{item:12814}。"
+zh_tw = "燒掉指揮帳篷後，立刻在脫戰狀態下插上{item:12807}（戰鬥中無法使用）。如果帳篷先重生了，就得回任務發布處的箱子裡再拿一個{item:12814}。"
+
+# A Matter of Time: each glowing silo in range releases its own wave of parasites; they slow and do not follow into the river.
+[[note]]
+quest = 4971
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Use {item:12627} away from other glowing silos: each one nearby sends its own wave of {npc:10717}, which keep coming and slow you. At the silo by the river on the south-east side, jump into the water to shake them off."
+fr = "Utilisez {item:12627} loin des autres silos lumineux : chacun à proximité envoie sa propre vague de {npc:10717}, qui ne cessent d'arriver et vous ralentissent. Au silo près de la rivière, au sud-est, sautez dans l'eau pour les semer."
+de = "Benutze {item:12627} abseits anderer leuchtender Silos: Jedes Silo in der Nähe schickt eine eigene Welle {npc:10717}, die ständig nachkommen und dich verlangsamen. Am Silo am Fluss im Südosten spring ins Wasser, um sie abzuschütteln."
+es = "Usa {item:12627} lejos de otros silos brillantes: cada uno cercano envía su propia oleada de {npc:10717}, que no dejan de llegar y te ralentizan. En el silo junto al río, al sureste, salta al agua para quitártelos de encima."
+pt = "Use {item:12627} longe de outros silos brilhantes: cada um por perto manda sua própria onda de {npc:10717}, que não param de chegar e deixam você lento. No silo junto ao rio, a sudeste, pule na água para se livrar deles."
+ru = "Используйте {item:12627} подальше от других светящихся силосов: каждый поблизости выпускает свою волну, {npc:10717} всё прибывают и замедляют вас. У силоса возле реки на юго-востоке прыгайте в воду, чтобы сбросить их."
+ko = "다른 빛나는 저장고와 떨어진 곳에서 {item:12627}을(를) 사용하세요. 근처의 저장고마다 {npc:10717}이(가) 따로 몰려오며, 계속 나타나 이동을 느리게 합니다. 남동쪽 강가의 저장고에서 하면 물에 뛰어들어 떨쳐 낼 수 있습니다."
+zh_cn = "在远离其他发光筒仓的地方使用{item:12627}：附近每个筒仓都会各自冒出一波{npc:10717}，它们源源不断，还会让你减速。在东南边河旁的筒仓使用，可以跳进水里甩掉它们。"
+zh_tw = "在遠離其他發光筒倉的地方使用{item:12627}：附近每個筒倉都會各自冒出一波{npc:10717}，牠們源源不絕，還會讓你減速。在東南邊河旁的筒倉使用，可以跳進水裡甩掉牠們。"
+
+# The Wildlife Suffers Too: the wolves share spawn points with the Carrion Lurkers north of Dalson's Tears.
+[[note]]
+quest = 4984
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1817} shares its spawn points with {npc:1821}: if you only see spiders, kill them and wolves respawn in their place."
+fr = "{npc:1817} partage ses points d'apparition avec {npc:1821} : si vous ne voyez que des araignées, tuez-les et des loups réapparaîtront à leur place."
+de = "{npc:1817} teilt sich die Spawnpunkte mit {npc:1821}: Siehst du nur Spinnen, töte sie, dann spawnen an ihrer Stelle Wölfe."
+es = "{npc:1817} comparte puntos de aparición con {npc:1821}: si solo ves arañas, mátalas y aparecerán lobos en su lugar."
+pt = "{npc:1817} compartilha pontos de surgimento com {npc:1821}: se só houver aranhas, mate-as e lobos surgem no lugar delas."
+ru = "{npc:1817} появляется в тех же точках, что и {npc:1821}: если вокруг одни пауки, убивайте их, и на их месте появятся волки."
+ko = "{npc:1817}은(는) {npc:1821}와(과) 생성 지점을 공유합니다. 거미만 보이면 거미를 처치하세요. 그 자리에 늑대가 나타납니다."
+zh_cn = "{npc:1817}和{npc:1821}共用刷新点：如果只看到蜘蛛，就杀掉它们，狼会在原处刷新出来。"
+zh_tw = "{npc:1817}和{npc:1821}共用重生點：如果只看到蜘蛛，就殺掉牠們，狼會在原處重生出來。"
+
+# All Along the Watchtowers: the torch has a cooldown and cannot be used in combat; beside the door the elite inside has no line of sight.
+[[note]]
+quest = 5098
+phase = "objective"
+level = "warning"
+en = "{item:12815} cannot be used in combat and has a 2-minute cooldown: stand against the wall right beside each tower's door, out of sight of the elite inside, and use it from there."
+fr = "{item:12815} ne s'utilise pas en combat et a un temps de recharge de 2 minutes : collez-vous au mur juste à côté de la porte de chaque tour, hors de vue de l'élite à l'intérieur, et utilisez-la de là."
+de = "{item:12815} ist im Kampf nicht benutzbar und hat 2 Minuten Abklingzeit: Stell dich direkt neben die Tür jedes Turms an die Wand, außer Sicht des Elite-Gegners drinnen, und benutze sie von dort."
+es = "{item:12815} no se puede usar en combate y tiene 2 minutos de reutilización: pégate a la pared justo al lado de la puerta de cada torre, fuera de la vista del élite de dentro, y úsala desde ahí."
+pt = "{item:12815} não pode ser usada em combate e tem 2 minutos de recarga: encoste na parede logo ao lado da porta de cada torre, fora da vista do elite lá dentro, e use-a dali."
+ru = "{item:12815} нельзя использовать в бою, а перезарядка — 2 минуты: встаньте у стены сразу рядом с дверью каждой башни, вне поля зрения элитного противника внутри, и используйте его оттуда."
+ko = "{item:12815}은(는) 전투 중 사용할 수 없고 재사용 대기시간이 2분입니다. 각 탑 문 바로 옆 벽에 붙어 안쪽 정예 몹의 시야 밖에서 사용하세요."
+zh_cn = "{item:12815}无法在战斗中使用，冷却时间2分钟：贴着每座塔门旁边的墙站，避开塔内精英怪的视线，在那里使用。"
+zh_tw = "{item:12815}無法在戰鬥中使用，冷卻時間2分鐘：貼著每座塔門旁邊的牆站，避開塔內精英怪的視線，在那裡使用。"
+
+# Two Halves Become One: the Jabbering Ghoul is a single spawn that walks into the Scarlet patrol at the farm.
+[[note]]
+quest = 5051
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Only {npc:10801}, the green ghoul holding a pitchfork, carries the other half. He respawns every few minutes near the barn and wanders into the Scarlet patrol, which often kills him first: catch him quickly."
+fr = "Seule {npc:10801}, la goule verte qui tient une fourche, porte l'autre moitié. Elle réapparaît toutes les quelques minutes près de la grange et part vers la patrouille écarlate, qui la tue souvent avant vous : attrapez-la vite."
+de = "Nur {npc:10801}, der grüne Ghul mit der Mistgabel, trägt die andere Hälfte. Er spawnt alle paar Minuten bei der Scheune neu und läuft zur Patrouille des Scharlachroten Kreuzzugs, die ihn oft zuerst tötet: Schnapp ihn dir schnell."
+es = "Solo {npc:10801}, el necrófago verde con una horca, lleva la otra mitad. Reaparece cada pocos minutos cerca del granero y se acerca a la patrulla Escarlata, que a menudo lo mata antes: atrápalo rápido."
+pt = "Só {npc:10801}, o carniçal verde que segura um forcado, tem a outra metade. Ele reaparece a cada poucos minutos perto do celeiro e vai até a patrulha Escarlate, que muitas vezes o mata antes: pegue-o rápido."
+ru = "Вторую половину носит только {npc:10801} — зелёный вурдалак с вилами. Он появляется каждые несколько минут возле амбара и бредёт к патрулю Алого ордена, который часто убивает его первым: перехватите его быстро."
+ko = "나머지 반쪽은 쇠스랑을 든 초록색 구울인 {npc:10801}만 가지고 있습니다. 몇 분마다 헛간 근처에 나타나 붉은십자군 순찰대 쪽으로 걸어가는데, 순찰대가 먼저 죽이는 일이 많으니 빨리 잡으세요."
+zh_cn = "只有{npc:10801}（拿着干草叉的绿色食尸鬼）身上有另一半。他每隔几分钟在谷仓附近刷新，然后走向血色十字军的巡逻队，常被他们抢先杀掉：要尽快抓住他。"
+zh_tw = "只有{npc:10801}（拿著乾草叉的綠色食屍鬼）身上有另一半。他每隔幾分鐘在穀倉附近重生，然後走向血色十字軍的巡邏隊，常被他們搶先殺掉：要盡快抓住他。"
+
+[[icon]]
+quest = 5051
+phase = "objective"
+objective = 1
+icon = "rare"

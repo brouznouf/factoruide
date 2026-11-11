@@ -1,0 +1,61 @@
+# Quest notes of Azshara. See notes/README.md for the format.
+
+# A Land Filled with Hatred: the three Haldarr kinds share spawn points, so the scarce one comes back in place of the others.
+[[note]]
+quest = 5536
+phase = "objective"
+level = "warning"
+en = "{npc:6125}, {npc:6126} and {npc:6127} share spawn points: when one kind runs short, kill everything in the ruins and it respawns in the others' place."
+fr = "{npc:6125}, {npc:6126} et {npc:6127} partagent leurs points d'apparition : quand une sorte manque, tuez tout dans les ruines et elle réapparaîtra à la place des autres."
+de = "{npc:6125}, {npc:6126} und {npc:6127} teilen sich ihre Spawnpunkte: Fehlt eine Art, töte alles in den Ruinen, dann spawnt sie an der Stelle der anderen."
+es = "{npc:6125}, {npc:6126} y {npc:6127} comparten puntos de aparición: si falta un tipo, mata todo en las ruinas y reaparecerá en lugar de los demás."
+pt = "{npc:6125}, {npc:6126} e {npc:6127} compartilham pontos de surgimento: se faltar um tipo, mate tudo nas ruínas e ele reaparece no lugar dos outros."
+ru = "{npc:6125}, {npc:6126} и {npc:6127} появляются в одних и тех же точках: если какого-то вида не хватает, перебейте всех в руинах, и он появится вместо остальных."
+ko = "{npc:6125}, {npc:6126}, {npc:6127}은(는) 생성 지점을 공유합니다. 한 종류가 부족하면 폐허의 몹을 모두 처치하세요. 그 자리에 부족한 종류가 다시 나타납니다."
+zh_cn = "{npc:6125}、{npc:6126}和{npc:6127}共用刷新点：哪种不够，就把废墟里的怪全部清掉，它会在其他怪的位置刷新出来。"
+zh_tw = "{npc:6125}、{npc:6126}和{npc:6127}共用重生點：哪種不夠，就把廢墟裡的怪全部清掉，它會在其他怪的位置重生出來。"
+
+# Betrayed: the quest ends at the summoning tome on the altar; a second book (a journal by the tent) does nothing.
+[[note]]
+quest = 3505
+phase = "turnin"
+level = "info"
+en = "Hand the quest in at {object:151286} on the altar inside the ring of pillars, not at the journal by the tent nearby."
+fr = "Rendez la quête à {object:151286} sur l'autel au milieu du cercle de piliers, pas au journal près de la tente voisine."
+de = "Gib die Quest bei {object:151286} auf dem Altar im Säulenkreis ab, nicht beim Tagebuch am Zelt daneben."
+es = "Entrega la misión en {object:151286}, sobre el altar dentro del círculo de pilares, no en el diario junto a la tienda cercana."
+pt = "Entregue a missão em {object:151286}, no altar dentro do círculo de pilares, e não no diário perto da tenda ao lado."
+ru = "Сдайте задание у предмета {object:151286} на алтаре в кругу колонн, а не у дневника возле палатки рядом."
+ko = "퀘스트는 기둥으로 둘러싸인 제단 위의 {object:151286}에서 완료하세요. 근처 천막 옆의 일지가 아닙니다."
+zh_cn = "在石柱环中祭坛上的{object:151286}处交任务，不是旁边帐篷边的那本日志。"
+zh_tw = "在石柱環中祭壇上的{object:151286}處交任務，不是旁邊帳篷邊的那本日誌。"
+
+# Delivery to Archmage Xylem: the tower is only reached through Sanath Lim-yo's teleport at the foot of the cliff.
+[[note]]
+quest = 3561
+phase = "turnin"
+level = "info"
+en = "{npc:8379} is in a tower up the cliff: talk to {npc:8395} by the campfire at the foot of the mountain to be teleported up, then follow the path. An elf on the ledge up there takes you back down."
+fr = "{npc:8379} est dans une tour en haut de la falaise : parlez à {npc:8395}, près du feu de camp au pied de la montagne, pour être téléporté en haut, puis suivez le chemin. Un elfe sur la corniche vous redescend."
+de = "{npc:8379} ist in einem Turm oben auf der Klippe: Sprich mit {npc:8395} am Lagerfeuer am Fuß des Berges, um hinaufteleportiert zu werden, und folge dann dem Pfad. Ein Elf auf dem Felsvorsprung bringt dich wieder hinunter."
+es = "{npc:8379} está en una torre en lo alto del acantilado: habla con {npc:8395}, junto a la hoguera al pie de la montaña, para que te teletransporte arriba, y sigue el camino. Un elfo en la cornisa te baja de nuevo."
+pt = "{npc:8379} fica numa torre no alto do penhasco: fale com {npc:8395}, junto à fogueira no pé da montanha, para ser teletransportado para cima e siga o caminho. Um elfo na borda lá em cima leva você de volta."
+ru = "{npc:8379} находится в башне на вершине утёса: поговорите с персонажем {npc:8395} у костра у подножия горы, он телепортирует вас наверх, затем идите по тропе. Эльф на уступе наверху вернёт вас вниз."
+ko = "{npc:8379}은(는) 절벽 위 탑에 있습니다. 산기슭 모닥불 옆의 {npc:8395}에게 말을 걸어 위로 순간이동한 뒤 길을 따라가세요. 위쪽 바위 턱에 있는 엘프가 다시 아래로 보내 줍니다."
+zh_cn = "{npc:8379}在悬崖上的塔里：和山脚篝火旁的{npc:8395}对话，传送上去后沿小路走。上面岩架上的精灵可以把你送回山下。"
+zh_tw = "{npc:8379}在懸崖上的塔裡：和山腳營火旁的{npc:8395}對話，傳送上去後沿小路走。上面岩架上的精靈可以把你送回山下。"
+
+# Kim'jael Indeed!: the four items come at random from any equipment box; a relog is the known fix when the last one never drops.
+[[note]]
+quest = 3601
+phase = "objective"
+level = "warning"
+en = "Any {object:153123} box can hold any of the four items, often only food. Boxes respawn within minutes, not always at the same spot. If the last item never shows up, log out and back in, then open the next box."
+fr = "Chaque caisse {object:153123} peut contenir l'un des quatre objets, souvent juste de la nourriture. Elles réapparaissent en quelques minutes, pas toujours au même endroit. Si le dernier objet ne sort jamais, déconnectez-vous puis reconnectez-vous avant d'ouvrir la suivante."
+de = "Jede Kiste {object:153123} kann jeden der vier Gegenstände enthalten, oft nur Essen. Die Kisten erscheinen nach wenigen Minuten neu, nicht immer an derselben Stelle. Kommt der letzte Gegenstand nie, logg dich aus und wieder ein und öffne dann die nächste Kiste."
+es = "Cualquier caja {object:153123} puede tener cualquiera de los cuatro objetos, a menudo solo comida. Reaparecen en pocos minutos, no siempre en el mismo sitio. Si el último objeto nunca sale, desconéctate, vuelve a entrar y abre la siguiente caja."
+pt = "Qualquer caixa {object:153123} pode ter qualquer um dos quatro itens, muitas vezes só comida. Elas reaparecem em poucos minutos, nem sempre no mesmo lugar. Se o último item nunca aparecer, saia do jogo, entre de novo e abra a próxima caixa."
+ru = "В любом ящике {object:153123} может оказаться любой из четырёх предметов, часто только еда. Ящики появляются снова через несколько минут, не всегда на том же месте. Если последний предмет никак не выпадает, перезайдите в игру и откройте следующий ящик."
+ko = "{object:153123} 상자에는 네 가지 물품 중 무엇이든 들어 있을 수 있지만, 음식만 나올 때가 많습니다. 상자는 몇 분 안에 다시 생기지만 늘 같은 자리는 아닙니다. 마지막 물품이 끝내 안 나오면 접속을 끊었다가 다시 접속한 뒤 다음 상자를 여세요."
+zh_cn = "任何一个{object:153123}箱子都可能开出四件物品中的任意一件，但常常只有食物。箱子几分钟内就会刷新，位置不一定相同。如果最后一件一直不出，下线再上线，然后打开下一个箱子。"
+zh_tw = "任何一個{object:153123}箱子都可能開出四件物品中的任意一件，但常常只有食物。箱子幾分鐘內就會重生，位置不一定相同。如果最後一件一直不出，下線再上線，然後打開下一個箱子。"
