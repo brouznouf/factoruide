@@ -1,0 +1,33 @@
+# Quest notes of Maraudon. See notes/README.md for the format.
+
+# The Pariah's Instructions: the Nameless Prophet under the first bridge drops the amulet that reveals the five Khan spirits; three are in the outer caves, one in each dungeon wing.
+[[note]]
+quest = 7067
+phase = "objective"
+objective = 1
+level = "warning"
+en = "First kill {npc:13718} (elite, under the first bridge past the stone door) for {item:17757}, which reveals the five Khan spirits: three in the outer caves (middle, purple and orange paths), one inside each dungeon wing. Target them by name."
+fr = "Tuez d'abord {npc:13718} (élite, sous le premier pont après la porte de pierre) pour obtenir {item:17757}, qui révèle les esprits des cinq khans : trois dans les grottes extérieures (chemins du milieu, violet et orange), un dans chaque aile du donjon. Ciblez-les par leur nom."
+de = "Töte zuerst {npc:13718} (Elite, unter der ersten Brücke hinter dem Steintor) für {item:17757}, das die Geister der fünf Khans sichtbar macht: drei in den äußeren Höhlen (mittlerer, violetter und orangener Weg), je einer in jedem Dungeonflügel. Ziele sie per Name an."
+es = "Primero mata a {npc:13718} (élite, bajo el primer puente tras la puerta de piedra) para conseguir {item:17757}, que revela los espíritus de los cinco kanes: tres en las cuevas exteriores (caminos central, morado y naranja) y uno dentro de cada ala de la mazmorra. Selecciónalos por su nombre."
+pt = "Primeiro mate {npc:13718} (elite, sob a primeira ponte depois da porta de pedra) para obter {item:17757}, que revela os espíritos dos cinco khans: três nas cavernas externas (caminhos do meio, roxo e laranja) e um dentro de cada ala da masmorra. Selecione-os pelo nome."
+ru = "Сначала убейте {npc:13718} (элита, под первым мостом за каменной дверью) ради {item:17757}: он открывает духов пяти ханов — трёх во внешних пещерах (средний, фиолетовый и оранжевый пути) и по одному в каждом крыле подземелья. Выбирайте их в цель по имени."
+ko = "먼저 돌문을 지나 첫 다리 아래의 정예 {npc:13718}을(를) 처치해 {item:17757}을(를) 얻으세요. 이것으로 다섯 칸의 영혼이 드러납니다. 셋은 바깥 동굴(가운데, 보라, 주황 길)에, 하나씩 던전 양쪽 구역 안에 있습니다. 이름으로 대상을 지정하세요."
+zh_cn = "先击杀{npc:13718}（精英，在穿过石门后的第一座桥下）获得{item:17757}，它能显现五位可汗的灵魂：三个在外部洞穴（中路、紫色和橙色通道），地下城两翼里各一个。用名字选中它们。"
+zh_tw = "先擊殺{npc:13718}（精英，在穿過石門後的第一座橋下）獲得{item:17757}，它能顯現五位可汗的靈魂：三個在外部洞穴（中路、紫色和橙色通道），地城兩翼裡各一個。用名字選取它們。"
+
+# Twisted Evils: the Nameless Prophet, outside the dungeon wings, drops the carving almost every kill and respawns quickly nearby.
+[[note]]
+quest = 7028
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:13718}, an elite just past the stone door, outside the dungeon wings, drops {item:17684} almost every kill and respawns quickly close by: farming him is faster than running the dungeon for them."
+fr = "{npc:13718}, un élite juste après la porte de pierre, hors des ailes du donjon, laisse tomber {item:17684} presque à chaque mort et réapparaît vite tout près : le farmer est plus rapide que faire le donjon pour elles."
+de = "{npc:13718}, ein Elite direkt hinter dem Steintor außerhalb der Dungeonflügel, lässt fast jedes Mal {item:17684} fallen und erscheint schnell in der Nähe wieder: Ihn zu farmen geht schneller, als dafür den Dungeon zu laufen."
+es = "{npc:13718}, un élite justo tras la puerta de piedra, fuera de las alas de la mazmorra, suelta {item:17684} casi siempre y reaparece rápido cerca: farmearlo es más rápido que hacer la mazmorra para conseguirlas."
+pt = "{npc:13718}, um elite logo depois da porta de pedra, fora das alas da masmorra, solta {item:17684} quase sempre e volta rápido ali perto: farmá-lo é mais rápido do que fazer a masmorra por elas."
+ru = "{npc:13718}, элита сразу за каменной дверью, вне крыльев подземелья, почти всегда оставляет {item:17684} и быстро возрождается рядом: фармить его быстрее, чем проходить ради них подземелье."
+ko = "돌문 바로 뒤, 던전 구역 바깥의 정예 {npc:13718}은(는) 거의 매번 {item:17684}을(를) 떨어뜨리고 근처에 금방 다시 나타납니다. 던전을 도는 것보다 그를 잡는 편이 빠릅니다."
+zh_cn = "{npc:13718}是石门后不远、地下城两翼之外的精英，几乎每次都掉落{item:17684}，并且很快在附近刷新：刷他比为此打地下城更快。"
+zh_tw = "{npc:13718}是石門後不遠、地城兩翼之外的精英，幾乎每次都掉落{item:17684}，並且很快在附近重生：刷他比為此打地城更快。"

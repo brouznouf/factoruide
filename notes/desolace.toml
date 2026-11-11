@@ -141,3 +141,35 @@ ru = "Из открытого портала выходит враг «{npc:1193
 ko = "차원문을 열면 강하게 때리는 {npc:11937}(38레벨)이 나옵니다. 순찰 중인 악마와 소환사가 멀어지길 기다렸다가 수호병을 떼어 내 싸우고, 차원문 세 개를 돌아가며 이용하세요. 몇 분이면 다시 열립니다."
 zh_cn = "打开传送门会冒出一个攻击很高的{npc:11937}（38级）。等巡逻的恶魔和召唤师走开，把守卫拉到一边，在三个传送门之间轮流打：它们几分钟内就会重新开启。"
 zh_tw = "打開傳送門會冒出一個攻擊很高的{npc:11937}（38級）。等巡邏的惡魔和召喚師走開，把守衛拉到一邊，在三個傳送門之間輪流打：它們幾分鐘內就會重新開啟。"
+
+# Bone Collector: picking up a bone often spawns a hostile kodo apparition that does not chase far.
+[[note]]
+quest = 5501
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Picking up a {item:13703} often spawns a {npc:11521} that attacks you. Be ready to fight it, or run off in a straight line: it does not chase you far."
+fr = "Ramasser un {item:13703} fait souvent apparaître une {npc:11521} qui vous attaque. Soyez prêt à la combattre, ou fuyez en ligne droite : elle ne vous poursuit pas loin."
+de = "Beim Aufheben eines {item:13703} erscheint oft eine {npc:11521}, die dich angreift. Sei bereit zu kämpfen oder lauf geradeaus davon: Sie verfolgt dich nicht weit."
+es = "Al recoger un {item:13703} suele aparecer una {npc:11521} que te ataca. Prepárate para luchar o huye en línea recta: no te persigue lejos."
+pt = "Pegar um {item:13703} muitas vezes faz surgir uma {npc:11521} que ataca você. Esteja pronto para lutar ou fuja em linha reta: ela não persegue por muito tempo."
+ru = "Когда вы подбираете {item:13703}, часто появляется {npc:11521} и нападает на вас. Будьте готовы к бою или убегайте по прямой: далеко он не преследует."
+ko = "{item:13703}을(를) 주우면 종종 {npc:11521}이(가) 나타나 공격합니다. 싸울 준비를 하거나 일직선으로 달아나세요. 멀리 쫓아오지 않습니다."
+zh_cn = "拾取{item:13703}时经常会出现一只{npc:11521}攻击你。做好战斗准备，或者直线逃跑：它不会追太远。"
+zh_tw = "拾取{item:13703}時經常會出現一隻{npc:11521}攻擊你。做好戰鬥準備，或者直線逃跑：牠不會追太遠。"
+
+# Get Me Out of Here!: two ambushes (four maulers at the first fork, three wranglers with hyenas later); she respawns in about 8 minutes.
+[[note]]
+quest = 6132
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Clear the road before freeing her. Four {npc:4656} ambush her at the first fork, then three {npc:4655} with their hyenas further on. She respawns about 8 minutes after a failure."
+fr = "Dégagez la route avant de la libérer. Quatre {npc:4656} lui tendent une embuscade au premier embranchement, puis trois {npc:4655} avec leurs hyènes plus loin. Elle réapparaît environ 8 minutes après un échec."
+de = "Räum den Weg, bevor du sie befreist. Vier {npc:4656} überfallen sie an der ersten Gabelung, weiter vorn dann drei {npc:4655} mit ihren Hyänen. Nach einem Fehlschlag ist sie nach etwa 8 Minuten wieder da."
+es = "Despeja el camino antes de liberarla. Cuatro {npc:4656} le tienden una emboscada en la primera bifurcación y, más adelante, tres {npc:4655} con sus hienas. Reaparece unos 8 minutos después de un fracaso."
+pt = "Limpe o caminho antes de libertá-la. Quatro {npc:4656} a emboscam na primeira bifurcação e, mais adiante, três {npc:4655} com suas hienas. Ela volta cerca de 8 minutos após uma falha."
+ru = "Расчистите дорогу, прежде чем освобождать её. На первой развилке нападают четыре {npc:4656}, дальше — три {npc:4655} со своими гиенами. После провала она возрождается примерно через 8 минут."
+ko = "풀어 주기 전에 길을 정리하세요. 첫 갈림길에서 {npc:4656} 넷이, 더 가서는 하이에나를 데린 {npc:4655} 셋이 매복합니다. 실패하면 약 8분 뒤에 다시 나타납니다."
+zh_cn = "放她出来之前先清理道路。第一个岔口有四个{npc:4656}伏击，再往前是三个带着土狼的{npc:4655}。失败后她大约8分钟重新出现。"
+zh_tw = "放她出來之前先清理道路。第一個岔口有四個{npc:4656}伏擊，再往前是三個帶著土狼的{npc:4655}。失敗後她大約8分鐘重新出現。"

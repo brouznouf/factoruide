@@ -28,3 +28,111 @@ ru = "Двухчасовой таймер идёт и когда вы не в и
 ko = "2시간 제한은 접속하지 않아도 계속 흐릅니다. 검사하지 않은 표본을 버리면 퀘스트가 포기됩니다. 표본 넷 중 하나 정도만 검사를 통과하니, 쉬지 않고 한 시간 이상을 잡으세요."
 zh_cn = "2小时时限在离线时也会继续计时。摧毁未化验的样本会放弃任务。大约四个样本里只有一个能通过化验：预留一小时以上不间断的时间。"
 zh_tw = "2小時時限在離線時也會繼續計時。摧毀未化驗的樣本會放棄任務。大約四個樣本裡只有一個能通過化驗：預留一小時以上不間斷的時間。"
+
+# Gadgetzan Water Survey: filling the widget at the pool spawns two hostile tunnelers on the player; killing them is not needed.
+[[note]]
+quest = 992
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Filling the widget at the pool spawns two {npc:5459} (level 47-48) right on top of you. You don't need to kill them: run off or mount up as soon as the sample is taken."
+fr = "Remplir l'appareil au bassin fait apparaître deux {npc:5459} (niveau 47-48) juste sur vous. Inutile de les tuer : fuyez ou montez en selle dès que l'échantillon est pris."
+de = "Wenn du das Gerät am Teich füllst, erscheinen zwei {npc:5459} (Stufe 47-48) direkt auf dir. Du musst sie nicht töten: lauf weg oder steig auf, sobald die Probe genommen ist."
+es = "Al llenar el aparato en la charca aparecen dos {npc:5459} (nivel 47-48) justo encima de ti. No hace falta matarlos: huye o monta en cuanto tengas la muestra."
+pt = "Encher o aparelho na lagoa faz surgir dois {npc:5459} (nível 47-48) bem em cima de você. Não é preciso matá-los: fuja ou monte assim que pegar a amostra."
+ru = "Когда вы наполняете прибор у пруда, прямо на вас появляются два {npc:5459} (47-48 уровня). Убивать их не нужно: убегайте или садитесь на скакуна сразу после взятия пробы."
+ko = "웅덩이에서 기구를 채우면 바로 위에 {npc:5459} 둘(47-48레벨)이 나타납니다. 죽일 필요는 없으니, 표본을 얻자마자 달아나거나 탈것을 타세요."
+zh_cn = "在水池装满仪器时，会有两只{npc:5459}（47-48级）直接出现在你身上。不必击杀它们：取到样本后立刻逃跑或上坐骑。"
+zh_tw = "在水池裝滿儀器時，會有兩隻{npc:5459}（47-48級）直接出現在你身上。不必擊殺牠們：取到樣本後立刻逃跑或上坐騎。"
+
+# WANTED: Caliph Scorpidsting: he spawns by the tents and walks between the water towers, followed by two stealthed rogues; respawn under 10 minutes.
+[[note]]
+quest = 2781
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:7847} spawns by the tents at about 59, 39 and walks among the water towers with two stealthed {npc:5615} at his heels. Pull him from range and expect the rogues to join; he comes back in under 10 minutes."
+fr = "{npc:7847} apparaît près des tentes vers 59, 39 et marche entre les châteaux d'eau, suivi de deux {npc:5615} camouflés. Attirez-le à distance en vous attendant aux voleurs ; il réapparaît en moins de 10 minutes."
+de = "{npc:7847} erscheint bei den Zelten um 59, 39 und läuft zwischen den Wassertürmen umher, dicht gefolgt von zwei getarnten {npc:5615}. Zieh ihn aus der Ferne und rechne mit den Schurken; er ist in unter 10 Minuten wieder da."
+es = "{npc:7847} aparece junto a las tiendas hacia 59, 39 y camina entre las torres de agua con dos {npc:5615} en sigilo pegados a él. Atráelo a distancia y cuenta con los pícaros; reaparece en menos de 10 minutos."
+pt = "{npc:7847} surge perto das tendas por volta de 59, 39 e anda entre as torres de água com dois {npc:5615} furtivos atrás dele. Puxe-o à distância e conte com os ladinos; ele volta em menos de 10 minutos."
+ru = "{npc:7847} появляется у палаток около 59, 39 и ходит между водонапорными башнями, а за ним крадутся два незаметных {npc:5615}. Выманивайте его издалека и ждите разбойников; он возрождается быстрее чем за 10 минут."
+ko = "{npc:7847}은(는) 59, 39 근처 천막 옆에 나타나 은신한 {npc:5615} 둘을 데리고 급수탑 사이를 돌아다닙니다. 원거리에서 끌어오되 도적들도 따라온다고 생각하세요. 10분 안에 다시 나타납니다."
+zh_cn = "{npc:7847}在约59, 39的帐篷旁出现，带着两个潜行的{npc:5615}在水塔之间游走。远程把他拉过来，并做好盗贼一起上的准备；他不到10分钟就会刷新。"
+zh_tw = "{npc:7847}在約59, 39的帳篷旁出現，帶著兩個潛行的{npc:5615}在水塔之間遊走。遠程把他拉過來，並做好盜賊一起上的準備；他不到10分鐘就會重生。"
+
+# Stoley's Shipment: the crates are on the top floor of the first house on the right inside the pirate town, with a linked pack of pirates below.
+[[note]]
+quest = 2873
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:9244} is in crates on the top floor of the first house on the right as you enter the pirate town. The pirates on the ground floor and the stairs come together: clear them carefully or slip past, then leave fast."
+fr = "{item:9244} se trouve dans des caisses au dernier étage de la première maison à droite en entrant dans la ville pirate. Les pirates du rez-de-chaussée et de l'escalier viennent ensemble : éliminez-les prudemment ou passez discrètement, puis repartez vite."
+de = "{item:9244} liegt in Kisten im obersten Stock des ersten Hauses rechts, wenn du die Piratenstadt betrittst. Die Piraten im Erdgeschoss und auf der Treppe kommen zusammen: räume sie vorsichtig oder schleich vorbei und verschwinde schnell."
+es = "{item:9244} está en unas cajas en el último piso de la primera casa a la derecha al entrar en el pueblo pirata. Los piratas de la planta baja y la escalera vienen juntos: límpialos con cuidado o cuélate, y sal rápido."
+pt = "{item:9244} está em caixotes no último andar da primeira casa à direita ao entrar na vila pirata. Os piratas do térreo e da escada vêm juntos: limpe-os com cuidado ou passe escondido, e saia rápido."
+ru = "{item:9244} лежит в ящиках на верхнем этаже первого дома справа при входе в пиратский городок. Пираты на первом этаже и лестнице нападают вместе: осторожно зачистите их или проскользните мимо и быстро уходите."
+ko = "{item:9244}은(는) 해적 마을에 들어서서 오른쪽 첫 번째 집 꼭대기 층 상자 안에 있습니다. 1층과 계단의 해적들은 함께 달려듭니다. 조심해서 처치하거나 몰래 지나간 뒤 빨리 빠져나오세요."
+zh_cn = "{item:9244}在进入海盗镇后右手边第一栋房子顶层的箱子里。一楼和楼梯上的海盗会一起上：小心清理，或者偷偷溜过去，然后尽快离开。"
+zh_tw = "{item:9244}在進入海盜鎮後右手邊第一棟房子頂層的箱子裡。一樓和樓梯上的海盜會一起上：小心清理，或者偷偷溜過去，然後盡快離開。"
+
+# The Scrimshank Redemption: the gear is deep inside the hive; the upper tunnel and left turns lead to the north-west corner of the big lower room; many patrols.
+[[note]]
+quest = 10
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:8593} is deep inside the hive, not where the map seems to show it on the surface. At the bottom of the ramp take the upper tunnel, keep left at each fork, and look in the north-west corner of the big lower room. Patrols walk every tunnel."
+fr = "{item:8593} est au fond de la ruche, pas à la surface où la carte semble l'indiquer. Au pied de la rampe, prenez le tunnel du haut, gardez la gauche à chaque embranchement et cherchez dans le coin nord-ouest de la grande salle du bas. Des patrouilles parcourent chaque tunnel."
+de = "{item:8593} liegt tief im Bau, nicht an der Oberfläche, wo die Karte es zu zeigen scheint. Nimm am Fuß der Rampe den oberen Tunnel, halte dich an jeder Gabelung links und such in der Nordwestecke des großen unteren Raums. In jedem Tunnel laufen Patrouillen."
+es = "{item:8593} está en lo más hondo de la colmena, no en la superficie donde parece indicarlo el mapa. Al pie de la rampa toma el túnel superior, sigue a la izquierda en cada bifurcación y busca en la esquina noroeste de la gran sala inferior. Hay patrullas en cada túnel."
+pt = "{item:8593} fica no fundo da colmeia, não na superfície onde o mapa parece mostrar. No pé da rampa pegue o túnel de cima, mantenha a esquerda em cada bifurcação e procure no canto noroeste da grande sala de baixo. Há patrulhas em todo túnel."
+ru = "{item:8593} находится глубоко в улье, а не на поверхности, как будто показывает карта. Внизу пандуса идите в верхний туннель, на каждой развилке держитесь левее и ищите в северо-западном углу большого нижнего зала. Во всех туннелях ходят патрули."
+ko = "{item:8593}은(는) 지도에 보이는 것처럼 지상이 아니라 벌레 소굴 깊숙한 곳에 있습니다. 비탈 아래에서 위쪽 굴로 들어가 갈림길마다 왼쪽을 따르고, 아래쪽 큰 방의 북서쪽 구석을 살피세요. 모든 굴에 순찰병이 다닙니다."
+zh_cn = "{item:8593}在虫巢深处，而不是地图上看起来的地面位置。到坡道底部后走上面的隧道，每个岔口都靠左，在下层大房间的西北角寻找。每条隧道都有巡逻怪。"
+zh_tw = "{item:8593}在蟲巢深處，而不是地圖上看起來的地面位置。到坡道底部後走上面的隧道，每個岔口都靠左，在下層大房間的西北角尋找。每條隧道都有巡邏怪。"
+
+# Gahz'ridian: the detector helmet shows the mounds on the minimap, they are thickest in the southern ogre ruins, and the helmet is needed to turn the quest in.
+[[note]]
+quest = 3161
+level = "warning"
+en = "Wear {item:9978}: the mounds then show on your minimap. They are thickest in the ogre ruins of southern Tanaris. Keep the helmet until you turn the quest in: without it you cannot hand it in."
+fr = "Portez {item:9978} : les monticules apparaissent alors sur votre minicarte. Ils sont les plus nombreux dans les ruines des ogres du sud de Tanaris. Gardez le casque jusqu'à la fin : sans lui, impossible de rendre la quête."
+de = "Trag {item:9978}: Dann erscheinen die Hügel auf deiner Minikarte. Am dichtesten liegen sie in den Ogerruinen im Süden von Tanaris. Behalte den Helm bis zur Abgabe: ohne ihn kannst du die Quest nicht abschließen."
+es = "Ponte {item:9978}: así los montículos aparecen en tu minimapa. Abundan sobre todo en las ruinas de los ogros del sur de Tanaris. Conserva el casco hasta entregar la misión: sin él no podrás entregarla."
+pt = "Use {item:9978}: os montes passam a aparecer no seu minimapa. Eles são mais numerosos nas ruínas dos ogros no sul de Tanaris. Guarde o elmo até entregar a missão: sem ele, não dá para entregá-la."
+ru = "Наденьте {item:9978}: тогда холмики видны на мини-карте. Больше всего их в руинах огров на юге Танариса. Не выбрасывайте шлем до сдачи задания: без него сдать его нельзя."
+ko = "{item:9978}을(를) 쓰면 더미가 미니맵에 표시됩니다. 타나리스 남쪽 오우거 폐허에 가장 많습니다. 퀘스트를 완료할 때까지 투구를 버리지 마세요. 없으면 완료할 수 없습니다."
+zh_cn = "戴上{item:9978}：沙堆就会显示在小地图上。塔纳利斯南部的食人魔废墟里最多。交任务前别丢掉这个头盔：没有它就无法交任务。"
+zh_tw = "戴上{item:9978}：沙堆就會顯示在小地圖上。塔納利斯南部的食人魔廢墟裡最多。交任務前別丟掉這個頭盔：沒有它就無法交任務。"
+
+# Tooga's Quest: Tooga has several spawn points, is not offered while another timed quest is held, stops to fight attackers, and the escort fails if the player gets too far ahead.
+[[note]]
+quest = 1560
+level = "warning"
+en = "{npc:5955} spawns at one of several spots in the valley and does not offer the quest while another timed quest is in your log. Walk with him: he stops to fight anything that attacks, and the escort fails if you get too far ahead."
+fr = "{npc:5955} apparaît à l'un de plusieurs endroits de la vallée et ne propose pas la quête si vous avez déjà une autre quête à durée limitée. Marchez avec lui : il s'arrête pour combattre tout ce qui attaque, et l'escorte échoue si vous le distancez trop."
+de = "{npc:5955} erscheint an einer von mehreren Stellen im Tal und bietet die Quest nicht an, solange du eine andere zeitlich begrenzte Quest hast. Geh mit ihm: Er bleibt stehen, um alles zu bekämpfen, was angreift, und die Eskorte scheitert, wenn du zu weit vorausläufst."
+es = "{npc:5955} aparece en uno de varios puntos del valle y no ofrece la misión si ya tienes otra misión con tiempo límite. Camina con él: se detiene a luchar contra todo lo que ataca, y la escolta falla si te adelantas demasiado."
+pt = "{npc:5955} surge em um de vários pontos do vale e não oferece a missão se você tiver outra missão com tempo limite. Ande com ele: ele para para lutar contra tudo que ataca, e a escolta falha se você se adiantar demais."
+ru = "{npc:5955} появляется в одной из нескольких точек долины и не даёт задание, пока у вас есть другое задание с ограничением по времени. Идите рядом: он останавливается драться со всеми, кто нападает, а сопровождение проваливается, если вы уйдёте слишком далеко вперёд."
+ko = "{npc:5955}은(는) 골짜기의 여러 지점 중 한 곳에 나타나며, 시간 제한 퀘스트가 이미 있으면 퀘스트를 주지 않습니다. 함께 걸으세요. 공격해 오는 적과는 멈춰서 싸우고, 너무 앞서가면 호위가 실패합니다."
+zh_cn = "{npc:5955}会在山谷的几个地点之一出现，如果你已有另一个限时任务，他不会提供此任务。和他一起步行：遇到攻击者他会停下来战斗，你跑得太远护送就会失败。"
+zh_tw = "{npc:5955}會在山谷的幾個地點之一出現，如果你已有另一個限時任務，他不會提供此任務。和他一起步行：遇到攻擊者他會停下來戰鬥，你跑得太遠護送就會失敗。"
+
+# Sprinkle's Secret Ingredient: the mushroom can be eaten, which uses it up; herb tracking shows the underwater mushrooms.
+[[note]]
+quest = 2641
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Don't use {item:8526}: eating it uses it up and sends you back to the bottom of the lake in {zone:47}. Herb tracking shows the mushrooms underwater."
+fr = "N'utilisez pas {item:8526} : le manger le fait disparaître et vous renvoie au fond du lac des {zone:47}. Le pistage des herbes montre les champignons sous l'eau."
+de = "Benutze {item:8526} nicht: Wenn du es isst, ist es weg und du musst zurück auf den Grund des Sees im {zone:47}. Kräutersuche zeigt die Pilze unter Wasser."
+es = "No uses {item:8526}: comérselo lo gasta y te obliga a volver al fondo del lago de {zone:47}. Rastrear hierbas muestra los champiñones bajo el agua."
+pt = "Não use {item:8526}: comê-lo o consome e manda você de volta ao fundo do lago em {zone:47}. Rastrear ervas mostra os cogumelos debaixo d'água."
+ru = "Не используйте {item:8526}: если его съесть, он пропадёт, и придётся снова нырять на дно озера в {zone:47}. Поиск трав показывает грибы под водой."
+ko = "{item:8526}을(를) 사용하지 마세요. 먹으면 사라져서 {zone:47}의 호수 바닥까지 다시 가야 합니다. 약초 찾기를 켜면 물속 버섯이 보입니다."
+zh_cn = "不要使用{item:8526}：吃掉就没了，你得回到{zone:47}的湖底重新采。寻找草药能显示水下的蘑菇。"
+zh_tw = "不要使用{item:8526}：吃掉就沒了，你得回到{zone:47}的湖底重新採。尋找草藥能顯示水下的蘑菇。"

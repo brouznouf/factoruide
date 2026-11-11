@@ -15,3 +15,101 @@ ru = "Три засады по пути: три йети на склоне по�
 ko = "도중에 매복이 세 번 있습니다. 동굴 뒤 비탈에 예티 셋, 절벽 길에 고릴라 셋, 부두 근처에 놀 넷(주문시전자 포함). 로봇을 살려 두세요. 로봇이 움직이지 않으면 다른 사람이 호위 중입니다."
 zh_cn = "途中有三次伏击：山洞后的斜坡上有三只雪人，悬崖小路上有三只大猩猩，码头附近有四个豺狼人（其中一个施法者）。保护好机器人；如果它不动，说明别人正在护送。"
 zh_tw = "途中有三次伏擊：山洞後的斜坡上有三隻雪人，懸崖小路上有三隻大猩猩，碼頭附近有四個豺狼人（其中一個施法者）。保護好機器人；如果它不動，表示別人正在護送。"
+
+# The Gordunni Scroll: the scroll that starts it lies on the ground in the ogre outpost, at one of several spots.
+[[note]]
+quest = 2978
+phase = "accept"
+level = "info"
+en = "{item:9370} lies on the ground in the ogre camp, at one of several spots: by the cauldron at the upper cave mouth (about 75, 28) or by the training dummies of the eastern camp (about 80, 34). It is easy to miss: sweep your cursor over the ground."
+fr = "{item:9370} est posé au sol dans le camp des ogres, à l'un de plusieurs endroits : près du chaudron à l'entrée de la grotte du haut (vers 75, 28) ou près des mannequins d'entraînement du camp est (vers 80, 34). Il passe facilement inaperçu : balayez le sol avec le curseur."
+de = "{item:9370} liegt im Ogerlager auf dem Boden, an einer von mehreren Stellen: beim Kessel am oberen Höhleneingang (um 75, 28) oder bei den Übungspuppen im östlichen Lager (um 80, 34). Man übersieht es leicht: fahr mit dem Mauszeiger über den Boden."
+es = "{item:9370} está en el suelo del campamento ogro, en uno de varios puntos: junto al caldero de la entrada de la cueva superior (hacia 75, 28) o junto a los muñecos de entrenamiento del campamento este (hacia 80, 34). Pasa desapercibido: barre el suelo con el cursor."
+pt = "{item:9370} fica no chão do acampamento dos ogros, em um de vários pontos: junto ao caldeirão na entrada da caverna de cima (por volta de 75, 28) ou junto aos bonecos de treino do acampamento leste (por volta de 80, 34). É fácil não ver: passe o cursor pelo chão."
+ru = "{item:9370} лежит на земле в лагере огров, в одном из нескольких мест: у котла перед входом в верхнюю пещеру (около 75, 28) или у тренировочных манекенов восточного лагеря (около 80, 34). Его легко не заметить: водите курсором по земле."
+ko = "{item:9370}은(는) 오우거 야영지 바닥 여러 곳 중 한 곳에 놓여 있습니다. 위쪽 동굴 입구의 가마솥 옆(약 75, 28)이나 동쪽 야영지의 훈련용 허수아비 옆(약 80, 34)입니다. 놓치기 쉬우니 커서로 바닥을 훑어보세요."
+zh_cn = "{item:9370}掉在食人魔营地的地上，位置是几处之一：上方洞口的大锅旁（约75, 28），或东边营地的训练假人旁（约80, 34）。很容易漏看：用鼠标在地面上扫一扫。"
+zh_tw = "{item:9370}掉在食人魔營地的地上，位置是幾處之一：上方洞口的大鍋旁（約75, 28），或東邊營地的訓練假人旁（約80, 34）。很容易漏看：用滑鼠在地面上掃一掃。"
+
+[[icon]]
+quest = 2978
+phase = "accept"
+icon = "pickup"
+
+# Gordunni Cobalt: the dig spots are faint blue glows that hum when close; only mounds glowing blue hold cobalt.
+[[note]]
+quest = 2987
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Look for faint blue glows on the ground around the camp (a low hum when you are close), use {item:9466} there, then loot the mound that appears. Only mounds glowing blue hold cobalt; plain ones give junk."
+fr = "Cherchez de faibles lueurs bleues au sol autour du camp (un léger bourdonnement quand vous êtes proche), utilisez {item:9466} dessus, puis fouillez le monticule qui apparaît. Seuls les monticules qui brillent en bleu contiennent du cobalt ; les autres donnent des déchets."
+de = "Achte auf schwaches blaues Leuchten am Boden rund ums Lager (ein leises Summen in der Nähe), benutze dort {item:9466} und plündere den Hügel, der erscheint. Nur blau leuchtende Hügel enthalten Kobalt; normale geben Plunder."
+es = "Busca leves destellos azules en el suelo alrededor del campamento (un zumbido suave cuando estás cerca), usa {item:9466} ahí y saquea el montículo que aparece. Solo los montículos con brillo azul tienen cobalto; los normales dan basura."
+pt = "Procure leves brilhos azuis no chão ao redor do acampamento (um zumbido baixo quando você está perto), use {item:9466} ali e saqueie o monte que aparece. Só montes com brilho azul têm cobalto; os comuns dão sucata."
+ru = "Ищите слабое голубое свечение на земле вокруг лагеря (рядом слышно тихое гудение), используйте там {item:9466} и обыщите появившийся холмик. Кобальт есть только в холмиках с голубым свечением; обычные дают хлам."
+ko = "야영지 주변 바닥의 희미한 푸른 빛을 찾아(가까이 가면 낮게 웅웅거립니다) 그곳에서 {item:9466}을(를) 사용하고, 나타난 흙더미를 뒤지세요. 푸르게 빛나는 흙더미에만 코발트가 있고, 평범한 것은 잡동사니만 나옵니다."
+zh_cn = "在营地周围的地面上寻找微弱的蓝光（靠近时有低沉的嗡嗡声），在那里使用{item:9466}，然后拾取出现的土堆。只有发蓝光的土堆里有钴；普通的只有垃圾。"
+zh_tw = "在營地周圍的地面上尋找微弱的藍光（靠近時有低沉的嗡嗡聲），在那裡使用{item:9466}，然後拾取出現的土堆。只有發藍光的土堆裡有鈷；普通的只有垃圾。"
+
+# The Ogres of Feralas: the shamans share spawn points with the other ogres of the ruins, so killing the warlocks and others brings more shamans.
+[[note]]
+quest = 2980
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:5236} share spawn points with the other ogres of the ruins, so few are up at once. Keep killing the {npc:5240} and the others around them to bring more shamans."
+fr = "Les {npc:5236} partagent leurs points d'apparition avec les autres ogres des ruines, si bien qu'il y en a peu à la fois. Continuez à tuer les {npc:5240} et les autres autour d'eux pour faire venir plus de chamans."
+de = "{npc:5236} teilen ihre Spawnpunkte mit den anderen Ogern der Ruinen, daher sind nur wenige gleichzeitig da. Töte weiter die {npc:5240} und die anderen um sie herum, damit mehr Schamanen erscheinen."
+es = "Los {npc:5236} comparten puntos de aparición con los demás ogros de las ruinas, así que hay pocos a la vez. Sigue matando a los {npc:5240} y al resto a su alrededor para que salgan más chamanes."
+pt = "Os {npc:5236} dividem pontos de surgimento com os outros ogros das ruínas, então há poucos de cada vez. Continue matando os {npc:5240} e os demais ao redor para que surjam mais xamãs."
+ru = "{npc:5236} делят точки появления с другими ограми руин, поэтому одновременно их мало. Продолжайте убивать {npc:5240} и остальных вокруг, чтобы появлялось больше шаманов."
+ko = "{npc:5236}은(는) 폐허의 다른 오우거와 생성 지점을 공유해서 한 번에 몇 마리 없습니다. 주변의 {npc:5240} 등 다른 오우거도 계속 처치해야 주술사가 더 나타납니다."
+zh_cn = "{npc:5236}和废墟里的其他食人魔共用刷新点，所以同时存在的很少。继续击杀周围的{npc:5240}和其他食人魔，才能刷出更多萨满。"
+zh_tw = "{npc:5236}和廢墟裡的其他食人魔共用重生點，所以同時存在的很少。繼續擊殺周圍的{npc:5240}和其他食人魔，才能刷出更多薩滿。"
+
+# Stinglasher: he patrols slowly between the western hive with its spiral ramp and the eastern hive.
+[[note]]
+quest = 7731
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:14661} patrols slowly between the two hives, up and down the spiral ramp of the western one and over to the eastern entrance. If he is not in sight, kill wasps between the two entrances until he walks by."
+fr = "{npc:14661} patrouille lentement entre les deux ruches, montant et descendant la rampe en spirale de celle de l'ouest jusqu'à l'entrée est. S'il n'est pas en vue, tuez des guêpes entre les deux entrées jusqu'à ce qu'il passe."
+de = "{npc:14661} patrouilliert langsam zwischen den beiden Bauten, die Wendelrampe des westlichen hinauf und hinunter und hinüber zum östlichen Eingang. Ist er nicht zu sehen, töte Wespen zwischen den beiden Eingängen, bis er vorbeikommt."
+es = "{npc:14661} patrulla despacio entre las dos colmenas, subiendo y bajando la rampa en espiral de la occidental y yendo hasta la entrada oriental. Si no lo ves, mata avispas entre las dos entradas hasta que pase."
+pt = "{npc:14661} patrulha devagar entre as duas colmeias, subindo e descendo a rampa em espiral da ocidental e indo até a entrada oriental. Se ele não estiver à vista, mate vespas entre as duas entradas até ele passar."
+ru = "{npc:14661} медленно патрулирует между двумя ульями: вверх и вниз по спиральному пандусу западного и до восточного входа. Если его не видно, бейте ос между двумя входами, пока он не пройдёт мимо."
+ko = "{npc:14661}은(는) 서쪽 벌집의 나선형 비탈을 오르내리며 동쪽 입구까지 두 벌집 사이를 천천히 순찰합니다. 보이지 않으면 두 입구 사이에서 말벌을 잡으며 지나가기를 기다리세요."
+zh_cn = "{npc:14661}在两个虫巢之间缓慢巡逻，沿西边虫巢的螺旋坡道上下，再走到东边入口。看不到他时，就在两个入口之间杀黄蜂，等他经过。"
+zh_tw = "{npc:14661}在兩個蟲巢之間緩慢巡邏，沿西邊蟲巢的螺旋坡道上下，再走到東邊入口。看不到他時，就在兩個入口之間殺黃蜂，等他經過。"
+
+# Zapped Giants: the shrinker has a 2-hour duration, and retaking the quest for a new one loses the residue collected; some giants stand in the sea.
+[[note]]
+quest = 7003
+level = "warning"
+en = "{item:18904} disappears 2 hours after you get it, and retaking the quest for a new one loses the residue collected. Do all 15 giants in one go; some stand in the sea off the coast."
+fr = "{item:18904} disparaît 2 heures après l'avoir reçu, et reprendre la quête pour en obtenir un autre fait perdre les résidus récoltés. Faites les 15 géants d'une traite ; certains se tiennent dans la mer, au large de la côte."
+de = "{item:18904} verschwindet 2 Stunden, nachdem du es erhalten hast, und die Quest für ein neues erneut anzunehmen kostet die gesammelten Rückstände. Erledige alle 15 Riesen am Stück; einige stehen im Meer vor der Küste."
+es = "{item:18904} desaparece 2 horas después de recibirlo, y volver a aceptar la misión para obtener otro hace perder los residuos reunidos. Haz los 15 gigantes de una vez; algunos están en el mar, frente a la costa."
+pt = "{item:18904} some 2 horas depois de você recebê-lo, e pegar a missão de novo para ter outro faz perder os resíduos coletados. Faça os 15 gigantes de uma vez; alguns ficam no mar, perto da costa."
+ru = "{item:18904} исчезает через 2 часа после получения, а если взять задание заново ради нового, собранные остатки пропадут. Сделайте всех 15 великанов за один заход; некоторые стоят в море у берега."
+ko = "{item:18904}은(는) 받은 지 2시간 뒤에 사라지고, 새로 받으려고 퀘스트를 다시 받으면 모은 잔여물이 없어집니다. 거인 15마리를 한 번에 끝내세요. 일부는 해안 앞바다에 서 있습니다."
+zh_cn = "{item:18904}在获得2小时后消失，重新接任务换一个新的会失去已收集的残留物。一口气完成全部15个巨人；有些站在海岸外的海里。"
+zh_tw = "{item:18904}在獲得2小時後消失，重新接任務換一個新的會失去已收集的殘留物。一口氣完成全部15個巨人；有些站在海岸外的海裡。"
+
+# Dark Heart: the horn is blown at the small holed stone north of the pillared platform; used while Edana's corpse is still there, it is lost and nothing spawns.
+[[note]]
+quest = 3062
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Blow {item:9530} at the small stone with a hole, just north of the pillared platform at the north edge of the ruins (about 40.6, 8.6). If the corpse of {npc:8075} is still lying there, the horn is used up for nothing: wait until it disappears."
+fr = "Soufflez dans {item:9530} près de la petite pierre percée, juste au nord de la plateforme à piliers au bord nord des ruines (vers 40.6, 8.6). Si le cadavre de {npc:8075} est encore là, le cor est utilisé pour rien : attendez qu'il disparaisse."
+de = "Blase {item:9530} am kleinen Stein mit Loch, direkt nördlich der Plattform mit Säulen am Nordrand der Ruinen (um 40.6, 8.6). Liegt die Leiche von {npc:8075} noch dort, ist das Horn umsonst verbraucht: warte, bis sie verschwindet."
+es = "Toca {item:9530} junto a la pequeña piedra con un agujero, justo al norte de la plataforma con pilares en el borde norte de las ruinas (hacia 40.6, 8.6). Si el cadáver de {npc:8075} sigue allí, el cuerno se gasta en vano: espera a que desaparezca."
+pt = "Toque {item:9530} junto à pequena pedra com um furo, logo ao norte da plataforma com pilares na borda norte das ruínas (por volta de 40.6, 8.6). Se o cadáver de {npc:8075} ainda estiver lá, o chifre é gasto à toa: espere ele sumir."
+ru = "Трубите в {item:9530} у маленького камня с дырой, чуть севернее площадки с колоннами на северном краю руин (около 40.6, 8.6). Если труп {npc:8075} ещё лежит там, рог потратится впустую: дождитесь, пока он исчезнет."
+ko = "폐허 북쪽 끝 기둥 단상 바로 북쪽, 구멍 뚫린 작은 돌 앞에서 {item:9530}을(를) 부세요(약 40.6, 8.6). {npc:8075}의 시체가 아직 있으면 뿔피리만 헛되이 사라지니, 시체가 없어질 때까지 기다리세요."
+zh_cn = "在废墟北缘石柱平台正北的带孔小石头旁吹响{item:9530}（约40.6, 8.6）。如果{npc:8075}的尸体还在那里，号角会白白消耗：等尸体消失再吹。"
+zh_tw = "在廢墟北緣石柱平台正北的帶孔小石頭旁吹響{item:9530}（約40.6, 8.6）。如果{npc:8075}的屍體還在那裡，號角會白白消耗：等屍體消失再吹。"
