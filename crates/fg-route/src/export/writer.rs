@@ -302,6 +302,8 @@ impl StepWriter<'_> {
             child_name: None,
             text: String::new(),
             say: Vec::new(),
+            icon: None,
+            notes: Vec::new(),
             target: None,
             zone: None,
             zone_id: None,
@@ -893,11 +895,6 @@ impl StepWriter<'_> {
                 };
                 step.say.push(say.arg("quest", quest).arg("who", who));
                 self.patrol(step, loc);
-                if q.start_wait > 0.0 {
-                    step.say.push(
-                        Phrase::new("suffix.start_wait").arg("minutes", num((q.start_wait / 60.0).round() as i64)),
-                    );
-                }
                 if let Some(limit) = q.time_limit {
                     step.say
                         .push(Phrase::new("suffix.timed").arg("minutes", num((limit / 60.0).round() as i64)));

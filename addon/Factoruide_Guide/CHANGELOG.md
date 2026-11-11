@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Steps show how their quest is taken or their objective done, and a yellow, orange or red mark when a note tells more about the quest; the step's tooltip lists the notes.
+
 ## 0.18.0 (2026-11-10)
 
 - No more blocked-action errors from the quest panel during a fight; its layout catches up afterwards.

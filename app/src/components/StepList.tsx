@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { type Farmed, fmtTime, type QuestInfo, type RouteStep, type Step, type StepReport } from "../api";
+import { type Farmed, fmtTime, type QuestInfo, type RouteStep, type Step, type StepNote, type StepReport } from "../api";
 import { useT } from "../i18n";
 import { REASONS } from "./editing";
 import { NumberInput } from "./NumberInput";
@@ -313,7 +313,7 @@ function StepTip({ i, at, steps, card, title, spans, quests, edit }: TipProps) {
       <div className="sl-tip-head">
         {!isCheckpoint(s) && (
           <b>
-            <span aria-hidden>{GLYPHS[kind] ?? "•"}</span> {t(label)}
+            <span aria-hidden>{glyphOf(s, kind)}</span> {t(label)}
           </b>
         )}
         <span className="sl-tip-time">
@@ -323,6 +323,11 @@ function StepTip({ i, at, steps, card, title, spans, quests, edit }: TipProps) {
       <strong className="sl-tip-title">{isCheckpoint(s) ? s.text : text}</strong>
       {i === card.first && title !== text && <div className="sl-tip-where">{title}</div>}
       {s.text !== text && !isCheckpoint(s) && <div className="sl-tip-text">{s.text}</div>}
+      {s.notes?.map((n, k) => (
+        <div key={k} className={`sl-tip-quest-note note-${n.level}`}>
+          <b>{t(NOTE_LABELS[n.level])}</b> {n.text}
+        </div>
+      ))}
       {parts.length > 0 && (
         <>
           <div className="sl-tip-bar" aria-hidden>
@@ -476,8 +481,9 @@ function Row({ top, i, steps, card, spans, quests, active, found, onSelect, chec
         <span className="sl-text">{s.text}</span>
       ) : (
         <>
-          <b aria-label={t(label)}>{GLYPHS[kind] ?? "•"}</b>
+          <b aria-label={t(label)}>{glyphOf(s, kind)}</b>
           <span className="sl-text">{text}</span>
+          <NoteMark notes={s.notes} />
         </>
       )}
       {edit && step?.kind === "objective" && (
@@ -537,6 +543,27 @@ const PART_LABELS = { travel: "Trajet", combat: "Combat", interact: "Interaction
 const OBJECTIVE_LABELS: Record<string, string> = { kill: "Tuer", collect: "Récupérer", use: "Utiliser", talk: "Parler", other: "Faire" };
 /** The glyph before each kind of line. */
 const GLYPHS: Record<string, string> = { accept: "!", turnin: "?", kill: "✕", collect: "◆", use: "◆", talk: "…", fly: "➜", link: "➜", hearth: "⌂", teleport: "➜", deathskip: "✝" };
+
+/** The glyph of how a quest is taken or an objective done (the step's `icon`). */
+const ICON_GLYPHS: Record<string, string> = { npc: "!", object: "▣", item: "✉", item_drop: "◈", kill: "✕", elite: "☠", get: "◆", use: "⚙", talk: "…", buy: "¤", text: "◎", rare: "★", event: "⏱", pickup: "✋" };
+/** The glyph of a line: its icon's, else its kind's. */
+function glyphOf(s: Step, kind: string) {
+  return (s.icon && ICON_GLYPHS[s.icon]) ?? GLYPHS[kind] ?? "•";
+}
+/** How the quest notes are said, by level (French keys of the catalog). */
+const NOTE_LABELS: Record<StepNote["level"], string> = { info: "Bon à savoir", warning: "Attention", must_read: "À lire absolument" };
+
+/** The mark after a line with quest notes, in the color of the one that matters most. */
+function NoteMark({ notes }: { notes?: StepNote[] }) {
+  const t = useT();
+  const top = notes?.[0];
+  if (!top) return null;
+  return (
+    <span className={`sl-note-mark note-${top.level}`} aria-label={t(NOTE_LABELS[top.level])}>
+      ⚠
+    </span>
+  );
+}
 
 /** What a line says: its kind (French key), the kind of its objective, its text. */
 function lineOf(s: Step, quests: Map<number, QuestInfo>) {

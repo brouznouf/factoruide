@@ -235,7 +235,7 @@ pub fn load(
         skipped,
         initial: Initial::default(),
         known_class_prerequisites: known_prerequisites,
-        names: Names::load(conn, profile.locale.as_deref().unwrap_or("enUS"))?,
+        names: Names::load_for(conn, params.edition, profile.locale.as_deref().unwrap_or("enUS"))?,
         faction_names: faction_names(conn, params),
         explore,
         explore_by_zone,

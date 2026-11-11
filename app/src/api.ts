@@ -341,6 +341,12 @@ export interface Breakdown {
   waiting?: number;
 }
 
+/** A quest note of a step: how much it matters, and its text. */
+export interface StepNote {
+  level: "info" | "warning" | "must_read";
+  text: string;
+}
+
 export interface Step {
   kind: string;
   /** Grind steps: XP to have in `level` before going on. */
@@ -357,6 +363,10 @@ export interface Step {
   /** The XP they give (rested bonus included): what the addon counts. */
   farm_xp?: number;
   text: string;
+  /** How its quest is taken or its objective done (npc, object, item, item_drop, kill, elite, get, use, talk, buy, text, rare, event, pickup). */
+  icon?: string;
+  /** What the quest notes tell about it, in the guide's language, the one that matters most first. */
+  notes?: StepNote[];
   target?: { kind: string; id: number; name: string };
   zone?: string;
   /** The zone's ID (AreaTable). */

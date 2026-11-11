@@ -821,6 +821,8 @@ mod tests {
             child_name: None,
             text: format!("{} {id}", kind.as_str()),
             say: Vec::new(),
+            icon: None,
+            notes: Vec::new(),
             target,
             zone: Some(format!("zone {zone}")),
             zone_id: Some(zone),

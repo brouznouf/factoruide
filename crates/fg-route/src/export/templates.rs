@@ -295,6 +295,7 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
             "（限時：{minutes}分鐘內交付）",
         ],
     ),
+    // Guides written before the wait became a quest note (`notes/`) still say it.
     (
         "suffix.start_wait",
         [

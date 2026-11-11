@@ -3,6 +3,7 @@
 use anyhow::Result;
 use rusqlite::Connection;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 /// Names in the guide's language, English (the base data) when there is no translation.
 #[derive(Debug, Clone, Default)]
@@ -14,6 +15,9 @@ pub struct Names {
     object: HashMap<i64, String>,
     /// Zones and dungeons (AreaTable IDs).
     zone: HashMap<i64, String>,
+    /// The quest notes of the database's game version in this language (`load_for`), none
+    /// otherwise.
+    pub notes: Option<Arc<crate::export::notes::Book>>,
 }
 
 impl Names {
@@ -26,8 +30,23 @@ impl Names {
     }
 
     /// The names of `locale`, read once for each database (`memo::rows`).
-    pub fn kept(conn: &Connection, locale: &str) -> Result<std::sync::Arc<Self>> {
+    pub fn kept(conn: &Connection, locale: &str) -> Result<Arc<Self>> {
         crate::memo::rows(conn, "names", crate::memo::setting(locale), || Self::load(conn, locale))
+    }
+
+    /// The names of `locale` with the quest notes of `edition` (the game version of `conn`),
+    /// read once for each database.
+    pub fn kept_for(conn: &Connection, edition: crate::xp::Edition, locale: &str) -> Result<Arc<Self>> {
+        crate::memo::rows(conn, "names+notes", crate::memo::setting((locale, edition)), || {
+            Self::load_for(conn, edition, locale)
+        })
+    }
+
+    /// `load` with the quest notes of `edition`, the game version of `conn`.
+    pub fn load_for(conn: &Connection, edition: crate::xp::Edition, locale: &str) -> Result<Self> {
+        let mut names = Self::load(conn, locale)?;
+        names.notes = Some(Arc::new(crate::export::notes::Book::load(conn, edition, &names)?));
+        Ok(names)
     }
 
     pub fn load(conn: &Connection, locale: &str) -> Result<Self> {

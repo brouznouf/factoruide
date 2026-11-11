@@ -7,6 +7,7 @@ pub mod format;
 mod grind_spots;
 pub mod groups;
 mod lua;
+pub mod notes;
 mod phrase;
 pub mod polestar;
 mod templates;
@@ -32,8 +33,12 @@ use writer::StepWriter;
 pub fn render(route: &Route, names: &Names) -> Route {
     let mut out = route.clone();
     let lang = Lang::of(&names.locale);
-    for step in out.steps.iter_mut().filter(|s| !s.say.is_empty()) {
-        render_step(step, names);
+    for step in &mut out.steps {
+        if step.say.is_empty() {
+            annotate(step, names);
+        } else {
+            render_step(step, names);
+        }
     }
     for p in &mut out.professions {
         if let Some(name) = templates::profession_name(&p.key, lang) {
@@ -219,9 +224,20 @@ pub(crate) fn event_steps(planner: &Planner<'_>, route: &[Stop], trace: &[Timed]
         .collect()
 }
 
-/// A step written in the language of `names`: its sentence, and the names of its quest,
-/// target, mobs and zone.
+/// A step's icon and quest notes (those of `names`, in its language): what the files say now,
+/// whatever the guide was saved with.
+fn annotate(step: &mut Step, names: &Names) {
+    let book = names.notes.as_deref();
+    step.icon = (book.and_then(|b| b.icon_of(step)))
+        .or_else(|| notes::auto_icon(step))
+        .map(str::to_owned);
+    step.notes = book.map(|b| b.notes_of(step)).unwrap_or_default();
+}
+
+/// A step written in the language of `names`: its sentence, the names of its quest, target,
+/// mobs and zone, its icon and notes.
 fn render_step(step: &mut Step, names: &Names) {
+    annotate(step, names);
     step.text = phrase::render_all(&step.say, names);
     if let (Some(id), Some(name)) = (step.quest, &step.quest_name) {
         step.quest_name = Some(names.get("quest", id, name).to_owned());

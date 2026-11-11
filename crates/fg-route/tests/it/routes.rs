@@ -1832,6 +1832,35 @@ fn mobs_on_the_way_carry_their_xp() {
     assert!(line.contains(&format!(", fx = {}", step.farm_xp.unwrap())), "{line}");
 }
 
+/// A written guide's steps say how their quest is taken and their objective done, and the addon
+/// gets that icon and the quest notes of each step.
+#[test]
+fn addon_gets_the_icons_and_notes_of_each_step() {
+    use fg_route::export::StepKind;
+    use fg_route::export::notes::{Level, StepNote};
+    let p = generic();
+    let planner = planner(p);
+    let route = planner.construct(|_| {});
+    let built = fg_route::export::build(&planner, &p.profile, &route);
+    let mut guide = fg_route::export::render(&built, &fg_route::model::Names::default());
+    let accept = guide.steps.iter().position(|s| s.kind == StepKind::Accept).unwrap();
+    assert_eq!(guide.steps[accept].icon.as_deref(), Some("npc"));
+    let kill = (guide.steps.iter())
+        .find(|s| s.kind == StepKind::Objective && s.say.first().is_some_and(|p| p.key == "objective.kill"))
+        .expect("an objective to kill");
+    assert_eq!(kill.icon.as_deref(), Some(if kill.elite { "elite" } else { "kill" }));
+    guide.steps[accept].notes = vec![StepNote {
+        level: Level::MustRead,
+        text: "Wait for the event".into(),
+    }];
+    let lua = fg_route::export::to_lua(std::slice::from_ref(&guide));
+    let line = lua.lines().find(|l| l.contains("nt = ")).unwrap();
+    assert!(
+        line.contains(r#"ic = "npc", nt = { { l = 3, t = "Wait for the event" } }"#),
+        "{line}"
+    );
+}
+
 /// The addon gets the IDs of the mobs a step is done on, to leave their kills out of the mobs on
 /// the way.
 #[test]

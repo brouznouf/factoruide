@@ -136,6 +136,13 @@ pub const CHECKS: &[Check] = &[
         error: false,
     },
     Check {
+        name: "notes",
+        what: "quest notes and icons (notes/) on a quest, an objective or a thing named by a tag \
+               ({npc:..}) this game version does not have: limit the note to the game versions \
+               it is for (`editions`), or fix its IDs",
+        error: true,
+    },
+    Check {
         name: "timed-quests",
         what: "quests of the guide whose objectives give a time (\"in ten minutes\") while the \
                data has no time limit: the planner may do other things between taking and \
@@ -239,6 +246,20 @@ pub fn audit(
     } else {
         HashSet::new()
     };
+    if on("notes") {
+        for (key, detail) in crate::export::notes::check_data(conn, overrides.params.edition)? {
+            found.insert(
+                ("notes", key.clone()),
+                Finding {
+                    check: "notes",
+                    key,
+                    detail,
+                    races: Vec::new(),
+                    npcs: Vec::new(),
+                },
+            );
+        }
+    }
     if on("hostile-in-cities") {
         for f in hostile_in_cities(conn)? {
             found.insert((f.check, f.key.clone()), f);

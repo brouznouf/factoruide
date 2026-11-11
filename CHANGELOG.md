@@ -8,6 +8,18 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### App
+
+- Steps show how their quest is taken (an item, an object, a mob's drop, an event) or their objective done, and a mark when a note tells more about the quest.
+
+### Guides
+
+- Quest notes: tips and warnings about a quest (good to know, watch out, must read), written in the guide's language; Jungle Secrets says how to get it from Private Thorsen.
+
+### Addon
+
+- Steps show how their quest is taken or their objective done, and a yellow, orange or red mark when a note tells more about the quest; the step's tooltip lists the notes.
+
 ## 0.18.0 (2026-11-11)
 
 WoW Forever's guide map on one seamless map of Azeroth, and the latest WoW Forever data.

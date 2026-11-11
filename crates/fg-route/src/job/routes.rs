@@ -134,7 +134,7 @@ pub fn write_addon_routes(
     addon_dir: &Path,
     interface: &str,
 ) -> Result<usize> {
-    let mut routes = render_routes(conn, &load_routes(routes_dir)?, None)?;
+    let mut routes = render_routes(conn, edition, &load_routes(routes_dir)?, None)?;
     let locale = routes
         .first()
         .and_then(|r| r.locale.clone())
@@ -178,8 +178,14 @@ pub fn addon_walks(
 
 /// Write the guide pack for the Polestar addon (`export::polestar`) into `dir` from every saved
 /// route, each written in its own language.
-pub fn write_polestar_pack(conn: &Connection, routes_dir: &Path, dir: &Path, version: &str) -> Result<usize> {
-    let routes = render_routes(conn, &load_routes(routes_dir)?, None)?;
+pub fn write_polestar_pack(
+    conn: &Connection,
+    edition: Edition,
+    routes_dir: &Path,
+    dir: &Path,
+    version: &str,
+) -> Result<usize> {
+    let routes = render_routes(conn, edition, &load_routes(routes_dir)?, None)?;
     let guides: Vec<(String, Route)> = routes.into_iter().map(|r| (slug(&r.name), r)).collect();
     std::fs::create_dir_all(dir)?;
     for (name, content) in export::polestar::pack(&guides, version) {
@@ -190,8 +196,14 @@ pub fn write_polestar_pack(conn: &Connection, routes_dir: &Path, dir: &Path, ver
 
 /// Write every saved route as an import string for Polestar's Import page
 /// (`export::polestar::import_string`), `<guide>.txt` each in `dir`, each in its own language.
-pub fn write_polestar_strings(conn: &Connection, routes_dir: &Path, dir: &Path, _version: &str) -> Result<usize> {
-    let routes = render_routes(conn, &load_routes(routes_dir)?, None)?;
+pub fn write_polestar_strings(
+    conn: &Connection,
+    edition: Edition,
+    routes_dir: &Path,
+    dir: &Path,
+    _version: &str,
+) -> Result<usize> {
+    let routes = render_routes(conn, edition, &load_routes(routes_dir)?, None)?;
     std::fs::create_dir_all(dir)?;
     for r in &routes {
         let name = slug(&r.name);
@@ -205,8 +217,14 @@ pub fn write_polestar_strings(conn: &Connection, routes_dir: &Path, dir: &Path, 
 
 /// Write a pack's folder for Polestar's own tools (`export::polestar::source`) into `dir` from
 /// every saved route: its `pack.json` and a `.guide` file each, in English.
-pub fn write_polestar_source(conn: &Connection, routes_dir: &Path, dir: &Path, version: &str) -> Result<usize> {
-    let routes = render_routes(conn, &load_routes(routes_dir)?, Some("enUS"))?;
+pub fn write_polestar_source(
+    conn: &Connection,
+    edition: Edition,
+    routes_dir: &Path,
+    dir: &Path,
+    version: &str,
+) -> Result<usize> {
+    let routes = render_routes(conn, edition, &load_routes(routes_dir)?, Some("enUS"))?;
     add_polestar_source_pack(dir, version)?;
     for r in &routes {
         add_polestar_source(dir, &slug(&r.name), r, version)?;
@@ -262,14 +280,19 @@ fn add_polestar_source_pack(dir: &Path, version: &str) -> Result<()> {
 
 /// Routes written in `locale` (None: each in the language it was made in), the names of each
 /// language read once from the database.
-pub fn render_routes(conn: &Connection, routes: &[Route], locale: Option<&str>) -> Result<Vec<Route>> {
+pub fn render_routes(
+    conn: &Connection,
+    edition: Edition,
+    routes: &[Route],
+    locale: Option<&str>,
+) -> Result<Vec<Route>> {
     let mut names: HashMap<String, Names> = HashMap::new();
     routes
         .iter()
         .map(|r| {
             let locale = locale.or(r.locale.as_deref()).unwrap_or("enUS").to_owned();
             if !names.contains_key(&locale) {
-                names.insert(locale.clone(), Names::load(conn, &locale)?);
+                names.insert(locale.clone(), Names::load_for(conn, edition, &locale)?);
             }
             Ok(export::render(r, &names[&locale]))
         })

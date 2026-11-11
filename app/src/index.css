@@ -4072,6 +4072,33 @@ button.link.cmp-jump {
 .sl-tip-why.warn {
   color: var(--warn-text);
 }
+/* Quest notes: a mark after the line and the notes in its bubble, yellow (good to know), orange
+   (watch out) or red (must read). */
+.sl-note-mark {
+  flex: none;
+  font-size: 11px;
+}
+.note-info {
+  --note: var(--warn-text);
+}
+.note-warning {
+  --note: color-mix(in srgb, var(--warn-text) 45%, var(--bad));
+}
+.note-must_read {
+  --note: var(--bad);
+}
+.sl-note-mark {
+  color: var(--note);
+}
+.sl-tip-quest-note {
+  margin-top: 4px;
+  padding-left: 6px;
+  border-left: 2px solid var(--note);
+  color: var(--text-secondary);
+}
+.sl-tip-quest-note b {
+  color: var(--note);
+}
 /* Killing the mobs on the way to an objective: a small toggle, what it gives on hover. */
 .sl-farm-toggle {
   flex: none;

@@ -750,6 +750,49 @@ do
 end
 print("recommended level ok")
 
+-- Quest notes and icons (`nt`, `ic`): the step's icon says how it is done, a mark after its name
+-- takes the color of its most important note, and the tooltip lists the notes.
+do
+    FG.Routes["notes-test"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 21,
+        toLevel = 21,
+        time = 1,
+        steps = {
+            {
+                k = "accept",
+                t = "Accept Secret Quest",
+                q = 5102,
+                lvl = 21,
+                ic = "event",
+                nt = { { l = 3, t = "Read me" }, { l = 1, t = "Good to know" } },
+            },
+            { k = "turnin", t = "Turn in Secret Quest", q = 5102, lvl = 21 },
+        },
+    }
+    local shown
+    local card, mini = FG.Card.Render, FG.Mini.Render
+    FG.Card.Render = function(_, view) shown = view end
+    FG.Mini.Render = FG.Card.Render
+    useRoute("notes-test")
+    FG.Guide:Refresh()
+    local task = shown.tasks[1]
+    assert(task.icon == "Interface\\Icons\\INV_Misc_PocketWatch_01", "the event icon: " .. tostring(task.icon))
+    assert(task.mark:find("UI%-Dialog%-Icon%-AlertNew") and task.mark:find(":255:40:40|t", 1, true), "a red mark")
+    assert(not task.name:find("|T", 1, true), "the name alone for the compass")
+    local lines = {}
+    local addLine = GameTooltip.AddLine
+    GameTooltip.AddLine = function(_, text) table.insert(lines, text) end
+    FG.Guide:StepTooltip({}, 1)
+    GameTooltip.AddLine = addLine
+    assert(lines[2]:find("Read me", 1, true) and lines[3]:find("Good to know", 1, true), "the notes in the tooltip")
+    FG.Card.Render, FG.Mini.Render = card, mini
+    useRoute("skip-test")
+end
+print("quest notes ok")
+
 -- Progress belongs to its guide: a quest marked done by hand in one is still to do in another,
 -- and coming back finds the marks again. A new version keeps the quests, not the step marks.
 Press("skip")

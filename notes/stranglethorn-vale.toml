@@ -1,0 +1,14 @@
+# Quest notes of Stranglethorn Vale. See notes/README.md for the format.
+
+# Jungle Secrets: the giver offers it only away from the camp, after the ambush on his patrol.
+[[note]]
+quest = 215
+phase = "accept"
+level = "warning"
+en = "{npc:738} offers this quest only on his patrol away from the Rebel Camp, once you save him from the two Kurzen's Agents who ambush him. Wait at the camp until he leaves, then follow him."
+fr = "{npc:738} ne propose cette quête que pendant sa patrouille loin du camp rebelle, une fois sauvé des deux agents de Kurzen qui lui tendent une embuscade. Attendez au camp qu'il parte, puis suivez-le."
+
+[[icon]]
+quest = 215
+phase = "accept"
+icon = "event"

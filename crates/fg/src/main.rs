@@ -349,7 +349,7 @@ fn main() -> Result<()> {
             } else {
                 fg_route::job::write_polestar_pack
             };
-            let n = write(&open()?, &cli.routes, &out, env!("CARGO_PKG_VERSION"))?;
+            let n = write(&open()?, edition, &cli.routes, &out, env!("CARGO_PKG_VERSION"))?;
             eprintln!("wrote {} ({n} guides)", out.display());
         }
         Command::Replay { file, effort } => route::replay(&open()?, &overrides, &file, effort, &cli.routes)?,

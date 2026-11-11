@@ -154,6 +154,19 @@ pub fn to_lua(routes: &[Route]) -> String {
             if let Some(q) = s.quest {
                 fields.push(format!("q = {q}"));
             }
+            // How the quest is taken or the objective done, and the quest notes (level 1-3, text).
+            if let Some(icon) = &s.icon {
+                fields.push(format!("ic = {}", lua_str(icon)));
+            }
+            if !s.notes.is_empty() {
+                fields.push(format!(
+                    "nt = {{ {} }}",
+                    (s.notes.iter())
+                        .map(|n| format!("{{ l = {}, t = {} }}", n.level.number(), lua_str(&n.text)))
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                ));
+            }
             if s.bg {
                 fields.push("bg = true".into());
             }

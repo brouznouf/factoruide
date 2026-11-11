@@ -1182,4 +1182,7 @@ export const CATALOG: Record<string, Entry> = {
   "Attention : {warning}": { en: "Warning: {warning}", de: "Achtung: {warning}", es: "Atención: {warning}", pt: "Atenção: {warning}", ru: "Внимание: {warning}", ko: "주의: {warning}", zhCN: "注意：{warning}", zhTW: "注意：{warning}" },
   "Comparaison annulée : la configuration est conservée.": { en: "Comparison cancelled: the configuration is kept.", de: "Vergleich abgebrochen: Die Konfiguration bleibt erhalten.", es: "Comparación cancelada: se conserva la configuración.", pt: "Comparação cancelada: a configuração foi mantida.", ru: "Сравнение отменено: настройки сохранены.", ko: "비교가 취소되었습니다. 설정은 유지됩니다.", zhCN: "比较已取消：配置已保留。", zhTW: "比較已取消：設定已保留。" },
   "Comparaison des départs…": { en: "Comparing starts…", de: "Starts werden verglichen …", es: "Comparando salidas…", pt: "Comparando inícios…", ru: "Сравнение стартов…", ko: "시작 지점 비교 중…", zhCN: "正在比较起点…", zhTW: "正在比較起點…" },
+  "Bon à savoir": { en: "Good to know", de: "Gut zu wissen", es: "Bueno saberlo", pt: "Bom saber", ru: "Полезно знать", ko: "알아두면 좋은 점", zhCN: "小提示", zhTW: "小提示" },
+  "Attention": { en: "Watch out", de: "Achtung", es: "Atención", pt: "Atenção", ru: "Внимание", ko: "주의", zhCN: "注意", zhTW: "注意" },
+  "À lire absolument": { en: "Must read", de: "Unbedingt lesen", es: "Lectura obligatoria", pt: "Leitura obrigatória", ru: "Обязательно прочтите", ko: "꼭 읽으세요", zhCN: "必读", zhTW: "必讀" },
 };

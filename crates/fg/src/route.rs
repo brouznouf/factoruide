@@ -213,7 +213,7 @@ pub fn write_addon_routes(conn: &Connection, overrides_dir: &Path, routes_dir: &
 /// guide stamped computed at 0, version 1.
 pub fn write_guides_lua(conn: &Connection, overrides_dir: &Path, routes_dir: &Path, out: &Path) -> Result<()> {
     let overrides = Overrides::load_edition(overrides_dir, crate::edition())?;
-    let routes = job::render_routes(conn, &job::load_routes(routes_dir)?, None)?;
+    let routes = job::render_routes(conn, crate::edition(), &job::load_routes(routes_dir)?, None)?;
     let n = routes.len();
     let lua = job::guides_lua(
         conn,

@@ -436,7 +436,7 @@ impl Studio {
     ///
     /// [`CmdError`]: `Cancelled` and `Superseded` when the page gave up, otherwise the planner, the game data or the guide files failed.
     pub fn names<H: Host>(&self, host: &H, edition: Edition, locale: &str) -> Result<Arc<Names>> {
-        Ok(Names::kept(&host.open_db(edition)?, locale)?)
+        Ok(Names::kept_for(&host.open_db(edition)?, edition, locale)?)
     }
 
     /// A guide written in `locale` (None: the language it was made in).

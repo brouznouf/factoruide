@@ -98,6 +98,11 @@ local function CreateStrip()
     strip.fill = Skin:Fill(strip, "OVERLAY", "orange", 1)
     strip.fill:SetPoint("TOPLEFT", strip.track)
     strip.fill:SetPoint("BOTTOMLEFT", strip.track)
+    -- Over the strip: the task's tooltip (its full text, its quest notes).
+    strip:SetScript("OnEnter", function(self)
+        if self.index then FG.Guide:StepTooltip(self, self.index) end
+    end)
+    strip:SetScript("OnLeave", function() GameTooltip:Hide() end)
     -- Clicks on the strip: left points at the task, right marks it done.
     strip:SetScript("OnMouseUp", function(self, button)
         if not self.index or FG.JustDragged(self) then return end
@@ -434,7 +439,7 @@ local function DrawTags(view, main)
             TextColor(tag.text, "text")
             tag.text:ClearAllPoints()
             tag.text:SetPoint("LEFT", tag.icon, "RIGHT", 5, 0)
-            local text = v.name .. "  " .. Skin.Hex("text2") .. Count(v) .. "|r"
+            local text = v.name .. (v.mark or "") .. "  " .. Skin.Hex("text2") .. Count(v) .. "|r"
             for _, chip in ipairs(v.chips or {}) do
                 text = text .. "  " .. Skin.Hex(chip.color) .. chip.text .. "|r"
             end
@@ -626,7 +631,7 @@ function Mini:Render(view)
             .. string.format(L.stepOf, view.step, view.total)
             .. (main.done and ("  " .. Skin.Hex("green") .. L.done .. "|r") or "")
     )
-    strip.name:SetText(main.name)
+    strip.name:SetText((main.name or "") .. (main.mark or ""))
     strip.name:SetAlpha(main.done and 0.5 or 1)
     strip.count:SetText(Count(main))
     local sub = main.sub or ""
