@@ -172,3 +172,66 @@ ru = "{npc:1061} появляется у трона, только когда у�
 ko = "{npc:1061}은(는) 왕좌 주변의 경비병({npc:660} ×2)이 죽어야 나타나며 재생성이 느립니다. 보이지 않으면 안뜰을 정리하고 기다리세요."
 zh_cn = "{npc:1061}只有在王座周围的守卫（{npc:660} ×2）死后才会出现，且重生很慢。如果他不在，清理庭院后等待。"
 zh_tw = "{npc:1061}只有在王座周圍的守衛（{npc:660} ×2）死後才會出現，且重生很慢。如果他不在，清理庭院後等待。"
+
+# The Bloodsail Buccaneers: the charts and the orders each spawn at one of three spots on the beach camps; a looted one respawns elsewhere.
+[[note]]
+quest = 604
+phase = "objective"
+level = "info"
+en = "{item:3920} and {item:3921} each lie at one of three spots: the tent of the small camp, the rowboat on the beach, or the crates of the big camp full of warlocks. Check the boat and the small tent first; a looted document comes back at another spot."
+fr = "{item:3920} et {item:3921} se trouvent chacun à l'un de trois endroits : la tente du petit camp, la barque sur la plage ou les caisses du grand camp plein de démonistes. Vérifiez d'abord la barque et la petite tente ; un document ramassé réapparaît ailleurs."
+de = "{item:3920} und {item:3921} liegen jeweils an einer von drei Stellen: im Zelt des kleinen Lagers, im Ruderboot am Strand oder auf den Kisten des großen Lagers voller Hexenmeister. Sieh zuerst im Boot und im kleinen Zelt nach; ein aufgehobenes Dokument erscheint woanders wieder."
+es = "{item:3920} y {item:3921} están cada uno en uno de tres sitios: la tienda del campamento pequeño, el bote de la playa o las cajas del campamento grande lleno de brujos. Mira primero el bote y la tienda pequeña; un documento recogido reaparece en otro sitio."
+pt = "{item:3920} e {item:3921} ficam cada um em um de três lugares: a tenda do acampamento pequeno, o bote na praia ou os caixotes do acampamento grande cheio de bruxos. Olhe primeiro o bote e a tenda pequena; um documento pego reaparece em outro lugar."
+ru = "{item:3920} и {item:3921} лежат каждый в одном из трёх мест: в палатке малого лагеря, в лодке на пляже или на ящиках большого лагеря, полного чернокнижников. Сначала проверьте лодку и малую палатку; поднятый документ появляется в другом месте."
+ko = "{item:3920}와 {item:3921}는 각각 세 곳 중 한 곳에 있습니다: 작은 야영지의 천막, 해변의 보트, 흑마법사가 가득한 큰 야영지의 상자. 먼저 보트와 작은 천막을 확인하세요. 누가 집어 간 문서는 다른 곳에 다시 나타납니다."
+zh_cn = "{item:3920}和{item:3921}各在三个地点之一：小营地的帐篷、海滩上的小船，或满是术士的大营地的箱子上。先查看小船和小帐篷；被拾取的文件会在另一处重新出现。"
+zh_tw = "{item:3920}和{item:3921}各在三個地點之一：小營地的帳篷、海灘上的小船，或滿是術士的大營地的箱子上。先查看小船和小帳篷；被拾取的文件會在另一處重新出現。"
+
+# Stranglethorn Fever: Mokk comes with the third wave summoned by Unbagwa; the witch doctor must survive the first two, and a new try costs ten more fangs (Classic numbers; the waves are smaller in TBC).
+[[note]]
+quest = 348
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["classic", "forever"]
+en = "{npc:1514} only comes with the third wave of gorillas that {npc:1449} summons: keep the witch doctor alive through the first two waves; after that, looting Mokk is all that counts. If the witch doctor dies early, ten more {item:2799} are needed."
+fr = "{npc:1514} n'arrive qu'avec la troisième vague de gorilles invoquée par {npc:1449} : gardez le sorcier-docteur en vie pendant les deux premières ; ensuite, seul compte le butin de Mokk. Si le sorcier-docteur meurt trop tôt, il faut dix {item:2799} de plus."
+de = "{npc:1514} kommt erst mit der dritten Gorillawelle, die {npc:1449} beschwört: halte den Hexendoktor die ersten beiden Wellen am Leben; danach zählt nur, Mokk zu plündern. Stirbt der Hexendoktor zu früh, brauchst du zehn weitere {item:2799}."
+es = "{npc:1514} solo llega con la tercera oleada de gorilas que invoca {npc:1449}: mantén vivo al médico brujo durante las dos primeras; después solo importa saquear a Mokk. Si el médico brujo muere antes, necesitarás diez {item:2799} más."
+pt = "{npc:1514} só chega com a terceira onda de gorilas que {npc:1449} invoca: mantenha o mandingueiro vivo nas duas primeiras; depois, só importa saquear Mokk. Se o mandingueiro morrer antes, serão precisos mais dez {item:2799}."
+ru = "{npc:1514} появляется только с третьей волной горилл, которых призывает {npc:1449}: сохраните знахарю жизнь в первых двух волнах; дальше важно лишь обыскать Мокка. Если знахарь погибнет раньше, понадобится ещё десять {item:2799}."
+ko = "{npc:1514}는 {npc:1449}가 부르는 고릴라의 세 번째 무리와 함께 나타납니다. 처음 두 무리 동안 주술사를 살려 두세요. 그 뒤로는 모크의 전리품만 챙기면 됩니다. 주술사가 일찍 죽으면 {item:2799} 10개가 더 필요합니다."
+zh_cn = "{npc:1514}只在{npc:1449}召来的第三波猩猩中出现：前两波要保住巫医；之后只要拾取莫克就行。巫医若提前死亡，需要再交十个{item:2799}。"
+zh_tw = "{npc:1514}只在{npc:1449}召來的第三波猩猩中出現：前兩波要保住巫醫；之後只要拾取莫克就行。巫醫若提前死亡，需要再交十個{item:2799}。"
+
+# Cortello's Riddle: the next scroll lies half hidden in the water under the bridge of the Swamp of Sorrows.
+[[note]]
+quest = 624
+phase = "turnin"
+level = "info"
+en = "{object:2553} lies in the shallow water under the bridge in {zone:8}, on the north side of the middle pillar. It is hard to see: sweep your cursor over the water."
+fr = "{object:2553} se trouve dans l'eau peu profonde sous le pont ({zone:8}), côté nord du pilier central. Il est difficile à voir : balayez l'eau avec le curseur."
+de = "{object:2553} liegt im seichten Wasser unter der Brücke in {zone:8}, auf der Nordseite des mittleren Pfeilers. Sie ist schwer zu sehen: fahr mit dem Mauszeiger über das Wasser."
+es = "{object:2553} está en el agua poco profunda bajo el puente de {zone:8}, en el lado norte del pilar central. Cuesta verlo: pasa el cursor por el agua."
+pt = "{object:2553} fica na água rasa sob a ponte de {zone:8}, no lado norte do pilar central. É difícil de ver: passe o cursor sobre a água."
+ru = "{object:2553} лежит на мелководье под мостом ({zone:8}), с северной стороны центральной опоры. Его трудно заметить: водите курсором по воде."
+ko = "{object:2553}는 {zone:8}의 다리 아래 얕은 물속, 가운데 기둥 북쪽에 있습니다. 잘 보이지 않으니 커서를 물 위로 훑어 보세요."
+zh_cn = "{object:2553}在{zone:8}那座桥下的浅水中，中间桥墩的北侧。很难看清：用鼠标在水面上来回扫。"
+zh_tw = "{object:2553}在{zone:8}那座橋下的淺水中，中間橋墩的北側。很難看清：用滑鼠在水面上來回掃。"
+
+# Big Game Hunter: King Bangalash calls two panthers at half health; they stay after a failed attempt and add up.
+[[note]]
+quest = 208
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Below half health {npc:731} calls two panthers, which stay with him if you fail, and two more come at every new try. Clear the cats around him first and kill him in one go."
+fr = "Sous la moitié de sa vie, {npc:731} appelle deux panthères qui restent avec lui en cas d'échec, et deux autres arrivent à chaque nouvel essai. Éliminez d'abord les félins autour de lui et tuez-le d'une traite."
+de = "Unter halber Gesundheit ruft {npc:731} zwei Panther, die bei einem Fehlschlag bei ihm bleiben, und bei jedem neuen Versuch kommen zwei weitere. Räum zuerst die Katzen um ihn herum ab und töte ihn in einem Zug."
+es = "Por debajo de media vida, {npc:731} llama a dos panteras que se quedan con él si fallas, y llegan dos más en cada nuevo intento. Limpia primero los felinos de alrededor y mátalo de una vez."
+pt = "Abaixo de metade da vida, {npc:731} chama duas panteras que ficam com ele se você falhar, e vêm mais duas a cada nova tentativa. Limpe antes os felinos ao redor e mate-o de uma vez."
+ru = "Потеряв половину здоровья, {npc:731} призывает двух пантер, которые остаются с ним при неудаче, и с каждой новой попыткой приходят ещё две. Сначала перебейте кошек вокруг и убейте его с первого раза."
+ko = "{npc:731}는 생명력이 절반 아래로 떨어지면 표범 둘을 부르며, 실패하면 표범은 그 곁에 남고 다시 시도할 때마다 둘이 더 옵니다. 먼저 주변 고양이과 짐승을 처리하고 한 번에 처치하세요."
+zh_cn = "{npc:731}血量低于一半时会召来两只豹子，失败后豹子会留在他身边，每次重试还会再来两只。先清掉周围的猫科野兽，一口气杀掉他。"
+zh_tw = "{npc:731}血量低於一半時會召來兩隻豹子，失敗後豹子會留在他身邊，每次重試還會再來兩隻。先清掉周圍的貓科野獸，一口氣殺掉他。"

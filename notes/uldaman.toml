@@ -15,3 +15,35 @@ ru = "«{object:124388}» находится вне подземелья: из �
 ko = "{object:124388}은(는) 던전 밖에 있습니다. 입구가 있는 동굴에서 서쪽 벽을 따라 난 굴로 들어가 작은 트로그 방으로 가세요. 상자는 안쪽 기둥 뒤에 있습니다. 더 큰 트로그 홀의 상자는 얼라이언스 퀘스트용입니다."
 zh_cn = "{object:124388}在副本外：从副本入口所在的洞穴沿西墙的隧道走到一间小的穴居人房间，箱子在最里面的柱子后面。较大的穴居人大厅里的箱子是联盟任务用的。"
 zh_tw = "{object:124388}在副本外：從副本入口所在的洞穴沿西牆的隧道走到一間小的穴居人房間，箱子在最裡面的柱子後面。較大的穴居人大廳裡的箱子是聯盟任務用的。"
+
+# Solution to Doom: the tablet's chest is in the outer caves before the dungeon portal, along the dwarf side.
+[[note]]
+quest = 709
+phase = "objective"
+objective = 1
+level = "info"
+en = "The chest with {item:4631} is in the outer caves, not in the dungeon. In the big cave with the portal, stay on the upper path instead of dropping down, take the tunnel on the left and follow the dwarves, not the troggs."
+fr = "Le coffre contenant {item:4631} est dans les grottes extérieures, pas dans le donjon. Dans la grande grotte du portail, restez sur le chemin du haut au lieu de sauter, prenez le tunnel de gauche et suivez les nains, pas les troggs."
+de = "Die Truhe mit {item:4631} steht in den äußeren Höhlen, nicht im Dungeon. Bleib in der großen Höhle mit dem Portal auf dem oberen Weg statt hinunterzuspringen, nimm den linken Tunnel und folge den Zwergen, nicht den Troggs."
+es = "El cofre con {item:4631} está en las cuevas exteriores, no en la mazmorra. En la gran cueva del portal, sigue por el camino de arriba en vez de bajar, toma el túnel de la izquierda y sigue a los enanos, no a los troggs."
+pt = "O baú com {item:4631} fica nas cavernas externas, não na masmorra. Na caverna grande do portal, siga pelo caminho de cima em vez de descer, pegue o túnel da esquerda e siga os anões, não os troggs."
+ru = "Сундук с {item:4631} находится во внешних пещерах, а не в подземелье. В большой пещере с порталом не спрыгивайте вниз, а идите по верхней тропе, сверните в левый туннель и следуйте за дворфами, а не за троггами."
+ko = "{item:4631}가 든 상자는 던전 안이 아니라 바깥 동굴에 있습니다. 입구가 있는 큰 동굴에서 아래로 뛰어내리지 말고 위쪽 길을 따라가다 왼쪽 터널로 들어가, 트로그가 아닌 드워프 쪽으로 가세요."
+zh_cn = "装有{item:4631}的箱子在外围洞穴，不在副本里。在有传送门的大洞穴中，不要跳下去，沿上层小路走，进入左边的隧道，跟着矮人走，而不是穴居人。"
+zh_tw = "裝有{item:4631}的箱子在外圍洞穴，不在副本裡。在有傳送門的大洞穴中，不要跳下去，沿上層小路走，進入左邊的隧道，跟著矮人走，而不是穴居人。"
+
+# The Platinum Discs: the lecture, the turn-in and the next quest all happen in the treasure room; leaving it first means clearing the dungeon again.
+[[note]]
+quest = 2278
+phase = "objective"
+objective = 1
+level = "must_read"
+en = "After clicking {object:131474}, talk to {npc:7172} through his whole speech, then click the discs again to finish and take the next quest. Do it all before leaving the room: once outside, you must clear the dungeon again."
+fr = "Après avoir cliqué sur {object:131474}, parlez à {npc:7172} jusqu'au bout de son discours, puis cliquez de nouveau sur les disques pour terminer et prendre la quête suivante. Faites tout avant de quitter la salle : une fois sorti, il faut refaire le donjon."
+de = "Nachdem du {object:131474} angeklickt hast, sprich mit {npc:7172} bis zum Ende seiner Rede und klicke dann erneut auf die Scheiben, um abzuschließen und die nächste Quest anzunehmen. Erledige alles, bevor du den Raum verlässt: Danach musst du den Dungeon erneut säubern."
+es = "Tras hacer clic en {object:131474}, habla con {npc:7172} hasta el final de su discurso y vuelve a hacer clic en los discos para terminar y aceptar la siguiente misión. Hazlo todo antes de salir de la sala: una vez fuera, tendrás que limpiar la mazmorra otra vez."
+pt = "Depois de clicar em {object:131474}, fale com {npc:7172} até o fim do discurso e clique de novo nos discos para concluir e pegar a próxima missão. Faça tudo antes de sair da sala: depois de sair, você terá de limpar a masmorra de novo."
+ru = "Щёлкнув по {object:131474}, выслушайте {npc:7172} до конца, затем снова щёлкните по дискам, чтобы завершить задание и взять следующее. Сделайте всё, не выходя из зала: выйдя, придётся проходить подземелье заново."
+ko = "{object:131474}를 클릭한 뒤 {npc:7172}의 이야기를 끝까지 듣고, 다시 원반을 클릭해 퀘스트를 완료하고 다음 퀘스트를 받으세요. 방을 나가기 전에 모두 끝내야 합니다. 나가면 던전을 다시 돌아야 합니다."
+zh_cn = "点击{object:131474}后，与{npc:7172}对话直到他讲完，再次点击圆盘完成任务并接下一个任务。离开房间前全部做完：出去之后就得重新清一遍副本。"
+zh_tw = "點擊{object:131474}後，與{npc:7172}對話直到他講完，再次點擊圓盤完成任務並接下一個任務。離開房間前全部做完：出去之後就得重新清一遍副本。"

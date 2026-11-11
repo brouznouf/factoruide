@@ -1,0 +1,46 @@
+# Quest notes of the Swamp of Sorrows. See notes/README.md for the format.
+
+# Galen's Escape: Galen walks straight through the camps next to his cage; if he dies, abandoning the quest brings him back within a minute.
+[[note]]
+quest = 1393
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:5391} walks straight through the camps next to his cage and pulls everything: clear them before you free him. If he dies, abandon and retake the quest; he is back within a minute."
+fr = "{npc:5391} traverse tout droit les camps voisins de sa cage et attire tout : nettoyez-les avant de le libérer. S'il meurt, abandonnez et reprenez la quête ; il revient en moins d'une minute."
+de = "{npc:5391} läuft direkt durch die Lager neben seinem Käfig und zieht alles mit: räum sie ab, bevor du ihn befreist. Stirbt er, brich die Quest ab und nimm sie neu an; er ist binnen einer Minute zurück."
+es = "{npc:5391} cruza en línea recta los campamentos junto a su jaula y atrae a todo: límpialos antes de liberarlo. Si muere, abandona la misión y vuelve a aceptarla; reaparece en menos de un minuto."
+pt = "{npc:5391} atravessa direto os acampamentos ao lado da jaula e puxa tudo: limpe-os antes de libertá-lo. Se ele morrer, abandone e pegue a missão de novo; ele volta em menos de um minuto."
+ru = "{npc:5391} идёт прямо через лагеря у своей клетки и собирает всех: зачистите их, прежде чем освобождать его. Если он погибнет, откажитесь от задания и возьмите его снова; он вернётся меньше чем через минуту."
+ko = "{npc:5391}는 우리 옆 야영지를 곧장 가로지르며 모두 끌어들입니다. 풀어 주기 전에 야영지를 정리하세요. 그가 죽으면 퀘스트를 포기하고 다시 받으세요. 1분 안에 다시 나타납니다."
+zh_cn = "{npc:5391}会径直穿过笼子旁的营地，把所有怪都引过来：放他出来前先清掉这些营地。他死了就放弃任务再接，他一分钟内就会重新出现。"
+zh_tw = "{npc:5391}會徑直穿過籠子旁的營地，把所有怪都引過來：放他出來前先清掉這些營地。他死了就放棄任務再接，他一分鐘內就會重新出現。"
+
+# Noboru the Cudgel: the cudgel that starts the quest is a grey item, easily sold by mistake, and Noboru drops it again only once the quest is abandoned.
+[[note]]
+quest = 1392
+level = "warning"
+en = "{item:6196} is a grey item: don't sell it with your junk. If you lose it, {npc:5477} won't drop another until you abandon the quest."
+fr = "{item:6196} est un objet gris : ne le vendez pas avec votre camelote. Si vous le perdez, {npc:5477} n'en lâchera pas d'autre tant que vous n'aurez pas abandonné la quête."
+de = "{item:6196} ist ein grauer Gegenstand: verkauf ihn nicht mit deinem Plunder. Verlierst du ihn, lässt {npc:5477} keinen neuen fallen, bis du die Quest abbrichst."
+es = "{item:6196} es un objeto gris: no lo vendas con la chatarra. Si lo pierdes, {npc:5477} no soltará otro hasta que abandones la misión."
+pt = "{item:6196} é um item cinza: não o venda junto com o lixo. Se perdê-lo, {npc:5477} não deixará cair outro até você abandonar a missão."
+ru = "{item:6196} — серый предмет: не продавайте его вместе с хламом. Если потеряете его, {npc:5477} не оставит новый, пока вы не откажетесь от задания."
+ko = "{item:6196}는 회색 아이템이니 잡동사니와 함께 팔지 마세요. 잃어버리면 퀘스트를 포기하기 전까지 {npc:5477}가 다시 떨어뜨리지 않습니다."
+zh_cn = "{item:6196}是灰色物品：别和垃圾一起卖掉。如果弄丢了，在放弃任务之前{npc:5477}不会再掉落。"
+zh_tw = "{item:6196}是灰色物品：別和垃圾一起賣掉。如果弄丟了，在放棄任務之前{npc:5477}不會再掉落。"
+
+# The Atal'ai Exile: he stands on a ledge beside the stairs of the southern temple of Shadra'Alor; the elite spider Shadra roams below.
+[[note]]
+quest = 1429
+phase = "turnin"
+level = "warning"
+en = "{npc:5598} stands on a ledge left of the stairs of the southern temple in Shadra'Alor: climb the stairs and drop down to the left. {npc:2707}, a level 55 elite spider, roams at the foot of the steps."
+fr = "{npc:5598} se tient sur une corniche à gauche de l'escalier du temple sud de Shadra'Alor : montez l'escalier et sautez sur la gauche. {npc:2707}, une araignée élite de niveau 55, rôde au pied des marches."
+de = "{npc:5598} steht auf einem Vorsprung links der Treppe des südlichen Tempels in Shadra'Alor: geh die Treppe hinauf und spring nach links hinunter. {npc:2707}, eine Elite-Spinne der Stufe 55, streift am Fuß der Stufen umher."
+es = "{npc:5598} está en una cornisa a la izquierda de la escalera del templo del sur de Shadra'Alor: sube la escalera y déjate caer a la izquierda. {npc:2707}, una araña élite de nivel 55, ronda al pie de los escalones."
+pt = "{npc:5598} fica numa saliência à esquerda da escada do templo sul de Shadra'Alor: suba a escada e pule para a esquerda. {npc:2707}, uma aranha de elite de nível 55, ronda o pé dos degraus."
+ru = "{npc:5598} стоит на уступе слева от лестницы южного храма в Шадра'Алоре: поднимитесь по лестнице и спрыгните влево. {npc:2707}, элитный паук 55-го уровня, бродит у подножия ступеней."
+ko = "{npc:5598}는 샤드라알로 남쪽 사원 계단 왼쪽 턱에 서 있습니다. 계단을 오르다 왼쪽으로 뛰어내리세요. 55레벨 정예 거미 {npc:2707}가 계단 아래를 돌아다닙니다."
+zh_cn = "{npc:5598}站在沙德拉洛南边神庙阶梯左侧的平台上：爬上阶梯后往左跳下去。55级精英蜘蛛{npc:2707}在台阶下游荡。"
+zh_tw = "{npc:5598}站在沙德拉洛南邊神廟階梯左側的平台上：爬上階梯後往左跳下去。55級精英蜘蛛{npc:2707}在台階下遊蕩。"

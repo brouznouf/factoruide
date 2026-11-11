@@ -45,3 +45,48 @@ ru = "Ждите у входа в пещеру: когда появятся во
 ko = "동굴 입구에서 기다리세요. 물의 정령이 나타나면 {npc:2768}에게서 떨어진 바깥으로 끌어내 그가 작업을 마칠 때까지 붙잡아 두세요. 그가 전투에 끼어들면 정령이 끝없이 나오니 퀘스트를 포기하고 다시 받으세요."
 zh_cn = "在洞口等待：水元素出现后，把它们拉到洞外，远离{npc:2768}，并拖住它们直到他完成工作。如果他加入战斗，元素会不断刷新：放弃任务后重新接取。"
 zh_tw = "在洞口等待：水元素出現後，把它們拉到洞外，遠離{npc:2768}，並拖住它們直到他完成工作。如果他加入戰鬥，元素會不斷重生：放棄任務後重新接取。"
+
+# Sunken Treasure: with the goggles on, the gems that are up show on the minimap.
+[[note]]
+quest = 666
+phase = "objective"
+objective = 1
+level = "info"
+en = "Wear {item:4491}: the gem nodes then show on your minimap, and only those are really there. Bring water breathing if you can."
+fr = "Portez {item:4491} : les gisements de gemmes apparaissent alors sur votre minicarte, et seuls ceux-là sont vraiment présents. Emportez de quoi respirer sous l'eau si possible."
+de = "Setz {item:4491} auf: Dann erscheinen die Edelsteinfundorte auf deiner Minikarte, und nur diese sind wirklich da. Nimm wenn möglich etwas für Wasseratmung mit."
+es = "Ponte {item:4491}: los nodos de gemas aparecerán en tu minimapa, y solo esos están realmente ahí. Lleva respiración acuática si puedes."
+pt = "Use {item:4491}: os pontos de gemas aparecem no seu minimapa, e só esses estão mesmo lá. Leve respiração aquática se puder."
+ru = "Наденьте {item:4491}: тогда самоцветы появятся на миникарте, и только они действительно на месте. По возможности возьмите средство подводного дыхания."
+ko = "{item:4491}를 착용하세요. 그러면 보석 위치가 미니맵에 표시되며, 표시된 것만 실제로 있습니다. 가능하면 수중 호흡 수단을 챙기세요."
+zh_cn = "戴上{item:4491}：宝石位置会显示在小地图上，只有显示出来的才真的存在。可以的话带上水下呼吸。"
+zh_tw = "戴上{item:4491}：寶石位置會顯示在小地圖上，只有顯示出來的才真的存在。可以的話帶上水下呼吸。"
+
+# Deep Sea Salvage: the four items are inside the two wrecks and hard to see; where each one lies.
+[[note]]
+quest = 662
+phase = "objective"
+level = "info"
+en = "The four items blend into the wrecks. Eastern ship, middle deck: the log in a half barrel near the stairs, the charts on the ledge around the mast. Western ship: the charts on crates by a cannon, middle deck, the log on the sand in the hold."
+fr = "Les quatre objets se confondent avec les épaves. Navire est, pont du milieu : le journal dans un demi-tonneau près de l'escalier, les cartes sur le rebord autour du mât. Navire ouest : les cartes sur des caisses près d'un canon, pont du milieu, le journal sur le sable de la cale."
+de = "Die vier Gegenstände sind in den Wracks kaum zu sehen. Östliches Schiff, mittleres Deck: das Logbuch in einem halben Fass bei der Treppe, die Karten auf dem Sims um den Mast. Westliches Schiff: die Karten auf Kisten bei einer Kanone, mittleres Deck, das Logbuch im Sand im Laderaum."
+es = "Los cuatro objetos se confunden con los barcos hundidos. Barco del este, cubierta central: el diario en un medio barril junto a la escalera, las cartas en el saliente del mástil. Barco del oeste: las cartas sobre cajas junto a un cañón, cubierta central, y el diario en la arena de la bodega."
+pt = "Os quatro itens se confundem com os naufrágios. Navio do leste, convés do meio: o diário num meio barril perto da escada, as cartas na saliência ao redor do mastro. Navio do oeste: as cartas sobre caixotes perto de um canhão, convés do meio, e o diário na areia do porão."
+ru = "Все четыре предмета сливаются с обломками. Восточный корабль, средняя палуба: журнал в половине бочки у лестницы, карты на выступе вокруг мачты. Западный корабль: карты на ящиках у пушки на средней палубе, журнал на песке в трюме."
+ko = "네 물건은 난파선과 색이 비슷해 잘 안 보입니다. 동쪽 배 중간 갑판: 계단 근처 반쪽 통 안에 항해 일지, 돛대 둘레 선반에 항해도. 서쪽 배: 중간 갑판 대포 옆 상자 위에 항해도, 선창 바닥 모래 위에 항해 일지."
+zh_cn = "四件物品与沉船颜色相近。东边的船中层甲板：航海日志在楼梯旁的半截木桶里，航海图在桅杆周围的台沿上。西边的船：航海图在中层甲板大炮旁的箱子上，航海日志在底舱的沙地上。"
+zh_tw = "四件物品與沉船顏色相近。東邊的船中層甲板：航海日誌在樓梯旁的半截木桶裡，航海圖在桅杆周圍的台沿上。西邊的船：航海圖在中層甲板大砲旁的箱子上，航海日誌在底艙的沙地上。"
+
+# Breaking the Keystone: Fozruk wanders with three kobold guards (one casts sleep); the turn-in at the Keystone spawns the elite giant Thenan.
+[[note]]
+quest = 652
+level = "warning"
+en = "{npc:2611} carries {item:4469} and roams around the zone with three kobold guards, one of which casts sleep. Turning in at {object:2688} spawns {npc:2763}, an elite giant: be ready, or walk away until he leaves."
+fr = "{npc:2611} porte {item:4469} et parcourt la zone avec trois gardes kobolds, dont un lance un sommeil. Rendre la quête à {object:2688} fait apparaître {npc:2763}, un géant élite : soyez prêt, ou éloignez-vous jusqu'à ce qu'il parte."
+de = "{npc:2611} trägt {item:4469} und zieht mit drei Koboldwachen durch das Gebiet, von denen eine Schlaf wirkt. Die Abgabe bei {object:2688} lässt {npc:2763} erscheinen, einen Elite-Riesen: sei bereit oder geh weg, bis er verschwindet."
+es = "{npc:2611} lleva {item:4469} y recorre la zona con tres guardias kóbold, uno de los cuales lanza sueño. Entregar la misión en {object:2688} hace aparecer a {npc:2763}, un gigante élite: prepárate o aléjate hasta que se vaya."
+pt = "{npc:2611} carrega {item:4469} e percorre a zona com três guardas kobolds, um dos quais lança sono. Entregar a missão em {object:2688} faz surgir {npc:2763}, um gigante de elite: esteja pronto ou afaste-se até ele ir embora."
+ru = "{npc:2611} носит {item:4469} и бродит по зоне с тремя кобольдами-стражами, один из которых усыпляет. Сдача задания у {object:2688} вызывает {npc:2763}, элитного великана: будьте готовы или отойдите, пока он не исчезнет."
+ko = "{npc:2611}는 {item:4469}을 지니고 코볼트 경비병 셋과 지역을 돌아다니며, 그중 하나는 수면을 겁니다. {object:2688}에서 퀘스트를 완료하면 정예 거인 {npc:2763}이 나타납니다. 대비하거나 그가 사라질 때까지 물러나세요."
+zh_cn = "{npc:2611}带着{item:4469}，与三名狗头人护卫在区域内游荡，其中一名会施放催眠。在{object:2688}交任务会召出精英巨人{npc:2763}：做好准备，或走开等他消失。"
+zh_tw = "{npc:2611}帶著{item:4469}，與三名狗頭人護衛在區域內遊蕩，其中一名會施放催眠。在{object:2688}交任務會召出精英巨人{npc:2763}：做好準備，或走開等他消失。"

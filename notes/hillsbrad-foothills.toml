@@ -94,3 +94,19 @@ ru = "Входите в комнату, где находится {npc:2316}, н
 ko = "은신을 풀고 {npc:2316}의 방에 들어가세요. 은신한 채 들어가면 찾은 것으로 인정되지 않으며, 인정될 때까지 그는 대화하지 않습니다."
 zh_cn = "不要潜行进入{npc:2316}的房间：潜行进入不算找到他，在此之前他也不会和你交谈。"
 zh_tw = "不要潛行進入{npc:2316}的房間：潛行進入不算找到他，在此之前他也不會和你交談。"
+
+# Lord Aliden Perenolde: the manor's guards respawn fast, and the lord heals himself to full and casts sleep.
+[[note]]
+quest = 507
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The guards in and around the manor respawn quickly: clear your way up and don't linger. {npc:2423} heals himself back to full and casts sleep; interrupt his heals or drain his mana."
+fr = "Les gardes dans le manoir et autour réapparaissent vite : frayez-vous un chemin sans traîner. {npc:2423} se soigne entièrement et lance un sommeil ; interrompez ses soins ou drainez son mana."
+de = "Die Wachen im und um das Herrenhaus respawnen schnell: kämpf dich nach oben und trödle nicht. {npc:2423} heilt sich wieder voll und wirkt Schlaf; unterbrich seine Heilung oder entzieh ihm Mana."
+es = "Los guardias dentro y alrededor de la mansión reaparecen rápido: ábrete paso sin entretenerte. {npc:2423} se cura por completo y lanza sueño; interrumpe sus curaciones o drena su maná."
+pt = "Os guardas dentro e ao redor da mansão reaparecem rápido: abra caminho sem demorar. {npc:2423} se cura por completo e lança sono; interrompa as curas dele ou drene seu mana."
+ru = "Стража в усадьбе и вокруг неё быстро возрождается: пробивайтесь наверх и не задерживайтесь. {npc:2423} полностью исцеляется и усыпляет; прерывайте его лечение или выжигайте ему ману."
+ko = "저택 안팎의 경비병은 빨리 다시 나타납니다. 길을 뚫고 지체하지 마세요. {npc:2423}는 생명력을 가득 회복하고 수면을 겁니다. 치유를 끊거나 마나를 빼앗으세요."
+zh_cn = "庄园内外的守卫刷新很快：一路清上去，别逗留。{npc:2423}会把自己治疗满血并施放催眠；打断他的治疗或吸干他的法力。"
+zh_tw = "莊園內外的守衛重生很快：一路清上去，別逗留。{npc:2423}會把自己治療滿血並施放催眠；打斷他的治療或吸乾他的法力。"

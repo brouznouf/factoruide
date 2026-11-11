@@ -14,3 +14,17 @@ ru = "Две засады по пути: три скорпида сразу по
 ko = "도중에 매복이 두 번 있습니다. 출발 직후 전갈 셋, 끝 무렵 황무지 방랑자 인간 셋(마법사 포함). 로봇을 살려 두세요. 파티라면 모든 구성원이 각자 호위를 시작해야 합니다."
 zh_cn = "途中有两次伏击：出发后马上有三只蝎子，快到终点时有三个废土游荡者人类（其中一个法师）。保护好机器人；组队时每位成员都必须开始护送。"
 zh_tw = "途中有兩次伏擊：出發後馬上有三隻蠍子，快到終點時有三個廢土遊蕩者人類（其中一個法師）。保護好機器人；組隊時每位成員都必須開始護送。"
+
+# Tanaris Field Sampling: the timer runs offline, deleting an untested sample abandons the quest, and few samples pass the test.
+[[note]]
+quest = 654
+level = "warning"
+en = "The 2-hour timer keeps running while you are offline. Deleting an untested sample abandons the quest. Only about one sample in four passes the test: plan an hour or more without a break."
+fr = "Le délai de 2 heures continue de courir hors ligne. Détruire un échantillon non testé abandonne la quête. Environ un échantillon sur quatre seulement réussit le test : prévoyez au moins une heure sans interruption."
+de = "Das 2-Stunden-Zeitlimit läuft auch offline weiter. Eine ungetestete Probe zu zerstören bricht die Quest ab. Nur etwa jede vierte Probe besteht den Test: plane eine Stunde oder mehr am Stück ein."
+es = "El límite de 2 horas sigue corriendo aunque estés desconectado. Destruir una muestra sin analizar abandona la misión. Solo una de cada cuatro muestras pasa la prueba: reserva una hora o más sin pausas."
+pt = "O limite de 2 horas continua correndo mesmo offline. Destruir uma amostra não testada abandona a missão. Só cerca de uma amostra em quatro passa no teste: reserve uma hora ou mais sem pausa."
+ru = "Двухчасовой таймер идёт и когда вы не в игре. Уничтожение непроверенного образца отменяет задание. Проверку проходит лишь примерно один образец из четырёх: выделите час или больше без перерыва."
+ko = "2시간 제한은 접속하지 않아도 계속 흐릅니다. 검사하지 않은 표본을 버리면 퀘스트가 포기됩니다. 표본 넷 중 하나 정도만 검사를 통과하니, 쉬지 않고 한 시간 이상을 잡으세요."
+zh_cn = "2小时时限在离线时也会继续计时。摧毁未化验的样本会放弃任务。大约四个样本里只有一个能通过化验：预留一小时以上不间断的时间。"
+zh_tw = "2小時時限在離線時也會繼續計時。摧毀未化驗的樣本會放棄任務。大約四個樣本裡只有一個能通過化驗：預留一小時以上不間斷的時間。"

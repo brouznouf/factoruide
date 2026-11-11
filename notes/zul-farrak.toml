@@ -1,0 +1,33 @@
+# Quest notes of Zul'Farrak. See notes/README.md for the format.
+
+# Gahz'rilla: he is summoned only by striking the gong with the charged mallet (Sacred Mallet from Qiaga, charged on the Jintha'Alor altar); one mallet per group is enough.
+[[note]]
+quest = 2770
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:7273} only comes when the gong by his pool is struck with the Mallet of Zul'Farrak: take the Sacred Mallet from {npc:7996} in {zone:47}, then use it on the altar at the top of Jintha'Alor. One mallet in the group is enough."
+fr = "{npc:7273} n'apparaît que si l'on frappe le gong de son bassin avec le Marteau de Zul'Farrak : prenez le Maillet sacré sur {npc:7996} dans {zone:47}, puis utilisez-le sur l'autel au sommet de Jintha'Alor. Un seul maillet suffit pour le groupe."
+de = "{npc:7273} erscheint nur, wenn der Gong an seinem Becken mit dem Schlaghammer von Zul'Farrak geschlagen wird: nimm den Hochheiligen Schlaghammer von {npc:7996} im {zone:47} und benutze ihn am Altar oben in Jintha'Alor. Ein Hammer pro Gruppe genügt."
+es = "{npc:7273} solo aparece si se golpea el gong de su estanque con la Marra de Zul'Farrak: consigue la Marra sacra de {npc:7996} en {zone:47} y úsala en el altar de la cima de Jintha'Alor. Basta con una marra en el grupo."
+pt = "{npc:7273} só aparece quando o gongo do lago dele é tocado com a Marreta de Zul'Farrak: pegue a Marreta Sagrada de {npc:7996} em {zone:47} e use-a no altar no topo de Jintha'Alor. Basta uma marreta no grupo."
+ru = "{npc:7273} появляется, только если ударить в гонг у его водоёма Молотом Зул'Фаррака: добудьте Священный молот у {npc:7996} ({zone:47}) и примените его у алтаря на вершине Джинта'Алора. Одного молота на группу достаточно."
+ko = "{npc:7273}는 연못 옆 징을 줄파락의 나무망치로 쳐야만 나타납니다. {zone:47}의 {npc:7996}에게서 신성한 나무망치를 얻어 진타알로 꼭대기 제단에서 사용하세요. 파티에 망치 하나면 충분합니다."
+zh_cn = "只有用祖尔法拉克之槌敲响水池边的锣，{npc:7273}才会出现：从{zone:47}的{npc:7996}身上取得神圣之槌，然后在辛萨罗顶上的祭坛使用它。队伍里有一把槌就够了。"
+zh_tw = "只有用祖爾法拉克之槌敲響水池邊的鑼，{npc:7273}才會出現：從{zone:47}的{npc:7996}身上取得神聖之槌，然後在辛薩羅頂上的祭壇使用它。隊伍裡有一把槌就夠了。"
+
+# Divino-matic Rod: after the stairs event, Sergeant Bly and his group hearth away if nobody talks to him soon; he carries the rod.
+[[note]]
+quest = 2768
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Once the waves on the stairs are beaten and the door is blown open, talk to {npc:7604} within a minute or two, rested and ready: his group turns on you and he carries {item:8548}. Wait too long and they hearth away."
+fr = "Une fois les vagues de l'escalier repoussées et la porte détruite, parlez à {npc:7604} dans la minute ou les deux qui suivent, reposé et prêt : son groupe vous attaque et il porte {item:8548}. Si vous attendez trop, ils partent par pierre de foyer."
+de = "Sind die Wellen auf der Treppe besiegt und die Tür gesprengt, sprich innerhalb von ein, zwei Minuten mit {npc:7604}, erholt und bereit: seine Gruppe greift dich an und er trägt {item:8548}. Wartest du zu lange, benutzen sie ihren Ruhestein."
+es = "Tras vencer las oleadas de la escalera y volar la puerta, habla con {npc:7604} en un minuto o dos, recuperado y listo: su grupo te ataca y él lleva {item:8548}. Si esperas demasiado, se van con su piedra de hogar."
+pt = "Depois de vencer as ondas na escada e explodir a porta, fale com {npc:7604} em um ou dois minutos, recuperado e pronto: o grupo dele ataca você e ele carrega {item:8548}. Se esperar demais, eles usam a pedra de regresso e somem."
+ru = "Отбив волны на лестнице и взорвав дверь, поговорите с {npc:7604} в течение минуты-двух, восстановившись и приготовившись: его отряд нападёт на вас, а у него {item:8548}. Если промедлить, они уйдут с помощью камня возвращения."
+ko = "계단에서 몰려오는 적을 막고 문이 폭파되면, 1~2분 안에 체력과 마나를 채운 뒤 {npc:7604}에게 말을 거세요. 그의 일행이 공격해 오며 그가 {item:8548}을 지니고 있습니다. 너무 오래 기다리면 귀환석으로 떠납니다."
+zh_cn = "击退阶梯上的几波敌人、炸开大门后，在一两分钟内回满状态并与{npc:7604}对话：他的队伍会攻击你，{item:8548}就在他身上。等太久他们会用炉石离开。"
+zh_tw = "擊退階梯上的幾波敵人、炸開大門後，在一兩分鐘內回滿狀態並與{npc:7604}對話：他的隊伍會攻擊你，{item:8548}就在他身上。等太久他們會用爐石離開。"
