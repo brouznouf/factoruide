@@ -1,0 +1,49 @@
+# Quest notes of Dustwallow Marsh. See notes/README.md for the format.
+
+# Theramore Spies: the infiltrators are stealthed and non-aggressive, scattered over the islets around the Horde village.
+[[note]]
+quest = 1201
+phase = "objective"
+objective = 1
+level = "info"
+en = "Every {npc:4834} is stealthed and passive, mostly on the small islands east and south of the Horde village. Walk slowly, listen for the stealth sound and spam a /target macro with its name."
+fr = "Chaque {npc:4834} est camouflé et passif, surtout sur les îlots à l'est et au sud du village de la Horde. Marchez lentement, guettez le son du camouflage et répétez une macro /target avec son nom."
+de = "Jeder {npc:4834} ist getarnt und passiv, meist auf den kleinen Inseln östlich und südlich des Hordendorfs. Geh langsam, achte auf das Tarngeräusch und nutz wiederholt ein /target-Makro mit seinem Namen."
+es = "Cada {npc:4834} está en sigilo y es pasivo, sobre todo en los islotes al este y al sur del poblado de la Horda. Camina despacio, atento al sonido de sigilo, y usa sin parar una macro /target con su nombre."
+pt = "Cada {npc:4834} fica furtivo e passivo, principalmente nas ilhotas a leste e ao sul da vila da Horda. Ande devagar, fique atento ao som de furtividade e use repetidamente uma macro /target com o nome dele."
+ru = "Каждый {npc:4834} невидим и не нападает сам, в основном на островках к востоку и югу от деревни Орды. Идите медленно, прислушивайтесь к звуку незаметности и жмите макрос /target с его именем."
+ko = "{npc:4834}은(는) 모두 은신 상태이며 먼저 공격하지 않고, 주로 호드 마을 동쪽과 남쪽의 작은 섬들에 있습니다. 천천히 걸으며 은신 소리에 귀 기울이고, 이름을 넣은 /target 매크로를 계속 누르세요."
+zh_cn = "每个{npc:4834}都处于潜行状态且不会主动攻击，多在部落村庄东边和南边的小岛上。慢慢走，留意潜行的声音，并反复使用带其名字的/target宏。"
+zh_tw = "每個{npc:4834}都處於潛行狀態且不會主動攻擊，多在部落村莊東邊和南邊的小島上。慢慢走，留意潛行的聲音，並反覆使用帶其名字的/target巨集。"
+
+# Questioning Reethe: the event bugs if hostiles are left at the tent; four soldiers attack and Ogron's death fails the quest.
+[[note]]
+quest = 1273
+phase = "objective"
+objective = 1
+level = "must_read"
+en = "Before talking to {npc:4983}, check that {npc:4980} stands alone at the tent; kill any leftover attackers there first. Then stay right next to the ogre: four Theramore soldiers ambush you, and the quest fails if he dies."
+fr = "Avant de parler à {npc:4983}, vérifiez que {npc:4980} est seul sous la tente ; tuez d'abord les éventuels assaillants restés là. Restez ensuite collé à l'ogre : quatre soldats de Theramore vous attaquent, et la quête échoue s'il meurt."
+de = "Bevor du mit {npc:4983} sprichst, prüf, dass {npc:4980} allein am Zelt steht; töte vorher übrig gebliebene Angreifer dort. Bleib dann direkt beim Oger: Vier Soldaten aus Theramore greifen an, und die Quest scheitert, wenn er stirbt."
+es = "Antes de hablar con {npc:4983}, comprueba que {npc:4980} está solo en la tienda; mata antes a los atacantes que queden allí. Luego quédate pegado al ogro: te emboscan cuatro soldados de Theramore y la misión falla si él muere."
+pt = "Antes de falar com {npc:4983}, confira se {npc:4980} está sozinho na barraca; mate antes os atacantes que tiverem ficado lá. Depois fique colado no ogro: quatro soldados de Theramore emboscam vocês, e a missão falha se ele morrer."
+ru = "Прежде чем говорить с персонажем {npc:4983}, убедитесь, что {npc:4980} стоит у палатки один; сначала убейте оставшихся там нападающих. Затем держитесь вплотную к огру: нападут четыре солдата Терамора, и задание провалится, если он погибнет."
+ko = "{npc:4983}에게 말을 걸기 전에 {npc:4980}이(가) 천막에 혼자 있는지 확인하고, 남아 있는 공격자가 있으면 먼저 처치하세요. 그다음 오우거 바로 곁에 붙어 있으세요. 테라모어 병사 넷이 기습하며, 그가 죽으면 퀘스트가 실패합니다."
+zh_cn = "与{npc:4983}对话前，先确认{npc:4980}独自站在帐篷旁；若有残留的袭击者，先把它们杀掉。随后紧贴食人魔：四名塞拉摩士兵会伏击你们，他一旦死亡任务即失败。"
+zh_tw = "與{npc:4983}對話前，先確認{npc:4980}獨自站在帳篷旁；若有殘留的襲擊者，先把他們殺掉。隨後緊貼食人魔：四名塞拉摩士兵會伏擊你們，他一旦死亡任務即失敗。"
+
+# The Theramore Docks: the footlocker is underwater by the north-eastern dock, where an elite Coral Shark patrols.
+[[note]]
+quest = 1202
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The {object:20925} lies on the sea floor under the north-eastern dock of Theramore. A {npc:5434} (elite, level 46) patrols there and may rest beside the chest: wait until it swims off."
+fr = "La {object:20925} repose au fond de la mer sous le quai nord-est de Theramore. Un {npc:5434} (élite, niveau 46) patrouille là et s'arrête parfois près du coffre : attendez qu'il s'éloigne."
+de = "Die {object:20925} liegt auf dem Meeresgrund unter dem Nordostkai von Theramore. Ein {npc:5434} (Elite, Stufe 46) patrouilliert dort und hält sich manchmal an der Kiste auf: Warte, bis er wegschwimmt."
+es = "El {object:20925} está en el fondo del mar bajo el muelle noreste de Theramore. Un {npc:5434} (élite, nivel 46) patrulla la zona y a veces se queda junto al cofre: espera a que se aleje."
+pt = "O {object:20925} fica no fundo do mar sob o cais nordeste de Theramore. Um {npc:5434} (elite, nível 46) patrulha ali e às vezes para junto ao baú: espere até ele se afastar."
+ru = "«{object:20925}» лежит на дне под северо-восточным причалом Терамора. Там патрулирует {npc:5434} (элита, 46-й уровень), иногда останавливаясь у сундука: дождитесь, пока он уплывёт."
+ko = "{object:20925}은(는) 테라모어 북동쪽 부두 아래 바닷속에 있습니다. {npc:5434}(정예, 46레벨)이 그 주변을 순찰하며 상자 옆에 머물기도 하니 멀어질 때까지 기다리세요."
+zh_cn = "{object:20925}位于塞拉摩东北码头下方的海底。一只{npc:5434}（精英，46级）在附近巡游，有时停在箱子旁：等它游走再去。"
+zh_tw = "{object:20925}位於塞拉摩東北碼頭下方的海底。一隻{npc:5434}（精英，46級）在附近巡游，有時停在箱子旁：等牠游走再去。"

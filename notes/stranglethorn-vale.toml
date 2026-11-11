@@ -117,3 +117,58 @@ zh_tw = "{item:18706}來自古拉巴什競技場每三小時出現一次的寶�
 quest = 7810
 phase = "accept"
 icon = "event"
+
+# Excelsior: the elder crocolisk shares spawn points with the ordinary saltwater crocolisks on the coast.
+[[note]]
+quest = 628
+phase = "objective"
+objective = 1
+level = "info"
+en = "The {npc:2635} spawns in place of an ordinary {npc:1151} along the coast north of the Horde camp. If none is up, kill the ordinary ones on the beach until it appears."
+fr = "L'{npc:2635} apparaît à la place d'un {npc:1151} ordinaire sur la côte au nord du camp de la Horde. S'il n'y en a aucun, tuez les crocilisques ordinaires de la plage jusqu'à ce qu'il apparaisse."
+de = "Der {npc:2635} erscheint anstelle eines gewöhnlichen {npc:1151} an der Küste nördlich des Hordenlagers. Ist keiner da, töte die gewöhnlichen am Strand, bis er auftaucht."
+es = "El {npc:2635} aparece en lugar de un {npc:1151} común en la costa al norte del campamento de la Horda. Si no hay ninguno, mata a los comunes de la playa hasta que salga."
+pt = "O {npc:2635} surge no lugar de um {npc:1151} comum na costa ao norte do acampamento da Horda. Se não houver nenhum, mate os comuns da praia até ele aparecer."
+ru = "{npc:2635} появляется вместо обычного зверя «{npc:1151}» на побережье к северу от лагеря Орды. Если его нет, убивайте обычных кроколисков на пляже, пока он не появится."
+ko = "{npc:2635}은(는) 호드 야영지 북쪽 해안에서 일반 {npc:1151} 대신 나타납니다. 보이지 않으면 해변의 일반 악어를 처치하며 나타날 때까지 기다리세요."
+zh_cn = "{npc:2635}会在部落营地以北的海岸上取代普通的{npc:1151}出现。如果一只都没有，就在海滩上击杀普通鳄鱼，直到它出现。"
+zh_tw = "{npc:2635}會在部落營地以北的海岸上取代普通的{npc:1151}出現。如果一隻都沒有，就在海灘上擊殺普通鱷魚，直到牠出現。"
+
+# Excelsior: the elder crocolisk is a random replacement spawn.
+[[icon]]
+quest = 628
+phase = "objective"
+objective = 1
+icon = "rare"
+
+# The Vile Reef: of the two tablet slabs, the one on the outer side of the wall can be looted without pulling the elite murlocs.
+[[note]]
+quest = 629
+phase = "objective"
+objective = 1
+level = "info"
+en = "Two stone slabs against the ruined wall hold the {item:4094}. Loot the one on the outer, north side (about 24.8, 22.9): the other faces the glowing altar among elite murlocs."
+fr = "Deux dalles de pierre contre le mur en ruine portent l'{item:4094}. Prenez celle du côté extérieur nord (environ 24,8, 22,9) : l'autre fait face à l'autel lumineux, parmi des murlocs élites."
+de = "Zwei Steinplatten an der zerfallenen Mauer tragen den {item:4094}. Plündere die auf der äußeren Nordseite (etwa 24,8, 22,9): Die andere liegt zum leuchtenden Altar hin zwischen Elite-Murlocs."
+es = "Dos losas de piedra contra el muro en ruinas tienen la {item:4094}. Saquea la del lado exterior norte (unos 24,8, 22,9): la otra da al altar brillante, entre múrlocs élite."
+pt = "Duas lajes de pedra junto ao muro em ruínas guardam o {item:4094}. Saqueie a do lado externo norte (cerca de 24,8, 22,9): a outra fica voltada ao altar brilhante, entre murlocs de elite."
+ru = "«{item:4094}» лежит на двух каменных плитах у разрушенной стены. Берите с той, что на внешней северной стороне (около 24.8, 22.9): другая обращена к светящемуся алтарю, среди элитных мурлоков."
+ko = "무너진 벽에 기댄 석판 두 개에 {item:4094}이(가) 있습니다. 바깥쪽 북면(약 24.8, 22.9)의 것을 가져가세요. 다른 하나는 빛나는 제단 쪽 정예 멀록들 사이에 있습니다."
+zh_cn = "倒塌墙边的两块石板上都有{item:4094}。拿外侧北面那块（约24.8, 22.9）：另一块朝向发光祭坛，周围都是精英鱼人。"
+zh_tw = "倒塌牆邊的兩塊石板上都有{item:4094}。拿外側北面那塊（約24.8, 22.9）：另一塊朝向發光祭壇，周圍都是精英魚人。"
+
+# Bloodscalp Clan Heads: Gan'zulah appears only after the witch doctors at his throne are killed, and respawns slowly.
+[[note]]
+quest = 584
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1061} only shows up at his throne once the guards around it ({npc:660} ×2) are dead, and he respawns slowly. If he is missing, clear the courtyard and wait."
+fr = "{npc:1061} n'apparaît à son trône qu'une fois ses gardes ({npc:660} ×2) tués, et il réapparaît lentement. S'il est absent, nettoyez la cour et attendez."
+de = "{npc:1061} erscheint an seinem Thron erst, wenn seine Wachen ({npc:660} ×2) tot sind, und er respawnt langsam. Fehlt er, räum den Hof und warte."
+es = "{npc:1061} solo aparece en su trono cuando sus guardias ({npc:660} ×2) han muerto, y reaparece despacio. Si no está, limpia el patio y espera."
+pt = "{npc:1061} só aparece no trono depois que os guardas ao redor ({npc:660} ×2) morrem, e ele renasce devagar. Se não estiver lá, limpe o pátio e espere."
+ru = "{npc:1061} появляется у трона, только когда убиты его стражи ({npc:660} ×2), и возрождается медленно. Если его нет, зачистите двор и ждите."
+ko = "{npc:1061}은(는) 왕좌 주변의 경비병({npc:660} ×2)이 죽어야 나타나며 재생성이 느립니다. 보이지 않으면 안뜰을 정리하고 기다리세요."
+zh_cn = "{npc:1061}只有在王座周围的守卫（{npc:660} ×2）死后才会出现，且重生很慢。如果他不在，清理庭院后等待。"
+zh_tw = "{npc:1061}只有在王座周圍的守衛（{npc:660} ×2）死後才會出現，且重生很慢。如果他不在，清理庭院後等待。"

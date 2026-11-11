@@ -1,0 +1,17 @@
+# Quest notes of Uldaman. See notes/README.md for the format.
+
+# Reclaimed Treasures: the Horde chest is in a side room of the outer cave, not inside the instance; the big hall's chest is the Alliance one.
+[[note]]
+quest = 2342
+phase = "objective"
+objective = 1
+level = "info"
+en = "The {object:124388} is outside the instance: from the cavern with the portal, take the tunnel along the west wall to a small trogg room; the chest is behind a pillar at the back. The chest in the larger trogg hall belongs to an Alliance quest."
+fr = "Le {object:124388} est hors de l'instance : depuis la caverne du portail, prenez le tunnel le long du mur ouest jusqu'à une petite salle de troggs ; le coffre est derrière un pilier au fond. Celui de la grande salle des troggs sert à une quête de l'Alliance."
+de = "Die {object:124388} liegt außerhalb der Instanz: Nimm in der Höhle mit dem Portal den Tunnel an der Westwand zu einem kleinen Troggraum; die Truhe steht hinten hinter einer Säule. Die Truhe in der größeren Trogghalle gehört zu einer Allianzquest."
+es = "El {object:124388} está fuera de la instancia: desde la caverna del portal, toma el túnel de la pared oeste hasta una pequeña sala de troggs; el cofre está tras un pilar al fondo. El cofre de la sala grande de troggs es de una misión de la Alianza."
+pt = "O {object:124388} fica fora da instância: da caverna do portal, pegue o túnel junto à parede oeste até uma pequena sala de troggs; o baú está atrás de um pilar no fundo. O baú do salão maior de troggs é de uma missão da Aliança."
+ru = "«{object:124388}» находится вне подземелья: из пещеры с порталом пройдите по туннелю у западной стены в небольшой зал троггов; сундук стоит за колонной в глубине. Сундук в большом зале троггов — для задания Альянса."
+ko = "{object:124388}은(는) 던전 밖에 있습니다. 입구가 있는 동굴에서 서쪽 벽을 따라 난 굴로 들어가 작은 트로그 방으로 가세요. 상자는 안쪽 기둥 뒤에 있습니다. 더 큰 트로그 홀의 상자는 얼라이언스 퀘스트용입니다."
+zh_cn = "{object:124388}在副本外：从副本入口所在的洞穴沿西墙的隧道走到一间小的穴居人房间，箱子在最里面的柱子后面。较大的穴居人大厅里的箱子是联盟任务用的。"
+zh_tw = "{object:124388}在副本外：從副本入口所在的洞穴沿西牆的隧道走到一間小的穴居人房間，箱子在最裡面的柱子後面。較大的穴居人大廳裡的箱子是聯盟任務用的。"

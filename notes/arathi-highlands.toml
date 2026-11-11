@@ -1,0 +1,47 @@
+# Quest notes of Arathi Highlands. See notes/README.md for the format.
+
+# Stones of Binding: the turn-in is the small stone next to the central crystal of the Circle of Inner Binding.
+[[note]]
+quest = 651
+phase = "turnin"
+level = "info"
+en = "Hand the keys in at the small {object:2702} beside the big glowing crystal, not at the crystal itself."
+fr = "Rendez les clés à la petite {object:2702} à côté du grand cristal lumineux, pas au cristal lui-même."
+de = "Gib die Schlüssel am kleinen {object:2702} neben dem großen leuchtenden Kristall ab, nicht am Kristall selbst."
+es = "Entrega las llaves en la pequeña {object:2702} junto al gran cristal brillante, no en el propio cristal."
+pt = "Entregue as chaves na pequena {object:2702} ao lado do grande cristal brilhante, não no cristal em si."
+ru = "Сдавайте ключи у небольшого объекта «{object:2702}» рядом с большим светящимся кристаллом, а не у самого кристалла."
+ko = "열쇠는 크게 빛나는 수정이 아니라 그 옆의 작은 {object:2702}에 반납하세요."
+zh_cn = "把钥匙交给大发光水晶旁边那块小的{object:2702}，而不是水晶本身。"
+zh_tw = "把鑰匙交給大發光水晶旁邊那塊小的{object:2702}，而不是水晶本身。"
+
+# Stones of Binding: burning exiles drop charms against thundering ones, thundering against cresting, cresting against burning.
+[[note]]
+quest = 651
+phase = "objective"
+level = "info"
+en = "Exiles drop charms that banish another kind of exile: do the west circle ({npc:2760}), then the outer one ({npc:2762}), then the east one ({npc:2761}), using each circle's charms at the next. Keep spares for the end of the chain."
+fr = "Les exilés laissent tomber des charmes qui bannissent un autre type d'exilé : faites le cercle ouest ({npc:2760}), puis l'extérieur ({npc:2762}), puis l'est ({npc:2761}), en utilisant les charmes de chaque cercle au suivant. Gardez-en pour la fin de la chaîne."
+de = "Verbannte lassen Talismane fallen, die eine andere Art bannen: Erledige den Westkreis ({npc:2760}), dann den äußeren ({npc:2762}), dann den östlichen ({npc:2761}) und nutz die Talismane jedes Kreises beim nächsten. Heb Reste fürs Ende der Questreihe auf."
+es = "Los exiliados sueltan amuletos que destierran a otro tipo de exiliado: haz el círculo oeste ({npc:2760}), luego el exterior ({npc:2762}) y luego el este ({npc:2761}), usando los amuletos de cada círculo en el siguiente. Guarda algunos para el final de la cadena."
+pt = "Os exilados deixam cair amuletos que banem outro tipo de exilado: faça o círculo oeste ({npc:2760}), depois o externo ({npc:2762}) e depois o leste ({npc:2761}), usando os amuletos de cada círculo no seguinte. Guarde alguns para o fim da sequência."
+ru = "Изгнанники роняют амулеты, изгоняющие другой вид изгнанников: сначала западный круг ({npc:2760}), затем внешний ({npc:2762}), затем восточный ({npc:2761}), используя амулеты каждого круга в следующем. Оставьте запас на конец цепочки."
+ko = "추방자들은 다른 종류의 추방자를 퇴치하는 부적을 떨어뜨립니다. 서쪽 마법진({npc:2760}), 외곽 마법진({npc:2762}), 동쪽 마법진({npc:2761}) 순으로 진행하며 각 마법진의 부적을 다음 곳에 쓰세요. 연계 퀘스트 마지막을 위해 남는 것은 보관하세요."
+zh_cn = "流放者会掉落能放逐另一种流放者的符咒：按西边法阵（{npc:2760}）、外围法阵（{npc:2762}）、东边法阵（{npc:2761}）的顺序进行，把每处得到的符咒用在下一处。留一些给任务链的最后一步。"
+zh_tw = "流放者會掉落能放逐另一種流放者的符咒：按西邊法陣（{npc:2760}）、外圍法陣（{npc:2762}）、東邊法陣（{npc:2761}）的順序進行，把每處得到的符咒用在下一處。留一些給任務鏈的最後一步。"
+
+# Sunken Treasure: fighting inside the cave lets the professor join in and elementals keep coming; pull them out of the cave.
+[[note]]
+quest = 665
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Wait at the cave mouth: when the water elementals appear, pull them outside, away from {npc:2768}, and keep them busy until he finishes. If he joins the fight, more keep spawning: abandon and retake the quest."
+fr = "Attendez à l'entrée de la grotte : quand les élémentaires d'eau apparaissent, attirez-les dehors, loin de {npc:2768}, et occupez-les jusqu'à ce qu'il ait fini. S'il se joint au combat, d'autres arrivent sans fin : abandonnez la quête et reprenez-la."
+de = "Warte am Höhleneingang: Wenn die Wasserelementare erscheinen, zieh sie nach draußen, weg von {npc:2768}, und beschäftige sie, bis er fertig ist. Mischt er im Kampf mit, kommen immer neue: Brich die Quest ab und nimm sie neu an."
+es = "Espera en la entrada de la cueva: cuando aparezcan los elementales de agua, sácalos fuera, lejos de {npc:2768}, y entretenlos hasta que termine. Si él entra en combate, no dejan de aparecer más: abandona la misión y vuelve a aceptarla."
+pt = "Espere na entrada da caverna: quando os elementais da água surgirem, puxe-os para fora, longe de {npc:2768}, e ocupe-os até ele terminar. Se ele entrar na luta, surgem mais sem parar: abandone a missão e aceite-a de novo."
+ru = "Ждите у входа в пещеру: когда появятся водяные элементали, выманите их наружу, подальше от персонажа {npc:2768}, и занимайте их, пока он не закончит. Если он вступит в бой, они будут появляться снова и снова: откажитесь от задания и возьмите его заново."
+ko = "동굴 입구에서 기다리세요. 물의 정령이 나타나면 {npc:2768}에게서 떨어진 바깥으로 끌어내 그가 작업을 마칠 때까지 붙잡아 두세요. 그가 전투에 끼어들면 정령이 끝없이 나오니 퀘스트를 포기하고 다시 받으세요."
+zh_cn = "在洞口等待：水元素出现后，把它们拉到洞外，远离{npc:2768}，并拖住它们直到他完成工作。如果他加入战斗，元素会不断刷新：放弃任务后重新接取。"
+zh_tw = "在洞口等待：水元素出現後，把它們拉到洞外，遠離{npc:2768}，並拖住它們直到他完成工作。如果他加入戰鬥，元素會不斷重生：放棄任務後重新接取。"
