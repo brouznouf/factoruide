@@ -1,0 +1,80 @@
+# Quest notes of Silverpine Forest. See notes/README.md for the format.
+
+# Arugal's Folly (Remedy of Arugal): looting the spellbooks summons a worgen into the room.
+[[note]]
+quest = 422
+phase = "objective"
+objective = 1
+level = "info"
+en = "Taking the books upstairs brings {npc:1770} into the room: loot them with health and mana to spare."
+fr = "Prendre les livres à l'étage fait venir {npc:1770} dans la pièce : ramassez-les avec de la vie et du mana en réserve."
+de = "Wenn du oben die Bücher nimmst, kommt {npc:1770} in den Raum: nimm sie nur mit genug Gesundheit und Mana."
+es = "Al coger los libros del piso de arriba aparece {npc:1770} en la sala: recógelos con salud y maná de sobra."
+pt = "Pegar os livros no andar de cima traz {npc:1770} para a sala: pegue-os com vida e mana de sobra."
+ru = "Если взять книги наверху, в комнату придёт {npc:1770}: забирайте их, имея запас здоровья и маны."
+ko = "위층에서 책을 가져가면 {npc:1770}이(가) 방으로 들어옵니다. 생명력과 마나에 여유가 있을 때 챙기세요."
+zh_cn = "拿取楼上的书会引来{npc:1770}进入房间：请在生命值和法力值充足时拾取。"
+zh_tw = "拿取樓上的書會引來{npc:1770}進入房間：請在生命值和法力值充足時拾取。"
+
+# Escorting Erland: once escorted, he is gone for several minutes before he is back.
+[[note]]
+quest = 435
+phase = "accept"
+level = "info"
+en = "If {npc:1978} is not there, another player has just escorted him: he comes back about 8 minutes later."
+fr = "Si {npc:1978} n'est pas là, un autre joueur vient de l'escorter : il revient environ 8 minutes plus tard."
+de = "Ist {npc:1978} nicht da, hat ihn gerade ein anderer Spieler eskortiert: Er kommt etwa 8 Minuten später zurück."
+es = "Si {npc:1978} no está, otro jugador acaba de escoltarlo: vuelve unos 8 minutos después."
+pt = "Se {npc:1978} não estiver lá, outro jogador acabou de escoltá-lo: ele volta cerca de 8 minutos depois."
+ru = "Если {npc:1978} нет на месте, его только что сопроводил другой игрок: он вернётся примерно через 8 минут."
+ko = "{npc:1978}이(가) 없다면 다른 플레이어가 막 호위를 마친 것입니다. 약 8분 뒤에 다시 나타납니다."
+zh_cn = "如果{npc:1978}不在，说明其他玩家刚护送过他：大约8分钟后他会重新出现。"
+zh_tw = "如果{npc:1978}不在，表示其他玩家剛護送過他：大約8分鐘後他會重新出現。"
+
+# Escorting Erland: he walks into the wolves along the way and stops to fight them.
+[[note]]
+quest = 435
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1978} walks straight into the wolves on his way and stops to fight them: go ahead of him and kill them first."
+fr = "{npc:1978} fonce droit sur les loups de son chemin et s'arrête pour les combattre : passez devant lui et tuez-les d'abord."
+de = "{npc:1978} läuft direkt in die Wölfe auf seinem Weg und bleibt stehen, um sie zu bekämpfen: geh ihm voraus und töte sie zuerst."
+es = "{npc:1978} se mete de lleno entre los lobos de su camino y se detiene a luchar: adelántate y mátalos primero."
+pt = "{npc:1978} anda direto para os lobos do caminho e para para lutar: vá à frente dele e mate-os primeiro."
+ru = "{npc:1978} идёт прямо на волков на своём пути и останавливается, чтобы сражаться: идите впереди и убивайте их заранее."
+ko = "{npc:1978}은(는) 길에 있는 늑대에게 곧장 걸어 들어가 멈춰서 싸웁니다. 앞서 가서 늑대를 먼저 처치하세요."
+zh_cn = "{npc:1978}会径直走进路上的狼群并停下来战斗：走在他前面，先把狼杀掉。"
+zh_tw = "{npc:1978}會直接走進路上的狼群並停下來戰鬥：走在他前面，先把狼殺掉。"
+
+# Pyrewood Ambush: four waves of elite villagers (1, 2, 3, 3) with short pauses between them.
+[[note]]
+quest = 452
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Speaking to {npc:2058} starts four waves of elites (1, 2, 3, then 3) with only a few seconds between them: start at full health and mana."
+fr = "Parler à {npc:2058} déclenche quatre vagues d'élites (1, 2, 3, puis 3) espacées de quelques secondes seulement : commencez avec toute votre vie et votre mana."
+de = "Ein Gespräch mit {npc:2058} startet vier Wellen von Elites (1, 2, 3, dann 3) mit nur wenigen Sekunden Pause: beginne mit voller Gesundheit und vollem Mana."
+es = "Hablar con {npc:2058} inicia cuatro oleadas de élites (1, 2, 3 y luego 3) con solo unos segundos entre ellas: empieza con la salud y el maná al máximo."
+pt = "Falar com {npc:2058} inicia quatro ondas de elites (1, 2, 3 e depois 3) com só alguns segundos entre elas: comece com vida e mana cheias."
+ru = "Разговор с {npc:2058} запускает четыре волны элитных врагов (1, 2, 3, затем 3) с паузой всего в несколько секунд: начинайте с полным здоровьем и маной."
+ko = "{npc:2058}에게 말을 걸면 정예 몹이 네 차례(1, 2, 3, 그리고 3) 몇 초 간격으로 몰려옵니다. 생명력과 마나를 가득 채우고 시작하세요."
+zh_cn = "与{npc:2058}对话会引来四波精英（1、2、3、再3个），每波间隔仅几秒：请在生命值和法力值全满时开始。"
+zh_tw = "與{npc:2058}對話會引來四波精英（1、2、3、再3個），每波間隔僅幾秒：請在生命值和法力值全滿時開始。"
+
+# Border Crossings: the apprentices guarding the crate cast slowing frostbolts at long range and
+# link; the back of the camp has fewer of them.
+[[note]]
+quest = 477
+phase = "turnin"
+level = "warning"
+en = "{npc:1867} around the crate cast slowing frostbolts from far away and join each other's fights: come in from behind the tents and pull them one at a time."
+fr = "{npc:1867} autour de la caisse lance de loin des éclairs de givre qui ralentissent, et ses semblables se joignent au combat : arrivez par l'arrière des tentes et attirez-les un par un."
+de = "{npc:1867} rund um die Kiste wirkt aus großer Entfernung verlangsamende Frostblitze, und die anderen schließen sich dem Kampf an: komm von hinter den Zelten und zieh sie einzeln."
+es = "{npc:1867} alrededor de la caja lanza desde lejos Descargas de Escarcha que ralentizan, y los demás se unen al combate: entra por detrás de las tiendas y atráelos de uno en uno."
+pt = "{npc:1867} perto do caixote lança de longe Setas de Gelo que deixam lento, e os outros entram na luta: chegue por trás das tendas e puxe-os um de cada vez."
+ru = "{npc:1867} у ящика издалека бьёт замедляющими ледяными стрелами, а соседи вступают в бой: заходите из-за палаток и выманивайте их по одному."
+ko = "상자 주변의 {npc:1867}은(는) 멀리서 감속 효과가 있는 얼음화살을 쏘고 서로의 전투에 합류합니다. 천막 뒤쪽으로 다가가 하나씩 끌어내세요."
+zh_cn = "箱子周围的{npc:1867}会从远处施放减速的寒冰箭，并互相支援：从帐篷后方接近，逐个拉怪。"
+zh_tw = "箱子周圍的{npc:1867}會從遠處施放緩速的寒冰箭，並互相支援：從帳篷後方接近，逐個拉怪。"

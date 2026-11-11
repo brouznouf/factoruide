@@ -1,0 +1,33 @@
+# Quest notes of the Wailing Caverns. See notes/README.md for the format.
+
+# Deviate Hides: the giver stands in a small cave in an eye of the stone face over the cave mouth,
+# reached by climbing the hill from behind and dropping down ledge by ledge.
+[[note]]
+quest = 1486
+phase = "accept"
+level = "warning"
+en = "{npc:5767} stands in a small cave in one eye of the stone face above the entrance of {zone:718}. Climb the hill from behind onto the top of the face, drop onto the nose ledge, then into the eye on the left as you face it."
+fr = "{npc:5767} se tient dans une petite grotte, dans l'un des yeux du visage de pierre au-dessus de l'entrée des {zone:718}. Grimpez la colline par l'arrière jusqu'au sommet du visage, sautez sur le rebord du nez, puis dans l'œil de gauche quand vous lui faites face."
+de = "{npc:5767} steht in einer kleinen Höhle in einem Auge des Steingesichts über dem Höhleneingang ({zone:718}). Klettere von hinten auf den Hügel bis oben aufs Gesicht, spring auf den Nasenvorsprung und dann ins Auge, das von vorn gesehen links liegt."
+es = "{npc:5767} está en una pequeña cueva, en uno de los ojos del rostro de piedra sobre la entrada de las {zone:718}. Sube la colina por detrás hasta lo alto del rostro, salta a la cornisa de la nariz y luego al ojo de la izquierda mirándolo de frente."
+pt = "{npc:5767} fica numa pequena caverna, em um dos olhos do rosto de pedra acima da entrada da {zone:718}. Suba a colina por trás até o topo do rosto, pule na saliência do nariz e depois no olho da esquerda, olhando de frente."
+ru = "{npc:5767} стоит в маленькой пещере в одном из глаз каменного лица над входом в {zone:718}. Поднимитесь на холм сзади на макушку лица, спрыгните на выступ носа, а затем в глаз, который слева, если смотреть спереди."
+ko = "{npc:5767}은(는) {zone:718} 입구 위 돌 얼굴의 한쪽 눈 안 작은 동굴에 있습니다. 뒤쪽에서 언덕을 올라 얼굴 꼭대기로 간 뒤 코 부분 바위로 뛰어내리고, 정면에서 봤을 때 왼쪽 눈으로 들어가세요."
+zh_cn = "{npc:5767}站在{zone:718}入口上方石脸一只眼睛里的小洞中。从后方爬上山丘到石脸顶部，跳到鼻子处的岩架上，再跳进正面看时左边的眼睛。"
+zh_tw = "{npc:5767}站在{zone:718}入口上方石臉一隻眼睛裡的小洞中。從後方爬上山丘到石臉頂部，跳到鼻子處的岩架上，再跳進正面看時左邊的眼睛。"
+
+# Deviate Eradication: the giver stands in a small cave in an eye of the stone face over the cave mouth,
+# reached by climbing the hill from behind and dropping down ledge by ledge.
+[[note]]
+quest = 1487
+phase = "accept"
+level = "warning"
+en = "{npc:5768} stands in a small cave in one eye of the stone face above the entrance of {zone:718}. Climb the hill from behind onto the top of the face, drop onto the nose ledge, then into the eye on the left as you face it."
+fr = "{npc:5768} se tient dans une petite grotte, dans l'un des yeux du visage de pierre au-dessus de l'entrée des {zone:718}. Grimpez la colline par l'arrière jusqu'au sommet du visage, sautez sur le rebord du nez, puis dans l'œil de gauche quand vous lui faites face."
+de = "{npc:5768} steht in einer kleinen Höhle in einem Auge des Steingesichts über dem Höhleneingang ({zone:718}). Klettere von hinten auf den Hügel bis oben aufs Gesicht, spring auf den Nasenvorsprung und dann ins Auge, das von vorn gesehen links liegt."
+es = "{npc:5768} está en una pequeña cueva, en uno de los ojos del rostro de piedra sobre la entrada de las {zone:718}. Sube la colina por detrás hasta lo alto del rostro, salta a la cornisa de la nariz y luego al ojo de la izquierda mirándolo de frente."
+pt = "{npc:5768} fica numa pequena caverna, em um dos olhos do rosto de pedra acima da entrada da {zone:718}. Suba a colina por trás até o topo do rosto, pule na saliência do nariz e depois no olho da esquerda, olhando de frente."
+ru = "{npc:5768} стоит в маленькой пещере в одном из глаз каменного лица над входом в {zone:718}. Поднимитесь на холм сзади на макушку лица, спрыгните на выступ носа, а затем в глаз, который слева, если смотреть спереди."
+ko = "{npc:5768}은(는) {zone:718} 입구 위 돌 얼굴의 한쪽 눈 안 작은 동굴에 있습니다. 뒤쪽에서 언덕을 올라 얼굴 꼭대기로 간 뒤 코 부분 바위로 뛰어내리고, 정면에서 봤을 때 왼쪽 눈으로 들어가세요."
+zh_cn = "{npc:5768}站在{zone:718}入口上方石脸一只眼睛里的小洞中。从后方爬上山丘到石脸顶部，跳到鼻子处的岩架上，再跳进正面看时左边的眼睛。"
+zh_tw = "{npc:5768}站在{zone:718}入口上方石臉一隻眼睛裡的小洞中。從後方爬上山丘到石臉頂部，跳到鼻子處的岩架上，再跳進正面看時左邊的眼睛。"

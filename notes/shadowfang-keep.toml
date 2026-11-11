@@ -1,0 +1,18 @@
+# Quest notes of Shadowfang Keep. See notes/README.md for the format.
+
+# The Book of Ur: it sits on a bookshelf in Fenrus' room and respawns within seconds for each
+# party member.
+[[note]]
+quest = 1013
+phase = "objective"
+objective = 1
+level = "info"
+en = "The book is on the bookshelf to the left as you enter the room of {npc:4274}. Once looted, it comes back after a few seconds for the next party member."
+fr = "Le livre est sur l'étagère à gauche en entrant dans la salle de {npc:4274}. Une fois pris, il réapparaît après quelques secondes pour le membre suivant du groupe."
+de = "Das Buch liegt im Bücherregal links vom Eingang zum Raum von {npc:4274}. Nach dem Plündern erscheint es nach wenigen Sekunden erneut für das nächste Gruppenmitglied."
+es = "El libro está en la estantería a la izquierda al entrar en la sala de {npc:4274}. Tras cogerlo, vuelve a aparecer a los pocos segundos para el siguiente miembro del grupo."
+pt = "O livro fica na estante à esquerda ao entrar na sala de {npc:4274}. Depois de pego, ele volta em alguns segundos para o próximo membro do grupo."
+ru = "Книга лежит на книжной полке слева от входа в зал, где находится {npc:4274}. После того как её возьмут, она появляется снова через несколько секунд для следующего участника группы."
+ko = "책은 {npc:4274}의 방에 들어서면 왼쪽 책장에 있습니다. 누군가 챙기면 몇 초 뒤 다음 파티원을 위해 다시 나타납니다."
+zh_cn = "书在进入{npc:4274}所在房间后左侧的书架上。被拾取后，几秒钟后会为下一位队友重新出现。"
+zh_tw = "書在進入{npc:4274}所在房間後左側的書架上。被拾取後，幾秒鐘後會為下一位隊友重新出現。"

@@ -1,0 +1,33 @@
+# Quest notes of Tirisfal Glades. See notes/README.md for the format.
+
+# At War With The Scarlet Crusade (Melrache): the tower can be reached over the ridge from the
+# west, avoiding the Scarlet camps that line the path up from the road.
+[[note]]
+quest = 372
+phase = "objective"
+level = "info"
+en = "Reach the tower from its western tip (about 77,30), away from the path, to skip most of the Scarlet camps along the road."
+fr = "Rejoignez la tour par sa pointe ouest (vers 77,30), à l'écart du chemin, pour éviter la plupart des camps écarlates le long de la route."
+de = "Erreiche den Turm über seine Westspitze (etwa 77,30), abseits des Weges, um die meisten Lager des Scharlachroten Kreuzzugs an der Straße zu umgehen."
+es = "Llega a la torre por su extremo oeste (sobre 77,30), lejos del camino, para evitar la mayoría de los campamentos Escarlata de la ruta."
+pt = "Chegue à torre pela ponta oeste (perto de 77,30), longe do caminho, para evitar a maioria dos acampamentos Escarlates ao longo da estrada."
+ru = "Подходите к башне с западной оконечности (около 77,30), в стороне от тропы, чтобы обойти большинство лагерей Алого ордена вдоль дороги."
+ko = "길에서 벗어나 서쪽 끝(약 77,30)에서 탑으로 다가가면 길가의 붉은십자군 야영지 대부분을 피할 수 있습니다."
+zh_cn = "离开小路，从西端（约77,30）接近塔楼，可以避开路边大部分血色十字军营地。"
+zh_tw = "離開小路，從西端（約77,30）接近塔樓，可以避開路邊大部分血色十字軍營地。"
+
+# The Family Crypt: three floors of hard-hitting undead with patrols and fast respawns; the
+# captain waits in the lowest room.
+[[note]]
+quest = 408
+phase = "objective"
+level = "warning"
+en = "The crypt's undead hit hard, respawn quickly and patrols join fights: wait for each patrol to pass, then pull one at a time. {npc:1658} is on the bottom floor."
+fr = "Les morts-vivants de la crypte frappent fort, réapparaissent vite et des patrouilles se joignent aux combats : attendez que chaque patrouille passe, puis attirez-les un par un. {npc:1658} est à l'étage le plus bas."
+de = "Die Untoten der Gruft schlagen hart zu, respawnen schnell und Patrouillen mischen sich in Kämpfe ein: warte, bis jede Patrouille vorbei ist, und zieh sie dann einzeln. {npc:1658} ist auf der untersten Ebene."
+es = "Los no-muertos de la cripta golpean fuerte, reaparecen rápido y las patrullas se unen a los combates: espera a que pase cada patrulla y atráelos de uno en uno. {npc:1658} está en el piso más bajo."
+pt = "Os mortos-vivos da cripta batem forte, renascem rápido e as patrulhas entram nas lutas: espere cada patrulha passar e puxe-os um de cada vez. {npc:1658} fica no andar mais baixo."
+ru = "Нежить в склепе бьёт больно, быстро возрождается, а патрули вмешиваются в бой: дождитесь, пока пройдёт патруль, и выманивайте по одному. {npc:1658} на самом нижнем ярусе."
+ko = "묘지의 언데드는 강하게 때리고 빨리 재생성되며, 순찰병이 전투에 끼어듭니다. 순찰병이 지나가길 기다렸다가 하나씩 끌어내세요. {npc:1658}은(는) 가장 아래층에 있습니다."
+zh_cn = "墓穴里的亡灵攻击很高、重生很快，巡逻怪还会加入战斗：等巡逻过去后再逐个拉怪。{npc:1658}在最底层。"
+zh_tw = "墓穴裡的不死生物攻擊很高、重生很快，巡邏怪還會加入戰鬥：等巡邏過去後再逐個拉怪。{npc:1658}在最底層。"
