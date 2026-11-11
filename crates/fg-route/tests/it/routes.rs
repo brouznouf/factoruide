@@ -4307,6 +4307,9 @@ fn a_dungeon_guide_does_the_dungeon_quests_and_nothing_else() {
     let recommended = guide.route.recommended.as_ref().expect("a level recommended");
     assert_eq!(recommended.level, 28);
     assert_eq!(recommended.quests.iter().map(|q| q.id).collect::<Vec<_>>(), [340]);
+    // The addon must not leave its steps behind once the character is higher than it was.
+    assert!(guide.route.levels_ignored);
+    assert!(fg_route::export::to_lua(std::slice::from_ref(&guide.route)).contains("levelsIgnored = true"));
     assert_eq!(guide.route.breakdown.grinding, 0.0);
     assert!(
         !(guide.route.steps.iter()).any(|s| s.quest == Some(330)),

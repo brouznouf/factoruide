@@ -744,6 +744,14 @@ do
     assert(warned(), "the level recommended on the current step")
     playerLevel = 25
     assert(not warned(), "nothing once the level is reached")
+    -- Made when the character was lower: its steps are not left behind (a leveling guide's are).
+    for _, flagged in ipairs({ true, false }) do
+        FG.Routes["objective-test"].levelsIgnored = flagged or nil
+        FG.Routes["objective-test"].toLevel = flagged and 30 or 21 -- older guides: no flag, from = to
+        useRoute("skip-test")
+        useRoute("objective-test")
+        assert(char.guide.step == 1, "objective guide's steps kept 4 levels up, step " .. char.guide.step)
+    end
     playerLevel = 21
     FG.Card.Render, FG.Mini.Render = card, mini
     useRoute("skip-test")

@@ -100,7 +100,8 @@ pub fn to_lua(routes: &[Route]) -> String {
         let recommended = r
             .recommended
             .as_ref()
-            .map_or_else(String::new, |rec| format!(" recommendedLevel = {},", rec.level));
+            .map_or_else(String::new, |rec| format!(" recommendedLevel = {},", rec.level))
+            + if r.levels_ignored { " levelsIgnored = true," } else { "" };
         let _ = writeln!(
             out,
             "FG.Routes[{}] = {{ race = {}, class = {}, faction = {}, locale = {}, fromLevel = {}, toLevel = {}, time = {}, levels = {{ {} }}, professions = {{ {} }}, reputations = {{ {} }}, spells = {{ {} }}, checkpoints = {{ {} }},{players}{buffs}{recommended} steps = {{",

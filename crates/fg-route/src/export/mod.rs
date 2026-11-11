@@ -306,6 +306,7 @@ fn route_of(
         checkpoints,
         reputation: reputation_reached(planner, route),
         recommended: recommended(planner),
+        levels_ignored: model.levels_ignored,
         players: if profile.mates.is_empty() {
             Vec::new()
         } else {

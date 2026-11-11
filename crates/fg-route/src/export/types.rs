@@ -433,6 +433,10 @@ pub struct Route {
     /// character's level anyway: the app and the addon warn.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub recommended: Option<Recommended>,
+    /// An objective guide: its steps' levels are only where the character would be, the addon
+    /// does not leave the steps planned well below the character's level behind.
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub levels_ignored: bool,
     pub steps: Vec<Step>,
 }
 

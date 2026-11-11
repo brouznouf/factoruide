@@ -901,6 +901,7 @@ mod tests {
             class_spells: Vec::new(),
             buffs: Vec::new(),
             recommended: None,
+            levels_ignored: false,
             steps,
         }
     }

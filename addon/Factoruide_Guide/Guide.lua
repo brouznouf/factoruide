@@ -168,6 +168,13 @@ local state -- per character: { route = name, step = n, point = {...}, flightLea
 local route
 local acceptIndex = {} -- quest -> index of its accept step
 local turninIndex = {} -- quest -> index of its turn-in step
+
+--- An objective guide (a dungeon's, a zone's, quests chosen): no level to reach. Those made before
+--- `levelsIgnored` was exported end at the level they start at, unlike a leveling guide.
+local function ObjectiveGuide()
+    return route ~= nil
+        and (route.levelsIgnored == true or (route.fromLevel ~= nil and route.fromLevel == route.toLevel))
+end
 local objectiveQuests = {} -- quests with an objective step
 local questMobs = {} -- creature -> indexes of the objective steps done on it (killed, or dropping an item)
 local childQuests = {} -- child quests handed in on the way to their parent's turn-in
@@ -294,8 +301,14 @@ function IsDone(step, index)
         if not group:ForMe(step) then return group:Passed(step, index or state.step), true end
     end
     -- Planned well below our level: left behind (a character resuming the route, a quest
-    -- added to the game after we went through that zone), unless the quest is in the log.
-    if step.lvl and UnitLevel("player") - step.lvl >= OUTDATED_LEVELS and not (q and QuestLog.IsOnQuest(q)) then
+    -- added to the game after we went through that zone), unless the quest is in the log. Not in
+    -- an objective guide: its levels are only the character's when it was made.
+    if
+        step.lvl
+        and not ObjectiveGuide()
+        and UnitLevel("player") - step.lvl >= OUTDATED_LEVELS
+        and not (q and QuestLog.IsOnQuest(q))
+    then
         return true, true
     end
     -- An exclusive alternative (or the quest a breadcrumb leads to) is done or in progress:
