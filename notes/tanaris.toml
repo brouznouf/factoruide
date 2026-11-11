@@ -1,0 +1,16 @@
+# Quest notes of Tanaris. See notes/README.md for the format.
+
+# Rescue OOX-17/TN!: two ambushes on the robot's way; each party member must start it.
+[[note]]
+quest = 648
+phase = "objective"
+level = "warning"
+en = "Two ambushes on the way: three scorpids right after the start, three Wastewander humans (a mage among them) near the end. Keep the robot alive; in a group, every member must start the escort."
+fr = "Deux embuscades en chemin : trois scorpides juste après le départ, trois humains Bat-le-désert (dont un mage) vers la fin. Gardez le robot en vie ; en groupe, chaque membre doit lancer l'escorte."
+de = "Zwei Hinterhalte unterwegs: drei Skorpide direkt nach dem Start, drei Menschen der Ödniswanderer (darunter ein Magier) gegen Ende. Halte den Roboter am Leben; in einer Gruppe muss jedes Mitglied die Eskorte starten."
+es = "Dos emboscadas por el camino: tres escórpidos justo al empezar y tres humanos Erraderos (uno de ellos mago) cerca del final. Mantén vivo al robot; en grupo, cada miembro debe iniciar la escolta."
+pt = "Duas emboscadas no caminho: três escorpídeos logo após a partida e três humanos Andarilhos (um deles mago) perto do fim. Mantenha o robô vivo; em grupo, cada membro precisa iniciar a escolta."
+ru = "Две засады по пути: три скорпида сразу после старта и три человека из Скитальцев (среди них маг) ближе к концу. Берегите робота; в группе каждый участник должен сам начать сопровождение."
+ko = "도중에 매복이 두 번 있습니다. 출발 직후 전갈 셋, 끝 무렵 황무지 방랑자 인간 셋(마법사 포함). 로봇을 살려 두세요. 파티라면 모든 구성원이 각자 호위를 시작해야 합니다."
+zh_cn = "途中有两次伏击：出发后马上有三只蝎子，快到终点时有三个废土游荡者人类（其中一个法师）。保护好机器人；组队时每位成员都必须开始护送。"
+zh_tw = "途中有兩次伏擊：出發後馬上有三隻蠍子，快到終點時有三個廢土遊蕩者人類（其中一個法師）。保護好機器人；組隊時每位成員都必須開始護送。"

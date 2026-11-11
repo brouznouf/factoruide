@@ -1,0 +1,22 @@
+# Quest notes of The Hinterlands. See notes/README.md for the format.
+
+# Whiskey Slim's Lost Grog: the bottles stand on the shore and blend into the ground.
+[[note]]
+quest = 580
+phase = "objective"
+objective = 1
+level = "info"
+en = "The blue bottles stand on the shore and are hard to see against the ground: turn the ground clutter down in the graphics settings to spot them from afar."
+fr = "Les bouteilles bleues sont posées sur le rivage et se confondent avec le sol : baissez les détails du sol dans les options graphiques pour les repérer de loin."
+de = "Die blauen Flaschen stehen am Ufer und sind vor dem Boden schwer zu erkennen: stell die Bodendetails in den Grafikeinstellungen herunter, um sie von Weitem zu sehen."
+es = "Las botellas azules están en la orilla y cuesta verlas contra el suelo: baja los detalles del terreno en las opciones gráficas para verlas de lejos."
+pt = "As garrafas azuis ficam na margem e são difíceis de ver contra o chão: reduza os detalhes do terreno nas opções gráficas para avistá-las de longe."
+ru = "Синие бутылки стоят на берегу и сливаются с землёй: уменьшите детализацию поверхности в настройках графики, чтобы видеть их издалека."
+ko = "파란 병은 해안에 놓여 있어 땅과 구분하기 어렵습니다. 그래픽 설정에서 지면 세부 묘사를 낮추면 멀리서도 보입니다."
+zh_cn = "蓝色瓶子放在岸边，很难从地面上分辨出来：在图像设置中调低地面细节，就能远远看到它们。"
+zh_tw = "藍色瓶子放在岸邊，很難從地面上分辨出來：在圖像設定中調低地面細節，就能遠遠看到它們。"
+
+[[icon]]
+quest = 580
+phase = "objective"
+icon = "pickup"

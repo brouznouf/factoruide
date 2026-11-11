@@ -1,0 +1,17 @@
+# Quest notes of Feralas. See notes/README.md for the format.
+
+# Rescue OOX-22/FE!: three ambushes on the robot's way to the dock.
+[[note]]
+quest = 2767
+phase = "objective"
+level = "warning"
+editions = ["classic", "tbc"]
+en = "Three ambushes on the way: three yetis on the slope after the cave, three gorillas on the cliff path, four gnolls (a caster among them) near the dock. Keep the robot alive; if it does not move, someone else is escorting it."
+fr = "Trois embuscades en chemin : trois yétis sur la pente après la grotte, trois gorilles sur le sentier de la falaise, quatre gnolls (dont un lanceur de sorts) près du quai. Gardez le robot en vie ; s'il ne bouge pas, quelqu'un d'autre l'escorte."
+de = "Drei Hinterhalte unterwegs: drei Yetis am Hang nach der Höhle, drei Gorillas auf dem Klippenpfad, vier Gnolle (darunter ein Zauberwirker) nahe dem Steg. Halte den Roboter am Leben; bewegt er sich nicht, eskortiert ihn gerade jemand anderes."
+es = "Tres emboscadas por el camino: tres yetis en la ladera tras la cueva, tres gorilas en el sendero del acantilado y cuatro gnolls (uno lanzador de hechizos) cerca del muelle. Mantén vivo al robot; si no se mueve, otro lo está escoltando."
+pt = "Três emboscadas no caminho: três yetis na encosta depois da caverna, três gorilas na trilha do penhasco e quatro gnolls (um deles conjurador) perto do cais. Mantenha o robô vivo; se ele não se mexer, outra pessoa o está escoltando."
+ru = "Три засады по пути: три йети на склоне после пещеры, три гориллы на тропе вдоль утёса, четыре гнолла (среди них заклинатель) у причала. Берегите робота; если он не двигается, его уже сопровождает кто-то другой."
+ko = "도중에 매복이 세 번 있습니다. 동굴 뒤 비탈에 예티 셋, 절벽 길에 고릴라 셋, 부두 근처에 놀 넷(주문시전자 포함). 로봇을 살려 두세요. 로봇이 움직이지 않으면 다른 사람이 호위 중입니다."
+zh_cn = "途中有三次伏击：山洞后的斜坡上有三只雪人，悬崖小路上有三只大猩猩，码头附近有四个豺狼人（其中一个施法者）。保护好机器人；如果它不动，说明别人正在护送。"
+zh_tw = "途中有三次伏擊：山洞後的斜坡上有三隻雪人，懸崖小路上有三隻大猩猩，碼頭附近有四個豺狼人（其中一個施法者）。保護好機器人；如果它不動，表示別人正在護送。"

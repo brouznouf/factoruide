@@ -20,3 +20,100 @@ zh_tw = "{npc:738}只在離開反抗軍營地巡邏時、被你從伏擊（{npc:
 quest = 215
 phase = "accept"
 icon = "event"
+
+# Panther Mastery: the panthers stalk unseen until close, spread along the main road.
+[[note]]
+quest = 192
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:684} are stealthed: you only see them up close. Walk along both sides of the main road and target them by name as you go."
+fr = "{npc:684} est camouflé : on ne le voit que de près. Longez les deux côtés de la route principale et ciblez-le par son nom en avançant."
+de = "{npc:684} ist getarnt: du siehst ihn erst aus der Nähe. Lauf beide Seiten der Hauptstraße ab und wähle ihn unterwegs per Namen ins Ziel."
+es = "{npc:684} está en sigilo: solo lo ves de cerca. Recorre ambos lados del camino principal y selecciónalo por su nombre mientras avanzas."
+pt = "{npc:684} fica furtivo: você só o vê de perto. Percorra os dois lados da estrada principal e selecione-o pelo nome enquanto avança."
+ru = "{npc:684} скрыт незаметностью: его видно только вблизи. Идите вдоль обеих сторон главной дороги и выбирайте его в цель по имени."
+ko = "{npc:684}은(는) 은신 상태라 가까이 가야 보입니다. 큰길 양쪽을 따라 걸으며 이름으로 대상을 지정하세요."
+zh_cn = "{npc:684}处于潜行状态，只有靠近才能看到。沿主路两侧前进，边走边按名字选中它们。"
+zh_tw = "{npc:684}處於潛行狀態，只有靠近才能看到。沿主路兩側前進，邊走邊按名字選取牠們。"
+
+# Bad Medicine: the medicine men heal themselves and the remedy is a rare drop.
+[[note]]
+quest = 204
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:940} heal themselves: interrupt the heal or kill them fast. {item:2633} does not drop often, expect many kills."
+fr = "{npc:940} se soigne : interrompez le soin ou tuez-le vite. {item:2633} tombe rarement, prévoyez de nombreuses victimes."
+de = "{npc:940} heilt sich selbst: unterbrich die Heilung oder töte ihn schnell. {item:2633} droppt selten, rechne mit vielen Kills."
+es = "{npc:940} se cura a sí mismo: interrumpe la sanación o mátalo rápido. {item:2633} cae poco, prepárate para muchas muertes."
+pt = "{npc:940} se cura: interrompa a cura ou mate-o rápido. {item:2633} cai raramente, espere matar muitos."
+ru = "{npc:940} лечит себя: прерывайте лечение или убивайте быстро. {item:2633} выпадает редко, придётся убить многих."
+ko = "{npc:940}은(는) 스스로 치유합니다. 치유를 차단하거나 빨리 처치하세요. {item:2633}은(는) 잘 나오지 않으니 많이 잡을 각오를 하세요."
+zh_cn = "{npc:940}会治疗自己：打断治疗或迅速击杀。{item:2633}掉率不高，准备多杀一些。"
+zh_tw = "{npc:940}會治療自己：打斷治療或迅速擊殺。{item:2633}掉落率不高，準備多殺一些。"
+
+# Kurzen's Mystery: the four tablets stand in guarded ruins, one of them underwater.
+[[note]]
+quest = 207
+phase = "objective"
+level = "warning"
+en = "Each tablet leans against a wall in crowded ruins: one in Bal'lal Ruins, one underwater in the Vile Reef among elite murlocs, two in Zul'Kunda. Pull the guards one at a time, or sneak along the walls and ledges."
+fr = "Chaque tablette est adossée à un mur dans des ruines bien gardées : une aux ruines de Bal'lal, une sous l'eau au Récif infâme parmi des murlocs élites, deux à Zul'Kunda. Attirez les gardes un par un, ou faufilez-vous le long des murs et des corniches."
+de = "Jede Tafel lehnt an einer Wand in dicht bevölkerten Ruinen: eine in den Ruinen von Bal'lal, eine unter Wasser im Üblen Riff zwischen Elite-Murlocs, zwei in Zul'Kunda. Zieh die Wachen einzeln oder schleich an Mauern und Vorsprüngen entlang."
+es = "Cada tablilla está apoyada en un muro de unas ruinas llenas de enemigos: una en las Ruinas de Bal'lal, una bajo el agua en el Arrecife Vil entre múrlocs élite, dos en Zul'Kunda. Atrae a los guardias de uno en uno o avanza a escondidas por muros y salientes."
+pt = "Cada tábua fica encostada numa parede de ruínas cheias de inimigos: uma nas Ruínas de Bal'lal, uma debaixo d'água no Recife Vil entre murlocs de elite, duas em Zul'Kunda. Puxe os guardas um de cada vez ou esgueire-se pelas paredes e saliências."
+ru = "Каждая табличка стоит у стены в многолюдных руинах: одна в Руинах Бал'лала, одна под водой у Гнусного рифа среди элитных мурлоков, две в Зул'Кунде. Выманивайте стражей по одному или пробирайтесь вдоль стен и уступов."
+ko = "석판은 적이 많은 폐허의 벽에 하나씩 기대어 있습니다. 발랄 폐허에 하나, 정예 멀록이 있는 썩은 암초 물속에 하나, 줄쿤다에 둘. 경비병을 하나씩 끌어내거나 벽과 턱을 따라 몰래 이동하세요."
+zh_cn = "每块石板都靠在敌人密集的废墟墙边：巴尔拉废墟一块，邪恶暗礁水下一块（有精英鱼人），祖昆达两块。逐个引出守卫，或沿着墙壁和岩架潜行过去。"
+zh_tw = "每塊石板都靠在敵人密集的廢墟牆邊：巴爾拉廢墟一塊，邪惡暗礁水下一塊（有精英魚人），祖昆達兩塊。逐個引出守衛，或沿著牆壁和岩架潛行過去。"
+
+# The Bloodsail Buccaneers: the captains stand on the middle deck, the riddle lies lower down.
+[[note]]
+quest = 608
+phase = "objective"
+level = "info"
+en = "Each captain is one deck down, at the front of his ship: no need to go deeper. {item:4056}, lying on a lower deck of one of the ships, starts another quest."
+fr = "Chaque capitaine se trouve un pont plus bas, à l'avant de son navire : inutile de descendre plus loin. {item:4056}, posé sur un pont inférieur de l'un des navires, lance une autre quête."
+de = "Jeder Kapitän steht ein Deck tiefer, vorne auf seinem Schiff: weiter runter musst du nicht. {item:4056} liegt auf einem unteren Deck eines der Schiffe und startet eine weitere Quest."
+es = "Cada capitán está una cubierta más abajo, en la proa de su barco: no hace falta bajar más. {item:4056}, en una cubierta inferior de uno de los barcos, inicia otra misión."
+pt = "Cada capitão fica um convés abaixo, na proa do seu navio: não precisa descer mais. {item:4056}, num convés inferior de um dos navios, inicia outra missão."
+ru = "Каждый капитан находится палубой ниже, в носовой части своего корабля: глубже спускаться не нужно. {item:4056} лежит на нижней палубе одного из кораблей и начинает другое задание."
+ko = "각 선장은 자기 배의 한 층 아래 갑판, 뱃머리 쪽에 있습니다. 더 내려갈 필요는 없습니다. 배 한 척의 아래 갑판에 있는 {item:4056}은(는) 다른 퀘스트를 시작합니다."
+zh_cn = "每位船长都在下一层甲板的船头，不必再往下走。其中一艘船更下层甲板上的{item:4056}可以开启另一个任务。"
+zh_tw = "每位船長都在下一層甲板的船頭，不必再往下走。其中一艘船更下層甲板上的{item:4056}可以開啟另一個任務。"
+
+# Message in a Bottle: the turn-in stands on an island of stealthed level 50 cats.
+[[note]]
+quest = 594
+phase = "turnin"
+level = "warning"
+en = "{npc:2634} is on Jaguero Isle, roamed by level 50 {npc:2522} you cannot see coming: come from the shore and run into the sea if they jump you, they do not follow."
+fr = "{npc:2634} se trouve sur l'île de Jaguero, où rôde {npc:2522} niveau 50, invisible jusqu'à l'attaque : arrivez par la plage et fuyez dans la mer s'il vous saute dessus, il ne suit pas."
+de = "{npc:2634} ist auf der Jaguero-Insel, wo {npc:2522} der Stufe 50 umherstreift, ohne dass du ihn kommen siehst: komm vom Strand und flieh ins Meer, wenn er dich anspringt, er folgt nicht."
+es = "{npc:2634} está en la Isla Jaguero, donde merodea {npc:2522} de nivel 50 sin que lo veas venir: llega desde la orilla y huye al mar si te ataca, no te sigue."
+pt = "{npc:2634} fica na Ilha Jaguero, onde ronda {npc:2522} de nível 50 sem que você o veja chegar: venha pela praia e fuja para o mar se ele atacar, ele não segue."
+ru = "{npc:2634} находится на острове Ягуэро, где бродит {npc:2522} 50-го уровня, которого не видно до нападения: подходите с берега и уходите в море, если он нападёт, он не преследует."
+ko = "{npc:2634}은(는) 자구에로 섬에 있습니다. 보이지 않게 다가오는 50레벨 {npc:2522}이(가) 돌아다니니, 해변 쪽으로 접근하고 공격당하면 바다로 도망치세요. 따라오지 않습니다."
+zh_cn = "{npc:2634}在加古耶罗岛上，岛上游荡着看不见的50级{npc:2522}：从海岸靠近，如果被扑倒就跑进海里，它们不会追。"
+zh_tw = "{npc:2634}在加古耶羅島上，島上遊蕩著看不見的50級{npc:2522}：從海岸靠近，如果被撲倒就跑進海裡，牠們不會追。"
+
+# Arena Master: the trinket starting it comes from the arena's contested chest.
+[[note]]
+quest = 7810
+phase = "accept"
+level = "warning"
+en = "{item:18706} comes from the chest that appears in the Gurubashi Arena every three hours; the first player to loot it takes it, so expect a fight with others."
+fr = "{item:18706} vient du coffre qui apparaît dans l'arène des Gurubashi toutes les trois heures ; le premier joueur qui le pille l'emporte, attendez-vous à vous battre contre d'autres."
+de = "{item:18706} stammt aus der Truhe, die alle drei Stunden in der Arena der Gurubashi erscheint; wer sie zuerst plündert, bekommt es, also rechne mit Kämpfen gegen andere."
+es = "{item:18706} sale del cofre que aparece en la Arena Gurubashi cada tres horas; se lo lleva el primero que lo despoja, así que prepárate para pelear con otros."
+pt = "{item:18706} vem do baú que aparece na Arena Gurubashi a cada três horas; quem saquear primeiro leva, então espere lutar com outros jogadores."
+ru = "{item:18706} достаётся из сундука, который появляется на арене Гурубаши раз в три часа; его получает тот, кто первым откроет сундук, так что готовьтесь к схватке с другими."
+ko = "{item:18706}은(는) 구루바시 투기장에 3시간마다 나타나는 상자에서 나옵니다. 먼저 여는 플레이어가 가져가니 다른 플레이어와의 싸움을 각오하세요."
+zh_cn = "{item:18706}来自古拉巴什竞技场每三小时出现一次的宝箱；先拾取的玩家得到它，准备好和其他人争夺。"
+zh_tw = "{item:18706}來自古拉巴什競技場每三小時出現一次的寶箱；先拾取的玩家得到它，準備好和其他人爭奪。"
+
+[[icon]]
+quest = 7810
+phase = "accept"
+icon = "event"

@@ -1,0 +1,17 @@
+# Quest notes of the Badlands. See notes/README.md for the format.
+
+# Pearl Diving: the clams lie underwater among elite murlocs, in Stranglethorn Vale.
+[[note]]
+quest = 705
+phase = "objective"
+objective = 1
+level = "info"
+en = "The clams lie underwater in the Vile Reef among elite murlocs: keep your distance from them, and bring a water breathing potion if you have one."
+fr = "Les palourdes sont sous l'eau au Récif infâme, parmi des murlocs élites : gardez vos distances avec eux et emportez une potion de respiration aquatique si vous en avez une."
+de = "Die Muscheln liegen unter Wasser im Üblen Riff zwischen Elite-Murlocs: halte Abstand zu ihnen und nimm einen Wasseratmungstrank mit, wenn du einen hast."
+es = "Las almejas están bajo el agua en el Arrecife Vil, entre múrlocs élite: mantén la distancia con ellos y lleva una poción de respiración acuática si tienes una."
+pt = "Os mariscos ficam debaixo d'água no Recife Vil, entre murlocs de elite: mantenha distância deles e leve uma poção de respiração aquática se tiver uma."
+ru = "Моллюски лежат под водой у Гнусного рифа среди элитных мурлоков: держитесь от них подальше и возьмите зелье подводного дыхания, если оно есть."
+ko = "조개는 정예 멀록이 있는 썩은 암초 물속에 있습니다. 멀록과 거리를 두고, 수중 호흡 물약이 있으면 챙기세요."
+zh_cn = "蛤蚌在邪恶暗礁的水下，周围有精英鱼人：与它们保持距离，有水下呼吸药水的话就带上。"
+zh_tw = "蛤蚌在邪惡暗礁的水下，周圍有精英魚人：與牠們保持距離，有水下呼吸藥水的話就帶上。"
