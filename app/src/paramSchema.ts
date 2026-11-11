@@ -1,5 +1,5 @@
 // Description of every planner setting, used to generate the settings form.
-import type { Params } from "./api";
+import { WEAPON_TYPES, type Params, type WeaponType } from "./api";
 
 export type Field =
   | { key: keyof Params; kind: "number"; label: string; help?: string; unit?: string; min?: number; max?: number; step?: number; scale?: number }
@@ -11,7 +11,37 @@ export interface Section {
   help?: string;
   /** For testing the planner: folded until opened. */
   expert?: boolean;
+  /** Long: folded until opened, without being for experts. */
+  folded?: boolean;
   fields: Field[];
+}
+
+/** French names of the weapon types, in `WEAPON_TYPES` order. */
+const WEAPON_NAMES: Record<WeaponType, string> = {
+  axe: "Hache à une main",
+  axe2h: "Hache à deux mains",
+  mace: "Masse à une main",
+  mace2h: "Masse à deux mains",
+  sword: "Épée à une main",
+  sword2h: "Épée à deux mains",
+  dagger: "Dague",
+  fist: "Arme de pugilat",
+  polearm: "Arme d'hast",
+  staff: "Bâton",
+  bow: "Arc",
+  crossbow: "Arbalète",
+  gun: "Arme à feu",
+  thrown: "Arme de jet",
+  wand: "Baguette",
+};
+
+/** Each weapon type's value and speed range (`Params::reward_weight` in the planner). */
+function weaponFields(): Field[] {
+  return WEAPON_TYPES.flatMap((w): Field[] => [
+    { key: `weapon_${w}_value`, kind: "number", label: `${WEAPON_NAMES[w]} : valeur`, help: "Comme la valeur d'une amélioration d'équipement, pour les armes de ce type dont la vitesse est entre la vitesse min et la vitesse max. Le choix parmi les récompenses d'une quête suit aussi ces valeurs.", min: 0, max: 2, step: 0.1 },
+    { key: `weapon_${w}_min_speed`, kind: "number", label: `${WEAPON_NAMES[w]} : vitesse min`, help: "Vitesse d'attaque la plus basse des armes de ce type qui prennent leur propre valeur.", unit: "s", min: 0, max: 4, step: 0.05 },
+    { key: `weapon_${w}_max_speed`, kind: "number", label: `${WEAPON_NAMES[w]} : vitesse max`, help: "Vitesse d'attaque la plus haute des armes de ce type qui prennent leur propre valeur. 0 (défaut) = aucune : ces armes prennent la valeur d'une amélioration d'équipement. Min et max égaux = une seule vitesse.", unit: "s", min: 0, max: 4, step: 0.05 },
+  ]);
 }
 
 export const sections: Section[] = [
@@ -113,8 +143,16 @@ export const sections: Section[] = [
     fields: [
       { key: "power_scale", kind: "number", label: "Poids de l'équipement et des sorts", help: "1 = le modèle tel quel ; 0 = la puissance est le niveau.", min: 0, max: 2, step: 0.1 },
       { key: "gear_floor", kind: "number", label: "Équipement de base sans récompenses", help: "Part d'un objet vert typique du niveau que le personnage porte de toute façon (marchands, objets trouvés).", unit: "%", scale: 0.01, min: 30, max: 120, step: 5 },
-      { key: "gear_value", kind: "number", label: "Valeur d'une amélioration d'équipement", help: "XP que vaut un niveau de puissance gagné, en niveaux d'XP : favorise les quêtes à bonne récompense.", min: 0, max: 2, step: 0.1 },
       { key: "dungeon_loot_share", kind: "number", label: "Part du butin des donjons obtenue", help: "Chance de gagner un objet de boss qui vous sert, face aux autres joueurs du groupe.", unit: "%", scale: 0.01, min: 0, max: 100, step: 5 },
+    ],
+  },
+  {
+    title: "Poids des récompenses",
+    help: "Ce que vaut une quête dont la récompense améliore l'équipement. Chaque type d'arme peut prendre sa propre valeur pour une plage de vitesses ; le reste (armures, bijoux, armes hors de leur plage) prend la valeur d'une amélioration d'équipement.",
+    folded: true,
+    fields: [
+      { key: "gear_value", kind: "number", label: "Valeur d'une amélioration d'équipement", help: "XP que vaut un niveau de puissance gagné, en niveaux d'XP : favorise les quêtes à bonne récompense. Pour toutes les récompenses sauf les armes dont la vitesse est dans la plage de leur type, qui prennent la valeur de leur type.", min: 0, max: 2, step: 0.1 },
+      ...weaponFields(),
     ],
   },
   {

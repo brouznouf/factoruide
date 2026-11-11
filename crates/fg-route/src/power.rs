@@ -64,6 +64,55 @@ enum Fit {
     OneHand,
 }
 
+/// The weapon types a reward can weigh apart (`Params::reward_weight`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum Weapon {
+    /// Not a weapon of one of those types: armor, jewels, fishing poles, miscellaneous.
+    Other,
+    Axe,
+    TwoHandedAxe,
+    Mace,
+    TwoHandedMace,
+    Sword,
+    TwoHandedSword,
+    Dagger,
+    Fist,
+    Polearm,
+    Staff,
+    Bow,
+    Crossbow,
+    Gun,
+    Thrown,
+    Wand,
+}
+
+impl Weapon {
+    /// The type of an item of the game's class and subclass.
+    fn of(class: i64, subclass: i64) -> Weapon {
+        if class != 2 {
+            return Weapon::Other;
+        }
+        match subclass {
+            0 => Weapon::Axe,
+            1 => Weapon::TwoHandedAxe,
+            2 => Weapon::Bow,
+            3 => Weapon::Gun,
+            4 => Weapon::Mace,
+            5 => Weapon::TwoHandedMace,
+            6 => Weapon::Polearm,
+            7 => Weapon::Sword,
+            8 => Weapon::TwoHandedSword,
+            10 => Weapon::Staff,
+            13 => Weapon::Fist,
+            15 => Weapon::Dagger,
+            16 => Weapon::Thrown,
+            18 => Weapon::Crossbow,
+            19 => Weapon::Wand,
+            _ => Weapon::Other,
+        }
+    }
+}
+
 #[derive(Debug, Clone)]
 pub struct Item {
     pub id: i64,
@@ -73,6 +122,9 @@ pub struct Item {
     required_level: i64,
     /// Level from which the class can wear it (mail and plate at 40).
     wear_level: i64,
+    weapon: Weapon,
+    /// Attack speed in seconds (0 for what is not a weapon).
+    speed: f32,
 }
 
 /// What the character wears: per slot, the item owned and possibly a better one owned with
@@ -393,7 +445,8 @@ impl PowerModel {
         let mut uncommon = Vec::new();
         let mut stmt = conn.prepare(
             "SELECT s.id, quality, inventory_type, s.class, s.subclass, allowable_class, s.required_level, str, agi,
-                    sta, int, spi, armor, ap, rap, sp, heal, crit, spell_crit, hit, mp5, dps, coalesce(n.name, '')
+                    sta, int, spi, armor, ap, rap, sp, heal, crit, spell_crit, hit, mp5, dps, coalesce(n.name, ''),
+                    coalesce(s.speed, 0)
              FROM m_item_stats s LEFT JOIN m_item n ON n.id = s.id WHERE quality >= 1",
         )?;
         let mut rows = stmt.query([])?;
@@ -426,6 +479,8 @@ impl PowerModel {
                 stats,
                 required_level: r.get(6)?,
                 wear_level,
+                weapon: Weapon::of(item_class, subclass),
+                speed: r.get::<_, f64>(23)? as f32,
             };
             if quality == 2 {
                 uncommon.push(items.len());
@@ -696,14 +751,35 @@ impl PowerModel {
         true
     }
 
-    /// Gear gain of the best of a quest's reward choices, and its index in `choices`.
-    pub(crate) fn best_choice(&self, gear: &Gear, choices: &[u16], level: i64) -> Option<(usize, f64)> {
+    /// Gear gain of the best of a quest's reward choices, and its index in `choices`: the one
+    /// worth the most by `Params::reward_weight`, then the strongest (an upgrade weighing nothing
+    /// is still worn when no other is).
+    pub(crate) fn best_choice(
+        &self,
+        gear: &Gear,
+        choices: &[u16],
+        level: i64,
+        params: &crate::Params,
+    ) -> Option<(usize, f64)> {
         choices
             .iter()
             .enumerate()
-            .map(|(k, &i)| (k, self.gain_of(gear, i as usize, 1.0, level).0))
-            .filter(|(_, g)| *g > 0.0)
-            .max_by(|a, b| a.1.total_cmp(&b.1))
+            .map(|(k, &i)| {
+                (
+                    k,
+                    self.gain_of(gear, i as usize, 1.0, level).0,
+                    self.reward_weight(i, params),
+                )
+            })
+            .filter(|(_, g, _)| *g > 0.0)
+            .max_by(|a, b| (a.1 * a.2).total_cmp(&(b.1 * b.2)).then(a.1.total_cmp(&b.1)))
+            .map(|(k, g, _)| (k, g))
+    }
+
+    /// Levels of XP a level of power item `i` adds is worth as a quest's reward.
+    pub(crate) fn reward_weight(&self, i: u16, params: &crate::Params) -> f64 {
+        let item = &self.items[i as usize];
+        params.reward_weight(item.weapon, f64::from(item.speed))
     }
 
     /// Rough gear gain of wearing item `i` at `level`, in levels: its value over what its best
@@ -1012,5 +1088,114 @@ mod tests {
         let gain = (20.0 - floor_weapon(20.0, 0.75, false)) * w[DPS];
         let levels = (1.0 + gain).ln() / LEVEL_LN;
         assert!(levels > 1.0 && levels < 4.0, "{levels}");
+    }
+
+    /// A model of one-handed weapons only, each `(weapon, speed, value)` worth its value at
+    /// every level over an empty floor.
+    fn weapons(list: &[(Weapon, f32, f64)]) -> PowerModel {
+        const LEVELS: usize = 11;
+        let items: Vec<Item> = (list.iter().enumerate())
+            .map(|(k, &(weapon, speed, _))| Item {
+                id: k as i64 + 1,
+                name: format!("{weapon:?} {speed}"),
+                fit: Fit::OneHand,
+                stats: [0.0; STATS],
+                required_level: 1,
+                wear_level: 1,
+                weapon,
+                speed,
+            })
+            .collect();
+        PowerModel {
+            item_index: items.iter().enumerate().map(|(i, it)| (it.id, i as u16)).collect(),
+            items,
+            weights: vec![[0.0; STATS]; LEVELS],
+            values: list.iter().flat_map(|&(_, _, v)| [v; LEVELS]).collect(),
+            floor: vec![[0.0; SLOTS]; LEVELS],
+            dual_wield: false,
+            families: Vec::new(),
+            spells: Vec::new(),
+            gated: Vec::new(),
+            gear_floor: 0.75,
+        }
+    }
+
+    /// Weights where 2.60 one-handed swords are worth `sword` and every dagger `dagger`.
+    fn sword_and_dagger(sword: f64, dagger: f64) -> crate::Params {
+        let mut p = crate::Params::default();
+        let w = &mut p.weapons;
+        (w.weapon_sword_value, w.weapon_sword_min_speed, w.weapon_sword_max_speed) = (sword, 2.6, 2.6);
+        (
+            w.weapon_dagger_value,
+            w.weapon_dagger_min_speed,
+            w.weapon_dagger_max_speed,
+        ) = (dagger, 0.0, 5.0);
+        p
+    }
+
+    #[test]
+    fn weapons_in_their_speed_range_take_their_own_weight() {
+        let p = sword_and_dagger(2.0, 0.0);
+        assert_eq!(p.reward_weight(Weapon::Sword, f64::from(2.6f32)), 2.0);
+        assert_eq!(p.reward_weight(Weapon::Sword, 2.7), 0.5, "out of range: the rest");
+        assert_eq!(p.reward_weight(Weapon::TwoHandedSword, 2.6), 0.5, "another type");
+        assert_eq!(p.reward_weight(Weapon::Dagger, 1.8), 0.0);
+        assert_eq!(p.reward_weight(Weapon::Other, 2.6), 0.5);
+        // No range (the default): the type weighs as the rest, whatever its own weight.
+        let mut p = crate::Params::default();
+        p.weapons.weapon_mace_value = 2.0;
+        assert_eq!(p.reward_weight(Weapon::Mace, 2.6), 0.5);
+        p.weapons.weapon_mace_max_speed = 2.8;
+        assert_eq!(p.reward_weight(Weapon::Mace, 2.6), 2.0);
+        assert_eq!(p.reward_weight(Weapon::Mace, 2.9), 0.5);
+    }
+
+    #[test]
+    fn weapon_types_follow_the_games_subclasses() {
+        assert_eq!(Weapon::of(2, 7), Weapon::Sword);
+        assert_eq!(Weapon::of(2, 8), Weapon::TwoHandedSword);
+        assert_eq!(Weapon::of(2, 15), Weapon::Dagger);
+        assert_eq!(Weapon::of(2, 19), Weapon::Wand);
+        assert_eq!(Weapon::of(2, 20), Weapon::Other, "fishing pole");
+        assert_eq!(Weapon::of(4, 7), Weapon::Other, "armor");
+    }
+
+    #[test]
+    fn weapon_weights_are_settings_of_their_own() {
+        let p = crate::Params::default()
+            .with_overrides(&["weapon_sword_max_speed=2.7".into(), "weapon_sword_value=1.5".into()])
+            .unwrap();
+        assert_eq!(p.weapons.weapon_sword_max_speed, 2.7);
+        assert_eq!(p.reward_weight(Weapon::Sword, 2.5), 1.5);
+        let json = serde_json::to_value(&p).unwrap();
+        assert_eq!(json["weapon_sword_value"], 1.5, "flat, as the app sends them");
+    }
+
+    #[test]
+    fn the_reward_picked_follows_the_weights_then_the_power() {
+        // A 2.60 sword, a dagger and a mace: the dagger is the strongest.
+        let model = weapons(&[
+            (Weapon::Sword, 2.6, 0.10),
+            (Weapon::Dagger, 1.8, 0.12),
+            (Weapon::Mace, 2.4, 0.11),
+        ]);
+        let choices = [0, 1, 2];
+        let pick = |params: crate::Params| {
+            model
+                .best_choice(&Gear::default(), &choices, 10, &params)
+                .map(|(k, _)| k)
+        };
+        assert_eq!(pick(crate::Params::default()), Some(1), "equal weights: the strongest");
+        assert_eq!(pick(sword_and_dagger(2.0, 0.5)), Some(0));
+        // Not a sword of that speed: the sword weighs as the rest.
+        let mut slower = sword_and_dagger(2.0, 0.5);
+        slower.weapons.weapon_sword_min_speed = 2.7;
+        slower.weapons.weapon_sword_max_speed = 2.7;
+        assert_eq!(pick(slower), Some(1));
+        assert_eq!(pick(sword_and_dagger(0.5, 0.0)), Some(2));
+        // Nothing weighs anything: still the strongest is worn.
+        let mut none = sword_and_dagger(0.0, 0.0);
+        none.gear_value = 0.0;
+        assert_eq!(pick(none), Some(1));
     }
 }
