@@ -1,0 +1,35 @@
+# Quest notes of Ashenvale. See notes/README.md for the format.
+
+# Troll Charm: the chests are inside the cave at the top of the furbolg village; chests and
+# furbolgs respawn quickly, so staying in one room is enough.
+[[note]]
+quest = 6462
+phase = "objective"
+objective = 1
+level = "info"
+en = "The {object:178144} chests are inside the cave at the top of the furbolg village (entrance under an arch, about 38, 30). Chests and furbolgs respawn fast: circle one room instead of going deep."
+fr = "Les coffres {object:178144} se trouvent dans la grotte en haut du village des furbolgs (entrée sous une arche, vers 38, 30). Coffres et furbolgs réapparaissent vite : tournez dans une seule salle au lieu de vous enfoncer."
+de = "Die Truhen ({object:178144}) stehen in der Höhle oben im Furbolgdorf (Eingang unter einem Bogen, etwa 38, 30). Truhen und Furbolgs respawnen schnell: zieh Kreise in einem Raum, statt tief hineinzugehen."
+es = "Los cofres {object:178144} están dentro de la cueva en lo alto del poblado de los fúrbolg (entrada bajo un arco, hacia 38, 30). Cofres y fúrbolg reaparecen rápido: recorre una sola sala en vez de adentrarte."
+pt = "Os baús {object:178144} ficam dentro da caverna no alto da aldeia dos furbolgs (entrada sob um arco, cerca de 38, 30). Baús e furbolgs ressurgem rápido: circule uma única sala em vez de ir fundo."
+ru = "Сундуки ({object:178144}) стоят в пещере на вершине деревни фурболгов (вход под аркой, около 38, 30). Сундуки и фурболги быстро возрождаются: ходите по кругу в одном зале, не углубляясь."
+ko = "{object:178144} 상자는 늑대인간 마을 꼭대기의 동굴 안에 있습니다(아치 아래 입구, 약 38, 30). 상자와 늑대인간이 빨리 재생성되니 깊이 들어가지 말고 한 방을 돌며 모으세요."
+zh_cn = "{object:178144}位于熊怪村落顶部的洞穴内（入口在一道拱门下，约38, 30）。箱子和熊怪刷新很快：在一个房间里转圈即可，不必深入。"
+zh_tw = "{object:178144}位於熊怪村落頂部的洞穴內（入口在一道拱門下，約38, 30）。箱子和熊怪重生很快：在一個房間裡繞圈即可，不必深入。"
+
+# Vorsha the Lasher: the brazier cannot be used for a few minutes after someone finished the
+# event; two waves of naga come before the hydra.
+[[note]]
+quest = 6641
+phase = "objective"
+objective = 1
+level = "warning"
+en = "If the brazier cannot be clicked, someone just finished the event: wait about 5 minutes for it to light again. Then come two waves of three naga (kill the priestesses first) before {npc:12940}."
+fr = "Si le brasero ne peut pas être utilisé, quelqu'un vient de terminer l'événement : attendez environ 5 minutes qu'il se rallume. Viennent ensuite deux vagues de trois nagas (tuez d'abord les prêtresses) avant {npc:12940}."
+de = "Lässt sich das Kohlebecken nicht anklicken, hat gerade jemand das Ereignis beendet: warte etwa 5 Minuten, bis es wieder brennt. Dann kommen zwei Wellen aus je drei Naga (töte zuerst die Priesterinnen), danach {npc:12940}."
+es = "Si no puedes usar el brasero, alguien acaba de terminar el evento: espera unos 5 minutos a que vuelva a encenderse. Luego llegan dos oleadas de tres nagas (mata primero a las sacerdotisas) antes de {npc:12940}."
+pt = "Se não der para clicar no braseiro, alguém acabou de terminar o evento: espere cerca de 5 minutos até ele acender de novo. Depois vêm duas ondas de três nagas (mate as sacerdotisas primeiro) antes de {npc:12940}."
+ru = "Если жаровня не активируется, кто-то только что завершил событие: подождите около 5 минут, пока она снова загорится. Затем придут две волны по три наги (сначала убивайте жриц), а после них {npc:12940}."
+ko = "화로를 클릭할 수 없다면 누군가 방금 이벤트를 마친 것입니다. 다시 불이 붙을 때까지 약 5분 기다리세요. 그다음 나가 셋씩 두 차례 몰려오고(사제부터 처치) 마지막으로 {npc:12940}이(가) 나타납니다."
+zh_cn = "如果火盆无法点击，说明有人刚完成这个事件：等待约5分钟让它重新点燃。之后会来两波各三只纳迦（先杀女祭司），然后是{npc:12940}。"
+zh_tw = "如果火盆無法點擊，表示有人剛完成這個事件：等待約5分鐘讓它重新點燃。之後會來兩波各三隻納迦（先殺女祭司），然後是{npc:12940}。"

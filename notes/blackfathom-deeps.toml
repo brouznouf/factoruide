@@ -1,0 +1,35 @@
+# Quest notes of Blackfathom Deeps. See notes/README.md for the format.
+
+# The Essence of Aku'Mai: the sapphires grow in the tunnels before the instance portal and
+# respawn in about a minute.
+[[note]]
+quest = 6563
+phase = "objective"
+objective = 1
+level = "info"
+en = "The {item:16784} crystals grow on the walls of the flooded tunnels before the dungeon portal, not inside it. They respawn in about a minute: clear a few nearby and wait instead of going deeper."
+fr = "Les cristaux ({item:16784}) poussent sur les parois des tunnels inondés avant le portail du donjon, pas à l'intérieur. Ils réapparaissent en une minute environ : nettoyez-en quelques-uns à proximité et attendez au lieu d'aller plus loin."
+de = "Die Kristalle ({item:16784}) wachsen an den Wänden der gefluteten Tunnel vor dem Dungeonportal, nicht darin. Sie respawnen nach etwa einer Minute: räume ein paar in der Nähe frei und warte, statt tiefer zu gehen."
+es = "Los cristales ({item:16784}) crecen en las paredes de los túneles inundados antes del portal de la mazmorra, no dentro. Reaparecen en un minuto más o menos: despeja unos cuantos cerca y espera en vez de adentrarte."
+pt = "Os cristais ({item:16784}) crescem nas paredes dos túneis alagados antes do portal da masmorra, não dentro dela. Eles ressurgem em cerca de um minuto: limpe alguns por perto e espere em vez de ir mais fundo."
+ru = "Кристаллы ({item:16784}) растут на стенах затопленных туннелей перед порталом подземелья, а не внутри. Они появляются снова примерно через минуту: зачистите несколько рядом и ждите, не углубляясь."
+ko = "{item:16784} 수정은 던전 입구 앞, 물에 잠긴 통로 벽에 붙어 있으며 던전 안에는 없습니다. 약 1분이면 다시 생기니 더 깊이 가지 말고 근처 몇 곳을 정리한 뒤 기다리세요."
+zh_cn = "{item:16784}水晶长在副本传送门之前的水淹隧道墙壁上，而不是副本内。约一分钟刷新一次：清理附近几处后原地等待，不必深入。"
+zh_tw = "{item:16784}水晶長在副本傳送門之前的水淹隧道牆壁上，而不是副本內。約一分鐘重生一次：清理附近幾處後原地等待，不必深入。"
+
+# Amongst the Ruins: the stone lies under the water below the walkway before the last boss's
+# room, and opening it spawns an elite.
+[[note]]
+quest = 6921
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The {object:177964} lies under the water below the walkway just before the room of {npc:4832}. Opening it spawns {npc:12876}, an elite: be ready to fight him."
+fr = "{object:177964} se trouve sous l'eau, sous la passerelle juste avant la salle de {npc:4832}. L'ouvrir fait apparaître {npc:12876}, un élite : soyez prêt à le combattre."
+de = "{object:177964} liegt unter Wasser unter dem Steg kurz vor dem Raum von {npc:4832}. Beim Öffnen erscheint {npc:12876}, ein Elite: sei bereit für den Kampf."
+es = "{object:177964} está bajo el agua, debajo de la pasarela justo antes de la sala de {npc:4832}. Al abrirla aparece {npc:12876}, un élite: prepárate para luchar."
+pt = "{object:177964} fica embaixo d'água, sob a passarela logo antes da sala de {npc:4832}. Abri-la faz surgir {npc:12876}, um elite: esteja pronto para lutar."
+ru = "{object:177964} лежит под водой под мостком прямо перед залом {npc:4832}. Если его открыть, появится {npc:12876} — элитный противник: будьте готовы к бою."
+ko = "{object:177964}은(는) {npc:4832}의 방 바로 앞 통로 아래 물속에 있습니다. 열면 정예 {npc:12876}이(가) 나타나니 싸울 준비를 하세요."
+zh_cn = "{object:177964}位于{npc:4832}房间前那段走道下方的水中。打开它会刷出精英{npc:12876}：做好战斗准备。"
+zh_tw = "{object:177964}位於{npc:4832}房間前那段走道下方的水中。打開它會刷出精英{npc:12876}：做好戰鬥準備。"

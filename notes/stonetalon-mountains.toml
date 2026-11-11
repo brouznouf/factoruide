@@ -15,3 +15,53 @@ ru = "Сок выпадает только из {npc:4020}: {npc:4021} выгл�
 ko = "수액은 {npc:4020}에게서만 나옵니다. {npc:4021}은(는) 생김새가 같고 그들 사이를 돌아다니지만 수액을 떨어뜨리지 않습니다."
 zh_cn = "只有{npc:4020}会掉落树液：{npc:4021}外观相同、混在其中游荡，但从不掉落。"
 zh_tw = "只有{npc:4020}會掉落樹液：{npc:4021}外觀相同、混在其中遊蕩，但從不掉落。"
+
+# Harpies Threaten: every harpy kind of the vale draws from the same spawn points, so the unwanted
+# kinds take the place of the wanted ones; the slayers are the fewest, near the roguefeathers.
+[[note]]
+quest = 6282
+phase = "objective"
+level = "info"
+en = "All the harpy kinds of the vale share spawn points: kill the {npc:4026} and {npc:4027} near you too, or the ones you need will not come back. {npc:4024} are the scarcest, around the camps of {npc:4023}."
+fr = "Toutes les harpies du val partagent les mêmes points d'apparition : tuez aussi {npc:4026} et {npc:4027} autour de vous, sinon celles qu'il vous faut ne reviendront pas. {npc:4024} est la plus rare, autour des camps de {npc:4023}."
+de = "Alle Harpyienarten des Tals teilen sich die Spawnpunkte: töte auch {npc:4026} und {npc:4027} in deiner Nähe, sonst kommen die benötigten nicht zurück. {npc:4024} ist am seltensten, rund um die Lager von {npc:4023}."
+es = "Todas las arpías del valle comparten puntos de aparición: mata también a {npc:4026} y {npc:4027} cerca de ti, o las que necesitas no volverán. {npc:4024} es la más escasa, alrededor de los campamentos de {npc:4023}."
+pt = "Todos os tipos de harpia do vale compartilham pontos de surgimento: mate também {npc:4026} e {npc:4027} perto de você, ou as que você precisa não voltarão. {npc:4024} é a mais rara, em volta dos acampamentos de {npc:4023}."
+ru = "Все виды гарпий в долине появляются в одних и тех же точках: убивайте и {npc:4026} и {npc:4027} рядом, иначе нужные не появятся снова. {npc:4024} встречается реже всех, возле лагерей {npc:4023}."
+ko = "골짜기의 모든 하피는 생성 지점을 공유합니다. 주변의 {npc:4026}와(과) {npc:4027}도 처치하지 않으면 필요한 하피가 다시 나타나지 않습니다. {npc:4024}이(가) 가장 드물며, {npc:4023} 야영지 주변에 있습니다."
+zh_cn = "山谷中所有鹰身人共用刷新点：附近的{npc:4026}和{npc:4027}也要杀掉，否则你需要的那些不会再刷新。{npc:4024}最少，在{npc:4023}的营地周围。"
+zh_tw = "山谷中所有鷹身人共用重生點：附近的{npc:4026}和{npc:4027}也要殺掉，否則你需要的那些不會再重生。{npc:4024}最少，在{npc:4023}的營地周圍。"
+
+# Gerenzo Wrenchwhistle: the waterwheel is reached by a trail from the east end of the lake that
+# climbs and turns back west along the cliffs; the lake below breaks the fall.
+[[note]]
+quest = 1096
+phase = "objective"
+objective = 1
+level = "info"
+en = "The way up to the waterwheel is a trail at the east end of the lake (about 70, 41) that climbs and turns back west along the cliffs. Once he is dead, jumping into the lake is the fastest way down."
+fr = "Le chemin vers la roue à aubes est un sentier à l'extrémité est du lac (vers 70, 41) qui monte puis repart vers l'ouest le long des falaises. Une fois la cible tuée, sauter dans le lac est le moyen le plus rapide de redescendre."
+de = "Der Weg hinauf zum Wasserrad ist ein Pfad am Ostende des Sees (etwa 70, 41), der ansteigt und an den Klippen entlang nach Westen zurückführt. Ist er tot, springst du am schnellsten in den See hinunter."
+es = "El camino a la noria es un sendero en el extremo este del lago (hacia 70, 41) que sube y vuelve al oeste por los acantilados. Una vez muerto, saltar al lago es la forma más rápida de bajar."
+pt = "O caminho até a roda d'água é uma trilha na ponta leste do lago (cerca de 70, 41) que sobe e volta para oeste pelos penhascos. Depois de matá-lo, pular no lago é o jeito mais rápido de descer."
+ru = "Путь к водяному колесу — тропа у восточного края озера (около 70, 41), которая поднимается и уходит обратно на запад вдоль скал. После убийства быстрее всего спуститься, прыгнув в озеро."
+ko = "물레방아로 올라가는 길은 호수 동쪽 끝(약 70, 41)의 오솔길로, 위로 오른 뒤 절벽을 따라 다시 서쪽으로 이어집니다. 처치한 뒤에는 호수로 뛰어내리는 것이 가장 빨리 내려가는 방법입니다."
+zh_cn = "通往水车的路是湖东端（约70, 41）的一条小径，向上爬后沿悬崖折回西边。击杀后跳进湖里是最快的下山方式。"
+zh_tw = "通往水車的路是湖東端（約70, 41）的一條小徑，向上爬後沿懸崖折回西邊。擊殺後跳進湖裡是最快的下山方式。"
+
+# Gerenzo's Orders: the defence lasts about five minutes with three or four waves while the
+# crowded mine respawns; widely found too hard alone at the quest's level.
+[[note]]
+quest = 1090
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:4276} mines for about 5 minutes while three or four waves of kobolds attack, and the mine respawns around you meanwhile. Clear the room first and bring help: it is hard alone at the quest's level."
+fr = "{npc:4276} creuse pendant environ 5 minutes pendant que trois ou quatre vagues de kobolds attaquent, et la mine réapparaît autour de vous entre-temps. Nettoyez d'abord la salle et venez accompagné : c'est difficile seul au niveau de la quête."
+de = "{npc:4276} schürft etwa 5 Minuten, während drei oder vier Wellen Kobolde angreifen, und die Mine respawnt derweil um dich herum. Räume zuerst den Raum und bring Hilfe mit: allein ist es auf Questlevel schwer."
+es = "{npc:4276} mina durante unos 5 minutos mientras atacan tres o cuatro oleadas de kobolds, y la mina reaparece a tu alrededor mientras tanto. Limpia primero la sala y ve acompañado: es difícil en solitario al nivel de la misión."
+pt = "{npc:4276} minera por cerca de 5 minutos enquanto três ou quatro ondas de kobolds atacam, e a mina ressurge ao seu redor nesse meio-tempo. Limpe a sala antes e leve ajuda: é difícil sozinho no nível da missão."
+ru = "{npc:4276} добывает руду около 5 минут, пока нападают три-четыре волны кобольдов, а шахта вокруг тем временем возрождается. Сначала зачистите зал и возьмите помощь: в одиночку на уровне задания это тяжело."
+ko = "{npc:4276}이(가) 약 5분 동안 채굴하는 사이 코볼트가 서너 차례 몰려오고, 그동안 광산의 몹도 주변에서 다시 생성됩니다. 먼저 방을 정리하고 도움을 받으세요. 퀘스트 레벨에서 혼자서는 어렵습니다."
+zh_cn = "{npc:4276}会采矿约5分钟，期间有三到四波狗头人来袭，矿洞里的怪也会在你周围重生。先清空房间并找人帮忙：在任务等级单人完成很困难。"
+zh_tw = "{npc:4276}會採礦約5分鐘，期間有三到四波狗頭人來襲，礦坑裡的怪也會在你周圍重生。先清空房間並找人幫忙：在任務等級單人完成很困難。"

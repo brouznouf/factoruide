@@ -227,3 +227,20 @@ ru = "{npc:3341} ходит туда-сюда по дороге возле ра�
 ko = "{npc:3341}은(는) 발굴지 근처 길을 오가며 걷습니다. 한 곳이 아니라 길을 따라 찾아보세요."
 zh_cn = "{npc:3341}会在挖掘场附近的大路上来回走动：沿着大路找他，而不是守在一个地方。"
 zh_tw = "{npc:3341}會在挖掘場附近的大路上來回走動：沿著大路找他，而不是守在一個地方。"
+
+# Revenge of Gann: the target flying machine is outside the keep, on a wooden tower in the
+# excavation pit, and the explosive works from the foot of the tower.
+[[note]]
+quest = 849
+phase = "objective"
+objective = 1
+level = "info"
+en = "This {object:3644} is not inside the keep: it stands on top of a wooden tower in the excavation pit, at the first bend of the ramp down. Use the {item:5021} from the ground, no need to climb."
+fr = "Ce {object:3644} n'est pas dans le donjon : il se trouve en haut d'une tour en bois dans la fosse d'excavation, au premier virage de la rampe qui descend. Utilisez {item:5021} depuis le sol, inutile de grimper."
+de = "Diese {object:3644} ist nicht in der Festung: Sie steht oben auf einem Holzturm in der Ausgrabungsgrube, an der ersten Biegung der Rampe nach unten. Benutze {item:5021} vom Boden aus, Klettern ist unnötig."
+es = "Esta {object:3644} no está dentro de la fortaleza: está en lo alto de una torre de madera en el foso de excavación, en la primera curva de la rampa de bajada. Usa {item:5021} desde el suelo, no hace falta subir."
+pt = "Esta {object:3644} não fica dentro da fortaleza: está no alto de uma torre de madeira no fosso da escavação, na primeira curva da rampa de descida. Use {item:5021} do chão, não precisa subir."
+ru = "Этот {object:3644} находится не в крепости, а на вершине деревянной башни в котловане раскопок, у первого поворота спускающегося пандуса. Используйте {item:5021} с земли, залезать не нужно."
+ko = "이 {object:3644}은(는) 요새 안이 아니라 발굴 구덩이의 나무 탑 꼭대기, 내려가는 비탈길의 첫 모퉁이에 있습니다. 올라갈 필요 없이 땅에서 {item:5021}을(를) 사용하세요."
+zh_cn = "这架{object:3644}不在要塞里：它位于挖掘坑中一座木塔的顶端，就在下坡道的第一个弯处。在地面使用{item:5021}即可，无需爬上去。"
+zh_tw = "這架{object:3644}不在要塞裡：它位於挖掘坑中一座木塔的頂端，就在下坡道的第一個彎處。在地面使用{item:5021}即可，無需爬上去。"

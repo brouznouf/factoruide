@@ -1,0 +1,17 @@
+# Quest notes of the Hillsbrad Foothills. See notes/README.md for the format.
+
+# Elixir of Pain: the dog turns into a hostile beast right after drinking the elixir, and the kill
+# gives notable experience.
+[[note]]
+quest = 502
+phase = "turnin"
+level = "warning"
+en = "Once he drinks the elixir, {npc:2274} turns into {npc:2275}, a hostile level 24 beast that attacks you: be at full health. Killing it gives good experience."
+fr = "Une fois l'élixir bu, {npc:2274} se transforme en {npc:2275}, une bête hostile de niveau 24 qui vous attaque : soyez en pleine santé. La tuer rapporte beaucoup d'expérience."
+de = "Sobald er das Elixier trinkt, verwandelt sich {npc:2274} in {npc:2275}, eine feindselige Bestie der Stufe 24, die dich angreift: geh mit voller Gesundheit hin. Der Kill bringt gute Erfahrung."
+es = "En cuanto bebe el elixir, {npc:2274} se convierte en {npc:2275}, una bestia hostil de nivel 24 que te ataca: ve con la salud al máximo. Matarla da buena experiencia."
+pt = "Assim que bebe o elixir, {npc:2274} se transforma em {npc:2275}, uma fera hostil de nível 24 que ataca você: esteja com a vida cheia. Matá-la dá bastante experiência."
+ru = "Выпив эликсир, {npc:2274} превращается в {npc:2275} — враждебного зверя 24-го уровня, который нападает на вас: подходите с полным здоровьем. За убийство дают много опыта."
+ko = "{npc:2274}은(는) 비약을 마시면 레벨 24의 적대적인 야수 {npc:2275}(으)로 변해 공격해 옵니다. 생명력을 가득 채우고 가세요. 처치하면 경험치를 많이 얻습니다."
+zh_cn = "{npc:2274}喝下药剂后会变成{npc:2275}，一只24级的敌对野兽并攻击你：请满血前往。击杀它能获得不少经验。"
+zh_tw = "{npc:2274}喝下藥劑後會變成{npc:2275}，一隻24級的敵對野獸並攻擊你：請滿血前往。擊殺牠能獲得不少經驗。"

@@ -1,0 +1,84 @@
+# Quest notes of Thousand Needles. See notes/README.md for the format.
+
+# Assassination Plot: the messenger who drops the starting note appears at the first road fork
+# south of the lift and walks west.
+[[note]]
+quest = 4881
+phase = "accept"
+level = "info"
+en = "{npc:10617} carries the note that starts this quest. He appears at the first road fork south of the lift (about 29, 34) and walks west: wait for him there."
+fr = "{npc:10617} porte la note qui lance cette quête. Il apparaît au premier embranchement de la route au sud de l'élévateur (vers 29, 34) et marche vers l'ouest : attendez-le là."
+de = "{npc:10617} trägt die Notiz, die diese Quest startet. Er erscheint an der ersten Weggabelung südlich des Aufzugs (etwa 29, 34) und läuft nach Westen: warte dort auf ihn."
+es = "{npc:10617} lleva la nota que inicia esta misión. Aparece en la primera bifurcación del camino al sur del elevador (hacia 29, 34) y camina hacia el oeste: espéralo allí."
+pt = "{npc:10617} carrega o bilhete que inicia esta missão. Ele surge na primeira bifurcação da estrada ao sul do elevador (cerca de 29, 34) e anda para oeste: espere-o lá."
+ru = "{npc:10617} несёт записку, с которой начинается это задание. Он появляется у первой развилки дороги к югу от подъёмника (около 29, 34) и идёт на запад: ждите его там."
+ko = "{npc:10617}이(가) 이 퀘스트를 시작하는 쪽지를 지니고 있습니다. 승강장 남쪽 첫 갈림길(약 29, 34)에 나타나 서쪽으로 걸어가니 그곳에서 기다리세요."
+zh_cn = "{npc:10617}身上带着开启此任务的便条。他会出现在升降梯南边的第一个岔路口（约29, 34）并向西走去：在那里等他。"
+zh_tw = "{npc:10617}身上帶著開啟此任務的便條。他會出現在升降梯南邊的第一個岔路口（約29, 34）並向西走去：在那裡等他。"
+
+# Free at Last: the escort fails at a short distance, adds spawn at each plateau, and the captive
+# takes about 15 minutes to come back after a failure.
+[[note]]
+quest = 4904
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Stay right next to {npc:10646}: the escort fails at a shorter distance than most. Two Grimtotems join each time she reaches a plateau, so clear the next one while she crosses the bridge. She respawns in about 15 minutes."
+fr = "Restez tout près de {npc:10646} : l'escorte échoue à une distance plus courte que d'habitude. Deux membres du Totem sinistre arrivent chaque fois qu'elle atteint un plateau : nettoyez le suivant pendant qu'elle traverse le pont. Elle réapparaît en 15 minutes environ."
+de = "Bleib direkt bei {npc:10646}: die Eskorte scheitert schon bei kürzerem Abstand als üblich. An jedem Plateau kommen zwei Grimmtotem hinzu, also räume das nächste, während sie die Brücke überquert. Sie respawnt nach etwa 15 Minuten."
+es = "Quédate pegado a {npc:10646}: la escolta falla a menos distancia de lo habitual. Llegan dos miembros de Tótem Siniestro cada vez que alcanza una meseta, así que despeja la siguiente mientras cruza el puente. Reaparece en unos 15 minutos."
+pt = "Fique colado em {npc:10646}: a escolta falha a uma distância menor que o normal. Dois membros do Temível Totem chegam sempre que ela alcança um platô, então limpe o próximo enquanto ela atravessa a ponte. Ela ressurge em cerca de 15 minutos."
+ru = "Держитесь вплотную к {npc:10646}: сопровождение срывается на меньшем расстоянии, чем обычно. На каждом плато появляются два воина племени Зловещего Тотема, поэтому зачищайте следующее, пока она идёт по мосту. Она возрождается примерно через 15 минут."
+ko = "{npc:10646} 바로 곁에 붙어 있으세요. 이 호위는 보통보다 짧은 거리에서도 실패합니다. 고원에 닿을 때마다 그림토템부족 둘이 나타나니, 그녀가 다리를 건너는 동안 다음 고원을 정리하세요. 약 15분 뒤에 다시 나타납니다."
+zh_cn = "紧跟在{npc:10646}身边：这次护送的失败距离比一般更短。她每到一个平台都会出现两个恐怖图腾，趁她过桥时先清理下一个平台。她约15分钟后重生。"
+zh_tw = "緊跟在{npc:10646}身邊：這次護送的失敗距離比一般更短。她每到一個平台都會出現兩個恐怖圖騰，趁她過橋時先清理下一個平台。她約15分鐘後重生。"
+
+# Homeward Bound: the escort fails as soon as the player is not close, and a rare elite circles
+# over the nests.
+[[note]]
+quest = 4770
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Keep close to {npc:10427}: the escort fails if you fall behind or run ahead. {npc:5934}, a rare elite, flies over the nests: start the escort just after it passes."
+fr = "Restez près de {npc:10427} : l'escorte échoue si vous restez en arrière ou partez devant. {npc:5934}, un élite rare, survole les nids : lancez l'escorte juste après son passage."
+de = "Bleib nah bei {npc:10427}: die Eskorte scheitert, wenn du zurückfällst oder vorausläufst. {npc:5934}, ein seltener Elite, fliegt über die Nester: starte die Eskorte direkt, nachdem er vorbeigezogen ist."
+es = "Mantente cerca de {npc:10427}: la escolta falla si te quedas atrás o te adelantas. {npc:5934}, un élite raro, sobrevuela los nidos: empieza la escolta justo después de que pase."
+pt = "Fique perto de {npc:10427}: a escolta falha se você ficar para trás ou correr na frente. {npc:5934}, um elite raro, sobrevoa os ninhos: comece a escolta logo depois que ele passar."
+ru = "Держитесь рядом с {npc:10427}: сопровождение срывается, если вы отстанете или убежите вперёд. Над гнёздами летает {npc:5934}, редкий элитный противник: начинайте сопровождение сразу после того, как он пролетит."
+ko = "{npc:10427} 가까이 붙어 있으세요. 뒤처지거나 앞서 달려가면 호위가 실패합니다. 희귀 정예 {npc:5934}이(가) 둥지 위를 날아다니니, 그가 지나간 직후에 호위를 시작하세요."
+zh_cn = "紧跟{npc:10427}：落在后面或跑到前面都会导致护送失败。稀有精英{npc:5934}在巢穴上空盘旋：等它飞过后再开始护送。"
+zh_tw = "緊跟{npc:10427}：落在後面或跑到前面都會導致護送失敗。稀有精英{npc:5934}在巢穴上空盤旋：等牠飛過後再開始護送。"
+
+# Test of Faith: only the jump from the planks teleports the player back before landing.
+[[note]]
+quest = 1149
+phase = "objective"
+objective = 1
+level = "must_read"
+en = "Jump only from the wooden planks: you are teleported back before landing. Jumping from anywhere else is a deadly fall."
+fr = "Sautez uniquement depuis les planches en bois : vous êtes téléporté avant de toucher le sol. Sauter de n'importe où ailleurs est une chute mortelle."
+de = "Spring nur von den Holzplanken: du wirst vor der Landung zurückteleportiert. Ein Sprung von anderswo ist ein tödlicher Sturz."
+es = "Salta solo desde los tablones de madera: te teletransportan antes de tocar el suelo. Saltar desde cualquier otro sitio es una caída mortal."
+pt = "Pule apenas das tábuas de madeira: você é teleportado de volta antes de cair. Pular de qualquer outro lugar é uma queda fatal."
+ru = "Прыгайте только с деревянных досок: вас телепортирует обратно до приземления. Прыжок из любого другого места — смертельное падение."
+ko = "반드시 나무 판자에서만 뛰어내리세요. 땅에 닿기 전에 순간이동으로 돌아옵니다. 다른 곳에서 뛰어내리면 추락사합니다."
+zh_cn = "只能从木板上跳下：落地前你会被传送回去。从其他任何地方跳下都会摔死。"
+zh_tw = "只能從木板上跳下：落地前你會被傳送回去。從其他任何地方跳下都會摔死。"
+
+# Test of Endurance: one crate is enough to bring the boss with the last wave; each extra crate
+# adds waves of silencing harpies.
+[[note]]
+quest = 1150
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Break only one {object:20447}: it starts about four waves of harpies that silence, and {npc:4490} comes with the last one. Breaking more only adds waves."
+fr = "Ne cassez qu'une seule caisse de {object:20447} : elle déclenche environ quatre vagues de harpies qui réduisent au silence, et {npc:4490} arrive avec la dernière. En casser plus ne fait qu'ajouter des vagues."
+de = "Zerbrich nur eine Kiste {object:20447}: sie löst etwa vier Wellen Harpyien aus, die zum Schweigen bringen, und {npc:4490} kommt mit der letzten. Mehr zu zerbrechen bringt nur mehr Wellen."
+es = "Rompe solo una caja de {object:20447}: inicia unas cuatro oleadas de arpías que silencian, y {npc:4490} llega con la última. Romper más solo añade oleadas."
+pt = "Quebre apenas uma caixa de {object:20447}: ela inicia cerca de quatro ondas de harpias que silenciam, e {npc:4490} vem com a última. Quebrar mais só adiciona ondas."
+ru = "Разбейте только один ящик «{object:20447}»: это вызывает около четырёх волн гарпий, накладывающих немоту, и {npc:4490} приходит с последней. Если разбить больше, волн просто станет больше."
+ko = "{object:20447}은(는) 하나만 부수세요. 침묵을 거는 하피가 약 네 차례 몰려오고, {npc:4490}은(는) 마지막 무리와 함께 나타납니다. 더 부수면 무리만 늘어납니다."
+zh_cn = "只打破一个{object:20447}：它会引来约四波会沉默的鹰身人，{npc:4490}随最后一波出现。打破更多只会增加波数。"
+zh_tw = "只打破一個{object:20447}：它會引來約四波會沉默的鷹身人，{npc:4490}隨最後一波出現。打破更多只會增加波數。"

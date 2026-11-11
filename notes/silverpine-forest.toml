@@ -78,3 +78,36 @@ ru = "{npc:1867} у ящика издалека бьёт замедляющим�
 ko = "상자 주변의 {npc:1867}은(는) 멀리서 감속 효과가 있는 얼음화살을 쏘고 서로의 전투에 합류합니다. 천막 뒤쪽으로 다가가 하나씩 끌어내세요."
 zh_cn = "箱子周围的{npc:1867}会从远处施放减速的寒冰箭，并互相支援：从帐篷后方接近，逐个拉怪。"
 zh_tw = "箱子周圍的{npc:1867}會從遠處施放緩速的寒冰箭，並互相支援：從帳篷後方接近，逐個拉怪。"
+
+# The Weaver: the archmage stands at the back of the town hall among linked casters with pets;
+# pulling carelessly brings the whole room.
+[[note]]
+quest = 480
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:2120} stands at the back of the town hall with several linked casters and their pets. Pull the room one group at a time, or bring help."
+fr = "{npc:2120} se tient au fond de l'hôtel de ville avec plusieurs lanceurs de sorts liés et leurs familiers. Attirez la salle un groupe à la fois, ou venez accompagné."
+de = "{npc:2120} steht hinten im Rathaus bei mehreren verbundenen Zauberwirkern und ihren Begleitern. Zieh den Raum Gruppe für Gruppe oder bring Hilfe mit."
+es = "{npc:2120} está al fondo del ayuntamiento con varios lanzadores de hechizos vinculados y sus mascotas. Atrae la sala de grupo en grupo o ve acompañado."
+pt = "{npc:2120} fica no fundo da prefeitura com vários conjuradores vinculados e seus ajudantes. Puxe a sala um grupo por vez, ou leve ajuda."
+ru = "{npc:2120} стоит в глубине ратуши рядом с несколькими связанными заклинателями и их питомцами. Выманивайте их по одной группе или возьмите помощь."
+ko = "{npc:2120}은(는) 회관 안쪽에서 서로 연결된 여러 주문시전자 및 그 소환수와 함께 서 있습니다. 한 무리씩 끌어내거나 도움을 받으세요."
+zh_cn = "{npc:2120}站在市政厅深处，身边有数名相互关联的施法者及其宠物。一次只拉一组，或者找人帮忙。"
+zh_tw = "{npc:2120}站在市政廳深處，身邊有數名相互關聯的施法者及其寵物。一次只拉一組，或者找人幫忙。"
+
+# Beren's Peril: the cave sits on a hilltop reached by a narrow trail hidden behind trees just
+# north of the road, hard to spot.
+[[note]]
+quest = 516
+phase = "objective"
+level = "info"
+en = "The cave sits on a hilltop reached by a narrow trail that starts just north of the road at about 60.5, 74.7, hidden behind three big trees."
+fr = "La grotte se trouve au sommet d'une colline, accessible par un sentier étroit qui part juste au nord de la route vers 60,5, 74,7, caché derrière trois grands arbres."
+de = "Die Höhle liegt auf einer Hügelkuppe, erreichbar über einen schmalen Pfad, der knapp nördlich der Straße bei etwa 60,5, 74,7 beginnt, versteckt hinter drei großen Bäumen."
+es = "La cueva está en lo alto de una colina, a la que se llega por un sendero estrecho que empieza justo al norte del camino hacia 60,5, 74,7, oculto tras tres árboles grandes."
+pt = "A caverna fica no alto de uma colina, alcançada por uma trilha estreita que começa logo ao norte da estrada, por volta de 60,5, 74,7, escondida atrás de três árvores grandes."
+ru = "Пещера находится на вершине холма; к ней ведёт узкая тропа, которая начинается чуть севернее дороги, около 60.5, 74.7, и скрыта за тремя большими деревьями."
+ko = "동굴은 언덕 꼭대기에 있으며, 길 바로 북쪽 약 60.5, 74.7에서 시작하는 좁은 오솔길로 올라갑니다. 오솔길은 큰 나무 세 그루 뒤에 가려져 있습니다."
+zh_cn = "洞穴位于山顶，需走一条窄小径上去，小径起点在道路北侧约60.5, 74.7处，藏在三棵大树后面。"
+zh_tw = "洞穴位於山頂，需走一條窄小徑上去，小徑起點在道路北側約60.5, 74.7處，藏在三棵大樹後面。"
