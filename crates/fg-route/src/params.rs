@@ -280,7 +280,12 @@ pub struct Params {
     pub gear_floor: f64,
     pub power_scale: f64,
     pub dungeon_loot_share: f64,
+    /// `gear_value` is for every reward but the weapons `weapons` weighs apart
+    /// (`Params::reward_weight`). The pick among a quest's reward choices follows the same
+    /// weights.
     pub gear_value: f64,
+    #[serde(flatten)]
+    pub weapons: WeaponWeights,
     /// Class quests giving a pet or a form are done as soon as taken when that costs at most
     /// this many seconds: the route only counts their power in faster fights, not the safety.
     pub class_power_slack: f64,
@@ -613,6 +618,7 @@ impl Default for Params {
             power_scale: 1.0,
             dungeon_loot_share: 0.35,
             gear_value: 0.5,
+            weapons: WeaponWeights::default(),
             class_power_slack: 600.0,
             tidy_slack: 30.0,
             tidy_radius: 100.0,
@@ -850,6 +856,77 @@ impl Params {
         let n = self.group_size.clamp(1, 5);
         [1.0, 1.0, 1.166, 1.3, 1.4][n as usize - 1] / n as f64
     }
+
+    /// Levels of XP a level of power a reward item adds is worth (see `gear_value`): its weapon
+    /// type's weight when its speed is in that type's range, `gear_value` otherwise.
+    pub(crate) fn reward_weight(&self, weapon: crate::power::Weapon, speed: f64) -> f64 {
+        match self.weapons.of(weapon) {
+            Some((min, max, value)) if max > 0.0 && speed > min - 0.005 && speed < max + 0.005 => value,
+            _ => self.gear_value,
+        }
+    }
+
+    /// Whether any reward is worth something to the route (see `gear_value`).
+    pub(crate) fn values_gear(&self) -> bool {
+        self.gear_value > 0.0 || self.weapons.values_some()
+    }
+}
+
+/// Declares `WeaponWeights`: three settings for each weapon type (its weight, and the lowest and
+/// highest attack speed it is for), named as the app knows them.
+macro_rules! weapon_weights {
+    ($($weapon:ident => $value:ident, $min:ident, $max:ident;)*) => {
+        /// For each weapon type, what a reward weapon of that type is worth (as `gear_value`) when
+        /// its attack speed, in seconds, is within its `min..=max` (to the hundredth of a second).
+        /// Outside that range, or with no range (`max` 0, the default), the weapon is worth
+        /// `gear_value` as every other reward.
+        #[derive(Debug, Clone, Serialize, Deserialize)]
+        #[serde(default)]
+        #[non_exhaustive]
+        pub struct WeaponWeights {
+            $(pub $value: f64, pub $min: f64, pub $max: f64,)*
+        }
+
+        impl Default for WeaponWeights {
+            fn default() -> Self {
+                Self { $($value: 0.5, $min: 0.0, $max: 0.0,)* }
+            }
+        }
+
+        impl WeaponWeights {
+            /// `(min, max, value)` of a weapon type (none for what is not a weapon of one).
+            fn of(&self, weapon: crate::power::Weapon) -> Option<(f64, f64, f64)> {
+                use crate::power::Weapon;
+                match weapon {
+                    $(Weapon::$weapon => Some((self.$min, self.$max, self.$value)),)*
+                    Weapon::Other => None,
+                }
+            }
+
+            /// Whether a weapon type with a range is worth something.
+            fn values_some(&self) -> bool {
+                false $(|| (self.$max > 0.0 && self.$value > 0.0))*
+            }
+        }
+    };
+}
+
+weapon_weights! {
+    Axe => weapon_axe_value, weapon_axe_min_speed, weapon_axe_max_speed;
+    TwoHandedAxe => weapon_axe2h_value, weapon_axe2h_min_speed, weapon_axe2h_max_speed;
+    Mace => weapon_mace_value, weapon_mace_min_speed, weapon_mace_max_speed;
+    TwoHandedMace => weapon_mace2h_value, weapon_mace2h_min_speed, weapon_mace2h_max_speed;
+    Sword => weapon_sword_value, weapon_sword_min_speed, weapon_sword_max_speed;
+    TwoHandedSword => weapon_sword2h_value, weapon_sword2h_min_speed, weapon_sword2h_max_speed;
+    Dagger => weapon_dagger_value, weapon_dagger_min_speed, weapon_dagger_max_speed;
+    Fist => weapon_fist_value, weapon_fist_min_speed, weapon_fist_max_speed;
+    Polearm => weapon_polearm_value, weapon_polearm_min_speed, weapon_polearm_max_speed;
+    Staff => weapon_staff_value, weapon_staff_min_speed, weapon_staff_max_speed;
+    Bow => weapon_bow_value, weapon_bow_min_speed, weapon_bow_max_speed;
+    Crossbow => weapon_crossbow_value, weapon_crossbow_min_speed, weapon_crossbow_max_speed;
+    Gun => weapon_gun_value, weapon_gun_min_speed, weapon_gun_max_speed;
+    Thrown => weapon_thrown_value, weapon_thrown_min_speed, weapon_thrown_max_speed;
+    Wand => weapon_wand_value, weapon_wand_min_speed, weapon_wand_max_speed;
 }
 
 impl Params {

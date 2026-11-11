@@ -228,7 +228,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   // Advanced view: a search over the settings' names and explanations; the sections for experts
   // folded until opened (all open while searching).
   const [query, setQuery] = useState("");
-  const [openSections, setOpenSections] = useState(() => new Set(sections.filter((s) => !s.expert).map((s) => s.title)));
+  const [openSections, setOpenSections] = useState(() => new Set(sections.filter((s) => !s.expert && !s.folded).map((s) => s.title)));
   const plain = (text: string) => text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
   const matches = (f: Field) => !query.trim() || plain(`${t(f.label)} ${f.help ? t(f.help) : ""}`).includes(plain(query.trim()));
 

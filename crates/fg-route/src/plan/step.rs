@@ -344,7 +344,9 @@ impl Simulator<'_> {
         for &item in fixed {
             changed |= p.equip(&mut s.gear, item, 1.0, s.level);
         }
-        let picked = p.best_choice(&s.gear, choices, s.level).map(|(k, _)| choices[k]);
+        let picked = p
+            .best_choice(&s.gear, choices, s.level, self.params)
+            .map(|(k, _)| choices[k]);
         if let Some(item) = picked {
             changed |= p.equip(&mut s.gear, item, 1.0, s.level);
         }

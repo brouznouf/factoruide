@@ -44,8 +44,15 @@ export interface ProfileImported {
   level: number;
 }
 
+/** Weapon types a reward weighs apart, as the planner names them (`fg_route::params::WeaponWeights`). */
+export const WEAPON_TYPES = ["axe", "axe2h", "mace", "mace2h", "sword", "sword2h", "dagger", "fist", "polearm", "staff", "bow", "crossbow", "gun", "thrown", "wand"] as const;
+export type WeaponType = (typeof WEAPON_TYPES)[number];
+
+/** For each weapon type, its reward value and the attack speeds (seconds) it is for: max 0 = none. */
+export type WeaponWeights = { [K in WeaponType as `weapon_${K}_value` | `weapon_${K}_min_speed` | `weapon_${K}_max_speed`]: number };
+
 /** Planner tunables, mirror of `fg_route::Params`. */
-export interface Params {
+export interface Params extends WeaponWeights {
   /** The zone the route begins in (AreaTable zone), chosen on the starts' preview; 0 or unset: the planner's choice. */
   start_zone?: number;
   run_speed: number;

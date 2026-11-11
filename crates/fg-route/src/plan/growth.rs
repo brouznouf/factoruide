@@ -133,30 +133,32 @@ impl<'g> Growth<'g> {
         power.max(1e-6).ln() / crate::power::LEVEL_LN
     }
 
-    /// Levels of power the rewards of quest `i` would add (the best choice, and a class power
-    /// not gained yet), quickly.
-    pub(crate) fn reward_gain(self, s: &State, i: u32) -> f64 {
+    /// Levels of XP the rewards of quest `i` are worth, in levels of the character's: the levels
+    /// of power they would add (the best choice, and a class power not gained yet), quickly, each
+    /// item's weighed by `Params::reward_weight`, the class power's and spells' by `gear_value`.
+    pub(crate) fn reward_worth(self, s: &State, i: u32) -> f64 {
         let mut class = match self.quest_at(i).power {
             Some((k, power)) if s.powers & (1 << k) == 0 => Self::class_power_levels(power),
             _ => 0.0,
         };
-        let Some(p) = &self.model.power else { return class };
+        let Some(p) = &self.model.power else {
+            return class * self.params.gear_value;
+        };
         class += self.params.power_scale
             * p.quest_gain(
                 s.abilities,
                 s.abilities | self.model.abilities.quest(self.quest_at(i).id),
                 s.level.max(self.quest_at(i).min_level),
             );
+        let class = class * self.params.gear_value;
         let (fixed, choices) = &self.model.rewards[i as usize];
         if fixed.is_empty() && choices.is_empty() {
             return class;
         }
         let level = s.level.max(self.quest_at(i).level);
-        let best = choices
-            .iter()
-            .map(|&c| p.quick_gain(&s.gear, c, level))
-            .fold(0.0, f64::max);
-        class + self.params.power_scale * (fixed.iter().map(|&c| p.quick_gain(&s.gear, c, level)).sum::<f64>() + best)
+        let worth = |c: u16| p.quick_gain(&s.gear, c, level) * p.reward_weight(c, self.params);
+        let best = choices.iter().map(|&c| worth(c)).fold(0.0, f64::max);
+        class + self.params.power_scale * (fixed.iter().map(|&c| worth(c)).sum::<f64>() + best)
     }
 
     /// Abilities and power actually granted by completing a class quest.
@@ -310,22 +312,23 @@ impl<'g> Growth<'g> {
     }
 
     /// XP the power a quest's rewards add is worth: `gear_value` levels of XP per level of
-    /// power (it makes every fight that follows faster).
+    /// power, or the weight of the reward's kind of weapon (`reward_worth`; it makes every fight
+    /// that follows faster).
     pub(crate) fn gear_xp(self, s: &State, i: u32, level: i64) -> f64 {
-        if self.params.gear_value <= 0.0 {
+        if !self.params.values_gear() {
             return 0.0;
         }
         // A quest asking for several (ten books for the library's necklace) shares its reward
         // among them: each is worth its part, as long as the reward is not earned.
         let share: f64 = (self.model.bundles[i as usize].iter())
             .filter(|&&f| !s.rewarded(f as usize))
-            .map(|&f| self.reward_gain(s, f) / self.quest_at(f).pre_need as f64)
+            .map(|&f| self.reward_worth(s, f) / self.quest_at(f).pre_need as f64)
             .sum();
-        let gain = self.reward_gain(s, i) + share;
-        if gain <= 0.0 {
+        let worth = self.reward_worth(s, i) + share;
+        if worth <= 0.0 {
             return 0.0;
         }
-        gain * self.params.gear_value * self.rules().to_next_level(level) as f64
+        worth * self.rules().to_next_level(level) as f64
     }
 
     /// Time at the class trainers: every class of the group trains (one after the other).
