@@ -3428,9 +3428,13 @@ fn profession_trainer_stops_are_off_unless_chosen() {
     let on = plan(&["profession_trainers=true"]);
     let found = stops(&on);
     let lines: Vec<i64> = on.professions.iter().map(|p| p.skill_line).collect();
+    // Learned at its trainer: its first rank, or more when the route gets there once the skill
+    // curve is past it (Leatherworking from Mak at level 14 teaches up to 150 at once).
     for line in &lines {
         assert!(
-            found.iter().any(|s| s.line == Some(*line) && s.skill == Some(75)),
+            found
+                .iter()
+                .any(|s| s.line == Some(*line) && s.skill.is_some_and(|k| k >= 75)),
             "{line}: the profession is learned at its trainer"
         );
     }
