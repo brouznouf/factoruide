@@ -296,6 +296,20 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
         ],
     ),
     (
+        "suffix.start_wait",
+        [
+            "(offered only after an event at its giver: about {minutes} min wait)",
+            "(proposée seulement après un événement autour du donneur : environ {minutes} min d'attente)",
+            "(erst nach einem Ereignis beim Questgeber angeboten: etwa {minutes} Min. Wartezeit)",
+            "(solo se ofrece tras un evento junto a quien la da: unos {minutes} min de espera)",
+            "(oferecida só após um evento junto a quem a dá: cerca de {minutes} min de espera)",
+            "(выдаётся только после события у квестодателя: ожидание около {minutes} мин)",
+            "(퀘스트 제공자 주변 이벤트 후에만 제공: 약 {minutes}분 대기)",
+            "（仅在任务给予者处的事件之后提供：约等待{minutes}分钟）",
+            "（僅在任務給予者處的事件之後提供：約等待{minutes}分鐘）",
+        ],
+    ),
+    (
         "suffix.optional",
         [
             "(optional: {profession} {skill})",

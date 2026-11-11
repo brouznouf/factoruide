@@ -329,7 +329,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
                 (SELECT json_group_array(json_extract(t.value, '$[1]'))
                  FROM json_each(extra, '$.extra_objectives') e, json_each(e.value, '$.\"5\"') t
                  WHERE json_extract(t.value, '$[0]') = 'object'),
-                {reward_spell}, objectives_text
+                {reward_spell}, objectives_text, json_extract(extra, '$.start_wait')
          FROM m_quest WHERE status = 'available'"
     ))?;
     let rows = stmt.query_map([], |r| {
@@ -362,6 +362,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
                 .unwrap_or_default(),
             reward_spell: r.get(24)?,
             objectives_text: r.get(25)?,
+            start_wait: r.get(26)?,
         })
     })?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
@@ -671,6 +672,9 @@ pub(super) struct QuestRow {
     pub(super) flags: Option<i64>,
     /// Seconds from taking the quest to finish it (timed quests).
     pub(super) time_limit: Option<i64>,
+    /// Mean seconds waited at the giver before it offers the quest (an event coming back now
+    /// and then).
+    pub(super) start_wait: Option<f64>,
     /// Its objectives text has a number ("Capture 5 Deeprun Rats").
     pub(super) numbered: bool,
     /// The quest's objectives text ("Speak with Nara Wildmane.").

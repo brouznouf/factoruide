@@ -157,6 +157,18 @@ fn timed_quest_deadline_is_part_of_the_state() {
     );
 }
 
+/// A giver offering its quest only after an event (Private Thorsen saved from his ambush): taking
+/// it costs the mean wait for the event.
+#[test]
+fn a_giver_after_an_event_costs_its_wait() {
+    let mut p = quests_at_start(1);
+    let route = [Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)];
+    let before = planner(&p).simulate(&route, None).unwrap();
+    p.model.quests[0].start_wait = 1000.0;
+    let after = planner(&p).simulate(&route, None).unwrap();
+    assert!((after - before - 1000.0).abs() < 1.0, "{before} then {after}");
+}
+
 /// An objective done at another of its places, where a quest of the route is taken and turned
 /// in at hand: removing that quest replays the objective's stop, whose place is the one really
 /// visited (not the objective's nearest place).

@@ -171,6 +171,7 @@ impl Q {
             xp: 500,
             xp_observed: false,
             time_limit: None,
+            start_wait: 0.0,
             starts: Vec::new(),
             ends: Vec::new(),
             objectives: Vec::new(),
@@ -327,6 +328,12 @@ impl Q {
 
     pub fn timed(mut self, seconds: f64) -> Self {
         self.quest.time_limit = Some(seconds);
+        self
+    }
+
+    /// Offered after a wait at the giver (seconds, on average).
+    pub fn start_wait(mut self, seconds: f64) -> Self {
+        self.quest.start_wait = seconds;
         self
     }
 

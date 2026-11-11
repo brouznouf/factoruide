@@ -3061,6 +3061,22 @@ fn a_place_to_reach_takes_its_fixed_time() {
     assert_eq!(o[0].extra, 1500.0);
 }
 
+/// A giver offering its quest only after an event (`start_wait` of the overrides, Jungle
+/// Secrets): the model keeps how long it waits.
+#[test]
+fn a_giver_after_an_event_keeps_its_wait() {
+    let conn = Fixture::new(Edition::Classic)
+        .file("classic_dungeons")
+        .toml(
+            "[[quest]]\nid = 90011\nname = \"Secrets\"\nlevel = 18\nmin_level = 14\nraces_mask = 77\nzone = 40\nxp = 300\n\
+             extra = '{\"start_wait\": 1000}'\n\
+             starts = [{ npc = 234 }]\nends = [{ npc = 234 }]\n",
+        )
+        .open();
+    let p = prepare_in(&conn, "human", "warrior", 25, &[], None);
+    assert_eq!(p.model.quests[quest(&p, 90011).unwrap() as usize].start_wait, 1000.0);
+}
+
 /// A quest started by an item dropped inside a dungeon is taken during the group's run: the
 /// creatures standing outside, around its entrance, guard nothing of it (Elder Knowledge's elite
 /// Dragonmaw, Grime-Encrusted Ring's level 40 creatures, GitHub #125).

@@ -24,6 +24,9 @@
 #                               # spell is required in the class's guides
 # time_limit = 600              # timed quest: seconds from taking it to turn it in
 #                               # (0: not timed), over the sources'
+# start_wait = 1100             # mean seconds waited at the giver before it offers the
+#                               # quest: a giver offering it only after an event that comes
+#                               # back now and then (the guide tells the wait)
 # objectives = [{ type = "creature", id = 6177, amount = 1 }]   # replace the sources' (creature,
 #                               # object or item; talk: a creature healed or talked to, not
 #                               # killed; text: what the step says)
@@ -149,3 +152,10 @@ quests = [5921, 5922]
 class = "shaman"
 name = "Call of Air"
 quests = [1531, 1532]
+
+[[quest]]
+# Jungle Secrets: Private Thorsen offers it only away from the Rebel Camp, once saved from the two
+# Kurzen's Agents who ambush him on his patrol. He stands about 28 minutes at the camp between two
+# patrols: about 18 minutes waited on average, following him included.
+id = 215
+start_wait = 1100

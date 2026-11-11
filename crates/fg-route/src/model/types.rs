@@ -529,6 +529,9 @@ pub struct Quest {
     pub xp_observed: bool,
     /// Timed quest: seconds from taking it to turn it in, else it fails.
     pub time_limit: Option<f64>,
+    /// Mean seconds waited at the giver before it offers the quest: a giver offering it only
+    /// after an event that comes back now and then (Private Thorsen saved from his ambush).
+    pub start_wait: f64,
     pub starts: Vec<Loc>,
     pub ends: Vec<Loc>,
     pub objectives: Vec<Objective>,

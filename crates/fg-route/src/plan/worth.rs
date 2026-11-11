@@ -54,7 +54,8 @@ impl Worth<'_> {
         let travel: f64 = path.windows(2).map(|w| leg(&w[0], &w[1])).sum();
         let work: f64 = places.iter().map(|o| work_at(o)).sum();
         let start = q.start_kills * self.params.kill_time(level, bonus, q.start_mob_level)
-            + q.start_uses * self.params.object_time;
+            + q.start_uses * self.params.object_time
+            + q.start_wait;
         travel + work + start + self.params.stop_overhead * (2 + q.objectives.len()) as f64
     }
 

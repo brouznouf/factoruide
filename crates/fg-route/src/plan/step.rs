@@ -296,6 +296,9 @@ impl Simulator<'_> {
             s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
             self.growth().gather(s, q.starts[0].zone, q.start_kills);
         }
+        // A giver offering it only after an event: the mean wait for it.
+        s.time += q.start_wait;
+        s.spent.overhead += q.start_wait;
         s.accepted.set(i as usize, true);
         s.abilities |= self.model.abilities.accepted(q.id);
         s.log += 1;

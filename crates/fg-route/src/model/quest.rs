@@ -47,6 +47,7 @@ impl QuestBuilder<'_> {
             xp: self.xp(r, level),
             xp_observed: r.xp_observed,
             time_limit: r.time_limit.filter(|t| *t > 0).map(|t| t as f64),
+            start_wait: r.start_wait.filter(|w| *w > 0.0).unwrap_or(0.0),
             starts: givers.starts,
             ends: givers.ends,
             objectives,
