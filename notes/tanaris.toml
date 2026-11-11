@@ -136,3 +136,35 @@ ru = "Не используйте {item:8526}: если его съесть, о�
 ko = "{item:8526}을(를) 사용하지 마세요. 먹으면 사라져서 {zone:47}의 호수 바닥까지 다시 가야 합니다. 약초 찾기를 켜면 물속 버섯이 보입니다."
 zh_cn = "不要使用{item:8526}：吃掉就没了，你得回到{zone:47}的湖底重新采。寻找草药能显示水下的蘑菇。"
 zh_tw = "不要使用{item:8526}：吃掉就沒了，你得回到{zone:47}的湖底重新採。尋找草藥能顯示水下的蘑菇。"
+
+# Fire Plume Forged: the mold only works out of combat at the lake's edge (west shore works); Blazerunner, an elite, sits in the nearby cave.
+[[note]]
+quest = 5802
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Use {item:14644} out of combat on the lava lake's western shore (about 48, 47) rather than in the lava. {npc:9376}, an elite, waits in the cave beside the lake."
+fr = "Utilisez {item:14644} hors combat sur la rive ouest du lac de lave (vers 48, 47) plutôt que dans la lave. {npc:9376}, un élite, attend dans la grotte à côté du lac."
+de = "Benutze {item:14644} außerhalb des Kampfes am Westufer des Lavasees (etwa 48, 47), nicht in der Lava. {npc:9376}, ein Elite, wartet in der Höhle neben dem See."
+es = "Usa {item:14644} fuera de combate en la orilla oeste del lago de lava (hacia 48, 47) y no dentro de la lava. {npc:9376}, un élite, espera en la cueva junto al lago."
+pt = "Use {item:14644} fora de combate na margem oeste do lago de lava (por volta de 48, 47), não dentro da lava. {npc:9376}, um elite, espera na caverna ao lado do lago."
+ru = "Используйте {item:14644} вне боя на западном берегу лавового озера (около 48, 47), а не в лаве. {npc:9376}, элитный противник, ждёт в пещере у озера."
+ko = "{item:14644}은(는) 용암 속이 아니라 용암 호수 서쪽 기슭(48, 47 근처)에서 전투가 아닐 때 사용하세요. 정예 {npc:9376}이(가) 호수 옆 동굴에 있습니다."
+zh_cn = "在熔岩湖西岸（约48, 47）脱战状态下使用{item:14644}，不要站进熔岩里。精英怪{npc:9376}守在湖边的洞里。"
+zh_tw = "在熔岩湖西岸（約48, 47）脫戰狀態下使用{item:14644}，不要站進熔岩裡。精英怪{npc:9376}守在湖邊的洞裡。"
+
+# Pawn Captures Queen: three waves (2, 3, then 2 guards with the queen) spawn in the hatchery; the lure is consumed, a new one comes by retaking the quest.
+[[note]]
+quest = 4507
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Using {item:11833} starts three waves in the room: {npc:10040} ×2, then ×3, then ×2 with {npc:10041}. Fight them in the corridor. If you fail, the lure is lost: abandon the quest and take it again for a new one."
+fr = "Utiliser {item:11833} déclenche trois vagues dans la salle : {npc:10040} ×2, puis ×3, puis ×2 avec {npc:10041}. Combattez-les dans le couloir. En cas d'échec, l'appât est perdu : abandonnez la quête et reprenez-la pour en obtenir un autre."
+de = "{item:11833} löst drei Wellen im Raum aus: {npc:10040} ×2, dann ×3, dann ×2 mit {npc:10041}. Kämpfe im Gang. Scheiterst du, ist der Köder weg: Brich die Quest ab und nimm sie erneut an, um einen neuen zu bekommen."
+es = "Usar {item:11833} desata tres oleadas en la sala: {npc:10040} ×2, luego ×3 y luego ×2 con {npc:10041}. Lucha en el pasillo. Si fallas, pierdes el cebo: abandona la misión y vuelve a cogerla para obtener otro."
+pt = "Usar {item:11833} desencadeia três ondas na sala: {npc:10040} ×2, depois ×3, depois ×2 com {npc:10041}. Lute no corredor. Se falhar, a isca se perde: abandone a missão e pegue-a de novo para receber outra."
+ru = "{item:11833} вызывает в зале три волны: {npc:10040} ×2, затем ×3, затем ×2 вместе с {npc:10041}. Сражайтесь в коридоре. При неудаче приманка пропадает: откажитесь от задания и возьмите его снова, чтобы получить новую."
+ko = "{item:11833}을(를) 쓰면 방에 적이 세 차례 몰려옵니다. {npc:10040} 2마리, 다음엔 3마리, 마지막엔 2마리와 {npc:10041}. 통로에서 싸우세요. 실패하면 미끼가 사라지니 퀘스트를 포기하고 다시 받아 새 미끼를 얻으세요."
+zh_cn = "使用{item:11833}会在房间里引来三波敌人：{npc:10040}×2，然后×3，最后×2加上{npc:10041}。在走廊里打。失败的话诱饵就没了：放弃任务再重新接，就能拿到新的。"
+zh_tw = "使用{item:11833}會在房間裡引來三波敵人：{npc:10040}×2，然後×3，最後×2加上{npc:10041}。在走廊裡打。失敗的話誘餌就沒了：放棄任務再重新接，就能拿到新的。"

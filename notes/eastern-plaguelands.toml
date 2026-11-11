@@ -1,0 +1,55 @@
+# Quest notes of the Eastern Plaguelands. See notes/README.md for the format.
+
+# To Kill With Purpose: Living Rot does not stack and has a 10-minute timer that starts on looting; deleting it abandons the quest.
+[[note]]
+quest = 6022
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:15447} does not stack and expires 10 minutes after you loot it. Kill several undead first, then loot them all at once, with enough free bag slots."
+fr = "{item:15447} ne s'empile pas et disparaît 10 minutes après avoir été ramassée. Tuez d'abord plusieurs morts-vivants, puis fouillez-les tous d'un coup, avec assez de place libre dans vos sacs."
+de = "{item:15447} ist nicht stapelbar und verschwindet 10 Minuten nach dem Plündern. Töte erst mehrere Untote und plündere sie dann alle auf einmal, mit genug freien Taschenplätzen."
+es = "{item:15447} no se apila y caduca 10 minutos después de despojarla. Mata primero a varios no-muertos y despójalos todos a la vez, con huecos libres en las bolsas."
+pt = "{item:15447} não empilha e expira 10 minutos depois de saqueada. Mate primeiro vários mortos-vivos e saqueie todos de uma vez, com espaços livres nas bolsas."
+ru = "{item:15447} не складывается в стопку и пропадает через 10 минут после добычи. Сначала убейте нескольких нежитей, затем обыщите их всех разом; освободите место в сумках."
+ko = "{item:15447}은(는) 겹쳐지지 않고 획득 10분 뒤에 사라집니다. 언데드를 여러 마리 먼저 처치한 뒤 한꺼번에 전리품을 챙기고, 가방 칸을 충분히 비워 두세요."
+zh_cn = "{item:15447}无法堆叠，拾取10分钟后就会消失。先杀掉几只亡灵，再一次性拾取，并留出足够的背包空位。"
+zh_tw = "{item:15447}無法堆疊，拾取10分鐘後就會消失。先殺掉幾隻不死生物，再一次拾取，並留出足夠的背包空位。"
+
+# Pamela's Doll: the three parts spawn at random spots in the Darrowshire houses, each calls a ghost, and they must be combined from the bags.
+[[note]]
+quest = 5149
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The doll's parts can lie in any of the three houses, and taking each one calls a {npc:10940}. Once you hold all three, right-click one of them to put the doll together."
+fr = "Les morceaux de la poupée peuvent se trouver dans n'importe laquelle des trois maisons, et chacun ramassé fait apparaître un {npc:10940}. Une fois les trois en main, faites un clic droit sur l'un d'eux pour reconstituer la poupée."
+de = "Die Teile der Puppe können in jedem der drei Häuser liegen, und jedes aufgehobene Teil ruft einen {npc:10940} herbei. Hast du alle drei, klicke eines mit Rechtsklick an, um die Puppe zusammenzusetzen."
+es = "Las piezas de la muñeca pueden estar en cualquiera de las tres casas, y cada una que cojas invoca a un {npc:10940}. Cuando tengas las tres, haz clic derecho en una para montar la muñeca."
+pt = "As partes da boneca podem estar em qualquer uma das três casas, e cada uma que você pega invoca um {npc:10940}. Com as três em mãos, clique com o botão direito em uma delas para montar a boneca."
+ru = "Части куклы могут лежать в любом из трёх домов, и каждая подобранная призывает {npc:10940}. Собрав все три, щёлкните правой кнопкой по одной из них, чтобы собрать куклу."
+ko = "인형 조각은 세 집 중 어디에나 있을 수 있으며, 조각을 하나 집을 때마다 {npc:10940}이(가) 나타납니다. 세 조각을 모두 모으면 그중 하나를 오른쪽 클릭해 인형을 맞추세요."
+zh_cn = "娃娃的部件可能在三座房子中的任意一座里，每拿起一个都会招来一个{npc:10940}。集齐三个后，右键点击其中一个把娃娃拼起来。"
+zh_tw = "娃娃的部件可能在三棟房子中的任何一棟裡，每拿起一個都會招來一個{npc:10940}。集齊三個後，右鍵點擊其中一個把娃娃拼起來。"
+
+[[icon]]
+quest = 5149
+phase = "objective"
+objective = 1
+icon = "pickup"
+
+# Of Forgotten Memories: only Mercutio must die, his corpse despawns fast; the gap in the graveyard fence splits his helpers.
+[[note]]
+quest = 5781
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The mound calls {npc:11886} and his helpers. Only he must die: loot {item:14613} at once, his body vanishes quickly. Jumping through the gap in the fence by the grave makes the others walk the long way round."
+fr = "Le monticule fait venir {npc:11886} et ses acolytes. Seul lui doit mourir : ramassez {item:14613} aussitôt, son corps disparaît vite. Sauter par la brèche de la clôture près de la tombe oblige les autres à faire le tour."
+de = "Der Erdhügel ruft {npc:11886} und seine Helfer. Nur er muss sterben: Plündere {item:14613} sofort, seine Leiche verschwindet schnell. Springst du durch die Lücke im Zaun beim Grab, müssen die anderen außen herumlaufen."
+es = "El montículo invoca a {npc:11886} y sus secuaces. Solo él debe morir: despoja {item:14613} enseguida, su cuerpo desaparece pronto. Saltar por el hueco de la valla junto a la tumba obliga a los demás a dar la vuelta."
+pt = "O monte invoca {npc:11886} e seus ajudantes. Só ele precisa morrer: saqueie {item:14613} na hora, o corpo some rápido. Pular pela abertura da cerca junto ao túmulo obriga os outros a dar a volta."
+ru = "Холмик призывает {npc:11886} и его подручных. Убить нужно только его: сразу заберите {item:14613}, тело быстро исчезает. Прыжок через пролом в ограде у могилы заставит остальных идти в обход."
+ko = "흙더미를 누르면 {npc:11886}와(과) 부하들이 나타납니다. 그만 죽이면 됩니다. 시체가 금방 사라지니 {item:14613}을(를) 바로 챙기세요. 무덤 옆 울타리 틈으로 뛰어넘으면 나머지는 먼 길로 돌아옵니다."
+zh_cn = "土堆会召唤{npc:11886}和他的手下。只需杀死他本人：立刻拾取{item:14613}，他的尸体很快就会消失。从坟墓旁篱笆的缺口跳过去，其他怪就得绕远路。"
+zh_tw = "土堆會召喚{npc:11886}和他的手下。只需殺死他本人：立刻拾取{item:14613}，他的屍體很快就會消失。從墳墓旁籬笆的缺口跳過去，其他怪就得繞遠路。"

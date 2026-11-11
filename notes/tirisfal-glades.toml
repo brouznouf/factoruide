@@ -31,3 +31,18 @@ ru = "Нежить в склепе бьёт больно, быстро возр�
 ko = "묘지의 언데드는 강하게 때리고 빨리 재생성되며, 순찰병이 전투에 끼어듭니다. 순찰병이 지나가길 기다렸다가 하나씩 끌어내세요. {npc:1658}은(는) 가장 아래층에 있습니다."
 zh_cn = "墓穴里的亡灵攻击很高、重生很快，巡逻怪还会加入战斗：等巡逻过去后再逐个拉怪。{npc:1658}在最底层。"
 zh_tw = "墓穴裡的不死生物攻擊很高、重生很快，巡邏怪還會加入戰鬥：等巡邏過去後再逐個拉怪。{npc:1658}在最底層。"
+
+# A Plague Upon Thee (barrel): placing the barrel only does half; clicking the smoking barrel offers the follow-up that is turned in at the Bulwark.
+[[note]]
+quest = 5902
+phase = "objective"
+level = "warning"
+en = "Click the crate in the middle of the mill to set the barrel on it, then click the smoking barrel itself: it offers {quest:6390}, the step that sends you back to the quest giver."
+fr = "Cliquez sur la caisse au centre de la scierie pour y poser le tonneau, puis cliquez sur le tonneau fumant lui-même : il propose {quest:6390}, l'étape qui vous renvoie au donneur de quête."
+de = "Klicke die Kiste in der Mitte der Sägemühle an, um das Fass daraufzustellen, und dann das rauchende Fass selbst: Es bietet {quest:6390} an, den Schritt, der dich zum Auftraggeber zurückschickt."
+es = "Haz clic en la caja del centro del aserradero para dejar el barril encima y luego en el propio barril humeante: ofrece {quest:6390}, el paso que te devuelve a quien te dio la misión."
+pt = "Clique no caixote no meio da serraria para pôr o barril em cima e depois no próprio barril fumegante: ele oferece {quest:6390}, a etapa que leva você de volta a quem deu a missão."
+ru = "Щёлкните по ящику в центре лесопилки, чтобы поставить на него бочку, затем по самой дымящейся бочке: она предложит {quest:6390} — этап, который возвращает вас к тому, кто выдал задание."
+ko = "제재소 한가운데 상자를 클릭해 통을 올려놓은 뒤, 연기가 나는 통 자체를 클릭하세요. {quest:6390}을(를) 받을 수 있으며, 이 단계로 퀘스트를 준 NPC에게 돌아갑니다."
+zh_cn = "点击伐木场中央的箱子把桶放上去，然后再点击冒烟的桶本身：它会提供{quest:6390}，也就是带你回去找任务发布者的那一步。"
+zh_tw = "點擊伐木場中央的箱子把桶放上去，然後再點擊冒煙的桶本身：它會提供{quest:6390}，也就是帶你回去找任務發布者的那一步。"

@@ -1,0 +1,49 @@
+# Quest notes of the Searing Gorge. See notes/README.md for the format.
+
+# STOLEN (Tuyere): only a few Steamsmiths spawn and the drop rate is low, but the item can be looted by every party member.
+[[note]]
+quest = 7728
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:18959} drops rarely and only from {npc:5840}, of which only a handful spawn, around 39, 50. Every party member can loot it, so group up with others on the quest."
+fr = "{item:18959} tombe rarement et seulement sur {npc:5840}, dont il n'existe qu'une poignée, vers 39, 50. Chaque membre du groupe peut la ramasser : groupez-vous avec ceux qui ont la quête."
+de = "{item:18959} droppt selten und nur bei {npc:5840}, von denen es nur eine Handvoll gibt, um 39, 50. Jedes Gruppenmitglied kann ihn plündern, also schließ dich anderen mit der Quest an."
+es = "{item:18959} cae rara vez y solo de {npc:5840}, de los que apenas aparecen unos pocos, hacia 39, 50. Todo el grupo puede despojarla, así que agrúpate con otros que tengan la misión."
+pt = "{item:18959} cai raramente e só de {npc:5840}, dos quais surgem poucos, por volta de 39, 50. Todos do grupo podem saqueá-la, então agrupe-se com outros que tenham a missão."
+ru = "{item:18959} выпадает редко и только у противников {npc:5840}, которых всего несколько, около 39, 50. Добычу получает каждый участник группы, так что объединяйтесь с теми, у кого есть задание."
+ko = "{item:18959}은(는) {npc:5840}에게서만 드물게 떨어지며, 39, 50 근처에 몇 마리밖에 없습니다. 파티원 모두가 획득할 수 있으니 같은 퀘스트를 하는 사람들과 파티를 맺으세요."
+zh_cn = "{item:18959}只从{npc:5840}身上掉落，而且掉率很低，他们在39, 50附近只有寥寥几个。队伍里每个人都能拾取，所以和有这个任务的人组队。"
+zh_tw = "{item:18959}只從{npc:5840}身上掉落，而且掉率很低，他們在39, 50附近只有寥寥幾個。隊伍裡每個人都能拾取，所以和有這個任務的人組隊。"
+
+# Incendosaurs: their cave in the Slag Pit has no ground path; players drop from the north rim onto the walkway between the two eastern caves.
+[[note]]
+quest = 7727
+phase = "objective"
+objective = 1
+level = "info"
+en = "The {npc:9318} cave has no path from the ground: from the north rim near the crane at about 49, 44, drop onto the metal walkway below, then enter the cave at 47, 47 and go right."
+fr = "On n'atteint pas à pied la grotte de {npc:9318} : depuis le bord nord, près de la grue vers 49, 44, sautez sur la passerelle métallique en contrebas, puis entrez dans la grotte en 47, 47 et prenez à droite."
+de = "Zur Höhle von {npc:9318} führt kein Weg vom Boden aus: Spring vom Nordrand nahe dem Kran bei etwa 49, 44 auf den Metallsteg darunter, betritt dann die Höhle bei 47, 47 und halte dich rechts."
+es = "A la cueva de {npc:9318} no se llega a pie: desde el borde norte, junto a la grúa hacia 49, 44, salta a la pasarela metálica de abajo, entra en la cueva en 47, 47 y gira a la derecha."
+pt = "Não há caminho a pé até a caverna de {npc:9318}: da borda norte, perto do guindaste por volta de 49, 44, pule na passarela de metal abaixo, entre na caverna em 47, 47 e vá para a direita."
+ru = "К пещере, где обитает {npc:9318}, пешком не пройти: с северного края у крана около 49, 44 спрыгните на металлический мостик внизу, затем войдите в пещеру в 47, 47 и держитесь правее."
+ko = "{npc:9318} 동굴은 땅에서 가는 길이 없습니다. 49, 44 근처 북쪽 가장자리 기중기 옆에서 아래 금속 통로로 뛰어내린 뒤, 47, 47의 동굴로 들어가 오른쪽으로 가세요."
+zh_cn = "{npc:9318}所在的洞穴无法从地面走过去：从北侧边缘约49, 44的吊车旁跳到下方的金属走道上，再从47, 47进洞后向右走。"
+zh_tw = "{npc:9318}所在的洞穴無法從地面走過去：從北側邊緣約49, 44的吊車旁跳到下方的金屬走道上，再從47, 47進洞後向右走。"
+
+# What the Flux?: the plans sit behind Overseer Maltorius and two elite guards; they can be grabbed without killing them, then a jump off the balcony.
+[[note]]
+quest = 7722
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The plans lie on a balcony behind {npc:14621} and his two elite guards. You can grab them and jump off the ledge instead of fighting all three."
+fr = "Les plans se trouvent sur un balcon derrière {npc:14621} et ses deux gardes élites. Vous pouvez les saisir puis sauter du rebord au lieu d'affronter les trois."
+de = "Die Pläne liegen auf einem Balkon hinter {npc:14621} und seinen zwei Elite-Wachen. Du kannst sie schnappen und über die Kante springen, statt gegen alle drei zu kämpfen."
+es = "Los planos están en un balcón detrás de {npc:14621} y sus dos guardias élite. Puedes cogerlos y saltar por el borde en lugar de luchar contra los tres."
+pt = "Os planos ficam numa sacada atrás de {npc:14621} e seus dois guardas elite. Você pode pegá-los e pular da borda em vez de enfrentar os três."
+ru = "Чертежи лежат на балконе, где стоят {npc:14621} и два его элитных стража. Можно схватить их и спрыгнуть с уступа, не сражаясь со всеми тремя."
+ko = "설계도는 {npc:14621}와(과) 정예 경비병 둘이 지키는 발코니 뒤쪽에 있습니다. 셋과 싸우지 말고 설계도만 집어 난간 밖으로 뛰어내려도 됩니다."
+zh_cn = "图纸放在阳台上，就在{npc:14621}和他的两名精英卫兵身后。可以抓起图纸直接从边缘跳下去，不必和三个都打。"
+zh_tw = "圖紙放在陽台上，就在{npc:14621}和他的兩名精英衛兵身後。可以抓起圖紙直接從邊緣跳下去，不必和三個都打。"

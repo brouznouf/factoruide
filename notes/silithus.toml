@@ -1,0 +1,17 @@
+# Quest notes of Silithus. See notes/README.md for the format.
+
+# Hive in the Tower: the pod gives only goo and spawns ambushers; the quest item drops from an ambusher, and they keep coming while the goo is carried.
+[[note]]
+quest = 1126
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{object:178553} only gives {item:17345} and calls foes ({npc:13301}): {item:17346} drops from them. Kill one and loot it before leaving; more keep coming while the goo is in your bags."
+fr = "{object:178553} ne donne que {item:17345} et appelle des ennemis ({npc:13301}) : {item:17346} tombe sur eux. Tuez-en un et fouillez-le avant de partir ; d'autres arrivent tant que la bave est dans vos sacs."
+de = "{object:178553} gibt nur {item:17345} und ruft Gegner ({npc:13301}) herbei: {item:17346} droppt bei ihnen. Töte einen und plündere ihn, bevor du gehst; solange der Schleim in deinen Taschen ist, kommen weitere."
+es = "{object:178553} solo da {item:17345} y atrae enemigos ({npc:13301}): {item:17346} cae de ellos. Mata a uno y despójalo antes de irte; seguirán llegando mientras lleves la baba en las bolsas."
+pt = "{object:178553} só dá {item:17345} e atrai inimigos ({npc:13301}): {item:17346} cai deles. Mate um e saqueie antes de sair; outros continuam vindo enquanto a gosma estiver nas bolsas."
+ru = "{object:178553} даёт только {item:17345} и призывает врагов ({npc:13301}): {item:17346} выпадает с них. Убейте одного и обыщите его перед уходом; пока слизь у вас в сумках, будут приходить новые."
+ko = "{object:178553}에서는 {item:17345}만 나오고 적({npc:13301})이 나타납니다. {item:17346}은(는) 그들에게서 떨어집니다. 하나를 처치해 전리품을 챙긴 뒤 떠나세요. 점액이 가방에 있는 동안 계속 몰려옵니다."
+zh_cn = "{object:178553}只给{item:17345}，还会招来敌人（{npc:13301}）：{item:17346}是从它们身上掉的。杀一只并拾取后再离开；黏液在背包里时会不断有新的过来。"
+zh_tw = "{object:178553}只給{item:17345}，還會招來敵人（{npc:13301}）：{item:17346}是從牠們身上掉的。殺一隻並拾取後再離開；黏液在背包裡時會不斷有新的過來。"

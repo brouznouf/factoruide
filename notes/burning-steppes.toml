@@ -1,0 +1,39 @@
+# Quest notes of the Burning Steppes. See notes/README.md for the format.
+
+# Broodling Essence: the device is used on a live broodling at short range, then the essence is a crystal on the corpse, not in its loot.
+[[note]]
+quest = 4726
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Use {item:12284} on a living {npc:7047} from close range (taking damage interrupts it), kill it, then click the crystal that forms on the body: the essence is not in its loot."
+fr = "Utilisez {item:12284} de près sur un {npc:7047} encore vivant (subir des dégâts l'interrompt), tuez-le, puis cliquez sur le cristal qui se forme sur le corps : l'essence n'est pas dans son butin."
+de = "Benutze {item:12284} aus kurzer Entfernung an einem lebenden {npc:7047} (Schaden unterbricht es), töte ihn und klicke dann den Kristall an, der auf der Leiche entsteht: Die Essenz ist nicht in der Beute."
+es = "Usa {item:12284} de cerca sobre un {npc:7047} vivo (recibir daño lo interrumpe), mátalo y luego haz clic en el cristal que se forma sobre el cuerpo: la esencia no está en su botín."
+pt = "Use {item:12284} de perto em um {npc:7047} vivo (sofrer dano interrompe), mate-o e clique no cristal que se forma sobre o corpo: a essência não está no saque."
+ru = "Примените {item:12284} вблизи к живому противнику {npc:7047} (урон прерывает действие), убейте его и щёлкните по кристаллу, появившемуся на теле: сущности нет в добыче."
+ko = "살아 있는 {npc:7047}에게 가까이에서 {item:12284}을(를) 사용하고(피해를 입으면 끊깁니다), 처치한 뒤 시체 위에 생기는 수정을 클릭하세요. 정수는 전리품에 없습니다."
+zh_cn = "靠近一只活着的{npc:7047}使用{item:12284}（受到伤害会打断），杀死它后点击尸体上出现的水晶：精华不在它的战利品里。"
+zh_tw = "靠近一隻活著的{npc:7047}使用{item:12284}（受到傷害會打斷），殺死牠後點擊屍體上出現的水晶：精華不在牠的戰利品裡。"
+
+# Krom'Grul: he has several spawn points across the three caves of Dreadmaul Rock and can spawn stuck inside the terrain.
+[[note]]
+quest = 3822
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:8977} spawns in any of the three caves of the ogre hill. Target him by name from outside to tell which one; he sometimes spawns inside the rock, out of reach until he respawns."
+fr = "{npc:8977} apparaît dans n'importe laquelle des trois grottes de la colline des ogres. Ciblez-le par son nom depuis l'extérieur pour savoir laquelle ; il apparaît parfois dans la roche, hors d'atteinte jusqu'à sa réapparition."
+de = "{npc:8977} erscheint in einer der drei Höhlen des Oger-Hügels. Wähle ihn von draußen per Namen als Ziel, um zu sehen, in welcher; manchmal steckt er im Fels und ist bis zum nächsten Respawn unerreichbar."
+es = "{npc:8977} aparece en cualquiera de las tres cuevas de la colina de los ogros. Selecciónalo por su nombre desde fuera para saber en cuál; a veces aparece dentro de la roca, inalcanzable hasta que reaparezca."
+pt = "{npc:8977} surge em qualquer uma das três cavernas da colina dos ogros. Selecione-o pelo nome do lado de fora para saber em qual; às vezes ele surge dentro da rocha, fora de alcance até reaparecer."
+ru = "{npc:8977} появляется в любой из трёх пещер огрского холма. Возьмите его в цель по имени снаружи, чтобы понять, в какой; иногда он появляется внутри скалы и недоступен до следующего возрождения."
+ko = "{npc:8977}은(는) 오우거 언덕의 동굴 세 곳 중 어디에나 나타납니다. 밖에서 이름으로 대상을 잡아 어느 동굴인지 확인하세요. 가끔 바위 속에 나타나 다시 나타날 때까지 닿을 수 없습니다."
+zh_cn = "{npc:8977}会在食人魔山丘的三个洞穴中任意一个刷新。在外面按名字选中他就能判断是哪个洞；他有时会刷在岩石里，要等下次刷新才打得到。"
+zh_tw = "{npc:8977}會在食人魔山丘的三個洞穴中任何一個重生。在外面按名字選取他就能判斷是哪個洞；他有時會重生在岩石裡，要等下次重生才打得到。"
+
+[[icon]]
+quest = 3822
+phase = "objective"
+objective = 1
+icon = "rare"

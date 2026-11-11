@@ -114,3 +114,72 @@ quest = 5051
 phase = "objective"
 objective = 1
 icon = "rare"
+
+# The Wildlife Suffers Too (Horde): the bears share spawn points with the Plague Lurkers east of Dalson's Tears.
+[[note]]
+quest = 4985
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1816} shares its spawn points with {npc:1824}: if you only see spiders, kill them and bears may respawn in their place."
+fr = "{npc:1816} partage ses points d'apparition avec {npc:1824} : si vous ne voyez que des araignées, tuez-les et des ours pourront réapparaître à leur place."
+de = "{npc:1816} teilt sich die Spawnpunkte mit {npc:1824}: Siehst du nur Spinnen, töte sie, dann können an ihrer Stelle Bären spawnen."
+es = "{npc:1816} comparte puntos de aparición con {npc:1824}: si solo ves arañas, mátalas y pueden aparecer osos en su lugar."
+pt = "{npc:1816} compartilha pontos de surgimento com {npc:1824}: se só houver aranhas, mate-as e ursos podem surgir no lugar delas."
+ru = "{npc:1816} появляется в тех же точках, что и {npc:1824}: если вокруг одни пауки, убивайте их, и на их месте могут появиться медведи."
+ko = "{npc:1816}은(는) {npc:1824}와(과) 생성 지점을 공유합니다. 거미만 보이면 거미를 처치하세요. 그 자리에 곰이 나타날 수 있습니다."
+zh_cn = "{npc:1816}和{npc:1824}共用刷新点：如果只看到蜘蛛，就杀掉它们，熊可能会在原处刷新出来。"
+zh_tw = "{npc:1816}和{npc:1824}共用重生點：如果只看到蜘蛛，就殺掉牠們，熊可能會在原處重生出來。"
+
+# The Annals of Darrowshire: trapped tomes have split two-tone pages, the real one evenly shaded pages; it may only spawn after trapped ones are looted.
+[[note]]
+quest = 5154
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Most tomes are traps that call a {npc:10943}: their pages are split white and grey, while the real one has evenly shaded pages. If none looks right, loot trapped ones until it spawns."
+fr = "La plupart des tomes sont des pièges qui appellent un {npc:10943} : leurs pages sont nettement mi-blanches, mi-grises, alors que le vrai a des pages d'une teinte uniforme. Si aucun ne convient, fouillez des tomes piégés jusqu'à ce qu'il apparaisse."
+de = "Die meisten Folianten sind Fallen, die einen {npc:10943} rufen: Ihre Seiten sind scharf in Weiß und Grau geteilt, der echte hat gleichmäßig getönte Seiten. Passt keiner, plündere Fallen, bis er erscheint."
+es = "La mayoría de los tomos son trampas que invocan a un {npc:10943}: sus páginas están partidas en blanco y gris, y el auténtico tiene páginas de un tono uniforme. Si ninguno encaja, despoja tomos trampa hasta que aparezca."
+pt = "A maioria dos tomos é armadilha que invoca um {npc:10943}: as páginas são divididas em branco e cinza, enquanto o verdadeiro tem páginas de tom uniforme. Se nenhum parecer certo, saqueie os falsos até ele surgir."
+ru = "Большинство фолиантов — ловушки, призывающие {npc:10943}: их страницы резко поделены на белое и серое, а у настоящего страницы ровного оттенка. Если такого нет, обыскивайте ловушки, пока он не появится."
+ko = "대부분의 책은 {npc:10943}을(를) 부르는 함정입니다. 함정 책은 페이지가 흰색과 회색으로 뚜렷이 나뉘고, 진짜 책은 페이지 색이 고릅니다. 맞는 책이 없으면 진짜가 나타날 때까지 함정 책을 챙기세요."
+zh_cn = "大多数书都是会招来{npc:10943}的陷阱：它们的书页一半白一半灰，界线分明，而真的那本书页颜色均匀。如果一本都不像，就拾取陷阱书，直到真书刷新出来。"
+zh_tw = "大多數書都是會招來{npc:10943}的陷阱：它們的書頁一半白一半灰，界線分明，而真的那本書頁顏色均勻。如果一本都不像，就拾取陷阱書，直到真書重生出來。"
+
+[[icon]]
+quest = 5154
+phase = "objective"
+objective = 1
+icon = "pickup"
+
+# Unfinished Business (Durgen): he spawns at the top of the tower and later walks down to its foot, where he is easier to pull.
+[[note]]
+quest = 6023
+phase = "objective"
+objective = 2
+level = "info"
+en = "{npc:11611} spawns among casters at the top of the tower, then walks down to its foot: clear the guards at the base and wait for him there rather than climbing."
+fr = "{npc:11611} apparaît au sommet de la tour parmi des lanceurs de sorts, puis descend jusqu'à son pied : éliminez les gardes de la base et attendez-le là plutôt que de monter."
+de = "{npc:11611} erscheint oben auf dem Turm zwischen Zauberwirkern und läuft dann zu dessen Fuß hinunter: Räum die Wachen am Sockel weg und warte dort auf ihn, statt hinaufzusteigen."
+es = "{npc:11611} aparece en lo alto de la torre entre lanzadores de hechizos y luego baja hasta su base: elimina a los guardias de abajo y espéralo allí en lugar de subir."
+pt = "{npc:11611} surge no alto da torre entre conjuradores e depois desce até a base: elimine os guardas lá embaixo e espere por ele ali em vez de subir."
+ru = "{npc:11611} появляется на вершине башни среди заклинателей, а потом спускается к её подножию: перебейте стражу внизу и ждите его там, а не поднимайтесь наверх."
+ko = "{npc:11611}은(는) 탑 꼭대기에서 주문시전자들과 함께 나타난 뒤 탑 아래로 걸어 내려옵니다. 올라가지 말고 아래쪽 경비병을 처리한 다음 그곳에서 기다리세요."
+zh_cn = "{npc:11611}会在塔顶的施法者中间刷新，然后走到塔底：不必爬上去，清掉塔底的守卫后在那里等他。"
+zh_tw = "{npc:11611}會在塔頂的施法者中間重生，然後走到塔底：不必爬上去，清掉塔底的守衛後在那裡等他。"
+
+# Mold Rhymes With...: the follow-up, Fire Plume Forged, needs two Thorium Bars at Un'Goro's lava lake, far from any vendor.
+[[note]]
+quest = 5514
+phase = "turnin"
+level = "info"
+en = "Have {item:12359} ×2 with you when you hand this in: the next step, {quest:5802}, needs them at the lava lake ({zone:490})."
+fr = "Ayez {item:12359} ×2 sur vous en rendant cette quête : l'étape suivante, {quest:5802}, en a besoin au lac de lave ({zone:490})."
+de = "Hab {item:12359} ×2 dabei, wenn du diese Quest abgibst: Der nächste Schritt, {quest:5802}, braucht sie am Lavasee ({zone:490})."
+es = "Lleva {item:12359} ×2 encima al entregar esta misión: el siguiente paso, {quest:5802}, las necesita en el lago de lava ({zone:490})."
+pt = "Tenha {item:12359} ×2 com você ao entregar esta missão: a próxima etapa, {quest:5802}, precisa delas no lago de lava ({zone:490})."
+ru = "Сдавая это задание, имейте при себе {item:12359} ×2: следующий этап, {quest:5802}, требует их у лавового озера ({zone:490})."
+ko = "이 퀘스트를 완료할 때 {item:12359} 2개를 지니고 있으세요. 다음 단계인 {quest:5802}에서 용암 호수({zone:490})에 쓰입니다."
+zh_cn = "交这个任务时身上要带{item:12359}×2：下一步{quest:5802}要在熔岩湖（{zone:490}）用到它们。"
+zh_tw = "交這個任務時身上要帶{item:12359}×2：下一步{quest:5802}要在熔岩湖（{zone:490}）用到它們。"
