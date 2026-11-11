@@ -1,12 +1,20 @@
 # Quest notes of Stranglethorn Vale. See notes/README.md for the format.
 
-# Jungle Secrets: the giver offers it only away from the camp, after the ambush on his patrol.
+# Jungle Secrets: the giver offers it only away from the camp, once saved from the ambush on his
+# patrol; he stands at the camp for a while after appearing before he sets off.
 [[note]]
 quest = 215
 phase = "accept"
 level = "warning"
-en = "{npc:738} offers this quest only on his patrol away from the Rebel Camp, once you save him from the two Kurzen's Agents who ambush him. Wait at the camp until he leaves, then follow him."
-fr = "{npc:738} ne propose cette quête que pendant sa patrouille loin du camp rebelle, une fois sauvé des deux agents de Kurzen qui lui tendent une embuscade. Attendez au camp qu'il parte, puis suivez-le."
+en = "{npc:738} offers this quest only on his patrol away from the Rebel Camp, once saved from an ambush ({npc:775} ×2). He leaves the camp about 20 minutes after he appears: wait there, follow him and help him."
+fr = "{npc:738} ne propose cette quête que pendant sa patrouille hors du camp rebelle, une fois sauvé d'une embuscade ({npc:775} ×2). Il quitte le camp environ 20 minutes après son apparition : attendez-le, suivez-le et aidez-le."
+de = "{npc:738} bietet diese Quest nur auf seiner Patrouille außerhalb des Rebellenlagers an, sobald du ihn aus einem Hinterhalt gerettet hast ({npc:775} ×2). Er verlässt das Lager etwa 20 Minuten nach seinem Erscheinen: warte dort, folge ihm und hilf ihm."
+es = "{npc:738} solo ofrece esta misión durante su patrulla fuera del campamento rebelde, después de salvarlo de una emboscada ({npc:775} ×2). Sale del campamento unos 20 minutos después de aparecer: espéralo allí, síguelo y ayúdalo."
+pt = "{npc:738} só oferece esta missão durante sua patrulha fora do acampamento rebelde, depois de ser salvo de uma emboscada ({npc:775} ×2). Ele deixa o acampamento cerca de 20 minutos após aparecer: espere lá, siga-o e ajude-o."
+ru = "{npc:738} даёт это задание только во время патруля за пределами лагеря повстанцев, после того как вы спасёте его из засады ({npc:775} ×2). Он уходит из лагеря примерно через 20 минут после появления: ждите там, идите за ним и помогите ему."
+ko = "{npc:738}은(는) 반란군 야영지를 벗어나 순찰하는 동안, 매복({npc:775} ×2)에서 구해 준 뒤에만 이 퀘스트를 줍니다. 등장 후 약 20분 뒤 야영지를 떠나니, 그곳에서 기다렸다가 따라가서 도와주세요."
+zh_cn = "{npc:738}只在离开反抗军营地巡逻时、被你从伏击（{npc:775} ×2）中救下后才提供此任务。他出现约20分钟后离开营地：在那里等待，跟随并帮助他。"
+zh_tw = "{npc:738}只在離開反抗軍營地巡邏時、被你從伏擊（{npc:775} ×2）中救下後才提供此任務。他出現約20分鐘後離開營地：在那裡等待，跟隨並幫助他。"
 
 [[icon]]
 quest = 215
