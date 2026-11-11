@@ -418,11 +418,13 @@ impl QuestBuilder<'_> {
             })
             .collect();
         let here = if here.is_empty() { mob_ids.to_vec() } else { here };
-        let mob_level = here
-            .iter()
-            .map(|id| entities.npc_level(*id))
-            .min()
-            .unwrap_or(quest.level);
+        // The mobs there are all fought: the middle of their ranges on average, rounded up as
+        // one mob's (`npc_level`), not the lowest of them.
+        let mob_level = if here.is_empty() {
+            quest.level
+        } else {
+            (here.iter().map(|id| entities.npc_mid(*id)).sum::<f64>() / here.len() as f64).ceil() as i64
+        };
         let chances: Vec<f64> = here
             .iter()
             .filter_map(|id| self.sources.drop_chance.get(&(target, *id)).copied())
@@ -645,5 +647,14 @@ objectives = [{ creature = 990102, amount = 8 }]
             p.model.index.contains_key(&990105),
             "asked for by the player, the quest stays"
         );
+    }
+
+    #[test]
+    fn mobs_are_fought_at_the_middle_of_their_levels_rounded_up() {
+        let p = ghoul_ribs(&serde_json::json!({}), &[]);
+        let cull = &p.model.quests[p.model.index[&990106]].objectives[0];
+        assert_eq!(cull.mob_level, 25, "a 24-25 mob");
+        let ribs = &p.model.quests[p.model.index[&990105]].objectives[0];
+        assert_eq!(ribs.mob_level, 26, "24-25 and 26-27 together, not the lowest");
     }
 }
