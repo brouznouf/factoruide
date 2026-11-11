@@ -60,6 +60,7 @@ impl Objective {
             loc,
             text,
             kills: 0.0,
+            low_drop_kills: 0.0,
             mob_level: 0,
             uses: 0.0,
             extra,

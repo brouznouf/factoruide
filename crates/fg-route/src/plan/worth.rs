@@ -33,7 +33,9 @@ impl Worth<'_> {
         let trips = self.trips.with_movement(abilities);
         let leg = |a: &crate::world::Pos, b: &crate::world::Pos| trips.leg(a, b, level, 0, u8::MAX).0;
         let work_at = |o: &Objective| {
-            o.kills * self.combat.kill_time(level, bonus, o) + o.uses * self.params.object_time + o.extra
+            (o.kills + self.params.low_drop_extra() * o.low_drop_kills) * self.combat.kill_time(level, bonus, o)
+                + o.uses * self.params.object_time
+                + o.extra
         };
         // Each objective at its cheapest place, its work and the way from the giver to the
         // turn-in through it (an item bought at an auction house rather than waited for).
@@ -166,7 +168,11 @@ impl Worth<'_> {
             .map(|w| self.trips.at(s).leg(&w[0], &w[1], level, 0, u8::MAX).0)
             .sum();
         let work: f64 = (left.iter())
-            .map(|o| o.kills * self.combat.kill_time(level, s.bonus, o) + o.uses * self.params.object_time + o.extra)
+            .map(|o| {
+                (o.kills + self.params.low_drop_extra() * o.low_drop_kills) * self.combat.kill_time(level, s.bonus, o)
+                    + o.uses * self.params.object_time
+                    + o.extra
+            })
             .sum();
         let cost = travel + work + self.params.stop_overhead * (1 + left.len()) as f64;
         self.beats_grinding(s, worth, cost, level)
