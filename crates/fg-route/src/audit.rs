@@ -159,6 +159,13 @@ pub const CHECKS: &[Check] = &[
                accept a quest offered from the start",
         error: false,
     },
+    Check {
+        name: "foreign-text",
+        what: "quests whose name or objectives are not in English (a game cache read from a \
+               client in another language): the guide shows them as they are, and checks reading \
+               the text (timed-quests) miss them. Rebuild the data with the English text first",
+        error: true,
+    },
 ];
 
 /// Why a quest is left out when its objectives or their places are unknown to the data (the
@@ -276,6 +283,11 @@ pub fn audit(
     }
     if on("hostile-in-cities") {
         for f in hostile_in_cities(conn)? {
+            found.insert((f.check, f.key.clone()), f);
+        }
+    }
+    if on("foreign-text") {
+        for f in foreign_text(conn)? {
             found.insert((f.check, f.key.clone()), f);
         }
     }
@@ -1292,6 +1304,46 @@ fn says_a_time(text: &str) -> bool {
         .any(|w| text.contains(w))
 }
 
+/// Quests whose name or objectives read as French, German or Spanish: a Classic Era game cache
+/// read from a French client gave hundreds of quests French objectives ("Tuer 10 Vermines
+/// kobold, puis revenir voir le maréchal McBride.").
+fn foreign_text(conn: &Connection) -> Result<Vec<Finding>> {
+    let mut stmt = conn.prepare("SELECT id, coalesce(name, ''), coalesce(objectives_text, '') FROM m_quest")?;
+    let rows = stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?)))?;
+    let mut out = Vec::new();
+    for row in rows {
+        let (id, name, text) = row?;
+        let Some(foreign) = [&name, &text].into_iter().find(|t| reads_foreign(t)) else {
+            continue;
+        };
+        let excerpt: String = foreign.chars().take(100).collect();
+        out.push(Finding {
+            check: "foreign-text",
+            key: format!("quest {id}"),
+            detail: format!("{name} ({id}): \"{excerpt}\""),
+            races: Vec::new(),
+            npcs: Vec::new(),
+        });
+    }
+    Ok(out)
+}
+
+/// The text holds two words or more that English never uses but French, German or Spanish
+/// often do (none in the English quest texts of the three game versions).
+fn reads_foreign(text: &str) -> bool {
+    const WORDS: &[&str] = &[
+        "le", "les", "des", "du", "et", "à", "au", "aux", "pour", "avec", "dans", "puis", "der", "das", "und", "mit", "zu",
+        "für", "von", "los", "las", "con", "para", "del", "una", "que",
+    ];
+    let lower = text.to_lowercase();
+    let mut hits: Vec<&str> = (lower.split(|c: char| !c.is_alphabetic()))
+        .filter(|w| WORDS.contains(w))
+        .collect();
+    hits.sort_unstable();
+    hits.dedup();
+    hits.len() >= 2
+}
+
 fn timed_quests(model: &Model, untimed: &HashMap<i64, String>) -> Vec<Finding> {
     model
         .quests
@@ -1706,6 +1758,17 @@ mod tests {
         assert_eq!(keys, [format!("quest {id}")]);
         assert!(timed_quests(&p.model, &HashMap::new()).is_empty());
     }
+    /// French, German and Spanish objectives read as foreign; English ones, names with a
+    /// borrowed word ("Le Fishe") included, do not.
+    #[test]
+    fn objectives_in_another_language_read_as_foreign() {
+        assert!(reads_foreign("Tuer 10 Vermines kobold, puis revenir voir le maréchal McBride."));
+        assert!(reads_foreign("Bringt 10 Koboldkerzen zu Marshal McBride und sprecht mit ihm."));
+        assert!(reads_foreign("Lleva 10 velas de kobold al alguacil McBride para que las vea."));
+        assert!(!reads_foreign("Kill 10 Kobold Vermin, then return to Marshal McBride."));
+        assert!(!reads_foreign("Bring Le Fishe's head to Stormwind and talk to the guard."));
+    }
+
     /// A door given for one faction only is found (the other would take the shared one), and a
     /// door of an area that is no dungeon; both sides given, or a dungeon not planned, are not.
     #[test]
