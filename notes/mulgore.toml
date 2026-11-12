@@ -1,0 +1,47 @@
+# Quest notes of Mulgore. See notes/README.md for the format.
+
+# Supervisor Fizsprocket: he stands at the far end of the mine's eastern tunnels, in a small room with a log crane, and looks like the other goblins.
+[[note]]
+quest = 765
+phase = "objective"
+objective = 1
+level = "info"
+en = "In the mine, keep to the right-hand (east) tunnels: {npc:3051} stands at the far end, in a small room with a crane holding logs. He looks like any other goblin, so check names before pulling."
+fr = "Dans la mine, suivez les galeries de droite (est) : {npc:3051} se tient tout au fond, dans une petite salle avec une grue chargée de rondins. Il ressemble à n'importe quel autre gobelin : vérifiez les noms avant d'attaquer."
+de = "Halte dich in der Mine an die rechten (östlichen) Gänge: {npc:3051} steht ganz am Ende in einem kleinen Raum mit einem Kran voller Baumstämme. Er sieht aus wie jeder andere Goblin, also prüfe die Namen vor dem Angriff."
+es = "En la mina, sigue las galerías de la derecha (este): {npc:3051} está al fondo, en una pequeña sala con una grúa cargada de troncos. Parece un goblin cualquiera, así que mira los nombres antes de atacar."
+pt = "Na mina, siga pelas galerias da direita (leste): {npc:3051} fica bem no fundo, numa salinha com um guindaste carregado de toras. Ele parece um goblin qualquer, então confira os nomes antes de atacar."
+ru = "В шахте держитесь правых (восточных) туннелей: {npc:3051} стоит в самом конце, в небольшом зале с краном, держащим бревна. Он выглядит как любой другой гоблин, так что проверяйте имена перед атакой."
+ko = "광산에서는 오른쪽(동쪽) 갱도를 따라가세요. {npc:3051}은(는) 맨 안쪽, 통나무를 매단 기중기가 있는 작은 방에 있습니다. 다른 고블린과 똑같이 생겼으니 공격 전에 이름을 확인하세요."
+zh_cn = "在矿洞里沿右侧（东边）的坑道走：{npc:3051}站在最深处一个有吊着原木的起重机的小房间里。他和其他地精长得一样，攻击前先看名字。"
+zh_tw = "在礦坑裡沿右側（東邊）的坑道走：{npc:3051}站在最深處一個有吊著原木的起重機的小房間裡。他和其他哥布林長得一樣，攻擊前先看名字。"
+
+# Dwarven Digging: the picks are smashed next to a forge; one stands at the south end of the dig site camp, and the Thunder Bluff blacksmith's forge works too.
+[[note]]
+quest = 746
+phase = "objective"
+objective = 1
+level = "info"
+en = "Use each {item:4702} next to a forge to get {item:4703}. One stands at the back (south end) of the dig site camp; the blacksmith's forge in {zone:1638} works too if the camp is too crowded."
+fr = "Utilisez chaque {item:4702} près d'une forge pour obtenir {item:4703}. Il y en a une au fond (extrémité sud) du camp des fouilles ; la forge du forgeron de la ville, {zone:1638}, convient aussi si le camp est trop peuplé."
+de = "Benutze {item:4702} neben einer Schmiede, um {item:4703} zu erhalten. Eine steht hinten (am Südende) im Lager der Grabungsstätte; die Schmiede des Schmieds in {zone:1638} geht auch, wenn das Lager zu voll ist."
+es = "Usa cada {item:4702} junto a una forja para obtener {item:4703}. Hay una al fondo (extremo sur) del campamento de la excavación; la forja del herrero de {zone:1638} también sirve si el campamento está muy lleno."
+pt = "Use cada {item:4702} perto de uma forja para obter {item:4703}. Há uma no fundo (ponta sul) do acampamento da escavação; a forja do ferreiro de {zone:1638} também serve se o acampamento estiver cheio demais."
+ru = "Используйте {item:4702} рядом с кузнечным горном, чтобы получить {item:4703}. Один стоит в глубине (на южном краю) лагеря раскопок; подойдет и горн кузнеца в городе {zone:1638}, если в лагере слишком много врагов."
+ko = "{item:4702}을(를) 화로 옆에서 사용하면 {item:4703}이(가) 됩니다. 발굴지 야영지 안쪽(남쪽 끝)에 화로가 하나 있고, 야영지에 적이 너무 많으면 {zone:1638}의 대장장이 화로를 써도 됩니다."
+zh_cn = "在熔炉旁使用{item:4702}即可得到{item:4703}。挖掘场营地后方（南端）就有一座熔炉；如果营地敌人太多，{zone:1638}铁匠的熔炉也可以。"
+zh_tw = "在熔爐旁使用{item:4702}即可得到{item:4703}。挖掘場營地後方（南端）就有一座熔爐；如果營地敵人太多，{zone:1638}鐵匠的熔爐也可以。"
+
+# Rite of Vision: the spirit wolf is not an escort; the quest ends with Seer Wiserunner in his cave whether the wolf is followed or not.
+[[note]]
+quest = 772
+level = "info"
+en = "The spirit wolf is not an escort: once the water is drunk at the fire, you can go straight to {npc:2984}'s cave, up the hillside west of the road just before {zone:1638}, and do other quests on the way."
+fr = "Le loup-esprit n'est pas une escorte : une fois l'eau bue près du feu, vous pouvez aller directement à la grotte de {npc:2984}, sur le flanc de colline à l'ouest de la route juste avant {zone:1638}, et faire d'autres quêtes en chemin."
+de = "Der Geisterwolf ist keine Eskorte: Sobald du das Wasser am Feuer getrunken hast, kannst du direkt zur Höhle von {npc:2984} gehen, am Hang westlich der Straße kurz vor {zone:1638}, und unterwegs andere Quests erledigen."
+es = "El lobo espiritual no es una escolta: en cuanto bebas el agua junto al fuego, puedes ir directo a la cueva de {npc:2984}, en la ladera al oeste del camino justo antes de {zone:1638}, y hacer otras misiones por el camino."
+pt = "O lobo espiritual não é uma escolta: assim que beber a água junto à fogueira, você pode ir direto à caverna de {npc:2984}, na encosta a oeste da estrada logo antes de {zone:1638}, e fazer outras missões no caminho."
+ru = "Призрачный волк — не сопровождение: выпив воду у костра, можно сразу идти к пещере, где ждет {npc:2984}, на склоне к западу от дороги незадолго до {zone:1638}, выполняя по пути другие задания."
+ko = "영혼의 늑대는 호위 대상이 아닙니다. 모닥불 앞에서 물을 마신 뒤에는 {zone:1638} 바로 앞 길 서쪽 언덕 비탈에 있는 {npc:2984}의 동굴로 곧장 가도 되고, 가는 길에 다른 퀘스트를 해도 됩니다."
+zh_cn = "灵魂之狼不是护送目标：在火堆旁喝下水后，可以直接前往{npc:2984}的洞穴（位于{zone:1638}前道路西侧的山坡上），路上顺便做其他任务。"
+zh_tw = "靈魂之狼不是護送目標：在火堆旁喝下水後，可以直接前往{npc:2984}的洞穴（位於{zone:1638}前道路西側的山坡上），路上順便做其他任務。"

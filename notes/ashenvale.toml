@@ -33,3 +33,57 @@ ru = "Если жаровня не активируется, кто-то тол�
 ko = "화로를 클릭할 수 없다면 누군가 방금 이벤트를 마친 것입니다. 다시 불이 붙을 때까지 약 5분 기다리세요. 그다음 나가 셋씩 두 차례 몰려오고(사제부터 처치) 마지막으로 {npc:12940}이(가) 나타납니다."
 zh_cn = "如果火盆无法点击，说明有人刚完成这个事件：等待约5分钟让它重新点燃。之后会来两波各三只纳迦（先杀女祭司），然后是{npc:12940}。"
 zh_tw = "如果火盆無法點擊，表示有人剛完成這個事件：等待約5分鐘讓它重新點燃。之後會來兩波各三隻納迦（先殺女祭司），然後是{npc:12940}。"
+
+# Ashenvale Outrunners: they are stealthed and stay by the tree trunks south of Splintertree Post.
+[[note]]
+quest = 6503
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:12856} are stealthed and linger by the tree trunks on the slopes south of the outpost: walk around the trees pressing Tab, or use a /target macro, and listen for the stealth sound."
+fr = "Les {npc:12856} sont camouflés et se tiennent près des troncs d'arbres sur les pentes au sud du poste : tournez autour des arbres en appuyant sur Tab, ou utilisez une macro /target, et guettez le bruit du camouflage."
+de = "{npc:12856} sind getarnt und halten sich an den Baumstämmen auf den Hängen südlich des Postens auf: Geh mit Tab um die Bäume oder nutze ein /target-Makro und achte auf das Tarngeräusch."
+es = "{npc:12856} están en sigilo junto a los troncos de los árboles en las laderas al sur del puesto: rodea los árboles pulsando Tab, o usa una macro /target, y atento al sonido del sigilo."
+pt = "{npc:12856} ficam em furtividade junto aos troncos das árvores nas encostas ao sul do posto: contorne as árvores apertando Tab, ou use uma macro /target, e fique atento ao som de furtividade."
+ru = "{npc:12856} скрыты незаметностью и держатся у стволов деревьев на склонах к югу от заставы: обходите деревья, нажимая Tab, или используйте макрос /target и прислушивайтесь к звуку незаметности."
+ko = "{npc:12856}은(는) 은신 상태로 전초기지 남쪽 비탈의 나무 밑동 근처에 있습니다. Tab을 누르며 나무 주위를 돌거나 /target 매크로를 쓰고, 은신 소리에 귀를 기울이세요."
+zh_cn = "{npc:12856}处于潜行状态，徘徊在哨站南边山坡的树干旁：一边按Tab一边绕着树走，或使用/target宏，并留意潜行的声音。"
+zh_tw = "{npc:12856}處於潛行狀態，徘徊在哨站南邊山坡的樹幹旁：一邊按Tab一邊繞著樹走，或使用/target巨集，並留意潛行的聲音。"
+
+# Torek's Assault: clearing the way first lets Torek run straight in; Duriel and her guards spawn by the entrance and attack the nearest target.
+[[note]]
+quest = 6544
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Clear the road and the night elf outpost before talking to {npc:12858}: he runs straight in. Inside, {npc:12860} and her guards appear by the entrance and attack whoever is nearest; wait on the balcony and keep him alive."
+fr = "Dégagez la route et l'avant-poste elfe de la nuit avant de parler à {npc:12858} : il y fonce directement. À l'intérieur, {npc:12860} et ses gardes apparaissent près de l'entrée et attaquent le plus proche ; attendez sur le balcon et gardez-le en vie."
+de = "Räum die Straße und den Nachtelfenposten frei, bevor du mit {npc:12858} sprichst: Er rennt direkt hinein. Drinnen erscheinen {npc:12860} und ihre Wachen am Eingang und greifen den Nächsten an; warte auf dem Balkon und halte ihn am Leben."
+es = "Limpia el camino y el puesto elfo de la noche antes de hablar con {npc:12858}: entra corriendo. Dentro, {npc:12860} y sus guardias aparecen junto a la entrada y atacan al más cercano; espera en el balcón y mantenlo con vida."
+pt = "Limpe a estrada e o posto elfo noturno antes de falar com {npc:12858}: ele entra correndo. Lá dentro, {npc:12860} e os guardas dela surgem perto da entrada e atacam quem estiver mais perto; espere na sacada e mantenha-o vivo."
+ru = "Расчистите дорогу и заставу ночных эльфов, прежде чем говорить с {npc:12858}: он бежит прямо туда. Внутри у входа появляются {npc:12860} и ее стражи и нападают на ближайшего; ждите на балконе и не дайте ему погибнуть."
+ko = "{npc:12858}에게 말을 걸기 전에 길과 나이트 엘프 전초기지를 정리하세요. 그는 곧장 뛰어 들어갑니다. 안에서는 {npc:12860}와(과) 경비병들이 입구 근처에 나타나 가장 가까운 대상을 공격하니, 발코니에서 기다리며 그를 살려 두세요."
+zh_cn = "和{npc:12858}对话前先清理道路和暗夜精灵哨站：他会直接冲进去。进去后，{npc:12860}和她的卫兵会在入口附近出现并攻击最近的目标；在阳台上等待，并保住他的性命。"
+zh_tw = "和{npc:12858}對話前先清理道路和夜精靈哨站：他會直接衝進去。進去後，{npc:12860}和她的衛兵會在入口附近出現並攻擊最近的目標；在陽台上等待，並保住他的性命。"
+
+# King of the Foulweald: Chief Murgut comes about three minutes after the banner is planted, furbolgs keep coming two at a time, and a lost banner means going back to Karang.
+[[note]]
+quest = 6621
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:12918} shows up about three minutes after the banner is planted. Furbolgs keep coming two at a time: control the first two rather than killing them, then burn him down. If the banner falls, a new one means walking back to {npc:12757}."
+fr = "{npc:12918} arrive environ trois minutes après la pose de la bannière. Les furbolgs viennent sans cesse par deux : contrôlez les deux premiers plutôt que de les tuer, puis abattez-le. Si la bannière tombe, il faut retourner voir {npc:12757} pour en avoir une autre."
+de = "{npc:12918} erscheint etwa drei Minuten, nachdem das Banner steht. Furbolgs kommen ständig zu zweit: Kontrolliere die ersten beiden, statt sie zu töten, dann schalte ihn schnell aus. Fällt das Banner, musst du für ein neues zurück zu {npc:12757}."
+es = "{npc:12918} aparece unos tres minutos después de plantar el estandarte. Los furbolgs no dejan de llegar de dos en dos: controla a los dos primeros en lugar de matarlos y luego acaba con él. Si cae el estandarte, tendrás que volver con {npc:12757} por otro."
+pt = "{npc:12918} aparece cerca de três minutos depois de o estandarte ser fincado. Os furbolgs não param de vir de dois em dois: controle os dois primeiros em vez de matá-los e depois derrube-o. Se o estandarte cair, é preciso voltar até {npc:12757} por outro."
+ru = "{npc:12918} появляется примерно через три минуты после установки знамени. Фурболги идут по двое без конца: обездвижьте первых двух, а не убивайте, затем быстро убейте его. Если знамя падет, за новым придется возвращаться к {npc:12757}."
+ko = "{npc:12918}은(는) 깃발을 꽂고 약 3분 뒤에 나타납니다. 펄볼그가 둘씩 계속 몰려오니 처음 둘은 죽이지 말고 제압해 두었다가 그를 빠르게 처치하세요. 깃발이 쓰러지면 새 깃발을 받으러 {npc:12757}에게 돌아가야 합니다."
+zh_cn = "插下旗帜大约三分钟后{npc:12918}才会出现。熊怪会两只两只不断涌来：控制住最先的两只而不要杀死，然后迅速击杀他。如果旗帜倒下，就得回{npc:12757}那里重新领一面。"
+zh_tw = "插下旗幟大約三分鐘後{npc:12918}才會出現。熊怪會兩隻兩隻不斷湧來：控制住最先的兩隻而不要殺死，然後迅速擊殺他。如果旗幟倒下，就得回{npc:12757}那裡重新領一面。"
+
+[[icon]]
+quest = 6621
+phase = "objective"
+objective = 1
+icon = "event"

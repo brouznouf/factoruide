@@ -244,3 +244,50 @@ ru = "Этот {object:3644} находится не в крепости, а н�
 ko = "이 {object:3644}은(는) 요새 안이 아니라 발굴 구덩이의 나무 탑 꼭대기, 내려가는 비탈길의 첫 모퉁이에 있습니다. 올라갈 필요 없이 땅에서 {item:5021}을(를) 사용하세요."
 zh_cn = "这架{object:3644}不在要塞里：它位于挖掘坑中一座木塔的顶端，就在下坡道的第一个弯处。在地面使用{item:5021}即可，无需爬上去。"
 zh_tw = "這架{object:3644}不在要塞裡：它位於挖掘坑中一座木塔的頂端，就在下坡道的第一個彎處。在地面使用{item:5021}即可，無需爬上去。"
+
+# Nugget Slugs: the tool buckets stand around the lake shore at the foot of the small derricks and often hold several slugs; the big tower is not needed.
+[[note]]
+quest = 3922
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:161752} stand around the lake at the foot of the small derricks and often hold several slugs each: circling the shore is usually enough, without climbing the big central tower."
+fr = "Les {object:161752} sont autour du lac, au pied des petits derricks, et contiennent souvent plusieurs limaces chacun : faire le tour de la rive suffit en général, sans monter dans la grande tour centrale."
+de = "{object:161752} stehen rund um den See am Fuß der kleinen Bohrtürme und enthalten oft mehrere Schnecken: Meist reicht eine Runde am Ufer, ohne auf den großen Turm in der Mitte zu steigen."
+es = "{object:161752} están alrededor del lago, al pie de las torres de perforación pequeñas, y a menudo contienen varias babosas cada uno: suele bastar con rodear la orilla, sin subir a la gran torre central."
+pt = "{object:161752} ficam em volta do lago, ao pé das torres de perfuração pequenas, e muitas vezes têm várias lesmas cada: em geral basta contornar a margem, sem subir na grande torre central."
+ru = "{object:161752} стоят вокруг озера у подножия малых буровых вышек, и в каждом часто несколько слизней: обычно хватает обойти берег, не поднимаясь на большую центральную башню."
+ko = "{object:161752}은(는) 호수 둘레의 작은 시추탑 발치에 있으며 하나에 민달팽이가 여러 개 들어 있는 경우가 많습니다. 보통 가운데 큰 탑에 오르지 않고 호숫가를 한 바퀴 돌면 충분합니다."
+zh_cn = "{object:161752}分布在湖边小钻塔的脚下，每个常常装有好几只鼻涕虫：通常绕湖岸一圈就够了，不必爬上中央的大塔。"
+zh_tw = "{object:161752}分布在湖邊小鑽塔的腳下，每個常常裝有好幾隻蛞蝓：通常繞湖岸一圈就夠了，不必爬上中央的大塔。"
+
+# Plundering the Plunderers: Pick Lock must be trained and raised on the ship's footlockers (about 25 opens the jewel); opening it twice calls the parrot again and there is only one cracker.
+[[note]]
+quest = 2381
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Train Pick Lock first. On the ship, raise Lockpicking on the footlockers of the upper deck until {object:123462} below opens (about 25). Open it only once: the parrot it calls must get your single {item:7970}."
+fr = "Apprenez d'abord Crochetage. Sur le navire, montez la compétence sur les coffres du pont supérieur jusqu'à pouvoir ouvrir {object:123462} en dessous (environ 25). Ne l'ouvrez qu'une fois : le perroquet qu'il appelle doit recevoir votre unique {item:7970}."
+de = "Lerne zuerst Schlossknacken. Steigere die Fertigkeit auf dem Schiff an den Schließkisten des oberen Decks, bis sich {object:123462} darunter öffnen lässt (etwa 25). Öffne es nur einmal: Der Papagei, den es ruft, braucht dein einziges {item:7970}."
+es = "Aprende primero Forzar cerradura. En el barco, sube la habilidad con los baúles de la cubierta superior hasta poder abrir {object:123462} de abajo (unos 25). Ábrelo una sola vez: el loro que aparece necesita tu único {item:7970}."
+pt = "Aprenda Arrombar Fechadura antes. No navio, suba a perícia nos baús do convés superior até conseguir abrir {object:123462} embaixo (cerca de 25). Abra só uma vez: o papagaio que ele chama precisa do seu único {item:7970}."
+ru = "Сначала изучите «Взлом замка». На корабле прокачайте навык на сундучках верхней палубы, пока не сможете открыть {object:123462} внизу (около 25). Открывайте его только один раз: на призванного попугая нужен ваш единственный {item:7970}."
+ko = "먼저 자물쇠 따기를 배우세요. 배 위층 갑판의 사물함으로 숙련도를 올려 아래층의 {object:123462}을(를) 열 수 있게 하세요(약 25). 단 한 번만 여세요. 나타나는 앵무새에게 하나뿐인 {item:7970}을(를) 써야 합니다."
+zh_cn = "先学会开锁。在船上用上层甲板的提箱练开锁技能，直到能打开下层的{object:123462}（约25点）。只打开一次：它召来的鹦鹉需要你唯一的{item:7970}。"
+zh_tw = "先學會開鎖。在船上用上層甲板的提箱練開鎖技能，直到能打開下層的{object:123462}（約25點）。只打開一次：它召來的鸚鵡需要你唯一的{item:7970}。"
+
+# Mission: Possible But Not Probable: the key only comes from pickpocketing Silixiz, the lockbox needs about 85 Lockpicking, and looting the cache gives a days-long poison that ruins stealth.
+[[note]]
+quest = 2478
+phase = "objective"
+level = "warning"
+en = "{item:8072} only comes from picking {npc:7287}'s pocket: killing him does not drop it. {object:129127} at the top needs about 85 Lockpicking, and looting {item:8073} poisons you and weakens stealth for days, so take it last."
+fr = "{item:8072} s'obtient seulement en faisant les poches de {npc:7287} : le tuer ne la donne pas. {object:129127}, en haut, demande environ 85 en Crochetage, et ramasser {item:8073} vous empoisonne et affaiblit le camouflage pendant des jours : prenez-la en dernier."
+de = "{item:8072} gibt es nur durch Taschendiebstahl bei {npc:7287}: Tötest du ihn, fällt er nicht. {object:129127} oben braucht etwa 85 Schlossknacken, und das Plündern von {item:8073} vergiftet dich und schwächt Verstohlenheit tagelang, also nimm es zuletzt."
+es = "{item:8072} solo se consigue robándole a {npc:7287}: matarlo no la suelta. {object:129127}, arriba, pide unos 85 de Forzar cerradura, y recoger {item:8073} te envenena y debilita el sigilo durante días, así que cógelo al final."
+pt = "{item:8072} só sai batendo a carteira de {npc:7287}: matá-lo não a dá. {object:129127}, no alto, exige cerca de 85 em Arrombar Fechadura, e pegar {item:8073} envenena você e enfraquece a furtividade por dias, então pegue por último."
+ru = "{item:8072} можно только украсть у {npc:7287}: с убитого он не выпадает. Для {object:129127} наверху нужно около 85 навыка взлома, а добыча {item:8073} отравляет вас и на несколько дней ослабляет незаметность, поэтому берите его последним."
+ko = "{item:8072}은(는) {npc:7287}의 주머니를 털어야만 얻을 수 있고, 처치해도 떨어지지 않습니다. 꼭대기의 {object:129127}은(는) 자물쇠 따기 약 85가 필요하며, {item:8073}을(를) 집으면 중독되어 며칠 동안 은신이 약해지니 맨 마지막에 챙기세요."
+zh_cn = "{item:8072}只能从{npc:7287}身上偷取：杀死他不会掉落。顶层的{object:129127}需要约85点开锁技能，而拾取{item:8073}会让你中毒，数天内削弱潜行，所以最后再拿。"
+zh_tw = "{item:8072}只能從{npc:7287}身上偷取：殺死他不會掉落。頂層的{object:129127}需要約85點開鎖技能，而拾取{item:8073}會讓你中毒，數天內削弱潛行，所以最後再拿。"

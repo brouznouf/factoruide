@@ -65,3 +65,19 @@ ru = "{npc:4276} добывает руду около 5 минут, пока н�
 ko = "{npc:4276}이(가) 약 5분 동안 채굴하는 사이 코볼트가 서너 차례 몰려오고, 그동안 광산의 몹도 주변에서 다시 생성됩니다. 먼저 방을 정리하고 도움을 받으세요. 퀘스트 레벨에서 혼자서는 어렵습니다."
 zh_cn = "{npc:4276}会采矿约5分钟，期间有三到四波狗头人来袭，矿洞里的怪也会在你周围重生。先清空房间并找人帮忙：在任务等级单人完成很困难。"
 zh_tw = "{npc:4276}會採礦約5分鐘，期間有三到四波狗頭人來襲，礦坑裡的怪也會在你周圍重生。先清空房間並找人幫忙：在任務等級單人完成很困難。"
+
+# Protect Kaya: she leaves at once, three Grimtotems ambush her at the end, and the escort fails if you stray too far.
+[[note]]
+quest = 6523
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:11856} sets off as soon as you accept and does not wait: clear her path first. At the end three tauren ambush her; take them off her quickly, and stay close or the escort fails."
+fr = "{npc:11856} part dès que vous acceptez et n'attend pas : dégagez son chemin avant. À la fin, trois taurens lui tendent une embuscade ; détournez-les vite d'elle et restez près d'elle, sinon l'escorte échoue."
+de = "{npc:11856} läuft los, sobald du annimmst, und wartet nicht: Räum ihren Weg vorher frei. Am Ende überfallen sie drei Tauren; zieh sie schnell von ihr weg und bleib in der Nähe, sonst scheitert die Eskorte."
+es = "{npc:11856} se pone en marcha en cuanto aceptas y no espera: despeja su camino antes. Al final, tres tauren le tienden una emboscada; quítaselos de encima rápido y quédate cerca o la escolta fracasa."
+pt = "{npc:11856} parte assim que você aceita e não espera: limpe o caminho dela antes. No fim, três taurens a emboscam; tire-os de cima dela rápido e fique perto, ou a escolta falha."
+ru = "{npc:11856} отправляется в путь сразу после принятия задания и не ждет: заранее расчистите ей дорогу. В конце на нее нападают трое тауренов; быстро отвлеките их на себя и держитесь рядом, иначе сопровождение провалится."
+ko = "{npc:11856}은(는) 퀘스트를 수락하자마자 출발하고 기다려 주지 않으니 미리 길을 정리하세요. 마지막에 타우렌 셋이 그녀를 기습합니다. 재빨리 떼어 내고, 가까이 있지 않으면 호위가 실패합니다."
+zh_cn = "{npc:11856}在你接受任务后立刻出发，不会等你：先清理她的路线。最后会有三名牛头人伏击她；迅速把它们从她身上引开，并留在她附近，否则护送失败。"
+zh_tw = "{npc:11856}在你接受任務後立刻出發，不會等你：先清理她的路線。最後會有三名牛頭人伏擊她；迅速把他們從她身上引開，並留在她附近，否則護送失敗。"

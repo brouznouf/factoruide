@@ -31,3 +31,19 @@ ru = "{item:14544} выпадает редко, лучше всего добыв
 ko = "{item:14544}은(는) 드물게 나오며, 오그리마 정문 바로 동쪽의 불타는 칼날 동굴에서 잡는 것이 가장 좋습니다. 파티에서는 전리품을 가져간 사람만 얻으니, 각자 따로 얻어야 합니다."
 zh_cn = "{item:14544}掉率很低，最好在奥格瑞玛大门正东的火刃洞穴里刷。组队时只有拾取者能得到，每个玩家都需要各自掉落。"
 zh_tw = "{item:14544}掉落率很低，最好在奧格瑪大門正東的火刃洞穴裡刷。組隊時只有拾取者能得到，每位玩家都需要各自掉落。"
+
+# The Shattered Salute: the objective is the /salute emote on Shenthul once he has finished speaking.
+[[note]]
+quest = 2460
+phase = "objective"
+objective = 1
+level = "info"
+en = "Let {npc:3401} finish his three lines, then target him and type /salute in chat; no other action completes the objective."
+fr = "Laissez {npc:3401} finir ses trois répliques, puis ciblez-le et tapez /salute dans la discussion ; aucune autre action ne remplit l'objectif."
+de = "Lass {npc:3401} seine drei Sätze beenden, dann nimm ihn ins Ziel und tippe /salute in den Chat; nichts anderes erfüllt das Ziel."
+es = "Deja que {npc:3401} termine sus tres frases, luego selecciónalo y escribe /salute en el chat; ninguna otra acción cumple el objetivo."
+pt = "Deixe {npc:3401} terminar as três falas, depois selecione-o e digite /salute no chat; nenhuma outra ação cumpre o objetivo."
+ru = "Дождитесь, пока {npc:3401} договорит три реплики, затем выберите его целью и введите в чат /salute; иначе цель не засчитывается."
+ko = "{npc:3401}이(가) 세 마디를 다 할 때까지 기다린 뒤, 그를 대상으로 지정하고 채팅에 /salute를 입력하세요. 다른 방법으로는 목표가 완료되지 않습니다."
+zh_cn = "等{npc:3401}说完三句话，然后选中他并在聊天框输入/salute；其他任何操作都无法完成目标。"
+zh_tw = "等{npc:3401}說完三句話，然後選取他並在聊天框輸入/salute；其他任何操作都無法完成目標。"

@@ -1,0 +1,33 @@
+# Quest notes of the Deadmines (the mine outside the instance included). See notes/README.md for the format.
+
+# Oh Brother...: Foreman Thistlenettle and the undead miners are in a side tunnel of the mine outside the instance portal, elites in pairs that respawn fast.
+[[note]]
+quest = 167
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:626} is not inside the dungeon: in the mine before the instance portal, take the upper side tunnel that shows lighter on the minimap. He is an elite at the end of its loop, among undead elites that come in pairs and respawn quickly."
+fr = "{npc:626} n'est pas dans le donjon : dans la mine, avant le portail de l'instance, prenez la galerie latérale supérieure, plus claire sur la minicarte. C'est un élite au bout de sa boucle, parmi des morts-vivants élites qui vont par deux et réapparaissent vite."
+de = "{npc:626} ist nicht im Dungeon: Nimm in der Mine vor dem Instanzportal den oberen Seitengang, der auf der Minikarte heller erscheint. Er ist ein Elite am Ende der Schleife, zwischen untoten Elites, die paarweise kommen und schnell respawnen."
+es = "{npc:626} no está dentro de la mazmorra: en la mina, antes del portal de la instancia, toma el túnel lateral superior que se ve más claro en el minimapa. Es un élite al final de su bucle, entre no-muertos élite que van en parejas y reaparecen rápido."
+pt = "{npc:626} não fica dentro da masmorra: na mina, antes do portal da instância, pegue o túnel lateral de cima, mais claro no minimapa. Ele é um elite no fim do circuito, entre mortos-vivos elite que andam em pares e renascem rápido."
+ru = "{npc:626} находится не в подземелье: в шахте перед порталом подземелья сверните в верхний боковой туннель, более светлый на миникарте. Это элитный противник в конце петли, среди элитной нежити, которая ходит парами и быстро возрождается."
+ko = "{npc:626}은(는) 던전 안에 있지 않습니다. 인스턴스 입구 앞 광산에서 미니맵에 밝게 보이는 위쪽 옆 갱도로 가세요. 그는 고리 모양 갱도 끝에 있는 정예이며, 둘씩 다니고 빨리 재생성되는 언데드 정예들 사이에 있습니다."
+zh_cn = "{npc:626}不在副本里面：在副本传送门前的矿洞中，走小地图上颜色较浅的上层侧道。他是环形坑道尽头的精英，周围的亡灵精英成对出现，而且刷新很快。"
+zh_tw = "{npc:626}不在副本裡面：在副本傳送門前的礦坑中，走小地圖上顏色較淺的上層側道。他是環形坑道盡頭的精英，周圍的不死族精英成對出現，而且重生很快。"
+
+# Collecting Memories: the cards drop from the undead miners in the same side tunnel outside the instance portal, not inside the dungeon.
+[[note]]
+quest = 168
+phase = "objective"
+objective = 1
+level = "info"
+en = "The undead that carry {item:1894} are outside the dungeon: in the mine before the instance portal, in the upper side tunnel that shows lighter on the minimap. They are elites in pairs; do it with {quest:167}, same place."
+fr = "Les morts-vivants qui portent les {item:1894} sont hors du donjon : dans la mine avant le portail de l'instance, dans la galerie latérale supérieure, plus claire sur la minicarte. Ce sont des élites qui vont par deux ; faites-la avec {quest:167}, au même endroit."
+de = "Die Untoten mit {item:1894} sind außerhalb des Dungeons: in der Mine vor dem Instanzportal, im oberen Seitengang, der auf der Minikarte heller erscheint. Es sind Elites in Paaren; erledige dabei auch {quest:167}, am selben Ort."
+es = "Los no-muertos que llevan {item:1894} están fuera de la mazmorra: en la mina antes del portal de la instancia, en el túnel lateral superior que se ve más claro en el minimapa. Son élites en parejas; hazla junto con {quest:167}, en el mismo sitio."
+pt = "Os mortos-vivos que carregam {item:1894} ficam fora da masmorra: na mina antes do portal da instância, no túnel lateral de cima, mais claro no minimapa. São elites em pares; faça junto com {quest:167}, no mesmo lugar."
+ru = "Нежить с предметом {item:1894} находится вне подземелья: в шахте перед порталом, в верхнем боковом туннеле, более светлом на миникарте. Это элитные противники, они ходят парами; выполняйте вместе с заданием «{quest:167}» в том же месте."
+ko = "{item:1894}을(를) 가진 언데드는 던전 밖, 인스턴스 입구 앞 광산의 미니맵에 밝게 보이는 위쪽 옆 갱도에 있습니다. 둘씩 다니는 정예이니 같은 장소의 {quest:167}와(과) 함께 하세요."
+zh_cn = "携带{item:1894}的亡灵在副本外面：在副本传送门前的矿洞里，小地图上颜色较浅的上层侧道中。它们是成对出现的精英；可与同一地点的{quest:167}一起完成。"
+zh_tw = "攜帶{item:1894}的不死族在副本外面：在副本傳送門前的礦坑裡，小地圖上顏色較淺的上層側道中。牠們是成對出現的精英；可與同一地點的{quest:167}一起完成。"

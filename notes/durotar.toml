@@ -95,3 +95,19 @@ ru = "{npc:3205} лечит себя, и {npc:3206} поблизости тож�
 ko = "{npc:3205}은(는) 스스로 치유하고, 근처의 {npc:3206}도 그를 치유합니다. 그들을 먼저 처치하고 그의 치유 주문을 끊으세요. 제단 언덕 꼭대기에서 그가 멈출 때 혼자 끌어오세요. {quest:808}에서 얻는 {item:4945}이(가) 전투를 훨씬 쉽게 해 줍니다."
 zh_cn = "{npc:3205}会治疗自己，附近的{npc:3206}也会治疗他：先杀掉他们，并打断他的治疗。等他在神龛山顶停下时单独引他过来。{quest:808}得到的{item:4945}能让这场战斗轻松很多。"
 zh_tw = "{npc:3205}會治療自己，附近的{npc:3206}也會治療他：先殺掉他們，並打斷他的治療。等他在神龕山頂停下時單獨引他過來。{quest:808}得到的{item:4945}能讓這場戰鬥輕鬆很多。"
+
+# The Demon Seed: the climb up the southeast side of Dreadmist Peak avoids most camps; the altar is just inside a cave below the summit; the stone lasts 30 minutes.
+[[note]]
+quest = 924
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:4986} lasts 30 minutes. Climb the mountain from its southeast side (around 47,24 or 51,22) to skip most of the camps, then head for the cave just below the summit, not the top: {object:3525} is a few steps inside, behind some Burning Blade guards."
+fr = "{item:4986} dure 30 minutes. Escaladez la montagne par son flanc sud-est (vers 47,24 ou 51,22) pour éviter la plupart des camps, puis visez la grotte juste sous le sommet, pas la cime : {object:3525} est à quelques pas à l'intérieur, derrière des gardes de la Lame ardente."
+de = "{item:4986} hält 30 Minuten. Steig von der Südostseite auf den Berg (bei 47,24 oder 51,22), um die meisten Lager zu umgehen, und geh dann zur Höhle knapp unter dem Gipfel, nicht ganz nach oben: {object:3525} steht ein paar Schritte drinnen, hinter Wachen der Brennenden Klinge."
+es = "{item:4986} dura 30 minutos. Sube la montaña por su ladera sudeste (hacia 47,24 o 51,22) para evitar la mayoría de los campamentos y ve a la cueva justo debajo de la cima, no a la cumbre: {object:3525} está a unos pasos dentro, tras unos guardias del Filo Ardiente."
+pt = "{item:4986} dura 30 minutos. Suba a montanha pela encosta sudeste (perto de 47,24 ou 51,22) para evitar a maioria dos acampamentos e siga para a caverna logo abaixo do cume, não para o topo: {object:3525} fica a poucos passos lá dentro, atrás de guardas da Lâmina Ardente."
+ru = "{item:4986} действует 30 минут. Поднимайтесь на гору с юго-восточного склона (около 47,24 или 51,22), чтобы обойти большинство лагерей, и идите к пещере чуть ниже вершины, а не на саму вершину: {object:3525} в нескольких шагах внутри, за стражами Пылающего Клинка."
+ko = "{item:4986}은(는) 30분 동안만 유지됩니다. 대부분의 야영지를 피하려면 산의 남동쪽 비탈(47,24 또는 51,22 부근)로 오른 뒤, 꼭대기가 아니라 정상 바로 아래 동굴로 가세요. {object:3525}은(는) 동굴 안 몇 걸음 거리, 불타는 칼날 경비병들 뒤에 있습니다."
+zh_cn = "{item:4986}只能保持30分钟。从山的东南坡（约47,24或51,22）往上爬可避开大部分营地，然后前往峰顶下方的洞穴，而不是山顶：{object:3525}就在洞内几步处，有火刃卫兵把守。"
+zh_tw = "{item:4986}只能保持30分鐘。從山的東南坡（約47,24或51,22）往上爬可避開大部分營地，然後前往峰頂下方的洞穴，而不是山頂：{object:3525}就在洞內幾步處，有火刃衛兵把守。"
