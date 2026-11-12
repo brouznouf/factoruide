@@ -29,3 +29,50 @@ ru = "На задание даётся 15 минут. Не трогайте {npc
 ko = "퀘스트 제한 시간은 15분입니다. 오두막으로 올라가는 길에 {npc:1194}은(는) 건드리지 마세요. 재생성이 느려서 시간이 흐르기 시작하면 필요합니다."
 zh_cn = "任务限时15分钟。上山去小屋的路上别碰{npc:1194}：它们刷新很慢，计时开始后你会需要它们。"
 zh_tw = "任務限時15分鐘。上山去小屋的路上別碰{npc:1194}：牠們重生很慢，計時開始後你會需要牠們。"
+
+# A Hunter's Challenge: only a handful of Elder Mountain Boars live in the zone; when other players hunt them, the 12-minute timer often runs out.
+[[note]]
+quest = 258
+phase = "accept"
+level = "warning"
+en = "Only a handful of {npc:1192} live in the zone, and other players hunting them can leave too few for the 12-minute timer. Run past everything else; if it fails, abandon it and take it again."
+fr = "Seule une poignée de {npc:1192} vivent dans la zone, et d'autres joueurs qui les chassent peuvent en laisser trop peu pour le délai de 12 minutes. Ignorez tout le reste en chemin ; en cas d'échec, abandonnez la quête et reprenez-la."
+de = "Nur eine Handvoll {npc:1192} lebt in der Zone, und andere Spieler, die sie jagen, können zu wenige für den 12-Minuten-Timer übrig lassen. Lauf an allem anderen vorbei; scheitert sie, brich sie ab und nimm sie erneut an."
+es = "Solo hay un puñado de {npc:1192} en la zona, y otros jugadores que los cazan pueden dejar muy pocos para el límite de 12 minutos. Pasa de largo todo lo demás; si fallas, abandona la misión y vuelve a aceptarla."
+pt = "Só há um punhado de {npc:1192} na zona, e outros jogadores caçando-os podem deixar poucos demais para o limite de 12 minutos. Passe direto por todo o resto; se falhar, abandone a missão e aceite de novo."
+ru = "В зоне живет лишь горстка {npc:1192}, и если на них охотятся другие игроки, на 12 минут таймера может не хватить. Пробегайте мимо всего остального; если задание провалится, откажитесь от него и возьмите снова."
+ko = "이 지역에는 {npc:1192}이(가) 몇 마리밖에 없어서, 다른 플레이어가 사냥 중이면 12분 제한 시간 안에 부족할 수 있습니다. 다른 몹은 지나치고, 실패하면 퀘스트를 포기한 뒤 다시 받으세요."
+zh_cn = "这个地区只有寥寥几只{npc:1192}，如果有其他玩家也在猎杀，12分钟的时限可能不够。路上其他怪都别管；失败的话就放弃任务再重新接。"
+zh_tw = "這個地區只有寥寥幾隻{npc:1192}，如果有其他玩家也在獵殺，12分鐘的時限可能不夠。路上其他怪都別管；失敗的話就放棄任務再重新接。"
+
+# Resupplying the Excavation: the ambush starts on approach, Saean turning on Miran with two Dark Iron Ambushers; Miran reappears at the wagon if absent.
+[[note]]
+quest = 273
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The fight starts as you come near the wagon: {npc:1380} and two {npc:1981} turn on {npc:1379}. Arrive at full health and help him. If he is not at the wagon, wait a minute or two for him to come back."
+fr = "Le combat commence dès que vous approchez du chariot : {npc:1380} et deux {npc:1981} s'en prennent à {npc:1379}. Arrivez avec tous vos points de vie et aidez-le. S'il n'est pas au chariot, attendez une minute ou deux qu'il revienne."
+de = "Der Kampf beginnt, sobald du dich dem Wagen näherst: {npc:1380} und zwei {npc:1981} greifen {npc:1379} an. Komm mit voller Gesundheit und hilf ihm. Ist er nicht am Wagen, warte ein, zwei Minuten, bis er zurückkommt."
+es = "El combate empieza al acercarte al carro: {npc:1380} y dos {npc:1981} atacan a {npc:1379}. Llega con la salud al máximo y ayúdalo. Si no está en el carro, espera un minuto o dos a que vuelva."
+pt = "A luta começa quando você se aproxima da carroça: {npc:1380} e dois {npc:1981} atacam {npc:1379}. Chegue com a vida cheia e ajude-o. Se ele não estiver na carroça, espere um ou dois minutos até ele voltar."
+ru = "Бой начинается, как только вы подходите к повозке: {npc:1380} и двое {npc:1981} нападают на {npc:1379}. Подходите с полным здоровьем и помогите ему. Если его нет у повозки, подождите минуту-другую, пока он вернется."
+ko = "수레에 다가가면 전투가 시작됩니다. {npc:1380}와(과) {npc:1981} 둘이 {npc:1379}을(를) 공격합니다. 생명력을 가득 채우고 와서 그를 도우세요. 수레에 없으면 돌아올 때까지 1~2분 기다리세요."
+zh_cn = "一靠近马车战斗就会开始：{npc:1380}和两个{npc:1981}会攻击{npc:1379}。满血过来帮他。如果他不在马车旁，等一两分钟让他回来。"
+zh_tw = "一靠近馬車戰鬥就會開始：{npc:1380}和兩個{npc:1981}會攻擊{npc:1379}。滿血過來幫他。如果他不在馬車旁，等一兩分鐘讓他回來。"
+
+# Protecting the Shipment: Dark Iron Raiders ambush Miran just before the excavation site; a failed escort is retaken from Miran after abandoning.
+[[note]]
+quest = 309
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Two {npc:2149} ambush {npc:1379} just before the excavation site: keep them on you so he survives. If he dies, abandon the quest and take it again from him at the wagon."
+fr = "Deux {npc:2149} tendent une embuscade à {npc:1379} juste avant le site de fouilles : gardez-les sur vous pour qu'il survive. S'il meurt, abandonnez la quête et reprenez-la auprès de lui, au chariot."
+de = "Zwei {npc:2149} überfallen {npc:1379} kurz vor der Ausgrabungsstätte: Halte sie bei dir, damit er überlebt. Stirbt er, brich die Quest ab und nimm sie bei ihm am Wagen erneut an."
+es = "Dos {npc:2149} emboscan a {npc:1379} justo antes de la excavación: mantenlos sobre ti para que sobreviva. Si muere, abandona la misión y vuelve a aceptarla de él junto al carro."
+pt = "Dois {npc:2149} emboscam {npc:1379} logo antes do sítio de escavação: mantenha-os em você para que ele sobreviva. Se ele morrer, abandone a missão e aceite de novo com ele na carroça."
+ru = "Двое {npc:2149} нападают на {npc:1379} прямо перед раскопками: удерживайте их на себе, чтобы он выжил. Если он погибнет, откажитесь от задания и возьмите его снова у него у повозки."
+ko = "발굴지 바로 앞에서 {npc:2149} 둘이 {npc:1379}을(를) 기습합니다. 그가 살아남도록 적을 자신에게 붙잡아 두세요. 그가 죽으면 퀘스트를 포기하고 수레에 있는 그에게서 다시 받으세요."
+zh_cn = "快到挖掘场时会有两个{npc:2149}伏击{npc:1379}：把它们的仇恨拉到自己身上，让他活下来。如果他死了，放弃任务，再到马车旁找他重新接。"
+zh_tw = "快到挖掘場時會有兩個{npc:2149}伏擊{npc:1379}：把它們的仇恨拉到自己身上，讓他活下來。如果他死了，放棄任務，再到馬車旁找他重新接。"

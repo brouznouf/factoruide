@@ -45,3 +45,19 @@ ru = "Призрачный волк — не сопровождение: вып�
 ko = "영혼의 늑대는 호위 대상이 아닙니다. 모닥불 앞에서 물을 마신 뒤에는 {zone:1638} 바로 앞 길 서쪽 언덕 비탈에 있는 {npc:2984}의 동굴로 곧장 가도 되고, 가는 길에 다른 퀘스트를 해도 됩니다."
 zh_cn = "灵魂之狼不是护送目标：在火堆旁喝下水后，可以直接前往{npc:2984}的洞穴（位于{zone:1638}前道路西侧的山坡上），路上顺便做其他任务。"
 zh_tw = "靈魂之狼不是護送目標：在火堆旁喝下水後，可以直接前往{npc:2984}的洞穴（位於{zone:1638}前道路西側的山坡上），路上順便做其他任務。"
+
+# Rites of the Earthmother: Arra'chea walks a long clockwise loop over the plains north-east of Thunder Bluff and is easier to wait for than to chase.
+[[note]]
+quest = 776
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3058} walks a long clockwise loop over the plains between {zone:1638} and Red Rocks. Wait on her path, near the wooded knoll halfway between them, rather than chasing her. Watch for the swoops: they stun."
+fr = "{npc:3058} suit une longue boucle dans le sens horaire sur les plaines entre {zone:1638} et les Rochers rouges. Attendez-la sur son chemin, près de la butte boisée à mi-distance, plutôt que de la poursuivre. Méfiez-vous des trombes : elles étourdissent."
+de = "{npc:3058} läuft eine lange Runde im Uhrzeigersinn über die Ebenen zwischen {zone:1638} und den Roten Felsen. Warte auf ihrem Weg beim bewaldeten Hügel auf halber Strecke, statt ihr nachzulaufen. Achte auf die Sturzflieger: Sie betäuben."
+es = "{npc:3058} recorre un largo circuito en el sentido de las agujas del reloj por las llanuras entre {zone:1638} y las Rocas Rojas. Espérala en su camino, junto al otero arbolado a medio camino, en lugar de perseguirla. Cuidado con las aves: aturden."
+pt = "{npc:3058} percorre um longo circuito em sentido horário pelas planícies entre {zone:1638} e as Rochas Vermelhas. Espere no caminho dela, perto do outeiro arborizado no meio do trajeto, em vez de persegui-la. Cuidado com as aves: elas atordoam."
+ru = "{npc:3058} ходит по длинному кругу по часовой стрелке по равнинам между {zone:1638} и Красными скалами. Ждите ее на маршруте у лесистого холма на полпути, а не гоняйтесь за ней. Остерегайтесь птиц: они оглушают."
+ko = "{npc:3058}은(는) {zone:1638}와 붉은 바위 사이의 평원을 시계 방향으로 길게 돕니다. 쫓아다니지 말고 그 중간쯤 나무가 있는 언덕 근처 경로에서 기다리세요. 기절시키는 새를 조심하세요."
+zh_cn = "{npc:3058}沿顺时针方向在{zone:1638}和红石岭之间的平原上绕一大圈。不要追着她跑，在两者中间那片长着树的小丘附近、她的路线上等她。小心会击晕的飞禽。"
+zh_tw = "{npc:3058}沿順時針方向在{zone:1638}和紅石丘之間的平原上繞一大圈。不要追著她跑，在兩者中間那片長著樹的小丘附近、她的路線上等她。小心會擊暈的飛禽。"

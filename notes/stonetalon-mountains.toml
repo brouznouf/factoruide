@@ -81,3 +81,19 @@ ru = "{npc:11856} отправляется в путь сразу после п�
 ko = "{npc:11856}은(는) 퀘스트를 수락하자마자 출발하고 기다려 주지 않으니 미리 길을 정리하세요. 마지막에 타우렌 셋이 그녀를 기습합니다. 재빨리 떼어 내고, 가까이 있지 않으면 호위가 실패합니다."
 zh_cn = "{npc:11856}在你接受任务后立刻出发，不会等你：先清理她的路线。最后会有三名牛头人伏击她；迅速把它们从她身上引开，并留在她附近，否则护送失败。"
 zh_tw = "{npc:11856}在你接受任務後立刻出發，不會等你：先清理她的路線。最後會有三名牛頭人伏擊她；迅速把他們從她身上引開，並留在她附近，否則護送失敗。"
+
+# Ordanus: his Cenarion Vindicator guards summon waves of treants only once they take damage; the usual way out is a jump from the ramp.
+[[note]]
+quest = 1088
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Put all your damage on {npc:4273}: his two {npc:3833} summon treants only once they are hurt, so use no area attacks or Thorns. After looting the head, run a little way down the ramp and jump over the railing."
+fr = "Concentrez tous vos dégâts sur {npc:4273} : ses deux {npc:3833} n'invoquent des tréants qu'une fois blessés, donc pas d'attaques de zone ni d'Épines. Après avoir ramassé la tête, descendez un peu la rampe et sautez par-dessus la rambarde."
+de = "Richte deinen ganzen Schaden auf {npc:4273}: Seine beiden {npc:3833} beschwören Treants erst, wenn sie verletzt werden, also keine Flächenangriffe und keine Dornen. Lauf nach dem Plündern des Kopfes ein Stück die Rampe hinunter und spring über das Geländer."
+es = "Pon todo tu daño en {npc:4273}: sus dos {npc:3833} invocan antárboles solo cuando reciben daño, así que nada de ataques de área ni Espinas. Tras despojar la cabeza, baja un poco por la rampa y salta por encima de la barandilla."
+pt = "Concentre todo o dano em {npc:4273}: os dois {npc:3833} dele só invocam treants quando sofrem dano, então nada de ataques em área nem Espinhos. Depois de saquear a cabeça, desça um pouco a rampa e pule por cima do parapeito."
+ru = "Бейте только {npc:4273}: двое {npc:3833} призывают древней лишь после того, как получат урон, поэтому никаких атак по области и Шипов. Забрав голову, спуститесь немного по пандусу и прыгайте через перила."
+ko = "모든 공격을 {npc:4273}에게 집중하세요. 그의 {npc:3833} 둘은 피해를 입어야만 나무정령을 소환하므로 광역 공격이나 가시를 쓰지 마세요. 머리를 챙긴 뒤 경사로를 조금 내려가서 난간 너머로 뛰어내리세요."
+zh_cn = "把所有伤害都打在{npc:4273}身上：他的两个{npc:3833}只有受到伤害后才会召唤树人，所以别用范围攻击或荆棘术。拾取头颅后，沿坡道往下走一段再翻过栏杆跳下。"
+zh_tw = "把所有傷害都打在{npc:4273}身上：他的兩個{npc:3833}只有受到傷害後才會召喚樹人，所以別用範圍攻擊或荊棘術。拾取頭顱後，沿坡道往下走一段再翻過欄杆跳下。"

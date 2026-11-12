@@ -291,3 +291,34 @@ ru = "{item:8072} можно только украсть у {npc:7287}: с уб�
 ko = "{item:8072}은(는) {npc:7287}의 주머니를 털어야만 얻을 수 있고, 처치해도 떨어지지 않습니다. 꼭대기의 {object:129127}은(는) 자물쇠 따기 약 85가 필요하며, {item:8073}을(를) 집으면 중독되어 며칠 동안 은신이 약해지니 맨 마지막에 챙기세요."
 zh_cn = "{item:8072}只能从{npc:7287}身上偷取：杀死他不会掉落。顶层的{object:129127}需要约85点开锁技能，而拾取{item:8073}会让你中毒，数天内削弱潜行，所以最后再拿。"
 zh_tw = "{item:8072}只能從{npc:7287}身上偷取：殺死他不會掉落。頂層的{object:129127}需要約85點開鎖技能，而拾取{item:8073}會讓你中毒，數天內削弱潛行，所以最後再拿。"
+
+# Isha Awak: no fixed spot; found at several points of the shallows between Mahren Skyseer's camp and Northwatch Hold, among aggressive makrura.
+[[note]]
+quest = 873
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3476} roams the shallows along the coast from {npc:3388}'s camp south to Northwatch Hold rather than staying at one spot. Search the water's edge and clear the crabs around him before you pull."
+fr = "{npc:3476} parcourt les hauts-fonds le long de la côte, du camp de {npc:3388} jusqu'au fort de Guet-du-Nord au sud, sans rester au même endroit. Fouillez le bord de l'eau et éliminez les crabes autour de lui avant de l'attirer."
+de = "{npc:3476} streift durch das seichte Wasser an der Küste, vom Lager von {npc:3388} bis südlich zur Nordwacht, statt an einer Stelle zu bleiben. Suche am Ufer und erledige die Krebse um ihn herum, bevor du ihn angreifst."
+es = "{npc:3476} recorre las aguas poco profundas de la costa, desde el campamento de {npc:3388} hasta el Bastión del Norte al sur, sin quedarse en un sitio. Busca en la orilla y limpia los cangrejos de alrededor antes de atraerlo."
+pt = "{npc:3476} percorre as águas rasas da costa, do acampamento de {npc:3388} até a Fortaleza Vigia Norte ao sul, sem ficar num só lugar. Procure na beira da água e limpe os caranguejos ao redor antes de puxá-lo."
+ru = "{npc:3476} бродит по мелководью вдоль побережья от лагеря {npc:3388} на юг до Северной крепости, а не стоит на одном месте. Ищите его у кромки воды и перебейте крабов вокруг, прежде чем нападать."
+ko = "{npc:3476}은(는) 한곳에 머물지 않고 {npc:3388}의 야영지에서 남쪽 북부감시 요새까지 해안의 얕은 물을 돌아다닙니다. 물가를 살펴보고, 끌어오기 전에 주변의 게를 먼저 처치하세요."
+zh_cn = "{npc:3476}不会停在一个地方，而是在{npc:3388}的营地往南到北卫要塞一带的海岸浅水中游荡。沿着水边寻找，拉怪前先清掉他周围的螃蟹。"
+zh_tw = "{npc:3476}不會停在一個地方，而是在{npc:3388}的營地往南到北衛要塞一帶的海岸淺水中遊蕩。沿著水邊尋找，拉怪前先清掉牠周圍的螃蟹。"
+
+# Apothecary Zamah: she stands inside the Pools of Vision, a cave under Spirit Rise whose entrance is easy to miss from the bridges above.
+[[note]]
+quest = 853
+phase = "turnin"
+level = "info"
+en = "{npc:3419} is inside the Pools of Vision, a cave under Spirit Rise in {zone:1638}: take the lowest bridge to the rise, and the entrance is on the right between two guards."
+fr = "{npc:3419} se trouve dans les Bassins des visions, une grotte sous le Pic des Esprits à {zone:1638} : prenez le pont le plus bas vers le pic, l'entrée est sur la droite entre deux gardes."
+de = "{npc:3419} steht in den Teichen der Visionen, einer Höhle unter der Anhöhe der Geister in {zone:1638}: Nimm die unterste Brücke zur Anhöhe, der Eingang liegt rechts zwischen zwei Wachen."
+es = "{npc:3419} está dentro de las Pozas de las Visiones, una cueva bajo el Alto de los Espíritus en {zone:1638}: toma el puente más bajo hacia el alto y la entrada está a la derecha, entre dos guardias."
+pt = "{npc:3419} fica dentro das Lagoas da Visão, uma caverna sob o Platô dos Espíritos em {zone:1638}: pegue a ponte mais baixa até o platô; a entrada fica à direita, entre dois guardas."
+ru = "{npc:3419} находится в Озерах Видений, пещере под Вершиной Духов в {zone:1638}: перейдите на вершину по самому нижнему мосту, вход справа между двумя стражниками."
+ko = "{npc:3419}은(는) {zone:1638}의 정령의 봉우리 아래 동굴인 환영의 웅덩이 안에 있습니다. 가장 낮은 다리로 봉우리에 건너가면 오른쪽 두 경비병 사이에 입구가 있습니다."
+zh_cn = "{npc:3419}在{zone:1638}灵魂高地下方的洞穴“幻象之池”里：走最低的那座桥到高地，入口在右侧两名卫兵之间。"
+zh_tw = "{npc:3419}在{zone:1638}靈魂高地下方的洞穴「幻象之池」裡：走最低的那座橋到高地，入口在右側兩名衛兵之間。"

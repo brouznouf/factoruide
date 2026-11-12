@@ -98,3 +98,51 @@ ru = "{npc:4131} появляется только в пещере, на мес�
 ko = "{npc:4131}은(는) 동굴 안에서만 {npc:4133} 대신 나타납니다. 남은 것이 없으면 안의 일벌레를 처치해 새로 나타나게 하세요. 일벌레는 주변 실리시드를 불러 모으니 먼저 떨어진 곳으로 끌어내세요."
 zh_cn = "{npc:4131}只会在洞穴里出现，取代{npc:4133}的位置：如果一个都没有了，就杀掉洞里的雄蜂让它们刷新。雄蜂会呼叫附近的异种虫帮忙，先把它们拉开。"
 zh_tw = "{npc:4131}只會在洞穴裡出現，取代{npc:4133}的位置：如果一個都沒有了，就殺掉洞裡的雄蜂讓牠們重生。雄蜂會呼叫附近的異種蟲幫忙，先把牠們拉開。"
+
+# Test of Lore (the book): the book lies deep in the Dor'Danil Barrow Den, reached by an easily missed side path in the first large cavern.
+[[note]]
+quest = 1154
+phase = "objective"
+objective = 1
+level = "info"
+en = "In the Dor'Danil Barrow Den in Ashenvale, take the easy-to-miss path down on the left as you enter the first large cavern. {object:20725} lies on a table on a raised platform in the next cavern."
+fr = "Dans le Refuge de Dor'danil en Orneval, prenez le chemin facile à manquer qui descend sur la gauche en entrant dans la première grande caverne. {object:20725} est posé sur une table, sur une plateforme surélevée dans la caverne suivante."
+de = "Nimm im Hügelgrab von Dor'danil im Eschental beim Betreten der ersten großen Kaverne den leicht zu übersehenden Weg links nach unten. {object:20725} liegt in der nächsten Kaverne auf einem Tisch auf einer erhöhten Plattform."
+es = "En la Guarida de Dor'danil en Vallefresno, toma el camino que baja a la izquierda, fácil de pasar por alto, al entrar en la primera gran caverna. {object:20725} está sobre una mesa en una plataforma elevada de la caverna siguiente."
+pt = "No Túmulo de Dor'Danil, em Vale Gris, pegue o caminho fácil de perder que desce à esquerda ao entrar na primeira grande caverna. {object:20725} está sobre uma mesa numa plataforma elevada na caverna seguinte."
+ru = "В кургане Дор'данил в Ясеневом лесу, войдя в первый большой зал, спуститесь по незаметной тропе слева. {object:20725} лежит на столе на возвышении в следующем зале."
+ko = "잿빛 골짜기의 도르다닐 무덤굴에서 첫 번째 큰 동굴에 들어서자마자 왼쪽 아래로 이어지는 눈에 잘 띄지 않는 길로 가세요. {object:20725}은(는) 다음 동굴의 높은 단 위 탁자에 놓여 있습니다."
+zh_cn = "在灰谷的多达尼尔巢穴，进入第一个大洞窟时走左边那条不起眼的下坡小路。{object:20725}放在下一个洞窟中高台上的桌子上。"
+zh_tw = "在梣谷的多達尼爾巢穴，進入第一個大洞窟時走左邊那條不起眼的下坡小路。{object:20725}放在下一個洞窟中高台上的桌子上。"
+
+# Test of Lore (the question): the answer is Neltharion; a wrong answer teleports the player away, and completing needs a second talk.
+[[note]]
+quest = 6627
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The question asks which Aspect became Deathwing: answer Neltharion. A wrong answer teleports you to Camp Taurajo. Then talk to {npc:4489} again and pick the quest line, not an answer, to complete it."
+fr = "La question demande quel Aspect est devenu Aile-de-mort : répondez Neltharion. Une mauvaise réponse vous téléporte au camp Taurajo. Parlez ensuite de nouveau à {npc:4489} et choisissez la ligne de la quête, pas une réponse, pour la terminer."
+de = "Die Frage lautet, welcher Aspekt zu Todesschwinge wurde: Antworte Neltharion. Eine falsche Antwort teleportiert dich zum Lager Taurajo. Sprich danach erneut mit {npc:4489} und wähle die Questzeile, keine Antwort, um sie abzuschließen."
+es = "La pregunta es qué Aspecto se convirtió en Alamuerte: responde Neltharion. Una respuesta incorrecta te teletransporta al Campamento Taurajo. Luego habla otra vez con {npc:4489} y elige la línea de la misión, no una respuesta, para completarla."
+pt = "A pergunta é qual Aspecto se tornou Asa da Morte: responda Neltharion. Uma resposta errada teleporta você para o Acampamento Taurajo. Depois fale de novo com {npc:4489} e escolha a linha da missão, não uma resposta, para concluí-la."
+ru = "Вопрос: какой из Аспектов стал Смертокрылом? Отвечайте «Нелтарион». Неверный ответ телепортирует вас в лагерь Таурахо. Затем снова поговорите с {npc:4489} и выберите строку задания, а не ответ, чтобы его завершить."
+ko = "질문은 어느 위상이 데스윙이 되었는가입니다. 넬타리온이라고 답하세요. 틀리면 타우라조 야영지로 순간이동됩니다. 그다음 {npc:4489}에게 다시 말을 걸어 답이 아닌 퀘스트 항목을 골라 완료하세요."
+zh_cn = "问题是哪位守护巨龙变成了死亡之翼：回答耐萨里奥。答错会被传送到陶拉祖营地。之后再和{npc:4489}对话，选择任务选项而不是答案来完成任务。"
+zh_tw = "問題是哪位守護巨龍變成了死亡之翼：回答奈薩里奧。答錯會被傳送到陶拉祖營地。之後再和{npc:4489}對話，選擇任務選項而不是答案來完成任務。"
+
+# Arikara: lighting the Sacred Fire of Life with the powder is what summons the elite serpent.
+[[note]]
+quest = 5088
+phase = "objective"
+objective = 1
+level = "info"
+en = "Using {item:12785} at {object:175944} on Darkcloud Pinnacle summons {npc:10882}, an elite: clear the plateau and be at full health before you light it."
+fr = "Utiliser {item:12785} sur {object:175944} au pic de Sombrenuage invoque {npc:10882}, un élite : nettoyez le plateau et soyez au maximum de vos points de vie avant de l'allumer."
+de = "Wenn du {item:12785} am {object:175944} auf dem Dunkelwolkengipfel benutzt, wird {npc:10882} beschworen, ein Elite: Räume das Plateau und sei bei voller Gesundheit, bevor du es entzündest."
+es = "Usar {item:12785} en {object:175944} en el Pináculo Nubenegra invoca a {npc:10882}, un élite: limpia la meseta y ten la salud al máximo antes de encenderlo."
+pt = "Usar {item:12785} em {object:175944} no Pináculo Nuvem Negra invoca {npc:10882}, um elite: limpe o platô e esteja com a vida cheia antes de acendê-lo."
+ru = "Применение {item:12785} у {object:175944} на пике Темного Облака призывает {npc:10882} – элитного противника: зачистите плато и восстановите здоровье, прежде чем разжигать огонь."
+ko = "먹구름 봉우리의 {object:175944}에 {item:12785}을(를) 사용하면 정예인 {npc:10882}이(가) 소환됩니다. 불을 붙이기 전에 고원을 정리하고 생명력을 가득 채우세요."
+zh_cn = "在黑云峰的{object:175944}使用{item:12785}会召唤精英{npc:10882}：点燃之前先清理平台，并把生命值回满。"
+zh_tw = "在黑雲峰的{object:175944}使用{item:12785}會召喚精英{npc:10882}：點燃之前先清理平台，並把生命值回滿。"

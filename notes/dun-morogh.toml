@@ -94,3 +94,34 @@ ru = "Лагерь троллей наверху, на хребте к вост�
 ko = "트롤 야영지는 호수 동쪽 산마루 위에 있습니다. 올라가는 길은 곰 동굴 옆(약 37, 42)에서 시작합니다. 선견자들은 원거리에서 공격하고 둘씩 덤빕니다. 야영지 주변의 {object:276}에도 {item:2676}이(가) 들어 있습니다."
 zh_cn = "巨魔营地在湖东边的山脊上面：上山的小路从熊洞旁开始（约37, 42）。先知会远程施法，而且成对出现；营地周围的{object:276}里也有{item:2676}。"
 zh_tw = "食人妖營地在湖東邊的山脊上面：上山的小路從熊洞旁開始（約37, 42）。先知會遠程施法，而且成對出現；營地周圍的{object:276}裡也有{item:2676}。"
+
+# The Stolen Journal: the right-hand path in the troll cave ends on a ledge right above Grik'nir, skipping most of the cave.
+[[note]]
+quest = 218
+phase = "objective"
+objective = 1
+level = "info"
+en = "Inside the troll cave, take the right-hand path: it ends on a ledge right above {npc:808}. Drop down and fight him with only one troll beside him instead of clearing the whole left path."
+fr = "Dans la grotte des trolls, prenez le chemin de droite : il mène à une corniche juste au-dessus de {npc:808}. Sautez en bas et combattez-le avec un seul troll à ses côtés au lieu de nettoyer tout le chemin de gauche."
+de = "Nimm in der Trollhöhle den rechten Weg: Er endet auf einem Vorsprung direkt über {npc:808}. Spring hinunter und kämpfe gegen ihn mit nur einem Troll an seiner Seite, statt den ganzen linken Weg zu räumen."
+es = "Dentro de la cueva de los trols, toma el camino de la derecha: termina en una cornisa justo encima de {npc:808}. Salta abajo y lucha contra él con un solo trol a su lado en vez de limpiar todo el camino de la izquierda."
+pt = "Dentro da caverna dos trolls, pegue o caminho da direita: ele termina numa saliência logo acima de {npc:808}. Pule e enfrente-o com só um troll ao lado, em vez de limpar todo o caminho da esquerda."
+ru = "В пещере троллей идите по правой тропе: она выводит на уступ прямо над {npc:808}. Спрыгните вниз и сражайтесь с ним, когда рядом лишь один тролль, вместо того чтобы зачищать весь левый путь."
+ko = "트롤 동굴 안에서 오른쪽 길로 가세요. {npc:808} 바로 위 바위턱으로 이어집니다. 왼쪽 길을 전부 정리하는 대신 뛰어내려 옆에 트롤 하나만 있는 상태로 그와 싸우세요."
+zh_cn = "在巨魔洞穴里走右边的路：它通到{npc:808}正上方的岩架。直接跳下去，只需对付他和身边的一个巨魔，不用清完整条左边的路。"
+zh_tw = "在食人妖洞穴裡走右邊的路：它通到{npc:808}正上方的岩架。直接跳下去，只需對付他和身邊的一個食人妖，不用清完整條左邊的路。"
+
+# Bitter Rivals: Jarven guards the barrel in the distillery basement until given an ale; the unguarded barrel becomes usable once he has gone upstairs.
+[[note]]
+quest = 310
+phase = "turnin"
+level = "info"
+en = "The basement stairs are behind the cook's table. Give {npc:1373} a {item:2686} from the innkeeper ({quest:308}), wait until he has gone all the way upstairs, then use {object:270} just behind where he stood."
+fr = "L'escalier de la cave est derrière la table du cuisinier. Donnez à {npc:1373} une {item:2686} achetée à l'aubergiste ({quest:308}), attendez qu'il soit bien monté à l'étage, puis utilisez {object:270} juste derrière l'endroit où il se tenait."
+de = "Die Kellertreppe liegt hinter dem Tisch des Kochs. Gib {npc:1373} ein {item:2686} vom Gastwirt ({quest:308}), warte, bis er ganz nach oben gegangen ist, und benutze dann {object:270} direkt hinter der Stelle, an der er stand."
+es = "La escalera del sótano está detrás de la mesa del cocinero. Dale a {npc:1373} una {item:2686} del tabernero ({quest:308}), espera a que haya subido del todo y luego usa {object:270} justo detrás de donde estaba."
+pt = "A escada do porão fica atrás da mesa do cozinheiro. Dê a {npc:1373} uma {item:2686} do taberneiro ({quest:308}), espere até ele subir de vez e então use {object:270} logo atrás de onde ele estava."
+ru = "Лестница в подвал за столом повара. Отдайте {npc:1373} {item:2686} от трактирщика ({quest:308}), дождитесь, пока он полностью поднимется наверх, и используйте {object:270} прямо за тем местом, где он стоял."
+ko = "지하실 계단은 요리사의 탁자 뒤에 있습니다. 여관주인에게 산 {item:2686}을(를) {npc:1373}에게 주고({quest:308}) 그가 위층으로 완전히 올라갈 때까지 기다린 뒤, 그가 서 있던 자리 바로 뒤의 {object:270}을(를) 사용하세요."
+zh_cn = "地下室的楼梯在厨师的桌子后面。把从旅店老板那里买的{item:2686}交给{npc:1373}（{quest:308}），等他完全走上楼后，再使用他原先站的位置正后方的{object:270}。"
+zh_tw = "地下室的樓梯在廚師的桌子後面。把從旅店老闆那裡買的{item:2686}交給{npc:1373}（{quest:308}），等他完全走上樓後，再使用他原先站的位置正後方的{object:270}。"
