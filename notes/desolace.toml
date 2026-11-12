@@ -173,3 +173,19 @@ ru = "Расчистите дорогу, прежде чем освобожда�
 ko = "풀어 주기 전에 길을 정리하세요. 첫 갈림길에서 {npc:4656} 넷이, 더 가서는 하이에나를 데린 {npc:4655} 셋이 매복합니다. 실패하면 약 8분 뒤에 다시 나타납니다."
 zh_cn = "放她出来之前先清理道路。第一个岔口有四个{npc:4656}伏击，再往前是三个带着土狼的{npc:4655}。失败后她大约8分钟重新出现。"
 zh_tw = "放她出來之前先清理道路。第一個岔口有四個{npc:4656}伏擊，再往前是三個帶著土狼的{npc:4655}。失敗後她大約8分鐘重新出現。"
+
+# Reagents for Reclaimers Inc. (aged kodos): the aged kodos spawn in small groups away from the kodo graveyard and walk into it, turning into dying kodos past its arch; a few also wander inside.
+[[note]]
+quest = 1459
+phase = "objective"
+objective = 2
+level = "warning"
+en = "{npc:4700} spawn in small groups away from the kodo graveyard and walk to it: catch them before they pass its arch, where they turn into dying kodos. A few also wander inside the graveyard."
+fr = "Les {npc:4700} apparaissent en petits groupes loin du cimetière des kodos et marchent vers lui : interceptez-les avant qu'ils passent son arche, où ils deviennent des kodos mourants. Quelques-uns errent aussi dans le cimetière."
+de = "{npc:4700} erscheinen in kleinen Gruppen abseits des Kodofriedhofs und laufen zu ihm: Fang sie ab, bevor sie seinen Torbogen passieren, wo sie zu sterbenden Kodos werden. Einige streifen auch im Friedhof umher."
+es = "Los {npc:4700} aparecen en pequeños grupos lejos del cementerio de kodos y caminan hacia él: atrápalos antes de que crucen su arco, donde se convierten en kodos moribundos. Algunos también deambulan dentro del cementerio."
+pt = "Os {npc:4700} surgem em pequenos grupos longe do cemitério dos kodos e caminham até ele: pegue-os antes que passem pelo arco, onde viram kodos moribundos. Alguns também vagueiam dentro do cemitério."
+ru = "{npc:4700} появляются небольшими группами вдали от кладбища кодо и идут к нему: перехватите их, пока они не прошли под аркой, где превращаются в умирающих кодо. Несколько бродят и внутри кладбища."
+ko = "{npc:4700}은(는) 코도 무덤에서 떨어진 곳에 작은 무리로 나타나 무덤으로 걸어갑니다. 아치를 지나면 죽어가는 코도로 바뀌니 그 전에 잡으세요. 몇 마리는 무덤 안을 돌아다니기도 합니다."
+zh_cn = "{npc:4700}会在远离科多兽坟场的地方成小群出现，然后走向坟场：在它们穿过拱门前截住它们，过了拱门就会变成垂死的科多兽。也有几只在坟场里游荡。"
+zh_tw = "{npc:4700}會在遠離科多獸墳場的地方成小群出現，然後走向墳場：在牠們穿過拱門前截住牠們，過了拱門就會變成垂死的科多獸。也有幾隻在墳場裡遊蕩。"

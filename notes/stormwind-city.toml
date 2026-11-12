@@ -64,3 +64,34 @@ ru = "{npc:4961} сдается примерно на четверти здор�
 ko = "{npc:4961}은(는) 생명력이 4분의 1쯤 남으면 항복하지만, 부하들({npc:4969} ×2)은 한동안 계속 공격하는 경우가 많습니다. 처치하거나 따돌릴 준비를 하세요. 지면 다시 말을 걸어 전투를 다시 시작하세요."
 zh_cn = "{npc:4961}生命值降到约四分之一时会认输，但他的打手（{npc:4969} ×2）常会继续攻击一阵：准备好解决他们或甩掉他们。如果打输了，再和他对话即可重新开始战斗。"
 zh_tw = "{npc:4961}生命值降到約四分之一時會認輸，但他的打手（{npc:4969} ×2）常會繼續攻擊一陣：準備好解決他們或甩掉他們。如果打輸了，再和他對話即可重新開始戰鬥。"
+
+# The Missing Diplomat (Slim): he slips out of the inn once the fight starts; a stun, sheep or fear as he turns hostile keeps his bodyguard away; he yields at about a third of his health.
+[[note]]
+quest = 1249
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Follow {npc:4962} out of the inn at once. Stun, sheep or fear him as soon as he turns hostile and his bodyguard does not show up. Focus on him only: he gives up at about a third of his health."
+fr = "Suivez {npc:4962} hors de l'auberge sans attendre. Étourdissez-le, métamorphosez-le ou apeurez-le dès qu'il devient hostile et son garde du corps ne vient pas. Ne frappez que lui : il abandonne vers un tiers de sa vie."
+de = "Folge {npc:4962} sofort aus dem Gasthaus. Betäube, verwandle oder fürchte ihn, sobald er feindlich wird, dann taucht sein Leibwächter nicht auf. Greif nur ihn an: Er gibt bei etwa einem Drittel seiner Gesundheit auf."
+es = "Sigue a {npc:4962} fuera de la posada enseguida. Atúrdelo, polimorfízalo o atemorízalo en cuanto se vuelva hostil y su guardaespaldas no aparecerá. Céntrate solo en él: se rinde hacia un tercio de su salud."
+pt = "Siga {npc:4962} para fora da estalagem na hora. Atordoe, transforme ou amedronte-o assim que ele ficar hostil e o guarda-costas dele não aparece. Foque só nele: ele desiste com cerca de um terço da vida."
+ru = "Сразу идите за {npc:4962} из таверны. Оглушите, превратите или напугайте его, как только он станет враждебным, и его телохранитель не появится. Бейте только его: он сдаётся примерно на трети здоровья."
+ko = "곧바로 {npc:4962}을(를) 따라 여관 밖으로 나가세요. 적대적으로 바뀌는 즉시 기절, 변이, 공포를 걸면 경호원이 나타나지 않습니다. 그만 공격하세요. 생명력이 약 3분의 1이 되면 항복합니다."
+zh_cn = "立刻跟着{npc:4962}走出旅店。他一变为敌对就击晕、变形或恐惧他，他的保镖就不会出现。只打他：他的生命值降到约三分之一时就会投降。"
+zh_tw = "立刻跟著{npc:4962}走出旅店。他一變為敵對就擊暈、變形或恐懼他，他的保鏢就不會出現。只打他：他的生命值降到約三分之一時就會投降。"
+
+# The Missing Diplomat (Sentry Point): entering the tower completes the search and Archmage Tervosh appears there to take it; when he does not, stepping out and back in or waiting a few minutes brings him.
+[[note]]
+quest = 1265
+phase = "turnin"
+level = "warning"
+en = "Walk into the lower floor of the tower: the search completes and {npc:4967} appears there to take the quest. If he does not, step out and back in, or wait a few minutes: another player may be on the next part."
+fr = "Entrez au rez-de-chaussée de la tour : la fouille se termine et {npc:4967} y apparaît pour prendre la quête. S'il ne vient pas, sortez et revenez, ou attendez quelques minutes : un autre joueur fait peut-être la suite."
+de = "Geh ins Erdgeschoss des Turms: Die Suche ist abgeschlossen und {npc:4967} erscheint dort, um die Quest anzunehmen. Kommt er nicht, geh hinaus und wieder hinein oder warte ein paar Minuten: Vielleicht macht ein anderer Spieler gerade den nächsten Teil."
+es = "Entra en la planta baja de la torre: la búsqueda se completa y {npc:4967} aparece allí para recibir la misión. Si no aparece, sal y vuelve a entrar, o espera unos minutos: puede que otro jugador esté con la parte siguiente."
+pt = "Entre no térreo da torre: a busca é concluída e {npc:4967} aparece ali para receber a missão. Se ele não vier, saia e entre de novo, ou espere alguns minutos: outro jogador pode estar na parte seguinte."
+ru = "Зайдите на нижний этаж башни: поиск завершится, и там появится {npc:4967}, чтобы принять задание. Если его нет, выйдите и зайдите снова или подождите несколько минут: возможно, другой игрок выполняет следующую часть."
+ko = "탑의 아래층으로 들어가면 수색이 완료되고 {npc:4967}이(가) 그곳에 나타나 퀘스트를 받습니다. 나타나지 않으면 밖으로 나갔다가 다시 들어오거나 몇 분 기다리세요. 다른 플레이어가 다음 단계를 진행 중일 수 있습니다."
+zh_cn = "走进塔的底层：搜查完成，{npc:4967}会出现在那里接收任务。如果他没出现，出去再进来，或等几分钟：可能有其他玩家正在做下一步。"
+zh_tw = "走進塔的底層：搜查完成，{npc:4967}會出現在那裡接收任務。如果他沒出現，出去再進來，或等幾分鐘：可能有其他玩家正在做下一步。"

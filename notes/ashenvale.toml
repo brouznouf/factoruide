@@ -172,3 +172,50 @@ ru = "{npc:3897} стоит лагерем над водопадом на юго
 ko = "{npc:3897}은(는) 호수 남동쪽 폭포 위에 있습니다. 폭포 동쪽의 횃불이 놓인 길을 따라 올라가세요. 도착하기 전에 {item:5462}을(를) 사용하고 공격하지 마세요. 무엇이든 공격하면 변신이 풀립니다."
 zh_cn = "{npc:3897}在湖东南侧的瀑布上方：沿瀑布东边点着火把的小路上去。到达前使用{item:5462}，不要攻击他；攻击任何目标都会解除变形。"
 zh_tw = "{npc:3897}在湖東南側的瀑布上方：沿瀑布東邊點著火把的小路上去。到達前使用{item:5462}，不要攻擊他；攻擊任何目標都會解除變形。"
+
+# The Howling Vale: past the tunnel, a rock on the left against the building's base reaches the tome's table with few fights.
+[[note]]
+quest = 1022
+phase = "objective"
+objective = 1
+level = "info"
+en = "The path up to the tunnel leaves the road to {zone:361} on its west side. Past the tunnel, climb onto the rock on the left against the building's base: {object:19027} is on the table just below, reachable after one or two pulls."
+fr = "Le sentier vers le tunnel part de la route de {zone:361}, côté ouest. Après le tunnel, montez sur le rocher à gauche contre la base du bâtiment : {object:19027} est sur la table juste en dessous, accessible après un ou deux combats."
+de = "Der Pfad zum Tunnel zweigt westlich von der Straße nach {zone:361} ab. Hinter dem Tunnel kletterst du auf den Felsen links am Fuß des Gebäudes: {object:19027} liegt auf dem Tisch direkt darunter, erreichbar nach ein, zwei Kämpfen."
+es = "El sendero al túnel sale del camino a {zone:361} por el oeste. Pasado el túnel, sube a la roca de la izquierda junto a la base del edificio: {object:19027} está en la mesa justo debajo, accesible tras uno o dos combates."
+pt = "A trilha até o túnel sai da estrada para {zone:361} pelo lado oeste. Depois do túnel, suba na rocha à esquerda junto à base do edifício: {object:19027} está na mesa logo abaixo, alcançável após um ou dois combates."
+ru = "Тропа к туннелю отходит от дороги в {zone:361} с западной стороны. За туннелем залезьте на камень слева у основания здания: {object:19027} лежит на столе прямо под ним, и до него можно добраться после одного-двух боёв."
+ko = "터널로 오르는 길은 {zone:361}(으)로 가는 길 서쪽에서 갈라집니다. 터널을 지나 왼쪽 건물 기단에 붙은 바위 위로 올라가세요. {object:19027}은(는) 바로 아래 탁자 위에 있으며, 한두 번만 싸우면 닿을 수 있습니다."
+zh_cn = "通往隧道的小路从去{zone:361}的大路西侧分出。穿过隧道后，爬上左边靠着建筑基座的岩石：{object:19027}就在正下方的桌子上，打一两只怪就能拿到。"
+zh_tw = "通往隧道的小路從去{zone:361}的大路西側分出。穿過隧道後，爬上左邊靠著建築基座的岩石：{object:19027}就在正下方的桌子上，打一兩隻怪就能拿到。"
+
+# Forsaken Diseases: the undead around the camp stealth in and out and come in pairs; the camp is easier from behind its tent, and stealthed Ashenvale Outrunners nearby join fights.
+[[note]]
+quest = 1011
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The undead around {object:18036} fade in and out of sight and often come in pairs. Approach the camp from behind its tent and pull them one at a time, or lead them to a stealthed {npc:12856} nearby, who joins in."
+fr = "Les morts-vivants autour de {object:18036} disparaissent et réapparaissent et viennent souvent par deux. Abordez le camp par l'arrière de la tente et attirez-les un par un, ou menez-les vers une {npc:12856} camouflée à proximité, qui vous aidera."
+de = "Die Untoten um {object:18036} tauchen auf und verschwinden wieder und kommen oft zu zweit. Nähere dich dem Lager von hinter dem Zelt und zieh sie einzeln, oder führ sie zu einem getarnten {npc:12856} in der Nähe, der mitkämpft."
+es = "Los no-muertos alrededor de {object:18036} aparecen y desaparecen y suelen venir de dos en dos. Acércate al campamento por detrás de la tienda y atráelos de uno en uno, o llévalos hasta una {npc:12856} en sigilo cercana, que te ayudará."
+pt = "Os mortos-vivos ao redor de {object:18036} somem e reaparecem e costumam vir em dupla. Aproxime-se do acampamento por trás da tenda e puxe-os um de cada vez, ou leve-os até um {npc:12856} furtivo por perto, que ajuda na luta."
+ru = "Нежить вокруг {object:18036} то исчезает, то появляется и часто нападает парами. Подходите к лагерю со стороны за палаткой и выманивайте их по одному или ведите к незаметной {npc:12856} поблизости — она поможет."
+ko = "{object:18036} 주변의 언데드는 모습을 감췄다 드러냈다 하며 종종 둘씩 덤빕니다. 천막 뒤쪽에서 야영지에 접근해 하나씩 끌어내거나, 근처에 은신한 {npc:12856}에게 데려가면 함께 싸워 줍니다."
+zh_cn = "{object:18036}周围的亡灵会时隐时现，常常两个一起来。从帐篷后方接近营地，一次拉一个，或者把它们引到附近潜行的{npc:12856}那里，她会加入战斗。"
+zh_tw = "{object:18036}周圍的亡靈會時隱時現，常常兩個一起來。從帳篷後方接近營地，一次拉一個，或者把牠們引到附近潛行的{npc:12856}那裡，她會加入戰鬥。"
+
+# Insane Druids: the three druids are spread over the barrow den's levels; stealthed undead respawn quickly, so leaving by hearthstone saves the walk back.
+[[note]]
+quest = 1012
+phase = "objective"
+level = "warning"
+en = "In the barrow den: {npc:3940} is across the first bridge; {npc:3941} at the bottom of the lower spiral (a bear, tracked as a beast); {npc:3942} on a balcony reached by a side tunnel and a bridge. Stealthed undead respawn fast: keep your hearthstone ready."
+fr = "Dans le tertre : {npc:3940} est après le premier pont ; {npc:3941} au fond de la spirale inférieure (un ours, pistable comme bête) ; {npc:3942} sur un balcon, par un tunnel latéral et un pont. Les morts-vivants camouflés réapparaissent vite : gardez votre pierre de foyer prête."
+de = "Im Grabhügel: {npc:3940} ist hinter der ersten Brücke; {npc:3941} ganz unten in der unteren Spirale (ein Bär, als Wildtier aufspürbar); {npc:3942} auf einem Balkon, über einen Seitentunnel und eine Brücke. Getarnte Untote erscheinen schnell neu: Halte den Ruhestein bereit."
+es = "En el túmulo: {npc:3940} está tras el primer puente; {npc:3941} al fondo de la espiral inferior (un oso, rastreable como bestia); {npc:3942} en un balcón, por un túnel lateral y un puente. Los no-muertos en sigilo reaparecen rápido: ten lista tu piedra de hogar."
+pt = "No túmulo: {npc:3940} fica depois da primeira ponte; {npc:3941} no fundo da espiral inferior (um urso, rastreável como fera); {npc:3942} numa sacada, por um túnel lateral e uma ponte. Os mortos-vivos furtivos reaparecem rápido: deixe sua pedra de regresso pronta."
+ru = "В кургане: {npc:3940} за первым мостом; {npc:3941} в самом низу нижней спирали (медведь, отслеживается как зверь); {npc:3942} на балконе, куда ведут боковой туннель и мост. Незаметная нежить быстро возрождается: держите камень возвращения наготове."
+ko = "무덤 굴에서 {npc:3940}은(는) 첫 다리 건너편에, {npc:3941}은(는) 아래쪽 나선 길 맨 밑에(곰이라 야수 추적에 잡힘), {npc:3942}은(는) 옆 터널과 다리를 지나는 발코니에 있습니다. 은신한 언데드가 빨리 재생성되니 귀환석을 준비해 두세요."
+zh_cn = "在古墓里：{npc:3940}在第一座桥对面；{npc:3941}在下层螺旋道的最底部（是一只熊，追踪野兽可见）；{npc:3942}在经过侧面隧道和一座桥才能到的阳台上。潜行的亡灵重生很快：准备好炉石。"
+zh_tw = "在古墓裡：{npc:3940}在第一座橋對面；{npc:3941}在下層螺旋道的最底部（是一隻熊，追蹤野獸可見）；{npc:3942}在經過側面隧道和一座橋才能到的陽台上。潛行的亡靈重生很快：準備好爐石。"

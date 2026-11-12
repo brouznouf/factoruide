@@ -110,3 +110,25 @@ ru = "Стража в усадьбе и вокруг неё быстро воз�
 ko = "저택 안팎의 경비병은 빨리 다시 나타납니다. 길을 뚫고 지체하지 마세요. {npc:2423}는 생명력을 가득 회복하고 수면을 겁니다. 치유를 끊거나 마나를 빼앗으세요."
 zh_cn = "庄园内外的守卫刷新很快：一路清上去，别逗留。{npc:2423}会把自己治疗满血并施放催眠；打断他的治疗或吸干他的法力。"
 zh_tw = "莊園內外的守衛重生很快：一路清上去，別逗留。{npc:2423}會把自己治療滿血並施放催眠；打斷他的治療或吸乾他的法力。"
+
+# A King's Tribute: the granite chunks are set into the walls inside the yeti cave, a little lighter than the rock; no Mining skill needed.
+[[note]]
+quest = 689
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:2714} is in chunks set into the walls inside the yeti cave, a little lighter than the rock around them: hover the walls. No Mining needed."
+fr = "{object:2714} se présente en blocs incrustés dans les parois de la grotte des yétis, un peu plus clairs que la roche autour : passez la souris sur les parois. Aucun Minage requis."
+de = "{object:2714} steckt in Brocken in den Wänden der Yetihöhle, etwas heller als der Fels drumherum: Fahr mit der Maus über die Wände. Kein Bergbau nötig."
+es = "{object:2714} está en bloques incrustados en las paredes de la cueva de los yetis, algo más claros que la roca de alrededor: pasa el cursor por las paredes. No hace falta Minería."
+pt = "{object:2714} fica em blocos encravados nas paredes da caverna dos yetis, um pouco mais claros que a rocha ao redor: passe o cursor nas paredes. Não precisa de Mineração."
+ru = "{object:2714} — глыбы, вделанные в стены пещеры йети, чуть светлее окружающей породы: водите курсором по стенам. Горное дело не нужно."
+ko = "{object:2714}은(는) 설인 동굴 안쪽 벽에 박힌 덩어리로, 주변 바위보다 조금 밝습니다. 벽에 마우스를 대 보세요. 채광 기술은 필요 없습니다."
+zh_cn = "{object:2714}是嵌在雪人洞穴内壁上的石块，颜色比周围的岩石稍浅：用鼠标在墙上扫一扫。不需要采矿技能。"
+zh_tw = "{object:2714}是嵌在雪人洞穴內壁上的石塊，顏色比周圍的岩石稍淺：用滑鼠在牆上掃一掃。不需要採礦技能。"
+
+[[icon]]
+quest = 689
+phase = "objective"
+objective = 1
+icon = "pickup"

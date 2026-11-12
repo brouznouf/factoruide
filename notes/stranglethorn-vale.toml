@@ -235,3 +235,48 @@ ru = "Потеряв половину здоровья, {npc:731} призыва
 ko = "{npc:731}는 생명력이 절반 아래로 떨어지면 표범 둘을 부르며, 실패하면 표범은 그 곁에 남고 다시 시도할 때마다 둘이 더 옵니다. 먼저 주변 고양이과 짐승을 처리하고 한 번에 처치하세요."
 zh_cn = "{npc:731}血量低于一半时会召来两只豹子，失败后豹子会留在他身边，每次重试还会再来两只。先清掉周围的猫科野兽，一口气杀掉他。"
 zh_tw = "{npc:731}血量低於一半時會召來兩隻豹子，失敗後豹子會留在他身邊，每次重試還會再來兩隻。先清掉周圍的貓科野獸，一口氣殺掉他。"
+
+# Supplies to Private Thorsen: he regularly patrols the road out of the camp and takes the supplies only while standing still, at the camp or at the end of his patrol.
+[[note]]
+quest = 198
+phase = "turnin"
+level = "warning"
+en = "{npc:738} regularly patrols the road out of the Rebel Camp and takes the supplies only while standing still, at the camp or at the end of his patrol. If he is away or dead, wait for him by the camp's fire."
+fr = "{npc:738} patrouille régulièrement sur la route hors du camp rebelle et ne prend les provisions que lorsqu'il est immobile, au camp ou au bout de sa patrouille. S'il est absent ou mort, attendez-le près du feu du camp."
+de = "{npc:738} patrouilliert regelmäßig die Straße außerhalb des Rebellenlagers und nimmt die Vorräte nur an, wenn er stillsteht, im Lager oder am Ende seiner Patrouille. Ist er fort oder tot, warte am Lagerfeuer auf ihn."
+es = "{npc:738} patrulla a menudo el camino fuera del campamento rebelde y solo acepta los suministros cuando está quieto, en el campamento o al final de su patrulla. Si no está o ha muerto, espéralo junto a la hoguera del campamento."
+pt = "{npc:738} patrulha com frequência a estrada fora do acampamento rebelde e só aceita os suprimentos quando está parado, no acampamento ou no fim da patrulha. Se ele não estiver ou tiver morrido, espere-o junto à fogueira do acampamento."
+ru = "{npc:738} регулярно патрулирует дорогу за лагерем повстанцев и принимает припасы, только когда стоит на месте: в лагере или в конце патруля. Если его нет или он погиб, ждите его у костра лагеря."
+ko = "{npc:738}은(는) 반란군 야영지 밖의 길을 주기적으로 순찰하며, 야영지나 순찰 끝 지점에서 멈춰 서 있을 때만 보급품을 받습니다. 자리에 없거나 죽었다면 야영지 모닥불 옆에서 기다리세요."
+zh_cn = "{npc:738}会定期沿着反抗军营地外的道路巡逻，只有在站定时才收下补给：在营地里或巡逻的终点。如果他不在或已死亡，就在营地的篝火旁等他。"
+zh_tw = "{npc:738}會定期沿著反抗軍營地外的道路巡邏，只有在站定時才收下補給：在營地裡或巡邏的終點。如果他不在或已死亡，就在營地的營火旁等他。"
+
+# The Hidden Key: the lockbox is a small box among the crates where the first Kurzen elites stand, along the right wall of the cave, before the ramp down; it takes a while to come back once opened.
+[[note]]
+quest = 328
+phase = "turnin"
+level = "warning"
+en = "In the cave keep to the right wall and do not take the ramp down. {object:288} is a small box among the crates where the first elites and a witch doctor stand. Once opened it takes up to 15 minutes to come back."
+fr = "Dans la grotte, longez le mur de droite et ne prenez pas la rampe qui descend. {object:288} est une petite boîte parmi les caisses où se tiennent les premiers élites et un sorcier-docteur. Une fois ouvert, il met jusqu'à 15 minutes à revenir."
+de = "Halte dich in der Höhle an die rechte Wand und nimm nicht die Rampe nach unten. {object:288} ist eine kleine Kiste zwischen den Kisten, wo die ersten Elite und ein Hexendoktor stehen. Einmal geöffnet, dauert es bis zu 15 Minuten, bis er wieder da ist."
+es = "En la cueva, sigue la pared derecha y no bajes por la rampa. {object:288} es una cajita entre las cajas donde están los primeros élites y un médico brujo. Una vez abierto, tarda hasta 15 minutos en volver."
+pt = "Na caverna, siga a parede da direita e não desça a rampa. {object:288} é uma caixinha entre os caixotes onde ficam os primeiros elites e um mandingueiro. Depois de aberto, leva até 15 minutos para voltar."
+ru = "В пещере держитесь правой стены и не спускайтесь по пандусу. {object:288} — маленький ящичек среди ящиков, где стоят первые элитные воины и знахарь. После открытия он появляется снова только через 15 минут."
+ko = "동굴에서는 오른쪽 벽을 따라가고 아래로 내려가는 비탈로 가지 마세요. {object:288}은(는) 첫 정예병들과 주술사가 서 있는 상자 더미 사이의 작은 상자입니다. 한 번 열리면 다시 나타나기까지 최대 15분이 걸립니다."
+zh_cn = "在山洞里沿右侧墙走，不要走下坡道。{object:288}是一个小盒子，夹在第一批精英和一个巫医所站的箱子堆中间。被打开后最多要15分钟才会重新出现。"
+zh_tw = "在山洞裡沿右側牆走，不要走下坡道。{object:288}是一個小盒子，夾在第一批精英和一個巫醫所站的箱子堆中間。被打開後最多要15分鐘才會重新出現。"
+
+# Bookie Herod: the records are a small stack of dark books on the upper floor of the compound's only two-storey house, against the back wall.
+[[note]]
+quest = 200
+phase = "turnin"
+level = "info"
+en = "{object:287} is a small stack of dark green books on the upper floor of the compound's only two-storey house, against the back wall: it blends into the wall."
+fr = "{object:287} est une petite pile de livres vert foncé à l'étage de la seule maison à deux niveaux du camp, contre le mur du fond : elle se confond avec le mur."
+de = "{object:287} sind ein kleiner Stapel dunkelgrüner Bücher im Obergeschoss des einzigen zweistöckigen Hauses im Lager, an der Rückwand: Er verschwimmt mit der Wand."
+es = "{object:287} es una pequeña pila de libros verde oscuro en el piso superior de la única casa de dos plantas del complejo, contra la pared del fondo: se confunde con la pared."
+pt = "{object:287} é uma pequena pilha de livros verde-escuros no andar de cima da única casa de dois andares do complexo, junto à parede dos fundos: ela se confunde com a parede."
+ru = "{object:287} — небольшая стопка тёмно-зелёных книг на верхнем этаже единственного двухэтажного дома в лагере, у задней стены: её трудно отличить от стены."
+ko = "{object:287}은(는) 기지에 하나뿐인 2층 집의 위층 뒷벽에 놓인 작은 진녹색 책 더미입니다. 벽과 색이 비슷해 눈에 잘 띄지 않습니다."
+zh_cn = "{object:287}是一小摞深绿色的书，在营地里唯一一栋两层房子的楼上，靠着后墙：它和墙几乎融为一体。"
+zh_tw = "{object:287}是一小疊深綠色的書，在營地裡唯一一棟兩層房子的樓上，靠著後牆：它和牆幾乎融為一體。"
