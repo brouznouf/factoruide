@@ -2214,3 +2214,31 @@ id = 645233
 zone = 16591
 x = 65.6
 y = 81.6
+
+# The Drowned City, the Alliance's chain (players' reports, the quests' texts): Brother Nimetz sends
+# to Southshore once Troll Witchery is done; Loremaster Dibbs gives the two dungeon quests after
+# that report, then one follow-up for each: the fetish after the fetishes, the translations after
+# the tablets. The sources know none of these links and offered the blue rewards from level 30.
+[[quest]]
+id = 95786
+pre_all = [205]
+
+[[quest]]
+id = 95787
+pre_all = [95786]
+
+[[quest]]
+id = 95788
+pre_all = [95786]
+
+[[quest]]
+id = 95798
+pre_all = [95788]
+
+[[quest]]
+# Findings for the Explorer's League: the translations go to Historian Karnik in Ironforge, not
+# back to Loremaster Dibbs.
+id = 95799
+pre_all = [95787]
+ends = [{ type = "npc", id = 2916 }]
+remove_ends = [{ type = "npc", id = 2277 }]

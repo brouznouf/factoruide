@@ -392,9 +392,9 @@ impl PowerModel {
         let mut items = Vec::new();
         let mut uncommon = Vec::new();
         let mut stmt = conn.prepare(
-            "SELECT s.id, quality, inventory_type, s.class, s.subclass, allowable_class, s.required_level, str, agi,
+            "SELECT s.id, s.quality, inventory_type, s.class, s.subclass, allowable_class, s.required_level, str, agi,
                     sta, int, spi, armor, ap, rap, sp, heal, crit, spell_crit, hit, mp5, dps, coalesce(n.name, '')
-             FROM m_item_stats s LEFT JOIN m_item n ON n.id = s.id WHERE quality >= 1",
+             FROM m_item_stats s LEFT JOIN m_item n ON n.id = s.id WHERE s.quality >= 1",
         )?;
         let mut rows = stmt.query([])?;
         while let Some(r) = rows.next()? {
