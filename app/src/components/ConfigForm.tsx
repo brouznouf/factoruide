@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { api, type CharacterInfo, type Options, type Params, type PlanRequest, type RequiredQuest } from "../api";
+import { autoGuideName } from "../guideName";
 import { MIN_CHOICE_LEVEL, SIMPLE_KEYS, efforts, presets, sections, type Field, type Section } from "../paramSchema";
 import { DungeonPanel, dungeonsWithoutLevels } from "./DungeonPanel";
 import { Hint } from "./Hint";
@@ -138,7 +139,12 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   const nameRef = useRef<HTMLInputElement>(null);
   const [toLevel, setToLevel] = useState(initial?.to_level ?? options.max_level);
   const [name, setName] = useState(initial?.name ?? "");
-  const nameMissing = triedRun && !name.trim();
+  // A name made from the guide's character (`autoName`, its name) follows that character's level
+  // and the level to reach until the player types one: lowering "to level" after picking the
+  // character no longer leaves "Name 25-60" on a 25-40 guide.
+  const [autoName, setAutoName] = useState<string | null>(null);
+  const guideName = autoName ? autoGuideName(autoName, fromLevel, toLevel) : name;
+  const nameMissing = triedRun && !guideName.trim();
   // The language the guide is first written in (shown and installed in any language later).
   const locale = initial?.locale ?? defaultLocale;
   const [params, setParams] = useState<Params>({ ...defaults, ...(initial?.params ?? {}) });
@@ -164,7 +170,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
   const ownPicked = (c: CharacterInfo | null) => {
     if (!c) return;
     if (toLevel <= c.profile.level) setToLevel(options.max_level);
-    if (!name.trim()) setName(`${c.profile.name.split("-")[0]} ${c.profile.level}-${Math.max(toLevel, c.profile.level + 1)}`);
+    if (!name.trim()) setAutoName(c.profile.name);
   };
   if (startCharacter && characters && !picked) {
     setPicked(true);
@@ -237,7 +243,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
     class: klass,
     from_level: fromLevel,
     to_level: toLevel,
-    name: name.trim(),
+    name: guideName.trim(),
     params,
     required_class_quests: classQuests ?? [],
     required_quests: requiredQuests,
@@ -256,7 +262,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
       setView("simple");
       return;
     }
-    if (name.trim()) return action(request());
+    if (guideName.trim()) return action(request());
     // The guide needs a name: show where to type it.
     setTriedRun(true);
     setView("simple");
@@ -267,7 +273,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
     onChange?.(request());
     // The request is made of these.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [players, toLevel, name, params, classQuests, requiredQuests, locale, onChange]);
+  }, [players, toLevel, name, autoName, params, classQuests, requiredQuests, locale, onChange]);
 
   /** A section of the advanced settings (null when the search leaves none of its fields). */
   const settingsSection = (s: Section) => {
@@ -372,8 +378,11 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
                   required
                   aria-invalid={nameMissing}
                   placeholder={t("ex. Duo nain guerrier et prêtre")}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={guideName}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setAutoName(null);
+                  }}
                 />
                 {nameMissing && <small className="field-error">{t("Donnez un nom au guide pour le retrouver et le partager.")}</small>}
               </label>
