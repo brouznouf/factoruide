@@ -272,3 +272,13 @@ reason = "The Ectoplasmic Distiller needs a Delicate Arcanite Converter (enginee
 check = "broken-chains"
 key = "quest 571"
 reason = "Mok'thardin's Enchantment: the Aged Gorilla Sinew drops at 1.6% in the data, below the 3% the planner farms for"
+
+[[accept]]
+check = "rare-rewards"
+key = "quest 8912"
+reason = "An Earnest Proposition, the Ahn'Qiraj war effort's class quest in Ironforge, offered at level 60 with nothing before"
+
+[[accept]]
+check = "rare-rewards"
+key = "quest 8920"
+reason = "An Earnest Proposition, the Ahn'Qiraj war effort's class quest in Orgrimmar, offered at level 60 with nothing before"

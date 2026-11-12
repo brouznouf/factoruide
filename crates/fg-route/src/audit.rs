@@ -150,6 +150,15 @@ pub const CHECKS: &[Check] = &[
                quest data, or accept a time that is no limit (a spell that lasts 2 minutes)",
         error: false,
     },
+    Check {
+        name: "rare-rewards",
+        what: "quests of the guide giving a rare (blue) item or better with no prerequisite known, \
+               outside dungeons and elites: such rewards usually end a long chain, so a chain the \
+               data lacks lets the guide take the quest before the game offers it. Check its \
+               series on Wowhead or in game: give the missing prerequisite in the quest data, or \
+               accept a quest offered from the start",
+        error: false,
+    },
 ];
 
 /// Why a quest is left out when its objectives or their places are unknown to the data (the
@@ -235,6 +244,11 @@ pub fn audit(
         untimed_quests_saying_a_time(conn)?
     } else {
         HashMap::new()
+    };
+    let rare = if on("rare-rewards") {
+        RareRewards::read(conn)?
+    } else {
+        RareRewards::default()
     };
     let doors = if on("dungeon-entrances") {
         dungeon_doors(conn)?
@@ -362,6 +376,9 @@ pub fn audit(
             timed_quests(&prepared.model, &timed_text)
                 .into_iter()
                 .for_each(&mut add);
+        }
+        if on("rare-rewards") {
+            rare.found(&prepared.model).into_iter().for_each(&mut add);
         }
         if on("source-items") {
             uncovered_source_items(&prepared.model, &source_items)
@@ -1296,6 +1313,90 @@ fn timed_quests(model: &Model, untimed: &HashMap<i64, String>) -> Vec<Finding> {
         .collect()
 }
 
+/// What the rare-rewards check reads: the items of quality rare (3, blue) or better with their
+/// name (databases built before the items had a quality have none), the dungeons' areas and the
+/// quests filed under one.
+#[derive(Default)]
+struct RareRewards {
+    items: HashMap<i64, (i64, String)>,
+    dungeons: HashSet<i64>,
+    dungeon_quests: HashSet<i64>,
+}
+
+impl RareRewards {
+    fn read(conn: &Connection) -> Result<Self> {
+        let has_quality: bool = conn.query_row(
+            "SELECT count(*) > 0 FROM pragma_table_info('m_item') WHERE name = 'quality'",
+            [],
+            |r| r.get(0),
+        )?;
+        let items = if has_quality {
+            let mut stmt = conn.prepare("SELECT id, quality, coalesce(name, '') FROM m_item WHERE quality >= 3")?;
+            stmt.query_map([], |r| Ok((r.get(0)?, (r.get(1)?, r.get(2)?))))?
+                .collect::<rusqlite::Result<_>>()?
+        } else {
+            HashMap::new()
+        };
+        // The dungeons' areas, and the other areas used inside them (Gnomeregan's 133).
+        let mut stmt = conn.prepare(
+            "SELECT area FROM dungeon UNION SELECT j.value FROM dungeon, json_each(coalesce(alt_areas, '[]')) j \
+             WHERE j.value IS NOT NULL",
+        )?;
+        let dungeons: HashSet<i64> = stmt.query_map([], |r| r.get(0))?.collect::<rusqlite::Result<_>>()?;
+        let mut stmt = conn.prepare("SELECT id, zone_or_sort FROM m_quest")?;
+        let dungeon_quests = (stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, Option<i64>>(1)?)))?)
+            .filter_map(|r| match r {
+                Ok((id, Some(zone))) if dungeons.contains(&zone) => Some(Ok(id)),
+                Ok(_) => None,
+                Err(e) => Some(Err(e)),
+            })
+            .collect::<rusqlite::Result<_>>()?;
+        Ok(Self {
+            items,
+            dungeons,
+            dungeon_quests,
+        })
+    }
+
+    /// Quests of the guide with nothing to do first that reward a rare item, outside dungeons
+    /// and elites: The Web of Magic gave a blue item at Loremaster Dibbs from level 30 while the
+    /// game offers it only at the end of a chain through the Drowned City, which no source knew.
+    fn found(&self, model: &Model) -> Vec<Finding> {
+        let mut out = Vec::new();
+        for q in &model.quests {
+            if !q.pre_all.is_empty() || !q.pre_any.is_empty() || !q.pre_held.is_empty() {
+                continue;
+            }
+            let in_dungeon = self.dungeon_quests.contains(&q.id)
+                || q.start_dungeon.is_some()
+                || (q.objectives.iter()).any(|o| o.dungeon.is_some() || self.dungeons.contains(&o.loc.zone));
+            if in_dungeon || q.objectives.iter().any(|o| o.elite) {
+                continue;
+            }
+            let items: Vec<String> = (q.reward_items.iter())
+                .filter_map(|i| (self.items.get(i)).map(|(quality, name)| format!("{name} ({i}, quality {quality})")))
+                .collect();
+            if items.is_empty() {
+                continue;
+            }
+            out.push(Finding {
+                check: "rare-rewards",
+                key: format!("quest {}", q.id),
+                detail: format!(
+                    "{} ({}), level {}: rewards {} with no prerequisite known",
+                    q.name,
+                    q.id,
+                    q.level,
+                    items.join(", ")
+                ),
+                races: Vec::new(),
+                npcs: Vec::new(),
+            });
+        }
+        out
+    }
+}
+
 /// Quests left out for something the data does not know (`unknown_in_data`) that quests of the
 /// guide need first: all of them (`pre_all`), or the only ones of a choice (`pre_any`, all left
 /// out). Secure the Mountain's den had no place, which lost the report taken back after it.
@@ -1454,6 +1555,36 @@ mod tests {
             let found = accepted(&dir, edition).unwrap();
             assert!(!found.is_empty(), "{edition:?}");
         }
+    }
+
+    /// The Web of Magic's case: a quest with a blue reward and nothing to do first is found;
+    /// with a prerequisite, a green reward, or taken in a dungeon, it is not.
+    #[test]
+    fn a_rare_reward_with_no_prerequisite_is_found() {
+        let mut p = quests_at_start(2);
+        let q = &mut p.model.quests[0];
+        (q.pre_all, q.pre_any, q.pre_held) = (Vec::new(), Vec::new(), Vec::new());
+        q.reward_items = vec![279_878, 279_888];
+        let id = q.id;
+        let mut rare = RareRewards {
+            items: HashMap::from([(279_878, (3, "Apprentice Sorcerer's Slacks".to_owned()))]),
+            ..RareRewards::default()
+        };
+        let found = rare.found(&p.model);
+        assert_eq!(
+            found.iter().map(|f| f.key.clone()).collect::<Vec<_>>(),
+            [format!("quest {id}")]
+        );
+        assert!(found[0].detail.contains("Apprentice Sorcerer's Slacks"));
+
+        p.model.quests[0].pre_all = vec![p.model.quests[1].id];
+        assert!(rare.found(&p.model).is_empty());
+        p.model.quests[0].pre_all.clear();
+        p.model.quests[0].reward_items = vec![279_888];
+        assert!(rare.found(&p.model).is_empty());
+        p.model.quests[0].reward_items = vec![279_878];
+        rare.dungeon_quests.insert(id);
+        assert!(rare.found(&p.model).is_empty());
     }
 
     /// Light's Justice's case: a giver with creatures ten levels above the quest around it is
