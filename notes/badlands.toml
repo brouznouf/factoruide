@@ -61,3 +61,19 @@ ru = "Печать вызывает сразу двух элитных прот�
 ko = "인장을 사용하면 정예 둘, {npc:2757}, {npc:2759}이(가) 동시에 나타납니다. 즉시 멀리 물러나 초기화시킨 뒤 하나씩 끌어오세요. 약 10분 동안 머무릅니다."
 zh_cn = "使用封印会同时召唤两个精英：{npc:2757}和{npc:2759}。立刻远远后退让它们重置，再一个一个拉；它们大约停留10分钟。"
 zh_tw = "使用封印會同時召喚兩個精英：{npc:2757}和{npc:2759}。立刻遠遠後退讓牠們重置，再一個一個拉；牠們大約停留10分鐘。"
+
+# The Star, the Hand and the Heart: Dagun only appears when the Enchanted Sea Kelp is used at the Seaworn Altar on the island; the kelp is a rare drop of the Mirefin Oracles and is traded at the auction house.
+[[note]]
+quest = 735
+phase = "objective"
+objective = 2
+level = "must_read"
+en = "{npc:2937} does not wait on the island: use {item:4639} at {object:2871} to call him up. The kelp drops rarely from {npc:4363} around the island, and it can also be bought at the auction house."
+fr = "{npc:2937} n'attend pas sur l'île : utilisez {item:4639} à {object:2871} pour le faire surgir. Le varech tombe rarement sur les {npc:4363} autour de l'île, et on peut aussi l'acheter à l'hôtel des ventes."
+de = "{npc:2937} wartet nicht auf der Insel: Benutze {item:4639} an {object:2871}, um ihn herbeizurufen. Der Seetang fällt selten bei {npc:4363} rund um die Insel und ist auch im Auktionshaus zu kaufen."
+es = "{npc:2937} no espera en la isla: usa {item:4639} en {object:2871} para invocarlo. El alga cae rara vez de los {npc:4363} de alrededor de la isla, y también se puede comprar en la casa de subastas."
+pt = "{npc:2937} não fica esperando na ilha: use {item:4639} em {object:2871} para invocá-lo. A alga cai raramente dos {npc:4363} em volta da ilha e também pode ser comprada na casa de leilões."
+ru = "{npc:2937} не ждет на острове: используйте {item:4639} у {object:2871}, чтобы призвать его. Водоросли редко выпадают из {npc:4363} вокруг острова, их также можно купить на аукционе."
+ko = "{npc:2937}은(는) 섬에 미리 있지 않습니다. {object:2871}에서 {item:4639}을(를) 사용해 불러내세요. 해초는 섬 주변의 {npc:4363}에게서 드물게 떨어지며, 경매장에서 살 수도 있습니다."
+zh_cn = "{npc:2937}不会在岛上等你：在{object:2871}使用{item:4639}把他召唤出来。海藻由岛周围的{npc:4363}低几率掉落，也可以在拍卖行买到。"
+zh_tw = "{npc:2937}不會在島上等你：在{object:2871}使用{item:4639}把他召喚出來。海藻由島周圍的{npc:4363}低機率掉落，也可以在拍賣行買到。"

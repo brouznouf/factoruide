@@ -104,3 +104,50 @@ ru = "Завершение этого шага поднимает {npc:412}, э�
 ko = "이 단계를 마치면 35레벨 정예 {npc:412}이(가) 깨어나 서쪽 묘지에서 어둠골까지 길을 따라 걸어와 경비병과 싸웁니다. 죽일 필요는 없으니 몇 분 동안 그 길을 피하세요."
 zh_cn = "完成这一步会唤醒35级精英{npc:412}，他会沿道路从西边的墓地走到夜色镇并与卫兵交战。不必杀他：几分钟内避开这条路即可。"
 zh_tw = "完成這一步會喚醒35級精英{npc:412}，他會沿道路從西邊的墓地走到夜色鎮並與衛兵交戰。不必殺他：幾分鐘內避開這條路即可。"
+
+# Bride of the Embalmer: three guards join Eliza soon after she rises; her corpse lasts only seconds; the shack's roof keeps the guards off.
+[[note]]
+quest = 253
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Three guards join {npc:314} soon after she rises. Loot her right away: her corpse vanishes within seconds. Standing on the roof of the shack next to the grave keeps the guards from reaching you."
+fr = "Trois gardes rejoignent {npc:314} peu après son apparition. Fouillez-la aussitôt : son cadavre disparaît en quelques secondes. Rester sur le toit de la cabane près de la tombe empêche les gardes de vous atteindre."
+de = "Kurz nachdem {npc:314} sich erhebt, kommen drei Wächter hinzu. Plündere sie sofort: Ihre Leiche verschwindet nach wenigen Sekunden. Auf dem Dach der Hütte neben dem Grab erreichen dich die Wächter nicht."
+es = "Tres guardias se unen a {npc:314} poco después de que se alce. Despójala enseguida: su cadáver desaparece en segundos. Si te quedas en el tejado de la cabaña junto a la tumba, los guardias no te alcanzan."
+pt = "Três guardas se juntam a {npc:314} logo depois que ela se ergue. Saqueie-a na hora: o cadáver some em segundos. Ficar no telhado da cabana ao lado do túmulo impede que os guardas alcancem você."
+ru = "Вскоре после появления {npc:314} к ней присоединяются три стража. Обыщите ее сразу: труп исчезает через несколько секунд. Если стоять на крыше хижины у могилы, стражи до вас не доберутся."
+ko = "{npc:314}이(가) 깨어나면 곧 경비병 셋이 합류합니다. 시체는 몇 초 만에 사라지니 바로 전리품을 챙기세요. 무덤 옆 오두막 지붕 위에 서 있으면 경비병이 닿지 못합니다."
+zh_cn = "{npc:314}出现后不久会有三名守卫加入。立刻拾取她：她的尸体几秒内就会消失。站在坟墓旁小屋的屋顶上，守卫就够不到你。"
+zh_tw = "{npc:314}出現後不久會有三名守衛加入。立刻拾取她：她的屍體幾秒內就會消失。站在墳墓旁小屋的屋頂上，守衛就搆不到你。"
+
+# Morbent Fel: the Bane must be used once the fight has started; used to pull, it does nothing and goes on a 3-minute cooldown.
+[[note]]
+quest = 55
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Start the fight first, then use {item:7297} on {npc:1200}: used to pull him, it does nothing and goes on a 3-minute cooldown. He is very hard to kill until it lands."
+fr = "Engagez d'abord le combat, puis utilisez {item:7297} sur {npc:1200} : utilisé pour l'attirer, il ne fait rien et part en recharge pour 3 minutes. Il est très dur à tuer tant qu'il n'a pas été touché."
+de = "Beginne zuerst den Kampf und benutze dann {item:7297} an {npc:1200}: Zum Pullen benutzt, wirkt es nicht und hat 3 Minuten Abklingzeit. Bis es trifft, ist er kaum zu besiegen."
+es = "Empieza primero el combate y luego usa {item:7297} sobre {npc:1200}: si lo usas para atraerlo, no hace nada y queda 3 minutos en reutilización. Hasta que surta efecto es muy difícil de matar."
+pt = "Comece a luta primeiro e depois use {item:7297} em {npc:1200}: usado para puxá-lo, não faz nada e entra em recarga de 3 minutos. Até acertá-lo, ele é muito difícil de matar."
+ru = "Сначала начните бой, затем используйте {item:7297} на {npc:1200}: если применить его для атаки, он не подействует и уйдет на 3 минуты восстановления. Пока он не подействовал, убить противника очень трудно."
+ko = "먼저 전투를 시작한 뒤 {npc:1200}에게 {item:7297}을(를) 사용하세요. 끌어오는 데 쓰면 효과 없이 3분 재사용 대기시간에 들어갑니다. 적중하기 전에는 처치하기가 매우 어렵습니다."
+zh_cn = "先开战，再对{npc:1200}使用{item:7297}：用它开怪不会生效，还会进入3分钟冷却。在它生效之前，他非常难杀。"
+zh_tw = "先開戰，再對{npc:1200}使用{item:7297}：用它開怪不會生效，還會進入3分鐘冷卻。在它生效之前，他非常難殺。"
+
+# The Daughter Who Lived: Watcher Ladimore walks around Darkshire rather than standing at one spot.
+[[note]]
+quest = 229
+phase = "turnin"
+level = "warning"
+en = "{npc:576} walks around the town instead of standing at one spot: if she is not at her marker, look along the nearby streets, by the mailbox."
+fr = "{npc:576} se promène dans la ville au lieu de rester à un endroit : si elle n'est pas à son repère, cherchez-la dans les rues voisines, près de la boîte aux lettres."
+de = "{npc:576} läuft durch den Ort, statt an einer Stelle zu stehen: Ist sie nicht an ihrer Markierung, such sie in den Straßen in der Nähe, beim Briefkasten."
+es = "{npc:576} pasea por el pueblo en vez de quedarse en un sitio: si no está en su marca, búscala por las calles cercanas, junto al buzón."
+pt = "{npc:576} anda pela cidade em vez de ficar em um lugar: se ela não estiver no marcador, procure nas ruas próximas, perto da caixa de correio."
+ru = "{npc:576} ходит по городку, а не стоит на месте: если ее нет у метки, поищите на ближайших улицах, у почтового ящика."
+ko = "{npc:576}은(는) 한자리에 있지 않고 마을을 돌아다닙니다. 표시된 위치에 없으면 우체통 근처 등 주변 거리를 찾아보세요."
+zh_cn = "{npc:576}在镇上走动，不会站在一个地方：如果她不在标记处，就到附近街道、邮箱旁找找。"
+zh_tw = "{npc:576}在鎮上走動，不會站在一個地方：如果她不在標記處，就到附近街道、郵箱旁找找。"

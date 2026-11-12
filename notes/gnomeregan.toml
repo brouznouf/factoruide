@@ -63,3 +63,51 @@ ru = "{object:142487} стоит в чистой зоне недалеко от 
 ko = "{object:142487}은(는) 입구 근처 청정 구역에 있습니다. 첫 갈림길에서 왼쪽, 이어서 왼쪽 두 번째 통로로 가세요. 세 기계 중 하나만 퀘스트를 주니 반응이 없으면 다음 기계를 시도하세요."
 zh_cn = "{object:142487}位于入口附近的清洁区：第一个岔口左转，再进左手第二条通道。那里三台机器中只有一台提供任务：如果没反应，就试下一台。"
 zh_tw = "{object:142487}位於入口附近的清潔區：第一個岔口左轉，再進左手第二條通道。那裡三台機器中只有一台提供任務：如果沒反應，就試下一台。"
+
+# Gnogaine: the phial only fills on a living irradiated trogg, and these troggs are in the halls outside the instance.
+[[note]]
+quest = 2926
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Use {item:9283} on a living {npc:6213} or {npc:6329} while it fights you: it does not work on corpses. These troggs are in the halls before the instance portal, so the phial can be filled before the dungeon run."
+fr = "Utilisez {item:9283} sur un {npc:6213} ou un {npc:6329} vivant pendant qu'il vous combat : cela ne marche pas sur les cadavres. Ces troggs sont dans les salles avant le portail de l'instance : la flasque peut être remplie avant le donjon."
+de = "Benutze {item:9283} an einem lebenden {npc:6213} oder {npc:6329}, während er gegen dich kämpft: An Leichen klappt es nicht. Diese Troggs sind in den Hallen vor dem Instanzportal, die Phiole lässt sich also vor dem Dungeon füllen."
+es = "Usa {item:9283} sobre un {npc:6213} o un {npc:6329} vivo mientras te ataca: no funciona con cadáveres. Estos troggs están en las salas antes del portal de la instancia, así que puedes llenar el vial antes de la mazmorra."
+pt = "Use {item:9283} em um {npc:6213} ou {npc:6329} vivo enquanto ele luta com você: não funciona em cadáveres. Esses troggs ficam nos salões antes do portal da instância, então dá para encher o frasco antes da masmorra."
+ru = "Используйте {item:9283} на живом {npc:6213} или {npc:6329}, пока он с вами сражается: на трупах это не работает. Эти трогги бродят в залах перед порталом подземелья, так что флакон можно наполнить до похода."
+ko = "{item:9283}을(를) 싸우고 있는 살아 있는 {npc:6213}이나 {npc:6329}에게 사용하세요. 시체에는 통하지 않습니다. 이 트로그들은 인스턴스 입구 앞 통로에 있어 던전에 들어가기 전에 채울 수 있습니다."
+zh_cn = "在活着的{npc:6213}或{npc:6329}与你战斗时对它使用{item:9283}：对尸体无效。这些穴居人在副本传送门之前的大厅里，可以在进副本前装满药瓶。"
+zh_tw = "在活著的{npc:6213}或{npc:6329}與你戰鬥時對牠使用{item:9283}：對屍體無效。這些穴居人在副本傳送門之前的大廳裡，可以在進副本前裝滿藥瓶。"
+
+# The Only Cure is More Green Glow: the heavy phial fills only on a living slime, lurker or horror; the fallout lasts 2 hours.
+[[note]]
+quest = 2962
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Use {item:9364} on a living {npc:6218}, {npc:6219} or {npc:6220}, not a corpse. {item:9365} vanishes 2 hours later and the quest cannot be turned in without it: fill the phial late in the run and hand it in soon after."
+fr = "Utilisez {item:9364} sur une {npc:6218}, un {npc:6219} ou une {npc:6220} vivants, pas sur un cadavre. {item:9365} disparaît 2 heures plus tard et la quête ne peut pas être rendue sans : remplissez la flasque en fin de donjon et rendez-la vite."
+de = "Benutze {item:9364} an einem lebenden {npc:6218}, {npc:6219} oder {npc:6220}, nicht an einer Leiche. {item:9365} verschwindet nach 2 Stunden, ohne sie lässt sich die Quest nicht abgeben: Fülle die Phiole spät im Lauf und gib sie bald ab."
+es = "Usa {item:9364} sobre un {npc:6218}, {npc:6219} o {npc:6220} vivo, no sobre un cadáver. {item:9365} desaparece 2 horas después y sin ella no puedes entregar la misión: llena el vial al final de la incursión y entrégala pronto."
+pt = "Use {item:9364} em um {npc:6218}, {npc:6219} ou {npc:6220} vivo, não em um cadáver. {item:9365} some 2 horas depois e a missão não pode ser entregue sem ela: encha o frasco no fim da incursão e entregue logo depois."
+ru = "Используйте {item:9364} на живом существе ({npc:6218}, {npc:6219} или {npc:6220}), а не на трупе. {item:9365} исчезает через 2 часа, без нее задание не сдать: наполните флакон ближе к концу похода и сдайте его поскорее."
+ko = "{item:9364}은(는) 시체가 아닌 살아 있는 {npc:6218}, {npc:6219}, {npc:6220}에게 사용하세요. {item:9365}은(는) 2시간 뒤 사라지며 없으면 퀘스트를 완료할 수 없습니다. 던전 후반에 채우고 곧바로 반납하세요."
+zh_cn = "对活着的{npc:6218}、{npc:6219}或{npc:6220}使用{item:9364}，不要对尸体使用。{item:9365}会在2小时后消失，没有它就无法交任务：在副本后段再装满药瓶，并尽快交还。"
+zh_tw = "對活著的{npc:6218}、{npc:6219}或{npc:6220}使用{item:9364}，不要對屍體使用。{item:9365}會在2小時後消失，沒有它就無法交任務：在副本後段再裝滿藥瓶，並盡快交還。"
+
+# Data Rescue: the prismatic card is made by upgrading the white card at the four punchograph machines in order.
+[[note]]
+quest = 2930
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Loot {item:9279} from {npc:6221} outside the instance, then use each machine in turn to upgrade the card: {object:142345} outside, near the workshop; {object:142475} past the Clean Zone; {object:142476} on the ring above {npc:6235}; {object:142696} just past him."
+fr = "Prenez {item:9279} sur les {npc:6221} hors de l'instance, puis utilisez chaque machine dans l'ordre pour améliorer la carte : {object:142345} dehors, près de l'atelier ; {object:142475} après la Zone propre ; {object:142476} sur l'anneau au-dessus de {npc:6235} ; {object:142696} juste après lui."
+de = "Erbeute {item:9279} von {npc:6221} außerhalb der Instanz und benutze dann jede Maschine der Reihe nach, um die Karte aufzuwerten: {object:142345} draußen bei der Werkstatt, {object:142475} hinter der Sauberen Zone, {object:142476} auf dem Ring über {npc:6235}, {object:142696} gleich hinter ihm."
+es = "Consigue {item:9279} de los {npc:6221} fuera de la instancia y usa cada máquina por turno para mejorar la tarjeta: {object:142345} fuera, junto al taller; {object:142475} tras la Zona Limpia; {object:142476} en el anillo sobre {npc:6235}; {object:142696} justo después de él."
+pt = "Pegue {item:9279} dos {npc:6221} fora da instância e use cada máquina na ordem para melhorar o cartão: {object:142345} do lado de fora, perto da oficina; {object:142475} depois da Zona Limpa; {object:142476} no anel acima de {npc:6235}; {object:142696} logo depois dele."
+ru = "Добудьте {item:9279} у {npc:6221} вне подземелья, затем по очереди используйте каждую машину, чтобы улучшить карту: {object:142345} снаружи, у мастерской; {object:142475} за Чистой зоной; {object:142476} на кольце над {npc:6235}; {object:142696} сразу за ним."
+ko = "인스턴스 밖의 {npc:6221}에게서 {item:9279}을(를) 얻은 뒤, 기계를 차례로 사용해 카드를 바꾸세요. {object:142345}: 밖의 작업장 근처, {object:142475}: 청정 구역 지나서, {object:142476}: {npc:6235} 위쪽 고리, {object:142696}: 그 바로 뒤."
+zh_cn = "从副本外的{npc:6221}身上拿到{item:9279}，然后依次使用各台机器升级卡片：{object:142345}在外面的车间附近；{object:142475}在清洁区之后；{object:142476}在{npc:6235}上方的环形平台；{object:142696}就在它之后。"
+zh_tw = "從副本外的{npc:6221}身上拿到{item:9279}，然後依次使用各台機器升級卡片：{object:142345}在外面的工坊附近；{object:142475}在清潔區之後；{object:142476}在{npc:6235}上方的環形平台；{object:142696}就在它之後。"

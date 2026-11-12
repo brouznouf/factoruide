@@ -127,3 +127,19 @@ ru = "{npc:2696} стоит на обрушенном западном прол�
 ko = "{npc:2696}은(는) 무너진 서쪽 다리에 있으며, 본 다리 북쪽 끝 근처의 튀어나온 난간에서 이동 속도 증가, 느린 낙하, 유령 상태로 뛰어야만 갈 수 있습니다. 그 뒤 15분이 주어지며 죽으면 실패합니다. 물로 뛰어들어 동쪽 모래사장으로 헤엄치세요."
 zh_cn = "{npc:2696}站在西边断掉的桥段上，只能借助加速、缓落或灵魂状态，从主桥北端附近突出的栏杆跳过去。之后有15分钟，死亡会导致任务失败：跳进水里向东游到沙滩。"
 zh_tw = "{npc:2696}站在西邊斷掉的橋段上，只能藉助加速、緩落或靈魂狀態，從主橋北端附近突出的欄杆跳過去。之後有15分鐘，死亡會導致任務失敗：跳進水裡向東游到沙灘。"
+
+# Defeat Nek'rosh: a slope behind his camp, climbed from the road, reaches him without fighting through the tents; he is immune to fire, has two casters and flees.
+[[note]]
+quest = 474
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Reach {npc:2091} by the slope behind his camp, climbed from the road, instead of fighting through the tents. He fights with two casters, flees when low and is immune to fire."
+fr = "Atteignez {npc:2091} par la pente derrière son camp, en montant depuis la route, au lieu de traverser les tentes. Il combat avec deux lanceurs de sorts, fuit quand il est faible et est insensible au feu."
+de = "Erreiche {npc:2091} über den Hang hinter seinem Lager, von der Straße aus, statt dich durch die Zelte zu kämpfen. Er kämpft mit zwei Zauberwirkern, flieht bei wenig Leben und ist immun gegen Feuer."
+es = "Llega hasta {npc:2091} por la pendiente detrás de su campamento, subiendo desde el camino, en vez de abrirte paso entre las tiendas. Lucha con dos lanzadores de hechizos, huye cuando le queda poca vida y es inmune al fuego."
+pt = "Chegue até {npc:2091} pela encosta atrás do acampamento, subindo a partir da estrada, em vez de lutar entre as tendas. Ele luta com dois conjuradores, foge quando está fraco e é imune a fogo."
+ru = "Подойдите к {npc:2091} по склону за его лагерем, поднявшись от дороги, а не пробивайтесь через шатры. С ним два заклинателя, он убегает, когда ослабеет, и неуязвим к огню."
+ko = "천막 사이를 뚫고 가지 말고, 도로에서 진영 뒤쪽 비탈을 올라 {npc:2091}에게 가세요. 그는 주문시전자 둘과 함께 싸우고, 체력이 낮으면 도망치며, 화염에 면역입니다."
+zh_cn = "从大路爬上营地后方的斜坡去找{npc:2091}，不必穿过帐篷一路杀过去。他身边有两个施法者，血量低时会逃跑，并且免疫火焰。"
+zh_tw = "從大路爬上營地後方的斜坡去找{npc:2091}，不必穿過帳篷一路殺過去。他身邊有兩個施法者，血量低時會逃跑，並且免疫火焰。"

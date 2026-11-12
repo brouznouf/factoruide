@@ -76,3 +76,19 @@ ru = "Двое {npc:2149} нападают на {npc:1379} прямо перед
 ko = "발굴지 바로 앞에서 {npc:2149} 둘이 {npc:1379}을(를) 기습합니다. 그가 살아남도록 적을 자신에게 붙잡아 두세요. 그가 죽으면 퀘스트를 포기하고 수레에 있는 그에게서 다시 받으세요."
 zh_cn = "快到挖掘场时会有两个{npc:2149}伏击{npc:1379}：把它们的仇恨拉到自己身上，让他活下来。如果他死了，放弃任务，再到马车旁找他重新接。"
 zh_tw = "快到挖掘場時會有兩個{npc:2149}伏擊{npc:1379}：把它們的仇恨拉到自己身上，讓他活下來。如果他死了，放棄任務，再到馬車旁找他重新接。"
+
+# Vyrin's Revenge: Ol' Sooty is often not in his cave but wanders down the path to the clearing below, sometimes toward the loch.
+[[note]]
+quest = 271
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1225} often leaves his cave and wanders down the path to the clearing below, sometimes toward the loch: if the cave is empty, search the foot of the path before waiting for a respawn."
+fr = "{npc:1225} quitte souvent sa grotte et descend le sentier jusqu'à la clairière en contrebas, parfois vers le loch : si la grotte est vide, cherchez au pied du sentier avant d'attendre une réapparition."
+de = "{npc:1225} verlässt oft seine Höhle und wandert den Pfad hinab zur Lichtung, manchmal bis zum See: Ist die Höhle leer, such am Fuß des Pfades, bevor du auf einen Respawn wartest."
+es = "{npc:1225} suele salir de su cueva y bajar por el sendero hasta el claro de abajo, a veces hacia el lago: si la cueva está vacía, busca al pie del sendero antes de esperar a que reaparezca."
+pt = "{npc:1225} costuma sair da caverna e descer a trilha até a clareira abaixo, às vezes rumo ao lago: se a caverna estiver vazia, procure no pé da trilha antes de esperar ele ressurgir."
+ru = "{npc:1225} часто выходит из пещеры и спускается по тропе к поляне внизу, иногда к озеру: если пещера пуста, поищите у подножия тропы, прежде чем ждать появления."
+ko = "{npc:1225}은(는) 자주 동굴을 나와 길을 따라 아래 빈터로, 때로는 호수 쪽으로 내려갑니다. 동굴이 비어 있으면 재생성을 기다리기 전에 길 아래쪽을 찾아보세요."
+zh_cn = "{npc:1225}经常离开洞穴，沿小路走到下方的空地，有时会走向湖边：如果洞里没有，先到小路下方找找，再考虑等它重生。"
+zh_tw = "{npc:1225}經常離開洞穴，沿小路走到下方的空地，有時會走向湖邊：如果洞裡沒有，先到小路下方找找，再考慮等牠重生。"

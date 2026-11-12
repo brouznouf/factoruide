@@ -1,0 +1,31 @@
+# Quest notes of The Stockade. See notes/README.md for the format.
+
+# The Color of Blood: Nikova Raskol walks a short loop at the east corner of Old Town instead of standing at one spot.
+[[note]]
+quest = 388
+level = "warning"
+en = "{npc:1721} does not stand still: she walks a short loop at the east corner of Old Town, beside the shops. If she is not at her marker, walk around the block to find her."
+fr = "{npc:1721} ne reste pas en place : elle fait une petite ronde dans le coin est de la Vieille ville, près des boutiques. Si elle n'est pas à son repère, faites le tour du pâté de maisons pour la trouver."
+de = "{npc:1721} steht nicht still: Sie läuft eine kleine Runde in der Ostecke der Altstadt, bei den Läden. Ist sie nicht an ihrer Markierung, geh um den Häuserblock, um sie zu finden."
+es = "{npc:1721} no se queda quieta: da una pequeña vuelta en la esquina este del Casco Antiguo, junto a las tiendas. Si no está en su marca, rodea la manzana para encontrarla."
+pt = "{npc:1721} não fica parada: ela faz uma pequena ronda no canto leste da Cidade Velha, perto das lojas. Se ela não estiver no marcador, dê a volta no quarteirão para encontrá-la."
+ru = "{npc:1721} не стоит на месте: она ходит по небольшому кругу в восточном углу Старого города, у лавок. Если ее нет у метки, обойдите квартал, чтобы ее найти."
+ko = "{npc:1721}은(는) 한자리에 있지 않고 구시가지 동쪽 구석의 상점 옆을 짧게 돌아다닙니다. 표시된 위치에 없으면 구역을 한 바퀴 돌며 찾아보세요."
+zh_cn = "{npc:1721}不会站着不动：她在旧城区东角的商店旁绕小圈走动。如果她不在标记处，绕着街区走一圈找她。"
+zh_tw = "{npc:1721}不會站著不動：她在舊城區東角的商店旁繞小圈走動。如果她不在標記處，繞著街區走一圈找她。"
+
+# What Comes Around...: Targorr is held in one of the side cells, and which one changes between runs.
+[[note]]
+quest = 386
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1696} is held in one of the side cells off the halls, and which one changes from run to run: look into each cell, clearing only what blocks the way."
+fr = "{npc:1696} est enfermé dans l'une des cellules qui donnent sur les couloirs, et ce n'est pas toujours la même : regardez dans chaque cellule en ne tuant que ce qui barre le passage."
+de = "{npc:1696} sitzt in einer der Seitenzellen an den Gängen, und welche es ist, wechselt von Lauf zu Lauf: Schau in jede Zelle und besiege nur, was im Weg steht."
+es = "{npc:1696} está encerrado en una de las celdas laterales de los pasillos, y cuál cambia de una incursión a otra: mira en cada celda y limpia solo lo que bloquee el paso."
+pt = "{npc:1696} fica preso em uma das celas laterais dos corredores, e qual delas muda de uma incursão para outra: olhe em cada cela, limpando só o que bloquear o caminho."
+ru = "{npc:1696} сидит в одной из боковых камер у коридоров, и в какой именно, меняется от захода к заходу: заглядывайте в каждую камеру, убивая только тех, кто мешает пройти."
+ko = "{npc:1696}은(는) 복도 옆 감방 중 하나에 갇혀 있으며, 어느 감방인지는 매번 바뀝니다. 길을 막는 적만 처치하며 감방을 하나씩 확인하세요."
+zh_cn = "{npc:1696}被关在走廊旁的某间侧牢房里，具体哪一间每次都不同：逐间查看牢房，只清理挡路的敌人。"
+zh_tw = "{npc:1696}被關在走廊旁的某間側牢房裡，具體哪一間每次都不同：逐間查看牢房，只清理擋路的敵人。"

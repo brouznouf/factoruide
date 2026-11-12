@@ -109,3 +109,19 @@ ru = "Если 30-минутный таймер истёк, а у вас ест�
 ko = "{item:2476}을(를) 가진 채 30분 제한 시간이 끝나도 퀘스트를 포기하지 마세요. 포기하면 넓적다리가 사라집니다. {npc:1141}에게서 다시 받아 바로 완료하세요. 시간 제한 퀘스트가 이미 목록에 있으면 이 퀘스트를 받을 수 없습니다."
 zh_cn = "如果30分钟计时结束时你还持有{item:2476}，不要放弃任务，否则腿肉会消失：从{npc:1141}那里重新接取任务并立即交付。任务日志中有其他限时任务时无法接取此任务。"
 zh_tw = "如果30分鐘計時結束時你還持有{item:2476}，不要放棄任務，否則腿肉會消失：從{npc:1141}那裡重新接取任務並立即交付。任務日誌中有其他限時任務時無法接取此任務。"
+
+# The Perenolde Tiara: Grel'borg walks from the basement of the large building in the Ruins of Alterac out to the street and back, and looks like the other ogre mages.
+[[note]]
+quest = 543
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:2417} walks from the basement of the large ruined building out to the street and back, and looks like the other ogre mages: target him by name. Waiting for him outside the building is easiest."
+fr = "{npc:2417} va du sous-sol du grand bâtiment en ruine jusqu'à la rue, puis revient, et ressemble aux autres ogres mages : ciblez-le par son nom. Le plus simple est de l'attendre devant le bâtiment."
+de = "{npc:2417} läuft vom Keller des großen zerstörten Gebäudes hinaus auf die Straße und zurück und sieht aus wie die anderen Ogermagier: Ziele ihn über seinen Namen an. Am einfachsten wartest du vor dem Gebäude auf ihn."
+es = "{npc:2417} va del sótano del gran edificio en ruinas hasta la calle y vuelve, y se parece a los demás magos ogros: selecciónalo por su nombre. Lo más fácil es esperarlo fuera del edificio."
+pt = "{npc:2417} anda do porão do grande prédio em ruínas até a rua e volta, e é igual aos outros magos ogros: selecione-o pelo nome. O mais fácil é esperá-lo do lado de fora do prédio."
+ru = "{npc:2417} ходит из подвала большого разрушенного здания на улицу и обратно и выглядит как другие огры-маги: выбирайте его по имени. Проще всего ждать его снаружи здания."
+ko = "{npc:2417}은(는) 큰 폐허 건물의 지하에서 거리까지 오갔다 돌아가며, 다른 오우거 마법사와 똑같이 생겼습니다. 이름으로 대상을 지정하세요. 건물 밖에서 기다리는 것이 가장 쉽습니다."
+zh_cn = "{npc:2417}会从那座大废墟建筑的地下室走到街上再走回去，长得和其他食人魔法师一样：按名字选中他。最省事的是在建筑外面等他。"
+zh_tw = "{npc:2417}會從那座大廢墟建築的地下室走到街上再走回去，長得和其他食人魔法師一樣：按名字選取他。最省事的是在建築外面等他。"

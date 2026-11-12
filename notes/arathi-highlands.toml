@@ -138,3 +138,34 @@ ru = "После использования {item:7273} у центрально�
 ko = "가운데 돌에서 {item:7273}을(를) 사용하면 {item:7272}은(는) 가방이 아니라 돌 위에 나타납니다. 떠나기 전에 꼭 챙기세요. 챙기기 전에 죽으면 둘 다 잃고 막대 열 개를 다시 모아야 합니다."
 zh_cn = "在中央石头处使用{item:7273}后，{item:7272}会出现在石头上而不是进入背包：离开前要拾取。拾取前死亡会两样都丢失，必须重新收集十根图腾棒。"
 zh_tw = "在中央石頭處使用{item:7273}後，{item:7272}會出現在石頭上而不是進入背包：離開前要拾取。拾取前死亡會兩樣都遺失，必須重新收集十根圖騰棒。"
+
+# Wanted! Marez Cowl: she appears at one of a few spots in Stromgarde, mostly behind the houses left of the main road, with a stealthed rogue.
+[[note]]
+quest = 684
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:2783} appears at one of a few spots in the ruined town, mostly behind the houses left of the main road, with a stealthed rogue beside her. If she is not at her marker, search the other tier and the southeast corner by the well."
+fr = "{npc:2783} apparaît à l'un de quelques endroits de la ville en ruine, surtout derrière les maisons à gauche de la rue principale, avec un voleur camouflé à ses côtés. Si elle n'est pas à son repère, cherchez à l'autre niveau et dans le coin sud-est près du puits."
+de = "{npc:2783} erscheint an einer von wenigen Stellen der zerstörten Stadt, meist hinter den Häusern links der Hauptstraße, mit einem getarnten Schurken neben sich. Ist sie nicht an ihrer Markierung, such auf der anderen Ebene und in der Südostecke am Brunnen."
+es = "{npc:2783} aparece en uno de varios sitios de la ciudad en ruinas, sobre todo tras las casas a la izquierda de la calle principal, con un pícaro sigiloso a su lado. Si no está en su marca, busca en el otro nivel y en la esquina sureste junto al pozo."
+pt = "{npc:2783} surge em um de poucos pontos da cidade em ruínas, quase sempre atrás das casas à esquerda da rua principal, com um ladino furtivo ao lado. Se ela não estiver no marcador, procure no outro nível e no canto sudeste, perto do poço."
+ru = "{npc:2783} появляется в одном из нескольких мест разрушенного города, чаще всего за домами слева от главной улицы, рядом с ней незаметный разбойник. Если ее нет у метки, поищите на другом ярусе и в юго-восточном углу у колодца."
+ko = "{npc:2783}은(는) 폐허 도시의 몇몇 장소 중 한 곳에 나타나며, 주로 큰길 왼쪽 집들 뒤에 은신한 도적과 함께 있습니다. 표시된 위치에 없으면 다른 층과 우물 옆 남동쪽 구석을 찾아보세요."
+zh_cn = "{npc:2783}会在废墟城镇里几个地点之一出现，多半在主路左侧的房屋后面，身边有一个潜行的盗贼。如果她不在标记处，就去另一层和东南角的井边找找。"
+zh_tw = "{npc:2783}會在廢墟城鎮裡幾個地點之一出現，多半在主路左側的房屋後面，身邊有一個潛行的盜賊。如果她不在標記處，就去另一層和東南角的井邊找找。"
+
+# Attack on the Tower: opening each of Trelane's chests calls in 3 to 5 elite ogres at the chest.
+[[note]]
+quest = 696
+phase = "objective"
+level = "warning"
+en = "Opening {object:2717}, {object:2718} or {object:2716}, one per floor of the tower, calls in 3 to 5 elite ogres at the chest. Loot and get away at once; dying inside the tower and coming back for the next chest also works."
+fr = "Ouvrir {object:2717}, {object:2718} ou {object:2716}, un par étage de la tour, fait venir 3 à 5 ogres élites près du coffre. Pillez et partez aussitôt ; mourir dans la tour et revenir pour le coffre suivant marche aussi."
+de = "Das Öffnen von {object:2717}, {object:2718} oder {object:2716}, je eins pro Stockwerk des Turms, ruft 3 bis 5 Elite-Oger an die Truhe. Plündere und verschwinde sofort; im Turm zu sterben und für die nächste Truhe zurückzukommen, klappt auch."
+es = "Abrir {object:2717}, {object:2718} o {object:2716}, uno por piso de la torre, hace aparecer de 3 a 5 ogros élite junto al cofre. Saquea y aléjate enseguida; morir dentro de la torre y volver a por el siguiente cofre también funciona."
+pt = "Abrir {object:2717}, {object:2718} ou {object:2716}, um por andar da torre, chama de 3 a 5 ogros elite junto ao baú. Saqueie e saia na hora; morrer dentro da torre e voltar para o próximo baú também funciona."
+ru = "Открытие {object:2717}, {object:2718} или {object:2716} (по одному на этаж башни) вызывает к сундуку от 3 до 5 элитных огров. Забирайте добычу и сразу уходите; можно и умереть в башне, а затем вернуться за следующим сундуком."
+ko = "탑의 층마다 하나씩 있는 {object:2717}, {object:2718}, {object:2716}을(를) 열면 상자 옆에 정예 오우거 3~5마리가 나타납니다. 챙기고 바로 빠지세요. 탑 안에서 죽은 뒤 다음 상자를 위해 돌아오는 방법도 통합니다."
+zh_cn = "打开{object:2717}、{object:2718}或{object:2716}（塔的每层各一个）会在箱子旁召来3到5个精英食人魔。拿完立刻离开；死在塔里再回来开下一个箱子也行。"
+zh_tw = "打開{object:2717}、{object:2718}或{object:2716}（塔的每層各一個）會在箱子旁召來3到5個精英食人魔。拿完立刻離開；死在塔裡再回來開下一個箱子也行。"
