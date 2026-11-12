@@ -359,3 +359,35 @@ quest = 4021
 phase = "objective"
 objective = 1
 icon = "event"
+
+# The Principal Source: filling the sampler at the pool spawns three more acolytes.
+[[note]]
+quest = 6127
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Filling the sampler at the pool brings an ambush ({npc:3380} ×3): clear the guards and heal up first, then fill it on the side of your way down and leave at once."
+fr = "Remplir l'échantillonneur au bassin déclenche une embuscade ({npc:3380} ×3) : éliminez les gardes et soignez-vous d'abord, puis remplissez-le du côté de votre descente et partez aussitôt."
+de = "Das Füllen des Probenbehälters am Teich löst einen Hinterhalt aus ({npc:3380} ×3): Besiege erst die Wachen und heile dich, fülle ihn dann auf der Seite deines Abstiegs und verschwinde sofort."
+es = "Llenar el muestreador en el estanque provoca una emboscada ({npc:3380} ×3): elimina antes a los guardias y cúrate, luego llénalo del lado por el que bajarás y vete enseguida."
+pt = "Encher o amostrador na lagoa provoca uma emboscada ({npc:3380} ×3): elimine os guardas e cure-se antes, depois encha-o do lado por onde vai descer e saia na hora."
+ru = "Когда вы наполняете пробирку у пруда, появляется засада ({npc:3380} ×3): сначала перебейте охрану и подлечитесь, затем наполните её со стороны спуска и сразу уходите."
+ko = "웅덩이에서 채집병을 채우면 매복({npc:3380} ×3)이 나타납니다. 먼저 경비병을 처치하고 생명력을 회복한 뒤, 내려갈 쪽에서 채우고 곧바로 떠나세요."
+zh_cn = "在水池装满取样瓶会引来伏击（{npc:3380} ×3）：先清掉守卫并回满血，然后在下山路线一侧装满，立刻离开。"
+zh_tw = "在水池裝滿取樣瓶會引來伏擊（{npc:3380} ×3）：先清掉守衛並回滿血，然後在下山路線一側裝滿，立刻離開。"
+
+# Body and Heart: Lunaclaw is a tough fight at the quest's level, and the dust is used up by a failed attempt.
+[[note]]
+quest = 6002
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:15710} on the stone summons {npc:12138}, level 12 and hard-hitting for a level 10: start at full health. If he wins, the dust is spent: abandon the quest and take it again in {zone:1638}."
+fr = "{item:15710} sur la pierre invoque {npc:12138}, niveau 12 et qui frappe fort pour un niveau 10 : commencez avec toute votre vie. S'il gagne, la poudre est perdue : abandonnez la quête et reprenez-la à {zone:1638}."
+de = "{item:15710} auf dem Stein beschwört {npc:12138}, Stufe 12 und für Stufe 10 sehr stark: Beginne mit voller Gesundheit. Gewinnt er, ist der Staub verbraucht: Brich die Quest ab und nimm sie in {zone:1638} neu an."
+es = "{item:15710} sobre la piedra invoca a {npc:12138}, de nivel 12 y que pega fuerte para un nivel 10: empieza con la salud al máximo. Si gana, el polvo se pierde: abandona la misión y vuelve a cogerla en {zone:1638}."
+pt = "{item:15710} na pedra invoca {npc:12138}, nível 12 e que bate forte para um nível 10: comece com a vida cheia. Se ele vencer, o pó se perde: abandone a missão e pegue-a de novo em {zone:1638}."
+ru = "{item:15710} на камне призывает {npc:12138} — 12-й уровень, бьёт сильно для 10-го: начинайте с полным здоровьем. Если он победит, пыль пропадёт: откажитесь от задания и возьмите его заново в {zone:1638}."
+ko = "돌에 {item:15710}을(를) 뿌리면 {npc:12138}이(가) 소환됩니다. 12레벨로 10레벨에게는 아프게 때리니 생명력을 가득 채우고 시작하세요. 지면 가루가 사라지니 퀘스트를 포기하고 {zone:1638}에서 다시 받으세요."
+zh_cn = "在石头上使用{item:15710}会召唤{npc:12138}，12级，对10级角色来说打得很疼：满血开打。如果打输，粉末就没了：放弃任务，回{zone:1638}重新接取。"
+zh_tw = "在石頭上使用{item:15710}會召喚{npc:12138}，12級，對10級角色來說打得很痛：滿血開打。如果打輸，粉末就沒了：放棄任務，回{zone:1638}重新接取。"

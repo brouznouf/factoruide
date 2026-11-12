@@ -283,3 +283,17 @@ ru = "{npc:12818} идёт прямо через лагеря фурболгов
 ko = "{npc:12818}은(는) 기다리지 않고 털보 야영지 한가운데를 지나갑니다. 나가는 길을 먼저 정리하세요. 셋씩 두 무리가 매복합니다. 하나는 동굴 안 갈림길, 하나는 동굴 밖입니다."
 zh_cn = "{npc:12818}不会等你，会径直穿过熊怪营地：先清理出去的路。会有两批各三只的伏击，一批在洞内岔路口，一批在洞外。"
 zh_tw = "{npc:12818}不會等你，會逕直穿過熊怪營地：先清理出去的路。會有兩批各三隻的伏擊，一批在洞內岔路口，一批在洞外。"
+
+# The Warsong Reports: the reports are inside the bundle, which has to be opened first.
+[[note]]
+quest = 6543
+level = "info"
+en = "Open {item:16783} in your bags: it holds the {item:16746} the three scouts need before they give their update."
+fr = "Ouvrez {item:16783} dans vos sacs : elle contient le {item:16746} dont les trois éclaireurs ont besoin avant de donner leur rapport."
+de = "Öffne {item:16783} in deinen Taschen: Darin ist der {item:16746}, den die drei Späher brauchen, bevor sie ihren Bericht geben."
+es = "Abre {item:16783} en tus bolsas: contiene el {item:16746} que los tres exploradores necesitan antes de darte su informe."
+pt = "Abra {item:16783} nas suas bolsas: ele contém o {item:16746} de que os três batedores precisam antes de dar o relatório."
+ru = "Откройте {item:16783} в сумках: внутри {item:16746}, без которого три разведчика не дадут свой отчёт."
+ko = "가방에서 {item:16783}을(를) 여세요. 세 정찰병이 보고를 주기 전에 필요한 {item:16746}이(가) 들어 있습니다."
+zh_cn = "在背包中打开{item:16783}：里面有三名斥候给出报告前所需的{item:16746}。"
+zh_tw = "在背包中打開{item:16783}：裡面有三名斥候給出報告前所需的{item:16746}。"

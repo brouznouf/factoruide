@@ -1,0 +1,17 @@
+# Quest notes of Moonglade. See notes/README.md for the format.
+
+# Trial of the Lake: the bauble has a short duration once looted.
+[[note]]
+quest = 28
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:15877} lasts only 5 minutes once taken from the vase on the lake bottom: swim straight to the Shrine of Remulos and use it there."
+fr = "{item:15877} ne dure que 5 minutes une fois pris dans le vase au fond du lac : nagez directement jusqu'au Sanctuaire de Remulos et utilisez-le là-bas."
+de = "{item:15877} hält nur 5 Minuten, sobald du es aus der Vase am Seegrund genommen hast: Schwimm direkt zum Schrein des Remulos und benutze es dort."
+es = "{item:15877} dura solo 5 minutos desde que lo sacas del jarrón del fondo del lago: nada directamente al Santuario de Remulos y úsalo allí."
+pt = "{item:15877} dura só 5 minutos depois de tirado do vaso no fundo do lago: nade direto até o Santuário de Remulos e use-o lá."
+ru = "{item:15877} действует всего 5 минут после того, как вы достанете её из вазы на дне озера: плывите прямо к Святилищу Ремула и используйте её там."
+ko = "{item:15877}은(는) 호수 바닥의 항아리에서 꺼낸 뒤 5분만 유지됩니다. 곧장 레물로스의 제단으로 헤엄쳐 가서 사용하세요."
+zh_cn = "{item:15877}从湖底的花瓶中取出后只持续5分钟：直接游到雷姆洛斯神殿并在那里使用。"
+zh_tw = "{item:15877}從湖底的花瓶中取出後只持續5分鐘：直接游到雷姆洛斯神殿並在那裡使用。"

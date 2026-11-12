@@ -62,3 +62,60 @@ ru = "Возьмите {item:3080} из предмета «{object:1586}» ря�
 ko = "{npc:1497} 옆의 {object:1586}에서 {item:3080}을(를) 꺼내 작은 섬의 제단에서 사용하면 {npc:1946}이(가) 소환됩니다. 공격이 강하니, 죽으면 상자에서 양초를 다시 꺼내 재도전하세요."
 zh_cn = "从{npc:1497}旁边的{object:1586}中拿一支{item:3080}，然后在小岛上的祭坛使用它召唤{npc:1946}。她攻击很猛：如果被她杀死，就从箱子里再拿一支蜡烛重试。"
 zh_tw = "從{npc:1497}旁邊的{object:1586}中拿一支{item:3080}，然後在小島上的祭壇使用它召喚{npc:1946}。她攻擊很猛：如果被她殺死，就從箱子裡再拿一支蠟燭重試。"
+
+# Garments of Darkness: the healing only counts when cast with Lesser Heal rank 2.
+[[note]]
+quest = 5650
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Only Lesser Heal (Rank 2) counts on {npc:12428}: train it first, heal him with it, then cast Power Word: Fortitude on him."
+fr = "Seul Soins inférieurs (rang 2) compte sur {npc:12428} : apprenez-le d'abord, soignez-le avec, puis lancez-lui Mot de pouvoir : Robustesse."
+de = "Bei {npc:12428} zählt nur Geringes Heilen (Rang 2): Lerne es zuerst, heile ihn damit und wirke dann Machtwort: Seelenstärke auf ihn."
+es = "Con {npc:12428} solo cuenta Sanación inferior (rango 2): apréndela primero, sánalo con ella y luego lánzale Palabra de poder: entereza."
+pt = "Em {npc:12428} só conta Cura Menor (grau 2): aprenda-a primeiro, cure-o com ela e depois lance Palavra de Poder: Fortitude nele."
+ru = "На {npc:12428} засчитывается только «Малое исцеление» (уровень 2): сначала выучите его, вылечите им цель, затем примените «Слово силы: Стойкость»."
+ko = "{npc:12428}에게는 하급 치유 (2레벨)만 인정됩니다. 먼저 배워서 그것으로 치유한 뒤 신의 권능: 인내를 걸어 주세요."
+zh_cn = "对{npc:12428}只有次级治疗术（等级2）才算数：先学会它，用它治疗他，然后对他施放真言术：韧。"
+zh_tw = "對{npc:12428}只有次級治療術（等級2）才算數：先學會它，用它治療他，然後對他施放真言術：韌。"
+
+# Sticks and Bones: the branches are hard to see on the ground and come back quickly.
+[[note]]
+quest = 86784
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The dry branches lie flat by the clusters of trees and blend into the grass: sweep the cursor over the ground until it turns into a gear. A branch comes back about 30 seconds after it is taken."
+fr = "Les branches sèches sont posées à plat près des bosquets et se confondent avec l'herbe : balayez le sol avec le curseur jusqu'à ce qu'il devienne un engrenage. Une branche revient environ 30 secondes après avoir été prise."
+de = "Die trockenen Zweige liegen flach bei den Baumgruppen und gehen im Gras unter: Fahre mit dem Mauszeiger über den Boden, bis er zum Zahnrad wird. Ein Zweig erscheint etwa 30 Sekunden nach dem Aufheben wieder."
+es = "Las ramas secas están en el suelo junto a los grupos de árboles y se confunden con la hierba: pasa el cursor por el suelo hasta que se convierta en un engranaje. Una rama reaparece unos 30 segundos después de cogerla."
+pt = "Os galhos secos ficam no chão junto aos grupos de árvores e se confundem com a grama: passe o cursor pelo chão até ele virar uma engrenagem. Um galho volta cerca de 30 segundos depois de ser pego."
+ru = "Сухие ветки лежат у групп деревьев и сливаются с травой: водите курсором по земле, пока он не станет шестерёнкой. Ветка появляется снова примерно через 30 секунд после того, как её подобрали."
+ko = "마른 나뭇가지는 나무 군락 옆 바닥에 놓여 있어 풀과 구분하기 어렵습니다. 커서가 톱니바퀴로 바뀔 때까지 바닥을 훑어보세요. 가지는 주운 뒤 약 30초 만에 다시 생깁니다."
+zh_cn = "干树枝平躺在树丛旁，与草地融为一体：用鼠标在地面上扫过，直到指针变成齿轮。树枝被拾取后约30秒重新出现。"
+zh_tw = "乾樹枝平躺在樹叢旁，與草地融為一體：用滑鼠在地面上掃過，直到游標變成齒輪。樹枝被拾取後約30秒重新出現。"
+
+[[icon]]
+quest = 86784
+phase = "objective"
+objective = 1
+icon = "pickup"
+editions = ["forever"]
+
+# That Shadowvale Green Elixir: the bottles are in a cellar under a ruin, not in the nearby house.
+[[note]]
+quest = 95314
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The bottles are in the cellar under the roofless ruin (entrance near 13, 65.7), not in the two-storey house beside it; more stand on the wine racks along the corridors. The undead inside are level 11-12."
+fr = "Les bouteilles sont dans la cave sous la ruine sans toit (entrée vers 13, 65.7), pas dans la maison à étage voisine ; d'autres sont sur les étagères à vin des couloirs. Les morts-vivants à l'intérieur sont de niveau 11-12."
+de = "Die Flaschen sind im Keller unter der dachlosen Ruine (Eingang bei 13, 65.7), nicht im zweistöckigen Haus daneben; weitere stehen in den Weinregalen der Gänge. Die Untoten drinnen sind Stufe 11-12."
+es = "Las botellas están en el sótano bajo la ruina sin techo (entrada cerca de 13, 65.7), no en la casa de dos plantas de al lado; hay más en los botelleros de los pasillos. Los no-muertos de dentro son de nivel 11-12."
+pt = "As garrafas ficam no porão sob a ruína sem teto (entrada perto de 13, 65.7), não na casa de dois andares ao lado; há mais nas adegas dos corredores. Os mortos-vivos lá dentro são de nível 11-12."
+ru = "Бутылки — в подвале под развалинами без крыши (вход около 13, 65.7), а не в двухэтажном доме рядом; ещё есть на винных стеллажах в коридорах. Нежить внутри 11-12-го уровня."
+ko = "병은 옆의 2층 집이 아니라 지붕 없는 폐허 아래 지하실에 있습니다(입구 13, 65.7 부근). 복도의 포도주 선반에도 더 있습니다. 안의 언데드는 11-12레벨입니다."
+zh_cn = "瓶子在无顶废墟下的地窖里（入口约在13, 65.7），不在旁边的两层房子里；走廊两侧的酒架上还有更多。里面的亡灵为11-12级。"
+zh_tw = "瓶子在無頂廢墟下的地窖裡（入口約在13, 65.7），不在旁邊的兩層房子裡；走廊兩側的酒架上還有更多。裡面的不死生物為11-12級。"

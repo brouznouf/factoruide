@@ -127,3 +127,25 @@ ru = "Войдите в деревню через пролом в южной с�
 ko = "남쪽 담장의 틈으로 마을에 들어가 담장을 따라 여관까지 가세요. 일지는 위층 오른쪽 맨 끝 방의 책장에 있으며, 정예 {npc:2106} 바로 옆입니다."
 zh_cn = "从村子南墙的缺口进入，沿着墙走到旅店。日记在楼上最右侧房间的书架里，就在精英{npc:2106}旁边。"
 zh_tw = "從村子南牆的缺口進入，沿著牆走到旅店。日記在樓上最右側房間的書架裡，就在菁英{npc:2106}旁邊。"
+
+# The Dead Fields: the banshee is not always up; she appears in the middle of the field after a wait.
+[[note]]
+quest = 437
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1983} is not always there: she appears in the middle of the field from time to time. If she is missing, kill the gnolls around it while you wait."
+fr = "{npc:1983} n'est pas toujours là : elle apparaît de temps en temps au milieu du champ. Si elle est absente, tuez les gnolls des environs en l'attendant."
+de = "{npc:1983} ist nicht immer da: Sie erscheint von Zeit zu Zeit mitten auf dem Feld. Fehlt sie, töte die Gnolle in der Nähe, während du wartest."
+es = "{npc:1983} no siempre está: aparece de vez en cuando en el centro del campo. Si no está, mata a los gnolls de alrededor mientras esperas."
+pt = "{npc:1983} nem sempre está lá: ela aparece de tempos em tempos no meio do campo. Se ela não estiver, mate os gnolls ao redor enquanto espera."
+ru = "{npc:1983} бывает на месте не всегда: она время от времени появляется посреди поля. Если её нет, убивайте гноллов поблизости, пока ждёте."
+ko = "{npc:1983}은(는) 항상 있지는 않으며, 가끔씩 들판 한가운데에 나타납니다. 보이지 않으면 기다리는 동안 주변의 놀을 처치하세요."
+zh_cn = "{npc:1983}并不总在那里：她会不时出现在田野中央。如果她不在，就一边等待一边击杀周围的豺狼人。"
+zh_tw = "{npc:1983}並不總在那裡：她會不時出現在田野中央。如果她不在，就一邊等待一邊擊殺周圍的豺狼人。"
+
+[[icon]]
+quest = 437
+phase = "objective"
+objective = 1
+icon = "rare"
