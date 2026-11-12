@@ -31,3 +31,18 @@ ru = "{npc:13718}, элита сразу за каменной дверью, в�
 ko = "돌문 바로 뒤, 던전 구역 바깥의 정예 {npc:13718}은(는) 거의 매번 {item:17684}을(를) 떨어뜨리고 근처에 금방 다시 나타납니다. 던전을 도는 것보다 그를 잡는 편이 빠릅니다."
 zh_cn = "{npc:13718}是石门后不远、地下城两翼之外的精英，几乎每次都掉落{item:17684}，并且很快在附近刷新：刷他比为此打地下城更快。"
 zh_tw = "{npc:13718}是石門後不遠、地城兩翼之外的精英，幾乎每次都掉落{item:17684}，並且很快在附近重生：刷他比為此打地城更快。"
+
+# Vyletongue Corruption: the right pool is the big orange-crystal one outside the instance; the vines are small untargetable plants that spawn elementals when the vial is used.
+[[note]]
+quest = 7041
+phase = "objective"
+level = "warning"
+en = "Fill the {item:17693} at the {object:178907} outside the instance (big, full of orange crystals), not the dryad's small pool. The vines are small orange plants by the walls that can't be targeted: use the vial next to one and two or three elementals attack."
+fr = "Remplissez {item:17693} à {object:178907}, hors de l'instance (grand, plein de cristaux orange), pas au petit bassin de la dryade. Les vignes sont de petites plantes orange contre les parois, impossibles à cibler : utilisez la fiole à côté et deux ou trois élémentaires attaquent."
+de = "Fülle {item:17693} an {object:178907} außerhalb der Instanz (groß, voller oranger Kristalle), nicht am kleinen Teich der Dryade. Die Ranken sind kleine orange Pflanzen an den Wänden, nicht anwählbar: benutze die Phiole daneben, und zwei oder drei Elementare greifen an."
+es = "Llena {item:17693} en {object:178907}, fuera de la instancia (grande, con cristales naranjas), no en el estanque de la dríade. Las enredaderas son plantitas naranjas junto a las paredes, no seleccionables: usa el vial junto a una y atacan dos o tres elementales."
+pt = "Encha {item:17693} em {object:178907}, fora da instância (grande, cheio de cristais laranja), não no laguinho da dríade. As vinhas são plantinhas laranja junto às paredes, que não podem ser alvo: use o frasco ao lado de uma e dois ou três elementais atacam."
+ru = "Наполните {item:17693} у {object:178907} снаружи подземелья (большой, с оранжевыми кристаллами), а не у маленького пруда дриады. Лозы — мелкие оранжевые растения у стен, их нельзя выбрать: используйте флакон рядом, и нападут два-три элементаля."
+ko = "{item:17693}은(는) 던전 밖의 {object:178907}(주황색 수정이 가득한 큰 웅덩이)에서 채우세요. 드라이어드 옆의 작은 웅덩이가 아닙니다. 덩굴은 벽을 따라 자란 작은 주황색 식물로 대상으로 지정할 수 없습니다. 옆에서 약병을 사용하면 정령 두세 마리가 공격합니다."
+zh_cn = "在副本外的{object:178907}（布满橙色水晶的大水池）装满{item:17693}，不是树妖旁边的小水池。藤蔓是墙边的橙色小植物，无法选中：在旁边使用药瓶，会有两三个元素生物发起攻击。"
+zh_tw = "在副本外的{object:178907}（布滿橙色水晶的大水池）裝滿{item:17693}，不是樹妖旁邊的小水池。藤蔓是牆邊的橙色小植物，無法選取：在旁邊使用藥瓶，會有兩三個元素生物發動攻擊。"

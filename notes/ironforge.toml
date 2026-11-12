@@ -45,3 +45,18 @@ ru = "{npc:8417} лежит в пещерах под лагерем с расп�
 ko = "{npc:8417}은(는) 지상이 아니라 비행 조련사가 있는 야영지 아래 동굴에 누워 있습니다. 야영지 남쪽의 기중기가 있는 수직 갱도로 매달린 돌덩이 위에 뛰어내린 뒤 동굴 바닥으로 내려가 북쪽으로 가세요."
 zh_cn = "{npc:8417}躺在飞行点营地下方的洞穴里，而不是地面上。从营地南边有起重机的竖井跳到吊着的石块上，再跳到洞底，然后往北走。"
 zh_tw = "{npc:8417}躺在飛行點營地下方的洞穴裡，而不是地面上。從營地南邊有起重機的豎井跳到吊著的石塊上，再跳到洞底，然後往北走。"
+
+# Seeing What Happens: the Uldum pedestal can be reached along the hills on the left without fighting the elite giants; one giant patrols.
+[[note]]
+quest = 2946
+phase = "turnin"
+level = "warning"
+en = "Reach the {object:142343} by the path along the hills left of the gate, away from the elite giants. A {npc:5470} patrols there: the ground shakes as it comes near."
+fr = "Rejoignez {object:142343} par le chemin qui longe les collines à gauche de la porte, à l'écart des géants élites. Attention à {npc:5470} qui patrouille là : le sol tremble quand il approche."
+de = "Erreiche {object:142343} über den Pfad an den Hügeln links vom Tor, abseits der Elite-Riesen. Achte auf {npc:5470}, der dort patrouilliert: der Boden bebt, wenn er näher kommt."
+es = "Llega a {object:142343} por el sendero que bordea las colinas a la izquierda de la puerta, lejos de los gigantes élite. Cuidado con {npc:5470}, que patrulla allí: el suelo tiembla cuando se acerca."
+pt = "Chegue a {object:142343} pela trilha ao longo das colinas à esquerda do portão, longe dos gigantes elite. Cuidado com {npc:5470}, que patrulha ali: o chão treme quando ele se aproxima."
+ru = "Подойдите к {object:142343} по тропе вдоль холмов слева от ворот, подальше от элитных великанов. Там патрулирует {npc:5470}: когда он рядом, земля дрожит."
+ko = "문 왼쪽 언덕을 따라 난 길로 정예 거인들을 피해 {object:142343}에 가세요. 그곳을 순찰하는 {npc:5470}을(를) 조심하세요. 가까이 오면 땅이 흔들립니다."
+zh_cn = "沿大门左侧山丘边的小路前往{object:142343}，避开精英巨人。小心在那里巡逻的{npc:5470}：它靠近时地面会震动。"
+zh_tw = "沿大門左側山丘邊的小路前往{object:142343}，避開精英巨人。小心在那裡巡邏的{npc:5470}：牠靠近時地面會震動。"

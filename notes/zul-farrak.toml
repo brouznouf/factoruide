@@ -31,3 +31,25 @@ ru = "Отбив волны на лестнице и взорвав дверь, 
 ko = "계단에서 몰려오는 적을 막고 문이 폭파되면, 1~2분 안에 체력과 마나를 채운 뒤 {npc:7604}에게 말을 거세요. 그의 일행이 공격해 오며 그가 {item:8548}을 지니고 있습니다. 너무 오래 기다리면 귀환석으로 떠납니다."
 zh_cn = "击退阶梯上的几波敌人、炸开大门后，在一两分钟内回满状态并与{npc:7604}对话：他的队伍会攻击你，{item:8548}就在他身上。等太久他们会用炉石离开。"
 zh_tw = "擊退階梯上的幾波敵人、炸開大門後，在一兩分鐘內回滿狀態並與{npc:7604}對話：他的隊伍會攻擊你，{item:8548}就在他身上。等太久他們會用爐石離開。"
+
+# Nekrum's Medallion: Nekrum only appears in the last wave of the stairs event, started by opening the prisoners' cages.
+[[note]]
+quest = 2991
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:7796} comes with the last wave on the stairs, after you free {npc:7604} and the other prisoners (the executioner carries the cage key). No other quest is needed to start the event."
+fr = "{npc:7796} arrive avec la dernière vague de l'escalier, après la libération de {npc:7604} et des autres prisonniers (le bourreau porte la clé des cages). Aucune autre quête n'est nécessaire pour lancer l'événement."
+de = "{npc:7796} kommt mit der letzten Welle auf der Treppe, nachdem du {npc:7604} und die anderen Gefangenen befreit hast (der Henker trägt den Käfigschlüssel). Für das Ereignis brauchst du keine andere Quest."
+es = "{npc:7796} llega con la última oleada de la escalera, después de liberar a {npc:7604} y a los demás prisioneros (el verdugo lleva la llave de las jaulas). No hace falta otra misión para iniciar el evento."
+pt = "{npc:7796} vem com a última onda na escada, depois que você liberta {npc:7604} e os outros prisioneiros (o carrasco leva a chave das jaulas). Nenhuma outra missão é necessária para iniciar o evento."
+ru = "{npc:7796} приходит с последней волной на лестнице, после того как вы освободите {npc:7604} и других пленников (ключ от клеток у палача). Другое задание для запуска события не нужно."
+ko = "{npc:7796}은(는) {npc:7604}와(과) 다른 포로들을 풀어 준 뒤 계단으로 몰려오는 마지막 무리와 함께 나타납니다(우리 열쇠는 처형자가 지니고 있습니다). 이벤트를 시작하는 데 다른 퀘스트는 필요 없습니다."
+zh_cn = "放出{npc:7604}和其他囚犯后（笼子钥匙在刽子手身上），{npc:7796}会随阶梯上的最后一波敌人出现。触发这个事件不需要其他任务。"
+zh_tw = "放出{npc:7604}和其他囚犯後（籠子鑰匙在劊子手身上），{npc:7796}會隨階梯上的最後一波敵人出現。觸發這個事件不需要其他任務。"
+
+[[icon]]
+quest = 2991
+phase = "objective"
+objective = 1
+icon = "event"

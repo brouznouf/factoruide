@@ -77,3 +77,18 @@ ru = "{npc:2937} не ждет на острове: используйте {item
 ko = "{npc:2937}은(는) 섬에 미리 있지 않습니다. {object:2871}에서 {item:4639}을(를) 사용해 불러내세요. 해초는 섬 주변의 {npc:4363}에게서 드물게 떨어지며, 경매장에서 살 수도 있습니다."
 zh_cn = "{npc:2937}不会在岛上等你：在{object:2871}使用{item:4639}把他召唤出来。海藻由岛周围的{npc:4363}低几率掉落，也可以在拍卖行买到。"
 zh_tw = "{npc:2937}不會在島上等你：在{object:2871}使用{item:4639}把他召喚出來。海藻由島周圍的{npc:4363}低機率掉落，也可以在拍賣行買到。"
+
+# Tremors of the Earth: the seal summons both dragons on the player; running off makes them return to the seal, after which they can be pulled singly.
+[[note]]
+quest = 717
+phase = "objective"
+level = "warning"
+en = "Clear the dragonkin around the {object:2933} first: using it calls {npc:2759} and {npc:2757} right on top of you. Run off at once; they go back to the seal and can then be pulled one at a time."
+fr = "Nettoyez d'abord les draconiens autour de {object:2933} : l'utiliser fait apparaître {npc:2759} et {npc:2757} juste sur vous. Fuyez aussitôt ; ils retournent au sceau et peuvent ensuite être attirés un par un."
+de = "Räume zuerst die Drachkin um {object:2933} weg: Benutzt du es, erscheinen {npc:2759} und {npc:2757} direkt auf dir. Lauf sofort weg; sie kehren zum Siegel zurück und lassen sich dann einzeln pullen."
+es = "Limpia primero los dragonantes alrededor de {object:2933}: usarlo hace aparecer a {npc:2759} y {npc:2757} justo encima de ti. Huye enseguida; vuelven al sello y luego puedes atraerlos de uno en uno."
+pt = "Limpe primeiro os dracônicos em volta de {object:2933}: usá-lo faz {npc:2759} e {npc:2757} surgirem bem em cima de você. Fuja na hora; eles voltam ao selo e depois podem ser puxados um de cada vez."
+ru = "Сначала зачистите драконидов вокруг {object:2933}: при использовании {npc:2759} и {npc:2757} появляются прямо на вас. Сразу отбегайте; они вернутся к печати, и потом их можно выманивать по одному."
+ko = "먼저 {object:2933} 주변의 용족을 처치하세요. 사용하면 {npc:2759}와(과) {npc:2757}이(가) 바로 당신 위에 나타납니다. 즉시 달아나세요. 그들이 인장으로 돌아가면 하나씩 끌어낼 수 있습니다."
+zh_cn = "先清掉{object:2933}周围的龙人：使用它会让{npc:2759}和{npc:2757}直接出现在你身上。立刻跑开；它们会回到封印旁，之后可以逐个拉。"
+zh_tw = "先清掉{object:2933}周圍的龍人：使用它會讓{npc:2759}和{npc:2757}直接出現在你身上。立刻跑開；牠們會回到封印旁，之後可以逐一拉怪。"

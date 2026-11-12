@@ -107,3 +107,17 @@ ru = "{npc:4967} и {npc:4968} появляются в лагере, как то
 ko = "{npc:4966}이(가) 항복하면 {npc:4967}와(과) {npc:4968}이(가) 야영지에 나타납니다. 그들이 순간이동해 떠나기 전에 바로 여기서 완료하고 제이나에게 {quest:1267}을(를) 받으세요. 놓치면 제이나는 테라모어의 자기 탑 꼭대기에 있습니다."
 zh_cn = "{npc:4966}投降后，{npc:4967}和{npc:4968}会出现在营地：趁他们传送离开前，当场交任务并立刻从吉安娜那里接{quest:1267}。否则吉安娜会在塞拉摩她的法师塔顶层等你。"
 zh_tw = "{npc:4966}投降後，{npc:4967}和{npc:4968}會出現在營地：趁他們傳送離開前，當場交任務並立刻從珍娜那裡接{quest:1267}。否則珍娜會在塞拉摩她的法師塔頂層等你。"
+
+# The Exorcism: the 3-minute limit runs until the turn-in; critters nearby join the fight; a failed attempt is retried by abandoning and retaking.
+[[note]]
+quest = 1955
+level = "warning"
+en = "Clear the critters around the garden before you start: the 3-minute timer runs until you hand in to {npc:6546}, so go back to her right after the kill. If it fails, abandon the quest and take it again."
+fr = "Éliminez les bestioles autour du jardin avant de commencer : le délai de 3 minutes court jusqu'au rendu à {npc:6546}, revenez donc la voir juste après la mise à mort. En cas d'échec, abandonnez la quête et reprenez-la."
+de = "Räume vor dem Start die Kleintiere um den Garten weg: das 3-Minuten-Zeitlimit läuft bis zur Abgabe bei {npc:6546}, geh also direkt nach dem Kill zu ihr zurück. Scheitert sie, brich die Quest ab und nimm sie neu an."
+es = "Limpia las alimañas alrededor del jardín antes de empezar: el límite de 3 minutos corre hasta que entregues a {npc:6546}, así que vuelve con ella justo después de matarlo. Si fallas, abandona la misión y acéptala de nuevo."
+pt = "Limpe os bichos em volta do jardim antes de começar: o limite de 3 minutos corre até a entrega a {npc:6546}, então volte a ela logo após a morte. Se falhar, abandone a missão e pegue-a de novo."
+ru = "Перед началом перебейте зверушек вокруг сада: трёхминутный таймер идёт до сдачи {npc:6546}, так что возвращайтесь к ней сразу после убийства. При провале отмените задание и возьмите его снова."
+ko = "시작하기 전에 정원 주변의 동물을 처치하세요. 3분 제한은 {npc:6546}에게 보고할 때까지 흐르니, 처치 직후 바로 그녀에게 돌아가세요. 실패하면 퀘스트를 포기하고 다시 받으세요."
+zh_cn = "开始前先清掉花园周围的小动物：3分钟时限一直计到向{npc:6546}交任务为止，所以击杀后立刻回去找她。失败的话就放弃任务再重新接。"
+zh_tw = "開始前先清掉花園周圍的小動物：3分鐘時限一直計到向{npc:6546}交任務為止，所以擊殺後立刻回去找她。失敗的話就放棄任務再重新接。"

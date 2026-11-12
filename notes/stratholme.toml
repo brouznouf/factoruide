@@ -1,0 +1,49 @@
+# Quest notes of Stratholme. See notes/README.md for the format.
+
+# The Archivist: burning the archive also burns the painting that Of Love and Family needs.
+[[note]]
+quest = 5251
+phase = "objective"
+objective = 2
+level = "warning"
+en = "Burning the {object:176245} also destroys the {object:177287} for {quest:5848}: if you have that quest, take the painting first."
+fr = "Brûler {object:176245} détruit aussi {object:177287} de {quest:5848} : si vous avez cette quête, prenez d'abord le tableau."
+de = "Das Verbrennen von {object:176245} zerstört auch {object:177287} für {quest:5848}: hast du diese Quest, nimm zuerst das Gemälde."
+es = "Quemar {object:176245} también destruye {object:177287} de {quest:5848}: si tienes esa misión, coge antes el cuadro."
+pt = "Queimar {object:176245} também destrói {object:177287} de {quest:5848}: se você tem essa missão, pegue o quadro antes."
+ru = "Сожжение {object:176245} уничтожает и {object:177287} для задания {quest:5848}: если оно у вас есть, сначала заберите картину."
+ko = "{object:176245}을(를) 불태우면 {quest:5848}에 필요한 {object:177287}도 함께 타 버립니다. 그 퀘스트가 있다면 그림부터 챙기세요."
+zh_cn = "烧毁{object:176245}也会毁掉{quest:5848}所需的{object:177287}：如果你有那个任务，先拿走画。"
+zh_tw = "燒毀{object:176245}也會毀掉{quest:5848}所需的{object:177287}：如果你有那個任務，先拿走畫。"
+
+# The Great Ezra Grimm: opening the tobacco box spawns Ezra Grimm, who calls nearby mobs; after a wipe he and the box are gone until a reset.
+[[note]]
+quest = 5214
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Clear every mob between the entrance and the {object:176248} before opening it: {npc:11058} spawns and calls for help. If the group wipes, he and the box vanish until the instance resets."
+fr = "Éliminez tous les monstres entre l'entrée et {object:176248} avant de l'ouvrir : {npc:11058} apparaît et appelle à l'aide. Si le groupe meurt, lui et la boîte disparaissent jusqu'à la réinitialisation de l'instance."
+de = "Räume alle Gegner zwischen Eingang und {object:176248} weg, bevor du sie öffnest: {npc:11058} erscheint und ruft um Hilfe. Stirbt die Gruppe, verschwinden er und die Kiste bis zum Zurücksetzen der Instanz."
+es = "Limpia todos los enemigos entre la entrada y {object:176248} antes de abrirla: aparece {npc:11058} y pide ayuda. Si el grupo muere, él y la caja desaparecen hasta que se reinicie la instancia."
+pt = "Limpe todos os inimigos entre a entrada e {object:176248} antes de abrir: {npc:11058} surge e pede ajuda. Se o grupo morrer, ele e a caixa somem até a instância ser reiniciada."
+ru = "Перед тем как открыть {object:176248}, перебейте всех врагов от входа до него: появляется {npc:11058} и зовёт на помощь. Если группа погибнет, он и ящик исчезнут до сброса подземелья."
+ko = "{object:176248}을(를) 열기 전에 입구부터 그곳까지의 적을 모두 처치하세요. {npc:11058}이(가) 나타나 도움을 부릅니다. 파티가 전멸하면 그와 상자는 인스턴스가 초기화될 때까지 사라집니다."
+zh_cn = "打开{object:176248}前，先清掉从入口到那里的所有怪物：{npc:11058}会出现并呼叫援兵。如果团灭，他和箱子会消失，直到副本重置。"
+zh_tw = "打開{object:176248}前，先清掉從入口到那裡的所有怪物：{npc:11058}會出現並呼叫援兵。如果團滅，他和箱子會消失，直到副本重置。"
+
+# The Active Agent: the Scourge Data box spawns in one of the three ziggurats at random and can be looted by the whole party.
+[[note]]
+quest = 5213
+phase = "objective"
+objective = 1
+level = "info"
+en = "The {object:176249} is a tiny box found in only one of the three ziggurats, chosen at random: search each one. Every party member can loot it."
+fr = "{object:176249} est une toute petite boîte présente dans une seule des trois ziggourats, choisie au hasard : fouillez-les toutes. Chaque membre du groupe peut la ramasser."
+de = "{object:176249} ist eine winzige Kiste, die nur in einer der drei Zikkurats liegt, zufällig gewählt: durchsuche jede. Jedes Gruppenmitglied kann sie plündern."
+es = "{object:176249} es una caja diminuta que está en solo uno de los tres zigurats, elegido al azar: registra cada uno. Todos los miembros del grupo pueden saquearla."
+pt = "{object:176249} é uma caixinha que fica em só um dos três zigurates, escolhido ao acaso: procure em cada um. Todos os membros do grupo podem saqueá-la."
+ru = "{object:176249} — крошечный ящик, который лежит лишь в одном из трёх зиккуратов, выбранном случайно: обыщите каждый. Забрать его может каждый участник группы."
+ko = "{object:176249}은(는) 세 지구라트 중 무작위로 한 곳에만 있는 아주 작은 상자입니다. 모두 찾아보세요. 파티원 모두가 획득할 수 있습니다."
+zh_cn = "{object:176249}是一个很小的箱子，只会随机出现在三座通灵塔中的一座：逐一搜索。每位队员都可以拾取。"
+zh_tw = "{object:176249}是一個很小的箱子，只會隨機出現在三座通靈塔中的一座：逐一搜尋。每位隊員都可以拾取。"

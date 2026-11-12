@@ -131,3 +131,62 @@ ru = "Если объект «{object:148498}» не нажимается, зн�
 ko = "{object:148498}을(를) 클릭할 수 없다면 누군가 방금 그곳에서 다음 퀘스트를 시작한 것입니다. 5~10분 안에 다시 나타납니다. 다음 퀘스트를 받으면 정예 몹 둘이 바로 나타나니 받기 전에 준비하세요."
 zh_cn = "如果{object:148498}无法点击，说明有人刚在那里开始了下一个任务：它会在5到10分钟内重新出现。接下一个任务会立刻引出两个精英，所以接之前先做好准备。"
 zh_tw = "如果{object:148498}無法點擊，說明有人剛在那裡開始了下一個任務：它會在5到10分鐘內重新出現。接下一個任務會立刻引出兩個精英，所以接之前先做好準備。"
+
+# The Horn of the Beast: the horn's owner is a wandering level 48 elite, immune to nature damage (not elite in TBC).
+[[note]]
+quest = 3181
+phase = "accept"
+level = "warning"
+editions = ["classic", "forever"]
+en = "{npc:5833}, a level 48 elite, wanders a path in the southeastern hills up to its cave. It is immune to nature damage: bring help or another kind of damage."
+fr = "{npc:5833}, un élite de niveau 48, arpente un chemin dans les collines du sud-est jusqu'à sa grotte. Il est insensible aux dégâts de nature : venez accompagné ou avec un autre type de dégâts."
+de = "{npc:5833}, ein Elite der Stufe 48, streift auf einem Pfad in den südöstlichen Hügeln bis zu seiner Höhle umher. Er ist immun gegen Naturschaden: nimm Hilfe mit oder setze eine andere Schadensart ein."
+es = "{npc:5833}, un élite de nivel 48, recorre un sendero de las colinas del sureste hasta su cueva. Es inmune al daño de naturaleza: ve acompañado o usa otro tipo de daño."
+pt = "{npc:5833}, um elite de nível 48, percorre uma trilha nas colinas do sudeste até a caverna. É imune a dano de natureza: leve ajuda ou outro tipo de dano."
+ru = "{npc:5833}, элитный противник 48-го уровня, бродит по тропе в юго-восточных холмах до своей пещеры. Невосприимчив к урону от сил природы: возьмите помощь или другой тип урона."
+ko = "48레벨 정예 {npc:5833}은(는) 남동쪽 언덕의 오솔길을 따라 자신의 동굴까지 돌아다닙니다. 자연 피해에 면역이니 도움을 받거나 다른 종류의 피해를 준비하세요."
+zh_cn = "{npc:5833}是48级精英，在东南山丘的小路上游荡，一直走到它的洞穴。它免疫自然伤害：找人帮忙或使用其他类型的伤害。"
+zh_tw = "{npc:5833}是48級精英，在東南山丘的小路上遊蕩，一直走到牠的洞穴。牠免疫自然傷害：找人幫忙或使用其他類型的傷害。"
+
+# Rise, Obsidion!: after a wipe the altar summons both foes again; the quest need not be abandoned.
+[[note]]
+quest = 3566
+level = "info"
+en = "If your group dies, click the {object:148498} again to call {npc:8391} and {npc:8400} back: no need to abandon the quest."
+fr = "Si votre groupe meurt, cliquez à nouveau sur {object:148498} pour rappeler {npc:8391} et {npc:8400} : inutile d'abandonner la quête."
+de = "Stirbt deine Gruppe, klicke erneut auf {object:148498}, um {npc:8391} und {npc:8400} zurückzurufen: du musst die Quest nicht abbrechen."
+es = "Si tu grupo muere, vuelve a hacer clic en {object:148498} para invocar de nuevo a {npc:8391} y {npc:8400}: no hace falta abandonar la misión."
+pt = "Se o seu grupo morrer, clique de novo em {object:148498} para chamar {npc:8391} e {npc:8400} de volta: não é preciso abandonar a missão."
+ru = "Если группа погибла, снова нажмите на {object:148498}, чтобы вызвать {npc:8391} и {npc:8400}: отменять задание не нужно."
+ko = "파티가 전멸하면 {object:148498}을(를) 다시 클릭해 {npc:8391}와(과) {npc:8400}을(를) 다시 불러내세요. 퀘스트를 포기할 필요는 없습니다."
+zh_cn = "如果队伍阵亡，再次点击{object:148498}即可重新召唤{npc:8391}和{npc:8400}：不需要放弃任务。"
+zh_tw = "如果隊伍陣亡，再次點擊{object:148498}即可重新召喚{npc:8391}和{npc:8400}：不需要放棄任務。"
+
+# The Torch of Retribution (2): Kalaran takes about a minute to make the torch, which floats next to him and ends the quest; his despawning fails it.
+[[note]]
+quest = 3454
+level = "warning"
+en = "Stay by {npc:8479} after you accept it: he takes about a minute to make the torch, which then floats beside him; click it to hand the quest in. If he vanishes meanwhile, the quest fails."
+fr = "Restez près de {npc:8479} après l'avoir acceptée : il met environ une minute à fabriquer la torche, qui flotte ensuite à côté de lui ; cliquez dessus pour rendre la quête. S'il disparaît entre-temps, la quête échoue."
+de = "Bleib nach der Annahme bei {npc:8479}: er braucht etwa eine Minute für die Fackel, die dann neben ihm schwebt; klicke sie an, um die Quest abzugeben. Verschwindet er währenddessen, scheitert die Quest."
+es = "Quédate junto a {npc:8479} tras aceptarla: tarda cerca de un minuto en crear la antorcha, que luego flota a su lado; haz clic en ella para entregar la misión. Si él desaparece mientras tanto, la misión falla."
+pt = "Fique perto de {npc:8479} depois de aceitar: ele leva cerca de um minuto para fazer a tocha, que depois flutua ao lado dele; clique nela para entregar a missão. Se ele sumir nesse meio-tempo, a missão falha."
+ru = "Взяв задание, оставайтесь рядом с {npc:8479}: он делает факел около минуты, потом факел парит рядом с ним; нажмите на него, чтобы сдать задание. Если он исчезнет за это время, задание провалится."
+ko = "퀘스트를 받은 뒤 {npc:8479} 곁에 머무르세요. 횃불을 만드는 데 1분쯤 걸리며, 완성된 횃불은 그의 옆에 떠 있습니다. 횃불을 클릭해 퀘스트를 완료하세요. 그사이 그가 사라지면 퀘스트가 실패합니다."
+zh_cn = "接任务后留在{npc:8479}身边：他大约需要一分钟制作火炬，做好后火炬会飘在他旁边；点击火炬交任务。如果他在此期间消失，任务就会失败。"
+zh_tw = "接任務後留在{npc:8479}身邊：他大約需要一分鐘製作火炬，做好後火炬會飄在他旁邊；點擊火炬交任務。如果他在此期間消失，任務就會失敗。"
+
+# Set Them Ablaze!: the torch must be equipped; each brazier is a tiny object on a tower's top floor, next to an elite guard, and the click counts at once.
+[[note]]
+quest = 3463
+phase = "objective"
+level = "warning"
+en = "Equip the {item:10515}, then click the small {object:149025} on the top floor of each tower: it is easy to miss on the floor. An elite guard waits up there, but the click counts at once, so you can leave without killing it."
+fr = "Équipez {item:10515}, puis cliquez sur le petit {object:149025} au dernier étage de chaque tour : il passe facilement inaperçu au sol. Un garde élite s'y trouve, mais le clic compte aussitôt : vous pouvez repartir sans le tuer."
+de = "Rüste {item:10515} aus und klicke im obersten Stock jedes Turms auf {object:149025}: es ist am Boden leicht zu übersehen. Oben wartet eine Elite-Wache, doch der Klick zählt sofort, du kannst also gehen, ohne sie zu töten."
+es = "Equípate {item:10515} y haz clic en el pequeño {object:149025} del piso superior de cada torre: es fácil no verlo en el suelo. Arriba espera un guardia élite, pero el clic cuenta al instante, así que puedes irte sin matarlo."
+pt = "Equipe {item:10515} e clique no pequeno {object:149025} no último andar de cada torre: é fácil não vê-lo no chão. Um guarda elite fica lá em cima, mas o clique conta na hora, então você pode sair sem matá-lo."
+ru = "Возьмите в руки {item:10515} и нажмите на маленький {object:149025} на верхнем этаже каждой башни: его легко не заметить на полу. Наверху ждёт элитный страж, но нажатие засчитывается сразу, так что можно уйти, не убивая его."
+ko = "{item:10515}을(를) 장착하고 각 탑 꼭대기 층의 작은 {object:149025}을(를) 클릭하세요. 바닥에 있어 놓치기 쉽습니다. 위에 정예 경비병이 있지만 클릭하는 즉시 인정되니 처치하지 않고 떠나도 됩니다."
+zh_cn = "装备{item:10515}，然后点击每座塔顶层的小型{object:149025}：它在地上，很容易漏看。上面有一名精英卫兵，但点击后立即完成，可以不杀它直接离开。"
+zh_tw = "裝備{item:10515}，然後點擊每座塔頂層的小型{object:149025}：它在地上，很容易漏看。上面有一名精英衛兵，但點擊後立即完成，可以不殺它直接離開。"

@@ -68,3 +68,19 @@ ru = "{npc:9176} не элитный, но бьет очень сильно и �
 ko = "{npc:9176}은(는) 정예가 아니지만 매우 세게 때리고 기절시킵니다. 주문을 쓰는 경비병이 함께 끌려오고, 오두막 옆으로 순찰병이 지나갑니다. 순찰병을 먼저 처치한 뒤 오두막에서 멀리 끌어내세요."
 zh_cn = "{npc:9176}不是精英，但打人很疼还会击晕；一个施法护卫与他关联，还有一支巡逻队会经过他的小屋。先杀掉巡逻队，再把他拉离小屋。"
 zh_tw = "{npc:9176}不是精英，但打人很痛還會擊暈；一個施法護衛與他連動，還有一支巡邏隊會經過他的小屋。先殺掉巡邏隊，再把他拉離小屋。"
+
+# The True Masters (4): Lady Prestor has no quest mark; while another player's later step plays out she ignores players or is gone for a few minutes.
+[[note]]
+quest = 4185
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1749} shows no quest mark: talk to her anyway. If she ignores you or is missing, another player's later step is playing out: wait a few minutes for her to come back instead of abandoning."
+fr = "{npc:1749} n'affiche aucun marqueur de quête : parlez-lui quand même. Si elle vous ignore ou est absente, l'étape suivante d'un autre joueur est en cours : attendez quelques minutes son retour au lieu d'abandonner."
+de = "{npc:1749} zeigt kein Questsymbol: sprich trotzdem mit ihr. Ignoriert sie dich oder fehlt sie, läuft gerade der spätere Schritt eines anderen Spielers: warte ein paar Minuten auf ihre Rückkehr, statt abzubrechen."
+es = "{npc:1749} no muestra marca de misión: habla con ella de todos modos. Si te ignora o no está, se está desarrollando el paso posterior de otro jugador: espera unos minutos a que vuelva en lugar de abandonar."
+pt = "{npc:1749} não mostra marcador de missão: fale com ela mesmo assim. Se ela ignorar você ou não estiver lá, a etapa seguinte de outro jogador está em andamento: espere alguns minutos pela volta dela em vez de abandonar."
+ru = "Над {npc:1749} нет значка задания: всё равно поговорите с ней. Если она вас игнорирует или её нет, идёт более поздний этап другого игрока: подождите несколько минут, пока она вернётся, а не отменяйте задание."
+ko = "{npc:1749}에게는 퀘스트 표시가 없지만 그래도 말을 거세요. 반응이 없거나 보이지 않으면 다른 플레이어의 다음 단계가 진행 중입니다. 퀘스트를 포기하지 말고 몇 분 기다리면 돌아옵니다."
+zh_cn = "{npc:1749}头上没有任务标记：照样和她对话。如果她不理你或不在，说明另一名玩家的后续步骤正在进行：等几分钟她回来，不要放弃任务。"
+zh_tw = "{npc:1749}頭上沒有任務標記：照樣和她對話。如果她不理你或不在，表示另一名玩家的後續步驟正在進行：等幾分鐘她回來，不要放棄任務。"
