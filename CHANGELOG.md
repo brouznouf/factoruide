@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+## 0.19.0 (2026-11-12)
+
+Quest notes in the guides, with tips and warnings on tricky quests, and fixes to the quest data from players' reports.
+
 ### App
 
 - Steps show how their quest is taken (an item, an object, a mob's drop, an event) or their objective done, and a mark when a note tells more about the quest.
@@ -19,6 +23,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Addon
 
 - Steps show how their quest is taken or their objective done, and a yellow, orange or red mark when a note tells more about the quest; the step's tooltip lists the notes.
+- A quest handed in far ahead of the guide no longer marks the merchants, trainers and flight masters before it as visited.
 
 ### WoW data
 
