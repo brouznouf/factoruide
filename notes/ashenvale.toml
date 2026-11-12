@@ -87,3 +87,57 @@ quest = 6621
 phase = "objective"
 objective = 1
 icon = "event"
+
+# Supplies to Auberdine: Feero is much weaker than the three ambushes on the way (4, then 3, then 3 attackers) and dies within seconds if they target him.
+[[note]]
+quest = 976
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:4484} is far weaker than the three ambushes on the way (4, then 3, then 3 attackers) and dies in seconds if they turn on him: take them all on yourself, and stay a little ahead of him so they reach you first. Easier in a group."
+fr = "{npc:4484} est bien plus faible que les trois embuscades du trajet (4, puis 3, puis 3 assaillants) et meurt en quelques secondes s'ils s'en prennent à lui : attirez-les tous sur vous et restez un peu devant lui pour qu'ils vous atteignent d'abord. Plus simple en groupe."
+de = "{npc:4484} ist viel schwächer als die drei Hinterhalte unterwegs (4, dann 3, dann 3 Angreifer) und stirbt in Sekunden, wenn sie sich auf ihn stürzen: zieh sie alle auf dich und bleib etwas vor ihm, damit sie zuerst dich erreichen. In einer Gruppe einfacher."
+es = "{npc:4484} es mucho más débil que las tres emboscadas del camino (4, luego 3 y luego 3 atacantes) y muere en segundos si van a por él: atráelos a todos hacia ti y quédate un poco por delante para que te alcancen primero. Más fácil en grupo."
+pt = "{npc:4484} é bem mais fraco que as três emboscadas do caminho (4, depois 3, depois 3 atacantes) e morre em segundos se eles o atacarem: puxe todos para você e fique um pouco à frente dele para que cheguem primeiro em você. Mais fácil em grupo."
+ru = "{npc:4484} гораздо слабее трех засад на пути (4, затем 3, затем 3 противника) и гибнет за секунды, если они нападут на него: берите всех на себя и держитесь чуть впереди него, чтобы они сначала добрались до вас. В группе проще."
+ko = "{npc:4484}은(는) 가는 길의 매복 세 번(4명, 3명, 3명)보다 훨씬 약해서 적들이 그를 노리면 몇 초 만에 죽습니다. 모든 적을 직접 끌어오고, 그보다 조금 앞서 가서 적이 먼저 당신에게 오게 하세요. 파티로 하면 더 쉽습니다."
+zh_cn = "{npc:4484}比途中的三次伏击（4个、3个、再3个敌人）弱得多，敌人一旦转向他，几秒内他就会死：把所有敌人都拉到自己身上，并走在他前面一点，让敌人先找上你。组队会更轻松。"
+zh_tw = "{npc:4484}比途中的三次伏擊（4個、3個、再3個敵人）弱得多，敵人一旦轉向他，幾秒內他就會死：把所有敵人都拉到自己身上，並走在他前面一點，讓敵人先找上你。組隊會更輕鬆。"
+
+# Bathran's Hair: the plant bundles blend into the ground and vanish in the grass at high ground clutter settings.
+[[note]]
+quest = 1010
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:17282} is small and blends into the ground: set Ground Clutter to its lowest in the graphics options and the bundles stand out."
+fr = "{object:17282} est petite et se confond avec le sol : réglez les détails du sol au minimum dans les options graphiques et les bottes ressortent nettement."
+de = "{object:17282} ist klein und verschmilzt mit dem Boden: stell die Bodenvegetation in den Grafikoptionen auf das Minimum, dann fallen die Bündel sofort auf."
+es = "{object:17282} es pequeño y se confunde con el suelo: pon los detalles del suelo al mínimo en las opciones gráficas y los paquetes se verán con claridad."
+pt = "{object:17282} é pequeno e se confunde com o chão: coloque os detalhes do solo no mínimo nas opções gráficas e os pacotes aparecem com clareza."
+ru = "{object:17282} — маленький предмет, сливающийся с землей: уменьшите детализацию земли до минимума в настройках графики, и пучки станут хорошо видны."
+ko = "{object:17282}은(는) 작고 땅과 잘 구분되지 않습니다. 그래픽 설정에서 지면 효과를 최저로 낮추면 쉽게 눈에 띕니다."
+zh_cn = "{object:17282}很小，和地面混在一起：在图像设置中把地表细节调到最低，草捆就会很显眼。"
+zh_tw = "{object:17282}很小，和地面混在一起：在圖像設定中把地表細節調到最低，草捆就會很顯眼。"
+
+# Raene's Cleansing (pommel): the pommel comes from a Rusty Chest that a slain Rotting Slime sometimes leaves on the ground, not from its loot.
+[[note]]
+quest = 1027
+phase = "objective"
+objective = 1
+level = "info"
+en = "The pommel is not in the loot: a slain {npc:3928} sometimes leaves a {object:19021} on the ground beside its corpse. Open it to get {item:5519}."
+fr = "Le pommeau n'est pas dans le butin : une {npc:3928} tuée laisse parfois un {object:19021} au sol près de son cadavre. Ouvrez-le pour obtenir {item:5519}."
+de = "Der Knauf ist nicht in der Beute: ein getöteter {npc:3928} hinterlässt manchmal eine {object:19021} neben seiner Leiche auf dem Boden. Öffne sie, um {item:5519} zu bekommen."
+es = "El pomo no está en el botín: una {npc:3928} muerta a veces deja un {object:19021} en el suelo junto a su cadáver. Ábrelo para obtener {item:5519}."
+pt = "O castão não vem no saque: um {npc:3928} morto às vezes deixa um {object:19021} no chão ao lado do cadáver. Abra-o para pegar {item:5519}."
+ru = "Навершия нет в добыче: убитая {npc:3928} иногда оставляет на земле рядом с трупом {object:19021}. Откройте его, чтобы получить {item:5519}."
+ko = "머리장식은 전리품으로 나오지 않습니다. 처치한 {npc:3928} 시체 옆 땅에 가끔 {object:19021}이(가) 생깁니다. 열어서 {item:5519}을(를) 얻으세요."
+zh_cn = "柄头不在战利品里：被杀死的{npc:3928}有时会在尸体旁的地上留下一个{object:19021}。打开它即可获得{item:5519}。"
+zh_tw = "柄頭不在戰利品裡：被殺死的{npc:3928}有時會在屍體旁的地上留下一個{object:19021}。打開它即可獲得{item:5519}。"
+
+[[icon]]
+quest = 1027
+phase = "objective"
+objective = 1
+icon = "pickup"

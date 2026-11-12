@@ -184,3 +184,66 @@ ru = "{npc:6669} — элитный противник, который стан�
 ko = "{npc:6669}은(는) {npc:6667} 근처로 데려가면 적대적으로 바뀌는 정예입니다. 생명력을 가득 채우고 가세요. 물속으로는 멀리 따라오지 않지만 그곳에서 회복합니다. 해변의 쓰러진 나무 주위로 끌고 다니면 공격받지 않습니다."
 zh_cn = "{npc:6669}是精英，一靠近{npc:6667}就会变为敌对：满血再去。它不会追你太远进水里，但会在那里回血。绕着海滩上的倒树放风筝可以让它打不到你。"
 zh_tw = "{npc:6669}是精英，一靠近{npc:6667}就會變為敵對：滿血再去。它不會追你太遠進水裡，但會在那裡回血。繞著海灘上的倒樹放風箏可以讓它打不到你。"
+
+# The Sleeper Has Awakened (Classic and TBC; Forever reworked the escort): the escort follows the player, the two scripted ambushes only trigger on the road, and he dozes off on the way (the horn wakes him).
+[[note]]
+quest = 5321
+phase = "objective"
+objective = 2
+level = "warning"
+editions = ["classic", "tbc"]
+en = "{npc:11218} falls asleep now and then: wake him with {item:13536}. Lead him through the woods beside the road, never on it: the two ambushes only come on the road, and their casters kill him fast."
+fr = "{npc:11218} s'endort de temps en temps : réveillez-le avec {item:13536}. Menez-le par les bois à côté de la route, jamais dessus : les deux embuscades n'arrivent que sur la route, et leurs lanceurs de sorts le tuent vite."
+de = "{npc:11218} schläft ab und zu ein: weck ihn mit {item:13536}. Führ ihn neben der Straße durch den Wald, nie auf ihr: die beiden Hinterhalte kommen nur auf der Straße, und ihre Zauberwirker töten ihn schnell."
+es = "{npc:11218} se duerme de vez en cuando: despiértalo con {item:13536}. Guíalo por el bosque junto al camino, nunca por él: las dos emboscadas solo aparecen en el camino y sus lanzadores de hechizos lo matan rápido."
+pt = "{npc:11218} adormece de vez em quando: acorde-o com {item:13536}. Leve-o pela mata ao lado da estrada, nunca por ela: as duas emboscadas só surgem na estrada, e os conjuradores delas o matam rápido."
+ru = "{npc:11218} время от времени засыпает: будите его предметом {item:13536}. Ведите его лесом вдоль дороги, но не по ней: обе засады появляются только на дороге, и их заклинатели быстро его убивают."
+ko = "{npc:11218}은(는) 가끔 잠이 듭니다. {item:13536}(으)로 깨우세요. 길 위가 아니라 길 옆 숲으로만 데려가세요. 두 번의 매복은 길 위에서만 나타나며, 매복의 주문 시전자들이 그를 빠르게 죽입니다."
+zh_cn = "{npc:11218}时不时会睡着：用{item:13536}叫醒他。带他走道路旁的树林，不要走在路上：两次伏击只会在路上出现，伏击中的施法者会很快杀死他。"
+zh_tw = "{npc:11218}時不時會睡著：用{item:13536}叫醒他。帶他走道路旁的樹林，不要走在路上：兩次伏擊只會在路上出現，伏擊中的施法者會很快殺死他。"
+
+# The Powers Below: the book starting the quest is a very rare drop of the Twilight cultists (often 100+ kills); it is a party-loot item.
+[[note]]
+quest = 968
+phase = "accept"
+level = "warning"
+en = "{item:5352} is a very rare drop from {npc:2338} and {npc:2339}: a hundred kills or more is common. In a party, every member can loot it from the same corpse."
+fr = "{item:5352} est un butin très rare sur {npc:2338} et {npc:2339} : une centaine de victimes ou plus n'a rien d'exceptionnel. En groupe, chaque membre peut le ramasser sur le même cadavre."
+de = "{item:5352} ist eine sehr seltene Beute von {npc:2338} und {npc:2339}: hundert Kills oder mehr sind normal. In einer Gruppe kann jedes Mitglied es von derselben Leiche plündern."
+es = "{item:5352} es un botín muy raro de {npc:2338} y {npc:2339}: es normal necesitar cien muertes o más. En grupo, cada miembro puede despojarlo del mismo cadáver."
+pt = "{item:5352} é um saque muito raro de {npc:2338} e {npc:2339}: é comum precisar de cem abates ou mais. Em grupo, cada membro pode saqueá-lo do mesmo cadáver."
+ru = "{item:5352} — очень редкая добыча с противников {npc:2338} и {npc:2339}: сотня убийств и больше — обычное дело. В группе каждый участник может забрать его с одного и того же трупа."
+ko = "{item:5352}은(는) {npc:2338}와(과) {npc:2339}에게서 매우 드물게 떨어집니다. 백 마리 이상 잡는 일도 흔합니다. 파티에서는 모든 파티원이 같은 시체에서 획득할 수 있습니다."
+zh_cn = "{item:5352}是{npc:2338}和{npc:2339}极为稀有的掉落：杀上一百只甚至更多很常见。组队时，每名队员都能从同一具尸体上拾取它。"
+zh_tw = "{item:5352}是{npc:2338}和{npc:2339}極為稀有的掉落：殺上一百隻甚至更多很常見。組隊時，每名隊員都能從同一具屍體上拾取它。"
+
+# Therylune's Escape: she is stealthed on the island of the Master's Glaive and respawns roughly 10 minutes after someone starts her escort.
+[[note]]
+quest = 945
+phase = "accept"
+level = "warning"
+en = "{npc:3584} is stealthed on the south side of the island and hard to spot. If she is not there, someone has just started her escort: she comes back after about 10 minutes."
+fr = "{npc:3584} est camouflée au sud de l'île et difficile à repérer. Si elle n'y est pas, quelqu'un vient de commencer son escorte : elle revient au bout de 10 minutes environ."
+de = "{npc:3584} ist auf der Südseite der Insel getarnt und schwer zu sehen. Ist sie nicht da, hat gerade jemand ihre Eskorte begonnen: sie kommt nach etwa 10 Minuten zurück."
+es = "{npc:3584} está en sigilo en el lado sur de la isla y cuesta verla. Si no está, alguien acaba de empezar su escolta: vuelve tras unos 10 minutos."
+pt = "{npc:3584} fica furtiva no lado sul da ilha e é difícil de ver. Se ela não estiver lá, alguém acabou de começar a escolta: ela volta depois de uns 10 minutos."
+ru = "{npc:3584} скрыта в незаметности на южной стороне острова, ее трудно разглядеть. Если ее нет, кто-то только что начал ее сопровождать: она вернется примерно через 10 минут."
+ko = "{npc:3584}은(는) 섬 남쪽에 은신해 있어 눈에 잘 띄지 않습니다. 보이지 않는다면 누군가 방금 호위를 시작한 것입니다. 약 10분 뒤에 돌아옵니다."
+zh_cn = "{npc:3584}潜行在岛屿南侧，很难发现。如果她不在，说明有人刚开始护送她：大约10分钟后她会回来。"
+zh_tw = "{npc:3584}潛行在島嶼南側，很難發現。如果她不在，說明有人剛開始護送她：大約10分鐘後她會回來。"
+
+# The Tower of Althalaxx (soul gem): low drop chance in practice (40+ kills is common); the gem is a party-loot item.
+[[note]]
+quest = 970
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:5366} is a rare drop: plan on 40 kills or more. In a party, every member on the quest can loot it from the same corpse, so grouping saves a lot of time."
+fr = "{item:5366} est un butin rare : comptez 40 victimes ou plus. En groupe, chaque membre ayant la quête peut la ramasser sur le même cadavre : se grouper fait gagner beaucoup de temps."
+de = "{item:5366} ist eine seltene Beute: rechne mit 40 Kills oder mehr. In einer Gruppe kann jedes Mitglied mit der Quest ihn von derselben Leiche plündern, eine Gruppe spart also viel Zeit."
+es = "{item:5366} es un botín raro: cuenta con 40 muertes o más. En grupo, cada miembro con la misión puede despojarla del mismo cadáver, así que agruparse ahorra mucho tiempo."
+pt = "{item:5366} é um saque raro: conte com 40 abates ou mais. Em grupo, cada membro com a missão pode saqueá-la do mesmo cadáver, então se agrupar economiza muito tempo."
+ru = "{item:5366} — редкая добыча: рассчитывайте на 40 убийств и больше. В группе каждый участник с заданием может забрать его с одного и того же трупа, так что группа сильно экономит время."
+ko = "{item:5366}은(는) 드물게 떨어집니다. 40마리 이상은 잡을 각오를 하세요. 파티에서는 퀘스트를 가진 모든 파티원이 같은 시체에서 획득할 수 있어 파티를 맺으면 시간이 크게 줄어듭니다."
+zh_cn = "{item:5366}掉率很低：做好杀40只甚至更多的准备。组队时，每名有此任务的队员都能从同一具尸体上拾取，组队能省下大量时间。"
+zh_tw = "{item:5366}掉率很低：做好殺40隻甚至更多的準備。組隊時，每名有此任務的隊員都能從同一具屍體上拾取，組隊能省下大量時間。"

@@ -1,0 +1,30 @@
+# Quest notes of Duskwood. See notes/README.md for the format.
+
+# Deliver the Thread: Stitches, an elite abomination raised by another quest of the chain, can stand near Abercrombie's hut before walking off toward Darkshire.
+[[note]]
+quest = 157
+phase = "turnin"
+level = "warning"
+en = "{npc:412}, a level 35 elite, sometimes stands near {npc:289}'s hut after another player's quest raised him. Keep your distance and wait a few minutes: he walks off along the road toward Darkshire."
+fr = "{npc:412}, un élite de niveau 35, se tient parfois près de la cabane d'{npc:289} après la quête d'un autre joueur. Restez à distance et attendez quelques minutes : il repart par la route vers Sombre-Comté."
+de = "{npc:412}, ein Elitegegner der Stufe 35, steht manchmal nahe der Hütte von {npc:289}, nachdem ein anderer Spieler ihn mit seiner Quest erweckt hat. Halte Abstand und warte ein paar Minuten: er zieht über die Straße Richtung Dunkelhain ab."
+es = "{npc:412}, un élite de nivel 35, a veces está cerca de la cabaña de {npc:289} tras la misión de otro jugador. Mantén la distancia y espera unos minutos: se marcha por el camino hacia Villa Oscura."
+pt = "{npc:412}, uma elite de nível 35, às vezes fica perto da cabana de {npc:289} depois da missão de outro jogador. Mantenha distância e espere alguns minutos: ele segue pela estrada rumo a Vila Sombria."
+ru = "{npc:412}, элитный противник 35 уровня, иногда стоит у хижины {npc:289} после задания другого игрока. Держитесь подальше и подождите несколько минут: он уйдет по дороге к Темнолесью."
+ko = "{npc:412}은(는) 35레벨 정예로, 다른 플레이어의 퀘스트 때문에 {npc:289}의 오두막 근처에 서 있을 때가 있습니다. 거리를 두고 몇 분 기다리세요. 길을 따라 어둠골 쪽으로 떠납니다."
+zh_cn = "{npc:412}是35级精英，有时会因为其他玩家的任务出现在{npc:289}的小屋附近。保持距离，等几分钟：他会沿着道路走向夜色镇。"
+zh_tw = "{npc:412}是35級精英，有時會因為其他玩家的任務出現在{npc:289}的小屋附近。保持距離，等幾分鐘：他會沿著道路走向夜色鎮。"
+
+# Eight-Legged Menaces: Stitches kills Watcher Dodds at the crossroads on his way to Darkshire; Dodds comes back about 5 minutes later.
+[[note]]
+quest = 245
+level = "warning"
+en = "{npc:412}, an elite raised by another player's quest, kills {npc:888} when he walks past the crossroads. If the watcher is missing, wait about 5 minutes for him to come back."
+fr = "{npc:412}, un élite réveillé par la quête d'un autre joueur, tue {npc:888} en passant au carrefour. Si le gardien est absent, attendez environ 5 minutes son retour."
+de = "{npc:412}, ein Elitegegner aus der Quest eines anderen Spielers, tötet {npc:888}, wenn er an der Kreuzung vorbeikommt. Fehlt der Behüter, warte etwa 5 Minuten, bis er zurück ist."
+es = "{npc:412}, un élite despertado por la misión de otro jugador, mata a {npc:888} al pasar por el cruce. Si el vigía no está, espera unos 5 minutos a que vuelva."
+pt = "{npc:412}, uma elite despertada pela missão de outro jogador, mata {npc:888} ao passar pela encruzilhada. Se o vigia não estiver lá, espere uns 5 minutos até ele voltar."
+ru = "{npc:412}, элитный противник, которого поднимает задание другого игрока, убивает {npc:888}, проходя мимо перекрестка. Если дозорного нет, подождите около 5 минут, пока он вернется."
+ko = "다른 플레이어의 퀘스트로 깨어난 정예 {npc:412}이(가) 갈림길을 지나가며 {npc:888}을(를) 죽입니다. 순찰대원이 없으면 돌아올 때까지 약 5분 기다리세요."
+zh_cn = "因其他玩家的任务而出现的精英{npc:412}经过路口时会杀死{npc:888}。如果守夜人不在，等大约5分钟他就会回来。"
+zh_tw = "因其他玩家的任務而出現的精英{npc:412}經過路口時會殺死{npc:888}。如果守夜人不在，等大約5分鐘他就會回來。"

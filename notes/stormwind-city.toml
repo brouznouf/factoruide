@@ -16,3 +16,19 @@ ru = "{npc:6090} бьет сильно для своего уровня: сра�
 ko = "{npc:6090}은(는) 레벨에 비해 강하게 때립니다. 새 무기 말고 숙련도가 있는 무기로 싸우세요. 지더라도 퀘스트를 포기하지 말고, 다시 나타날 때까지(약 5분) 기다렸다가 다시 말을 거세요."
 zh_cn = "{npc:6090}以他的等级来说打得很疼：用你有熟练度的武器战斗，别用新武器。如果输了，不要放弃任务：等他重新出现（约5分钟）后再和他对话。"
 zh_tw = "{npc:6090}以他的等級來說打得很痛：用你有熟練度的武器戰鬥，別用新武器。如果輸了，不要放棄任務：等他重新出現（約5分鐘）後再和他對話。"
+
+# Rethban Ore: a regular trade good, cheap at the auction house; in the cave it comes from the drudgers and from the tin and copper veins.
+[[note]]
+quest = 347
+phase = "objective"
+objective = 1
+level = "info"
+en = "{item:2798} is a regular trade good: buying 5 at the auction house saves the farm. In the cave, only {npc:580} carry it, and miners also find it in {object:2054} and {object:2055}."
+fr = "{item:2798} est un objet d'artisanat ordinaire : en acheter 5 à l'hôtel des ventes évite de le farmer. Dans la grotte, seuls les {npc:580} en portent, et les mineurs en trouvent aussi dans les {object:2054} et {object:2055}."
+de = "{item:2798} ist eine normale Handelsware: 5 Stück im Auktionshaus zu kaufen erspart das Farmen. In der Höhle tragen sie nur {npc:580}, und Bergbauer finden es auch in {object:2054} und {object:2055}."
+es = "{item:2798} es un objeto comerciable normal: comprar 5 en la casa de subastas te ahorra farmear. En la cueva solo lo llevan los {npc:580}, y los mineros también lo sacan de {object:2054} y {object:2055}."
+pt = "{item:2798} é um item comum de comércio: comprar 5 na casa de leilões poupa o farm. Na caverna, só {npc:580} o carregam, e mineradores também o tiram de {object:2054} e {object:2055}."
+ru = "{item:2798} — обычный товар: купив 5 штук на аукционе, вы избавитесь от фарма. В пещере ее носят только {npc:580}, а шахтеры также добывают ее из жил {object:2054} и {object:2055}."
+ko = "{item:2798}은(는) 일반 거래 품목이라 경매장에서 5개를 사면 수집할 필요가 없습니다. 동굴에서는 {npc:580}만 지니고 있으며, 채광 기술이 있으면 {object:2054}와(과) {object:2055}에서도 얻을 수 있습니다."
+zh_cn = "{item:2798}是普通的交易物品：在拍卖行买5个就不用去刷。洞穴里只有{npc:580}身上有，采矿者还能从{object:2054}和{object:2055}中采到。"
+zh_tw = "{item:2798}是普通的交易物品：在拍賣場買5個就不用去刷。洞穴裡只有{npc:580}身上有，採礦者還能從{object:2054}和{object:2055}中採到。"

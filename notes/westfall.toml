@@ -68,3 +68,18 @@ ru = "Сначала он быстро убегает, затем идет че�
 ko = "처음에는 빠르게 달려가고, 이후 폐허 마을을 멈추지 않고 걸어서 지나갑니다. 그곳의 적들이 그를 공격하고, 분수대에서는 주문 시전자 하나가 다른 하나를 끌어옵니다. 가까이 붙어 추가 적을 처리할 준비를 하세요. 그렇지 않으면 그가 죽습니다."
 zh_cn = "他一开始会快速跑开，之后不停步地穿过废墟小镇。那里的怪物会攻击他，在喷泉处一个施法者还会引来另一个：紧跟着他，准备处理增援，否则他会死。"
 zh_tw = "他一開始會快速跑開，之後不停步地穿過廢墟小鎮。那裡的怪物會攻擊他，在噴泉處一個施法者還會引來另一個：緊跟著他，準備處理增援，否則他會死。"
+
+# Captain Sander's Hidden Treasure: each clue gives the item that starts the next step; with full bags it is lost and the object needs a minute or two to reset.
+[[note]]
+quest = 136
+phase = "turnin"
+level = "info"
+en = "Keep a free bag slot through the whole treasure hunt: each clue gives the item that starts the next step, and with full bags it is lost. If that happens, free a slot and wait a minute or two before clicking again."
+fr = "Gardez un emplacement de sac libre pendant toute la chasse au trésor : chaque indice donne l'objet qui lance l'étape suivante, et avec des sacs pleins il est perdu. Dans ce cas, libérez une place et attendez une minute ou deux avant de cliquer à nouveau."
+de = "Halte während der ganzen Schatzsuche einen Taschenplatz frei: jeder Hinweis gibt den Gegenstand, der den nächsten Schritt startet, und bei vollen Taschen geht er verloren. Passiert das, mach Platz und warte ein bis zwei Minuten, bevor du erneut klickst."
+es = "Deja un hueco libre en las bolsas durante toda la búsqueda del tesoro: cada pista da el objeto que inicia el paso siguiente y, con las bolsas llenas, se pierde. Si pasa, libera un hueco y espera uno o dos minutos antes de volver a hacer clic."
+pt = "Mantenha um espaço livre nas bolsas durante toda a caça ao tesouro: cada pista dá o item que inicia a etapa seguinte e, com as bolsas cheias, ele se perde. Se acontecer, libere um espaço e espere um ou dois minutos antes de clicar de novo."
+ru = "Держите свободную ячейку в сумках на протяжении всех поисков сокровища: каждая подсказка дает предмет, начинающий следующий шаг, и при полных сумках он теряется. Если так вышло, освободите место и подождите минуту-другую, прежде чем щелкнуть снова."
+ko = "보물찾기 내내 가방 한 칸을 비워 두세요. 단서마다 다음 단계를 시작하는 아이템을 주는데, 가방이 가득 차 있으면 사라집니다. 그랬다면 한 칸을 비우고 1~2분 기다린 뒤 다시 클릭하세요."
+zh_cn = "整个寻宝过程中都要留一个空背包格：每条线索都会给出开启下一步的物品，背包满了它就会丢失。如果发生这种情况，腾出一格，等一两分钟再点击。"
+zh_tw = "整個尋寶過程中都要留一個空背包格：每條線索都會給出開啟下一步的物品，背包滿了它就會遺失。如果發生這種情況，騰出一格，等一兩分鐘再點擊。"

@@ -45,3 +45,19 @@ ru = "Если {npc:466} не сидит на коне у ворот город�
 ko = "{npc:466}이(가) 도시 성문에서 말을 타고 있지 않다면 도시 이벤트 중입니다. 경비병들과 무릎을 꿇고 있으며 대답하지 않습니다. 그가 사라졌다가 말을 타고 돌아올 때까지 약 10~20분 기다리세요."
 zh_cn = "如果{npc:466}不在城门口骑着马，说明城里正在进行事件：他和卫兵一起跪着，不会回应。等他消失后骑马回来，大约10到20分钟。"
 zh_tw = "如果{npc:466}不在城門口騎著馬，表示城裡正在進行事件：他和衛兵一起跪著，不會回應。等他消失後騎馬回來，大約10到20分鐘。"
+
+# Wanted: Lieutenant Fangore: he is immune to Shadow damage and his two guards are linked to him.
+[[note]]
+quest = 180
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:703} is immune to Shadow damage, and his two guards always join the fight: clear the gnolls around him first, then take him on with only his guards."
+fr = "{npc:703} est insensible aux dégâts d'Ombre, et ses deux gardes rejoignent toujours le combat : nettoyez d'abord les gnolls autour de lui, puis affrontez-le avec ses seuls gardes."
+de = "{npc:703} ist immun gegen Schattenschaden, und seine zwei Wachen greifen immer mit ein: räum zuerst die Gnolle um ihn herum weg und kämpfe dann nur gegen ihn und seine Wachen."
+es = "{npc:703} es inmune al daño de Sombras y sus dos guardias siempre se unen al combate: limpia primero los gnolls de alrededor y luego enfréntate a él solo con sus guardias."
+pt = "{npc:703} é imune a dano de Sombra, e os dois guardas dele sempre entram na luta: limpe primeiro os gnolls em volta e depois enfrente-o só com os guardas."
+ru = "{npc:703} невосприимчив к урону от темной магии, а два его стража всегда вступают в бой: сначала перебейте гноллов вокруг, затем сражайтесь с ним и только его стражами."
+ko = "{npc:703}은(는) 암흑 피해에 면역이며, 두 경비병이 항상 함께 싸웁니다. 먼저 주변 놀을 정리한 뒤 경비병만 남은 상태에서 상대하세요."
+zh_cn = "{npc:703}免疫暗影伤害，他的两名卫兵总会一起参战：先清掉他周围的豺狼人，再只带着他的卫兵和他交战。"
+zh_tw = "{npc:703}免疫暗影傷害，他的兩名衛兵總會一起參戰：先清掉他周圍的豺狼人，再只帶著他的衛兵和他交戰。"
