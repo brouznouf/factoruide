@@ -47,3 +47,19 @@ ru = "Если взять силитист из {object:181598}, вы получ
 ko = "{object:181598}에서 실리시스트를 얻으면 PvP가 활성화되고 이동 속도가 느려집니다. 돌아가는 길에 탈것을 타면 땅에 떨어지니, 걸어서 진영 야영지로 가져가세요."
 zh_cn = "从{object:181598}获取希利苏斯之尘会让你进入PvP状态并减速。返回途中不要上坐骑，否则它会掉在地上：步行把它带回本阵营的营地。"
 zh_tw = "從{object:181598}取得希利蘇斯之塵會讓你進入PvP狀態並減速。返回途中不要騎乘坐騎，否則它會掉在地上：步行把它帶回本陣營的營地。"
+
+# Scouring the Desert: carrying silithyst flags for PvP and slows; mounting drops it.
+[[note]]
+quest = 9419
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Taking silithyst from a {object:181598} flags you for PvP and slows you. Do not mount on the way back, as that drops it on the ground: walk it to your faction's camp."
+fr = "Prendre de la silithyste sur un {object:181598} vous rend JcJ et vous ralentit. Ne montez pas en selle au retour, cela la fait tomber au sol : rapportez-la à pied au camp de votre faction."
+de = "Silithyst aus {object:181598} zu nehmen, markiert dich für PvP und verlangsamt dich. Steig auf dem Rückweg nicht auf ein Reittier, sonst fällt es zu Boden: Bring es zu Fuß ins Lager deiner Fraktion."
+es = "Tomar silitista de {object:181598} te activa el JcJ y te ralentiza. No montes al volver, eso la deja caer al suelo: llévala a pie al campamento de tu facción."
+pt = "Pegar silitista de {object:181598} ativa o JxJ e deixa você lento. Não monte na volta, isso a derruba no chão: leve-a a pé até o acampamento da sua facção."
+ru = "Если взять силитист из {object:181598}, вы получите метку PvP и замедление. Не садитесь на ездовое животное на обратном пути, иначе он упадёт на землю: донесите его пешком до лагеря своей фракции."
+ko = "{object:181598}에서 실리시스트를 얻으면 PvP가 활성화되고 이동 속도가 느려집니다. 돌아가는 길에 탈것을 타면 땅에 떨어지니, 걸어서 진영 야영지로 가져가세요."
+zh_cn = "从{object:181598}获取希利苏斯之尘会让你进入PvP状态并减速。返回途中不要上坐骑，否则它会掉在地上：步行把它带回本阵营的营地。"
+zh_tw = "從{object:181598}取得希利蘇斯之塵會讓你進入PvP狀態並減速。返回途中不要騎乘坐騎，否則它會掉在地上：步行把它帶回本陣營的營地。"

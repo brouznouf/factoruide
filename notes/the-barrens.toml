@@ -322,3 +322,18 @@ ru = "{npc:3419} находится в Озерах Видений, пещере
 ko = "{npc:3419}은(는) {zone:1638}의 정령의 봉우리 아래 동굴인 환영의 웅덩이 안에 있습니다. 가장 낮은 다리로 봉우리에 건너가면 오른쪽 두 경비병 사이에 입구가 있습니다."
 zh_cn = "{npc:3419}在{zone:1638}灵魂高地下方的洞穴“幻象之池”里：走最低的那座桥到高地，入口在右侧两名卫兵之间。"
 zh_tw = "{npc:3419}在{zone:1638}靈魂高地下方的洞穴「幻象之池」裡：走最低的那座橋到高地，入口在右側兩名衛兵之間。"
+
+# The Affray: challengers come one at a time and Big Will waits, neutral, until attacked.
+[[note]]
+quest = 1719
+phase = "objective"
+level = "warning"
+en = "After you step on the grate, the challengers come one at a time about 15 seconds apart, with a 10-minute limit. Once the last falls, step back and heal: {npc:6238} stays neutral until you attack him."
+fr = "Une fois sur la grille, les adversaires arrivent un par un, à environ 15 secondes d'intervalle, avec une limite de 10 minutes. Après le dernier, reculez et soignez-vous : {npc:6238} reste neutre tant que vous ne l'attaquez pas."
+de = "Sobald du auf dem Gitter stehst, kommen die Herausforderer einzeln im Abstand von etwa 15 Sekunden, mit 10 Minuten Zeitlimit. Nach dem letzten tritt zurück und heil dich: {npc:6238} bleibt neutral, bis du ihn angreifst."
+es = "Al pisar la rejilla, los rivales llegan de uno en uno, cada unos 15 segundos, con un límite de 10 minutos. Tras el último, apártate y cúrate: {npc:6238} sigue neutral hasta que lo atacas."
+pt = "Ao pisar na grade, os desafiantes vêm um de cada vez, a cada 15 segundos mais ou menos, com limite de 10 minutos. Depois do último, afaste-se e cure-se: {npc:6238} fica neutro até você atacá-lo."
+ru = "Когда вы встанете на решётку, противники выходят по одному примерно каждые 15 секунд; лимит — 10 минут. После последнего отойдите и подлечитесь: {npc:6238} нейтрален, пока вы его не атакуете."
+ko = "창살을 밟으면 도전자가 약 15초 간격으로 한 명씩 나오며 제한 시간은 10분입니다. 마지막 도전자를 쓰러뜨리면 물러나 회복하세요. {npc:6238}은(는) 공격하기 전까지 중립입니다."
+zh_cn = "站上铁栅后，挑战者约每15秒出现一个，限时10分钟。最后一个倒下后后退回血：{npc:6238}在你攻击前保持中立。"
+zh_tw = "站上鐵柵後，挑戰者約每15秒出現一個，限時10分鐘。最後一個倒下後後退回血：{npc:6238}在你攻擊前保持中立。"

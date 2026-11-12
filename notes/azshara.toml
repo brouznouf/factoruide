@@ -106,3 +106,19 @@ ru = "Перед убийством используйте {item:17310} на о�
 ko = "독에 오염된 정령을 처치하기 전에 {item:17310}을(를) 사용하세요. 정령이 {npc:13279}(으)로 변해 매번 손목보호구를 떨어뜨립니다. 변하지 않은 정령은 떨어뜨리지 않으며, 공격대에 속해 있으면 아무것도 나오지 않습니다."
 zh_cn = "杀死中毒的元素生物前先对它使用{item:17310}：它会变成{npc:13279}，每次都会掉落护腕。未变身的元素不会掉落，处于团队中时也什么都不会掉。"
 zh_tw = "殺死中毒的元素生物前先對它使用{item:17310}：它會變成{npc:13279}，每次都會掉落護腕。未變身的元素不會掉落，處於團隊中時也什麼都不會掉。"
+
+# Betrayed: one crystal, at random, brings a guard then the Magus; the others summon an infernal.
+[[note]]
+quest = 3506
+phase = "objective"
+objective = 1
+level = "info"
+en = "Only one of the three crystals, at random, brings a guard and then {npc:8578}; the others summon an infernal. Pull the guard out of the circle before she arrives."
+fr = "Un seul des trois cristaux, au hasard, fait venir un garde puis {npc:8578} ; les autres invoquent un infernal. Éloignez le garde du cercle avant qu'elle arrive."
+de = "Nur einer der drei Kristalle, zufällig, ruft eine Wache und dann {npc:8578}; die anderen beschwören eine Höllenbestie. Zieh die Wache aus dem Kreis, bevor sie erscheint."
+es = "Solo uno de los tres cristales, al azar, trae a un guardia y luego a {npc:8578}; los demás invocan un infernal. Saca al guardia del círculo antes de que llegue ella."
+pt = "Só um dos três cristais, ao acaso, traz um guarda e depois {npc:8578}; os outros invocam um infernal. Afaste o guarda do círculo antes que ela chegue."
+ru = "Лишь один из трёх кристаллов, случайный, вызывает стража, а затем {npc:8578}; остальные призывают инфернала. Уведите стража из круга, пока она не появилась."
+ko = "수정 셋 중 무작위로 하나만 경비병과 그 뒤에 {npc:8578}을(를) 부르고, 나머지는 지옥불정령을 소환합니다. 그녀가 나타나기 전에 경비병을 원 밖으로 끌어내세요."
+zh_cn = "三块水晶中只有随机一块会引来一名卫兵，随后是{npc:8578}；其他的会召唤地狱火。在她出现前把卫兵引出圆圈。"
+zh_tw = "三塊水晶中只有隨機一塊會引來一名衛兵，隨後是{npc:8578}；其他的會召喚地獄火。在她出現前把衛兵引出圓圈。"

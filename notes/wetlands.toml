@@ -143,3 +143,19 @@ ru = "Подойдите к {npc:2091} по склону за его лагер�
 ko = "천막 사이를 뚫고 가지 말고, 도로에서 진영 뒤쪽 비탈을 올라 {npc:2091}에게 가세요. 그는 주문시전자 둘과 함께 싸우고, 체력이 낮으면 도망치며, 화염에 면역입니다."
 zh_cn = "从大路爬上营地后方的斜坡去找{npc:2091}，不必穿过帐篷一路杀过去。他身边有两个施法者，血量低时会逃跑，并且免疫火焰。"
 zh_tw = "從大路爬上營地後方的斜坡去找{npc:2091}，不必穿過帳篷一路殺過去。他身邊有兩個施法者，血量低時會逃跑，並且免疫火焰。"
+
+# A Grim Task: Balgaras has several spawn spots and only one is used at a time; immune to Shadow.
+[[note]]
+quest = 304
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1364} stands at only one of his spots at a time: inside a building of Dun Modr (an inn cellar too) or in the camps on the hills to the east. Look for his blue voidwalker. He is immune to Shadow."
+fr = "{npc:1364} n'occupe qu'un de ses emplacements à la fois : un bâtiment de Dun Modr (la cave de l'auberge aussi) ou les camps sur les collines à l'est. Cherchez son marcheur du Vide bleu. Il est insensible à l'Ombre."
+de = "{npc:1364} steht immer nur an einem seiner Orte: in einem Gebäude von Dun Modr (auch im Gasthauskeller) oder in den Lagern auf den Hügeln im Osten. Achte auf seinen blauen Leerwandler. Er ist immun gegen Schatten."
+es = "{npc:1364} solo está en uno de sus puntos a la vez: dentro de un edificio de Dun Modr (también el sótano de la posada) o en los campamentos de las colinas al este. Busca su abisario azul. Es inmune a las Sombras."
+pt = "{npc:1364} fica em só um dos seus pontos por vez: num prédio de Dun Modr (inclusive o porão da estalagem) ou nos acampamentos das colinas a leste. Procure o abissal azul dele. Ele é imune a Sombra."
+ru = "{npc:1364} стоит лишь в одном из своих мест: в здании Дун Модра (даже в подвале таверны) или в лагерях на холмах к востоку. Ищите его синего демона Бездны. Он невосприимчив к тьме."
+ko = "{npc:1364}은(는) 한 번에 한 곳에만 있습니다. 둔 모드르의 건물 안(여관 지하실 포함)이나 동쪽 언덕의 야영지입니다. 파란 공허방랑자를 찾으세요. 암흑 면역입니다."
+zh_cn = "{npc:1364}每次只出现在其中一个地点：丹莫德的某栋建筑里（包括旅店地窖）或东边山丘上的营地。找他那只蓝色的虚空行者。他免疫暗影。"
+zh_tw = "{npc:1364}每次只出現在其中一個地點：丹莫德的某棟建築裡（包括旅店地窖）或東邊山丘上的營地。找他那隻藍色的虛無行者。他免疫暗影。"

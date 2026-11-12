@@ -147,3 +147,19 @@ ru = "Две засады по пути: три совуха на дороге �
 ko = "도중에 매복이 두 번 있습니다. 길 위에 올빼미야수 셋, 끝 무렵 트롤 셋. 길가에는 은신한 {npc:2926}이(가) 숨어 있습니다. 로봇에게서 너무 멀어지면 호위가 실패하니 바짝 따라가세요. 파티라면 모든 구성원이 각자 시작해야 합니다."
 zh_cn = "途中有两次伏击：路上三只枭兽，快到终点时三个巨魔。路边还潜伏着潜行的{npc:2926}。紧跟机器人：落后太远护送就会失败。组队时每位成员都必须开始护送。"
 zh_tw = "途中有兩次伏擊：路上三隻梟獸，快到終點時三個食人妖。路邊還潛伏著潛行的{npc:2926}。緊跟機器人：落後太遠護送就會失敗。組隊時每位成員都必須開始護送。"
+
+# Undamaged Venom Sac: a rare drop that disappears 30 minutes after it is looted.
+[[note]]
+quest = 2934
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:9322} drops rarely and disappears 30 minutes after you loot it: set your hearthstone in Tarren Mill first and go back at once."
+fr = "{item:9322} tombe rarement et disparaît 30 minutes après avoir été ramassée : liez d'abord votre pierre de foyer à Moulin-de-Tarren et revenez aussitôt."
+de = "{item:9322} droppt selten und verschwindet 30 Minuten nach dem Plündern: Binde deinen Ruhestein vorher in Tarrens Mühle und kehr sofort zurück."
+es = "{item:9322} cae poco y desaparece 30 minutos después de saquearla: vincula antes tu piedra de hogar en Molino Tarren y vuelve enseguida."
+pt = "{item:9322} cai raramente e some 30 minutos depois de saqueada: vincule antes sua pedra de regresso na Serraria Tarren e volte logo."
+ru = "{item:9322} выпадает редко и исчезает через 30 минут после получения: заранее привяжите камень возвращения в Мельнице Таррен и сразу возвращайтесь."
+ko = "{item:9322}은(는) 드물게 나오고 획득 30분 후 사라집니다. 미리 귀환석을 타렌 밀농장에 귀속하고 바로 돌아가세요."
+zh_cn = "{item:9322}掉率很低，拾取30分钟后就会消失：先把炉石绑定在塔伦米尔，拿到后立刻返回。"
+zh_tw = "{item:9322}掉落率很低，拾取30分鐘後就會消失：先把爐石綁定在塔倫米爾，拿到後立刻返回。"

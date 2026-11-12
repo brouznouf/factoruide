@@ -235,3 +235,51 @@ ru = "{object:19877} стоит на верхнем этаже казармы Ч
 ko = "{object:19877}은(는) 파수병 숙소 위층에 있는데, 그 층에는 따로 문이 없습니다. 옆 사슬 갑옷 상점으로 올라가 다리를 건너세요."
 zh_cn = "{object:19877}在哨兵宿舍楼上，那一层没有自己的门：从旁边的锁甲店上楼，走过小桥。"
 zh_tw = "{object:19877}在哨兵宿舍樓上，那一層沒有自己的門：從旁邊的鎖甲店上樓，走過小橋。"
+
+# Ruuzel: the rare naga walking the shore by her island drops the ring too, without guards.
+[[note]]
+quest = 1009
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:10559}, a rare naga who walks the shore next to the island, also drops {item:5445} and is easier than {npc:3943}, who comes with two guards."
+fr = "{npc:10559}, une naga rare qui longe le rivage près de l'île, donne aussi {item:5445} et est plus facile que {npc:3943}, toujours accompagnée de deux gardes."
+de = "{npc:10559}, eine seltene Naga, die am Ufer neben der Insel entlangläuft, droppt ebenfalls {item:5445} und ist leichter als {npc:3943}, die zwei Wachen dabeihat."
+es = "{npc:10559}, una naga rara que recorre la orilla junto a la isla, también suelta {item:5445} y es más fácil que {npc:3943}, que va con dos guardias."
+pt = "{npc:10559}, uma naga rara que anda pela praia perto da ilha, também deixa cair {item:5445} e é mais fácil que {npc:3943}, que anda com dois guardas."
+ru = "{npc:10559}, редкая нага, что бродит по берегу у острова, тоже роняет {item:5445}, и с ней проще справиться, чем с целью {npc:3943}, у которой два стража."
+ko = "섬 옆 해안을 걷는 희귀 나가 {npc:10559}도 {item:5445}을(를) 떨어뜨리며, 경비병 둘을 거느린 {npc:3943}보다 쉽습니다."
+zh_cn = "{npc:10559}是在岛旁海岸游荡的稀有娜迦，也会掉落{item:5445}，比带着两名护卫的{npc:3943}好打。"
+zh_tw = "{npc:10559}是在島旁海岸遊蕩的稀有納迦，也會掉落{item:5445}，比帶著兩名護衛的{npc:3943}好打。"
+
+# Raene's Cleansing: the kill quest does not ask for the skull, but the next part does.
+[[note]]
+quest = 1045
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Loot {item:5388} from {npc:3696}: this quest only asks you to kill him, but the next part needs his skull."
+fr = "Ramassez {item:5388} sur {npc:3696} : cette quête demande seulement de le tuer, mais la suite exige son crâne."
+de = "Plündere {item:5388} von {npc:3696}: Diese Quest verlangt nur, ihn zu töten, aber der nächste Teil braucht seinen Schädel."
+es = "Saquea {item:5388} de {npc:3696}: esta misión solo pide matarlo, pero la siguiente parte exige su cráneo."
+pt = "Saqueie {item:5388} de {npc:3696}: esta missão só pede para matá-lo, mas a próxima parte exige o crânio."
+ru = "Обыщите тело: {npc:3696} несёт {item:5388}. Это задание требует лишь убить его, но для следующей части нужен череп."
+ko = "{npc:3696}에게서 {item:5388}을(를) 꼭 챙기세요. 이 퀘스트는 처치만 요구하지만 다음 단계에 해골이 필요합니다."
+zh_cn = "记得从{npc:3696}身上拾取{item:5388}：本任务只要求击杀他，但下一步需要这个头骨。"
+zh_tw = "記得從{npc:3696}身上拾取{item:5388}：本任務只要求擊殺他，但下一步需要這個頭骨。"
+
+# Freedom to Ruul: the escort walks on through the camps and two scripted packs of three ambush it.
+[[note]]
+quest = 6482
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:12818} walks straight through the furbolg camps without waiting: clear the way out first. Two groups of three ambush you, one at the fork inside the cave and one outside it."
+fr = "{npc:12818} traverse les camps de furbolgs sans attendre : dégagez d'abord le chemin de sortie. Deux groupes de trois vous tendent une embuscade, l'un à la bifurcation dans la grotte, l'autre dehors."
+de = "{npc:12818} läuft ohne zu warten mitten durch die Furbolglager: Räum vorher den Weg nach draußen frei. Zwei Dreiergruppen greifen aus dem Hinterhalt an, eine an der Gabelung in der Höhle, eine draußen."
+es = "{npc:12818} cruza los campamentos de furbolgs sin esperar: despeja antes el camino de salida. Dos grupos de tres te emboscan, uno en la bifurcación de la cueva y otro fuera."
+pt = "{npc:12818} atravessa os acampamentos de furbolgs sem esperar: limpe antes o caminho de saída. Dois grupos de três emboscam você, um na bifurcação dentro da caverna e outro do lado de fora."
+ru = "{npc:12818} идёт прямо через лагеря фурболгов, не дожидаясь вас: заранее расчистите путь наружу. Две группы по трое устраивают засаду: одна у развилки в пещере, другая снаружи."
+ko = "{npc:12818}은(는) 기다리지 않고 털보 야영지 한가운데를 지나갑니다. 나가는 길을 먼저 정리하세요. 셋씩 두 무리가 매복합니다. 하나는 동굴 안 갈림길, 하나는 동굴 밖입니다."
+zh_cn = "{npc:12818}不会等你，会径直穿过熊怪营地：先清理出去的路。会有两批各三只的伏击，一批在洞内岔路口，一批在洞外。"
+zh_tw = "{npc:12818}不會等你，會逕直穿過熊怪營地：先清理出去的路。會有兩批各三隻的伏擊，一批在洞內岔路口，一批在洞外。"

@@ -97,3 +97,18 @@ ru = "Бейте только {npc:4273}: двое {npc:3833} призывают
 ko = "모든 공격을 {npc:4273}에게 집중하세요. 그의 {npc:3833} 둘은 피해를 입어야만 나무정령을 소환하므로 광역 공격이나 가시를 쓰지 마세요. 머리를 챙긴 뒤 경사로를 조금 내려가서 난간 너머로 뛰어내리세요."
 zh_cn = "把所有伤害都打在{npc:4273}身上：他的两个{npc:3833}只有受到伤害后才会召唤树人，所以别用范围攻击或荆棘术。拾取头颅后，沿坡道往下走一段再翻过栏杆跳下。"
 zh_tw = "把所有傷害都打在{npc:4273}身上：他的兩個{npc:3833}只有受到傷害後才會召喚樹人，所以別用範圍攻擊或荊棘術。拾取頭顱後，沿坡道往下走一段再翻過欄杆跳下。"
+
+# The Den: the gatekeeper's key hangs in a lamp outside; elites guard each cache and the hoard.
+[[note]]
+quest = 1089
+phase = "objective"
+level = "warning"
+en = "Take {item:5687} from {object:19595}, the lamp left of the den's entrance. Each cache and {object:19599} is guarded by two or three elites, one cache by an elite faerie dragon. Hand in at the hoard, deep inside."
+fr = "Prenez {item:5687} dans {object:19595}, la lanterne à gauche de l'entrée de l'antre. Chaque cache et {object:19599} sont gardés par deux ou trois élites, une cache par un dragon féerique élite. Rendez la quête au trésor, tout au fond."
+de = "Nimm {item:5687} aus {object:19595}, der Laterne links vom Eingang des Baus. Jedes Versteck und {object:19599} bewachen zwei oder drei Elite, ein Versteck ein Elite-Feendrache. Gib die Quest am Hort ganz hinten ab."
+es = "Coge {item:5687} de {object:19595}, el farol a la izquierda de la entrada de la guarida. Cada alijo y {object:19599} los guardan dos o tres élites, uno de ellos un dragón feérico élite. Entrega la misión en el tesoro, al fondo."
+pt = "Pegue {item:5687} em {object:19595}, a lanterna à esquerda da entrada do covil. Cada esconderijo e {object:19599} são guardados por dois ou três elites, um deles por um dragão feérico elite. Entregue a missão no tesouro, lá no fundo."
+ru = "Возьмите {item:5687} из объекта {object:19595} — фонаря слева от входа в логово. Каждый тайник и {object:19599} охраняют двое-трое элитных, один тайник — элитный фейский дракон. Сдайте задание у клада в глубине."
+ko = "굴 입구 왼쪽 등불인 {object:19595}에서 {item:5687}을(를) 꺼내세요. 각 은닉처와 {object:19599}은(는) 정예 두세 마리가 지키고, 한 곳은 정예 요정용이 지킵니다. 깊숙한 보물 더미에서 퀘스트를 완료하세요."
+zh_cn = "从{object:19595}（巢穴入口左边的灯）取出{item:5687}。每个藏匿处和{object:19599}都有两三个精英把守，其中一处是精英精灵龙。在深处的宝藏处交任务。"
+zh_tw = "從{object:19595}（巢穴入口左邊的燈）取出{item:5687}。每個藏匿處和{object:19599}都有兩三個菁英把守，其中一處是菁英精靈龍。在深處的寶藏處交任務。"

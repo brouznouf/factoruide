@@ -29,3 +29,19 @@ ru = "{npc:7750} появляется по другую сторону доро�
 ko = "퀘스트를 수락하면 {npc:7750}이(가) {npc:7572} 맞은편 길 건너에 나타났다가 곧 사라집니다. 보이지 않으면 {npc:7572}에게 다시 말을 걸어 그 병사에 관한 대화를 선택해 다시 불러내세요."
 zh_cn = "接受任务时，{npc:7750}会出现在{npc:7572}对面的路边，不久后便会消失。如果他不见了，再次与{npc:7572}交谈并选择关于下士的选项，让他重新出现。"
 zh_tw = "接受任務時，{npc:7750}會出現在{npc:7572}對面的路邊，不久後便會消失。如果他不見了，再次與{npc:7572}交談並選擇關於下士的選項，讓他重新出現。"
+
+# Warrior Kinship: helboars share spawn points with the felbeasts and other beasts around.
+[[note]]
+quest = 8423
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:5993} share their spawn points with {npc:8675} and the other beasts: when none are around, kill the beasts nearby and boars soon take their place."
+fr = "{npc:5993} partage ses points d'apparition avec {npc:8675} et les autres bêtes : s'il n'y en a aucun, tuez les bêtes alentour et des sangliers les remplaceront vite."
+de = "{npc:5993} teilt seine Spawnpunkte mit {npc:8675} und den anderen Bestien: Ist keiner da, töte die Bestien in der Nähe, bald erscheinen Eber an ihrer Stelle."
+es = "{npc:5993} comparte puntos de aparición con {npc:8675} y las demás bestias: si no hay ninguno, mata las bestias cercanas y pronto aparecerán jabalíes en su lugar."
+pt = "{npc:5993} divide os pontos de surgimento com {npc:8675} e as outras feras: se não houver nenhum, mate as feras por perto e logo surgirão javalis no lugar."
+ru = "{npc:5993} появляются там же, где {npc:8675} и другие звери: если кабанов нет, убивайте зверей поблизости, и вскоре на их месте появятся кабаны."
+ko = "{npc:5993}은(는) {npc:8675} 등 다른 야수와 생성 지점을 공유합니다. 보이지 않으면 주변 야수를 처치하세요. 곧 그 자리에 멧돼지가 나타납니다."
+zh_cn = "{npc:5993}与{npc:8675}等野兽共用刷新点：附近没有时，击杀周围的野兽，很快就会有野猪刷出。"
+zh_tw = "{npc:5993}與{npc:8675}等野獸共用重生點：附近沒有時，擊殺周圍的野獸，很快就會有野豬重生。"

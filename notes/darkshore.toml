@@ -247,3 +247,19 @@ ru = "{item:5366} — редкая добыча: рассчитывайте на
 ko = "{item:5366}은(는) 드물게 떨어집니다. 40마리 이상은 잡을 각오를 하세요. 파티에서는 퀘스트를 가진 모든 파티원이 같은 시체에서 획득할 수 있어 파티를 맺으면 시간이 크게 줄어듭니다."
 zh_cn = "{item:5366}掉率很低：做好杀40只甚至更多的准备。组队时，每名有此任务的队员都能从同一具尸体上拾取，组队能省下大量时间。"
 zh_tw = "{item:5366}掉率很低：做好殺40隻甚至更多的準備。組隊時，每名有此任務的隊員都能從同一具屍體上拾取，組隊能省下大量時間。"
+
+# Escape Through Force: the escort ignores mobs the player pulls and walks on into more.
+[[note]]
+quest = 994
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3692} ignores mobs you pull and walks on into more: let them attack him first. Clear the furbolgs on the way out of the cave beforehand, and stay close."
+fr = "{npc:3692} ignore les monstres que vous attirez et continue vers d'autres : laissez-les l'attaquer d'abord. Nettoyez au préalable les furbolgs sur le chemin de sortie de la grotte et restez près de lui."
+de = "{npc:3692} ignoriert Gegner, die du ziehst, und läuft weiter in neue hinein: Lass sie zuerst ihn angreifen. Räum vorher die Furbolgs auf dem Weg aus der Höhle weg und bleib dicht bei ihm."
+es = "{npc:3692} ignora a los enemigos que atraes y sigue hacia otros: deja que lo ataquen a él primero. Limpia antes los furbolgs del camino de salida de la cueva y no te alejes."
+pt = "{npc:3692} ignora os inimigos que você puxa e segue em direção a outros: deixe que o ataquem primeiro. Limpe antes os furbolgs no caminho de saída da caverna e fique perto."
+ru = "{npc:3692} не замечает противников, которых вы выманили, и идёт дальше, в новых: пусть сначала нападут на него. Заранее перебейте фурболгов на выходе из пещеры и держитесь рядом."
+ko = "{npc:3692}은(는) 당신이 끌어온 적을 무시하고 다른 적에게 걸어갑니다. 적이 먼저 그를 공격하게 두세요. 미리 동굴 밖으로 나가는 길의 털보를 정리하고 가까이 붙어 있으세요."
+zh_cn = "{npc:3692}会无视你拉来的怪，继续走向更多敌人：让怪先攻击他。事先清掉出洞路上的熊怪，并紧跟着他。"
+zh_tw = "{npc:3692}會無視你拉來的怪，繼續走向更多敵人：讓怪先攻擊他。事先清掉出洞路上的熊怪，並緊跟著他。"
