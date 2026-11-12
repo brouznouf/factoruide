@@ -100,3 +100,34 @@ ru = "Установка копья у колодца включает режи�
 ko = "우물 옆에 창을 꽂으면 PvP가 활성화됩니다. 순찰하는 경비병이 멀어질 때를 기다렸다가 창을 꽂고(즉시 시전) 바로 떠나세요."
 zh_cn = "在井边插下长矛会让你进入PvP状态。等巡逻的卫兵走开，插下长矛（瞬发）后立刻离开。"
 zh_tw = "在井邊插下長矛會讓你進入PvP狀態。等巡邏的衛兵走開，插下長矛（瞬發）後立刻離開。"
+
+# Rhapsody Shindigger: his camp is up in the hills and only reachable by a path starting to the west.
+[[note]]
+quest = 1451
+phase = "turnin"
+level = "info"
+en = "{npc:5634}'s camp lies up in the hills and cannot be reached from the lodge to its east: the only way up is a path that starts further west, around 20, 48."
+fr = "Le camp de {npc:5634} est perché dans les collines et inaccessible depuis le pavillon à l'est : le seul accès est un sentier qui part plus à l'ouest, vers 20, 48."
+de = "Das Lager von {npc:5634} liegt oben in den Hügeln und ist von der Hütte im Osten aus nicht erreichbar: Der einzige Weg hinauf ist ein Pfad, der weiter westlich beginnt, um 20, 48."
+es = "El campamento de {npc:5634} está en lo alto de las colinas y no se llega desde el pabellón al este: el único acceso es un sendero que empieza más al oeste, hacia 20, 48."
+pt = "O acampamento de {npc:5634} fica no alto das colinas e não dá para chegar pelo pavilhão a leste: o único acesso é uma trilha que começa mais a oeste, por volta de 20, 48."
+ru = "Лагерь {npc:5634} находится на холмах, и со стороны охотничьего домика на востоке к нему не подняться: единственная тропа начинается западнее, около 20, 48."
+ko = "{npc:5634}의 야영지는 언덕 위에 있어 동쪽 산장 쪽에서는 갈 수 없습니다. 올라가는 길은 더 서쪽, 약 20, 48에서 시작하는 오솔길 하나뿐입니다."
+zh_cn = "{npc:5634}的营地在山丘上，从东边的小屋那一侧上不去：唯一的路是更西边约20, 48处开始的小径。"
+zh_tw = "{npc:5634}的營地在山丘上，從東邊的小屋那一側上不去：唯一的路是更西邊約20, 48處開始的小徑。"
+
+# Rhapsody's Kalimdor Kocktail: rocs share spawn points with the hyenas at the bone piles of Tanaris.
+[[note]]
+quest = 1452
+phase = "objective"
+objective = 1
+level = "info"
+en = "Rocs share spawn points with the hyenas around the great bone piles south of Gadgetzan: when a pile is overrun by hyenas, keep killing them there to bring rocs back instead of roaming from pile to pile."
+fr = "Les rocs partagent leurs points d'apparition avec les hyènes autour des grands tas d'ossements au sud de Gadgetzan : quand un tas est envahi d'hyènes, continuez à les tuer sur place pour faire revenir les rocs au lieu d'errer d'un tas à l'autre."
+de = "Rocs teilen ihre Spawnpunkte mit den Hyänen an den großen Knochenhaufen südlich von Gadgetzan: Ist ein Haufen voller Hyänen, töte sie dort weiter, damit Rocs nachkommen, statt von Haufen zu Haufen zu ziehen."
+es = "Los rocs comparten puntos de aparición con las hienas de los grandes montones de huesos al sur de Gadgetzan: si un montón está lleno de hienas, sigue matándolas allí para que vuelvan los rocs en vez de ir de montón en montón."
+pt = "Os rocas dividem pontos de surgimento com as hienas dos grandes montes de ossos ao sul de Geringontzan: quando um monte estiver cheio de hienas, continue matando-as ali para os rocas voltarem, em vez de rodar de monte em monte."
+ru = "Рухи делят точки появления с гиенами у больших груд костей к югу от Прибамбасска: если у груды одни гиены, продолжайте убивать их на месте, чтобы вернулись рухи, а не бегайте от груды к груде."
+ko = "가젯잔 남쪽 큰 뼈 무더기 주변에서 로크는 하이에나와 생성 지점을 공유합니다. 무더기에 하이에나만 가득하면 이곳저곳 돌아다니지 말고 그 자리에서 하이에나를 계속 잡아 로크가 다시 나오게 하세요."
+zh_cn = "加基森以南大骨堆周围的大鹏和土狼共用刷新点：如果某个骨堆全是土狼，就留在那里继续杀，让大鹏刷回来，不要在骨堆之间来回跑。"
+zh_tw = "加基森以南大骨堆周圍的大鵬和土狼共用重生點：如果某個骨堆全是土狼，就留在那裡繼續殺，讓大鵬重生回來，不要在骨堆之間來回跑。"

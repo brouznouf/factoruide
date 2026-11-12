@@ -173,3 +173,64 @@ ru = "Сначала возьмите задание {quest:7003} у {npc:14637}
 ko = "먼저 {npc:14637}에게서 {quest:7003} 퀘스트를 받으세요. 그의 {item:18904}을(를) 쓰면 {npc:5357}, {npc:5358} 모두 정예 등급이 사라지고, 그 시체에도 그릇을 그대로 쓸 수 있습니다. 해안의 바다 거인은 해당하지 않습니다."
 zh_cn = "先从{npc:14637}那里接受{quest:7003}：他的{item:18904}能让{npc:5357}和{npc:5358}失去精英状态，而容器对它们的尸体依然有效。海岸边的海巨人不算。"
 zh_tw = "先從{npc:14637}那裡接受{quest:7003}：他的{item:18904}能讓{npc:5357}和{npc:5358}失去精英狀態，而容器對牠們的屍體依然有效。海岸邊的海巨人不算。"
+
+# The High Wilderness: the shamans share spawn points with the other ogres of the ruins, so killing the warlocks and others brings more shamans.
+[[note]]
+quest = 2982
+phase = "objective"
+objective = 2
+level = "info"
+en = "{npc:5236} share spawn points with the other ogres of the ruins, so few are up at once. Keep killing the {npc:5240} and the others around them to bring more shamans."
+fr = "Les {npc:5236} partagent leurs points d'apparition avec les autres ogres des ruines, si bien qu'il y en a peu à la fois. Continuez à tuer les {npc:5240} et les autres autour d'eux pour faire venir plus de chamans."
+de = "{npc:5236} teilen ihre Spawnpunkte mit den anderen Ogern der Ruinen, daher sind nur wenige gleichzeitig da. Töte weiter die {npc:5240} und die anderen um sie herum, damit mehr Schamanen erscheinen."
+es = "Los {npc:5236} comparten puntos de aparición con los demás ogros de las ruinas, así que hay pocos a la vez. Sigue matando a los {npc:5240} y al resto a su alrededor para que salgan más chamanes."
+pt = "Os {npc:5236} dividem pontos de surgimento com os outros ogros das ruínas, então há poucos de cada vez. Continue matando os {npc:5240} e os demais ao redor para que surjam mais xamãs."
+ru = "{npc:5236} делят точки появления с другими ограми руин, поэтому одновременно их мало. Продолжайте убивать {npc:5240} и остальных вокруг, чтобы появлялось больше шаманов."
+ko = "{npc:5236}은(는) 폐허의 다른 오우거와 생성 지점을 공유해서 한 번에 몇 마리 없습니다. 주변의 {npc:5240} 등 다른 오우거도 계속 처치해야 주술사가 더 나타납니다."
+zh_cn = "{npc:5236}和废墟里的其他食人魔共用刷新点，所以同时存在的很少。继续击杀周围的{npc:5240}和其他食人魔，才能刷出更多萨满。"
+zh_tw = "{npc:5236}和廢墟裡的其他食人魔共用重生點，所以同時存在的很少。繼續擊殺周圍的{npc:5240}和其他食人魔，才能刷出更多薩滿。"
+
+# The Missing Courier: the rowboat is half buried just off the shore and blends into the sea floor.
+[[note]]
+quest = 4125
+phase = "turnin"
+level = "info"
+en = "{object:164909} is half buried in the sand a few steps into the water and very hard to see: look for a broken crate and green bottles on the beach, then sweep your cursor over the shallows. Swimming in from the sea avoids the giants and elementals on the shore."
+fr = "{object:164909} est à moitié enfouie dans le sable, à quelques pas dans l'eau, et très difficile à voir : repérez une caisse brisée et des bouteilles vertes sur la plage, puis balayez le haut-fond avec le curseur. Arriver à la nage depuis le large évite les géants et les élémentaires du rivage."
+de = "{object:164909} liegt halb im Sand vergraben, ein paar Schritte im Wasser, und ist kaum zu sehen: Achte auf eine zerbrochene Kiste und grüne Flaschen am Strand und fahr dann mit dem Mauszeiger über das flache Wasser. Vom Meer her anzuschwimmen umgeht die Riesen und Elementare am Ufer."
+es = "{object:164909} está medio enterrado en la arena, a pocos pasos dentro del agua, y cuesta mucho verlo: busca una caja rota y botellas verdes en la playa y pasa el cursor por el agua poco profunda. Llegar nadando desde el mar evita a los gigantes y elementales de la orilla."
+pt = "{object:164909} fica meio enterrada na areia, a poucos passos dentro d'água, e é muito difícil de ver: procure um caixote quebrado e garrafas verdes na praia e passe o cursor pela parte rasa. Chegar nadando pelo mar evita os gigantes e elementais da margem."
+ru = "{object:164909} наполовину зарыта в песок в паре шагов от берега и почти не видна: ищите разбитый ящик и зелёные бутылки на пляже, затем водите курсором по мелководью. Если подплыть со стороны моря, можно обойти великанов и элементалей на берегу."
+ko = "{object:164909}은(는) 물가에서 몇 걸음 들어간 모래에 반쯤 묻혀 있어 잘 보이지 않습니다. 해변의 부서진 상자와 초록색 병을 찾은 뒤 얕은 물을 커서로 훑으세요. 바다 쪽에서 헤엄쳐 오면 해안의 거인과 정령을 피할 수 있습니다."
+zh_cn = "{object:164909}半埋在离岸几步远的水下沙子里，很难看到：先在海滩上找破箱子和绿瓶子，再用鼠标在浅水处扫一扫。从海上游过来可以避开岸边的巨人和元素。"
+zh_tw = "{object:164909}半埋在離岸幾步遠的水下沙子裡，很難看到：先在海灘上找破箱子和綠瓶子，再用滑鼠在淺水處掃一掃。從海上游過來可以避開岸邊的巨人和元素。"
+
+# The Writhing Deep: the pod is in the western hive, down the spiral ramp, southwest tunnel, right at the fork.
+[[note]]
+quest = 4135
+phase = "turnin"
+level = "info"
+en = "{object:164954} is in the western hive, the one with the spiral ramp: go down to the bottom, take the southwest tunnel and keep right at the fork. The eastern hive holds nothing for this quest."
+fr = "{object:164954} se trouve dans la ruche ouest, celle à la rampe en spirale : descendez jusqu'en bas, prenez le tunnel sud-ouest et restez à droite à l'embranchement. La ruche est ne contient rien pour cette quête."
+de = "{object:164954} ist im westlichen Stock, dem mit der Spiralrampe: Geh ganz nach unten, nimm den Südwesttunnel und halte dich an der Gabelung rechts. Der östliche Stock hat für diese Quest nichts."
+es = "{object:164954} está en la colmena oeste, la de la rampa en espiral: baja hasta el fondo, toma el túnel suroeste y sigue a la derecha en la bifurcación. La colmena este no tiene nada para esta misión."
+pt = "{object:164954} fica na colmeia oeste, a da rampa em espiral: desça até o fundo, pegue o túnel sudoeste e siga pela direita na bifurcação. A colmeia leste não tem nada para esta missão."
+ru = "{object:164954} находится в западном улье, со спиральным спуском: спуститесь до самого низа, войдите в юго-западный туннель и на развилке держитесь правее. В восточном улье для этого задания ничего нет."
+ko = "{object:164954}은(는) 나선형 경사로가 있는 서쪽 둥지에 있습니다. 맨 아래까지 내려가 남서쪽 굴로 들어간 뒤 갈림길에서 오른쪽으로 가세요. 동쪽 둥지에는 이 퀘스트에 필요한 것이 없습니다."
+zh_cn = "{object:164954}在带螺旋坡道的西边虫巢里：下到最底部，进入西南方的隧道，在岔路口靠右走。东边的虫巢里没有这个任务需要的东西。"
+zh_tw = "{object:164954}在帶螺旋坡道的西邊蟲巢裡：下到最底部，進入西南方的隧道，在岔路口靠右走。東邊的蟲巢裡沒有這個任務需要的東西。"
+
+# Freed from the Hive: credit comes only once the courier has finished speaking; reopening the pod fixes a missed credit.
+[[note]]
+quest = 4265
+phase = "objective"
+level = "warning"
+en = "After breaking the pod, stay until {npc:9546} has finished talking and the quest shows as complete. If it does not, abandon it at the pod and break the pod open again."
+fr = "Après avoir brisé l'alvéole, restez jusqu'à ce que {npc:9546} ait fini de parler et que la quête soit indiquée comme terminée. Sinon, abandonnez-la près de l'alvéole et brisez-la à nouveau."
+de = "Bleib nach dem Aufbrechen der Kapsel, bis {npc:9546} ausgeredet hat und die Quest als abgeschlossen gilt. Wenn nicht, brich sie an der Kapsel ab und brich die Kapsel erneut auf."
+es = "Tras romper la vaina, quédate hasta que {npc:9546} termine de hablar y la misión aparezca como completada. Si no, abandónala junto a la vaina y vuelve a romperla."
+pt = "Depois de quebrar a carapaça, fique até {npc:9546} terminar de falar e a missão aparecer como concluída. Se não aparecer, abandone-a junto à carapaça e quebre-a de novo."
+ru = "Разбив кокон, оставайтесь на месте, пока {npc:9546} не договорит и задание не отметится выполненным. Если этого не произошло, откажитесь от задания у кокона и разбейте его снова."
+ko = "고치를 깬 뒤 {npc:9546}의 말이 끝나고 퀘스트가 완료로 표시될 때까지 자리를 지키세요. 완료되지 않으면 고치 옆에서 퀘스트를 포기하고 고치를 다시 깨세요."
+zh_cn = "打破虫茧后，待在原地直到{npc:9546}说完话、任务显示完成。如果没有完成，就在虫茧旁放弃任务，再打破一次虫茧。"
+zh_tw = "打破蟲繭後，待在原地直到{npc:9546}說完話、任務顯示完成。如果沒有完成，就在蟲繭旁放棄任務，再打破一次蟲繭。"

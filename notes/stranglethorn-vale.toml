@@ -312,3 +312,19 @@ ru = "{npc:691} невосприимчив к магии льда: заклин�
 ko = "{npc:691}은(는) 냉기에 면역입니다. 주문 시전자는 이곳에서 화염, 비전 등 다른 계열을 쓰세요."
 zh_cn = "{npc:691}免疫冰霜：施法者在这里应使用火焰、奥术或其他系别的法术。"
 zh_tw = "{npc:691}免疫冰霜：施法者在這裡應使用火焰、秘法或其他系別的法術。"
+
+# The Curse of the Tides: the altar is deep underwater among elite murlocs, and Gazban can root you there.
+[[note]]
+quest = 611
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The altar lies deep underwater among elite murlocs: bring {item:5996} or another way to breathe, and swim down from straight above it to avoid them. {npc:2624} can freeze you in place underwater, so pull him up toward the surface to fight."
+fr = "L'autel se trouve en eau profonde parmi des murlocs élites : apportez {item:5996} ou un autre moyen de respirer, et descendez à la verticale de l'autel pour les éviter. {npc:2624} peut vous geler sur place sous l'eau : attirez-le vers la surface pour le combattre."
+de = "Der Altar liegt tief unter Wasser zwischen Elite-Murlocs: Nimm {item:5996} oder eine andere Atemhilfe mit und tauche senkrecht von oben hinab, um ihnen auszuweichen. {npc:2624} kann dich unter Wasser festfrieren, also zieh ihn zum Kämpfen Richtung Oberfläche."
+es = "El altar está a gran profundidad entre múrlocs élite: lleva {item:5996} u otra forma de respirar, y baja en vertical desde encima para evitarlos. {npc:2624} puede congelarte en el sitio bajo el agua, así que atráelo hacia la superficie para luchar."
+pt = "O altar fica no fundo, entre murlocs de elite: leve {item:5996} ou outro jeito de respirar e desça em linha reta por cima dele para evitá-los. {npc:2624} pode congelar você no lugar debaixo d'água, então puxe-o para perto da superfície para lutar."
+ru = "Алтарь находится глубоко под водой среди элитных мурлоков: возьмите {item:5996} или другой способ дышать и спускайтесь вертикально сверху, чтобы обойти их. {npc:2624} может заморозить вас на месте под водой, поэтому выманите его к поверхности."
+ko = "제단은 정예 멀록들 사이 깊은 물속에 있습니다. {item:5996} 등 숨 쉴 방법을 챙기고, 멀록을 피해 제단 바로 위에서 수직으로 내려가세요. {npc:2624}은(는) 물속에서 발을 얼려 묶을 수 있으니 수면 쪽으로 끌어올려 싸우세요."
+zh_cn = "祭坛在深水中，周围都是精英鱼人：带上{item:5996}或其他水下呼吸手段，从祭坛正上方垂直潜下去以避开它们。{npc:2624}能在水下把你冻在原地，所以把他拉到靠近水面的地方再打。"
+zh_tw = "祭壇在深水中，周圍都是精英魚人：帶上{item:5996}或其他水下呼吸手段，從祭壇正上方垂直潛下去以避開牠們。{npc:2624}能在水下把你凍在原地，所以把他拉到靠近水面的地方再打。"

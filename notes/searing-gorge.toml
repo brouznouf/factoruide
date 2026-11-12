@@ -47,3 +47,56 @@ ru = "Чертежи лежат на балконе, где стоят {npc:1462
 ko = "설계도는 {npc:14621}와(과) 정예 경비병 둘이 지키는 발코니 뒤쪽에 있습니다. 셋과 싸우지 말고 설계도만 집어 난간 밖으로 뛰어내려도 됩니다."
 zh_cn = "图纸放在阳台上，就在{npc:14621}和他的两名精英卫兵身后。可以抓起图纸直接从边缘跳下去，不必和三个都打。"
 zh_tw = "圖紙放在陽台上，就在{npc:14621}和他的兩名精英衛兵身後。可以抓起圖紙直接從邊緣跳下去，不必和三個都打。"
+
+# Caught!: the dwarves of the dig site rarely drop silk, mostly mageweave.
+[[note]]
+quest = 4449
+phase = "objective"
+objective = 2
+level = "info"
+en = "The dwarves here rarely drop {item:4306} (mostly mageweave): bring 15 with you or buy them at an auction house before coming."
+fr = "Les nains d'ici lâchent rarement de l'{item:4306} (surtout du tisse-mage) : apportez-en 15 ou achetez-les à un hôtel des ventes avant de venir."
+de = "Die Zwerge hier lassen selten {item:4306} fallen (meist Magiestoff): Bring 15 mit oder kauf sie vorher in einem Auktionshaus."
+es = "Los enanos de aquí sueltan poco {item:4306} (sobre todo tejido mágico): trae 15 contigo o cómpralos en una casa de subastas antes de venir."
+pt = "Os anões daqui raramente deixam cair {item:4306} (mais tecido mágico): traga 15 ou compre numa casa de leilões antes de vir."
+ru = "Дворфы здесь редко роняют {item:4306} (в основном магическую ткань): возьмите 15 с собой или купите их на аукционе заранее."
+ko = "이곳 드워프는 {item:4306}을(를) 거의 떨어뜨리지 않습니다(주로 마법 옷감). 오기 전에 15개를 챙기거나 경매장에서 사 두세요."
+zh_cn = "这里的矮人很少掉落{item:4306}（多半是魔纹布）：来之前自带15块，或在拍卖行买好。"
+zh_tw = "這裡的矮人很少掉落{item:4306}（多半是魔紋布）：來之前自帶15塊，或在拍賣場買好。"
+
+# Ledger from Tanaris: the ledger lands on the ground by the outhouse instead of in the bags.
+[[note]]
+quest = 4450
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:11727} does not go to your bags: it drops on the ground in front of the outhouse when you accept. Pick it up; if it is gone, use the outhouse again and ask for the ledger."
+fr = "{item:11727} ne va pas dans vos sacs : il tombe au sol devant les latrines quand vous acceptez. Ramassez-le ; s'il a disparu, utilisez à nouveau les latrines et redemandez le livre."
+de = "{item:11727} landet nicht in deinen Taschen: Es fällt beim Annehmen vor dem Abort auf den Boden. Heb es auf; ist es weg, benutze den Abort erneut und frag nach dem Buch."
+es = "{item:11727} no va a tus bolsas: cae al suelo delante de la letrina al aceptar. Recógelo; si ha desaparecido, vuelve a usar la letrina y pide el libro."
+pt = "{item:11727} não vai para as bolsas: cai no chão diante da casinha quando você aceita. Pegue-o; se tiver sumido, use a casinha de novo e peça o livro."
+ru = "{item:11727} не попадает в сумки: при принятии она падает на землю перед уборной. Подберите её; если её нет, снова воспользуйтесь уборной и попросите книгу."
+ko = "{item:11727}은(는) 가방에 들어오지 않습니다. 수락하면 변소 앞 바닥에 떨어집니다. 주우세요. 없어졌다면 변소를 다시 사용해 장부를 달라고 하세요."
+zh_cn = "{item:11727}不会进入背包：接受任务时它会掉在厕所前的地上。把它捡起来；如果不见了，再次使用厕所索要账本。"
+zh_tw = "{item:11727}不會進入背包：接受任務時它會掉在廁所前的地上。把它撿起來；如果不見了，再次使用廁所索取帳本。"
+
+[[icon]]
+quest = 4450
+phase = "objective"
+objective = 1
+icon = "pickup"
+
+# Suntara Stones: the letter appears beside Dorius's body; standing on its spot or being shapeshifted can stop it appearing.
+[[note]]
+quest = 3367
+phase = "turnin"
+level = "warning"
+en = "When {npc:8284} is shot at the end, {object:175704} appears on the ground beside his body. Keep a few steps away from where he falls and leave any shapeshift form, or it may not appear; if it does not, abandon and wait for him to respawn."
+fr = "Quand {npc:8284} est abattu à la fin, {object:175704} apparaît au sol près de son corps. Restez à quelques pas de l'endroit où il tombe et quittez toute forme de métamorphose, sinon elle peut ne pas apparaître ; dans ce cas, abandonnez et attendez sa réapparition."
+de = "Wird {npc:8284} am Ende erschossen, erscheint {object:175704} neben seiner Leiche. Halte ein paar Schritte Abstand zu der Stelle, wo er fällt, und verlasse jede Gestaltwandlung, sonst erscheint er womöglich nicht; dann brich ab und warte auf seinen Respawn."
+es = "Cuando disparan a {npc:8284} al final, {object:175704} aparece en el suelo junto a su cuerpo. Mantente a unos pasos de donde cae y sal de cualquier forma cambiada, o puede no aparecer; si no aparece, abandona y espera a que reaparezca."
+pt = "Quando {npc:8284} é baleado no fim, {object:175704} aparece no chão ao lado do corpo. Fique a alguns passos de onde ele cai e saia de qualquer forma metamorfoseada, ou ela pode não aparecer; se não aparecer, abandone e espere ele ressurgir."
+ru = "Когда в конце {npc:8284} застрелят, рядом с телом появится {object:175704}. Держитесь в нескольких шагах от места, где он падает, и выйдите из облика, иначе письмо может не появиться; тогда откажитесь и ждите его возрождения."
+ko = "마지막에 {npc:8284}이(가) 총에 맞으면 시체 옆 바닥에 {object:175704}이(가) 나타납니다. 쓰러지는 자리에서 몇 걸음 떨어지고 변신 상태를 풀어 두세요. 그렇지 않으면 나타나지 않을 수 있으며, 그때는 포기하고 재생성을 기다리세요."
+zh_cn = "最后{npc:8284}被射杀时，{object:175704}会出现在他尸体旁的地上。离他倒下的位置几步远，并解除任何变形形态，否则信可能不出现；如果没出现，放弃任务并等他重生。"
+zh_tw = "最後{npc:8284}被射殺時，{object:175704}會出現在他屍體旁的地上。離他倒下的位置幾步遠，並解除任何變形形態，否則信可能不出現；如果沒出現，放棄任務並等他重生。"

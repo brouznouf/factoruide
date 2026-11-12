@@ -14,3 +14,17 @@ ru = "Все участники группы должны сдать это за
 ko = "누군가 {quest:3525}을(를) 수락하기 전에 파티원 모두가 이 퀘스트를 완료하세요. 호위는 수락하는 즉시 시작되며, 이 퀘스트를 끝내지 않은 사람은 참여할 수 없습니다."
 zh_cn = "在任何人接受{quest:3525}之前，所有队员都应先交掉这个任务：护送任务一接受就会开始，没完成本任务的人无法加入。"
 zh_tw = "在任何人接受{quest:3525}之前，所有隊員都應先交掉這個任務：護送任務一接受就會開始，沒完成本任務的人無法加入。"
+
+# Extinguishing the Idol: Belnistrasz respawns after a few minutes, and the brazier to hand in is gone in a new copy of the dungeon.
+[[note]]
+quest = 3525
+level = "warning"
+en = "If {npc:8516} dies, he comes back after a few minutes: no need to reset the dungeon. Hand in at {object:152097} as soon as the ritual ends, before leaving: it is not there in a new copy of the dungeon."
+fr = "Si {npc:8516} meurt, il revient au bout de quelques minutes : inutile de réinitialiser le donjon. Rendez la quête à {object:152097} dès la fin du rituel, avant de partir : il n'existe pas dans une nouvelle instance du donjon."
+de = "Stirbt {npc:8516}, kommt er nach ein paar Minuten zurück: Der Dungeon muss nicht zurückgesetzt werden. Gib bei {object:152097} ab, sobald das Ritual endet, und zwar bevor du gehst: In einer neuen Instanz ist sie nicht da."
+es = "Si {npc:8516} muere, vuelve a los pocos minutos: no hace falta reiniciar la mazmorra. Entrega en {object:152097} en cuanto acabe el ritual, antes de salir: no está en una nueva copia de la mazmorra."
+pt = "Se {npc:8516} morrer, ele volta após alguns minutos: não é preciso reiniciar a masmorra. Entregue em {object:152097} assim que o ritual terminar, antes de sair: ele não estará numa nova cópia da masmorra."
+ru = "Если {npc:8516} погибнет, он вернётся через несколько минут: сбрасывать подземелье не нужно. Сдайте задание у объекта «{object:152097}» сразу после ритуала, до выхода: в новой копии подземелья его нет."
+ko = "{npc:8516}이(가) 죽어도 몇 분 뒤 다시 나타나니 던전을 초기화할 필요는 없습니다. 의식이 끝나면 나가기 전에 바로 {object:152097}에서 완료하세요. 새 던전 인스턴스에는 없습니다."
+zh_cn = "如果{npc:8516}死了，几分钟后会重新出现：不必重置副本。仪式一结束，离开前就在{object:152097}交任务：新的副本里不会有它。"
+zh_tw = "如果{npc:8516}死了，幾分鐘後會重新出現：不必重置副本。儀式一結束，離開前就在{object:152097}交任務：新的副本裡不會有它。"

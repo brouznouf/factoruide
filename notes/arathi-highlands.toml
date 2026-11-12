@@ -122,3 +122,19 @@ ru = "{npc:2557} встречается только в пещере в холм
 ko = "{npc:2557}은(는) 트롤 마을 남동쪽 언덕의 동굴 안에만 있으며 입구를 찾기 어렵습니다. 뱀 석상 두 개를 지나는 오솔길을 따라가세요."
 zh_cn = "{npc:2557}只在巨魔村庄东南方山丘中的一个洞穴里出现，洞口很难发现：沿着经过两座蛇像的小路走就能到达。"
 zh_tw = "{npc:2557}只在食人妖村莊東南方山丘中的一個洞穴裡出現，洞口很難發現：沿著經過兩座蛇像的小路走就能到達。"
+
+# Items of Power: the charged bramble appears on the center stone and must be looted; dying first loses the sticks.
+[[note]]
+quest = 1948
+phase = "objective"
+objective = 2
+level = "warning"
+en = "After you use {item:7273} at the center stone, {item:7272} appears on the stone instead of going to your bags: loot it before leaving. Dying before you loot it loses both, and the ten sticks must be gathered again."
+fr = "Après avoir utilisé {item:7273} à la pierre centrale, {item:7272} apparaît sur la pierre au lieu d'aller dans vos sacs : ramassez-le avant de partir. Si vous mourez avant, vous perdez les deux et devez récupérer à nouveau les dix bâtons."
+de = "Nachdem du {item:7273} am mittleren Stein benutzt hast, erscheint {item:7272} auf dem Stein statt in deinen Taschen: Plündere ihn, bevor du gehst. Stirbst du vorher, sind beide weg und du musst die zehn Stecken erneut sammeln."
+es = "Tras usar {item:7273} en la piedra central, {item:7272} aparece sobre la piedra en vez de ir a tus bolsas: recógela antes de irte. Si mueres antes, pierdes ambos y tendrás que reunir de nuevo los diez palos."
+pt = "Depois de usar {item:7273} na pedra central, {item:7272} aparece sobre a pedra em vez de ir para as bolsas: pegue antes de sair. Se você morrer antes, perde os dois e terá de juntar as dez varas de novo."
+ru = "После использования {item:7273} у центрального камня {item:7272} появляется на камне, а не в сумках: заберите его, прежде чем уйти. Если умрёте раньше, потеряете и то и другое и придётся заново собирать десять палочек."
+ko = "가운데 돌에서 {item:7273}을(를) 사용하면 {item:7272}은(는) 가방이 아니라 돌 위에 나타납니다. 떠나기 전에 꼭 챙기세요. 챙기기 전에 죽으면 둘 다 잃고 막대 열 개를 다시 모아야 합니다."
+zh_cn = "在中央石头处使用{item:7273}后，{item:7272}会出现在石头上而不是进入背包：离开前要拾取。拾取前死亡会两样都丢失，必须重新收集十根图腾棒。"
+zh_tw = "在中央石頭處使用{item:7273}後，{item:7272}會出現在石頭上而不是進入背包：離開前要拾取。拾取前死亡會兩樣都遺失，必須重新收集十根圖騰棒。"
