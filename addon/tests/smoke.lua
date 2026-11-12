@@ -2049,6 +2049,31 @@ useRoute("visits-test")
 assert(char.guide.step == 5, "visits before the last turn-in are done, step " .. char.guide.step)
 assert(char.guide.marks[1] and char.guide.marks[3] and not char.guide.marks[5], "only the visits behind")
 completed[8201] = nil
+
+-- A quest handed in far ahead of the guide (found on the way, done out of order) does not pass
+-- the visits before it: only those followed by a quest step done, up to the first one not done.
+FG.Routes["visits-ahead-test"] = {
+    race = 7,
+    class = 8,
+    faction = "Alliance",
+    fromLevel = 1,
+    toLevel = 60,
+    time = 1,
+    steps = {
+        { k = "accept", t = "Accept A", q = 8211, lvl = 3 },
+        { k = "sell", t = "Sell", e = "npc", id = 66, m = 1429, x = 41.9, y = 67.1, lvl = 3 },
+        { k = "accept", t = "Accept B", q = 8212, lvl = 3 },
+        { k = "train", t = "Train", e = "npc", id = 67, m = 1429, x = 40, y = 60, lvl = 3 },
+        { k = "accept", t = "Accept C", q = 8213, lvl = 3 },
+        { k = "turnin", t = "Turn in C", q = 8213, lvl = 3 },
+    },
+}
+onQuest[8211] = true
+completed[8213] = true
+useRoute("visits-ahead-test")
+assert(char.guide.step == 2, "the merchant after the quest taken waits, step " .. char.guide.step)
+assert(not char.guide.marks[2] and not char.guide.marks[4], "visits before a quest not taken stay")
+onQuest[8211], completed[8213] = nil, nil
 print("visits passed ok")
 
 -- A dungeon run followed by its quests is done on entering the dungeon, then each quest step as

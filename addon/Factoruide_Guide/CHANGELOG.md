@@ -7,6 +7,7 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 ## Unreleased
 
 - Steps show how their quest is taken or their objective done, and a yellow, orange or red mark when a note tells more about the quest; the step's tooltip lists the notes.
+- A quest handed in far ahead of the guide no longer marks the merchants, trainers and flight masters before it as visited.
 
 ## 0.18.0 (2026-11-10)
 

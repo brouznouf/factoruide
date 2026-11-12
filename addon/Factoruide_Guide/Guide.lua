@@ -1259,16 +1259,28 @@ end
 
 local VISITS = { flight_master = true, train = true, sell = true, bind = true, profession = true }
 
---- The visits (merchant, trainer, flight master, inn) before the last quest the game knows as
---- handed in are done: their marks are lost with a new version of the guide or a character
---- joining it halfway, and the game cannot say whether a merchant was seen.
+local QUEST_STEPS = { accept = true, turnin = true, objective = true }
+
+--- The visits (merchant, trainer, flight master, inn) followed by a quest step the character
+--- did are done: their marks are lost with a new version of the guide or a character joining it
+--- halfway, and the game cannot say whether a merchant was seen. Only up to the first quest step
+--- not done: a quest handed in far ahead of the guide does not pass the visits on the way to it.
 local function PassVisits()
-    local last = 0
+    local pending = {}
     for i, step in ipairs(route.steps) do
-        if step.k == "turnin" and step.q and QuestLog.IsQuestFlaggedCompleted(step.q) then last = i end
-    end
-    for i = 1, last - 1 do
-        if VISITS[route.steps[i].k] and not state.marks[i] then state.marks[i] = true end
+        if VISITS[step.k] then
+            if not state.marks[i] then table.insert(pending, i) end
+        elseif QUEST_STEPS[step.k] and not step.bg then
+            local done, passed = IsDone(step, i)
+            if not done then break end
+            -- Marked by hand: says nothing of where the character went.
+            if not passed then
+                for _, index in ipairs(pending) do
+                    state.marks[index] = true
+                end
+                pending = {}
+            end
+        end
     end
 end
 
