@@ -1,0 +1,47 @@
+# Quest notes of the Redridge Mountains. See notes/README.md for the format.
+
+# Hilary's Necklace: the Glinting Mud spawns at one of many spots on the lake bed, changing each time.
+[[note]]
+quest = 3741
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:154357} lies on the lake bed at one of many spots that change: under the docks, by the bridge or near rocks. Swim along the surface and look down for a dark mound; lowering the ground clutter setting makes it easier to spot."
+fr = "{object:154357} repose au fond du lac à l'un de nombreux endroits qui changent : sous les pontons, près du pont ou contre des rochers. Nagez en surface et cherchez un monticule sombre en dessous ; baisser le réglage des détails du sol le rend plus visible."
+de = "{object:154357} liegt am Seegrund an einer von vielen wechselnden Stellen: unter den Stegen, an der Brücke oder bei Felsen. Schwimm an der Oberfläche und halte nach einem dunklen Hügel Ausschau; eine niedrigere Bodendetail-Einstellung macht ihn leichter sichtbar."
+es = "{object:154357} está en el fondo del lago, en uno de muchos puntos que cambian: bajo los muelles, junto al puente o cerca de rocas. Nada por la superficie y busca un montículo oscuro abajo; bajar el ajuste de detalle del suelo ayuda a verlo."
+pt = "{object:154357} fica no fundo do lago, em um de vários pontos que mudam: sob os píeres, perto da ponte ou junto a pedras. Nade pela superfície e procure um monte escuro lá embaixo; reduzir a configuração de detalhes do chão ajuda a enxergá-lo."
+ru = "{object:154357} лежит на дне озера в одном из многих меняющихся мест: под причалами, у моста или возле камней. Плывите по поверхности и ищите внизу тёмный холмик; если снизить детализацию земли, его легче заметить."
+ko = "{object:154357}은(는) 호수 바닥의 여러 곳 중 한 곳에 있으며 위치가 바뀝니다. 부두 아래, 다리 옆, 바위 근처를 살피세요. 수면을 따라 헤엄치며 아래의 어두운 둔덕을 찾으세요. 지면 효과 설정을 낮추면 더 잘 보입니다."
+zh_cn = "{object:154357}在湖底，位置是会变动的多处之一：码头下面、桥边或岩石旁。沿着水面游，往下找一个深色的土堆；调低地面细节设置更容易看到。"
+zh_tw = "{object:154357}在湖底，位置是會變動的多處之一：碼頭下面、橋邊或岩石旁。沿著水面游，往下找一個深色的土堆；調低地面細節設定更容易看到。"
+
+# Messenger to Stormwind: General Marcus Jonathan cannot be talked to while a Stormwind gate event (Onyxia chain) runs; he kneels by the guards, then despawns and returns on his horse.
+[[note]]
+quest = 120
+phase = "turnin"
+level = "warning"
+en = "If {npc:466} is not on his horse at the city gate, a city event keeps him busy: he kneels with the guards and does not answer. Wait for him to vanish and come back on his horse, about 10 to 20 minutes."
+fr = "Si {npc:466} n'est pas sur son cheval à la porte de la ville, un événement l'occupe : il est agenouillé avec les gardes et ne répond pas. Attendez qu'il disparaisse et revienne à cheval, 10 à 20 minutes environ."
+de = "Ist {npc:466} nicht auf seinem Pferd am Stadttor, hält ihn ein Ereignis in der Stadt auf: Er kniet bei den Wachen und antwortet nicht. Warte, bis er verschwindet und auf seinem Pferd zurückkehrt, etwa 10 bis 20 Minuten."
+es = "Si {npc:466} no está a caballo en la puerta de la ciudad, un evento lo tiene ocupado: está arrodillado con los guardias y no responde. Espera a que desaparezca y vuelva a caballo, unos 10 a 20 minutos."
+pt = "Se {npc:466} não estiver a cavalo no portão da cidade, um evento o mantém ocupado: ele fica ajoelhado com os guardas e não responde. Espere ele sumir e voltar a cavalo, cerca de 10 a 20 minutos."
+ru = "Если {npc:466} не сидит на коне у ворот города, он занят городским событием: стоит на коленях со стражей и не отвечает. Дождитесь, пока он исчезнет и вернётся на коне, примерно через 10–20 минут."
+ko = "{npc:466}이(가) 도시 성문에서 말을 타고 있지 않다면 도시 이벤트 중입니다. 경비병들과 무릎을 꿇고 있으며 대답하지 않습니다. 그가 사라졌다가 말을 타고 돌아올 때까지 약 10~20분 기다리세요."
+zh_cn = "如果{npc:466}不在城门口骑着马，说明城里正在进行事件：他和卫兵一起跪着，不会回应。等他消失后骑马回来，大约10到20分钟。"
+zh_tw = "如果{npc:466}不在城門口騎著馬，表示城裡正在進行事件：他和衛兵一起跪著，不會回應。等他消失後騎馬回來，大約10到20分鐘。"
+
+# Messenger to Stormwind (second part): same event as above, the general must be back on his horse to give it.
+[[note]]
+quest = 121
+phase = "accept"
+level = "warning"
+en = "If {npc:466} is not on his horse at the city gate, a city event keeps him busy: he kneels with the guards and does not answer. Wait for him to vanish and come back on his horse, about 10 to 20 minutes."
+fr = "Si {npc:466} n'est pas sur son cheval à la porte de la ville, un événement l'occupe : il est agenouillé avec les gardes et ne répond pas. Attendez qu'il disparaisse et revienne à cheval, 10 à 20 minutes environ."
+de = "Ist {npc:466} nicht auf seinem Pferd am Stadttor, hält ihn ein Ereignis in der Stadt auf: Er kniet bei den Wachen und antwortet nicht. Warte, bis er verschwindet und auf seinem Pferd zurückkehrt, etwa 10 bis 20 Minuten."
+es = "Si {npc:466} no está a caballo en la puerta de la ciudad, un evento lo tiene ocupado: está arrodillado con los guardias y no responde. Espera a que desaparezca y vuelva a caballo, unos 10 a 20 minutos."
+pt = "Se {npc:466} não estiver a cavalo no portão da cidade, um evento o mantém ocupado: ele fica ajoelhado com os guardas e não responde. Espere ele sumir e voltar a cavalo, cerca de 10 a 20 minutos."
+ru = "Если {npc:466} не сидит на коне у ворот города, он занят городским событием: стоит на коленях со стражей и не отвечает. Дождитесь, пока он исчезнет и вернётся на коне, примерно через 10–20 минут."
+ko = "{npc:466}이(가) 도시 성문에서 말을 타고 있지 않다면 도시 이벤트 중입니다. 경비병들과 무릎을 꿇고 있으며 대답하지 않습니다. 그가 사라졌다가 말을 타고 돌아올 때까지 약 10~20분 기다리세요."
+zh_cn = "如果{npc:466}不在城门口骑着马，说明城里正在进行事件：他和卫兵一起跪着，不会回应。等他消失后骑马回来，大约10到20分钟。"
+zh_tw = "如果{npc:466}不在城門口騎著馬，表示城裡正在進行事件：他和衛兵一起跪著，不會回應。等他消失後騎馬回來，大約10到20分鐘。"

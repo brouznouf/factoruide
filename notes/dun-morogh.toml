@@ -1,0 +1,96 @@
+# Quest notes of Dun Morogh. See notes/README.md for the format.
+
+# Protecting the Herd: Vagash is an elite on the ledge behind the ranch, reached by a footpath from the west; the road guards below kill him if he is pulled down.
+[[note]]
+quest = 314
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1388} is an elite on the ledge above the ranch. The footpath up starts west of the ranch, near 59, 50. Bring help, or pull him down the hill to the mountaineer guards on the road, who fight him."
+fr = "{npc:1388} est un élite sur la corniche au-dessus du ranch. Le sentier qui y monte part à l'ouest du ranch, vers 59, 50. Venez accompagné, ou attirez-le en bas de la colline jusqu'aux montagnards de garde sur la route, qui l'attaquent."
+de = "{npc:1388} ist ein Elite auf dem Felsvorsprung über der Ranch. Der Pfad hinauf beginnt westlich der Ranch, um 59, 50. Nimm Hilfe mit oder lock ihn den Hang hinab zu den Gebirgsjägern an der Straße, die ihn angreifen."
+es = "{npc:1388} es un élite en la cornisa sobre el rancho. El sendero de subida empieza al oeste del rancho, hacia 59, 50. Ve acompañado o atráelo colina abajo hasta los montañeses que vigilan el camino, que lo atacan."
+pt = "{npc:1388} é um elite na saliência acima do rancho. A trilha de subida começa a oeste do rancho, por volta de 59, 50. Leve ajuda ou atraia-o morro abaixo até os montanheses que guardam a estrada, que o atacam."
+ru = "{npc:1388} — элитный противник на уступе над ранчо. Тропа наверх начинается к западу от ранчо, около 59, 50. Возьмите помощь или сманите его вниз по склону к горным стражам на дороге: они его атакуют."
+ko = "{npc:1388}은(는) 목장 위 바위턱에 있는 정예입니다. 올라가는 오솔길은 목장 서쪽, 약 59, 50에서 시작합니다. 도움을 구하거나, 언덕 아래 길에 있는 산악경비대까지 끌고 내려가면 경비병이 함께 싸웁니다."
+zh_cn = "{npc:1388}是牧场上方岩架上的精英。上山的小路从牧场西边开始，约59, 50。找人帮忙，或把它引下山坡到路上的山地卫兵那里，他们会攻击它。"
+zh_tw = "{npc:1388}是牧場上方岩架上的精英。上山的小路從牧場西邊開始，約59, 50。找人幫忙，或把它引下山坡到路上的山地衛兵那裡，他們會攻擊它。"
+
+# Ironband's Compound: the strongbox is in the basement of the southern house, next to Captain Beld, who charges on sight.
+[[note]]
+quest = 1681
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:85562} is in the basement of the southern house of the compound, next to {npc:6124}, who charges as soon as he sees you. Pull the spies on the way one at a time."
+fr = "{object:85562} se trouve au sous-sol de la maison sud du complexe, à côté de {npc:6124}, qui charge dès qu'il vous voit. Attirez les espions en chemin un par un."
+de = "{object:85562} steht im Keller des südlichen Hauses der Anlage, neben {npc:6124}, der sofort angreift, sobald er dich sieht. Zieh die Spione auf dem Weg einzeln."
+es = "{object:85562} está en el sótano de la casa sur del recinto, junto a {npc:6124}, que carga en cuanto te ve. Atrae a los espías del camino de uno en uno."
+pt = "{object:85562} fica no porão da casa sul do complexo, ao lado de {npc:6124}, que investe assim que vê você. Puxe os espiões do caminho um de cada vez."
+ru = "{object:85562} стоит в подвале южного дома лагеря, рядом с {npc:6124}, который бросается в атаку, едва вас заметив. Выманивайте шпионов по пути по одному."
+ko = "{object:85562}은(는) 기지 남쪽 집의 지하실, {npc:6124} 옆에 있습니다. 그는 당신을 보자마자 돌진합니다. 가는 길의 첩자들은 하나씩 끌어내세요."
+zh_cn = "{object:85562}在营地南边房子的地下室里，旁边是{npc:6124}，他一看到你就会冲上来。路上的间谍要一个一个拉。"
+zh_tw = "{object:85562}在營地南邊房子的地下室裡，旁邊是{npc:6124}，他一看到你就會衝上來。路上的間諜要一個一個拉。"
+
+# Frostmane Hold: the exploration credit is inside the valley cave southwest of Brewnall Village, not at the troll camp on Shimmer Ridge; the trolls by the fire outside aggro together.
+[[note]]
+quest = 287
+phase = "objective"
+objective = 2
+level = "info"
+en = "Explore the cave in the valley southwest of the dwarf village by the lake (entrance near 24, 50), not the troll camp up on the ridge to the northeast. Inside, keep right down to the large cavern: the credit comes near its floor, about 21, 51. The trolls by the fire outside come together."
+fr = "Explorez la grotte du vallon au sud-ouest du village nain près du lac (entrée vers 24, 50), pas le camp troll sur la crête au nord-est. À l'intérieur, gardez la droite jusqu'à la grande caverne : la validation se fait près de son sol, vers 21, 51. Les trolls autour du feu dehors viennent ensemble."
+de = "Erkunde die Höhle im Tal südwestlich des Zwergendorfs am See (Eingang um 24, 50), nicht das Trolllager oben auf dem Grat im Nordosten. Halte dich drinnen rechts bis zur großen Kaverne: Die Wertung kommt nahe ihrem Boden, um 21, 51. Die Trolle am Feuer draußen kommen zusammen."
+es = "Explora la cueva del valle al suroeste del poblado enano junto al lago (entrada hacia 24, 50), no el campamento trol de la cresta al noreste. Dentro, sigue por la derecha hasta la gran caverna: se cumple cerca de su suelo, hacia 21, 51. Los trols junto al fuego de fuera vienen juntos."
+pt = "Explore a caverna do vale a sudoeste da vila anã junto ao lago (entrada por volta de 24, 50), não o acampamento troll na crista a nordeste. Lá dentro, siga pela direita até a grande caverna: conta perto do chão dela, por volta de 21, 51. Os trolls da fogueira lá fora vêm juntos."
+ru = "Исследуйте пещеру в долине к юго-западу от деревни дворфов у озера (вход около 24, 50), а не лагерь троллей на хребте к северо-востоку. Внутри держитесь правой стороны до большой пещеры: засчитывается у её дна, около 21, 51. Тролли у костра снаружи нападают вместе."
+ko = "호숫가 드워프 마을 남서쪽 골짜기의 동굴(입구 약 24, 50)을 탐험하세요. 북동쪽 산마루 위의 트롤 야영지가 아닙니다. 안에서는 오른쪽으로 계속 가 큰 동굴까지 내려가세요. 그 바닥 근처, 약 21, 51에서 완료됩니다. 바깥 모닥불 옆 트롤들은 함께 덤빕니다."
+zh_cn = "要探索的是湖边矮人村庄西南山谷里的山洞（入口约24, 50），不是东北边山脊上的巨魔营地。进洞后一直靠右走到大洞窟：在其底部附近完成，约21, 51。洞外火堆旁的巨魔会一起冲上来。"
+zh_tw = "要探索的是湖邊矮人村莊西南山谷裡的山洞（入口約24, 50），不是東北邊山脊上的食人妖營地。進洞後一直靠右走到大洞窟：在其底部附近完成，約21, 51。洞外火堆旁的食人妖會一起衝上來。"
+
+# Tundra MacGrann's Stolen Stash: MacGrann's ridge is reached by a trail from the wooden platform with a flag, across from Old Icebeard's cave.
+[[note]]
+quest = 312
+phase = "accept"
+level = "info"
+en = "{npc:1266} stands on a ridge that cannot be climbed from the lake: the trail up starts by the wooden platform with a flag, near 36, 52, across from the cave of {npc:1271}."
+fr = "{npc:1266} se tient sur une crête qu'on ne peut pas gravir depuis le lac : le sentier part de la plateforme en bois avec un drapeau, vers 36, 52, en face de la grotte de {npc:1271}."
+de = "{npc:1266} steht auf einem Grat, der vom See aus nicht erklimmbar ist: Der Pfad hinauf beginnt an der Holzplattform mit Flagge, um 36, 52, gegenüber der Höhle von {npc:1271}."
+es = "{npc:1266} está en una cresta a la que no se sube desde el lago: el sendero empieza junto a la plataforma de madera con bandera, hacia 36, 52, frente a la cueva de {npc:1271}."
+pt = "{npc:1266} fica numa crista que não dá para escalar a partir do lago: a trilha começa junto à plataforma de madeira com bandeira, por volta de 36, 52, em frente à caverna de {npc:1271}."
+ru = "{npc:1266} стоит на гребне, на который не подняться со стороны озера: тропа начинается у деревянного помоста с флагом, около 36, 52, напротив пещеры, где живёт {npc:1271}."
+ko = "{npc:1266}은(는) 호수 쪽에서는 오를 수 없는 산마루에 있습니다. 올라가는 길은 깃발이 꽂힌 나무 단 옆, 약 36, 52에서 시작하며 {npc:1271}의 동굴 맞은편입니다."
+zh_cn = "{npc:1266}站在一道从湖边爬不上去的山脊上：上山小路从插着旗子的木平台旁开始，约36, 52，就在{npc:1271}的山洞对面。"
+zh_tw = "{npc:1266}站在一道從湖邊爬不上去的山脊上：上山小路從插著旗子的木平台旁開始，約36, 52，就在{npc:1271}的山洞對面。"
+
+# Tundra MacGrann's Stolen Stash: Old Icebeard leaves his cave on a walk every few minutes, long enough to loot the locker without a fight.
+[[note]]
+quest = 312
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:1271} (elite) guards {object:272} but walks out of the cave every few minutes. Wait out of sight, run in once he leaves, loot and get out: there is no need to fight him."
+fr = "{npc:1271} (élite) garde {object:272} mais sort de la grotte toutes les quelques minutes. Attendez hors de vue, entrez dès qu'il part, ramassez et ressortez : inutile de le combattre."
+de = "{npc:1271} (Elite) bewacht {object:272}, verlässt die Höhle aber alle paar Minuten. Warte außer Sicht, lauf hinein, sobald er geht, plündere und verschwinde: Kämpfen musst du nicht."
+es = "{npc:1271} (élite) guarda {object:272}, pero sale de la cueva cada pocos minutos. Espera sin que te vea, entra en cuanto se vaya, saquea y sal: no hace falta pelear con él."
+pt = "{npc:1271} (elite) guarda {object:272}, mas sai da caverna a cada poucos minutos. Espere fora de vista, entre assim que ele sair, saqueie e saia: não é preciso enfrentá-lo."
+ru = "{npc:1271} (элитный) охраняет {object:272}, но каждые несколько минут выходит из пещеры. Ждите вне поля зрения, забегайте, как только он уйдёт, забирайте добычу и уходите: сражаться не нужно."
+ko = "{npc:1271}(정예)이(가) {object:272}을(를) 지키지만 몇 분마다 동굴 밖으로 나갑니다. 보이지 않는 곳에서 기다렸다가 그가 나가면 뛰어 들어가 챙기고 나오세요. 싸울 필요는 없습니다."
+zh_cn = "{npc:1271}（精英）守着{object:272}，但每隔几分钟就会走出山洞。躲在看不见的地方等，它一离开就冲进去拿了东西出来：不用和它打。"
+zh_tw = "{npc:1271}（精英）守著{object:272}，但每隔幾分鐘就會走出山洞。躲在看不見的地方等，牠一離開就衝進去拿了東西出來：不用和牠打。"
+
+# The Perfect Stout: the Frostmane camp is up on Shimmer Ridge; the path starts by the bear cave east of Iceflow Lake.
+[[note]]
+quest = 315
+phase = "objective"
+objective = 1
+level = "info"
+en = "The trolls' camp sits up on the ridge east of the lake: the path up starts beside the bear cave (about 37, 42). The seers cast from range and come in pairs; {object:276} around the camp hold {item:2676} too."
+fr = "Le camp des trolls est perché sur la crête à l'est du lac : le sentier part à côté de la grotte aux ours (vers 37, 42). Les voyants attaquent à distance et viennent par deux ; {object:276} autour du camp contient aussi {item:2676}."
+de = "Das Trolllager liegt oben auf dem Grat östlich des Sees: Der Pfad beginnt neben der Bärenhöhle (um 37, 42). Die Seher zaubern auf Distanz und kommen zu zweit; {object:276} rund ums Lager enthält ebenfalls {item:2676}."
+es = "El campamento trol está arriba, en la cresta al este del lago: el sendero empieza junto a la cueva de los osos (hacia 37, 42). Los videntes atacan a distancia y vienen de dos en dos; {object:276} del campamento también tiene {item:2676}."
+pt = "O acampamento dos trolls fica no alto da crista a leste do lago: a trilha começa ao lado da caverna dos ursos (por volta de 37, 42). Os videntes atacam à distância e vêm em dupla; {object:276} pelo acampamento também tem {item:2676}."
+ru = "Лагерь троллей наверху, на хребте к востоку от озера: тропа начинается у медвежьей пещеры (около 37, 42). Провидцы бьют издалека и нападают парами; {object:276} в лагере тоже содержит {item:2676}."
+ko = "트롤 야영지는 호수 동쪽 산마루 위에 있습니다. 올라가는 길은 곰 동굴 옆(약 37, 42)에서 시작합니다. 선견자들은 원거리에서 공격하고 둘씩 덤빕니다. 야영지 주변의 {object:276}에도 {item:2676}이(가) 들어 있습니다."
+zh_cn = "巨魔营地在湖东边的山脊上面：上山的小路从熊洞旁开始（约37, 42）。先知会远程施法，而且成对出现；营地周围的{object:276}里也有{item:2676}。"
+zh_tw = "食人妖營地在湖東邊的山脊上面：上山的小路從熊洞旁開始（約37, 42）。先知會遠程施法，而且成對出現；營地周圍的{object:276}裡也有{item:2676}。"

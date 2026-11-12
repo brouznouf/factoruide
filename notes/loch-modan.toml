@@ -1,0 +1,31 @@
+# Quest notes of Loch Modan. See notes/README.md for the format.
+
+# In Defense of the King's Lands (final part): the three named troggs share a ledge in the large cavern of the cave; Brawler stuns and interrupts.
+[[note]]
+quest = 217
+phase = "objective"
+level = "warning"
+en = "{npc:1205}, {npc:1206} and {npc:1207} stand together on a ledge above the cave's large cavern. Take the right-hand tunnel at the fork to reach them and clear the troggs around first. Kill {npc:1207} first: he stuns."
+fr = "{npc:1205}, {npc:1206} et {npc:1207} se tiennent ensemble sur une corniche au-dessus de la grande caverne de la grotte. Prenez le tunnel de droite à l'embranchement pour les atteindre et nettoyez d'abord les troggs autour. Tuez {npc:1207} en premier : il étourdit."
+de = "{npc:1205}, {npc:1206} und {npc:1207} stehen zusammen auf einem Vorsprung über der großen Kaverne der Höhle. Nimm an der Gabelung den rechten Tunnel, um sie zu erreichen, und räume zuerst die Troggs ringsum ab. Töte {npc:1207} zuerst: Er betäubt."
+es = "{npc:1205}, {npc:1206} y {npc:1207} están juntos en una cornisa sobre la gran caverna de la cueva. Toma el túnel de la derecha en la bifurcación para llegar y limpia antes a los troggs de alrededor. Mata primero a {npc:1207}: aturde."
+pt = "{npc:1205}, {npc:1206} e {npc:1207} ficam juntos numa saliência acima da grande caverna da gruta. Pegue o túnel da direita na bifurcação para chegar até eles e limpe antes os troggs ao redor. Mate {npc:1207} primeiro: ele atordoa."
+ru = "{npc:1205}, {npc:1206} и {npc:1207} стоят вместе на уступе над большим залом пещеры. На развилке идите в правый туннель и сначала зачистите троггов вокруг. Первым убейте {npc:1207}: он оглушает."
+ko = "{npc:1205}, {npc:1206}, {npc:1207}은(는) 동굴의 큰 공간 위 바위턱에 함께 서 있습니다. 갈림길에서 오른쪽 굴로 가서 먼저 주변 트로그를 정리하세요. {npc:1207}부터 처치하세요. 기절시킵니다."
+zh_cn = "{npc:1205}、{npc:1206}和{npc:1207}一起站在山洞大洞窟上方的岩架上。在岔路口走右边的通道过去，先清掉周围的穴居人。先杀{npc:1207}：他会击晕。"
+zh_tw = "{npc:1205}、{npc:1206}和{npc:1207}一起站在山洞大洞窟上方的岩架上。在岔路口走右邊的通道過去，先清掉周圍的穴居人。先殺{npc:1207}：他會擊暈。"
+
+# A Hunter's Boast: timed quest (900 s in the data); the buzzards on the way up respawn slowly, so killing them before accepting leaves too few.
+[[note]]
+quest = 257
+phase = "accept"
+level = "info"
+en = "The quest gives 15 minutes. Leave {npc:1194} alone on the way up to the lodge: they respawn slowly, and you will need them once the timer runs."
+fr = "La quête laisse 15 minutes. Épargnez {npc:1194} en montant au pavillon : ils réapparaissent lentement et il vous les faudra une fois le compte à rebours lancé."
+de = "Die Quest gibt dir 15 Minuten. Lass {npc:1194} auf dem Weg hinauf zur Hütte in Ruhe: Sie respawnen langsam, und du brauchst sie, sobald der Timer läuft."
+es = "La misión da 15 minutos. Deja en paz a {npc:1194} al subir al refugio: reaparecen despacio y los necesitarás cuando corra el tiempo."
+pt = "A missão dá 15 minutos. Deixe {npc:1194} em paz na subida até o refúgio: eles reaparecem devagar e você vai precisar deles quando o tempo começar a correr."
+ru = "На задание даётся 15 минут. Не трогайте {npc:1194} по дороге к охотничьему домику: они медленно возрождаются, а понадобятся, когда пойдёт отсчёт."
+ko = "퀘스트 제한 시간은 15분입니다. 오두막으로 올라가는 길에 {npc:1194}은(는) 건드리지 마세요. 재생성이 느려서 시간이 흐르기 시작하면 필요합니다."
+zh_cn = "任务限时15分钟。上山去小屋的路上别碰{npc:1194}：它们刷新很慢，计时开始后你会需要它们。"
+zh_tw = "任務限時15分鐘。上山去小屋的路上別碰{npc:1194}：牠們重生很慢，計時開始後你會需要牠們。"

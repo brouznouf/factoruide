@@ -1,0 +1,17 @@
+# Quest notes of Westfall. See notes/README.md for the format.
+
+# The Forgotten Heirloom: the wardrobe is inside the farmhouse, where Benny Blaanco and a trapper are linked and come together.
+[[note]]
+quest = 64
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{object:290} stands inside the farmhouse, where {npc:502} (level 15) and {npc:504} fight together. Clear the yard first, then pull them out through the door and kill the trapper first."
+fr = "{object:290} se trouve dans la ferme, où {npc:502} (niveau 15) et {npc:504} combattent ensemble. Nettoyez d'abord la cour, puis attirez-les dehors par la porte et tuez le trappeur en premier."
+de = "{object:290} steht im Bauernhaus, wo {npc:502} (Stufe 15) und {npc:504} gemeinsam kämpfen. Säubere zuerst den Hof, zieh sie dann durch die Tür hinaus und töte zuerst den Fallensteller."
+es = "{object:290} está dentro de la granja, donde {npc:502} (nivel 15) y {npc:504} luchan juntos. Limpia primero el patio, luego atráelos fuera por la puerta y mata primero al trampero."
+pt = "{object:290} fica dentro da casa da fazenda, onde {npc:502} (nível 15) e {npc:504} lutam juntos. Limpe o pátio primeiro, depois puxe-os para fora pela porta e mate o caçador primeiro."
+ru = "{object:290} стоит в доме фермы, где {npc:502} (уровень 15) и {npc:504} сражаются вместе. Сначала зачистите двор, затем выманите их через дверь и первым убейте охотника."
+ko = "{object:290}은(는) 농가 안에 있으며, 그곳의 {npc:502}(15레벨)와(과) {npc:504}은(는) 함께 싸웁니다. 먼저 마당을 정리한 뒤 문밖으로 끌어내고 덫사냥꾼부터 처치하세요."
+zh_cn = "{object:290}在农舍里，里面的{npc:502}（15级）和{npc:504}会一起出手。先清理院子，再把它们从门口引出来，先杀陷阱猎手。"
+zh_tw = "{object:290}在農舍裡，裡面的{npc:502}（15級）和{npc:504}會一起出手。先清理院子，再把牠們從門口引出來，先殺陷阱獵人。"
