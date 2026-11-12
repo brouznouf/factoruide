@@ -94,3 +94,124 @@ ru = "Вязанки ({item:13872}) маленькие и прячутся в т
 ko = "{item:13872} 더미는 작고 나무 밑동의 풀숲에 가려져 있습니다. 그래픽 설정에서 지면 디테일을 낮추면 훨씬 쉽게 보입니다."
 zh_cn = "{item:13872}堆很小，藏在树根旁的草丛里。在图像设置中调低地面杂物，就容易看到得多。"
 zh_tw = "{item:13872}堆很小，藏在樹根旁的草叢裡。在圖形設定中調低地面雜物，就容易看到得多。"
+
+# The Great Outdoors (Forever): the sitting part often fails to count; sitting again while seated,
+# in the tent, or retaking the quest fixes it.
+[[note]]
+quest = 95998
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "If sitting by the campfire gives no credit, sit again while already seated (type /sit twice), or sit inside the tent behind {npc:263399}. Still stuck: abandon the quest, take it again and sit once more."
+fr = "Si s'asseoir près du feu de camp ne valide rien, asseyez-vous à nouveau alors que vous êtes déjà assis (tapez /sit deux fois), ou asseyez-vous dans la tente derrière {npc:263399}. Toujours bloqué : abandonnez la quête, reprenez-la et asseyez-vous encore."
+de = "Wenn das Sitzen am Lagerfeuer nicht zählt, setz dich erneut, während du schon sitzt (/sit zweimal eingeben), oder setz dich in das Zelt hinter {npc:263399}. Klappt es immer noch nicht: Brich die Quest ab, nimm sie neu an und setz dich noch einmal."
+es = "Si sentarte junto a la hoguera no cuenta, vuelve a sentarte cuando ya estés sentado (escribe /sit dos veces) o siéntate dentro de la tienda detrás de {npc:263399}. Si sigue sin funcionar: abandona la misión, vuelve a aceptarla y siéntate otra vez."
+pt = "Se sentar perto da fogueira não contar, sente-se de novo quando já estiver sentado (digite /sit duas vezes) ou sente-se dentro da barraca atrás de {npc:263399}. Se ainda não funcionar: abandone a missão, pegue-a de novo e sente-se outra vez."
+ru = "Если сидение у костра не засчитывается, сядьте ещё раз, уже сидя (введите /sit дважды), или сядьте в палатке позади персонажа {npc:263399}. Не помогло: откажитесь от задания, возьмите его снова и сядьте ещё раз."
+ko = "모닥불 옆에 앉아도 인정되지 않으면 앉은 상태에서 다시 앉으세요(/sit 두 번 입력). 또는 {npc:263399} 뒤에 있는 천막 안에 앉으세요. 그래도 안 되면 퀘스트를 포기하고 다시 받은 뒤 또 앉으세요."
+zh_cn = "如果坐在篝火旁没有计数，在已经坐下的状态下再坐一次（输入两次/sit），或者坐到{npc:263399}身后的帐篷里。仍然不行：放弃任务，重新接取后再坐一次。"
+zh_tw = "如果坐在營火旁沒有計數，在已經坐下的狀態下再坐一次（輸入兩次/sit），或者坐到{npc:263399}身後的帳篷裡。仍然不行：放棄任務，重新接取後再坐一次。"
+
+# Shhh! We're Hunting Kobolds (Forever): the tracks are small, hazy green, by the trees on the
+# road south of Northshire; the tracker buff does not always show them.
+[[note]]
+quest = 91772
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "{object:563442} are small and give off a faint green haze, mostly beside the trees along the road from {zone:9} to Goldshire. Click them even if the tracker's buff fails to show them on the minimap."
+fr = "Les {object:563442} sont petites et dégagent une légère brume verte, surtout au pied des arbres le long de la route de {zone:9} à Comté-de-l'Or. Cliquez-les même si l'effet du pisteur ne les affiche pas sur la minicarte."
+de = "{object:563442} sind klein und verströmen einen schwachen grünen Dunst, meist neben den Bäumen an der Straße von {zone:9} nach Goldhain. Klick sie an, auch wenn der Buff des Fährtenlesers sie nicht auf der Minikarte zeigt."
+es = "Las {object:563442} son pequeñas y desprenden una leve neblina verde, sobre todo junto a los árboles del camino de {zone:9} a Villadorada. Haz clic en ellas aunque el efecto del rastreador no las muestre en el minimapa."
+pt = "As {object:563442} são pequenas e soltam uma leve névoa verde, principalmente ao lado das árvores na estrada de {zone:9} até Vila d'Ouro. Clique nelas mesmo que o efeito do rastreador não as mostre no minimapa."
+ru = "{object:563442} маленькие и испускают слабую зелёную дымку, в основном у деревьев вдоль дороги из локации {zone:9} в Златоземье. Щёлкайте по ним, даже если эффект следопыта не показывает их на мини-карте."
+ko = "{object:563442}은(는) 작고 옅은 초록 안개를 내뿜으며, 주로 {zone:9}에서 골드샤이어로 가는 길가의 나무 옆에 있습니다. 추적기 효과가 미니맵에 표시하지 않아도 클릭할 수 있습니다."
+zh_cn = "{object:563442}很小，散发淡淡的绿雾，大多在从{zone:9}到闪金镇的路边树旁。即使追踪器的效果没有在小地图上显示它们，也可以直接点击。"
+zh_tw = "{object:563442}很小，散發淡淡的綠霧，大多在從{zone:9}到閃金鎮的路邊樹旁。即使追蹤器的效果沒有在小地圖上顯示它們，也可以直接點擊。"
+
+# Book Return (Forever): Nimsy is an elite with guards up the stairs in the mine and summons an
+# elemental; hard to solo at the quest's level.
+[[note]]
+quest = 91775
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "{npc:248464} waits with guards up the stairs east of the mine's large room and calls an elemental during the fight: group up, or come back a couple of levels higher."
+fr = "{npc:248464} attend avec des gardes en haut de l'escalier à l'est de la grande salle de la mine et invoque un élémentaire pendant le combat : groupez-vous, ou revenez quelques niveaux plus haut."
+de = "{npc:248464} wartet mit Wachen oben an der Treppe östlich der großen Halle der Mine und ruft im Kampf einen Elementar herbei: Such dir eine Gruppe oder komm ein paar Stufen höher wieder."
+es = "{npc:248464} espera con guardias al subir la escalera al este de la sala grande de la mina e invoca un elemental durante el combate: busca grupo o vuelve con un par de niveles más."
+pt = "{npc:248464} espera com guardas no alto da escada a leste do salão grande da mina e invoca um elemental durante a luta: forme um grupo ou volte alguns níveis acima."
+ru = "{npc:248464} ждёт с охраной наверху лестницы к востоку от большого зала шахты и призывает элементаля во время боя: соберите группу или вернитесь на пару уровней выше."
+ko = "{npc:248464}은(는) 광산의 큰 방 동쪽 계단 위에서 경비병들과 함께 기다리며 전투 중에 정령을 부릅니다. 파티를 맺거나 레벨을 두어 단계 올린 뒤 다시 오세요."
+zh_cn = "{npc:248464}带着守卫待在矿洞大厅东边的楼梯上方，战斗中会召唤一个元素：组队，或者高几级再来。"
+zh_tw = "{npc:248464}帶著守衛待在礦坑大廳東邊的樓梯上方，戰鬥中會召喚一個元素：組隊，或者高幾級再來。"
+
+# Rare Books (Forever): Geosculptor Yip summons three earth elementals that linger after the fight.
+[[note]]
+quest = 91777
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "{npc:248474} summons three earth elementals that stay for a while after the fight, and another player's attempt may have left some up already: group up if you can."
+fr = "{npc:248474} invoque trois élémentaires de terre qui restent un moment après le combat, et la tentative d'un autre joueur a pu en laisser déjà en place : groupez-vous si possible."
+de = "{npc:248474} beschwört drei Erdelementare, die nach dem Kampf noch eine Weile bleiben, und der Versuch eines anderen Spielers hat vielleicht schon welche zurückgelassen: Such dir wenn möglich eine Gruppe."
+es = "{npc:248474} invoca tres elementales de tierra que se quedan un rato tras el combate, y el intento de otro jugador puede haber dejado ya algunos: busca grupo si puedes."
+pt = "{npc:248474} invoca três elementais da terra que ficam um tempo depois da luta, e a tentativa de outro jogador pode já ter deixado alguns por ali: forme um grupo se puder."
+ru = "{npc:248474} призывает трёх элементалей земли, которые остаются ещё какое-то время после боя, а после попытки другого игрока некоторые могут уже стоять: по возможности соберите группу."
+ko = "{npc:248474}은(는) 대지 정령 셋을 소환하며, 이들은 전투가 끝난 뒤에도 한동안 남아 있습니다. 다른 플레이어의 시도로 이미 몇이 남아 있을 수도 있으니 가능하면 파티를 맺으세요."
+zh_cn = "{npc:248474}会召唤三个土元素，战斗结束后它们还会停留一段时间，其他玩家的尝试也可能已经留下了几个：尽量组队。"
+zh_tw = "{npc:248474}會召喚三個土元素，戰鬥結束後它們還會停留一段時間，其他玩家的嘗試也可能已經留下了幾個：盡量組隊。"
+
+# A Net Disaster (Forever): the traps are hard to see, some are fully underwater, and the stream
+# toward Northshire has spawns too.
+[[note]]
+quest = 99127
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "{object:694772} are hard to spot: look in the shallow water along the shore and underwater too. When the lake is crowded, check the stream running up toward {zone:9}."
+fr = "Les {object:694772} sont difficiles à repérer : cherchez dans l'eau peu profonde le long de la rive et aussi sous l'eau. Quand le lac est bondé, fouillez le ruisseau qui remonte vers {zone:9}."
+de = "{object:694772} sind schwer zu erkennen: Such im flachen Wasser am Ufer und auch unter Wasser. Wenn am See viel los ist, schau am Bach nach, der hinauf nach {zone:9} führt."
+es = "Las {object:694772} son difíciles de ver: busca en el agua poco profunda de la orilla y también bajo el agua. Si el lago está lleno de gente, revisa el arroyo que sube hacia {zone:9}."
+pt = "As {object:694772} são difíceis de achar: procure na água rasa ao longo da margem e também debaixo d'água. Quando o lago estiver cheio, confira o riacho que sobe em direção a {zone:9}."
+ru = "{object:694772} трудно заметить: ищите на мелководье у берега и под водой. Если у озера толпа, проверьте ручей, который тянется к локации {zone:9}."
+ko = "{object:694772}은(는) 찾기 어렵습니다. 물가의 얕은 물과 물속까지 살펴보세요. 호수가 붐비면 {zone:9} 쪽으로 이어지는 개울을 확인하세요."
+zh_cn = "{object:694772}很难发现：在岸边浅水里找，也要看看水下。湖边人多时，去通往{zone:9}的小溪看看。"
+zh_tw = "{object:694772}很難發現：在岸邊淺水裡找，也要看看水下。湖邊人多時，去通往{zone:9}的小溪看看。"
+
+# An Enticing Offer (Forever): the Duskweed flowers are small, purple and few at a time, often in
+# the bushes by the farm fences.
+[[note]]
+quest = 99130
+phase = "objective"
+objective = 2
+level = "info"
+editions = ["forever"]
+en = "{object:694855} is a small purple flower that blends in: look in the farm gardens and fields and in the bushes along the fences. Only a few are up at a time."
+fr = "La {object:694855} est une petite fleur violette qui se fond dans le décor : cherchez dans les potagers et les champs des fermes et dans les buissons le long des clôtures. Seules quelques-unes sont présentes à la fois."
+de = "{object:694855} ist eine kleine violette Blume, die kaum auffällt: Such in den Gärten und Feldern der Höfe und in den Büschen an den Zäunen. Es sind immer nur wenige gleichzeitig da."
+es = "{object:694855} es una pequeña flor morada que se confunde con el entorno: busca en los huertos y campos de las granjas y en los arbustos junto a las vallas. Solo hay unas pocas a la vez."
+pt = "{object:694855} é uma pequena flor roxa que se confunde com o cenário: procure nas hortas e campos das fazendas e nos arbustos junto às cercas. Só há algumas de cada vez."
+ru = "{object:694855} — маленький фиолетовый цветок, который сливается с местностью: ищите в огородах и на полях ферм и в кустах вдоль заборов. Одновременно их растёт всего несколько."
+ko = "{object:694855}은(는) 눈에 잘 띄지 않는 작은 보라색 꽃입니다. 농장의 텃밭과 밭, 울타리를 따라 난 덤불 속을 살펴보세요. 한 번에 몇 개만 피어 있습니다."
+zh_cn = "{object:694855}是一种不起眼的紫色小花：在农场的菜园和田地里，以及围栏边的灌木丛中寻找。同一时间只有少数几株。"
+zh_tw = "{object:694855}是一種不起眼的紫色小花：在農場的菜園和田地裡，以及圍欄邊的灌木叢中尋找。同一時間只有少數幾株。"
+
+[[icon]]
+quest = 99127
+phase = "objective"
+objective = 1
+icon = "pickup"
+editions = ["forever"]
+
+[[icon]]
+quest = 99130
+phase = "objective"
+objective = 2
+icon = "pickup"
+editions = ["forever"]

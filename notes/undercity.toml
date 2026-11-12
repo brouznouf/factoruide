@@ -15,3 +15,21 @@ ru = "Лишь часть предметов {item:12230} при проверк�
 ko = "{item:12230}을(를) {zone:1497}에서 검사해도 일부만 오염된 표본이 됩니다. 돌아가기 전에 20~30개를 모으고, 퀘스트를 완료하기 전에 남는 것도 검사하세요. 완료 후에는 검사 장비를 쓸 수 없습니다."
 zh_cn = "{item:12230}在{zone:1497}检测时只有一部分会变成腐化样本：回去前收集20到30个，并在交任务前把多余的也检测掉，因为交完后检测设备就不能用了。"
 zh_tw = "{item:12230}在{zone:1497}檢測時只有一部分會變成腐化樣本：回去前收集20到30個，並在交任務前把多餘的也檢測掉，因為交完後檢測設備就不能用了。"
+
+# Unending Torment (Forever): the head is used at the ooze pool upstairs next to Ganoosh before
+# the delivery counts.
+[[note]]
+quest = 97288
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "Go up the stairs to the green ooze pool beside {npc:11750} and use the head from your bags there, then come back down to {npc:2055}."
+fr = "Montez l'escalier jusqu'au bassin de vase verte à côté de {npc:11750} et utilisez-y la tête depuis vos sacs, puis redescendez voir {npc:2055}."
+de = "Geh die Treppe hinauf zum grünen Schlammbecken neben {npc:11750}, benutze dort den Kopf aus deinen Taschen und komm dann wieder hinunter zu {npc:2055}."
+es = "Sube la escalera hasta la poza de limo verde junto a {npc:11750} y usa allí la cabeza desde tus bolsas; luego baja de nuevo con {npc:2055}."
+pt = "Suba a escada até o poço de gosma verde ao lado de {npc:11750} e use ali a cabeça das suas bolsas; depois desça de novo até {npc:2055}."
+ru = "Поднимитесь по лестнице к бассейну с зелёной слизью рядом с персонажем {npc:11750} и используйте там голову из сумок, затем спуститесь обратно к персонажу {npc:2055}."
+ko = "계단을 올라 {npc:11750} 옆의 초록 점액 웅덩이로 가서 가방의 머리를 사용한 뒤, 다시 내려가 {npc:2055}에게 가세요."
+zh_cn = "走上楼梯到{npc:11750}旁边的绿色软泥池，在那里使用背包里的头颅，然后下楼回到{npc:2055}那里。"
+zh_tw = "走上樓梯到{npc:11750}旁邊的綠色軟泥池，在那裡使用背包裡的頭顱，然後下樓回到{npc:2055}那裡。"
