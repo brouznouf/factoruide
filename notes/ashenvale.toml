@@ -219,3 +219,19 @@ ru = "В кургане: {npc:3940} за первым мостом; {npc:3941} �
 ko = "무덤 굴에서 {npc:3940}은(는) 첫 다리 건너편에, {npc:3941}은(는) 아래쪽 나선 길 맨 밑에(곰이라 야수 추적에 잡힘), {npc:3942}은(는) 옆 터널과 다리를 지나는 발코니에 있습니다. 은신한 언데드가 빨리 재생성되니 귀환석을 준비해 두세요."
 zh_cn = "在古墓里：{npc:3940}在第一座桥对面；{npc:3941}在下层螺旋道的最底部（是一只熊，追踪野兽可见）；{npc:3942}在经过侧面隧道和一座桥才能到的阳台上。潜行的亡灵重生很快：准备好炉石。"
 zh_tw = "在古墓裡：{npc:3940}在第一座橋對面；{npc:3941}在下層螺旋道的最底部（是一隻熊，追蹤野獸可見）；{npc:3942}在經過側面隧道和一座橋才能到的陽台上。潛行的亡靈重生很快：準備好爐石。"
+
+# Velinde's Effects: the locker is on the bunkhouse's upper floor, reached only over the bridge from the upper floor of the mail armour shop beside it.
+[[note]]
+quest = 1038
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:19877} is upstairs in the Sentinels' bunkhouse, which has no door of its own on that floor: go up through the mail armour shop next to it and cross the bridge."
+fr = "{object:19877} est à l'étage du dortoir des Sentinelles, sans porte à ce niveau : montez par la boutique d'armures en mailles voisine et traversez la passerelle."
+de = "{object:19877} steht oben in der Unterkunft der Schildwachen, die auf dieser Etage keine eigene Tür hat: Geh im Kettenrüstungsladen nebenan nach oben und über die Brücke."
+es = "{object:19877} está en el piso de arriba del barracón de las centinelas, que no tiene puerta propia en esa planta: sube por la tienda de mallas de al lado y cruza el puente."
+pt = "{object:19877} fica no andar de cima do alojamento das Sentinelas, que não tem porta própria nesse andar: suba pela loja de armaduras de malha ao lado e atravesse a ponte."
+ru = "{object:19877} стоит на верхнем этаже казармы Часовых, у которого нет своей двери: поднимитесь в соседнюю лавку кольчужных доспехов и перейдите по мостику."
+ko = "{object:19877}은(는) 파수병 숙소 위층에 있는데, 그 층에는 따로 문이 없습니다. 옆 사슬 갑옷 상점으로 올라가 다리를 건너세요."
+zh_cn = "{object:19877}在哨兵宿舍楼上，那一层没有自己的门：从旁边的锁甲店上楼，走过小桥。"
+zh_tw = "{object:19877}在哨兵宿舍樓上，那一層沒有自己的門：從旁邊的鎖甲店上樓，走過小橋。"

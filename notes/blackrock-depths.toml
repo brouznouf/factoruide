@@ -31,3 +31,18 @@ ru = "Наполните {item:11412} в маленьком водоеме на 
 ko = "{item:11412}은(는) {zone:490}의 온천 옆 언덕 꼭대기에 있는 작은 웅덩이(약 31, 50)에서 채우세요. 아래쪽 큰 호수가 아닙니다."
 zh_cn = "在{zone:490}温泉旁的小山顶上的小水池（约31, 50）装满{item:11412}，不是下面的大湖。"
 zh_tw = "在{zone:490}溫泉旁的小山頂上的小水池（約31, 50）裝滿{item:11412}，不是下面的大湖。"
+
+# Dark Iron Legacy: Franclorn Forgewright can only be seen and spoken to in ghost form, in his tomb at the centre of the Molten Span; both parts of the quest come from him.
+[[note]]
+quest = 3801
+phase = "accept"
+level = "must_read"
+en = "{npc:8888} is only visible while you are dead. Die near {zone:25}, run as a ghost to his tomb in the middle of the chains over the lava, accept, and talk to him again for the next part before you resurrect."
+fr = "{npc:8888} n'est visible que lorsque vous êtes mort. Mourez près de {zone:25}, allez en fantôme jusqu'à sa tombe au milieu des chaînes au-dessus de la lave, acceptez, puis reparlez-lui pour la suite avant de ressusciter."
+de = "{npc:8888} ist nur sichtbar, solange du tot bist. Stirb in der Nähe von {zone:25}, lauf als Geist zu seinem Grab in der Mitte der Ketten über der Lava, nimm an und sprich ihn vor der Wiederbelebung erneut für den nächsten Teil an."
+es = "{npc:8888} solo es visible mientras estás muerto. Muere cerca de {zone:25}, ve como fantasma hasta su tumba en medio de las cadenas sobre la lava, acepta y vuelve a hablar con él para la siguiente parte antes de resucitar."
+pt = "{npc:8888} só aparece enquanto você está morto. Morra perto de {zone:25}, vá como fantasma até o túmulo dele no meio das correntes sobre a lava, aceite e fale com ele de novo para a próxima parte antes de ressuscitar."
+ru = "{npc:8888} виден, только пока вы мертвы. Умрите рядом с {zone:25}, призраком доберитесь до его гробницы посреди цепей над лавой, примите задание и, прежде чем воскреснуть, поговорите с ним снова ради следующей части."
+ko = "{npc:8888}은(는) 죽어 있을 때만 보입니다. {zone:25} 근처에서 죽은 뒤 유령 상태로 용암 위 사슬 한가운데 있는 그의 무덤까지 가서 퀘스트를 받고, 부활하기 전에 다시 말을 걸어 다음 단계도 받으세요."
+zh_cn = "{npc:8888}只有在你死亡时才能看到。在{zone:25}附近死亡，以灵魂状态跑到熔岩上方锁链中央的他的墓室，接受任务，并在复活前再次和他对话接下一部分。"
+zh_tw = "{npc:8888}只有在你死亡時才能看到。在{zone:25}附近死亡，以靈魂狀態跑到熔岩上方鎖鏈中央的他的墓室，接受任務，並在復活前再次和他對話接下一部分。"

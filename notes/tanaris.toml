@@ -168,3 +168,18 @@ ru = "{item:11833} вызывает в зале три волны: {npc:10040} �
 ko = "{item:11833}을(를) 쓰면 방에 적이 세 차례 몰려옵니다. {npc:10040} 2마리, 다음엔 3마리, 마지막엔 2마리와 {npc:10041}. 통로에서 싸우세요. 실패하면 미끼가 사라지니 퀘스트를 포기하고 다시 받아 새 미끼를 얻으세요."
 zh_cn = "使用{item:11833}会在房间里引来三波敌人：{npc:10040}×2，然后×3，最后×2加上{npc:10041}。在走廊里打。失败的话诱饵就没了：放弃任务再重新接，就能拿到新的。"
 zh_tw = "使用{item:11833}會在房間裡引來三波敵人：{npc:10040}×2，然後×3，最後×2加上{npc:10041}。在走廊裡打。失敗的話誘餌就沒了：放棄任務再重新接，就能拿到新的。"
+
+# Find OOX-17/TN!: party members must all hand in the find step before one starts the escort; the robot is absent while another player escorts it and comes back after 10-15 minutes.
+[[note]]
+quest = 351
+phase = "turnin"
+level = "warning"
+en = "In a group, every member hands in this step before anyone starts the escort: decline the next part until all are ready. If {npc:7784} is missing, someone is escorting it; it comes back 10 to 15 minutes later."
+fr = "En groupe, chaque membre rend cette étape avant que quiconque lance l'escorte : refusez la suite tant que tous ne sont pas prêts. Si {npc:7784} est absent, quelqu'un l'escorte ; il revient 10 à 15 minutes plus tard."
+de = "In einer Gruppe gibt jedes Mitglied diesen Schritt ab, bevor jemand die Eskorte startet: Lehne den nächsten Teil ab, bis alle bereit sind. Fehlt {npc:7784}, eskortiert ihn gerade jemand; er ist 10 bis 15 Minuten später wieder da."
+es = "En grupo, cada miembro entrega este paso antes de que nadie inicie la escolta: rechaza la siguiente parte hasta que todos estén listos. Si {npc:7784} no está, alguien lo está escoltando; vuelve entre 10 y 15 minutos después."
+pt = "Em grupo, cada membro entrega esta etapa antes que alguém inicie a escolta: recuse a próxima parte até todos estarem prontos. Se {npc:7784} não estiver lá, alguém o está escoltando; ele volta de 10 a 15 minutos depois."
+ru = "В группе каждый сдаёт этот этап, прежде чем кто-то начнёт сопровождение: отказывайтесь от следующей части, пока все не будут готовы. Если {npc:7784} нет на месте, его кто-то сопровождает; он вернётся через 10–15 минут."
+ko = "파티라면 누군가 호위를 시작하기 전에 모든 구성원이 이 단계를 완료해야 합니다. 모두 준비될 때까지 다음 퀘스트는 거절하세요. {npc:7784}이(가) 없다면 다른 사람이 호위 중이며, 10~15분 뒤에 다시 나타납니다."
+zh_cn = "组队时，每位成员都要先交这一步，再由人开始护送：在所有人准备好之前先拒绝下一部分。如果{npc:7784}不在，说明有人正在护送它；10到15分钟后会回来。"
+zh_tw = "組隊時，每位成員都要先交這一步，再由人開始護送：在所有人準備好之前先拒絕下一部分。如果{npc:7784}不在，表示有人正在護送它；10到15分鐘後會回來。"

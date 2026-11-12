@@ -1,0 +1,17 @@
+# Quest notes of Darnassus. See notes/README.md for the format.
+
+# Morrowgrain Research: each pouch use costs two soil and a seed, has a 10-minute cooldown, and the casing gives morrowgrain only part of the time.
+[[note]]
+quest = 3785
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Each use of the {item:11020} takes two {item:11018} and has a 10-minute cooldown, and the {item:11024} it makes holds {item:11040} only some of the time. Bring 30 or more soil and start using the pouch as soon as you take the quest."
+fr = "Chaque utilisation de la {item:11020} consomme deux {item:11018} et a un temps de recharge de 10 minutes, et les {item:11024} obtenues ne contiennent de la {item:11040} qu'une partie du temps. Prévoyez au moins 30 humus et utilisez la bourse dès la quête prise."
+de = "Jede Nutzung des {item:11020} kostet zwei {item:11018} und hat 10 Minuten Abklingzeit, und die erzeugte {item:11024} enthält nur manchmal {item:11040}. Nimm 30 oder mehr Erde mit und benutze den Beutel, sobald du die Quest hast."
+es = "Cada uso de la {item:11020} gasta dos {item:11018} y tiene 10 minutos de reutilización, y la {item:11024} que crea solo a veces contiene {item:11040}. Lleva 30 o más muestras de tierra y empieza a usar la bolsa en cuanto tengas la misión."
+pt = "Cada uso da {item:11020} gasta dois {item:11018} e tem 10 minutos de recarga, e o {item:11024} que ela cria só às vezes contém {item:11040}. Leve 30 ou mais amostras de solo e comece a usar a bolsa assim que pegar a missão."
+ru = "Каждое использование {item:11020} тратит два {item:11018} и имеет восстановление 10 минут, а полученный {item:11024} содержит {item:11040} лишь иногда. Возьмите 30 или больше образцов почвы и начинайте пользоваться мешочком сразу после получения задания."
+ko = "{item:11020}은(는) 쓸 때마다 {item:11018} 2개가 들고 재사용 대기시간이 10분이며, 만들어진 {item:11024}에 {item:11040}이(가) 들어 있는 건 가끔뿐입니다. 흙을 30개 이상 챙기고 퀘스트를 받자마자 주머니를 쓰기 시작하세요."
+zh_cn = "每次使用{item:11020}要消耗两个{item:11018}，冷却时间10分钟，做出的{item:11024}只是有时含有{item:11040}。带上30个以上的土壤，接到任务就开始使用袋子。"
+zh_tw = "每次使用{item:11020}要消耗兩個{item:11018}，冷卻時間10分鐘，做出的{item:11024}只是有時含有{item:11040}。帶上30個以上的土壤，接到任務就開始使用袋子。"

@@ -189,3 +189,19 @@ ru = "{npc:4700} появляются небольшими группами вд
 ko = "{npc:4700}은(는) 코도 무덤에서 떨어진 곳에 작은 무리로 나타나 무덤으로 걸어갑니다. 아치를 지나면 죽어가는 코도로 바뀌니 그 전에 잡으세요. 몇 마리는 무덤 안을 돌아다니기도 합니다."
 zh_cn = "{npc:4700}会在远离科多兽坟场的地方成小群出现，然后走向坟场：在它们穿过拱门前截住它们，过了拱门就会变成垂死的科多兽。也有几只在坟场里游荡。"
 zh_tw = "{npc:4700}會在遠離科多獸墳場的地方成小群出現，然後走向墳場：在牠們穿過拱門前截住牠們，過了拱門就會變成垂死的科多獸。也有幾隻在墳場裡遊蕩。"
+
+# Return to Vahlarriel: Dalinda walks out without waiting, the camp respawns quickly, and after a failure she gives the quest again once she respawns.
+[[note]]
+quest = 1440
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Clear the room and the way out before you start: {npc:5644} walks on without waiting and the mobs outside respawn fast. If she dies, abandon the quest and take it again from her once she is back."
+fr = "Nettoyez la salle et le chemin de sortie avant de commencer : {npc:5644} avance sans attendre et les monstres dehors réapparaissent vite. Si elle meurt, abandonnez la quête et reprenez-la auprès d'elle à son retour."
+de = "Räum den Raum und den Weg nach draußen, bevor du startest: {npc:5644} läuft los, ohne zu warten, und draußen respawnen die Gegner schnell. Stirbt sie, brich die Quest ab und hol sie dir erneut bei ihr, sobald sie wieder da ist."
+es = "Limpia la sala y el camino de salida antes de empezar: {npc:5644} avanza sin esperar y los enemigos de fuera reaparecen rápido. Si muere, abandona la misión y vuelve a cogerla de ella cuando reaparezca."
+pt = "Limpe a sala e o caminho de saída antes de começar: {npc:5644} segue sem esperar e os inimigos lá fora reaparecem rápido. Se ela morrer, abandone a missão e pegue-a de novo com ela quando voltar."
+ru = "Перед началом зачистите комнату и путь наружу: {npc:5644} идёт, не дожидаясь вас, а снаружи враги быстро возрождаются. Если она погибнет, откажитесь от задания и снова возьмите его у неё, когда она появится."
+ko = "시작하기 전에 방과 나가는 길을 정리하세요. {npc:5644}은(는) 기다리지 않고 걸어가고, 바깥의 적은 빨리 다시 나타납니다. 그녀가 죽으면 퀘스트를 포기하고, 다시 나타난 그녀에게서 새로 받으세요."
+zh_cn = "开始前先清理房间和出去的路：{npc:5644}不会等你，外面的怪物重生很快。如果她死了，放弃任务，等她重新出现后再从她那里接。"
+zh_tw = "開始前先清理房間和出去的路：{npc:5644}不會等你，外面的怪物重生很快。如果她死了，放棄任務，等她重新出現後再從她那裡接。"

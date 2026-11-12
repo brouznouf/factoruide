@@ -1,0 +1,32 @@
+# Quest notes of Ironforge. See notes/README.md for the format.
+
+# Signal for Pickup: the pilot does not appear at once after the flare; he lands after a wait that can reach a few minutes.
+[[note]]
+quest = 3451
+phase = "turnin"
+level = "info"
+en = "After you fire the {item:10444} on the pad, {npc:8392} can take a few minutes to fly in and land: stay on the pad and wait for him."
+fr = "Après avoir tiré avec le {item:10444} sur la plateforme, {npc:8392} peut mettre quelques minutes à arriver et se poser : restez sur la plateforme et attendez-le."
+de = "Nachdem du die {item:10444} auf der Plattform abgefeuert hast, kann {npc:8392} einige Minuten brauchen, bis er heranfliegt und landet: Bleib auf der Plattform und warte auf ihn."
+es = "Después de disparar la {item:10444} en la plataforma, {npc:8392} puede tardar unos minutos en llegar y aterrizar: quédate en la plataforma y espéralo."
+pt = "Depois de disparar a {item:10444} na plataforma, {npc:8392} pode levar alguns minutos para chegar e pousar: fique na plataforma e espere por ele."
+ru = "После выстрела из {item:10444} на площадке {npc:8392} может прилететь и приземлиться только через несколько минут: оставайтесь на площадке и ждите его."
+ko = "착륙장에서 {item:10444}을(를) 쏜 뒤 {npc:8392}이(가) 날아와 착륙하기까지 몇 분이 걸릴 수 있습니다. 착륙장에 머물며 기다리세요."
+zh_cn = "在停机坪上发射{item:10444}后，{npc:8392}可能要过几分钟才会飞来降落：待在停机坪上等他。"
+zh_tw = "在停機坪上發射{item:10444}後，{npc:8392}可能要過幾分鐘才會飛來降落：待在停機坪上等他。"
+
+# The Smoldering Ruins of Thaurissan (first part): it completes by hearing the historian's whole story after accepting; the relics of the next part cannot be taken before.
+[[note]]
+quest = 3702
+phase = "objective"
+objective = 1
+level = "info"
+en = "After accepting, talk to {npc:8879} again and click through her whole story: that completes the quest, and the relics of the next part cannot be collected before."
+fr = "Après avoir accepté, reparlez à {npc:8879} et faites défiler tout son récit : cela termine la quête, et les reliques de la suite ne peuvent pas être récupérées avant."
+de = "Sprich nach dem Annehmen erneut mit {npc:8879} und klick dich durch ihre ganze Geschichte: Das schließt die Quest ab, und vorher lassen sich die Relikte des nächsten Teils nicht einsammeln."
+es = "Tras aceptarla, vuelve a hablar con {npc:8879} y pasa por todo su relato: eso completa la misión, y antes no se pueden recoger las reliquias de la siguiente parte."
+pt = "Depois de aceitar, fale de novo com {npc:8879} e passe por toda a história dela: isso conclui a missão, e antes disso as relíquias da próxima parte não podem ser coletadas."
+ru = "Приняв задание, снова поговорите с {npc:8879} и прослушайте весь её рассказ: это выполняет задание, а до этого реликвии следующей части собрать нельзя."
+ko = "퀘스트를 받은 뒤 {npc:8879}에게 다시 말을 걸어 이야기를 끝까지 넘기세요. 그래야 퀘스트가 완료되고, 그 전에는 다음 단계의 유물을 모을 수 없습니다."
+zh_cn = "接受任务后，再和{npc:8879}对话，把她的故事全部点完：这样任务才会完成，在此之前无法收集下一部分的遗物。"
+zh_tw = "接受任務後，再和{npc:8879}對話，把她的故事全部點完：這樣任務才會完成，在此之前無法收集下一部分的遺物。"

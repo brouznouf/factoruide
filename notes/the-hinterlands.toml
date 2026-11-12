@@ -131,3 +131,19 @@ ru = "Рухи делят точки появления с гиенами у б�
 ko = "가젯잔 남쪽 큰 뼈 무더기 주변에서 로크는 하이에나와 생성 지점을 공유합니다. 무더기에 하이에나만 가득하면 이곳저곳 돌아다니지 말고 그 자리에서 하이에나를 계속 잡아 로크가 다시 나오게 하세요."
 zh_cn = "加基森以南大骨堆周围的大鹏和土狼共用刷新点：如果某个骨堆全是土狼，就留在那里继续杀，让大鹏刷回来，不要在骨堆之间来回跑。"
 zh_tw = "加基森以南大骨堆周圍的大鵬和土狼共用重生點：如果某個骨堆全是土狼，就留在那裡繼續殺，讓大鵬重生回來，不要在骨堆之間來回跑。"
+
+# Rescue OOX-09/HL!: two scripted ambushes (owlbeasts on the road, trolls near the end), stealthed stalkers by the road; the escort fails when the player falls too far behind.
+[[note]]
+quest = 836
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Two ambushes on the way: three owlbeasts on the road, three trolls near the end. Stealthed {npc:2926} lurk by the road. Keep up with the robot: the escort fails if you fall far behind. In a group, every member must start it."
+fr = "Deux embuscades en chemin : trois chouettards sur la route, trois trolls vers la fin. Des {npc:2926} camouflés rôdent au bord de la route. Restez près du robot : l'escorte échoue si vous êtes trop loin. En groupe, chaque membre doit la lancer."
+de = "Zwei Hinterhalte unterwegs: drei Eulenbestien auf der Straße, drei Trolle gegen Ende. Getarnte {npc:2926} lauern am Wegrand. Bleib am Roboter dran: Die Eskorte scheitert, wenn du zu weit zurückfällst. In einer Gruppe muss jedes Mitglied sie starten."
+es = "Dos emboscadas por el camino: tres lechúcicos en la carretera y tres trols cerca del final. Hay {npc:2926} en sigilo junto al camino. No te separes del robot: la escolta falla si te quedas muy atrás. En grupo, cada miembro debe iniciarla."
+pt = "Duas emboscadas no caminho: três corujursos na estrada e três trolls perto do fim. Há {npc:2926} furtivos à beira da estrada. Acompanhe o robô: a escolta falha se você ficar muito para trás. Em grupo, cada membro precisa iniciá-la."
+ru = "Две засады по пути: три совуха на дороге и три тролля ближе к концу. У дороги прячутся незаметные {npc:2926}. Не отставайте от робота: если отстать слишком далеко, сопровождение провалится. В группе каждый участник должен сам его начать."
+ko = "도중에 매복이 두 번 있습니다. 길 위에 올빼미야수 셋, 끝 무렵 트롤 셋. 길가에는 은신한 {npc:2926}이(가) 숨어 있습니다. 로봇에게서 너무 멀어지면 호위가 실패하니 바짝 따라가세요. 파티라면 모든 구성원이 각자 시작해야 합니다."
+zh_cn = "途中有两次伏击：路上三只枭兽，快到终点时三个巨魔。路边还潜伏着潜行的{npc:2926}。紧跟机器人：落后太远护送就会失败。组队时每位成员都必须开始护送。"
+zh_tw = "途中有兩次伏擊：路上三隻梟獸，快到終點時三個食人妖。路邊還潛伏著潛行的{npc:2926}。緊跟機器人：落後太遠護送就會失敗。組隊時每位成員都必須開始護送。"

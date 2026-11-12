@@ -15,3 +15,19 @@ ru = "До {npc:5710} не добраться, пока живы шесть ду
 ko = "본당을 둘러싼 발코니의 트롤 영혼 여섯을 처치하기 전에는 {npc:5710}에게 갈 수 없습니다. 계단으로 위쪽 회랑에 올라가 먼저 처치하세요. 그의 방도 정리하세요. 방의 트롤들이 전투에 합류합니다."
 zh_cn = "必须先击杀大厅周围阳台上的六个巨魔灵魂，才能接近{npc:5710}：沿楼梯上到上层环廊先把它们杀掉。也要清理他的房间，那里的巨魔会加入战斗。"
 zh_tw = "必須先擊殺大廳周圍陽台上的六個食人妖靈魂，才能接近{npc:5710}：沿樓梯上到上層環廊先把牠們殺掉。也要清理他的房間，那裡的食人妖會加入戰鬥。"
+
+# Into The Temple of Atal'Hakkar: three tablets lie in the flooded hall before the first mobs and respawn in about 7 minutes, so the quest can be done without going deeper.
+[[note]]
+quest = 1475
+phase = "objective"
+objective = 1
+level = "info"
+en = "Past the underwater passage into the temple, the first hall holds three {object:37099} (one underwater) with no mobs nearby, and they respawn in about 7 minutes: you can wait there instead of fighting deeper in."
+fr = "Après le passage sous l'eau qui mène au temple, la première salle contient trois {object:37099} (dont une sous l'eau), sans monstres autour, qui réapparaissent en 7 minutes environ : vous pouvez attendre là plutôt que de vous battre plus loin."
+de = "Hinter dem Unterwassergang in den Tempel liegen in der ersten Halle drei {object:37099} (eine unter Wasser) ohne Gegner in der Nähe, und sie respawnen nach etwa 7 Minuten: Du kannst dort warten, statt tiefer drinnen zu kämpfen."
+es = "Tras el paso submarino que lleva al templo, la primera sala tiene tres {object:37099} (una bajo el agua) sin enemigos cerca, y reaparecen en unos 7 minutos: puedes esperar allí en vez de luchar más adentro."
+pt = "Depois da passagem submersa que leva ao templo, o primeiro salão tem três {object:37099} (uma debaixo d'água) sem inimigos por perto, e elas reaparecem em cerca de 7 minutos: dá para esperar ali em vez de lutar mais para dentro."
+ru = "За подводным проходом в храм, в первом зале, лежат три {object:37099} (одна под водой), врагов рядом нет, и они появляются снова примерно через 7 минут: можно ждать там, а не пробиваться глубже."
+ko = "물속 통로를 지나 사원에 들어서면 첫 번째 홀에 {object:37099} 셋(하나는 물속)이 있고 주변에 적이 없으며, 약 7분마다 다시 생깁니다. 더 깊이 싸우러 들어가지 말고 그곳에서 기다려도 됩니다."
+zh_cn = "穿过通往神庙的水下通道后，第一个大厅里有三块{object:37099}（一块在水下），附近没有怪物，大约7分钟刷新一次：可以在那里等，不必往深处打。"
+zh_tw = "穿過通往神廟的水下通道後，第一個大廳裡有三塊{object:37099}（一塊在水下），附近沒有怪物，大約7分鐘重生一次：可以在那裡等，不必往深處打。"

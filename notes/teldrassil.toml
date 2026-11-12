@@ -1,0 +1,43 @@
+# Quest notes of Teldrassil. See notes/README.md for the format.
+
+# The Moss-twined Heart: the starting item drops from a rare timberling with a respawn of about two hours, often found dead.
+[[note]]
+quest = 927
+phase = "accept"
+level = "warning"
+en = "{npc:3535} is a rare timberling that takes about two hours to respawn and is often already dead. Check the riverbank below the waterfall while doing other quests rather than waiting for him."
+fr = "{npc:3535} est un monstre rare qui met environ deux heures à réapparaître et qui est souvent déjà mort. Passez voir la berge sous la cascade pendant vos autres quêtes plutôt que de l'attendre."
+de = "{npc:3535} ist ein seltener Gegner mit etwa zwei Stunden Respawn und oft schon tot. Schau beim Erledigen anderer Quests am Flussufer unter dem Wasserfall vorbei, statt auf ihn zu warten."
+es = "{npc:3535} es un enemigo raro que tarda unas dos horas en reaparecer y a menudo ya está muerto. Pasa por la orilla bajo la cascada mientras haces otras misiones en vez de esperarlo."
+pt = "{npc:3535} é um inimigo raro que leva cerca de duas horas para reaparecer e muitas vezes já está morto. Passe pela margem abaixo da cachoeira enquanto faz outras missões em vez de esperá-lo."
+ru = "{npc:3535} — редкий противник, который возрождается около двух часов и часто уже убит. Заглядывайте на берег под водопадом, выполняя другие задания, а не ждите его."
+ko = "{npc:3535}은(는) 다시 나타나는 데 약 2시간이 걸리는 희귀 몬스터로, 이미 죽어 있는 경우가 많습니다. 기다리지 말고 다른 퀘스트를 하면서 폭포 아래 강가를 확인하세요."
+zh_cn = "{npc:3535}是稀有怪物，重生大约要两个小时，而且常常已经被杀。不要守着等，做其他任务时顺路去瀑布下方的河岸看看。"
+zh_tw = "{npc:3535}是稀有怪物，重生大約要兩個小時，而且常常已經被殺。不要守著等，做其他任務時順路去瀑布下方的河岸看看。"
+
+[[icon]]
+quest = 927
+phase = "accept"
+icon = "rare"
+
+# Favored of Elune?: the feathers are ground objects near the owlbeasts, not drops; low ground clutter makes them visible.
+[[note]]
+quest = 3661
+phase = "objective"
+objective = 1
+level = "info"
+en = "The owlbeasts do not drop the feathers: pick up {object:153239} lying on the ground wherever they roam. Turning Ground Clutter down in the graphics options makes them much easier to spot."
+fr = "Les chouettards ne lâchent pas les plumes : ramassez les {object:153239} posées au sol là où ils rôdent. Baisser la « Végétation au sol » dans les options graphiques les rend bien plus visibles."
+de = "Die Eulenbestien lassen die Federn nicht fallen: Sammle {object:153239} vom Boden auf, wo sie umherstreifen. Wenn du die Bodenvegetation in den Grafikoptionen herunterdrehst, siehst du sie viel leichter."
+es = "Los lechúcicos no sueltan las plumas: recoge las {object:153239} del suelo allí donde merodean. Bajar el detalle del suelo en las opciones gráficas hace que se vean mucho mejor."
+pt = "Os corujursos não derrubam as penas: pegue as {object:153239} caídas no chão onde eles andam. Diminuir a vegetação rasteira nas opções gráficas facilita muito encontrá-las."
+ru = "Совухи не роняют перья: подбирайте {object:153239} с земли там, где они бродят. Если уменьшить детализацию травы в настройках графики, их гораздо легче заметить."
+ko = "올빼미야수는 깃털을 떨어뜨리지 않습니다. 녀석들이 돌아다니는 곳 바닥에 놓인 {object:153239}을(를) 주우세요. 그래픽 설정에서 지면 잡동사니를 낮추면 훨씬 잘 보입니다."
+zh_cn = "枭兽不会掉落羽毛：在它们出没的地方捡起地上的{object:153239}。在图像设置中调低地面杂物，会更容易看到。"
+zh_tw = "梟獸不會掉落羽毛：在牠們出沒的地方撿起地上的{object:153239}。在圖形設定中調低地面雜物，會更容易看到。"
+
+[[icon]]
+quest = 3661
+phase = "objective"
+objective = 1
+icon = "pickup"

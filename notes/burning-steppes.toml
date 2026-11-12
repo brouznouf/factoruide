@@ -37,3 +37,18 @@ quest = 3822
 phase = "objective"
 objective = 1
 icon = "rare"
+
+# Extinguish the Firegut: the three Firegut kinds share spawn points, so a scarce kind comes back in place of the others.
+[[note]]
+quest = 3823
+phase = "objective"
+level = "info"
+en = "{npc:7033}, {npc:7034} and {npc:7035} share spawn points: if one kind runs short, keep killing the others nearby and their spots come back as any of the three."
+fr = "{npc:7033}, {npc:7034} et {npc:7035} partagent leurs points d'apparition : si une sorte manque, continuez à tuer les autres sur place, leurs emplacements reviennent sous l'une des trois formes."
+de = "{npc:7033}, {npc:7034} und {npc:7035} teilen sich Spawnpunkte: Fehlt eine Sorte, töte weiter die anderen in der Nähe, ihre Plätze kommen als eine der drei zurück."
+es = "{npc:7033}, {npc:7034} y {npc:7035} comparten puntos de aparición: si falta un tipo, sigue matando a los otros cerca y sus puntos vuelven como cualquiera de los tres."
+pt = "{npc:7033}, {npc:7034} e {npc:7035} dividem pontos de surgimento: se faltar um tipo, continue matando os outros por perto e os pontos voltam como qualquer um dos três."
+ru = "{npc:7033}, {npc:7034} и {npc:7035} делят точки появления: если какого-то вида не хватает, продолжайте убивать остальных рядом, и на их месте может появиться любой из трёх."
+ko = "{npc:7033}, {npc:7034}, {npc:7035}은(는) 생성 지점을 공유합니다. 한 종류가 모자라면 근처의 다른 녀석들을 계속 잡으세요. 그 자리에 셋 중 아무나 다시 나타납니다."
+zh_cn = "{npc:7033}、{npc:7034}和{npc:7035}共用刷新点：如果某一种不够，就继续杀附近的其他两种，它们的位置会刷出三种中的任意一种。"
+zh_tw = "{npc:7033}、{npc:7034}和{npc:7035}共用重生點：如果某一種不夠，就繼續殺附近的其他兩種，牠們的位置會重生出三種中的任意一種。"

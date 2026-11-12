@@ -146,3 +146,18 @@ ru = "Применение {item:12785} у {object:175944} на пике Тем�
 ko = "먹구름 봉우리의 {object:175944}에 {item:12785}을(를) 사용하면 정예인 {npc:10882}이(가) 소환됩니다. 불을 붙이기 전에 고원을 정리하고 생명력을 가득 채우세요."
 zh_cn = "在黑云峰的{object:175944}使用{item:12785}会召唤精英{npc:10882}：点燃之前先清理平台，并把生命值回满。"
 zh_tw = "在黑雲峰的{object:175944}使用{item:12785}會召喚精英{npc:10882}：點燃之前先清理平台，並把生命值回滿。"
+
+# Keeping Pace: Rizzle leaves his hut only briefly after Zamek's explosion; the plans must be opened at once, and they hand out an ore sample that needs a free bag slot.
+[[note]]
+quest = 1190
+phase = "objective"
+level = "warning"
+en = "Wait inside {npc:4720}'s hut by the plans: he runs out when {npc:4709}'s bomb goes off and soon comes back. Open the plans at once, with a free bag slot; if he returns first, ask for another explosion."
+fr = "Attendez dans la cabane de {npc:4720}, près des plans : il sort en courant quand la bombe de {npc:4709} explose et revient vite. Ouvrez les plans aussitôt, avec un emplacement de sac libre ; s'il revient avant, demandez une nouvelle explosion."
+de = "Warte in der Hütte von {npc:4720} bei den Plänen: Er rennt hinaus, wenn die Bombe von {npc:4709} hochgeht, und kommt bald zurück. Öffne die Pläne sofort, mit einem freien Taschenplatz; ist er vorher zurück, bitte um eine weitere Explosion."
+es = "Espera dentro de la cabaña de {npc:4720}, junto a los planos: sale corriendo cuando estalla la bomba de {npc:4709} y vuelve pronto. Abre los planos enseguida, con un hueco libre en las bolsas; si vuelve antes, pide otra explosión."
+pt = "Espere dentro da cabana de {npc:4720}, perto dos planos: ele sai correndo quando a bomba de {npc:4709} explode e logo volta. Abra os planos na hora, com um espaço livre na bolsa; se ele voltar antes, peça outra explosão."
+ru = "Ждите в хижине {npc:4720} рядом с чертежами: когда взорвётся бомба {npc:4709}, он выбежит и скоро вернётся. Сразу откройте чертежи, имея свободное место в сумках; если он вернётся раньше, попросите о новом взрыве."
+ko = "{npc:4720}의 오두막 안 설계도 옆에서 기다리세요. {npc:4709}의 폭탄이 터지면 밖으로 뛰어나갔다가 곧 돌아옵니다. 가방에 빈칸을 두고 즉시 설계도를 여세요. 그가 먼저 돌아오면 폭발을 다시 부탁하세요."
+zh_cn = "在{npc:4720}小屋里的图纸旁边等着：{npc:4709}的炸弹一响他就会跑出去，很快又回来。立刻打开图纸，背包要留一个空位；如果他先回来了，就再请人引爆一次。"
+zh_tw = "在{npc:4720}小屋裡的圖紙旁邊等著：{npc:4709}的炸彈一響他就會跑出去，很快又回來。立刻打開圖紙，背包要留一個空位；如果他先回來了，就再請人引爆一次。"
