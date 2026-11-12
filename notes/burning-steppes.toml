@@ -52,3 +52,19 @@ ru = "{npc:7033}, {npc:7034} и {npc:7035} делят точки появлен�
 ko = "{npc:7033}, {npc:7034}, {npc:7035}은(는) 생성 지점을 공유합니다. 한 종류가 모자라면 근처의 다른 녀석들을 계속 잡으세요. 그 자리에 셋 중 아무나 다시 나타납니다."
 zh_cn = "{npc:7033}、{npc:7034}和{npc:7035}共用刷新点：如果某一种不够，就继续杀附近的其他两种，它们的位置会刷出三种中的任意一种。"
 zh_tw = "{npc:7033}、{npc:7034}和{npc:7035}共用重生點：如果某一種不夠，就繼續殺附近的其他兩種，牠們的位置會重生出三種中的任意一種。"
+
+# Gor'tesh the Brute Lord: he is not elite but hits and stuns hard, with a linked caster guard and a patrol passing by his hut.
+[[note]]
+quest = 3824
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:9176} is not elite but hits very hard and stuns; a caster guard is linked to him and a patrol walks by his hut. Kill the patrol first, then pull him away from the hut."
+fr = "{npc:9176} n'est pas élite mais frappe très fort et étourdit ; un garde lanceur de sorts lui est lié et une patrouille passe près de sa hutte. Tuez d'abord la patrouille, puis attirez-le loin de la hutte."
+de = "{npc:9176} ist kein Elite, schlägt aber sehr hart zu und betäubt; ein zaubernder Wächter ist an ihn gekoppelt, und eine Patrouille kommt an seiner Hütte vorbei. Töte zuerst die Patrouille und zieh ihn dann von der Hütte weg."
+es = "{npc:9176} no es élite pero pega muy fuerte y aturde; un guardia lanzador de hechizos está vinculado a él y una patrulla pasa junto a su choza. Mata primero a la patrulla y luego atráelo lejos de la choza."
+pt = "{npc:9176} não é elite, mas bate muito forte e atordoa; um guarda conjurador está ligado a ele e uma patrulha passa pela cabana. Mate a patrulha primeiro e depois puxe-o para longe da cabana."
+ru = "{npc:9176} не элитный, но бьет очень сильно и оглушает; с ним связан страж-заклинатель, а мимо его хижины ходит патруль. Сначала убейте патруль, затем выманите его подальше от хижины."
+ko = "{npc:9176}은(는) 정예가 아니지만 매우 세게 때리고 기절시킵니다. 주문을 쓰는 경비병이 함께 끌려오고, 오두막 옆으로 순찰병이 지나갑니다. 순찰병을 먼저 처치한 뒤 오두막에서 멀리 끌어내세요."
+zh_cn = "{npc:9176}不是精英，但打人很疼还会击晕；一个施法护卫与他关联，还有一支巡逻队会经过他的小屋。先杀掉巡逻队，再把他拉离小屋。"
+zh_tw = "{npc:9176}不是精英，但打人很痛還會擊暈；一個施法護衛與他連動，還有一支巡邏隊會經過他的小屋。先殺掉巡邏隊，再把他拉離小屋。"

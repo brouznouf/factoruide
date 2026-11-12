@@ -239,3 +239,60 @@ ru = "{npc:11078} появляется, только когда вы с зада
 ko = "{npc:11078}은(는) 퀘스트를 가지고 가마솥에 다가가거나 주변 언데드를 처치해야 나타납니다. 공격받으면 사용이 끊기니 열쇠를 쓰기 전에 가마솥 근처의 몹을 모두 처리하고, 가마솥 앞쪽에서 사용하세요."
 zh_cn = "只有当你带着任务靠近大锅或击杀周围的亡灵时，{npc:11078}才会出现。使用钥匙前清掉大锅附近的所有怪物，受到攻击会打断操作，并从大锅正面使用。"
 zh_tw = "只有當你帶著任務靠近大鍋或擊殺周圍的亡靈時，{npc:11078}才會出現。使用鑰匙前清掉大鍋附近的所有怪物，受到攻擊會打斷操作，並從大鍋正面使用。"
+
+# All Along the Watchtowers (Alliance): the torch has a cooldown and cannot be used in combat; beside the door the elite inside has no line of sight.
+[[note]]
+quest = 5097
+phase = "objective"
+level = "warning"
+en = "{item:12815} cannot be used in combat and has a 2-minute cooldown: stand against the wall right beside each tower's door, out of sight of the elite inside, and use it from there."
+fr = "{item:12815} ne s'utilise pas en combat et a un temps de recharge de 2 minutes : collez-vous au mur juste à côté de la porte de chaque tour, hors de vue de l'élite à l'intérieur, et utilisez-la de là."
+de = "{item:12815} ist im Kampf nicht benutzbar und hat 2 Minuten Abklingzeit: Stell dich direkt neben die Tür jedes Turms an die Wand, außer Sicht des Elite-Gegners drinnen, und benutze sie von dort."
+es = "{item:12815} no se puede usar en combate y tiene 2 minutos de reutilización: pégate a la pared justo al lado de la puerta de cada torre, fuera de la vista del élite de dentro, y úsala desde ahí."
+pt = "{item:12815} não pode ser usada em combate e tem 2 minutos de recarga: encoste na parede logo ao lado da porta de cada torre, fora da vista do elite lá dentro, e use-a dali."
+ru = "{item:12815} нельзя использовать в бою, а перезарядка — 2 минуты: встаньте у стены сразу рядом с дверью каждой башни, вне поля зрения элитного противника внутри, и используйте его оттуда."
+ko = "{item:12815}은(는) 전투 중 사용할 수 없고 재사용 대기시간이 2분입니다. 각 탑 문 바로 옆 벽에 붙어 안쪽 정예 몹의 시야 밖에서 사용하세요."
+zh_cn = "{item:12815}无法在战斗中使用，冷却时间2分钟：贴着每座塔门旁边的墙站，避开塔内精英怪的视线，在那里使用。"
+zh_tw = "{item:12815}無法在戰鬥中使用，冷卻時間2分鐘：貼著每座塔門旁邊的牆站，避開塔內精英怪的視線，在那裡使用。"
+
+# Target: Dalson's Tears (Alliance): the cauldron lord comes up only once the area is disturbed; the key is used from the front, and any hit interrupts it.
+[[note]]
+quest = 5219
+level = "info"
+en = "{npc:11077} appears only once you near the cauldron with the quest or kill undead around it. Clear every mob close to the cauldron before using the key, since a hit interrupts it, and use it from the cauldron's front side."
+fr = "{npc:11077} n'apparaît que lorsque vous approchez du chaudron avec la quête ou tuez des morts-vivants autour. Éliminez tous les monstres proches du chaudron avant d'utiliser la clé, un coup l'interrompt, et utilisez-la depuis l'avant du chaudron."
+de = "{npc:11077} erscheint erst, wenn du dich mit der Quest dem Kessel näherst oder Untote um ihn herum tötest. Räum alle Gegner nahe am Kessel weg, bevor du den Schlüssel benutzt, ein Treffer unterbricht es, und benutze ihn von der Vorderseite des Kessels."
+es = "{npc:11077} solo aparece cuando te acercas al caldero con la misión o matas no-muertos a su alrededor. Elimina a todos los enemigos cerca del caldero antes de usar la llave, un golpe lo interrumpe, y úsala desde la parte delantera del caldero."
+pt = "{npc:11077} só aparece quando você se aproxima do caldeirão com a missão ou mata mortos-vivos ao redor. Elimine todos os inimigos perto do caldeirão antes de usar a chave, um golpe interrompe o uso, e use-a pela frente do caldeirão."
+ru = "{npc:11077} появляется, только когда вы с заданием подходите к котлу или убиваете нежить вокруг него. Перед тем как использовать ключ, перебейте всех врагов у котла, удар прерывает действие, и используйте его с передней стороны котла."
+ko = "{npc:11077}은(는) 퀘스트를 가지고 가마솥에 다가가거나 주변 언데드를 처치해야 나타납니다. 공격받으면 사용이 끊기니 열쇠를 쓰기 전에 가마솥 근처의 몹을 모두 처리하고, 가마솥 앞쪽에서 사용하세요."
+zh_cn = "只有当你带着任务靠近大锅或击杀周围的亡灵时，{npc:11077}才会出现。使用钥匙前清掉大锅附近的所有怪物，受到攻击会打断操作，并从大锅正面使用。"
+zh_tw = "只有當你帶著任務靠近大鍋或擊殺周圍的亡靈時，{npc:11077}才會出現。使用鑰匙前清掉大鍋附近的所有怪物，受到攻擊會打斷操作，並從大鍋正面使用。"
+
+# Target: Writhing Haunt (Alliance): the cauldron lord comes up only once the area is disturbed; the key is used from the front, and any hit interrupts it.
+[[note]]
+quest = 5222
+level = "info"
+en = "{npc:11076} appears only once you near the cauldron with the quest or kill undead around it. Clear every mob close to the cauldron before using the key, since a hit interrupts it, and use it from the cauldron's front side."
+fr = "{npc:11076} n'apparaît que lorsque vous approchez du chaudron avec la quête ou tuez des morts-vivants autour. Éliminez tous les monstres proches du chaudron avant d'utiliser la clé, un coup l'interrompt, et utilisez-la depuis l'avant du chaudron."
+de = "{npc:11076} erscheint erst, wenn du dich mit der Quest dem Kessel näherst oder Untote um ihn herum tötest. Räum alle Gegner nahe am Kessel weg, bevor du den Schlüssel benutzt, ein Treffer unterbricht es, und benutze ihn von der Vorderseite des Kessels."
+es = "{npc:11076} solo aparece cuando te acercas al caldero con la misión o matas no-muertos a su alrededor. Elimina a todos los enemigos cerca del caldero antes de usar la llave, un golpe lo interrumpe, y úsala desde la parte delantera del caldero."
+pt = "{npc:11076} só aparece quando você se aproxima do caldeirão com a missão ou mata mortos-vivos ao redor. Elimine todos os inimigos perto do caldeirão antes de usar a chave, um golpe interrompe o uso, e use-a pela frente do caldeirão."
+ru = "{npc:11076} появляется, только когда вы с заданием подходите к котлу или убиваете нежить вокруг него. Перед тем как использовать ключ, перебейте всех врагов у котла, удар прерывает действие, и используйте его с передней стороны котла."
+ko = "{npc:11076}은(는) 퀘스트를 가지고 가마솥에 다가가거나 주변 언데드를 처치해야 나타납니다. 공격받으면 사용이 끊기니 열쇠를 쓰기 전에 가마솥 근처의 몹을 모두 처리하고, 가마솥 앞쪽에서 사용하세요."
+zh_cn = "只有当你带着任务靠近大锅或击杀周围的亡灵时，{npc:11076}才会出现。使用钥匙前清掉大锅附近的所有怪物，受到攻击会打断操作，并从大锅正面使用。"
+zh_tw = "只有當你帶著任務靠近大鍋或擊殺周圍的亡靈時，{npc:11076}才會出現。使用鑰匙前清掉大鍋附近的所有怪物，受到攻擊會打斷操作，並從大鍋正面使用。"
+
+# A Plague Upon Thee (release): once the barrel is on the crate, clicking the barrel releases the termites with no visible effect and completes the quest.
+[[note]]
+quest = 6389
+level = "info"
+en = "Once the barrel stands on the crate, click the barrel itself to release the termites: nothing visible happens, but that completes the quest. Then bring the barrel back to {npc:11616}."
+fr = "Une fois le tonneau posé sur la caisse, cliquez sur le tonneau lui-même pour libérer les termites : rien de visible ne se passe, mais la quête est alors terminée. Rapportez ensuite le tonneau à {npc:11616}."
+de = "Sobald das Fass auf der Kiste steht, klick das Fass selbst an, um die Termiten freizulassen: Man sieht nichts, aber damit ist die Quest erfüllt. Bring das Fass dann zu {npc:11616} zurück."
+es = "Cuando el barril esté sobre la caja, haz clic en el propio barril para liberar las termitas: no se ve nada, pero así se completa la misión. Luego lleva el barril de vuelta a {npc:11616}."
+pt = "Quando o barril estiver sobre o caixote, clique no próprio barril para soltar os cupins: nada visível acontece, mas isso conclui a missão. Depois leve o barril de volta para {npc:11616}."
+ru = "Когда бочка окажется на ящике, щелкните по самой бочке, чтобы выпустить термитов: внешне ничего не произойдет, но задание будет выполнено. Затем отнесите бочку обратно к {npc:11616}."
+ko = "통이 상자 위에 놓이면 통 자체를 클릭해 흰개미를 풀어 주세요. 눈에 보이는 변화는 없지만 그것으로 퀘스트가 완료됩니다. 그런 다음 통을 {npc:11616}에게 가져가세요."
+zh_cn = "木桶放到箱子上后，再点击木桶本身放出白蚁：看不到任何效果，但任务就此完成。然后把木桶带回给{npc:11616}。"
+zh_tw = "木桶放到箱子上後，再點擊木桶本身放出白蟻：看不到任何效果，但任務就此完成。然後把木桶帶回給{npc:11616}。"

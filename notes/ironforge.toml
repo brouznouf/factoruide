@@ -30,3 +30,18 @@ ru = "Приняв задание, снова поговорите с {npc:8879}
 ko = "퀘스트를 받은 뒤 {npc:8879}에게 다시 말을 걸어 이야기를 끝까지 넘기세요. 그래야 퀘스트가 완료되고, 그 전에는 다음 단계의 유물을 모을 수 없습니다."
 zh_cn = "接受任务后，再和{npc:8879}对话，把她的故事全部点完：这样任务才会完成，在此之前无法收集下一部分的遗物。"
 zh_tw = "接受任務後，再和{npc:8879}對話，把她的故事全部點完：這樣任務才會完成，在此之前無法收集下一部分的遺物。"
+
+# Dwarven Justice: the Dying Archaeologist lies in the caves under Thorium Point; the crane shaft south of the camp is the quick way down.
+[[note]]
+quest = 3371
+phase = "turnin"
+level = "info"
+en = "{npc:8417} lies in the caves under the flight point camp, not on the surface. Drop through the shaft with a crane south of the camp onto the hanging stone block, then to the cave floor, and walk north."
+fr = "{npc:8417} est étendu dans les grottes sous le camp du maître de vol, pas en surface. Descendez par le puits à la grue au sud du camp sur le bloc de pierre suspendu, puis jusqu'au sol de la grotte, et marchez vers le nord."
+de = "{npc:8417} liegt in den Höhlen unter dem Lager mit dem Flugmeister, nicht an der Oberfläche. Lass dich durch den Schacht mit dem Kran südlich des Lagers auf den hängenden Steinblock fallen, dann auf den Höhlenboden, und geh nach Norden."
+es = "{npc:8417} yace en las cuevas bajo el campamento del maestro de vuelo, no en la superficie. Déjate caer por el pozo con una grúa al sur del campamento sobre el bloque de piedra colgante, luego al suelo de la cueva, y ve hacia el norte."
+pt = "{npc:8417} está nas cavernas sob o acampamento do mestre de voo, não na superfície. Desça pelo poço com um guindaste ao sul do acampamento até o bloco de pedra suspenso, depois até o chão da caverna, e siga para o norte."
+ru = "{npc:8417} лежит в пещерах под лагерем с распорядителем полетов, а не на поверхности. Спрыгните в шахту с краном к югу от лагеря на подвешенный каменный блок, затем на дно пещеры и идите на север."
+ko = "{npc:8417}은(는) 지상이 아니라 비행 조련사가 있는 야영지 아래 동굴에 누워 있습니다. 야영지 남쪽의 기중기가 있는 수직 갱도로 매달린 돌덩이 위에 뛰어내린 뒤 동굴 바닥으로 내려가 북쪽으로 가세요."
+zh_cn = "{npc:8417}躺在飞行点营地下方的洞穴里，而不是地面上。从营地南边有起重机的竖井跳到吊着的石块上，再跳到洞底，然后往北走。"
+zh_tw = "{npc:8417}躺在飛行點營地下方的洞穴裡，而不是地面上。從營地南邊有起重機的豎井跳到吊著的石塊上，再跳到洞底，然後往北走。"

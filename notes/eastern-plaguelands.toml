@@ -85,3 +85,51 @@ ru = "{npc:12248} бродит вокруг могил перед храмом. 
 ko = "{npc:12248}은(는) 사원 앞 무덤 주위를 서성입니다. 무덤을 밟으면 언데드 트롤이 더 일어나니 피하고, 그가 다른 몹에게서 멀어질 때 끌어오세요."
 zh_cn = "{npc:12248}在神殿前的坟墓周围来回走动。不要踩上坟墓，否则会冒出更多亡灵巨魔；等他离开其他怪物时再把他引过来。"
 zh_tw = "{npc:12248}在神殿前的墳墓周圍來回走動。不要踩上墳墓，否則會冒出更多亡靈食人妖；等他離開其他怪物時再把他引過來。"
+
+# Villains of Darrowshire: the skull lies under the friendly spectral ghosts fighting at the bottom of Blackwood Lake; looking straight down avoids clicking them.
+[[note]]
+quest = 5181
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:176208} lies at the bottom of the lake among fighting spectral warriors, who ignore you. Swim right above it and look straight down so you click the skull and not the ghosts; water elementals swim nearby."
+fr = "{object:176208} repose au fond du lac au milieu de guerriers spectraux qui se battent et vous ignorent. Nagez juste au-dessus et regardez droit vers le bas pour cliquer sur le crâne et non sur les fantômes ; des élémentaires d'eau nagent autour."
+de = "{object:176208} liegt am Grund des Sees zwischen kämpfenden Geisterkriegern, die dich ignorieren. Schwimm direkt darüber und schau senkrecht nach unten, damit du den Schädel anklickst und nicht die Geister; in der Nähe schwimmen Wasserelementare."
+es = "{object:176208} está en el fondo del lago entre guerreros espectrales que luchan y te ignoran. Nada justo encima y mira hacia abajo para hacer clic en el cráneo y no en los fantasmas; cerca nadan elementales de agua."
+pt = "{object:176208} fica no fundo do lago entre guerreiros espectrais que lutam e ignoram você. Nade logo acima e olhe direto para baixo para clicar no crânio e não nos fantasmas; elementais da água nadam por perto."
+ru = "{object:176208} лежит на дне озера среди сражающихся призрачных воинов, которые вас не замечают. Подплывите прямо сверху и посмотрите вертикально вниз, чтобы щелкнуть по черепу, а не по призракам; рядом плавают водные элементали."
+ko = "{object:176208}은(는) 서로 싸우는 유령 전사들 사이, 호수 바닥에 있습니다. 유령들은 당신을 무시합니다. 바로 위에서 수직으로 내려다보며 유령이 아닌 해골을 클릭하세요. 근처에 물의 정령이 헤엄쳐 다닙니다."
+zh_cn = "{object:176208}在湖底，周围有互相厮杀的幽灵战士，它们不会理你。游到正上方垂直向下看，才能点到头骨而不是幽灵；附近有水元素游荡。"
+zh_tw = "{object:176208}在湖底，周圍有互相廝殺的幽靈戰士，它們不會理你。游到正上方垂直向下看，才能點到頭骨而不是幽靈；附近有水元素遊蕩。"
+
+# Defenders of Darrowshire: the ghouls and flayers release a spirit that must be talked to; they share spawn points with the other Scourge of the area.
+[[note]]
+quest = 5211
+phase = "objective"
+objective = 1
+level = "info"
+en = "Killing {npc:8530}, {npc:8531} and {npc:8532} frees a spirit ({npc:11064}): talk to it quickly so it counts. They share spawn points with the other Scourge around, so kill those too when no ghoul is left."
+fr = "Chaque victime parmi {npc:8530}, {npc:8531} et {npc:8532} libère un esprit ({npc:11064}) : parlez-lui vite pour qu'il compte. Ils partagent leurs points d'apparition avec le reste du Fléau alentour : tuez-le aussi quand il ne reste plus de goule."
+de = "Jeder getötete {npc:8530}, {npc:8531} oder {npc:8532} befreit einen Geist ({npc:11064}): Sprich schnell mit ihm, damit er zählt. Sie teilen sich Spawnpunkte mit der übrigen Geißel in der Gegend, töte also auch diese, wenn kein Ghul mehr da ist."
+es = "Matar a {npc:8530}, {npc:8531} y {npc:8532} libera un espíritu ({npc:11064}): habla con él rápido para que cuente. Comparten puntos de aparición con el resto de la Plaga de la zona, así que mátalos también cuando no quede ningún necrófago."
+pt = "Matar {npc:8530}, {npc:8531} e {npc:8532} liberta um espírito ({npc:11064}): fale com ele rápido para que conte. Eles dividem pontos de surgimento com o resto do Flagelo da área, então mate esses também quando não houver mais carniçais."
+ru = "Убийство противников {npc:8530}, {npc:8531} и {npc:8532} освобождает дух ({npc:11064}): быстро поговорите с ним, чтобы он засчитался. Они делят точки появления с остальной Плетью вокруг, так что убивайте и ее, когда вурдалаков не осталось."
+ko = "{npc:8530}, {npc:8531}, {npc:8532}을(를) 처치하면 영혼({npc:11064})이 풀려납니다. 빨리 말을 걸어야 집계됩니다. 이들은 주변의 다른 스컬지와 생성 지점을 공유하므로, 구울이 보이지 않으면 다른 스컬지도 처치하세요."
+zh_cn = "击杀{npc:8530}、{npc:8531}和{npc:8532}会放出一个灵魂（{npc:11064}）：尽快和它对话才算数。它们与附近其他天灾共用刷新点，没有食尸鬼时就把其他天灾也杀掉。"
+zh_tw = "擊殺{npc:8530}、{npc:8531}和{npc:8532}會放出一個靈魂（{npc:11064}）：儘快和它對話才算數。牠們與附近其他天譴軍共用重生點，沒有食屍鬼時就把其他天譴軍也殺掉。"
+
+# Heroes of Darrowshire: the libram is in Hearthglen's town hall among elite Scarlet paladins that heal each other, sometimes with the rare Scarlet Judge.
+[[note]]
+quest = 5168
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{object:176206} lies in the town hall of the Scarlet town in northern {zone:28}, guarded by pairs of elite {npc:1834} that heal each other; a rare {npc:1837} may stand in the same room. Bring a group or a sure way out."
+fr = "{object:176206} se trouve dans l'hôtel de ville de la ville écarlate au nord de {zone:28}, gardé par des paires de {npc:1834} élites qui se soignent entre eux ; un rare, {npc:1837}, peut se tenir dans la même salle. Venez en groupe ou avec un moyen sûr de fuir."
+de = "{object:176206} liegt im Rathaus der Stadt des Scharlachroten Kreuzzugs im Norden von {zone:28}, bewacht von Paaren von Elite-{npc:1834}, die sich gegenseitig heilen; ein seltener {npc:1837} kann im selben Raum stehen. Komm mit Gruppe oder einem sicheren Fluchtweg."
+es = "{object:176206} está en el ayuntamiento del pueblo Escarlata al norte de {zone:28}, vigilado por parejas de {npc:1834} élite que se curan entre sí; un raro, {npc:1837}, puede estar en la misma sala. Ve en grupo o con una forma segura de huir."
+pt = "{object:176206} fica na prefeitura da cidade Escarlate no norte de {zone:28}, guardado por pares de {npc:1834} de elite que se curam; um raro, {npc:1837}, pode estar na mesma sala. Vá em grupo ou com um jeito seguro de fugir."
+ru = "{object:176206} лежит в ратуше города Алого ордена на севере зоны {zone:28}; его охраняют пары элитных противников {npc:1834}, которые лечат друг друга, а в том же зале может стоять редкий {npc:1837}. Идите группой или с надежным способом сбежать."
+ko = "{object:176206}은(는) {zone:28} 북쪽 붉은십자군 마을의 시청 안에 있으며, 서로 치유하는 정예 {npc:1834} 두 명씩이 지키고 있습니다. 같은 방에 희귀 몹 {npc:1837}이(가) 있을 수도 있습니다. 파티를 꾸리거나 확실한 탈출 수단을 챙기세요."
+zh_cn = "{object:176206}在{zone:28}北部血色十字军城镇的市政厅里，由成对的精英{npc:1834}看守，他们会互相治疗；同一房间里可能还有稀有怪{npc:1837}。请组队，或准备好可靠的脱身手段。"
+zh_tw = "{object:176206}在{zone:28}北部血色十字軍城鎮的市政廳裡，由成對的精英{npc:1834}看守，他們會互相治療；同一房間裡可能還有稀有怪{npc:1837}。請組隊，或準備好可靠的脫身手段。"

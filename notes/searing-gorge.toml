@@ -100,3 +100,34 @@ ru = "Когда в конце {npc:8284} застрелят, рядом с те
 ko = "마지막에 {npc:8284}이(가) 총에 맞으면 시체 옆 바닥에 {object:175704}이(가) 나타납니다. 쓰러지는 자리에서 몇 걸음 떨어지고 변신 상태를 풀어 두세요. 그렇지 않으면 나타나지 않을 수 있으며, 그때는 포기하고 재생성을 기다리세요."
 zh_cn = "最后{npc:8284}被射杀时，{object:175704}会出现在他尸体旁的地上。离他倒下的位置几步远，并解除任何变形形态，否则信可能不出现；如果没出现，放弃任务并等他重生。"
 zh_tw = "最後{npc:8284}被射殺時，{object:175704}會出現在他屍體旁的地上。離他倒下的位置幾步遠，並解除任何變形形態，否則信可能不出現；如果沒出現，放棄任務並等他重生。"
+
+# Release Them: the artifact sits in the middle of the lava pool among elite Twilight cultists who pull singly; standing on it avoids the lava.
+[[note]]
+quest = 3372
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{object:148506} sits in the middle of a lava pool guarded by elite Twilight cultists, which can be pulled one at a time. Jump straight onto the artifact to loot it: the lava kills you if you wade in."
+fr = "{object:148506} se trouve au milieu d'un bassin de lave gardé par des cultistes élites du Crépuscule, qu'on peut attirer un par un. Sautez directement sur l'artefact pour le fouiller : la lave vous tue si vous y entrez."
+de = "{object:148506} steht mitten in einem Lavabecken, bewacht von Elite-Kultisten des Schattenhammers, die sich einzeln ziehen lassen. Spring direkt auf das Artefakt, um es zu plündern: Die Lava tötet dich, wenn du hineinwatest."
+es = "{object:148506} está en medio de un charco de lava vigilado por cultistas élite del Martillo Crepuscular, que se pueden atraer de uno en uno. Salta directamente sobre el artefacto para saquearlo: la lava te mata si entras en ella."
+pt = "{object:148506} fica no meio de uma poça de lava guardada por cultistas de elite do Martelo do Crepúsculo, que podem ser puxados um a um. Pule direto em cima do artefato para saqueá-lo: a lava mata se você entrar nela."
+ru = "{object:148506} находится посреди лавового озерца, которое охраняют элитные культисты Сумеречного Молота; их можно выманивать по одному. Прыгните прямо на артефакт, чтобы обыскать его: в лаве вы погибнете."
+ko = "{object:148506}은(는) 정예 황혼의 망치단 신도들이 지키는 용암 웅덩이 한가운데에 있으며, 신도들은 하나씩 끌어낼 수 있습니다. 유물 위로 바로 뛰어올라 획득하세요. 용암에 들어가면 죽습니다."
+zh_cn = "{object:148506}位于一个熔岩池中央，由精英暮光之锤信徒看守，他们可以一个个拉。直接跳到神器上面拾取：走进熔岩会被烧死。"
+zh_tw = "{object:148506}位於一個熔岩池中央，由精英暮光之錘信徒看守，他們可以一個個拉。直接跳到神器上面拾取：走進熔岩會被燒死。"
+
+# Release Them: the altar disappears for several minutes after someone starts the next quest there, and starting it calls two elites at once.
+[[note]]
+quest = 3372
+phase = "turnin"
+level = "warning"
+en = "If {object:148498} cannot be clicked, someone has just started the next quest there: it comes back within 5 to 10 minutes. Taking that next quest calls two elites at once, so be ready before you accept it."
+fr = "Si {object:148498} ne peut pas être cliqué, quelqu'un vient d'y lancer la quête suivante : il revient au bout de 5 à 10 minutes. Prendre cette quête suivante fait aussitôt venir deux élites : soyez prêt avant de l'accepter."
+de = "Lässt sich {object:148498} nicht anklicken, hat gerade jemand dort die nächste Quest gestartet: Er kommt nach 5 bis 10 Minuten zurück. Die nächste Quest anzunehmen ruft sofort zwei Elitegegner herbei, sei also vorher bereit."
+es = "Si no puedes hacer clic en {object:148498}, alguien acaba de empezar allí la siguiente misión: vuelve en 5 a 10 minutos. Aceptar esa siguiente misión hace aparecer enseguida dos élites, así que prepárate antes."
+pt = "Se não der para clicar em {object:148498}, alguém acabou de iniciar a próxima missão ali: ele volta em 5 a 10 minutos. Aceitar essa próxima missão faz surgir na hora duas elites, então prepare-se antes."
+ru = "Если объект «{object:148498}» не нажимается, значит, кто-то только что начал там следующее задание: он вернется через 5–10 минут. Взятие следующего задания сразу вызывает двух элитных противников, так что приготовьтесь заранее."
+ko = "{object:148498}을(를) 클릭할 수 없다면 누군가 방금 그곳에서 다음 퀘스트를 시작한 것입니다. 5~10분 안에 다시 나타납니다. 다음 퀘스트를 받으면 정예 몹 둘이 바로 나타나니 받기 전에 준비하세요."
+zh_cn = "如果{object:148498}无法点击，说明有人刚在那里开始了下一个任务：它会在5到10分钟内重新出现。接下一个任务会立刻引出两个精英，所以接之前先做好准备。"
+zh_tw = "如果{object:148498}無法點擊，說明有人剛在那裡開始了下一個任務：它會在5到10分鐘內重新出現。接下一個任務會立刻引出兩個精英，所以接之前先做好準備。"

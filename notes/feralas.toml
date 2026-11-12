@@ -234,3 +234,67 @@ ru = "Разбив кокон, оставайтесь на месте, пока 
 ko = "고치를 깬 뒤 {npc:9546}의 말이 끝나고 퀘스트가 완료로 표시될 때까지 자리를 지키세요. 완료되지 않으면 고치 옆에서 퀘스트를 포기하고 고치를 다시 깨세요."
 zh_cn = "打破虫茧后，待在原地直到{npc:9546}说完话、任务显示完成。如果没有完成，就在虫茧旁放弃任务，再打破一次虫茧。"
 zh_tw = "打破蟲繭後，待在原地直到{npc:9546}說完話、任務顯示完成。如果沒有完成，就在蟲繭旁放棄任務，再打破一次蟲繭。"
+
+# Wandering Shay: Shay strays during the escort and the bell calls her back; the quest has a 15-minute timer, and going east to the road avoids the harpies.
+[[note]]
+quest = 2845
+phase = "objective"
+objective = 2
+level = "warning"
+en = "{npc:7774} wanders off now and then: ring {item:9189} at once to make her follow you again, or the 15-minute timer runs out. Skirting the harpies east to the road and then south avoids most fights."
+fr = "{npc:7774} s'éloigne de temps en temps : agitez aussitôt {item:9189} pour qu'elle vous suive à nouveau, sinon le délai de 15 minutes expire. Contourner les harpies par l'est jusqu'à la route, puis aller au sud, évite la plupart des combats."
+de = "{npc:7774} läuft ab und zu davon: Läute sofort {item:9189}, damit sie dir wieder folgt, sonst läuft das 15-Minuten-Zeitlimit ab. Wenn du die Harpyien östlich zur Straße umgehst und dann nach Süden gehst, vermeidest du die meisten Kämpfe."
+es = "{npc:7774} se aleja de vez en cuando: haz sonar {item:9189} enseguida para que vuelva a seguirte, o se agotará el límite de 15 minutos. Rodear a las arpías por el este hasta el camino y luego ir al sur evita la mayoría de combates."
+pt = "{npc:7774} se afasta de vez em quando: toque {item:9189} na hora para que ela volte a segui-lo, ou o limite de 15 minutos acaba. Contornar as harpias pelo leste até a estrada e depois seguir para o sul evita a maioria das lutas."
+ru = "{npc:7774} время от времени уходит в сторону: сразу используйте {item:9189}, чтобы она снова пошла за вами, иначе истекут 15 минут. Обойдите гарпий с востока до дороги, затем идите на юг — так удастся избежать большинства боев."
+ko = "{npc:7774}은(는) 가끔 다른 곳으로 가 버립니다. 바로 {item:9189}을(를) 울려 다시 따라오게 하세요. 그러지 않으면 15분 제한 시간이 끝납니다. 하피를 동쪽으로 돌아 길로 나간 뒤 남쪽으로 가면 대부분의 전투를 피할 수 있습니다."
+zh_cn = "{npc:7774}时不时会走开：立即摇响{item:9189}让她重新跟着你，否则15分钟的时限会耗尽。从东边绕过鹰身人到大路上再往南走，可以避开大部分战斗。"
+zh_tw = "{npc:7774}時不時會走開：立即搖響{item:9189}讓她重新跟著你，否則15分鐘的時限會耗盡。從東邊繞過鷹身人到大路上再往南走，可以避開大部分戰鬥。"
+
+# Freedom for All Creatures: the Grimtotem at the cage respawn fast; clearing them before accepting and following the largest group of darters keeps Kindal alive.
+[[note]]
+quest = 2969
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The tauren around the cage respawn fast: clear them before taking the quest from {npc:7956}, then jump down with her and open the cage at once. Follow the biggest group of {npc:7997} and keep her alive."
+fr = "Les taurens autour de la cage réapparaissent vite : éliminez-les avant de prendre la quête auprès de {npc:7956}, puis sautez en bas avec elle et ouvrez la cage aussitôt. Suivez le plus grand groupe de {npc:7997} et gardez-la en vie."
+de = "Die Tauren um den Käfig respawnen schnell: Räum sie weg, bevor du die Quest bei {npc:7956} annimmst, spring dann mit ihr hinunter und öffne sofort den Käfig. Folge der größten Gruppe von {npc:7997} und halte sie am Leben."
+es = "Los tauren alrededor de la jaula reaparecen rápido: elimínalos antes de aceptar la misión de {npc:7956}, luego salta abajo con ella y abre la jaula enseguida. Sigue al grupo más grande de {npc:7997} y mantenla con vida."
+pt = "Os taurens ao redor da jaula reaparecem rápido: elimine-os antes de pegar a missão com {npc:7956}, depois pule com ela e abra a jaula na hora. Siga o maior grupo de {npc:7997} e mantenha-a viva."
+ru = "Таурены вокруг клетки быстро появляются снова: перебейте их, прежде чем брать задание у {npc:7956}, затем спрыгните вниз вместе с ней и сразу откройте клетку. Следуйте за самой большой группой «{npc:7997}» и не дайте ей погибнуть."
+ko = "우리 주변의 타우렌은 빨리 다시 나타납니다. {npc:7956}에게 퀘스트를 받기 전에 처치해 두고, 그녀와 함께 뛰어내려 곧바로 우리를 여세요. 가장 큰 {npc:7997} 무리를 따라가며 그녀를 살려 두세요."
+zh_cn = "笼子周围的牛头人刷新很快：先清掉他们，再从{npc:7956}处接任务，然后和她一起跳下去立刻打开笼子。跟着最大的一群{npc:7997}，并确保她存活。"
+zh_tw = "籠子周圍的牛頭人重生很快：先清掉他們，再從{npc:7956}處接任務，然後和她一起跳下去立刻打開籠子。跟著最大的一群{npc:7997}，並確保她存活。"
+
+# Against Lord Shalzaru: the naga of the Isle of Dread cave respawn very fast; Shalzaru can be pulled without his two guards.
+[[note]]
+quest = 2870
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The naga in the cave respawn very fast, so expect to fight your way out too, or hearth after the kill. {npc:8136} can be pulled apart from his two guards."
+fr = "Les nagas de la grotte réapparaissent très vite : attendez-vous à devoir aussi vous frayer un chemin pour sortir, ou utilisez votre pierre de foyer après la victoire. {npc:8136} peut être attiré séparément de ses deux gardes."
+de = "Die Naga in der Höhle respawnen sehr schnell, rechne also damit, dich auch wieder hinauszukämpfen, oder nutz nach dem Kill den Ruhestein. {npc:8136} lässt sich getrennt von seinen beiden Wachen ziehen."
+es = "Los naga de la cueva reaparecen muy rápido: cuenta con abrirte paso también al salir, o usa la piedra de hogar tras matarlo. {npc:8136} se puede atraer por separado de sus dos guardias."
+pt = "Os nagas da caverna reaparecem muito rápido: conte com abrir caminho também na saída, ou use a pedra de regresso depois de matá-lo. {npc:8136} pode ser puxado separado dos seus dois guardas."
+ru = "Наги в пещере появляются снова очень быстро: будьте готовы пробиваться и на выходе или используйте камень возвращения после убийства. {npc:8136} можно выманить отдельно от двух его стражей."
+ko = "동굴 안의 나가는 매우 빨리 다시 나타나므로 나올 때도 싸워야 할 각오를 하거나, 처치 후 귀환석을 쓰세요. {npc:8136}은(는) 두 경비병과 따로 끌어낼 수 있습니다."
+zh_cn = "洞里的纳迦刷新非常快，出来时也得一路打出去，或者击杀后使用炉石。{npc:8136}可以和他的两个护卫分开拉。"
+zh_tw = "洞裡的納迦重生非常快，出來時也得一路打出去，或者擊殺後使用爐石。{npc:8136}可以和他的兩個護衛分開拉。"
+
+# The Mystery of Morrowgrain: Morrowgrain only comes from Evergreen Herb Casings grown by the pouch, which has a 10-minute cooldown and does not always yield it.
+[[note]]
+quest = 3791
+phase = "objective"
+objective = 1
+level = "info"
+en = "{item:11040} comes from {item:11024}, grown with {item:11020} from {item:11018} ×2 and a seed of {item:11022}. The pouch has a 10-minute cooldown and casings do not always hold it: start early and use it every 10 minutes while questing."
+fr = "{item:11040} s'obtient dans {item:11024}, que fait pousser {item:11020} à partir de {item:11018} ×2 et d'une graine de {item:11022}. La bourse a un temps de recharge de 10 minutes et n'en donne pas toujours : commencez tôt et utilisez-la toutes les 10 minutes en faisant vos quêtes."
+de = "{item:11040} stammt aus {item:11024}, das {item:11020} aus {item:11018} ×2 und einem Samen aus {item:11022} wachsen lässt. Der Beutel hat 10 Minuten Abklingzeit und nicht jede Hülle enthält es: Fang früh an und benutze ihn beim Questen alle 10 Minuten."
+es = "{item:11040} sale de {item:11024}, que {item:11020} hace crecer con {item:11018} ×2 y una semilla de {item:11022}. La bolsa tiene 10 minutos de reutilización y no siempre lo da: empieza pronto y úsala cada 10 minutos mientras haces misiones."
+pt = "{item:11040} vem de {item:11024}, cultivado com {item:11020} a partir de {item:11018} ×2 e uma semente de {item:11022}. A bolsa tem 10 minutos de recarga e nem sempre o dá: comece cedo e use-a a cada 10 minutos enquanto faz missões."
+ru = "{item:11040} добывается из предмета «{item:11024}», который выращивает {item:11020} из {item:11018} ×2 и семени из {item:11022}. Перезарядка мешочка — 10 минут, и злак выпадает не всегда: начните пораньше и используйте мешочек каждые 10 минут по ходу заданий."
+ko = "{item:11040}은(는) {item:11024}에서 나오며, {item:11020}에 {item:11018} 2개와 {item:11022}의 씨앗 하나를 넣어 키웁니다. 주머니는 재사용 대기시간이 10분이고 항상 나오지는 않으니, 일찍 시작해 퀘스트하는 동안 10분마다 사용하세요."
+zh_cn = "{item:11040}来自{item:11024}，用{item:11020}以{item:11018}×2和一颗{item:11022}里的种子种出。袋子冷却10分钟，而且不一定每次都有：尽早开始，做任务时每10分钟用一次。"
+zh_tw = "{item:11040}來自{item:11024}，用{item:11020}以{item:11018}×2和一顆{item:11022}裡的種子種出。袋子冷卻10分鐘，而且不一定每次都有：儘早開始，做任務時每10分鐘用一次。"

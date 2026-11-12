@@ -14,3 +14,65 @@ ru = "Возле персонажа {npc:9996} кошка перестаёт и�
 ko = "{npc:9996}에게 돌아오면 고양이가 더 이상 따라오지 않습니다. 바로 {npc:10042}에게 말을 걸어 풀어 준 뒤 퀘스트를 완료하세요. 약 1분 뒤 사라지면 처음부터 다시 해야 합니다. 몹을 끌지 않으니 탈것을 타고 돌아와도 됩니다."
 zh_cn = "回到{npc:9996}身边时，猫会停下不再跟随：立刻和{npc:10042}对话把它放出来，再交任务。大约一分钟后它就会消失，那就得从头再来。它不会引怪，可以骑着坐骑回来。"
 zh_tw = "回到{npc:9996}身邊時，貓會停下不再跟隨：立刻和{npc:10042}對話把牠放出來，再交任務。大約一分鐘後牠就會消失，那就得從頭再來。牠不會引怪，可以騎著坐騎回來。"
+
+# Ancient Spirit: Arei is summoned by the Flute of the Ancients at the statue of the Irontree Woods ruins, sometimes only after several uses, and not while he is still out from an escort.
+[[note]]
+quest = 4261
+phase = "accept"
+level = "warning"
+en = "{npc:9598} only appears when you use {item:11445} by the statue in the ruins of northern {zone:361} (about 49, 30); it may take several uses. If he still stands on the road from someone's escort, wait for him to vanish first."
+fr = "{npc:9598} n'apparaît que si vous utilisez {item:11445} près de la statue des ruines du nord de {zone:361} (vers 49, 30) ; il faut parfois plusieurs essais. S'il se tient encore sur la route après l'escorte de quelqu'un, attendez d'abord qu'il disparaisse."
+de = "{npc:9598} erscheint nur, wenn du {item:11445} an der Statue in den Ruinen im Norden von {zone:361} benutzt (um 49, 30); manchmal braucht es mehrere Versuche. Steht er nach der Eskorte eines anderen noch auf der Straße, warte erst, bis er verschwindet."
+es = "{npc:9598} solo aparece si usas {item:11445} junto a la estatua de las ruinas del norte de {zone:361} (hacia 49, 30); a veces hacen falta varios intentos. Si sigue en el camino tras la escolta de otro jugador, espera antes a que desaparezca."
+pt = "{npc:9598} só aparece quando você usa {item:11445} junto à estátua nas ruínas do norte de {zone:361} (por volta de 49, 30); pode levar várias tentativas. Se ele ainda estiver na estrada após a escolta de outra pessoa, espere ele sumir primeiro."
+ru = "{npc:9598} появляется, только если использовать {item:11445} у статуи в руинах на севере зоны {zone:361} (около 49, 30); иногда нужно несколько попыток. Если он еще стоит на дороге после чужого сопровождения, сначала дождитесь, пока он исчезнет."
+ko = "{npc:9598}은(는) {zone:361} 북쪽 폐허의 석상 옆(약 49, 30)에서 {item:11445}을(를) 사용해야만 나타나며, 여러 번 사용해야 할 수도 있습니다. 다른 사람의 호위 후 아직 길 위에 서 있다면 먼저 사라질 때까지 기다리세요."
+zh_cn = "只有在{zone:361}北部废墟的雕像旁（约49, 30）使用{item:11445}，{npc:9598}才会出现，可能要用好几次。如果他在别人护送后还站在路上，先等他消失。"
+zh_tw = "只有在{zone:361}北部廢墟的雕像旁（約49, 30）使用{item:11445}，{npc:9598}才會出現，可能要用好幾次。如果他在別人護送後還站在路上，先等他消失。"
+
+# Rescue From Jaedenar: three Jaedenar Legionnaires come when Arko'narin puts on her gear and the elite Spirit of Trey Lightforge attacks outside; she aggroes from afar.
+[[note]]
+quest = 5203
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Clear the room with her gear before {npc:11018} reaches it: an ambush ({npc:9862} ×3) comes when she puts it on, and {npc:11141} (elite) attacks once you are outside. She aggroes from far away, so clear ahead of her."
+fr = "Videz la salle de son équipement avant que {npc:11018} n'y arrive : une embuscade ({npc:9862} ×3) survient quand elle l'enfile, et {npc:11141} (élite) attaque une fois dehors. Elle attire les monstres de loin : nettoyez le chemin devant elle."
+de = "Räum den Raum mit ihrer Ausrüstung, bevor {npc:11018} ihn erreicht: Ein Hinterhalt ({npc:9862} ×3) kommt, wenn sie sie anlegt, und {npc:11141} (Elite) greift draußen an. Sie zieht Gegner von weit her, also räum vor ihr den Weg frei."
+es = "Despeja la sala de su equipo antes de que {npc:11018} llegue: una emboscada ({npc:9862} ×3) aparece cuando se lo pone, y {npc:11141} (élite) ataca ya fuera. Atrae enemigos desde lejos, así que despeja el camino por delante."
+pt = "Limpe a sala do equipamento antes que {npc:11018} chegue lá: uma emboscada ({npc:9862} ×3) surge quando ela o veste, e {npc:11141} (elite) ataca quando vocês saem. Ela atrai inimigos de longe, então limpe o caminho à frente dela."
+ru = "Зачистите зал с ее снаряжением до того, как туда дойдет {npc:11018}: когда она его наденет, нападет засада ({npc:9862} ×3), а снаружи атакует {npc:11141} (элитный). Она агрит врагов издалека, так что расчищайте путь перед ней."
+ko = "{npc:11018}이(가) 도착하기 전에 장비가 있는 방을 정리하세요. 그녀가 장비를 착용하면 매복({npc:9862} ×3)이 나타나고, 밖으로 나가면 {npc:11141}(정예)이(가) 공격합니다. 멀리서도 적을 끌어들이니 앞길을 미리 정리하세요."
+zh_cn = "在{npc:11018}到达前清空放她装备的房间：她穿上装备时会遭到伏击（{npc:9862}×3），出洞后{npc:11141}（精英）会发起攻击。她很远就会引怪，所以要提前清理前方的路。"
+zh_tw = "在{npc:11018}到達前清空放她裝備的房間：她穿上裝備時會遭到伏擊（{npc:9862}×3），出洞後{npc:11141}（精英）會發起攻擊。她很遠就會引怪，所以要提前清理前方的路。"
+
+# Retribution of the Light: Rakaiah stands at the altar past the slime water beyond the gear room of the escort; she pulls alone and respawns in 10 to 15 minutes.
+[[note]]
+quest = 5204
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:9518} stands by an altar deep in the cave: cross the slime-filled water past the room where {npc:11018} found her gear. She can be pulled without the casters around her and respawns in about 10 to 15 minutes."
+fr = "{npc:9518} se tient près d'un autel au fond de la grotte : traversez l'eau pleine de limons après la salle où {npc:11018} a retrouvé son équipement. On peut l'attirer sans les lanceurs de sorts autour d'elle, et elle réapparaît en 10 à 15 minutes environ."
+de = "{npc:9518} steht an einem Altar tief in der Höhle: Durchquere das Wasser voller Schlammwesen hinter dem Raum, in dem {npc:11018} ihre Ausrüstung fand. Sie lässt sich ohne die Zauberwirker um sie herum ziehen und respawnt nach etwa 10 bis 15 Minuten."
+es = "{npc:9518} está junto a un altar en lo hondo de la cueva: cruza el agua llena de lodos pasada la sala donde {npc:11018} recuperó su equipo. Se puede atraer sin los lanzadores de hechizos de su alrededor y reaparece en unos 10 a 15 minutos."
+pt = "{npc:9518} fica junto a um altar no fundo da caverna: atravesse a água cheia de gosmas depois da sala onde {npc:11018} achou seu equipamento. Ela pode ser puxada sem os conjuradores ao redor e reaparece em uns 10 a 15 minutos."
+ru = "{npc:9518} стоит у алтаря в глубине пещеры: пересеките воду со слизнями за залом, где {npc:11018} нашла свое снаряжение. Ее можно выманить без заклинателей вокруг, а появляется она снова примерно через 10–15 минут."
+ko = "{npc:9518}은(는) 동굴 깊은 곳의 제단 옆에 있습니다. {npc:11018}이(가) 장비를 찾았던 방을 지나 수액괴물이 가득한 물을 건너세요. 주변 주문시전자 없이 따로 끌어낼 수 있으며, 약 10~15분 후 다시 나타납니다."
+zh_cn = "{npc:9518}站在洞穴深处的祭坛旁：穿过{npc:11018}找回装备的那个房间后面满是软泥怪的水域。她可以单独拉出来，不会带上周围的施法者，大约10到15分钟刷新。"
+zh_tw = "{npc:9518}站在洞穴深處的祭壇旁：穿過{npc:11018}找回裝備的那個房間後面滿是軟泥怪的水域。她可以單獨拉出來，不會帶上周圍的施法者，大約10到15分鐘重生。"
+
+# Seeking Spiritual Aid: after the turn-in Islen calls a water spirit by the shore and offers the follow-up only once back.
+[[note]]
+quest = 5158
+phase = "turnin"
+level = "info"
+en = "After the turn-in, {npc:5901} walks down to the water to call a spirit: wait until she comes back and talk to her again for {quest:5159}."
+fr = "Après avoir rendu la quête, {npc:5901} descend jusqu'à l'eau pour appeler un esprit : attendez son retour et parlez-lui de nouveau pour obtenir {quest:5159}."
+de = "Nach der Abgabe geht {npc:5901} ans Wasser hinunter, um einen Geist zu rufen: Warte, bis sie zurück ist, und sprich sie erneut an, um {quest:5159} zu erhalten."
+es = "Tras entregarla, {npc:5901} baja hasta el agua para invocar a un espíritu: espera a que vuelva y habla otra vez con ella para obtener {quest:5159}."
+pt = "Depois da entrega, {npc:5901} desce até a água para chamar um espírito: espere ela voltar e fale com ela de novo para pegar {quest:5159}."
+ru = "После сдачи задания {npc:5901} спускается к воде, чтобы призвать духа: дождитесь, пока она вернется, и снова поговорите с ней, чтобы получить задание «{quest:5159}»."
+ko = "퀘스트를 완료하면 {npc:5901}이(가) 물가로 내려가 정령을 부릅니다. 돌아올 때까지 기다렸다가 다시 말을 걸어 {quest:5159}을(를) 받으세요."
+zh_cn = "交任务后，{npc:5901}会走到水边召唤一个灵魂：等她回来后再和她对话，接取{quest:5159}。"
+zh_tw = "交任務後，{npc:5901}會走到水邊召喚一個靈魂：等她回來後再和她對話，接取{quest:5159}。"
