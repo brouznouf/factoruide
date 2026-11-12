@@ -31,6 +31,7 @@ Quest notes in the guides, with tips and warnings on tricky quests, and fixes to
 ### App
 
 - Steps show how their quest is taken (an item, an object, a mob's drop, an event) or their objective done, and a mark when a note tells more about the quest.
+- A new guide's name filled in from its character follows the level to reach: lowering it to 40 no longer leaves "Name 25-60" on the guide, its file and its Polestar title.
 
 ### Guides
 
