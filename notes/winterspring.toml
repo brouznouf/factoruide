@@ -1,0 +1,48 @@
+# Quest notes of Winterspring. See notes/README.md for the format.
+
+# Guardians of the Altar: the escort fails when a torch is not lit soon after Ranshalla starts chanting; she only fights mobs that attack her.
+[[note]]
+quest = 4901
+phase = "objective"
+objective = 1
+level = "must_read"
+en = "At each cave, click the torch soon after {npc:10300} starts chanting, or the quest fails; rest during her chant, not after. Let her pull: she only fights mobs that attack her. At the end, click the altar."
+fr = "À chaque grotte, cliquez sur la torche peu après que {npc:10300} commence à psalmodier, sinon la quête échoue ; reposez-vous pendant son incantation, pas après. Laissez-la attirer les monstres : elle ne combat que ceux qui l'attaquent. À la fin, cliquez sur l'autel."
+de = "Klicke in jeder Höhle auf die Fackel, kurz nachdem {npc:10300} zu singen beginnt, sonst scheitert die Quest; erhol dich während ihres Gesangs, nicht danach. Lass sie die Gegner anlocken: Sie kämpft nur gegen die, die sie angreifen. Klicke am Ende auf den Altar."
+es = "En cada cueva, haz clic en la antorcha poco después de que {npc:10300} empiece a salmodiar, o la misión fallará; descansa durante su cántico, no después. Deja que ella atraiga a los enemigos: solo lucha contra los que la atacan. Al final, haz clic en el altar."
+pt = "Em cada caverna, clique na tocha logo depois que {npc:10300} começar a entoar, ou a missão falha; descanse durante o cântico, não depois. Deixe que ela atraia os monstros: ela só luta contra os que a atacam. No final, clique no altar."
+ru = "В каждой пещере щёлкните по факелу вскоре после того, как {npc:10300} начнёт заклинание, иначе задание провалится; отдыхайте во время заклинания, а не после. Пусть врагов притягивает она: она бьётся только с теми, кто нападает на неё. В конце щёлкните по алтарю."
+ko = "각 동굴에서 {npc:10300}이(가) 주문을 읊기 시작하면 곧바로 횃불을 클릭하세요. 늦으면 퀘스트가 실패합니다. 휴식은 주문을 읊는 동안 하세요. 몹은 그녀가 먼저 끌게 하세요. 자신을 공격하는 몹하고만 싸웁니다. 마지막에는 제단을 클릭하세요."
+zh_cn = "在每个洞穴里，{npc:10300}开始吟唱后要尽快点击火把，否则任务失败；在她吟唱时休息，不要等之后。让她先引怪：她只会和攻击她的怪战斗。最后点击祭坛。"
+zh_tw = "在每個洞穴裡，{npc:10300}開始吟唱後要盡快點擊火把，否則任務失敗；在她吟唱時休息，不要等之後。讓她先引怪：她只會和攻擊她的怪戰鬥。最後點擊祭壇。"
+
+# Toxic Horrors: the horrors share spawn points with the Irontree Stompers, which otherwise take every spot.
+[[note]]
+quest = 5086
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:7132} and {npc:7139} share spawn points: kill both kinds, or the second takes every spot and the first stops spawning."
+fr = "{npc:7132} et {npc:7139} partagent leurs points d'apparition : tuez les deux sortes, sinon la seconde occupe toutes les places et la première n'apparaît plus."
+de = "{npc:7132} und {npc:7139} teilen sich die Spawnpunkte: Töte beide Arten, sonst besetzt die zweite alle Plätze und die erste spawnt nicht mehr."
+es = "{npc:7132} y {npc:7139} comparten puntos de aparición: mata a ambos tipos, o el segundo ocupará todos los sitios y el primero dejará de aparecer."
+pt = "{npc:7132} e {npc:7139} compartilham pontos de surgimento: mate os dois tipos, senão o segundo ocupa todos os lugares e o primeiro para de surgir."
+ru = "{npc:7132} и {npc:7139} появляются в одних и тех же точках: убивайте оба вида, иначе второй займёт все места и первый перестанет появляться."
+ko = "{npc:7132}과(와) {npc:7139}은(는) 생성 지점을 공유합니다. 두 종류를 모두 처치하세요. 그렇지 않으면 두 번째 종류가 자리를 모두 차지해 첫 번째 종류가 더 이상 나타나지 않습니다."
+zh_cn = "{npc:7132}和{npc:7139}共用刷新点：两种都要杀，否则后者会占满所有位置，前者就不再刷新。"
+zh_tw = "{npc:7132}和{npc:7139}共用重生點：兩種都要殺，否則後者會佔滿所有位置，前者就不再重生。"
+
+# Winterfall Runners: three ambushers spawn at the turn-in; a mounted turn-in lets you ride off, and the giver still offers the next quest afterwards.
+[[note]]
+quest = 5087
+phase = "turnin"
+level = "warning"
+en = "Handing in spawns three {npc:14372}. Hand in while mounted and ride away: they gather by the lake and leave you alone, and {npc:9298} still offers the next quest when you come back."
+fr = "Rendre la quête fait apparaître trois {npc:14372}. Rendez-la à dos de monture et éloignez-vous : ils se regroupent près du lac et vous laissent tranquille, et {npc:9298} propose toujours la suite à votre retour."
+de = "Beim Abgeben erscheinen drei {npc:14372}. Gib die Quest beritten ab und reite weg: Sie sammeln sich am See und lassen dich in Ruhe, und {npc:9298} bietet dir die nächste Quest an, wenn du zurückkommst."
+es = "Al entregarla aparecen tres {npc:14372}. Entrégala montado y aléjate: se reúnen junto al lago y te dejan en paz, y {npc:9298} te ofrece la siguiente misión cuando vuelves."
+pt = "Ao entregar, surgem três {npc:14372}. Entregue montado e afaste-se: eles se juntam perto do lago e deixam você em paz, e {npc:9298} ainda oferece a próxima missão quando você voltar."
+ru = "При сдаче появляются три существа {npc:14372}. Сдавайте задание верхом и уезжайте: они соберутся у озера и не тронут вас, а {npc:9298} всё равно предложит следующее задание, когда вы вернётесь."
+ko = "퀘스트를 완료하면 {npc:14372} 셋이 나타납니다. 탈것에 탄 채 완료하고 멀리 달아나세요. 그들은 호숫가에 모여 더 쫓아오지 않으며, 돌아오면 {npc:9298}이(가) 다음 퀘스트를 그대로 줍니다."
+zh_cn = "交任务时会刷出三个{npc:14372}。骑着坐骑交任务然后跑开：它们会聚到湖边不再追你，回来后{npc:9298}照样会给你下一个任务。"
+zh_tw = "交任務時會刷出三個{npc:14372}。騎著坐騎交任務然後跑開：牠們會聚到湖邊不再追你，回來後{npc:9298}照樣會給你下一個任務。"

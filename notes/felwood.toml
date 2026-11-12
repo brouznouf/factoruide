@@ -76,3 +76,18 @@ ru = "После сдачи задания {npc:5901} спускается к в
 ko = "퀘스트를 완료하면 {npc:5901}이(가) 물가로 내려가 정령을 부릅니다. 돌아올 때까지 기다렸다가 다시 말을 걸어 {quest:5159}을(를) 받으세요."
 zh_cn = "交任务后，{npc:5901}会走到水边召唤一个灵魂：等她回来后再和她对话，接取{quest:5159}。"
 zh_tw = "交任務後，{npc:5901}會走到水邊召喚一個靈魂：等她回來後再和她對話，接取{quest:5159}。"
+
+# Dousing the Flames of Protection: the braziers are in the cave at the far west of Jaedenar, beyond the first cave; the Rescue from Jaedenar escort walks past all of them.
+[[note]]
+quest = 5165
+phase = "objective"
+level = "info"
+en = "The braziers are in the cave at the far west end of Jaedenar (around 35,58), past the first cave entrance. The escort {quest:5203}, started with a key a guard there drops, passes every brazier."
+fr = "Les braseros sont dans la grotte tout à l'ouest de Jaedenar (vers 35,58), après la première entrée de grotte. L'escorte {quest:5203}, lancée par une clé que lâche un garde sur place, passe devant chaque brasero."
+de = "Die Kohlenbecken sind in der Höhle am äußersten Westende von Jaedenar (etwa 35,58), hinter dem ersten Höhleneingang. Die Eskorte {quest:5203}, die mit dem Schlüssel einer Wache dort beginnt, führt an jedem Kohlenbecken vorbei."
+es = "Los braseros están en la cueva del extremo oeste de Jaedenar (hacia 35,58), pasada la primera entrada de cueva. La escolta {quest:5203}, que empieza con una llave que suelta un guardia de allí, pasa por todos los braseros."
+pt = "Os braseiros ficam na caverna no extremo oeste de Jaedenar (perto de 35,58), depois da primeira entrada de caverna. A escolta {quest:5203}, iniciada com uma chave que um guarda dali deixa cair, passa por todos os braseiros."
+ru = "Жаровни находятся в пещере на самом западе Джеденара (около 35,58), дальше первого входа в пещеру. Сопровождение {quest:5203}, которое начинается с ключа, выпадающего у местного стражника, проходит мимо каждой жаровни."
+ko = "화로는 자데나르 서쪽 끝 동굴(약 35,58) 안에 있으며, 첫 번째 동굴 입구를 지나야 합니다. 그곳 경비병이 떨어뜨리는 열쇠로 시작하는 호위 퀘스트 {quest:5203}은(는) 모든 화로를 지나갑니다."
+zh_cn = "火盆在加德纳尔最西端的洞穴里（约35,58），要走过第一个洞口。护送任务{quest:5203}由那里守卫掉落的钥匙开启，路线会经过每一个火盆。"
+zh_tw = "火盆在加德納爾最西端的洞穴裡（約35,58），要走過第一個洞口。護送任務{quest:5203}由那裡守衛掉落的鑰匙開啟，路線會經過每一個火盆。"

@@ -183,3 +183,19 @@ ru = "В группе каждый сдаёт этот этап, прежде ч
 ko = "파티라면 누군가 호위를 시작하기 전에 모든 구성원이 이 단계를 완료해야 합니다. 모두 준비될 때까지 다음 퀘스트는 거절하세요. {npc:7784}이(가) 없다면 다른 사람이 호위 중이며, 10~15분 뒤에 다시 나타납니다."
 zh_cn = "组队时，每位成员都要先交这一步，再由人开始护送：在所有人准备好之前先拒绝下一部分。如果{npc:7784}不在，说明有人正在护送它；10到15分钟后会回来。"
 zh_tw = "組隊時，每位成員都要先交這一步，再由人開始護送：在所有人準備好之前先拒絕下一部分。如果{npc:7784}不在，表示有人正在護送它；10到15分鐘後會回來。"
+
+# Fire Plume Forged: the mold also needs two Thorium Bars (not given), works only at the lava lake's edge on top of the volcano, and the elite there knocks players back.
+[[note]]
+quest = 5801
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Bring 2 {item:12359}. Climb the volcano in the middle of the crater by the fallen-tree ramp on its north side, then use {item:14644} at the very edge of the lava lake on top. {npc:9376}, an elite there, knocks players back, sometimes into the lava."
+fr = "Apportez 2 {item:12359}. Montez sur le volcan au centre du cratère par la rampe de l'arbre tombé, côté nord, puis utilisez {item:14644} tout au bord du lac de lave au sommet. {npc:9376}, un élite tout proche, repousse les joueurs, parfois dans la lave."
+de = "Bring 2 {item:12359} mit. Steig über die Rampe aus einem umgestürzten Baum auf der Nordseite auf den Vulkan in der Kratermitte und benutze {item:14644} direkt am Rand des Lavasees oben. {npc:9376}, ein Elite dort, stößt Spieler zurück, manchmal in die Lava."
+es = "Lleva 2 {item:12359}. Sube al volcán del centro del cráter por la rampa del árbol caído, en su lado norte, y usa {item:14644} justo al borde del lago de lava de la cima. {npc:9376}, un élite de la zona, empuja a los jugadores, a veces a la lava."
+pt = "Leve 2 {item:12359}. Suba o vulcão no meio da cratera pela rampa da árvore caída, no lado norte, e use {item:14644} bem na beira do lago de lava no topo. {npc:9376}, um elite por ali, empurra os jogadores, às vezes para dentro da lava."
+ru = "Возьмите 2 шт. {item:12359}. Поднимитесь на вулкан в центре кратера по поваленному дереву с северной стороны и используйте {item:14644} у самого края лавового озера на вершине. Элитный {npc:9376} поблизости отбрасывает игроков, иногда прямо в лаву."
+ko = "{item:12359} 2개를 챙기세요. 분화구 한가운데 화산의 북쪽, 쓰러진 나무 경사로로 올라가 꼭대기 용암 호수 바로 가장자리에서 {item:14644}을(를) 사용하세요. 근처의 정예 {npc:9376}은(는) 플레이어를 밀쳐 내며 용암에 빠뜨리기도 합니다."
+zh_cn = "带上2个{item:12359}。从火山北侧那棵倒下的树搭成的坡道爬上环形山中央的火山，然后在山顶熔岩湖的边缘使用{item:14644}。附近的精英{npc:9376}会把玩家击退，有时直接击进熔岩。"
+zh_tw = "帶上2個{item:12359}。從火山北側那棵倒下的樹搭成的坡道爬上環形山中央的火山，然後在山頂熔岩湖的邊緣使用{item:14644}。附近的精英{npc:9376}會把玩家擊退，有時直接擊進熔岩。"

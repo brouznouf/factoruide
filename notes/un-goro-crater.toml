@@ -93,3 +93,19 @@ ru = "Откройте {item:11568}, положите {item:11569} на плос
 ko = "{item:11568}을(를) 열고 평평한 검은 바위 위에 {item:11569}을(를) 놓은 뒤 바로 {item:11570}을(를) 사용하세요. 기다리면 고기가 사라집니다. 그러면 {npc:9684}이(가) 달려옵니다. 실패하거나 죽으면 퀘스트를 포기하고 다시 받아 새 주머니를 얻으세요."
 zh_cn = "打开{item:11568}，把{item:11569}放在那块平坦的黑色岩石上，然后立刻使用{item:11570}：等太久肉会消失。随后{npc:9684}会冲过来。如果失败或死亡，放弃任务再重新接取，就能拿到新的麻袋。"
 zh_tw = "打開{item:11568}，把{item:11569}放在那塊平坦的黑色岩石上，然後立刻使用{item:11570}：等太久肉會消失。隨後{npc:9684}會衝過來。如果失敗或死亡，放棄任務再重新接取，就能拿到新的麻袋。"
+
+# Chasing A-Me 01: the escorted gorilla only fights what attacks her first, keeps walking otherwise, and the gorillas at the cave mouth call for help.
+[[note]]
+quest = 4245
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:9623} only fights mobs that attack her first. Clear the gorillas at the cave entrance before starting, and don't stop to gather on the way: she keeps walking and the escort fails if you fall behind."
+fr = "{npc:9623} ne combat que les monstres qui l'attaquent en premier. Nettoyez les gorilles à l'entrée de la grotte avant de commencer, et ne vous arrêtez pas pour ramasser en route : elle continue d'avancer et l'escorte échoue si vous restez en arrière."
+de = "{npc:9623} kämpft nur gegen Gegner, die sie zuerst angreifen. Räume vor dem Start die Gorillas am Höhleneingang weg und halte unterwegs nicht zum Sammeln an: Sie läuft weiter, und die Eskorte scheitert, wenn du zurückbleibst."
+es = "{npc:9623} solo lucha contra los enemigos que la atacan primero. Limpia los gorilas de la entrada de la cueva antes de empezar y no te pares a recoger nada por el camino: sigue andando y la escolta falla si te quedas atrás."
+pt = "{npc:9623} só luta contra monstros que a atacam primeiro. Limpe os gorilas na entrada da caverna antes de começar e não pare para coletar nada no caminho: ela continua andando e a escolta falha se você ficar para trás."
+ru = "{npc:9623} сражается только с теми, кто нападёт первым. Перед началом зачистите горилл у входа в пещеру и не останавливайтесь ничего собирать по пути: она идёт дальше, и сопровождение провалится, если вы отстанете."
+ko = "{npc:9623}은(는) 먼저 공격해 온 몹하고만 싸웁니다. 시작하기 전에 동굴 입구의 고릴라를 정리하고, 가는 길에 채집하느라 멈추지 마세요. 계속 걸어가므로 뒤처지면 호위가 실패합니다."
+zh_cn = "{npc:9623}只会和先攻击她的怪战斗。开始前先清掉洞口的猩猩，路上不要停下来采集：她会一直往前走，你掉队的话护送就会失败。"
+zh_tw = "{npc:9623}只會和先攻擊她的怪戰鬥。開始前先清掉洞口的猩猩，路上不要停下來採集：她會一直往前走，你掉隊的話護送就會失敗。"

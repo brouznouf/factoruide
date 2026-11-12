@@ -133,3 +133,50 @@ ru = "{object:176206} лежит в ратуше города Алого орд�
 ko = "{object:176206}은(는) {zone:28} 북쪽 붉은십자군 마을의 시청 안에 있으며, 서로 치유하는 정예 {npc:1834} 두 명씩이 지키고 있습니다. 같은 방에 희귀 몹 {npc:1837}이(가) 있을 수도 있습니다. 파티를 꾸리거나 확실한 탈출 수단을 챙기세요."
 zh_cn = "{object:176206}在{zone:28}北部血色十字军城镇的市政厅里，由成对的精英{npc:1834}看守，他们会互相治疗；同一房间里可能还有稀有怪{npc:1837}。请组队，或准备好可靠的脱身手段。"
 zh_tw = "{object:176206}在{zone:28}北部血色十字軍城鎮的市政廳裡，由成對的精英{npc:1834}看守，他們會互相治療；同一房間裡可能還有稀有怪{npc:1837}。請組隊，或準備好可靠的脫身手段。"
+
+# Marauders of Darrowshire: the champions share spawn points with three other undead; the crystal turns only part of the skulls, and a full bag loses the skull.
+[[note]]
+quest = 5206
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:8529} shares spawn points with {npc:8528}, {npc:8542} and {npc:8532}: kill them all to make it spawn more often. {item:13156} does not always turn {item:13157} into {item:13155}; keep a free bag slot when you use it."
+fr = "{npc:8529} partage ses points d'apparition avec {npc:8528}, {npc:8542} et {npc:8532} : tuez-les tous pour qu'il apparaisse plus souvent. {item:13156} ne change pas toujours {item:13157} en {item:13155} ; gardez une place libre dans vos sacs en l'utilisant."
+de = "{npc:8529} teilt sich die Spawnpunkte mit {npc:8528}, {npc:8542} und {npc:8532}: Töte alle, damit er öfter spawnt. {item:13156} verwandelt {item:13157} nicht immer in {item:13155}; halte beim Benutzen einen Taschenplatz frei."
+es = "{npc:8529} comparte puntos de aparición con {npc:8528}, {npc:8542} y {npc:8532}: mátalos a todos para que aparezca más a menudo. {item:13156} no siempre convierte {item:13157} en {item:13155}; deja un hueco libre en las bolsas al usarlo."
+pt = "{npc:8529} compartilha pontos de surgimento com {npc:8528}, {npc:8542} e {npc:8532}: mate todos para que ele surja mais vezes. {item:13156} nem sempre transforma {item:13157} em {item:13155}; deixe um espaço livre nas bolsas ao usá-lo."
+ru = "{npc:8529} появляется в тех же точках, что {npc:8528}, {npc:8542} и {npc:8532}: убивайте всех, чтобы он появлялся чаще. {item:13156} не всегда превращает предмет {item:13157} в {item:13155}; при использовании держите в сумках свободное место."
+ko = "{npc:8529}은(는) {npc:8528}, {npc:8542}, {npc:8532}와(과) 생성 지점을 공유합니다. 모두 처치해 더 자주 나타나게 하세요. {item:13156}은(는) {item:13157}을(를) 항상 {item:13155}(으)로 바꾸지는 않습니다. 사용할 때 가방에 빈칸을 남겨 두세요."
+zh_cn = "{npc:8529}与{npc:8528}、{npc:8542}和{npc:8532}共用刷新点：把它们全部杀掉，它才会更常刷新。{item:13156}并不总能把{item:13157}变成{item:13155}；使用时背包要留一个空位。"
+zh_tw = "{npc:8529}與{npc:8528}、{npc:8542}和{npc:8532}共用重生點：把牠們全部殺掉，牠才會更常重生。{item:13156}並不總能把{item:13157}變成{item:13155}；使用時背包要留一個空位。"
+
+# Establishing New Outposts: a capture counts only while PvP-flagged, out of stealth, in a tower your faction does not hold yet.
+[[note]]
+quest = 9664
+phase = "objective"
+level = "warning"
+en = "Turn on PvP, stay inside the tower out of stealth and wait for its bar to move to your side. A tower your faction already holds gives no credit: wait until the other faction takes it."
+fr = "Activez le JcJ, restez dans la tour sans camouflage et attendez que sa barre passe de votre côté. Une tour déjà tenue par votre faction ne compte pas : attendez que l'autre faction la prenne."
+de = "Aktiviere PvP, bleib ohne Verstohlenheit im Turm und warte, bis sein Balken auf deine Seite wandert. Ein Turm, den deine Fraktion schon hält, zählt nicht: Warte, bis die andere Fraktion ihn einnimmt."
+es = "Activa el JcJ, quédate dentro de la torre sin sigilo y espera a que su barra pase a tu lado. Una torre que ya tiene tu facción no cuenta: espera a que la tome la otra facción."
+pt = "Ative o JxJ, fique dentro da torre sem furtividade e espere a barra passar para o seu lado. Uma torre que sua facção já controla não conta: espere a outra facção tomá-la."
+ru = "Включите режим PvP, оставайтесь в башне без незаметности и ждите, пока её полоса не сдвинется на вашу сторону. Башня, которую уже держит ваша фракция, не засчитывается: дождитесь, пока её захватит другая фракция."
+ko = "PvP를 켜고 은신하지 않은 채 탑 안에 머물며 막대가 내 진영 쪽으로 넘어올 때까지 기다리세요. 이미 내 진영이 차지한 탑은 인정되지 않으니 상대 진영이 점령할 때까지 기다리세요."
+zh_cn = "开启PvP，不要潜行，待在塔里等进度条移到你的阵营一侧。你的阵营已经控制的塔不算：等另一方阵营夺下它再来。"
+zh_tw = "開啟PvP，不要潛行，待在塔裡等進度條移到你的陣營一側。你的陣營已經控制的塔不算：等另一方陣營奪下它再來。"
+
+# The Battle of Darrowshire: Davil and Captain Redpath must live and cannot be healed; the event tends to stall when the player who placed the bundle wanders off.
+[[note]]
+quest = 5721
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:10944}, then {npc:10937}, must survive and cannot be healed: pull mobs off them. Whoever places {item:15209} should stay near it by the well, or the battle can stall. The graveyard is next to the town."
+fr = "{npc:10944}, puis {npc:10937}, doivent survivre et ne peuvent pas être soignés : détournez les monstres d'eux. Celui qui pose {item:15209} doit rester près du puits, sinon la bataille peut se bloquer. Le cimetière est juste à côté du village."
+de = "{npc:10944} und danach {npc:10937} müssen überleben und können nicht geheilt werden: Zieh die Gegner von ihnen weg. Wer {item:15209} abstellt, sollte beim Brunnen in der Nähe bleiben, sonst kann die Schlacht hängen bleiben. Der Friedhof liegt direkt beim Dorf."
+es = "{npc:10944} y después {npc:10937} deben sobrevivir y no se pueden curar: quítales los enemigos de encima. Quien coloque {item:15209} debe quedarse cerca, junto al pozo, o la batalla puede atascarse. El cementerio está al lado del pueblo."
+pt = "{npc:10944} e depois {npc:10937} precisam sobreviver e não podem ser curados: tire os monstros de cima deles. Quem colocar {item:15209} deve ficar por perto, junto ao poço, ou a batalha pode travar. O cemitério fica ao lado da vila."
+ru = "{npc:10944}, а затем {npc:10937} должны выжить, и лечить их нельзя: отвлекайте врагов на себя. Тот, кто положил {item:15209}, должен оставаться рядом у колодца, иначе битва может застрять. Кладбище совсем рядом с деревней."
+ko = "{npc:10944}, 이어서 {npc:10937}이(가) 살아남아야 하며 치유할 수 없습니다. 몹을 그들에게서 떼어 내세요. {item:15209}을(를) 놓은 사람은 우물 근처에 머물러야 합니다. 그렇지 않으면 전투가 멈출 수 있습니다. 무덤은 마을 바로 옆에 있습니다."
+zh_cn = "{npc:10944}和之后的{npc:10937}必须存活，且无法被治疗：把怪从他们身上拉走。放置{item:15209}的人要留在井边附近，否则战斗可能卡住。墓地就在村子旁边。"
+zh_tw = "{npc:10944}和之後的{npc:10937}必須存活，且無法被治療：把怪從他們身上拉走。放置{item:15209}的人要留在井邊附近，否則戰鬥可能卡住。墓地就在村子旁邊。"

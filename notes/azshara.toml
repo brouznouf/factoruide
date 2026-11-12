@@ -74,3 +74,35 @@ ru = "{npc:6140} не внутри каменного купола: она пл�
 ko = "{npc:6140}은(는) 돌 돔 안에 없습니다. 주변을 헤엄치다가 바로 북쪽의 폐허가 있는 작은 섬에 가끔 올라옵니다. 그곳에서 기다리세요. 공격이 강합니다."
 zh_cn = "{npc:6140}不在石穹顶里：她在周围游动，不时登上正北方那座有废墟的小岛。在那里等她；她攻击很猛。"
 zh_tw = "{npc:6140}不在石穹頂裡：她在周圍游動，不時登上正北方那座有廢墟的小島。在那裡等她；她攻擊很猛。"
+
+# The Siren's Coral: only the sirens drop the coral; they share spawn points with the other Spitelash naga and look like the screamers.
+[[note]]
+quest = 8252
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Only {npc:6195} drops the coral; {npc:6193} looks the same. It shares spawn points with the other naga, so kill everything nearby to make it spawn more often."
+fr = "Le corail ne tombe que sur {npc:6195} ; {npc:6193} lui ressemble trait pour trait. Elle partage ses points d'apparition avec les autres nagas : tuez tout autour pour qu'elle apparaisse plus souvent."
+de = "Nur {npc:6195} lässt die Koralle fallen; {npc:6193} sieht genauso aus. Sie teilt sich die Spawnpunkte mit den anderen Naga: Töte alles in der Nähe, damit sie öfter spawnt."
+es = "Solo {npc:6195} suelta el coral; {npc:6193} parece idéntica. Comparte puntos de aparición con las demás nagas: mata todo lo que haya cerca para que aparezca más a menudo."
+pt = "Só {npc:6195} deixa cair o coral; {npc:6193} parece igual. Ela compartilha pontos de surgimento com as outras nagas: mate tudo por perto para que surja mais vezes."
+ru = "Коралл падает только с существ {npc:6195}; {npc:6193} выглядят точно так же. Они появляются в тех же точках, что и другие наги: перебейте всех вокруг, чтобы они появлялись чаще."
+ko = "산호는 {npc:6195}에게서만 나옵니다. {npc:6193}은(는) 똑같이 생겼습니다. 다른 나가와 생성 지점을 공유하므로 주변의 몹을 모두 처치해 더 자주 나타나게 하세요."
+zh_cn = "只有{npc:6195}掉落珊瑚；{npc:6193}长得一模一样。它与其他纳迦共用刷新点：把附近的怪全部杀掉，它就会更常刷新。"
+zh_tw = "只有{npc:6195}掉落珊瑚；{npc:6193}長得一模一樣。牠與其他納迦共用重生點：把附近的怪全部殺掉，牠就會更常重生。"
+
+# Poisoned Water: the bracers come from the elementals once the Aspect turned them into Discordant Surges; quest items do not drop in a raid group.
+[[note]]
+quest = 6804
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Use {item:17310} on a poisoned elemental before killing it: it turns into {npc:13279}, which drops a bracer every time. Untouched elementals drop none, and nothing drops while you are in a raid group."
+fr = "Utilisez {item:17310} sur un élémentaire empoisonné avant de le tuer : il devient {npc:13279}, qui lâche un brassard à chaque fois. Les élémentaires non transformés n'en lâchent pas, et rien ne tombe si vous êtes en groupe de raid."
+de = "Benutze {item:17310} an einem vergifteten Elementar, bevor du ihn tötest: Er wird zu {npc:13279}, der jedes Mal eine Armschiene fallen lässt. Unverwandelte Elementare lassen keine fallen, und in einer Schlachtzugsgruppe fällt gar nichts."
+es = "Usa {item:17310} en un elemental envenenado antes de matarlo: se convierte en {npc:13279}, que suelta un brazal cada vez. Los elementales sin transformar no sueltan ninguno, y no cae nada si estás en una banda."
+pt = "Use {item:17310} num elemental envenenado antes de matá-lo: ele vira {npc:13279}, que sempre deixa cair uma braçadeira. Elementais não transformados não deixam nenhuma, e nada cai enquanto você estiver num grupo de raide."
+ru = "Перед убийством используйте {item:17310} на отравленном элементале: он превратится в существо {npc:13279}, с которого наручи падают всегда. С непревращённых элементалей они не падают, а в рейдовой группе не падает ничего."
+ko = "독에 오염된 정령을 처치하기 전에 {item:17310}을(를) 사용하세요. 정령이 {npc:13279}(으)로 변해 매번 손목보호구를 떨어뜨립니다. 변하지 않은 정령은 떨어뜨리지 않으며, 공격대에 속해 있으면 아무것도 나오지 않습니다."
+zh_cn = "杀死中毒的元素生物前先对它使用{item:17310}：它会变成{npc:13279}，每次都会掉落护腕。未变身的元素不会掉落，处于团队中时也什么都不会掉。"
+zh_tw = "殺死中毒的元素生物前先對它使用{item:17310}：它會變成{npc:13279}，每次都會掉落護腕。未變身的元素不會掉落，處於團隊中時也什麼都不會掉。"

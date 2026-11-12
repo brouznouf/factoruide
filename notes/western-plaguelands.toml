@@ -296,3 +296,51 @@ ru = "Когда бочка окажется на ящике, щелкните �
 ko = "통이 상자 위에 놓이면 통 자체를 클릭해 흰개미를 풀어 주세요. 눈에 보이는 변화는 없지만 그것으로 퀘스트가 완료됩니다. 그런 다음 통을 {npc:11616}에게 가져가세요."
 zh_cn = "木桶放到箱子上后，再点击木桶本身放出白蚁：看不到任何效果，但任务就此完成。然后把木桶带回给{npc:11616}。"
 zh_tw = "木桶放到箱子上後，再點擊木桶本身放出白蟻：看不到任何效果，但任務就此完成。然後把木桶帶回給{npc:11616}。"
+
+# Target: Gahrron's Withering: the Cauldron Lord's knockback throws players into the dense, fast-respawning undead around the cauldron.
+[[note]]
+quest = 5225
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:11078} knocks you far back into the undead around the cauldron, which respawn quickly. Clear them first and fight him with your back to the cauldron."
+fr = "{npc:11078} vous projette loin en arrière, au milieu des morts-vivants autour du chaudron, qui réapparaissent vite. Nettoyez-les d'abord et combattez-le dos au chaudron."
+de = "{npc:11078} schleudert dich weit zurück zwischen die Untoten um den Kessel, die schnell respawnen. Räume sie zuerst weg und kämpfe mit dem Rücken zum Kessel."
+es = "{npc:11078} te lanza lejos hacia los no-muertos que rodean el caldero, que reaparecen rápido. Límpialos primero y lucha de espaldas al caldero."
+pt = "{npc:11078} arremessa você para longe, no meio dos mortos-vivos em volta do caldeirão, que reaparecem rápido. Limpe-os primeiro e lute de costas para o caldeirão."
+ru = "{npc:11078} отбрасывает вас далеко назад, к нежити вокруг котла, которая быстро появляется снова. Сначала зачистите её и сражайтесь спиной к котлу."
+ko = "{npc:11078}은(는) 가마솥 주변 언데드 무리 속으로 멀리 밀쳐 냅니다. 언데드는 빠르게 다시 나타납니다. 먼저 정리하고 가마솥을 등지고 싸우세요."
+zh_cn = "{npc:11078}会把你远远击退到大锅周围的亡灵中，而它们刷新很快。先把它们清掉，再背靠大锅和他战斗。"
+zh_tw = "{npc:11078}會把你遠遠擊退到大鍋周圍的不死生物中，而牠們重生很快。先把牠們清掉，再背靠大鍋和他戰鬥。"
+
+# Alas, Andorhal: Araj's phylactery stays on the ground after his death and every player holding the quest can click it, whoever killed him; raid members cannot.
+[[note]]
+quest = 211
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:177241} stays where {npc:1852} dies, and anyone with the quest can loot it, even after another group's kill. Take {quest:5803} too so one kill does both, and leave any raid group before looting."
+fr = "{object:177241} reste là où {npc:1852} meurt et toute personne ayant la quête peut le fouiller, même après la victoire d'un autre groupe. Prenez aussi {quest:5803} pour tout faire en une fois, et quittez tout groupe de raid avant de fouiller."
+de = "{object:177241} bleibt dort, wo {npc:1852} stirbt, und jeder mit der Quest kann es plündern, auch nach dem Kill einer anderen Gruppe. Nimm auch {quest:5803} mit, damit ein Kill für beide reicht, und verlass vor dem Plündern jede Schlachtzugsgruppe."
+es = "{object:177241} queda donde muere {npc:1852} y cualquiera con la misión puede saquearla, incluso si lo mató otro grupo. Coge también {quest:5803} para hacer ambas con una muerte, y sal de cualquier banda antes de saquear."
+pt = "{object:177241} fica onde {npc:1852} morre e qualquer um com a missão pode saqueá-lo, mesmo depois da vitória de outro grupo. Pegue também {quest:5803} para fazer as duas com uma morte só, e saia de qualquer grupo de raide antes de saquear."
+ru = "{object:177241} остаётся на месте гибели существа {npc:1852}, и его может обыскать любой с этим заданием, даже если убила другая группа. Возьмите и {quest:5803}, чтобы одно убийство засчиталось за оба, и перед добычей выйдите из рейдовой группы."
+ko = "{object:177241}은(는) {npc:1852}이(가) 죽은 자리에 남으며, 다른 파티가 처치했더라도 퀘스트가 있으면 누구나 획득할 수 있습니다. {quest:5803}도 함께 받아 한 번에 끝내고, 획득하기 전에 공격대에서 나가세요."
+zh_cn = "{object:177241}会留在{npc:1852}死亡的地方，有任务的人都能拾取，即使是别的队伍杀的。顺便接上{quest:5803}，一次击杀完成两个任务；拾取前先退出团队。"
+zh_tw = "{object:177241}會留在{npc:1852}死亡的地方，有任務的人都能拾取，即使是別的隊伍殺的。順便接上{quest:5803}，一次擊殺完成兩個任務；拾取前先退出團隊。"
+
+# Araj's Scarab: same phylactery as Alas, Andorhal, lootable by every player holding the quest, outside a raid group.
+[[note]]
+quest = 5803
+phase = "objective"
+objective = 1
+level = "info"
+en = "{object:177241} stays where {npc:1852} dies, and anyone with the quest can loot it, even after another group's kill. Take {quest:211} too so one kill does both, and leave any raid group before looting."
+fr = "{object:177241} reste là où {npc:1852} meurt et toute personne ayant la quête peut le fouiller, même après la victoire d'un autre groupe. Prenez aussi {quest:211} pour tout faire en une fois, et quittez tout groupe de raid avant de fouiller."
+de = "{object:177241} bleibt dort, wo {npc:1852} stirbt, und jeder mit der Quest kann es plündern, auch nach dem Kill einer anderen Gruppe. Nimm auch {quest:211} mit, damit ein Kill für beide reicht, und verlass vor dem Plündern jede Schlachtzugsgruppe."
+es = "{object:177241} queda donde muere {npc:1852} y cualquiera con la misión puede saquearla, incluso si lo mató otro grupo. Coge también {quest:211} para hacer ambas con una muerte, y sal de cualquier banda antes de saquear."
+pt = "{object:177241} fica onde {npc:1852} morre e qualquer um com a missão pode saqueá-lo, mesmo depois da vitória de outro grupo. Pegue também {quest:211} para fazer as duas com uma morte só, e saia de qualquer grupo de raide antes de saquear."
+ru = "{object:177241} остаётся на месте гибели существа {npc:1852}, и его может обыскать любой с этим заданием, даже если убила другая группа. Возьмите и {quest:211}, чтобы одно убийство засчиталось за оба, и перед добычей выйдите из рейдовой группы."
+ko = "{object:177241}은(는) {npc:1852}이(가) 죽은 자리에 남으며, 다른 파티가 처치했더라도 퀘스트가 있으면 누구나 획득할 수 있습니다. {quest:211}도 함께 받아 한 번에 끝내고, 획득하기 전에 공격대에서 나가세요."
+zh_cn = "{object:177241}会留在{npc:1852}死亡的地方，有任务的人都能拾取，即使是别的队伍杀的。顺便接上{quest:211}，一次击杀完成两个任务；拾取前先退出团队。"
+zh_tw = "{object:177241}會留在{npc:1852}死亡的地方，有任務的人都能拾取，即使是別的隊伍殺的。順便接上{quest:211}，一次擊殺完成兩個任務；拾取前先退出團隊。"
