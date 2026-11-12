@@ -205,12 +205,17 @@ hide the guide or all the addon's windows, time per level, quest item, the optio
 On WoW Forever with [Polestar](https://github.com/fitzforge/polestar) installed, the app also
 writes your guides as a Polestar guide pack (Factoruide_Polestar; the web app downloads it). In Polestar, choose Factoruide
 under "Suggest guides from" on the "Community guides" page: it offers each character the guide of
-its race and class. **Export for Polestar…** on a guide writes it as Polestar's guide source (a
-`.guide` file, in English) into a pack folder for Polestar's own tools, which its Planner and Play
-open: `Factoruide_Polestar_Pack` in the folder you choose (or the folder itself when it is that
-pack). Exporting another guide adds its `.guide` file to the pack and keeps the others; exporting
-a guide again replaces its file. `fg polestar --source --out <dir>` writes such a pack from the
-planned routes.
+its race and class. **Export → Polestar: addon** on a guide writes it, whole and with no step limit,
+as an addon folder ready to copy into the game's `Interface\AddOns` folder: `<Character>_Polestar`
+(the guide's character, else its name) in the folder you choose, a guide pack of its own beside
+Factoruide_Polestar; the app then says where to copy it and what to choose in Polestar. Exporting
+another guide of the same character adds it to that folder; exporting a guide again replaces it.
+**Export → Polestar: .guide source** writes it as Polestar's guide source (a `.guide` file, in
+English) into a pack folder for Polestar's own tools, which its Planner and Play open:
+`Factoruide_Polestar_Pack` in the folder you choose (or the folder itself when it is that pack).
+Exporting another guide adds its `.guide` file to the pack and keeps the others; exporting a guide
+again replaces its file. `fg polestar --source --out <dir>` writes such a pack from the planned
+routes.
 
 - Guide: follows the guide chosen for the character (in the options' guides; the only one of
   its race and class by itself) and advances by itself; previous and next step, start over on the

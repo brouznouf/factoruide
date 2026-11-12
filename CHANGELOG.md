@@ -11,6 +11,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### App
 
 - Steps show how their quest is taken (an item, an object, a mob's drop, an event) or their objective done, and a mark when a note tells more about the quest.
+- WoW Forever: Export → Polestar: addon writes a guide, whole and with no step limit, as an addon folder named after its character (`<Character>_Polestar`), ready to copy into the game; the app says where to copy it and what to choose in Polestar.
 
 ### Guides
 

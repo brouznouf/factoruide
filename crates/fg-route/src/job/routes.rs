@@ -278,6 +278,51 @@ fn add_polestar_source_pack(dir: &Path, version: &str) -> Result<()> {
     Ok(())
 }
 
+/// Add a guide (`id`, its route written in the game's language) to the addon of `addon` in
+/// `picked`, an addon folder ready to copy into the game's AddOns folder: `picked` itself when it
+/// is that addon's folder, else its subfolder of that name, made when missing. The guide's Lua
+/// file is written (replaced if there), the pack's other guides kept, and the `.toc` and
+/// `Pack.lua` written again. A folder holding anything but that addon is left as it is.
+/// Returns the addon's folder.
+pub fn add_polestar_addon(
+    picked: &Path,
+    addon: &export::polestar::PackAddon,
+    id: &str,
+    route: &Route,
+    version: &str,
+) -> Result<PathBuf> {
+    let dir = if picked.file_name().is_some_and(|n| n == addon.folder.as_str()) {
+        picked.to_owned()
+    } else {
+        picked.join(&addon.folder)
+    };
+    let toc = dir.join(format!("{}.toc", addon.folder));
+    if dir.exists() {
+        let ours = std::fs::read_to_string(&toc).is_ok_and(|text| {
+            text.contains(export::polestar::GENERATED) && text.contains(&format!("## X-Polestar-Pack: {}\n", addon.id))
+        });
+        if !ours && std::fs::read_dir(&dir)?.next().is_some() {
+            anyhow::bail!(
+                "{} holds something other than the Factoruide addon {}: choose another folder",
+                dir.display(),
+                addon.folder
+            );
+        }
+    }
+    std::fs::create_dir_all(&dir)?;
+    let name = export::polestar::guide_name(id);
+    std::fs::write(dir.join(format!("Guide_{name}.lua")), addon.guide_lua(&name, route))?;
+    std::fs::write(dir.join("Pack.lua"), addon.pack_lua(version))?;
+    let mut guides: Vec<String> = std::fs::read_dir(&dir)?
+        .flatten()
+        .filter_map(|e| e.file_name().into_string().ok())
+        .filter(|f| f.starts_with("Guide_") && Path::new(f).extension().is_some_and(|e| e.eq_ignore_ascii_case("lua")))
+        .collect();
+    guides.sort();
+    std::fs::write(toc, addon.toc(version, &guides))?;
+    Ok(dir)
+}
+
 /// Routes written in `locale` (None: each in the language it was made in), the names of each
 /// language read once from the database.
 pub fn render_routes(
@@ -357,6 +402,46 @@ mod tests {
             .collect();
         out.sort();
         out
+    }
+
+    #[test]
+    fn a_characters_addon_is_ready_to_copy_and_keeps_its_other_guides() {
+        let picked = temp_dir("polestar-addon");
+        let addon = export::polestar::PackAddon::of(Some("Besmer-Realm"), "besmer-25-40");
+        let dir = add_polestar_addon(&picked, &addon, "besmer-25-40", &route("Besmer 25-40"), "1.0.0").unwrap();
+        assert_eq!(dir, picked.join("Besmer_Polestar"));
+        // The addon's own folder chosen again: written in place, the first guide kept.
+        assert_eq!(
+            add_polestar_addon(&dir, &addon, "besmer-40-60", &route("Besmer 40-60"), "1.1.0").unwrap(),
+            dir
+        );
+        assert_eq!(
+            files(&dir),
+            [
+                "Besmer_Polestar.toc",
+                "Guide_besmer-25-40.lua",
+                "Guide_besmer-40-60.lua",
+                "Pack.lua"
+            ]
+        );
+        let toc = std::fs::read_to_string(dir.join("Besmer_Polestar.toc")).unwrap();
+        assert!(toc.contains("## X-Polestar-Pack: factoruide-besmer\n") && toc.contains("## Version: 1.1.0\n"));
+        assert!(toc.ends_with("\nPack.lua\nGuide_besmer-25-40.lua\nGuide_besmer-40-60.lua\n"));
+        let guide = std::fs::read_to_string(dir.join("Guide_besmer-40-60.lua")).unwrap();
+        assert!(guide.contains("id = \"factoruide-besmer/besmer-40-60\", pack = \"factoruide-besmer\""));
+        std::fs::remove_dir_all(&picked).unwrap();
+    }
+
+    #[test]
+    fn a_folder_that_is_not_the_addon_is_left_as_it_is() {
+        let picked = temp_dir("polestar-addon-other");
+        let addon = export::polestar::PackAddon::of(Some("Besmer"), "besmer");
+        let dir = picked.join("Besmer_Polestar");
+        std::fs::create_dir_all(&dir).unwrap();
+        std::fs::write(dir.join("Besmer_Polestar.toc"), "## Title: someone else's\n").unwrap();
+        assert!(add_polestar_addon(&picked, &addon, "besmer", &route("Besmer"), "1.0.0").is_err());
+        assert_eq!(files(&dir), ["Besmer_Polestar.toc"]);
+        std::fs::remove_dir_all(&picked).unwrap();
     }
 
     #[test]

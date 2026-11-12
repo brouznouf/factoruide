@@ -163,6 +163,52 @@ pub(crate) fn export_polestar(
     Ok(pack.display().to_string())
 }
 
+/// What `export_polestar_addon` wrote, for the player to copy into the game.
+#[derive(serde::Serialize)]
+pub(crate) struct PolestarAddon {
+    /// The addon's folder.
+    path: String,
+    /// Its name (`<Character>_Polestar`) and its pack's title in Polestar's menus.
+    folder: String,
+    title: String,
+    /// The game's AddOns folder of WoW Forever, where it goes.
+    addons: String,
+}
+
+/// Export a guide version as a Polestar guide pack ready to copy into the game: the addon folder
+/// of its character's pack (`<Character>_Polestar`) in `dir` (or `dir` itself when it is that
+/// folder), the guide written in the language it was made in, without the step limit of
+/// Polestar's import strings; the character's other guides exported before are kept. Polestar
+/// exists on WoW Forever only.
+#[tauri::command(async)]
+pub(crate) fn export_polestar_addon(
+    state: State<'_, AppState>,
+    guide: GuideId,
+    version: u32,
+    dir: String,
+) -> CmdResult<PolestarAddon> {
+    if state.edition() != Edition::Forever {
+        return Err("Polestar is for WoW Forever only".into());
+    }
+    let saved = state.library().version(&guide, version)?;
+    let route = state.render(&saved.outcome.route, None)?;
+    let addon = fg_route::export::polestar::PackAddon::of(saved.meta.character.as_deref(), &saved.meta.name);
+    let path = job::add_polestar_addon(
+        Path::new(&dir),
+        &addon,
+        guide.as_str(),
+        &route,
+        env!("CARGO_PKG_VERSION"),
+    )
+    .map_err(err)?;
+    Ok(PolestarAddon {
+        path: path.display().to_string(),
+        folder: addon.folder,
+        title: addon.title,
+        addons: state.settings().addons_dir(Edition::Forever).display().to_string(),
+    })
+}
+
 /// Whether the data addon in the game has the current guides (else it is to be written again).
 #[tauri::command]
 pub(crate) fn addon_synced(state: State<'_, AppState>) -> bool {
