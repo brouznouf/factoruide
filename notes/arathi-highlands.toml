@@ -169,3 +169,19 @@ ru = "Открытие {object:2717}, {object:2718} или {object:2716} (по �
 ko = "탑의 층마다 하나씩 있는 {object:2717}, {object:2718}, {object:2716}을(를) 열면 상자 옆에 정예 오우거 3~5마리가 나타납니다. 챙기고 바로 빠지세요. 탑 안에서 죽은 뒤 다음 상자를 위해 돌아오는 방법도 통합니다."
 zh_cn = "打开{object:2717}、{object:2718}或{object:2716}（塔的每层各一个）会在箱子旁召来3到5个精英食人魔。拿完立刻离开；死在塔里再回来开下一个箱子也行。"
 zh_tw = "打開{object:2717}、{object:2718}或{object:2716}（塔的每層各一個）會在箱子旁召來3到5個精英食人魔。拿完立刻離開；死在塔裡再回來開下一個箱子也行。"
+
+# Eagle's Fist: the Messenger Bag is on top of Thoradin's Wall; the way up is a jumping path from the broken cart leaning on the wall on the Hillsbrad side, just north of the gate.
+[[note]]
+quest = 79975
+phase = "turnin"
+level = "info"
+editions = ["forever"]
+en = "The bag is on top of the great wall. Climb from the {zone:267} side, just north of the gate: jump onto the broken cart leaning on the wall, up to the fallen ladder, then from rock to rock to the top."
+fr = "Le sac est au sommet de la grande muraille. Grimpez côté {zone:267}, juste au nord de la porte : sautez sur la charrette cassée appuyée contre le mur, jusqu'à l'échelle tombée, puis de rocher en rocher jusqu'en haut."
+de = "Die Tasche liegt oben auf der großen Mauer. Klettere auf der Seite von {zone:267}, gleich nördlich des Tors: spring auf den kaputten Karren an der Mauer, hoch zur umgefallenen Leiter und dann von Fels zu Fels nach oben."
+es = "La bolsa está en lo alto de la gran muralla. Sube por el lado de {zone:267}, justo al norte de la puerta: salta al carro roto apoyado en el muro, luego a la escalera caída y de roca en roca hasta arriba."
+pt = "A bolsa fica no alto da grande muralha. Suba pelo lado de {zone:267}, logo ao norte do portão: pule na carroça quebrada encostada no muro, depois na escada caída e de pedra em pedra até o topo."
+ru = "Сумка лежит наверху великой стены. Забирайтесь со стороны локации {zone:267}, чуть севернее ворот: прыгните на сломанную телегу у стены, затем на упавшую лестницу и по камням наверх."
+ko = "가방은 거대한 성벽 꼭대기에 있습니다. 성문 바로 북쪽, {zone:267} 쪽에서 올라가세요. 성벽에 기대 있는 부서진 수레에 뛰어오른 뒤 쓰러진 사다리로, 이어서 바위를 차례로 밟고 꼭대기까지 오르세요."
+zh_cn = "包裹在大城墙顶上。从{zone:267}一侧、城门北边不远处往上爬：跳上靠在墙边的破马车，再到倒下的梯子上，然后踩着岩石一路跳到顶。"
+zh_tw = "包裹在大城牆頂上。從{zone:267}一側、城門北邊不遠處往上爬：跳上靠在牆邊的破馬車，再到倒下的梯子上，然後踩著岩石一路跳到頂。"

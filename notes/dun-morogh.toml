@@ -125,3 +125,37 @@ ru = "Лестница в подвал за столом повара. Отда�
 ko = "지하실 계단은 요리사의 탁자 뒤에 있습니다. 여관주인에게 산 {item:2686}을(를) {npc:1373}에게 주고({quest:308}) 그가 위층으로 완전히 올라갈 때까지 기다린 뒤, 그가 서 있던 자리 바로 뒤의 {object:270}을(를) 사용하세요."
 zh_cn = "地下室的楼梯在厨师的桌子后面。把从旅店老板那里买的{item:2686}交给{npc:1373}（{quest:308}），等他完全走上楼后，再使用他原先站的位置正后方的{object:270}。"
 zh_tw = "地下室的樓梯在廚師的桌子後面。把從旅店老闆那裡買的{item:2686}交給{npc:1373}（{quest:308}），等他完全走上樓後，再使用他原先站的位置正後方的{object:270}。"
+
+# The Great Outdoors: the campfire objective often fails to count unless the player sits while Eric Brighthammer is still talking; abandoning and taking the quest again fixes it.
+[[note]]
+quest = 96608
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Sit down by the campfire while {npc:265813} is still talking, or the rest may not count. If the rest buff never completes the objective, abandon the quest and take it again."
+fr = "Asseyez-vous près du feu de camp pendant que {npc:265813} parle encore, sinon le repos risque de ne pas compter. Si le bonus de repos ne valide jamais l'objectif, abandonnez la quête et reprenez-la."
+de = "Setz dich ans Lagerfeuer, solange {npc:265813} noch spricht, sonst zählt die Rast womöglich nicht. Wenn der Rast-Buff das Ziel nie erfüllt, brich die Quest ab und nimm sie erneut an."
+es = "Siéntate junto a la hoguera mientras {npc:265813} siga hablando, o puede que el descanso no cuente. Si el beneficio de descanso nunca completa el objetivo, abandona la misión y vuelve a aceptarla."
+pt = "Sente-se junto à fogueira enquanto {npc:265813} ainda estiver falando, ou o descanso pode não contar. Se o bônus de descanso nunca completar o objetivo, abandone a missão e aceite-a de novo."
+ru = "Сядьте у костра, пока {npc:265813} еще говорит, иначе отдых может не засчитаться. Если эффект отдыха так и не выполняет цель, откажитесь от задания и возьмите его снова."
+ko = "{npc:265813}이(가) 말하는 동안 모닥불 옆에 앉으세요. 그렇지 않으면 휴식이 인정되지 않을 수 있습니다. 휴식 효과로 목표가 끝내 완료되지 않으면 퀘스트를 포기하고 다시 받으세요."
+zh_cn = "趁{npc:265813}还在说话时在篝火旁坐下，否则休息可能不算数。如果休息效果始终无法完成目标，放弃任务后重新接取。"
+zh_tw = "趁{npc:265813}還在說話時在營火旁坐下，否則休息可能不算數。如果休息效果始終無法完成目標，放棄任務後重新接取。"
+
+# Flintfire's Shipment: the crates are inside the Grizzled Den, whose entrance is around 42.5, 54.5, and its mobs are strong for the quest's level.
+[[note]]
+quest = 98321
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The shipments are inside a cave whose entrance is around 42.5, 54.5. The mobs in there hit hard for this level."
+fr = "Les cargaisons sont dans une grotte dont l'entrée se trouve vers 42.5, 54.5. Les monstres à l'intérieur frappent fort pour ce niveau."
+de = "Die Lieferungen liegen in einer Höhle, deren Eingang bei etwa 42.5, 54.5 ist. Die Gegner dort schlagen für diese Stufe hart zu."
+es = "Los cargamentos están dentro de una cueva cuya entrada está hacia 42.5, 54.5. Los enemigos de dentro pegan fuerte para este nivel."
+pt = "As remessas ficam dentro de uma caverna cuja entrada está perto de 42.5, 54.5. Os inimigos lá dentro batem forte para este nível."
+ru = "Грузы лежат в пещере, вход в которую около 42.5, 54.5. Противники внутри сильно бьют для этого уровня."
+ko = "화물은 입구가 42.5, 54.5 근처에 있는 동굴 안에 있습니다. 안의 몬스터들은 이 레벨에 비해 강하게 때립니다."
+zh_cn = "货物在一个山洞里，洞口在42.5, 54.5附近。里面的怪物对这个等级来说下手很重。"
+zh_tw = "貨物在一個山洞裡，洞口在42.5, 54.5附近。裡面的怪物對這個等級來說下手很重。"

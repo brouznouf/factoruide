@@ -279,3 +279,19 @@ ru = "Нападают три волны фурболгов, в последне
 ko = "퍼볼그가 세 차례 공격하며, 마지막에는 이름 있는 우두머리가 옵니다. 사이사이 회복할 시간이 있습니다. 피해를 많이 주는 {npc:11711} 곁에서 싸우고, 마지막 처치 후에도 머무르세요. 퀘스트 완료까지 1분 이상 걸릴 수 있습니다."
 zh_cn = "熊怪会分三波进攻，最后一波有一个有名字的首领，波次之间有时间恢复。在{npc:11711}身边作战，她能打出不少伤害；最后一个死后别走开：任务可能要一分钟或更久才完成。"
 zh_tw = "熊怪會分三波進攻，最後一波有一個有名字的首領，波次之間有時間恢復。在{npc:11711}身邊作戰，她能打出不少傷害；最後一個死後別走開：任務可能要一分鐘或更久才完成。"
+
+# Baron Marinous: the starting item drops from an elite summoned by using the amulet (20 fragments from the Stormscale naga) at the Fathom Stone below the spiral stairs of the Ruins of Mathystra; the stone is gone for a while after each summon.
+[[note]]
+quest = 98028
+phase = "accept"
+level = "warning"
+editions = ["forever"]
+en = "The quest starts from an item dropped by an elite you summon: combine 20 amulet fragments from the naga, then use the amulet at the {object:669236}, at the bottom of the spiral stairs in the ruins (around 59, 22). The stone vanishes for a while after each summon."
+fr = "La quête commence par un objet laissé par un élite que vous invoquez : assemblez 20 fragments d'amulette pris aux nagas, puis utilisez l'amulette à la {object:669236}, au pied de l'escalier en colimaçon des ruines (vers 59, 22). La pierre disparaît un moment après chaque invocation."
+de = "Die Quest beginnt mit einem Gegenstand, den ein von dir beschworener Elitegegner fallen lässt: setze 20 Amulettfragmente der Naga zusammen und benutze das Amulett am {object:669236}, unten an der Wendeltreppe der Ruinen (etwa 59, 22). Der Stein verschwindet nach jeder Beschwörung eine Weile."
+es = "La misión empieza con un objeto que suelta un élite que invocas: junta 20 fragmentos de amuleto de los naga y usa el amuleto en {object:669236}, al pie de la escalera de caracol de las ruinas (hacia 59, 22). La piedra desaparece un rato tras cada invocación."
+pt = "A missão começa com um item deixado por uma elite que você invoca: junte 20 fragmentos de amuleto das nagas e use o amuleto em {object:669236}, ao pé da escada em caracol das ruínas (perto de 59, 22). A pedra some por um tempo após cada invocação."
+ru = "Задание начинается с предмета, который выпадает из призванного вами элитного противника: соберите 20 осколков амулета с наг и используйте амулет у объекта {object:669236} внизу винтовой лестницы в руинах (около 59, 22). После каждого призыва камень на время исчезает."
+ko = "이 퀘스트는 직접 소환하는 정예가 떨어뜨리는 아이템으로 시작합니다. 나가에게서 얻은 목걸이 조각 20개를 합친 뒤, 폐허의 나선 계단 아래(59, 22 근처)에 있는 {object:669236}에서 목걸이를 사용하세요. 소환할 때마다 돌이 한동안 사라집니다."
+zh_cn = "任务由你召唤出的精英掉落的物品开始：收集纳迦掉落的20块护符碎片并合成，然后在废墟螺旋楼梯底部（约59, 22）的{object:669236}处使用护符。每次召唤后石头会消失一段时间。"
+zh_tw = "任務由你召喚出的精英掉落的物品開始：收集納迦掉落的20塊護符碎片並合成，然後在廢墟螺旋樓梯底部（約59, 22）的{object:669236}處使用護符。每次召喚後石頭會消失一段時間。"

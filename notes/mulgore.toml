@@ -78,3 +78,36 @@ ru = "Ключ выпадает из элитного крошшера 12-го �
 ko = "열쇠는 광산 반대편 출구 바로 바깥을 돌아다니는 12레벨 정예 벌목기에서 얻습니다. 과부하로 제자리에 멈춰 더 빠르게 공격하면 물러나서 끝날 때까지 치유하세요."
 zh_cn = "钥匙来自一台在矿洞另一端出口外游荡的12级精英伐木机。当它过载、停在原地并加快攻击时，退开并治疗，直到效果结束。"
 zh_tw = "鑰匙來自一台在礦坑另一端出口外遊蕩的12級精英伐木機。當它過載、停在原地並加快攻擊時，退開並治療，直到效果結束。"
+
+# Talkin' bout Toxins, Mon: the samples come from the dead tauren lying in the area; a corpse rises when the extractor is used and keeps giving samples if it is not killed, while corpses of mobs other players looted give nothing.
+[[note]]
+quest = 96241
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Use the extractor on the dead tauren lying around the area. When a corpse gets up, keep using the extractor on it rather than killing it: a sample comes after a few uses. Corpses already looted by other players give nothing."
+fr = "Utilisez l'extracteur sur les taurens morts étendus dans la zone. Quand un cadavre se relève, continuez à utiliser l'extracteur sur lui au lieu de le tuer : un échantillon vient après quelques utilisations. Les cadavres déjà fouillés par d'autres joueurs ne donnent rien."
+de = "Benutze den Extraktor an den toten Tauren, die in der Gegend liegen. Steht eine Leiche auf, benutze den Extraktor weiter an ihr, statt sie zu töten: nach ein paar Anwendungen gibt es eine Probe. Leichen, die andere Spieler schon geplündert haben, geben nichts."
+es = "Usa el extractor en los tauren muertos tendidos por la zona. Cuando un cadáver se levante, sigue usando el extractor en él en vez de matarlo: la muestra llega tras unos cuantos usos. Los cadáveres ya despojados por otros jugadores no dan nada."
+pt = "Use o extrator nos taurens mortos caídos pela área. Quando um cadáver se levantar, continue usando o extrator nele em vez de matá-lo: a amostra vem depois de alguns usos. Cadáveres já saqueados por outros jogadores não dão nada."
+ru = "Используйте экстрактор на мертвых тауренах, лежащих в округе. Когда труп поднимется, продолжайте применять экстрактор к нему, а не убивайте: образец появится после нескольких применений. Трупы, которые уже обыскали другие игроки, ничего не дают."
+ko = "지역 곳곳에 쓰러진 타우렌 시체에 추출기를 사용하세요. 시체가 일어나면 죽이지 말고 계속 추출기를 사용하세요. 몇 번 사용하면 표본이 나옵니다. 다른 플레이어가 이미 전리품을 챙긴 시체에서는 아무것도 나오지 않습니다."
+zh_cn = "对区域里躺着的牛头人尸体使用提取器。尸体站起来后，不要杀死它，继续对它使用提取器：用几次后就会得到样本。已被其他玩家拾取过的尸体什么也不会给。"
+zh_tw = "對區域裡躺著的牛頭人屍體使用提取器。屍體站起來後，不要殺死它，繼續對它使用提取器：用幾次後就會得到樣本。已被其他玩家拾取過的屍體什麼也不會給。"
+
+# Earthen Echo: Muln Earthfury stands in the big tent of the camp on Skywatcher Plateau, which is reached by a path starting around 39.7, 16.9.
+[[note]]
+quest = 98823
+phase = "turnin"
+level = "info"
+editions = ["forever"]
+en = "The turn-in is in the large tent of the camp on top of the plateau. The path up starts around 39.7, 16.9."
+fr = "Le rendu se fait dans la grande tente du camp, au sommet du plateau. Le chemin qui y monte commence vers 39.7, 16.9."
+de = "Die Abgabe ist im großen Zelt des Lagers oben auf dem Plateau. Der Weg hinauf beginnt bei etwa 39.7, 16.9."
+es = "La entrega está en la tienda grande del campamento, en lo alto de la meseta. El camino de subida empieza hacia 39.7, 16.9."
+pt = "A entrega fica na tenda grande do acampamento, no alto do platô. O caminho de subida começa perto de 39.7, 16.9."
+ru = "Задание сдается в большом шатре лагеря на вершине плато. Тропа наверх начинается около 39.7, 16.9."
+ko = "완료 지점은 고원 꼭대기 야영지의 큰 천막 안입니다. 올라가는 길은 39.7, 16.9 근처에서 시작합니다."
+zh_cn = "交任务的地点在高原顶上营地的大帐篷里。上去的小路从39.7, 16.9附近开始。"
+zh_tw = "交任務的地點在高原頂上營地的大帳篷裡。上去的小路從39.7, 16.9附近開始。"

@@ -215,3 +215,35 @@ phase = "objective"
 objective = 2
 icon = "pickup"
 editions = ["forever"]
+
+# Elmpaw's Head: the head drops for only one group member per kill, so a group kills the bear once per member who wants the quest.
+[[note]]
+quest = 91746
+phase = "accept"
+level = "warning"
+editions = ["forever"]
+en = "In a group, each kill of {npc:248299} drops the head for one member only: kill it again for each player who needs the quest."
+fr = "En groupe, chaque mort de {npc:248299} ne donne la tête qu'à un seul membre : tuez-le de nouveau pour chaque joueur qui veut la quête."
+de = "In einer Gruppe lässt jeder Kill von {npc:248299} den Kopf nur für ein Mitglied fallen: töte ihn erneut für jeden Spieler, der die Quest braucht."
+es = "En grupo, cada muerte de {npc:248299} da la cabeza a un solo miembro: mátalo otra vez por cada jugador que necesite la misión."
+pt = "Em grupo, cada morte de {npc:248299} dá a cabeça para um só membro: mate-o de novo para cada jogador que precisar da missão."
+ru = "В группе каждое убийство {npc:248299} дает голову только одному участнику: убейте его снова для каждого игрока, которому нужно задание."
+ko = "파티에서는 {npc:248299}을(를) 한 번 처치할 때마다 한 명만 머리를 얻습니다. 퀘스트가 필요한 플레이어마다 다시 처치하세요."
+zh_cn = "组队时，每次击杀{npc:248299}只有一名成员能拿到头颅：需要任务的每个玩家都要再杀一次。"
+zh_tw = "組隊時，每次擊殺{npc:248299}只有一名成員能拿到頭顱：需要任務的每個玩家都要再殺一次。"
+
+# Croaky's Head: the head drops for only one group member per kill, so a group kills the murloc once per member who wants the quest.
+[[note]]
+quest = 91740
+phase = "accept"
+level = "warning"
+editions = ["forever"]
+en = "In a group, each kill of {npc:248278} drops the head for one member only: kill it again for each player who needs the quest."
+fr = "En groupe, chaque mort de {npc:248278} ne donne la tête qu'à un seul membre : tuez-le de nouveau pour chaque joueur qui veut la quête."
+de = "In einer Gruppe lässt jeder Kill von {npc:248278} den Kopf nur für ein Mitglied fallen: töte ihn erneut für jeden Spieler, der die Quest braucht."
+es = "En grupo, cada muerte de {npc:248278} da la cabeza a un solo miembro: mátalo otra vez por cada jugador que necesite la misión."
+pt = "Em grupo, cada morte de {npc:248278} dá a cabeça para um só membro: mate-o de novo para cada jogador que precisar da missão."
+ru = "В группе каждое убийство {npc:248278} дает голову только одному участнику: убейте его снова для каждого игрока, которому нужно задание."
+ko = "파티에서는 {npc:248278}을(를) 한 번 처치할 때마다 한 명만 머리를 얻습니다. 퀘스트가 필요한 플레이어마다 다시 처치하세요."
+zh_cn = "组队时，每次击杀{npc:248278}只有一名成员能拿到头颅：需要任务的每个玩家都要再杀一次。"
+zh_tw = "組隊時，每次擊殺{npc:248278}只有一名成員能拿到頭顱：需要任務的每個玩家都要再殺一次。"

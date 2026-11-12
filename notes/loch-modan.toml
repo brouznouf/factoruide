@@ -133,3 +133,35 @@ phase = "objective"
 objective = 1
 icon = "rare"
 editions = ["forever"]
+
+# Silver of the Waves: the starting toolbox is underwater on the bottom of the loch and spawns at one of several spots (around 45.6, 43.4, 48, 40, 48.9, 54.2 and 50.5, 53); its quest mark shows from the surface.
+[[note]]
+quest = 86614
+phase = "accept"
+level = "info"
+editions = ["forever"]
+en = "The toolbox lies on the bottom of the loch and moves between several spots from one spawn to the next. Swim over the middle of the loch and look down for its quest mark."
+fr = "La boîte à outils repose au fond du loch et change d'emplacement d'une apparition à l'autre. Nagez au-dessus du milieu du loch et cherchez son point d'exclamation en contrebas."
+de = "Der Werkzeugkasten liegt auf dem Grund des Sees und wechselt von einem Erscheinen zum nächsten zwischen mehreren Stellen. Schwimm über die Mitte des Sees und halte unter dir nach seinem Questsymbol Ausschau."
+es = "La caja de herramientas está en el fondo del lago y cambia de sitio entre una aparición y la siguiente. Nada sobre el centro del lago y busca hacia abajo su signo de misión."
+pt = "A caixa de ferramentas fica no fundo do lago e muda de lugar a cada vez que reaparece. Nade sobre o meio do lago e procure lá embaixo o sinal de missão."
+ru = "Ящик с инструментами лежит на дне озера и при каждом появлении меняет место. Плывите над серединой озера и высматривайте внизу значок задания."
+ko = "공구 상자는 호수 바닥에 있으며 나타날 때마다 여러 위치 중 한 곳으로 바뀝니다. 호수 한가운데 위를 헤엄치며 아래에서 퀘스트 표시를 찾으세요."
+zh_cn = "工具箱沉在湖底，每次刷新会在几个位置之间变换。在湖中央上方游动，向下寻找它的任务标记。"
+zh_tw = "工具箱沉在湖底，每次重生會在幾個位置之間變換。在湖中央上方游動，向下尋找它的任務標記。"
+
+# Wet Job: the Carved Figurine sits on a ledge just under the top of Stonewrought Dam; stepping off backwards lands on it, and the Alliance guards on the dam attack Horde players.
+[[note]]
+quest = 79974
+phase = "turnin"
+level = "info"
+editions = ["forever"]
+en = "The figurine is on a ledge just below the top of the dam. Walk backwards off the edge above it to land on the ledge rather than fall to the bottom. Horde players must get past the dwarf guards on the dam."
+fr = "La figurine est sur une corniche juste sous le haut du barrage. Reculez dans le vide au-dessus d'elle pour atterrir sur la corniche plutôt que de tomber en bas. Les joueurs de la Horde doivent passer les gardes nains du barrage."
+de = "Die Figur steht auf einem Vorsprung knapp unter der Dammkrone. Geh rückwärts über die Kante darüber, um auf dem Vorsprung zu landen, statt ganz nach unten zu fallen. Hordespieler müssen an den Zwergenwachen auf dem Damm vorbei."
+es = "La figurilla está en una cornisa justo debajo de lo alto de la presa. Camina hacia atrás desde el borde que hay encima para caer en la cornisa y no hasta abajo. Los jugadores de la Horda deben pasar a los guardias enanos de la presa."
+pt = "A estatueta fica numa saliência logo abaixo do topo da represa. Ande de costas para fora da borda acima dela para cair na saliência e não lá embaixo. Jogadores da Horda precisam passar pelos guardas anões da represa."
+ru = "Статуэтка стоит на уступе чуть ниже верха плотины. Сойдите с края над ней спиной вперед, чтобы приземлиться на уступ, а не упасть вниз. Игрокам Орды придется миновать стражников-дворфов на плотине."
+ko = "조각상은 댐 꼭대기 바로 아래 턱에 있습니다. 바닥까지 떨어지지 않도록 그 위의 가장자리에서 뒤로 걸어 내려가 턱에 착지하세요. 호드 플레이어는 댐 위의 드워프 경비병을 지나가야 합니다."
+zh_cn = "雕像在大坝顶部下方不远处的一块岩架上。从它上方的边缘倒着走下去，落在岩架上，而不是摔到底部。部落玩家需要越过大坝上的矮人卫兵。"
+zh_tw = "雕像在大壩頂部下方不遠處的一塊岩架上。從它上方的邊緣倒著走下去，落在岩架上，而不是摔到底部。部落玩家需要越過大壩上的矮人衛兵。"

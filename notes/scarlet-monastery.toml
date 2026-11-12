@@ -15,3 +15,20 @@ ru = "{npc:3984} живёт в одном доме с {npc:3985}, оба эли�
 ko = "{npc:3984}은(는) {npc:3985}와(과) 같은 집에 살며 둘 다 정예입니다. 그녀가 혼자 부두 끝으로 걸어 나올 때까지 기다렸다가 집에서 떨어진 그곳에서 싸워 그가 끼어들지 않게 하세요."
 zh_cn = "{npc:3984}和{npc:3985}住在同一间屋子里，两人都是精英。等她独自走到码头尽头，在远离屋子的地方和她战斗，以免他加入。"
 zh_tw = "{npc:3984}和{npc:3985}住在同一間屋子裡，兩人都是精英。等她獨自走到碼頭盡頭，在遠離屋子的地方和她戰鬥，以免他加入。"
+
+# The Eye of Bhossca: the disguise cannot be put on while in a group; the Reliquary Key's coffer appears after sitting on the two benches between the statues of the Graveyard, and it can be clicked through the mausoleum wall without pulling the spirit guarding it.
+[[note]]
+quest = 78676
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Leave your group, or the uniform cannot be worn. In the Graveyard, /sit on both benches between the statues (no interact icon) to reveal the key's coffer; you can loot it through the mausoleum's side wall without pulling its guard."
+fr = "Quittez votre groupe, sinon l'uniforme ne peut pas être porté. Dans le Cimetière, faites /sit sur les deux bancs entre les statues (sans icône d'interaction) pour révéler le coffre de la clé ; vous pouvez le fouiller à travers le mur latéral du mausolée sans attirer son gardien."
+de = "Verlass deine Gruppe, sonst lässt sich die Uniform nicht anlegen. Im Friedhof setz dich mit /sit auf beide Bänke zwischen den Statuen (kein Interaktionssymbol), damit die Truhe mit dem Schlüssel erscheint; du kannst sie durch die Seitenwand des Mausoleums plündern, ohne ihren Wächter anzulocken."
+es = "Sal del grupo o no podrás ponerte el uniforme. En el Cementerio, usa /sit en los dos bancos entre las estatuas (sin icono de interacción) para que aparezca el cofre de la llave; puedes saquearlo a través del muro lateral del mausoleo sin atraer a su guardián."
+pt = "Saia do grupo, ou o uniforme não pode ser vestido. No Cemitério, use /sit nos dois bancos entre as estátuas (sem ícone de interação) para revelar o cofre da chave; dá para saqueá-lo pela parede lateral do mausoléu sem atrair o guardião."
+ru = "Выйдите из группы, иначе форму не надеть. На Кладбище сядьте командой /sit на обе скамьи между статуями (значка взаимодействия нет), чтобы появился сундук с ключом; его можно открыть сквозь боковую стену мавзолея, не привлекая стража."
+ko = "파티를 떠나세요. 그렇지 않으면 제복을 입을 수 없습니다. 묘지에서 석상 사이의 두 벤치에 /sit으로 앉으면(상호작용 아이콘 없음) 열쇠가 든 상자가 나타납니다. 경비를 끌지 않고 영묘 옆벽 너머로 상자를 열 수 있습니다."
+zh_cn = "离开队伍，否则无法穿上制服。在墓地里，用/sit坐到雕像之间的两张长椅上（没有互动图标），钥匙所在的箱子就会出现；可以隔着陵墓侧墙拾取，不会引来守卫。"
+zh_tw = "離開隊伍，否則無法穿上制服。在墓地裡，用/sit坐到雕像之間的兩張長椅上（沒有互動圖示），鑰匙所在的箱子就會出現；可以隔著陵墓側牆拾取，不會引來守衛。"
