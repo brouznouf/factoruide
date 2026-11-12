@@ -59,3 +59,18 @@ ru = "В любом ящике {object:153123} может оказаться л�
 ko = "{object:153123} 상자에는 네 가지 물품 중 무엇이든 들어 있을 수 있지만, 음식만 나올 때가 많습니다. 상자는 몇 분 안에 다시 생기지만 늘 같은 자리는 아닙니다. 마지막 물품이 끝내 안 나오면 접속을 끊었다가 다시 접속한 뒤 다음 상자를 여세요."
 zh_cn = "任何一个{object:153123}箱子都可能开出四件物品中的任意一件，但常常只有食物。箱子几分钟内就会刷新，位置不一定相同。如果最后一件一直不出，下线再上线，然后打开下一个箱子。"
 zh_tw = "任何一個{object:153123}箱子都可能開出四件物品中的任意一件，但常常只有食物。箱子幾分鐘內就會重生，位置不一定相同。如果最後一件一直不出，下線再上線，然後打開下一個箱子。"
+
+# The Name of the Beast: Hetaera swims around her domed ruin and only comes ashore from time to time on the islet north of it.
+[[note]]
+quest = 3510
+phase = "objective"
+level = "warning"
+en = "{npc:6140} is not inside the stone dome: she swims around it and comes ashore now and then on the small island with ruins just north of it. Wait for her there; she hits hard."
+fr = "{npc:6140} n'est pas dans le dôme de pierre : elle nage autour et accoste de temps en temps sur la petite île en ruine juste au nord. Attendez-la là-bas ; elle frappe fort."
+de = "{npc:6140} ist nicht in der Steinkuppel: Sie schwimmt darum herum und kommt ab und zu auf der kleinen Insel mit Ruinen direkt nördlich davon an Land. Warte dort auf sie; sie schlägt hart zu."
+es = "{npc:6140} no está dentro de la cúpula de piedra: nada a su alrededor y de vez en cuando sale a la pequeña isla con ruinas justo al norte. Espérala allí; golpea fuerte."
+pt = "{npc:6140} não está dentro da cúpula de pedra: ela nada ao redor e de vez em quando sobe na pequena ilha com ruínas logo ao norte. Espere por ela lá; ela bate forte."
+ru = "{npc:6140} не внутри каменного купола: она плавает вокруг и время от времени выходит на берег маленького острова с руинами чуть севернее. Ждите её там; она сильно бьёт."
+ko = "{npc:6140}은(는) 돌 돔 안에 없습니다. 주변을 헤엄치다가 바로 북쪽의 폐허가 있는 작은 섬에 가끔 올라옵니다. 그곳에서 기다리세요. 공격이 강합니다."
+zh_cn = "{npc:6140}不在石穹顶里：她在周围游动，不时登上正北方那座有废墟的小岛。在那里等她；她攻击很猛。"
+zh_tw = "{npc:6140}不在石穹頂裡：她在周圍游動，不時登上正北方那座有廢墟的小島。在那裡等她；她攻擊很猛。"

@@ -30,3 +30,18 @@ ru = "Позвольте противнику {npc:10596} отравить ва�
 ko = "{npc:10596}에게 중독된 뒤 던전을 나와 효과가 끝나기 전에 {npc:9563}에게 가세요. 누구도 해제하지 못하게 하세요. 변신이나 점멸로도 사라집니다."
 zh_cn = "让{npc:10596}使你中毒，然后离开副本，在效果消失前赶到{npc:9563}那里。别让任何人驱散它；变形或闪现术也会把它移除。"
 zh_tw = "讓{npc:10596}使你中毒，然後離開副本，在效果消失前趕到{npc:9563}那裡。別讓任何人驅散它；變形或閃現術也會把它移除。"
+
+# The Matron Protectorate: Haleh's ledge is reached only by the rune at the back of Mazthoril; the rune by her leads back into the cave.
+[[note]]
+quest = 5160
+phase = "turnin"
+level = "warning"
+en = "{npc:10929} stands on a ledge reached only through a faint blue rune at the back of the Mazthoril cave, among elite dragonkin: step on it to be carried up. The rune beside her sends you back down into the cave."
+fr = "{npc:10929} se tient sur une corniche accessible uniquement par une rune bleue à peine visible au fond de la grotte de Mazthoril, parmi des draconiens élites : marchez dessus pour y être transporté. La rune près d'elle vous renvoie dans la grotte."
+de = "{npc:10929} steht auf einem Felsvorsprung, den du nur über eine schwach blaue Rune hinten in der Höhle von Mazthoril erreichst, zwischen Elite-Drachkin: Tritt darauf, um hinaufgebracht zu werden. Die Rune neben ihr bringt dich zurück in die Höhle."
+es = "{npc:10929} está en una cornisa a la que solo se llega por una runa azul apenas visible al fondo de la cueva de Mazthoril, entre dracónidos élite: písala para subir. La runa junto a ella te devuelve a la cueva."
+pt = "{npc:10929} fica numa saliência alcançada apenas por uma runa azul quase invisível no fundo da caverna de Mazthoril, entre dracônicos de elite: pise nela para ser levado até lá. A runa ao lado dela leva você de volta à caverna."
+ru = "{npc:10929} стоит на уступе, куда можно попасть только через едва заметную синюю руну в глубине пещеры Мазторила, среди элитных драконидов: встаньте на неё, чтобы перенестись наверх. Руна рядом с ней возвращает вас в пещеру."
+ko = "{npc:10929}은(는) 마즈소릴 동굴 안쪽, 정예 용족 사이에 있는 희미한 푸른 룬을 통해서만 갈 수 있는 바위 턱에 있습니다. 룬을 밟으면 위로 이동합니다. 그녀 옆의 룬은 다시 동굴로 보냅니다."
+zh_cn = "{npc:10929}站在一处岩架上，只能通过麦索瑞尔洞穴深处、精英龙人之间一个不起眼的蓝色符文到达：踩上去即可被传送上去。她身边的符文会把你送回洞穴。"
+zh_tw = "{npc:10929}站在一處岩架上，只能透過麥索瑞爾洞穴深處、菁英龍人之間一個不起眼的藍色符文抵達：踩上去即可被傳送上去。她身旁的符文會把你送回洞穴。"

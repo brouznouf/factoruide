@@ -53,3 +53,35 @@ ru = "Холмик призывает {npc:11886} и его подручных. 
 ko = "흙더미를 누르면 {npc:11886}와(과) 부하들이 나타납니다. 그만 죽이면 됩니다. 시체가 금방 사라지니 {item:14613}을(를) 바로 챙기세요. 무덤 옆 울타리 틈으로 뛰어넘으면 나머지는 먼 길로 돌아옵니다."
 zh_cn = "土堆会召唤{npc:11886}和他的手下。只需杀死他本人：立刻拾取{item:14613}，他的尸体很快就会消失。从坟墓旁篱笆的缺口跳过去，其他怪就得绕远路。"
 zh_tw = "土堆會召喚{npc:11886}和他的手下。只需殺死他本人：立刻拾取{item:14613}，他的屍體很快就會消失。從墳墓旁籬笆的缺口跳過去，其他怪就得繞遠路。"
+
+# The Ranger Lord's Behest: the registry's two level 60 guards come back quickly after being killed.
+[[note]]
+quest = 6133
+phase = "objective"
+objective = 4
+level = "warning"
+en = "{item:15847} lies on a bench in the lodge's south wing, guarded by two level 60 {npc:12322} that respawn after about a minute: kill them, take it and leave at once."
+fr = "{item:15847} est posé sur un banc dans l'aile sud du pavillon, gardé par deux {npc:12322} de niveau 60 qui réapparaissent au bout d'une minute environ : tuez-les, prenez-le et repartez aussitôt."
+de = "{item:15847} liegt auf einer Bank im Südflügel der Hütte, bewacht von zwei {npc:12322} der Stufe 60, die nach etwa einer Minute respawnen: Töte sie, nimm es und geh sofort."
+es = "{item:15847} está sobre un banco en el ala sur del pabellón, vigilado por dos {npc:12322} de nivel 60 que reaparecen al cabo de un minuto más o menos: mátalos, cógelo y vete enseguida."
+pt = "{item:15847} está sobre um banco na ala sul do pavilhão, guardado por dois {npc:12322} de nível 60 que reaparecem após cerca de um minuto: mate-os, pegue-o e saia logo."
+ru = "{item:15847} лежит на скамье в южном крыле домика под охраной двух {npc:12322} 60-го уровня, которые возрождаются примерно через минуту: убейте их, заберите его и сразу уходите."
+ko = "{item:15847}은(는) 산장 남쪽 동의 벤치 위에 있으며, 약 1분 뒤 다시 나타나는 60레벨 {npc:12322} 둘이 지킵니다. 처치하고 바로 챙겨서 떠나세요."
+zh_cn = "{item:15847}放在小屋南翼的一张长椅上，由两个60级的{npc:12322}看守，他们约一分钟后就会重生：击杀后立刻拿走并离开。"
+zh_tw = "{item:15847}放在小屋南翼的一張長椅上，由兩個60級的{npc:12322}看守，他們約一分鐘後就會重生：擊殺後立刻拿走並離開。"
+
+# Hameya's Plea: Hameya walks around the graves of Zul'Mashar, and the graves raise more trolls when stepped on.
+[[note]]
+quest = 6024
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:12248} paces around the graves in front of the temple. Stay off the graves, as stepping on them raises extra undead trolls, and pull him when he walks away from the other mobs."
+fr = "{npc:12248} fait les cent pas autour des tombes devant le temple. Ne marchez pas sur les tombes, cela fait surgir d'autres trolls morts-vivants, et attirez-le quand il s'éloigne des autres monstres."
+de = "{npc:12248} läuft um die Gräber vor dem Tempel herum. Betritt die Gräber nicht, das ruft weitere untote Trolle hervor, und zieh ihn, wenn er sich von den anderen Gegnern entfernt."
+es = "{npc:12248} da vueltas alrededor de las tumbas frente al templo. No pises las tumbas, eso hace surgir más trols no-muertos, y atráelo cuando se aleje de los demás enemigos."
+pt = "{npc:12248} anda em volta dos túmulos diante do templo. Não pise nos túmulos, isso faz surgir mais trolls mortos-vivos, e atraia-o quando ele se afastar dos outros inimigos."
+ru = "{npc:12248} бродит вокруг могил перед храмом. Не наступайте на могилы, из них поднимаются новые тролли-нежить, и выманивайте его, когда он отходит от остальных врагов."
+ko = "{npc:12248}은(는) 사원 앞 무덤 주위를 서성입니다. 무덤을 밟으면 언데드 트롤이 더 일어나니 피하고, 그가 다른 몹에게서 멀어질 때 끌어오세요."
+zh_cn = "{npc:12248}在神殿前的坟墓周围来回走动。不要踩上坟墓，否则会冒出更多亡灵巨魔；等他离开其他怪物时再把他引过来。"
+zh_tw = "{npc:12248}在神殿前的墳墓周圍來回走動。不要踩上墳墓，否則會冒出更多亡靈食人妖；等他離開其他怪物時再把他引過來。"

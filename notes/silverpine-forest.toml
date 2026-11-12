@@ -111,3 +111,19 @@ ru = "Пещера находится на вершине холма; к ней 
 ko = "동굴은 언덕 꼭대기에 있으며, 길 바로 북쪽 약 60.5, 74.7에서 시작하는 좁은 오솔길로 올라갑니다. 오솔길은 큰 나무 세 그루 뒤에 가려져 있습니다."
 zh_cn = "洞穴位于山顶，需走一条窄小径上去，小径起点在道路北侧约60.5, 74.7处，藏在三棵大树后面。"
 zh_tw = "洞穴位於山頂，需走一條窄小徑上去，小徑起點在道路北側約60.5, 74.7處，藏在三棵大樹後面。"
+
+# A Recipe For Death: the south wall gap avoids the front gate; the journal is in the inn's upper far-right room by Berard.
+[[note]]
+quest = 450
+phase = "objective"
+objective = 1
+level = "info"
+en = "Enter the village through the gap in its south wall and follow the wall to the inn. The journal is in a bookcase upstairs, in the far right room, next to {npc:2106} (elite)."
+fr = "Entrez dans le village par la brèche de son mur sud et longez le mur jusqu'à l'auberge. Le journal est dans une bibliothèque à l'étage, dans la pièce du fond à droite, à côté de {npc:2106} (élite)."
+de = "Betritt das Dorf durch die Lücke in seiner Südmauer und folge der Mauer bis zum Gasthaus. Das Tagebuch steht in einem Bücherregal im Obergeschoss, im hintersten Raum rechts, neben {npc:2106} (Elite)."
+es = "Entra en la aldea por el hueco de su muro sur y sigue el muro hasta la posada. El diario está en una estantería del piso de arriba, en la habitación del fondo a la derecha, junto a {npc:2106} (élite)."
+pt = "Entre na vila pela brecha no muro sul e siga o muro até a estalagem. O diário está numa estante no andar de cima, no quarto do fundo à direita, ao lado de {npc:2106} (elite)."
+ru = "Войдите в деревню через пролом в южной стене и идите вдоль стены до таверны. Дневник лежит в книжном шкафу наверху, в дальней правой комнате, рядом с {npc:2106} (элита)."
+ko = "남쪽 담장의 틈으로 마을에 들어가 담장을 따라 여관까지 가세요. 일지는 위층 오른쪽 맨 끝 방의 책장에 있으며, 정예 {npc:2106} 바로 옆입니다."
+zh_cn = "从村子南墙的缺口进入，沿着墙走到旅店。日记在楼上最右侧房间的书架里，就在精英{npc:2106}旁边。"
+zh_tw = "從村子南牆的缺口進入，沿著牆走到旅店。日記在樓上最右側房間的書架裡，就在菁英{npc:2106}旁邊。"

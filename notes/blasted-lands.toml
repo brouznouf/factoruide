@@ -1,0 +1,31 @@
+# Quest notes of Blasted Lands. See notes/README.md for the format.
+
+# The Stones That Bind Us: servants are freed only by using their stone while they lie stunned near it at low health.
+[[note]]
+quest = 2681
+phase = "objective"
+level = "warning"
+en = "Fight each servant next to its {object:141812}: near death it turns invulnerable and stunned for about 30 seconds, then use the stone to free it. Clear nearby mobs first, since a hit interrupts the use; a servant far from its stone cannot be freed."
+fr = "Combattez chaque serviteur près de {object:141812} : presque mort, il devient invulnérable et étourdi pendant environ 30 secondes ; utilisez alors la pierre pour le libérer. Éliminez d'abord les monstres proches, un coup interrompt l'action ; loin de sa pierre, il ne peut être libéré."
+de = "Kämpfe gegen jeden Diener neben {object:141812}: Kurz vor dem Tod wird er für etwa 30 Sekunden unverwundbar und betäubt, dann benutze den Stein, um ihn zu befreien. Räum vorher Gegner in der Nähe weg, ein Treffer unterbricht das Benutzen; fern vom Stein lässt er sich nicht befreien."
+es = "Lucha contra cada siervo junto a {object:141812}: casi muerto se vuelve invulnerable y queda aturdido unos 30 segundos; usa entonces la piedra para liberarlo. Limpia antes los enemigos cercanos, un golpe interrumpe el uso; lejos de su piedra no se puede liberar."
+pt = "Lute com cada servo ao lado de {object:141812}: quase morto, ele fica invulnerável e atordoado por cerca de 30 segundos; use então a pedra para libertá-lo. Limpe antes os inimigos próximos, um golpe interrompe o uso; longe da pedra ele não pode ser libertado."
+ru = "Сражайтесь с каждым слугой рядом с {object:141812}: почти при смерти он становится неуязвимым и оглушённым примерно на 30 секунд, тогда используйте камень, чтобы освободить его. Сначала перебейте врагов рядом: удар прерывает действие; вдали от камня слугу не освободить."
+ko = "각 하수인을 {object:141812} 옆에서 공격하세요. 거의 죽으면 약 30초 동안 무적 상태로 기절하니, 그때 돌을 사용해 해방하세요. 공격받으면 사용이 끊기니 주변 몹을 먼저 처리하세요. 돌에서 멀리 있는 하수인은 해방할 수 없습니다."
+zh_cn = "在{object:141812}旁边攻击每个仆从：濒死时它会无敌并昏迷约30秒，此时使用石头将其解放。先清掉附近的怪物，受到攻击会打断操作；远离石头的仆从无法解放。"
+zh_tw = "在{object:141812}旁邊攻擊每個僕從：瀕死時牠會無敵並昏迷約30秒，此時使用石頭將其解放。先清掉附近的怪物，受到攻擊會打斷操作；遠離石頭的僕從無法解放。"
+
+# Heroes of Old: the corporal shows up briefly across the road; the Fallen Hero can call him back.
+[[note]]
+quest = 2702
+phase = "turnin"
+level = "warning"
+en = "{npc:7750} appears across the road from {npc:7572} when you accept and fades soon after. If he is gone, talk to {npc:7572} again and pick the option about the corporal to bring him back."
+fr = "{npc:7750} apparaît de l'autre côté de la route face à {npc:7572} quand vous acceptez, puis s'efface peu après. S'il a disparu, reparlez à {npc:7572} et choisissez l'option au sujet du caporal pour le faire revenir."
+de = "{npc:7750} erscheint beim Annehmen auf der anderen Straßenseite gegenüber {npc:7572} und verblasst bald danach. Ist er weg, sprich erneut mit {npc:7572} und wähle die Option zum Korporal, um ihn zurückzuholen."
+es = "{npc:7750} aparece al otro lado del camino frente a {npc:7572} al aceptar y se desvanece poco después. Si ya no está, vuelve a hablar con {npc:7572} y elige la opción sobre el cabo para que regrese."
+pt = "{npc:7750} aparece do outro lado da estrada, em frente a {npc:7572}, quando você aceita e some pouco depois. Se ele tiver sumido, fale de novo com {npc:7572} e escolha a opção sobre o cabo para trazê-lo de volta."
+ru = "{npc:7750} появляется по другую сторону дороги от {npc:7572}, когда вы берёте задание, и вскоре исчезает. Если его нет, снова поговорите с {npc:7572} и выберите вариант о капрале, чтобы вернуть его."
+ko = "퀘스트를 수락하면 {npc:7750}이(가) {npc:7572} 맞은편 길 건너에 나타났다가 곧 사라집니다. 보이지 않으면 {npc:7572}에게 다시 말을 걸어 그 병사에 관한 대화를 선택해 다시 불러내세요."
+zh_cn = "接受任务时，{npc:7750}会出现在{npc:7572}对面的路边，不久后便会消失。如果他不见了，再次与{npc:7572}交谈并选择关于下士的选项，让他重新出现。"
+zh_tw = "接受任務時，{npc:7750}會出現在{npc:7572}對面的路邊，不久後便會消失。如果他不見了，再次與{npc:7572}交談並選擇關於下士的選項，讓他重新出現。"

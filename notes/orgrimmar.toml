@@ -15,3 +15,19 @@ ru = "Опустите здоровье бойца Пылающего Клинк
 ko = "불타는 칼날 단원의 생명력을 20% 정도 아래로 떨어뜨린 뒤 {item:6436}을(를) 사용하고, 정신 집중 중에 죽게 하세요. 이렇게 처치할 때마다 {item:6435}을(를) 얻습니다."
 zh_cn = "把火刃成员的生命值打到约20%以下，然后对它使用{item:6436}，让它在你引导期间死亡：每次这样击杀都会得到一个{item:6435}。"
 zh_tw = "把火刃成員的生命值打到約20%以下，然後對它使用{item:6436}，讓它在你引導期間死亡：每次這樣擊殺都會得到一個{item:6435}。"
+
+# Hidden Enemies: the insignia is a rare drop and is not shared in a party.
+[[note]]
+quest = 5726
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:14544} is a rare drop, best farmed in the Burning Blade cave just east of Orgrimmar's gate. In a party only the looter gets it, so each player needs their own drop."
+fr = "{item:14544} tombe rarement ; le mieux est de le chercher dans la grotte de la Lame ardente juste à l'est de la porte d'Orgrimmar. En groupe, seul celui qui le ramasse l'obtient : chaque joueur a besoin du sien."
+de = "{item:14544} droppt selten, am besten farmst du es in der Höhle der Brennenden Klinge direkt östlich von Orgrimmars Tor. In einer Gruppe bekommt es nur, wer es looted: Jeder Spieler braucht seinen eigenen Drop."
+es = "{item:14544} cae poco; lo mejor es buscarlo en la cueva del Filo Ardiente justo al este de la puerta de Orgrimmar. En grupo solo lo obtiene quien lo despoja: cada jugador necesita el suyo."
+pt = "{item:14544} cai raramente; o melhor é buscá-lo na caverna da Lâmina Ardente logo a leste do portão de Orgrimmar. Em grupo só quem saqueia fica com ele: cada jogador precisa do seu."
+ru = "{item:14544} выпадает редко, лучше всего добывать его в пещере Пылающего Клинка сразу к востоку от ворот Оргриммара. В группе его получает только тот, кто забрал добычу: каждому игроку нужен свой."
+ko = "{item:14544}은(는) 드물게 나오며, 오그리마 정문 바로 동쪽의 불타는 칼날 동굴에서 잡는 것이 가장 좋습니다. 파티에서는 전리품을 가져간 사람만 얻으니, 각자 따로 얻어야 합니다."
+zh_cn = "{item:14544}掉率很低，最好在奥格瑞玛大门正东的火刃洞穴里刷。组队时只有拾取者能得到，每个玩家都需要各自掉落。"
+zh_tw = "{item:14544}掉落率很低，最好在奧格瑪大門正東的火刃洞穴裡刷。組隊時只有拾取者能得到，每位玩家都需要各自掉落。"

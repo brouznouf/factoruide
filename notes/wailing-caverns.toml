@@ -47,3 +47,18 @@ ru = "{npc:3655} в незаметности и виден только вбли
 ko = "{npc:3655}은(는) 은신 중이라 가까이 가야 보입니다. 동굴의 첫 번째 굽이 오른쪽의 작은 구석을 살펴보고, 그다음 마지막 큰 방 앞의 막다른 곳을 찾아보세요."
 zh_cn = "{npc:3655}处于潜行状态，只有靠近才能看到：先搜查洞穴第一个拐弯处右侧的小凹处，再去最后一个大厅前的死胡同。"
 zh_tw = "{npc:3655}處於潛行狀態，只有靠近才能看到：先搜查洞穴第一個轉彎處右側的小凹處，再去最後一個大廳前的死巷。"
+
+# Leaders of the Fang: killing the four leaders in one run is what unlocks the Disciple's escort and the Glowing Shard.
+[[note]]
+quest = 914
+phase = "objective"
+level = "info"
+en = "Kill all four in the same run: {npc:3678} at the entrance then offers an escort whose final boss drops {item:10441}, which starts {quest:6981}."
+fr = "Tuez les quatre au cours de la même visite : {npc:3678}, à l'entrée, propose alors une escorte dont le boss final laisse tomber {item:10441}, qui lance {quest:6981}."
+de = "Töte alle vier im selben Durchlauf: {npc:3678} am Eingang bietet dann eine Eskorte an, deren Endboss {item:10441} droppt, womit {quest:6981} beginnt."
+es = "Mata a los cuatro en la misma incursión: {npc:3678}, en la entrada, ofrece entonces una escolta cuyo jefe final suelta {item:10441}, que inicia {quest:6981}."
+pt = "Mate os quatro na mesma incursão: {npc:3678}, na entrada, oferece então uma escolta cujo chefe final derruba {item:10441}, que inicia {quest:6981}."
+ru = "Убейте всех четверых за один заход: тогда {npc:3678} у входа предложит сопровождение, последний босс которого оставляет {item:10441}, начинающий {quest:6981}."
+ko = "넷을 한 번의 공략에서 모두 처치하세요. 그러면 입구의 {npc:3678}이(가) 호위를 제안하고, 마지막 우두머리가 {quest:6981}을(를) 시작하는 {item:10441}을(를) 떨어뜨립니다."
+zh_cn = "在同一次副本中击杀全部四个：入口处的{npc:3678}随后会提供护送任务，最终首领会掉落{item:10441}，开启{quest:6981}。"
+zh_tw = "在同一次副本中擊殺全部四個：入口處的{npc:3678}隨後會提供護送任務，最終首領會掉落{item:10441}，開啟{quest:6981}。"

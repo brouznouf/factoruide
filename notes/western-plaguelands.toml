@@ -183,3 +183,59 @@ ru = "Сдавая это задание, имейте при себе {item:123
 ko = "이 퀘스트를 완료할 때 {item:12359} 2개를 지니고 있으세요. 다음 단계인 {quest:5802}에서 용암 호수({zone:490})에 쓰입니다."
 zh_cn = "交这个任务时身上要带{item:12359}×2：下一步{quest:5802}要在熔岩湖（{zone:490}）用到它们。"
 zh_tw = "交這個任務時身上要帶{item:12359}×2：下一步{quest:5802}要在熔岩湖（{zone:490}）用到它們。"
+
+# Target: Felstone Field: the cauldron lord comes up only once the area is disturbed; the key is used from the front, and any hit interrupts it.
+[[note]]
+quest = 5229
+level = "info"
+en = "{npc:11075} appears only once you near the cauldron with the quest or kill undead around it. Clear every mob close to the cauldron before using the key, since a hit interrupts it, and use it from the cauldron's front side."
+fr = "{npc:11075} n'apparaît que lorsque vous approchez du chaudron avec la quête ou tuez des morts-vivants autour. Éliminez tous les monstres proches du chaudron avant d'utiliser la clé, un coup l'interrompt, et utilisez-la depuis l'avant du chaudron."
+de = "{npc:11075} erscheint erst, wenn du dich mit der Quest dem Kessel näherst oder Untote um ihn herum tötest. Räum alle Gegner nahe am Kessel weg, bevor du den Schlüssel benutzt, ein Treffer unterbricht es, und benutze ihn von der Vorderseite des Kessels."
+es = "{npc:11075} solo aparece cuando te acercas al caldero con la misión o matas no-muertos a su alrededor. Elimina a todos los enemigos cerca del caldero antes de usar la llave, un golpe lo interrumpe, y úsala desde la parte delantera del caldero."
+pt = "{npc:11075} só aparece quando você se aproxima do caldeirão com a missão ou mata mortos-vivos ao redor. Elimine todos os inimigos perto do caldeirão antes de usar a chave, um golpe interrompe o uso, e use-a pela frente do caldeirão."
+ru = "{npc:11075} появляется, только когда вы с заданием подходите к котлу или убиваете нежить вокруг него. Перед тем как использовать ключ, перебейте всех врагов у котла, удар прерывает действие, и используйте его с передней стороны котла."
+ko = "{npc:11075}은(는) 퀘스트를 가지고 가마솥에 다가가거나 주변 언데드를 처치해야 나타납니다. 공격받으면 사용이 끊기니 열쇠를 쓰기 전에 가마솥 근처의 몹을 모두 처리하고, 가마솥 앞쪽에서 사용하세요."
+zh_cn = "只有当你带着任务靠近大锅或击杀周围的亡灵时，{npc:11075}才会出现。使用钥匙前清掉大锅附近的所有怪物，受到攻击会打断操作，并从大锅正面使用。"
+zh_tw = "只有當你帶著任務靠近大鍋或擊殺周圍的亡靈時，{npc:11075}才會出現。使用鑰匙前清掉大鍋附近的所有怪物，受到攻擊會打斷操作，並從大鍋正面使用。"
+
+# Target: Dalson's Tears: the cauldron lord comes up only once the area is disturbed; the key is used from the front, and any hit interrupts it.
+[[note]]
+quest = 5231
+level = "info"
+en = "{npc:11077} appears only once you near the cauldron with the quest or kill undead around it. Clear every mob close to the cauldron before using the key, since a hit interrupts it, and use it from the cauldron's front side."
+fr = "{npc:11077} n'apparaît que lorsque vous approchez du chaudron avec la quête ou tuez des morts-vivants autour. Éliminez tous les monstres proches du chaudron avant d'utiliser la clé, un coup l'interrompt, et utilisez-la depuis l'avant du chaudron."
+de = "{npc:11077} erscheint erst, wenn du dich mit der Quest dem Kessel näherst oder Untote um ihn herum tötest. Räum alle Gegner nahe am Kessel weg, bevor du den Schlüssel benutzt, ein Treffer unterbricht es, und benutze ihn von der Vorderseite des Kessels."
+es = "{npc:11077} solo aparece cuando te acercas al caldero con la misión o matas no-muertos a su alrededor. Elimina a todos los enemigos cerca del caldero antes de usar la llave, un golpe lo interrumpe, y úsala desde la parte delantera del caldero."
+pt = "{npc:11077} só aparece quando você se aproxima do caldeirão com a missão ou mata mortos-vivos ao redor. Elimine todos os inimigos perto do caldeirão antes de usar a chave, um golpe interrompe o uso, e use-a pela frente do caldeirão."
+ru = "{npc:11077} появляется, только когда вы с заданием подходите к котлу или убиваете нежить вокруг него. Перед тем как использовать ключ, перебейте всех врагов у котла, удар прерывает действие, и используйте его с передней стороны котла."
+ko = "{npc:11077}은(는) 퀘스트를 가지고 가마솥에 다가가거나 주변 언데드를 처치해야 나타납니다. 공격받으면 사용이 끊기니 열쇠를 쓰기 전에 가마솥 근처의 몹을 모두 처리하고, 가마솥 앞쪽에서 사용하세요."
+zh_cn = "只有当你带着任务靠近大锅或击杀周围的亡灵时，{npc:11077}才会出现。使用钥匙前清掉大锅附近的所有怪物，受到攻击会打断操作，并从大锅正面使用。"
+zh_tw = "只有當你帶著任務靠近大鍋或擊殺周圍的亡靈時，{npc:11077}才會出現。使用鑰匙前清掉大鍋附近的所有怪物，受到攻擊會打斷操作，並從大鍋正面使用。"
+
+# Target: Writhing Haunt: the cauldron lord comes up only once the area is disturbed; the key is used from the front, and any hit interrupts it.
+[[note]]
+quest = 5233
+level = "info"
+en = "{npc:11076} appears only once you near the cauldron with the quest or kill undead around it. Clear every mob close to the cauldron before using the key, since a hit interrupts it, and use it from the cauldron's front side."
+fr = "{npc:11076} n'apparaît que lorsque vous approchez du chaudron avec la quête ou tuez des morts-vivants autour. Éliminez tous les monstres proches du chaudron avant d'utiliser la clé, un coup l'interrompt, et utilisez-la depuis l'avant du chaudron."
+de = "{npc:11076} erscheint erst, wenn du dich mit der Quest dem Kessel näherst oder Untote um ihn herum tötest. Räum alle Gegner nahe am Kessel weg, bevor du den Schlüssel benutzt, ein Treffer unterbricht es, und benutze ihn von der Vorderseite des Kessels."
+es = "{npc:11076} solo aparece cuando te acercas al caldero con la misión o matas no-muertos a su alrededor. Elimina a todos los enemigos cerca del caldero antes de usar la llave, un golpe lo interrumpe, y úsala desde la parte delantera del caldero."
+pt = "{npc:11076} só aparece quando você se aproxima do caldeirão com a missão ou mata mortos-vivos ao redor. Elimine todos os inimigos perto do caldeirão antes de usar a chave, um golpe interrompe o uso, e use-a pela frente do caldeirão."
+ru = "{npc:11076} появляется, только когда вы с заданием подходите к котлу или убиваете нежить вокруг него. Перед тем как использовать ключ, перебейте всех врагов у котла, удар прерывает действие, и используйте его с передней стороны котла."
+ko = "{npc:11076}은(는) 퀘스트를 가지고 가마솥에 다가가거나 주변 언데드를 처치해야 나타납니다. 공격받으면 사용이 끊기니 열쇠를 쓰기 전에 가마솥 근처의 몹을 모두 처리하고, 가마솥 앞쪽에서 사용하세요."
+zh_cn = "只有当你带着任务靠近大锅或击杀周围的亡灵时，{npc:11076}才会出现。使用钥匙前清掉大锅附近的所有怪物，受到攻击会打断操作，并从大锅正面使用。"
+zh_tw = "只有當你帶著任務靠近大鍋或擊殺周圍的亡靈時，{npc:11076}才會出現。使用鑰匙前清掉大鍋附近的所有怪物，受到攻擊會打斷操作，並從大鍋正面使用。"
+
+# Target: Gahrron's Withering: the cauldron lord comes up only once the area is disturbed; the key is used from the front, and any hit interrupts it.
+[[note]]
+quest = 5235
+level = "info"
+en = "{npc:11078} appears only once you near the cauldron with the quest or kill undead around it. Clear every mob close to the cauldron before using the key, since a hit interrupts it, and use it from the cauldron's front side."
+fr = "{npc:11078} n'apparaît que lorsque vous approchez du chaudron avec la quête ou tuez des morts-vivants autour. Éliminez tous les monstres proches du chaudron avant d'utiliser la clé, un coup l'interrompt, et utilisez-la depuis l'avant du chaudron."
+de = "{npc:11078} erscheint erst, wenn du dich mit der Quest dem Kessel näherst oder Untote um ihn herum tötest. Räum alle Gegner nahe am Kessel weg, bevor du den Schlüssel benutzt, ein Treffer unterbricht es, und benutze ihn von der Vorderseite des Kessels."
+es = "{npc:11078} solo aparece cuando te acercas al caldero con la misión o matas no-muertos a su alrededor. Elimina a todos los enemigos cerca del caldero antes de usar la llave, un golpe lo interrumpe, y úsala desde la parte delantera del caldero."
+pt = "{npc:11078} só aparece quando você se aproxima do caldeirão com a missão ou mata mortos-vivos ao redor. Elimine todos os inimigos perto do caldeirão antes de usar a chave, um golpe interrompe o uso, e use-a pela frente do caldeirão."
+ru = "{npc:11078} появляется, только когда вы с заданием подходите к котлу или убиваете нежить вокруг него. Перед тем как использовать ключ, перебейте всех врагов у котла, удар прерывает действие, и используйте его с передней стороны котла."
+ko = "{npc:11078}은(는) 퀘스트를 가지고 가마솥에 다가가거나 주변 언데드를 처치해야 나타납니다. 공격받으면 사용이 끊기니 열쇠를 쓰기 전에 가마솥 근처의 몹을 모두 처리하고, 가마솥 앞쪽에서 사용하세요."
+zh_cn = "只有当你带着任务靠近大锅或击杀周围的亡灵时，{npc:11078}才会出现。使用钥匙前清掉大锅附近的所有怪物，受到攻击会打断操作，并从大锅正面使用。"
+zh_tw = "只有當你帶著任務靠近大鍋或擊殺周圍的亡靈時，{npc:11078}才會出現。使用鑰匙前清掉大鍋附近的所有怪物，受到攻擊會打斷操作，並從大鍋正面使用。"

@@ -1,0 +1,17 @@
+# Quest notes of Razorfen Kraul. See notes/README.md for the format.
+
+# Blueleaf Tubers: from the middle of the vine bridge past the first left turn, one snufflenose finds all the tubers in place, out of the mobs' reach.
+[[note]]
+quest = 1221
+phase = "objective"
+objective = 1
+level = "info"
+en = "In the dungeon, take the left path at the first fork to the vine bridge. Stand on it, open {item:5880} and use {item:5897}: the snufflenose digs up every tuber right there, out of the mobs' reach."
+fr = "Dans le donjon, prenez à gauche à la première bifurcation jusqu'au pont de lianes. Placez-vous dessus, ouvrez {item:5880} et utilisez {item:5897} : l'animal déterre tous les tubercules sur place, hors de portée des monstres."
+de = "Nimm im Dungeon an der ersten Gabelung den linken Weg bis zur Rankenbrücke. Stell dich darauf, öffne {item:5880} und benutze {item:5897}: Das Tier gräbt alle Knollen genau dort aus, außer Reichweite der Gegner."
+es = "En la mazmorra, toma el camino de la izquierda en la primera bifurcación hasta el puente de lianas. Colócate encima, abre {item:5880} y usa {item:5897}: el animal desentierra todos los tubérculos allí mismo, fuera del alcance de los enemigos."
+pt = "Na masmorra, pegue o caminho da esquerda na primeira bifurcação até a ponte de cipós. Fique sobre ela, abra {item:5880} e use {item:5897}: o bichinho desenterra todos os tubérculos ali mesmo, fora do alcance dos inimigos."
+ru = "В подземелье на первой развилке идите налево до мостика из лиан. Встаньте на него, откройте {item:5880} и используйте {item:5897}: зверёк выкопает все клубни прямо там, вне досягаемости врагов."
+ko = "던전의 첫 갈림길에서 왼쪽 길로 가 덩굴 다리까지 가세요. 다리 위에 서서 {item:5880}을(를) 열고 {item:5897}을(를) 사용하면, 동물이 몹이 닿지 않는 그 자리에서 덩이줄기를 모두 캐냅니다."
+zh_cn = "在副本里，第一个岔路口走左边，到藤蔓桥。站在桥上，打开{item:5880}并使用{item:5897}：小动物会在原地挖出所有块茎，怪物够不着你。"
+zh_tw = "在副本裡，第一個岔路口走左邊，到藤蔓橋。站在橋上，打開{item:5880}並使用{item:5897}：小動物會在原地挖出所有塊莖，怪物搆不著你。"
