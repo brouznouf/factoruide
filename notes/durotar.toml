@@ -1,0 +1,97 @@
+# Quest notes of Durotar (Valley of Trials included). See notes/README.md for the format.
+
+# Thazz'ril's Pick: the pick sits behind a rock column next to the waterfall, reached by the middle passage of the cave.
+[[note]]
+quest = 6394
+phase = "objective"
+objective = 1
+level = "info"
+en = "In the cave, take the middle passage at the three-way split. {object:178087} glows behind a rock column just right of the waterfall in the central chamber, easy to walk past."
+fr = "Dans la grotte, prenez le passage du milieu à l'embranchement en trois. {object:178087} brille derrière une colonne rocheuse, juste à droite de la cascade de la salle centrale ; on passe facilement à côté."
+de = "Nimm in der Höhle an der dreifachen Gabelung den mittleren Gang. {object:178087} leuchtet hinter einer Felssäule direkt rechts vom Wasserfall in der Haupthöhle; man läuft leicht daran vorbei."
+es = "En la cueva, toma el pasaje central en la bifurcación triple. {object:178087} brilla detrás de una columna de roca, justo a la derecha de la cascada de la sala central; es fácil pasarlo de largo."
+pt = "Na caverna, pegue a passagem do meio na bifurcação tripla. {object:178087} brilha atrás de uma coluna de rocha, logo à direita da cachoeira na câmara central; é fácil passar direto por ela."
+ru = "В пещере на тройной развилке идите в средний проход. {object:178087} светится за каменной колонной справа от водопада в центральном зале; его легко пройти мимо."
+ko = "동굴의 세 갈래 길에서 가운데 통로로 가세요. {object:178087}은(는) 중앙 동굴 폭포 바로 오른쪽 바위 기둥 뒤에서 빛나고 있어 지나치기 쉽습니다."
+zh_cn = "在洞穴的三岔路口走中间的通道。{object:178087}在中央洞室瀑布右侧的一根石柱后面发光，很容易错过。"
+zh_tw = "在洞穴的三岔路口走中間的通道。{object:178087}在中央洞室瀑布右側的一根石柱後面發光，很容易錯過。"
+
+# From The Wreckage....: the toolboxes respawn in about three minutes, so one box is enough.
+[[note]]
+quest = 825
+phase = "objective"
+objective = 1
+level = "info"
+en = "Each {object:3236} comes back within about three minutes: once you have found one under the wrecks, wait by it rather than swimming around the other ships."
+fr = "Chaque {object:3236} réapparaît en trois minutes environ : dès que vous en avez trouvé un exemplaire sous les épaves, attendez à côté au lieu de nager autour des autres navires."
+de = "{object:3236} erscheint nach etwa drei Minuten wieder: Sobald du unter den Wracks ein Exemplar gefunden hast, warte dort, statt um die anderen Schiffe zu schwimmen."
+es = "{object:3236} reaparece en unos tres minutos: en cuanto encuentres un ejemplar bajo los restos del naufragio, espera a su lado en lugar de nadar alrededor de los otros barcos."
+pt = "{object:3236} reaparece em cerca de três minutos: assim que encontrar um exemplar sob os destroços, espere ao lado em vez de nadar em volta dos outros navios."
+ru = "{object:3236} появляется снова примерно через три минуты: найдя один под обломками кораблей, ждите рядом, а не плавайте вокруг других судов."
+ko = "{object:3236}은(는) 약 3분 안에 다시 나타납니다. 난파선 아래에서 하나를 찾았다면 다른 배들을 헤엄쳐 돌아다니지 말고 그 옆에서 기다리세요."
+zh_cn = "{object:3236}大约三分钟就会重新出现：在残骸下找到一个后，就在旁边等待，不必游到其他船只附近寻找。"
+zh_tw = "{object:3236}大約三分鐘就會重新出現：在殘骸下找到一個後，就在旁邊等待，不必游到其他船隻附近尋找。"
+
+# Finding the Antidote: only Venomtail Scorpids drop the poison sacs; the look-alike Armored Scorpids have none, and Need for a Cure is timed.
+[[note]]
+quest = 813
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Only {npc:3127} drop the sacs: {npc:3126}, which look the same, never do. Check the name before pulling, as the 45-minute timer of {quest:812} keeps running."
+fr = "Seuls les {npc:3127} lâchent les poches : les {npc:3126}, identiques en apparence, jamais. Vérifiez le nom avant d'attaquer, car le délai de 45 minutes de {quest:812} continue de courir."
+de = "Nur {npc:3127} lassen die Beutel fallen: {npc:3126}, die genauso aussehen, nie. Prüfe den Namen vor dem Angriff, denn das 45-Minuten-Zeitlimit von {quest:812} läuft weiter."
+es = "Solo {npc:3127} suelta las bolsas: {npc:3126}, de aspecto idéntico, nunca. Mira el nombre antes de atacar, porque el límite de 45 minutos de {quest:812} sigue corriendo."
+pt = "Só {npc:3127} deixa cair as bolsas: {npc:3126}, de aparência idêntica, nunca. Confira o nome antes de atacar, pois o limite de 45 minutos de {quest:812} continua correndo."
+ru = "Мешочки оставляют только {npc:3127}, а {npc:3126}, с виду такие же, — никогда. Проверяйте имя перед атакой: 45-минутный таймер задания «{quest:812}» продолжает идти."
+ko = "주머니는 {npc:3127}만 떨어뜨립니다. 생김새가 같은 {npc:3126}은(는) 절대 주지 않습니다. 공격 전에 이름을 확인하세요. {quest:812}의 45분 제한 시간이 계속 흐릅니다."
+zh_cn = "只有{npc:3127}会掉落毒囊：外形相同的{npc:3126}从不掉落。攻击前先看名字，因为{quest:812}的45分钟时限一直在走。"
+zh_tw = "只有{npc:3127}會掉落毒囊：外形相同的{npc:3126}從不掉落。攻擊前先看名字，因為{quest:812}的45分鐘時限一直在走。"
+
+# Dark Storms: Fizzle has an imp and linked casters around his campfire, wanders off it now and then, and respawns in about a minute.
+[[note]]
+quest = 806
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:3203} (level 12) fights with an imp, among Burning Blade casters that pull together. Clear the guards while he wanders away from the campfire, then take him, imp first. He is back about a minute after dying: loot and leave."
+fr = "{npc:3203} (niveau 12) combat avec un diablotin, entouré de lanceurs de sorts de la Lame ardente qui viennent ensemble. Éliminez les gardes quand il s'éloigne du feu de camp, puis attaquez-le, le diablotin d'abord. Il revient environ une minute après sa mort : ramassez le butin et partez."
+de = "{npc:3203} (Stufe 12) kämpft mit einem Wichtel, umgeben von Zauberern der Brennenden Klinge, die gemeinsam kommen. Räum die Wachen ab, während er sich vom Lagerfeuer entfernt, dann greif ihn an, den Wichtel zuerst. Er ist etwa eine Minute nach seinem Tod wieder da: plündern und weg."
+es = "{npc:3203} (nivel 12) lucha con un diablillo, rodeado de lanzadores de hechizos del Filo Ardiente que acuden juntos. Limpia a los guardias mientras se aleja de la hoguera y luego atácalo, primero al diablillo. Vuelve más o menos un minuto después de morir: despoja y vete."
+pt = "{npc:3203} (nível 12) luta com um diabrete, cercado de magos da Lâmina Ardente que vêm juntos. Elimine os guardas enquanto ele se afasta da fogueira e então ataque-o, o diabrete primeiro. Ele volta cerca de um minuto depois de morrer: saqueie e saia."
+ru = "{npc:3203} (12 уровня) сражается вместе с бесом среди заклинателей Пылающего Клинка, которые нападают вместе. Перебейте стражу, пока он отходит от костра, затем атакуйте его, начиная с беса. Он возрождается примерно через минуту: заберите добычу и уходите."
+ko = "{npc:3203}(12레벨)은(는) 임프를 데리고 다니며, 함께 몰려오는 불타는 칼날단 주문시전자들 사이에 있습니다. 그가 모닥불에서 멀어질 때 경비병을 정리한 뒤, 임프부터 처치하고 그를 공격하세요. 죽고 1분쯤 뒤 다시 나타나니 전리품을 챙기고 떠나세요."
+zh_cn = "{npc:3203}（12级）带着一只小鬼，周围是会一起冲上来的燃刃施法者。趁他离开营火时清掉守卫，再先杀小鬼后打他。他死后大约一分钟就会重生：拾取后立刻离开。"
+zh_tw = "{npc:3203}（12級）帶著一隻小鬼，周圍是會一起衝上來的燃刃施法者。趁他離開營火時清掉守衛，再先殺小鬼後打他。他死後大約一分鐘就會重生：拾取後立刻離開。"
+
+# Minshina's Skull: Zalazane's patrol reaches the shrine hill; the back slope lets the skull be taken while he is in the camp.
+[[note]]
+quest = 808
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:3205} walks up to the shrine on his patrol. Climb the hill by its back slope and take {item:4864} while he is down in the camp."
+fr = "{npc:3205} monte jusqu'au sanctuaire pendant sa patrouille. Grimpez la colline par son versant arrière et prenez {item:4864} pendant qu'il est en bas, dans le camp."
+de = "{npc:3205} kommt auf seiner Runde bis zum Schrein hinauf. Steig über den hinteren Hang auf den Hügel und nimm {item:4864}, während er unten im Lager ist."
+es = "{npc:3205} sube hasta el santuario durante su patrulla. Trepa la colina por la ladera de atrás y coge {item:4864} mientras él está abajo, en el campamento."
+pt = "{npc:3205} sobe até o santuário na sua patrulha. Suba a colina pela encosta de trás e pegue {item:4864} enquanto ele estiver lá embaixo, no acampamento."
+ru = "{npc:3205} во время обхода поднимается к святилищу. Взбирайтесь на холм по заднему склону и берите {item:4864}, пока он внизу, в лагере."
+ko = "{npc:3205}은(는) 순찰 중에 제단까지 올라옵니다. 언덕 뒤쪽 비탈로 올라가 그가 야영지 아래에 있을 때 {item:4864}을(를) 챙기세요."
+zh_cn = "{npc:3205}巡逻时会走到神龛旁。从山丘背面的斜坡爬上去，趁他在下面营地时拿走{item:4864}。"
+zh_tw = "{npc:3205}巡邏時會走到神龕旁。從山丘背面的斜坡爬上去，趁他在下面營地時拿走{item:4864}。"
+
+# Zalazane: he and the Voodoo Trolls around him heal; he pauses alone atop the shrine hill; the skull from Minshina's Skull drains him.
+[[note]]
+quest = 826
+phase = "objective"
+objective = 3
+level = "warning"
+en = "{npc:3205} heals himself, and nearby {npc:3206} heal him too: kill those first and interrupt his heals. Pull him alone where he pauses atop the shrine hill. {item:4945} from {quest:808} makes the fight much easier."
+fr = "{npc:3205} se soigne, et les {npc:3206} proches le soignent aussi : tuez-les d'abord et interrompez ses soins. Attirez-le seul là où il s'arrête, en haut de la colline du sanctuaire. {item:4945}, obtenu avec {quest:808}, facilite beaucoup le combat."
+de = "{npc:3205} heilt sich selbst, und {npc:3206} in seiner Nähe heilen ihn ebenfalls: töte sie zuerst und unterbrich seine Heilungen. Zieh ihn allein dort, wo er oben auf dem Schreinhügel stehen bleibt. {item:4945} aus {quest:808} macht den Kampf viel leichter."
+es = "{npc:3205} se cura, y los {npc:3206} cercanos también lo curan: mátalos primero e interrumpe sus curaciones. Atráelo solo donde se detiene, en lo alto de la colina del santuario. {item:4945}, de {quest:808}, facilita mucho el combate."
+pt = "{npc:3205} se cura, e os {npc:3206} por perto também o curam: mate-os primeiro e interrompa as curas dele. Puxe-o sozinho onde ele para, no alto da colina do santuário. {item:4945}, de {quest:808}, facilita muito a luta."
+ru = "{npc:3205} лечит себя, и {npc:3206} поблизости тоже лечат его: убейте их первыми и прерывайте его исцеление. Выманивайте его одного там, где он останавливается на вершине холма со святилищем. {item:4945} из задания «{quest:808}» сильно облегчает бой."
+ko = "{npc:3205}은(는) 스스로 치유하고, 근처의 {npc:3206}도 그를 치유합니다. 그들을 먼저 처치하고 그의 치유 주문을 끊으세요. 제단 언덕 꼭대기에서 그가 멈출 때 혼자 끌어오세요. {quest:808}에서 얻는 {item:4945}이(가) 전투를 훨씬 쉽게 해 줍니다."
+zh_cn = "{npc:3205}会治疗自己，附近的{npc:3206}也会治疗他：先杀掉他们，并打断他的治疗。等他在神龛山顶停下时单独引他过来。{quest:808}得到的{item:4945}能让这场战斗轻松很多。"
+zh_tw = "{npc:3205}會治療自己，附近的{npc:3206}也會治療他：先殺掉他們，並打斷他的治療。等他在神龕山頂停下時單獨引他過來。{quest:808}得到的{item:4945}能讓這場戰鬥輕鬆很多。"
