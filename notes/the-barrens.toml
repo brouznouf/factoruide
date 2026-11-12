@@ -391,3 +391,74 @@ ru = "{item:15710} на камне призывает {npc:12138} — 12-й ур
 ko = "돌에 {item:15710}을(를) 뿌리면 {npc:12138}이(가) 소환됩니다. 12레벨로 10레벨에게는 아프게 때리니 생명력을 가득 채우고 시작하세요. 지면 가루가 사라지니 퀘스트를 포기하고 {zone:1638}에서 다시 받으세요."
 zh_cn = "在石头上使用{item:15710}会召唤{npc:12138}，12级，对10级角色来说打得很疼：满血开打。如果打输，粉末就没了：放弃任务，回{zone:1638}重新接取。"
 zh_tw = "在石頭上使用{item:15710}會召喚{npc:12138}，12級，對10級角色來說打得很痛：滿血開打。如果打輸，粉末就沒了：放棄任務，回{zone:1638}重新接取。"
+
+# Trouble in the Valley (Forever): attacking the corporal pulls the whole camp of marines, even
+# from its edge; they leash back when he is dragged far enough.
+[[note]]
+quest = 95621
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Attacking {npc:262119} brings every marine of the camp at once, even when pulled from its edge: bring a group, or kite him away until the others give up and walk back."
+fr = "Attaquer {npc:262119} attire d'un coup tous les marins du camp, même depuis sa lisière : venez en groupe, ou entraînez-le au loin jusqu'à ce que les autres abandonnent et repartent."
+de = "Wer {npc:262119} angreift, hat sofort alle Marinesoldaten des Lagers am Hals, auch vom Rand aus: Komm mit einer Gruppe oder zieh ihn weg, bis die anderen aufgeben und zurückgehen."
+es = "Atacar a {npc:262119} atrae a la vez a todos los marines del campamento, incluso desde el borde: ve en grupo, o llévalo lejos hasta que los demás se rindan y vuelvan."
+pt = "Atacar {npc:262119} puxa todos os fuzileiros do acampamento de uma vez, mesmo pela borda: venha em grupo ou arraste-o para longe até os outros desistirem e voltarem."
+ru = "Нападение на {npc:262119} поднимает сразу всех моряков лагеря, даже с его края: идите группой или уводите его прочь, пока остальные не отстанут и не вернутся."
+ko = "{npc:262119}을(를) 공격하면 진영 가장자리에서 끌어도 진영의 해병이 한꺼번에 몰려옵니다. 파티를 꾸리거나, 다른 적이 포기하고 돌아갈 때까지 그를 멀리 끌고 가세요."
+zh_cn = "攻击{npc:262119}会一次引来营地里所有的水兵，即使从营地边缘拉也一样：组队前往，或把他远远拉开，直到其他人放弃返回。"
+zh_tw = "攻擊{npc:262119}會一次引來營地裡所有的水兵，即使從營地邊緣拉也一樣：組隊前往，或把他遠遠拉開，直到其他人放棄返回。"
+
+# Chol'aruk the Ravener (Horde, Forever): the boss waits at the back of a cave of level 18-20
+# elites whose mouth is on the northeast side of the mountain, northeast of the Crossroads.
+[[note]]
+quest = 97003
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "{npc:267307} waits at the back of a cave full of level 18-20 elites, entered from the northeast side of the mountain near 58, 25 (northeast of the Crossroads). Bring a friend or two."
+fr = "{npc:267307} attend au fond d'une grotte remplie d'élites de niveau 18-20, dont l'entrée est sur le flanc nord-est de la montagne vers 58, 25 (au nord-est de la Croisée). Venez à deux ou trois."
+de = "{npc:267307} wartet am Ende einer Höhle voller Elites der Stufe 18-20, deren Eingang an der Nordostseite des Berges bei etwa 58, 25 liegt (nordöstlich vom Wegekreuz). Nimm ein oder zwei Mitspieler mit."
+es = "{npc:267307} espera al fondo de una cueva llena de élites de nivel 18-20, con la entrada en la ladera noreste de la montaña cerca de 58, 25 (al noreste de El Cruce). Ve con uno o dos compañeros."
+pt = "{npc:267307} espera no fundo de uma caverna cheia de elites de nível 18-20, com entrada na encosta nordeste da montanha perto de 58, 25 (a nordeste da Encruzilhada). Leve um ou dois amigos."
+ru = "{npc:267307} ждёт в глубине пещеры, полной элитных существ 18-20 уровня; вход на северо-восточном склоне горы около 58, 25 (к северо-востоку от Перекрестка). Возьмите одного-двух спутников."
+ko = "{npc:267307}은(는) 18-20레벨 정예가 가득한 동굴 안쪽에 있습니다. 입구는 산의 북동쪽 면, 약 58, 25(크로스로드 북동쪽)입니다. 한두 명과 함께 가세요."
+zh_cn = "{npc:267307}在一个满是18-20级精英的洞穴深处，入口位于山的东北侧，约58, 25（十字路口东北）。带上一两个同伴。"
+zh_tw = "{npc:267307}在一個滿是18-20級精英的洞穴深處，入口位於山的東北側，約58, 25（十字路口東北）。帶上一兩個同伴。"
+
+# Chol'aruk the Ravener (Alliance, Forever): same cave and boss as the Horde quest.
+[[note]]
+quest = 97005
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "{npc:267307} waits at the back of a cave full of level 18-20 elites, entered from the northeast side of the mountain near 58, 25 (northeast of the Crossroads). Bring a friend or two."
+fr = "{npc:267307} attend au fond d'une grotte remplie d'élites de niveau 18-20, dont l'entrée est sur le flanc nord-est de la montagne vers 58, 25 (au nord-est de la Croisée). Venez à deux ou trois."
+de = "{npc:267307} wartet am Ende einer Höhle voller Elites der Stufe 18-20, deren Eingang an der Nordostseite des Berges bei etwa 58, 25 liegt (nordöstlich vom Wegekreuz). Nimm ein oder zwei Mitspieler mit."
+es = "{npc:267307} espera al fondo de una cueva llena de élites de nivel 18-20, con la entrada en la ladera noreste de la montaña cerca de 58, 25 (al noreste de El Cruce). Ve con uno o dos compañeros."
+pt = "{npc:267307} espera no fundo de uma caverna cheia de elites de nível 18-20, com entrada na encosta nordeste da montanha perto de 58, 25 (a nordeste da Encruzilhada). Leve um ou dois amigos."
+ru = "{npc:267307} ждёт в глубине пещеры, полной элитных существ 18-20 уровня; вход на северо-восточном склоне горы около 58, 25 (к северо-востоку от Перекрестка). Возьмите одного-двух спутников."
+ko = "{npc:267307}은(는) 18-20레벨 정예가 가득한 동굴 안쪽에 있습니다. 입구는 산의 북동쪽 면, 약 58, 25(크로스로드 북동쪽)입니다. 한두 명과 함께 가세요."
+zh_cn = "{npc:267307}在一个满是18-20级精英的洞穴深处，入口位于山的东北侧，约58, 25（十字路口东北）。带上一两个同伴。"
+zh_tw = "{npc:267307}在一個滿是18-20級精英的洞穴深處，入口位於山的東北側，約58, 25（十字路口東北）。帶上一兩個同伴。"
+
+# WANTED: Bruuz (Forever): the shark elite hits hard; dragging him to the Ratchet docks gets the
+# town's guards into the fight.
+[[note]]
+quest = 92706
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "{npc:209797} hits hard: draw him toward the Ratchet docks so the guards join the fight."
+fr = "{npc:209797} frappe fort : attirez-le vers les quais de Cabestan pour que les gardes se joignent au combat."
+de = "{npc:209797} schlägt hart zu: Lock ihn zu den Docks von Ratschet, damit die Wachen mitkämpfen."
+es = "{npc:209797} golpea fuerte: atráelo hacia los muelles de Trinquete para que los guardias se unan al combate."
+pt = "{npc:209797} bate forte: atraia-o para as docas de Vila Catraca para que os guardas entrem na luta."
+ru = "{npc:209797} бьёт больно: выманите его к причалам Кабестана, чтобы в бой вступила стража."
+ko = "{npc:209797}은(는) 강하게 때립니다. 톱니항 부두 쪽으로 끌고 가서 경비병이 싸움에 끼어들게 하세요."
+zh_cn = "{npc:209797}攻击很高：把它引到棘齿城码头，让卫兵加入战斗。"
+zh_tw = "{npc:209797}攻擊很高：把牠引到棘齒城碼頭，讓衛兵加入戰鬥。"

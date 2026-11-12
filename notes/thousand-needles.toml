@@ -177,3 +177,19 @@ ru = "Тушение предмета «{object:20807}» расходует {ite
 ko = "{object:20807}을(를) 끄면 {item:5868}이(가) 소모되고 전리품 창이 열리니 바로 {item:5869}을(를) 챙기세요. 줍기 전에 창을 닫거나 방해받으면 약병을 잃어 새로 구해야 합니다."
 zh_cn = "熄灭{object:20807}会消耗{item:5868}并打开拾取窗口：立刻拿走{item:5869}。拾取前关闭窗口或被打断，瓶子就没了，需要再弄一个。"
 zh_tw = "熄滅{object:20807}會消耗{item:5868}並打開拾取視窗：立刻拿走{item:5869}。拾取前關閉視窗或被打斷，瓶子就沒了，需要再弄一個。"
+
+# Stop the Screeching (Forever): all three harpy kinds are in one cave that respawns fast and
+# pulls in packs.
+[[note]]
+quest = 98070
+level = "warning"
+editions = ["forever"]
+en = "All three harpies are in the cave entered near 27.5, 49.5; inside they respawn fast and four or five easily join a fight. Pull carefully or bring a group."
+fr = "Les trois harpies se trouvent dans la grotte dont l'entrée est vers 27.5, 49.5 ; à l'intérieur, elles réapparaissent vite et quatre ou cinq rejoignent facilement un combat. Attirez-les prudemment ou venez en groupe."
+de = "Alle drei Harpyien sind in der Höhle mit Eingang bei etwa 27.5, 49.5; drinnen respawnen sie schnell und vier oder fünf mischen sich leicht in einen Kampf ein. Zieh vorsichtig oder komm mit einer Gruppe."
+es = "Las tres arpías están en la cueva con entrada cerca de 27.5, 49.5; dentro reaparecen rápido y cuatro o cinco se unen fácilmente a un combate. Atrae con cuidado o ve en grupo."
+pt = "As três harpias ficam na caverna com entrada perto de 27.5, 49.5; lá dentro renascem rápido e quatro ou cinco entram facilmente numa luta. Puxe com cuidado ou venha em grupo."
+ru = "Все три вида гарпий в пещере с входом около 27.5, 49.5; внутри они быстро возрождаются, и четыре-пять легко вмешиваются в бой. Выманивайте осторожно или идите группой."
+ko = "세 하피 모두 입구가 약 27.5, 49.5인 동굴 안에 있습니다. 안에서는 빨리 재생성되고 네다섯 마리가 쉽게 전투에 끼어듭니다. 조심해서 끌거나 파티로 가세요."
+zh_cn = "三种鹰身人都在入口约27.5, 49.5的洞穴里；洞内重生很快，很容易一次引来四五只。小心拉怪或组队前往。"
+zh_tw = "三種鷹身人都在入口約27.5, 49.5的洞穴裡；洞內重生很快，很容易一次引來四五隻。小心拉怪或組隊前往。"

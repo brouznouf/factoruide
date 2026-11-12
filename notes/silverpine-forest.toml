@@ -149,3 +149,53 @@ quest = 437
 phase = "objective"
 objective = 1
 icon = "rare"
+
+# Old Fire-Eye (Forever): his purple shield only falls once a swing of the Moonsilver Blade lands;
+# the blade's on-hit effect then carries the fight.
+[[note]]
+quest = 95140
+phase = "objective"
+objective = 1
+level = "must_read"
+editions = ["forever"]
+en = "Equip the Moonsilver Blade before fighting Old Fire-Eye: his purple shield only falls once a swing of the blade lands, and its strikes then do most of the damage."
+fr = "Équipez la Lame d'argent lunaire avant d'affronter le Vieil Œil-de-feu : son bouclier violet ne tombe qu'une fois un coup de la lame porté, et ses frappes font ensuite l'essentiel des dégâts."
+de = "Rüste die Mondsilberklinge aus, bevor du Altes Feuerauge angreifst: Sein violetter Schild fällt erst, wenn ein Hieb der Klinge trifft, und ihre Treffer machen danach den Großteil des Schadens."
+es = "Equípate la Hoja de plata lunar antes de luchar contra el Viejo Ojo de Fuego: su escudo morado solo cae cuando acierta un golpe de la hoja, y luego sus impactos hacen casi todo el daño."
+pt = "Equipe a Lâmina de Prata Lunar antes de enfrentar o Velho Olho-de-fogo: o escudo roxo dele só cai quando um golpe da lâmina acerta, e depois os golpes dela causam a maior parte do dano."
+ru = "Наденьте Клинок лунного серебра перед боем со Старым Огнеглазом: его фиолетовый щит спадает только после удачного удара клинком, а затем удары клинка наносят основной урон."
+ko = "늙은 불눈과 싸우기 전에 달은빛 검을 장착하세요. 검으로 한 번 적중해야 보라색 보호막이 사라지고, 이후 검의 타격이 대부분의 피해를 줍니다."
+zh_cn = "与老火眼战斗前装备月银之刃：只有用这把剑命中一次，他的紫色护盾才会消失，之后剑的打击会造成大部分伤害。"
+zh_tw = "與老火眼戰鬥前裝備月銀之刃：只有用這把劍命中一次，他的紫色護盾才會消失，之後劍的打擊會造成大部分傷害。"
+
+# Lumina Windsinger (Forever): she is shared by everyone; while another player escorts her out the
+# cage is empty until she respawns.
+[[note]]
+quest = 91862
+level = "warning"
+editions = ["forever"]
+en = "If Lumina is not in her cage in the keep's basement, another player is escorting her out: wait for her to come back."
+fr = "Si Lumina n'est pas dans sa cage au sous-sol du donjon, un autre joueur l'escorte dehors : attendez son retour."
+de = "Ist Lumina nicht in ihrem Käfig im Keller der Feste, eskortiert sie gerade ein anderer Spieler hinaus: Warte, bis sie zurückkommt."
+es = "Si Lumina no está en su jaula en el sótano del torreón, otro jugador la está escoltando fuera: espera a que vuelva."
+pt = "Se Lumina não estiver na jaula no porão da fortaleza, outro jogador a está escoltando para fora: espere ela voltar."
+ru = "Если Люмины нет в клетке в подвале крепости, её выводит другой игрок: дождитесь её возвращения."
+ko = "루미나가 요새 지하의 우리에 없다면 다른 플레이어가 호위 중입니다. 돌아올 때까지 기다리세요."
+zh_cn = "如果卢米娜不在要塞地下室的笼子里，说明另一名玩家正在护送她出去：等她回来。"
+zh_tw = "如果盧米娜不在要塞地下室的籠子裡，表示另一名玩家正在護送她出去：等她回來。"
+
+# The Offering Stone (Forever): the Beren's Peril undead respawn very fast and the altar is at the
+# very end of the cave, so the way in and out is a long fight.
+[[note]]
+quest = 95884
+level = "warning"
+editions = ["forever"]
+en = "Beren's Peril is packed with undead that respawn very quickly, and the stone is at the very end of the cave (entrance near 60.5, 72.5): go in with a group or expect to fight your way out."
+fr = "Le Péril de Beren grouille de morts-vivants qui réapparaissent très vite, et la pierre est tout au fond de la grotte (entrée vers 60.5, 72.5) : entrez en groupe ou attendez-vous à combattre pour ressortir."
+de = "Berens Gefahr ist voller Untoter, die sehr schnell respawnen, und der Stein liegt ganz am Ende der Höhle (Eingang bei etwa 60.5, 72.5): Geh in einer Gruppe hinein oder kämpf dich auch wieder hinaus."
+es = "El Peligro de Beren está lleno de no-muertos que reaparecen muy rápido, y la piedra está al final de la cueva (entrada cerca de 60.5, 72.5): entra en grupo o prepárate para salir luchando."
+pt = "O Perigo de Beren está cheio de mortos-vivos que renascem muito rápido, e a pedra fica bem no fim da caverna (entrada perto de 60.5, 72.5): entre em grupo ou prepare-se para sair lutando."
+ru = "Пещера Берена кишит нежитью, которая возрождается очень быстро, а камень в самом её конце (вход около 60.5, 72.5): идите группой или готовьтесь пробиваться обратно с боем."
+ko = "베렌의 위험에는 매우 빨리 재생성되는 언데드가 가득하고, 돌은 동굴 가장 끝(입구 약 60.5, 72.5)에 있습니다. 파티로 들어가거나 싸우며 빠져나올 각오를 하세요."
+zh_cn = "贝伦的危险里满是重生极快的亡灵，而石头在洞穴最深处（入口约60.5, 72.5）：组队进入，否则准备好一路杀出来。"
+zh_tw = "貝倫的危險裡滿是重生極快的不死生物，而石頭在洞穴最深處（入口約60.5, 72.5）：組隊進入，否則準備好一路殺出來。"

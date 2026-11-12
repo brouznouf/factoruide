@@ -119,3 +119,104 @@ ru = "Бутылки — в подвале под развалинами без 
 ko = "병은 옆의 2층 집이 아니라 지붕 없는 폐허 아래 지하실에 있습니다(입구 13, 65.7 부근). 복도의 포도주 선반에도 더 있습니다. 안의 언데드는 11-12레벨입니다."
 zh_cn = "瓶子在无顶废墟下的地窖里（入口约在13, 65.7），不在旁边的两层房子里；走廊两侧的酒架上还有更多。里面的亡灵为11-12级。"
 zh_tw = "瓶子在無頂廢墟下的地窖裡（入口約在13, 65.7），不在旁邊的兩層房子裡；走廊兩側的酒架上還有更多。裡面的不死生物為11-12級。"
+
+# Making Repairs (Forever): the lumber is not outdoors, it lies on the floors of the cellar crypt
+# under the roofless burned house west of the Bulwark.
+[[note]]
+quest = 91316
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The lumber is not outdoors: it lies on the floors of the cellar crypt under the roofless burned house (entrance near 13, 65.7)."
+fr = "Le bois n'est pas dehors : il est posé au sol dans la crypte sous la maison incendiée sans toit (entrée vers 13, 65.7)."
+de = "Das Holz liegt nicht im Freien, sondern auf dem Boden der Gruft im Keller des abgebrannten Hauses ohne Dach (Eingang bei etwa 13, 65.7)."
+es = "La madera no está al aire libre: está en el suelo de la cripta bajo la casa quemada sin techo (entrada cerca de 13, 65.7)."
+pt = "A madeira não fica ao ar livre: está no chão da cripta sob a casa queimada sem telhado (entrada perto de 13, 65.7)."
+ru = "Брёвна лежат не снаружи, а на полу склепа в подвале сгоревшего дома без крыши (вход около 13, 65.7)."
+ko = "목재는 바깥이 아니라 지붕 없는 불탄 집 아래 지하 묘실 바닥에 놓여 있습니다(입구 약 13, 65.7)."
+zh_cn = "木材不在野外，而是散落在无顶的烧毁房屋下方的地窖墓穴地面上（入口约13, 65.7）。"
+zh_tw = "木材不在野外，而是散落在無頂的燒毀房屋下方的地窖墓穴地面上（入口約13, 65.7）。"
+
+[[icon]]
+quest = 91316
+phase = "objective"
+objective = 1
+icon = "pickup"
+editions = ["forever"]
+
+# The One That Got Away (Forever): the crystal fragment lies on the ground in the left-hand part
+# of the same cellar crypt.
+[[note]]
+quest = 99153
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The crystal lies on the ground in the left-hand part of the cellar crypt under the roofless burned house (entrance near 13, 65.7), around 9.7, 69.4."
+fr = "Le cristal est posé au sol dans la partie gauche de la crypte sous la maison incendiée sans toit (entrée vers 13, 65.7), vers 9.7, 69.4."
+de = "Der Kristall liegt im linken Teil der Gruft im Keller des abgebrannten Hauses ohne Dach (Eingang bei etwa 13, 65.7) auf dem Boden, etwa bei 9.7, 69.4."
+es = "El cristal está en el suelo, en la parte izquierda de la cripta bajo la casa quemada sin techo (entrada cerca de 13, 65.7), hacia 9.7, 69.4."
+pt = "O cristal está no chão, na parte esquerda da cripta sob a casa queimada sem telhado (entrada perto de 13, 65.7), perto de 9.7, 69.4."
+ru = "Кристалл лежит на земле в левой части склепа в подвале сгоревшего дома без крыши (вход около 13, 65.7), примерно у 9.7, 69.4."
+ko = "수정은 지붕 없는 불탄 집 아래 지하 묘실(입구 약 13, 65.7)의 왼쪽 구역 바닥, 약 9.7, 69.4에 놓여 있습니다."
+zh_cn = "水晶落在无顶的烧毁房屋下方地窖墓穴（入口约13, 65.7）左侧区域的地面上，约9.7, 69.4。"
+zh_tw = "水晶落在無頂的燒毀房屋下方地窖墓穴（入口約13, 65.7）左側區域的地面上，約9.7, 69.4。"
+
+[[icon]]
+quest = 99153
+phase = "objective"
+objective = 1
+icon = "pickup"
+editions = ["forever"]
+
+# Whispering Horror Residue (Forever): the starting item drops from an elite at the far end of the
+# cellar crypt, soloable a level or two above it.
+[[note]]
+quest = 95328
+phase = "accept"
+level = "warning"
+editions = ["forever"]
+en = "The item that starts this quest drops from Whispering Horror, a level 11-13 elite at the far end of the cellar crypt under the roofless burned house (entrance near 13, 65.7)."
+fr = "L'objet qui lance cette quête est laissé par l'Horreur murmurante, une élite de niveau 11-13 au fond de la crypte sous la maison incendiée sans toit (entrée vers 13, 65.7)."
+de = "Der Gegenstand, der diese Quest startet, wird vom Flüsternden Schrecken fallen gelassen, einem Elite der Stufe 11-13 am hinteren Ende der Gruft im Keller des abgebrannten Hauses ohne Dach (Eingang bei etwa 13, 65.7)."
+es = "El objeto que inicia esta misión lo suelta el Horror susurrante, un élite de nivel 11-13 al fondo de la cripta bajo la casa quemada sin techo (entrada cerca de 13, 65.7)."
+pt = "O item que inicia esta missão cai do Horror Sussurrante, um elite de nível 11-13 no fundo da cripta sob a casa queimada sem telhado (entrada perto de 13, 65.7)."
+ru = "Предмет, начинающий это задание, выпадает из Шепчущего ужаса — элитного существа 11-13 уровня в дальнем конце склепа под сгоревшим домом без крыши (вход около 13, 65.7)."
+ko = "이 퀘스트를 시작하는 아이템은 지붕 없는 불탄 집 아래 지하 묘실(입구 약 13, 65.7) 가장 안쪽에 있는 11-13레벨 정예, 속삭이는 공포가 떨어뜨립니다."
+zh_cn = "开启此任务的物品由低语恐魔掉落，它是无顶的烧毁房屋下方地窖墓穴（入口约13, 65.7）最深处的11-13级精英。"
+zh_tw = "開啟此任務的物品由低語恐魔掉落，它是無頂的燒毀房屋下方地窖墓穴（入口約13, 65.7）最深處的11-13級精英。"
+
+# A Lesson in Divinity (resurrect Falgan, Forever): the resurrected deathguard dies again after a
+# while for the next paladin; a lost symbol means a new one from Danitha Morr.
+[[note]]
+quest = 94438
+phase = "turnin"
+level = "warning"
+editions = ["forever"]
+en = "Turn the quest in to Deathguard Falgan right after resurrecting him: he soon dies again, and a new {item:6866} means walking back to Danitha Morr at Bandarion Keep."
+fr = "Rendez la quête au Garde-mort Falgan juste après l'avoir ressuscité : il meurt de nouveau peu après, et un nouveau {item:6866} oblige à retourner voir Danitha Morr au donjon de Bandarion."
+de = "Gib die Quest bei Todeswache Falgan gleich nach seiner Wiederbelebung ab: Er stirbt bald wieder, und ein neues {item:6866} heißt, zurück zu Danitha Morr in der Bandarionfeste zu laufen."
+es = "Entrega la misión al Guardia de la Muerte Falgan justo después de resucitarlo: vuelve a morir pronto, y un nuevo {item:6866} supone volver a pie hasta Danitha Morr en el Bastión de Bandarion."
+pt = "Entregue a missão ao Guarda da Morte Falgan logo depois de ressuscitá-lo: ele morre de novo em pouco tempo, e um novo {item:6866} exige voltar até Danitha Morr na Fortaleza Bandarion."
+ru = "Сдайте задание стражнику смерти Фальгану сразу после воскрешения: вскоре он снова умирает, а за новым предметом {item:6866} придётся идти обратно к Даните Морр в крепость Бандарион."
+ko = "죽음의 경비병 팔간을 되살린 직후 바로 퀘스트를 완료하세요. 곧 다시 죽으며, {item:6866}을(를) 새로 받으려면 반다리온 요새의 다니타 모르에게 걸어 돌아가야 합니다."
+zh_cn = "复活亡灵卫兵法尔甘后立即交任务：他很快会再次死去，而重新获取{item:6866}需要走回班达瑞恩要塞找达妮莎·莫尔。"
+zh_tw = "復活亡靈衛兵法爾甘後立即交任務：他很快會再次死去，而重新取得{item:6866}需要走回班達瑞恩要塞找達妮莎·莫爾。"
+
+# A Frightened Request (Forever): the objective completes by standing next to Edward's body in the
+# walled graveyard where Rath'mael is, once its mobs are cleared; nothing is clicked.
+[[note]]
+quest = 92401
+phase = "objective"
+level = "warning"
+editions = ["forever"]
+en = "{npc:250842} lies dead inside the walled graveyard next to {npc:250657}: clear the mobs there and stand beside his body. There is nothing to click."
+fr = "{npc:250842} gît mort dans le cimetière clos, près de {npc:250657} : éliminez les monstres sur place et tenez-vous à côté de son corps. Il n'y a rien à cliquer."
+de = "{npc:250842} liegt tot im ummauerten Friedhof neben {npc:250657}: Räume die Gegner dort und stell dich neben seine Leiche. Es gibt nichts anzuklicken."
+es = "{npc:250842} yace muerto dentro del cementerio amurallado junto a {npc:250657}: limpia los enemigos y quédate junto a su cuerpo. No hay nada que pulsar."
+pt = "{npc:250842} jaz morto dentro do cemitério murado ao lado de {npc:250657}: elimine os inimigos e fique ao lado do corpo dele. Não há nada para clicar."
+ru = "{npc:250842} лежит мёртвым на огороженном кладбище рядом с {npc:250657}: перебейте там противников и встаньте рядом с его телом. Нажимать ничего не нужно."
+ko = "{npc:250842}은(는) {npc:250657} 옆 담장 두른 묘지 안에 죽은 채 누워 있습니다. 그곳의 적을 처치하고 시신 옆에 서세요. 클릭할 것은 없습니다."
+zh_cn = "{npc:250842}死在{npc:250657}旁边的围墙墓地里：清掉那里的怪物，站到他的尸体旁即可，无需点击任何东西。"
+zh_tw = "{npc:250842}死在{npc:250657}旁邊的圍牆墓地裡：清掉那裡的怪物，站到他的屍體旁即可，無需點擊任何東西。"
