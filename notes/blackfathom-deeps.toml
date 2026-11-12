@@ -33,3 +33,20 @@ ru = "{object:177964} лежит под водой под мостком пря�
 ko = "{object:177964}은(는) {npc:4832}의 방 바로 앞 통로 아래 물속에 있습니다. 열면 정예 {npc:12876}이(가) 나타나니 싸울 준비를 하세요."
 zh_cn = "{object:177964}位于{npc:4832}房间前那段走道下方的水中。打开它会刷出精英{npc:12876}：做好战斗准备。"
 zh_tw = "{object:177964}位於{npc:4832}房間前那段走道下方的水中。打開它會刷出精英{npc:12876}：做好戰鬥準備。"
+
+# Allegiance to the Old Gods: Lorgus Jett has several spawn points, some in short side tunnels off
+# the main path, so he can be walked past.
+[[note]]
+quest = 6565
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:12902} spawns in one of a few places along the main path through the dungeon, sometimes in a short side tunnel off the main path. If he is not on the path, check the dead-end side passages before going on."
+fr = "{npc:12902} apparaît à l'un de plusieurs endroits le long du chemin principal du donjon, parfois dans un petit tunnel à l'écart du chemin principal. S'il n'est pas sur le chemin, fouillez les passages en cul-de-sac avant de continuer."
+de = "{npc:12902} erscheint an einer von mehreren Stellen entlang des Hauptwegs durch den Dungeon, manchmal in einem kurzen Seitentunnel abseits des Hauptwegs. Ist er nicht auf dem Weg, sieh in den Sackgassen nach, bevor du weitergehst."
+es = "{npc:12902} aparece en uno de varios sitios a lo largo del camino principal de la mazmorra, a veces en un túnel lateral corto fuera del camino principal. Si no está en el camino, revisa los pasadizos sin salida antes de seguir."
+pt = "{npc:12902} surge em um de vários lugares ao longo do caminho principal da masmorra, às vezes em um túnel lateral curto fora do caminho principal. Se ele não estiver no caminho, confira as passagens sem saída antes de seguir."
+ru = "{npc:12902} появляется в одном из нескольких мест вдоль основного пути через подземелье, иногда в коротком боковом туннеле в стороне от основного пути. Если его нет на пути, проверьте тупиковые ответвления, прежде чем идти дальше."
+ko = "{npc:12902}은(는) 던전 주 통로를 따라 여러 지점 중 한 곳에 나타나며, 가끔은 주 통로에서 벗어난 짧은 곁굴에 있습니다. 길에 보이지 않으면 더 가기 전에 막다른 곁길을 확인하세요."
+zh_cn = "{npc:12902}会在副本主路沿途的几处地点之一刷新，有时在主路旁的短小岔道里。如果路上没看到他，继续前进前先检查那些死胡同岔道。"
+zh_tw = "{npc:12902}會在副本主路沿途的幾處地點之一重生，有時在主路旁的短小岔道裡。如果路上沒看到他，繼續前進前先檢查那些死胡同岔道。"

@@ -1,0 +1,18 @@
+# Quest notes of Stormwind City. See notes/README.md for the format.
+
+# Beat Bartleby: he hits hard for a level 10 duel; after a loss he respawns (about 4.5 minutes) and
+# can be challenged again without abandoning.
+[[note]]
+quest = 1640
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:6090} hits hard for his level: fight with a weapon you have skill in, not a new one. If he wins, do not abandon the quest: wait for him to respawn (about 5 minutes) and talk to him again."
+fr = "{npc:6090} frappe fort pour son niveau : combattez avec une arme que vous maîtrisez, pas une nouvelle. S'il gagne, n'abandonnez pas la quête : attendez qu'il réapparaisse (environ 5 minutes) et parlez-lui de nouveau."
+de = "{npc:6090} schlägt für seine Stufe hart zu: Kämpfe mit einer Waffe, die du beherrschst, nicht mit einer neuen. Gewinnt er, brich die Quest nicht ab: Warte, bis er respawnt (etwa 5 Minuten), und sprich ihn erneut an."
+es = "{npc:6090} pega fuerte para su nivel: lucha con un arma que domines, no con una nueva. Si gana, no abandones la misión: espera a que reaparezca (unos 5 minutos) y vuelve a hablar con él."
+pt = "{npc:6090} bate forte para o nível dele: lute com uma arma em que você tem perícia, não com uma nova. Se ele vencer, não abandone a missão: espere ele ressurgir (cerca de 5 minutos) e fale com ele de novo."
+ru = "{npc:6090} бьет сильно для своего уровня: сражайтесь оружием, которым владеете, а не новым. Если он победит, не отменяйте задание: дождитесь, пока он появится снова (около 5 минут), и поговорите с ним еще раз."
+ko = "{npc:6090}은(는) 레벨에 비해 강하게 때립니다. 새 무기 말고 숙련도가 있는 무기로 싸우세요. 지더라도 퀘스트를 포기하지 말고, 다시 나타날 때까지(약 5분) 기다렸다가 다시 말을 거세요."
+zh_cn = "{npc:6090}以他的等级来说打得很疼：用你有熟练度的武器战斗，别用新武器。如果输了，不要放弃任务：等他重新出现（约5分钟）后再和他对话。"
+zh_tw = "{npc:6090}以他的等級來說打得很痛：用你有熟練度的武器戰鬥，別用新武器。如果輸了，不要放棄任務：等他重新出現（約5分鐘）後再和他對話。"

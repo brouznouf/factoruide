@@ -1,0 +1,65 @@
+# Quest notes of Gnomeregan. See notes/README.md for the format.
+
+# Chief Engineer Scooty: taking it first removes Rig Wars from Nogg, and Sovik offers it through
+# his gossip options rather than with a quest mark.
+[[note]]
+quest = 2842
+phase = "accept"
+level = "warning"
+en = "Accept {quest:2841} from {npc:3412} first: it is no longer offered once you hold this quest. {npc:3413} gives this one through his chat options, with no mark above his head."
+fr = "Acceptez d'abord {quest:2841} auprès de {npc:3412} : elle n'est plus proposée une fois cette quête-ci prise. {npc:3413} donne celle-ci par ses options de dialogue, sans marque au-dessus de sa tête."
+de = "Nimm zuerst {quest:2841} bei {npc:3412} an: Sie wird nicht mehr angeboten, sobald du diese Quest hast. {npc:3413} gibt diese über seine Gesprächsoptionen, ohne Zeichen über dem Kopf."
+es = "Acepta primero {quest:2841} de {npc:3412}: deja de ofrecerse en cuanto tienes esta misión. {npc:3413} da esta desde sus opciones de diálogo, sin marca sobre la cabeza."
+pt = "Aceite primeiro {quest:2841} com {npc:3412}: ela deixa de ser oferecida assim que você pega esta missão. {npc:3413} entrega esta pelas opções de diálogo, sem marca sobre a cabeça."
+ru = "Сначала возьмите {quest:2841} у {npc:3412}: его больше не предлагают, как только у вас есть это задание. {npc:3413} дает это задание через варианты диалога, без значка над головой."
+ko = "먼저 {npc:3412}에게서 {quest:2841}을(를) 받으세요. 이 퀘스트를 받고 나면 더 이상 받을 수 없습니다. {npc:3413}은(는) 머리 위 표시 없이 대화 선택지로 이 퀘스트를 줍니다."
+zh_cn = "先从{npc:3412}处接受{quest:2841}：一旦接了本任务，它就不再提供。{npc:3413}头上没有标记，要通过对话选项才能接到本任务。"
+zh_tw = "先從{npc:3412}處接受{quest:2841}：一旦接了本任務，它就不再提供。{npc:3413}頭上沒有標記，要透過對話選項才能接到本任務。"
+
+# Grime-Encrusted Ring: the Sparklematic is in the Clean Zone near the entrance, and only one of
+# the three machines there takes quests.
+[[note]]
+quest = 2945
+phase = "turnin"
+level = "info"
+en = "The {object:142487} stands in the Clean Zone near the entrance: left at the first junction, then the second passage on the left. Only one of the three machines there takes the ring: if one does nothing, try the next."
+fr = "{object:142487} se trouve dans la zone propre, près de l'entrée : à gauche au premier embranchement, puis le deuxième passage à gauche. Une seule des trois machines accepte l'anneau : si l'une ne réagit pas, essayez la suivante."
+de = "{object:142487} steht in der sauberen Zone nahe dem Eingang: an der ersten Abzweigung links, dann der zweite Gang links. Nur eine der drei Maschinen dort nimmt den Ring an: Tut sich nichts, versuch die nächste."
+es = "{object:142487} está en la zona limpia, cerca de la entrada: a la izquierda en el primer cruce y luego el segundo pasillo a la izquierda. Solo una de las tres máquinas acepta el anillo: si una no responde, prueba la siguiente."
+pt = "{object:142487} fica na zona limpa, perto da entrada: à esquerda no primeiro cruzamento, depois a segunda passagem à esquerda. Só uma das três máquinas aceita o anel: se uma não responder, tente a próxima."
+ru = "{object:142487} стоит в чистой зоне недалеко от входа: налево на первой развилке, затем второй проход слева. Кольцо принимает только одна из трех машин: если одна не реагирует, попробуйте следующую."
+ko = "{object:142487}은(는) 입구 근처 청정 구역에 있습니다. 첫 갈림길에서 왼쪽, 이어서 왼쪽 두 번째 통로로 가세요. 세 기계 중 하나만 반지를 받으니 반응이 없으면 다음 기계를 시도하세요."
+zh_cn = "{object:142487}位于入口附近的清洁区：第一个岔口左转，再进左手第二条通道。那里三台机器中只有一台接受戒指：如果没反应，就试下一台。"
+zh_tw = "{object:142487}位於入口附近的清潔區：第一個岔口左轉，再進左手第二條通道。那裡三台機器中只有一台接受戒指：如果沒反應，就試下一台。"
+
+# The Sparklematic 5200: the machine is in the Clean Zone near the entrance, and only one of the
+# three machines there offers the quest.
+[[note]]
+quest = 2951
+phase = "accept"
+level = "info"
+en = "The {object:142487} stands in the Clean Zone near the entrance: left at the first junction, then the second passage on the left. Only one of the three machines there offers quests: if one does nothing, try the next."
+fr = "{object:142487} se trouve dans la zone propre, près de l'entrée : à gauche au premier embranchement, puis le deuxième passage à gauche. Une seule des trois machines propose des quêtes : si l'une ne réagit pas, essayez la suivante."
+de = "{object:142487} steht in der sauberen Zone nahe dem Eingang: an der ersten Abzweigung links, dann der zweite Gang links. Nur eine der drei Maschinen dort bietet Quests an: Tut sich nichts, versuch die nächste."
+es = "{object:142487} está en la zona limpia, cerca de la entrada: a la izquierda en el primer cruce y luego el segundo pasillo a la izquierda. Solo una de las tres máquinas ofrece misiones: si una no responde, prueba la siguiente."
+pt = "{object:142487} fica na zona limpa, perto da entrada: à esquerda no primeiro cruzamento, depois a segunda passagem à esquerda. Só uma das três máquinas oferece missões: se uma não responder, tente a próxima."
+ru = "{object:142487} стоит в чистой зоне недалеко от входа: налево на первой развилке, затем второй проход слева. Задания предлагает только одна из трех машин: если одна не реагирует, попробуйте следующую."
+ko = "{object:142487}은(는) 입구 근처 청정 구역에 있습니다. 첫 갈림길에서 왼쪽, 이어서 왼쪽 두 번째 통로로 가세요. 세 기계 중 하나만 퀘스트를 주니 반응이 없으면 다음 기계를 시도하세요."
+zh_cn = "{object:142487}位于入口附近的清洁区：第一个岔口左转，再进左手第二条通道。那里三台机器中只有一台提供任务：如果没反应，就试下一台。"
+zh_tw = "{object:142487}位於入口附近的清潔區：第一個岔口左轉，再進左手第二條通道。那裡三台機器中只有一台提供任務：如果沒反應，就試下一台。"
+
+# The Sparklematic 5200: the machine is in the Clean Zone near the entrance, and only one of the
+# three machines there offers the quest.
+[[note]]
+quest = 2952
+phase = "accept"
+level = "info"
+en = "The {object:142487} stands in the Clean Zone near the entrance: left at the first junction, then the second passage on the left. Only one of the three machines there offers quests: if one does nothing, try the next."
+fr = "{object:142487} se trouve dans la zone propre, près de l'entrée : à gauche au premier embranchement, puis le deuxième passage à gauche. Une seule des trois machines propose des quêtes : si l'une ne réagit pas, essayez la suivante."
+de = "{object:142487} steht in der sauberen Zone nahe dem Eingang: an der ersten Abzweigung links, dann der zweite Gang links. Nur eine der drei Maschinen dort bietet Quests an: Tut sich nichts, versuch die nächste."
+es = "{object:142487} está en la zona limpia, cerca de la entrada: a la izquierda en el primer cruce y luego el segundo pasillo a la izquierda. Solo una de las tres máquinas ofrece misiones: si una no responde, prueba la siguiente."
+pt = "{object:142487} fica na zona limpa, perto da entrada: à esquerda no primeiro cruzamento, depois a segunda passagem à esquerda. Só uma das três máquinas oferece missões: se uma não responder, tente a próxima."
+ru = "{object:142487} стоит в чистой зоне недалеко от входа: налево на первой развилке, затем второй проход слева. Задания предлагает только одна из трех машин: если одна не реагирует, попробуйте следующую."
+ko = "{object:142487}은(는) 입구 근처 청정 구역에 있습니다. 첫 갈림길에서 왼쪽, 이어서 왼쪽 두 번째 통로로 가세요. 세 기계 중 하나만 퀘스트를 주니 반응이 없으면 다음 기계를 시도하세요."
+zh_cn = "{object:142487}位于入口附近的清洁区：第一个岔口左转，再进左手第二条通道。那里三台机器中只有一台提供任务：如果没反应，就试下一台。"
+zh_tw = "{object:142487}位於入口附近的清潔區：第一個岔口左轉，再進左手第二條通道。那裡三台機器中只有一台提供任務：如果沒反應，就試下一台。"

@@ -1,0 +1,96 @@
+# Quest notes of Elwynn Forest (Northshire Valley included). See notes/README.md for the format.
+
+# Milly's Harvest: Defias thugs stand next to most crates and attack while one is being opened.
+[[note]]
+quest = 3904
+phase = "objective"
+objective = 1
+level = "info"
+en = "Defias ({npc:38}) stand next to most {object:161557} crates and attack while you open them: kill those close by first so the opening is not interrupted."
+fr = "Des Défias ({npc:38}) se tiennent près de la plupart des caisses ({object:161557}) et attaquent pendant que vous les ouvrez : tuez d'abord ceux qui sont proches pour ne pas être interrompu."
+de = "Defias ({npc:38}) stehen neben den meisten Kisten ({object:161557}) und greifen an, während du sie öffnest: Töte zuerst die in der Nähe, damit das Öffnen nicht unterbrochen wird."
+es = "Hay Defias ({npc:38}) junto a la mayoría de las cajas ({object:161557}) y atacan mientras las abres: mata primero a los que estén cerca para que no te interrumpan."
+pt = "Há Défias ({npc:38}) ao lado da maioria dos caixotes ({object:161557}) e eles atacam enquanto você os abre: mate primeiro os que estão perto para não ser interrompido."
+ru = "Рядом с большинством ящиков ({object:161557}) стоят Братья Справедливости ({npc:38}) и нападают, пока вы их открываете: сначала убейте тех, кто рядом, чтобы вас не прервали."
+ko = "대부분의 상자({object:161557}) 옆에 데피아즈단({npc:38})이 서 있다가 상자를 여는 동안 공격합니다. 방해받지 않도록 가까이 있는 적부터 처치하세요."
+zh_cn = "大多数箱子（{object:161557}）旁都站着迪菲亚（{npc:38}），会在你打开时发起攻击：先杀掉附近的敌人，以免打开被打断。"
+zh_tw = "大多數箱子（{object:161557}）旁都站著迪菲亞（{npc:38}），會在你打開時發動攻擊：先殺掉附近的敵人，以免打開被打斷。"
+
+# Grape Manifest: Brother Neals is at the top of the abbey's bell tower, two flights up.
+[[note]]
+quest = 3905
+phase = "turnin"
+level = "info"
+en = "{npc:952} stands at the very top of the abbey's bell tower, not on the ground floor. Take the spiral staircase inside the abbey and keep climbing past the first floor."
+fr = "{npc:952} se tient tout en haut du clocher de l'abbaye, pas au rez-de-chaussée. Prenez l'escalier en colimaçon dans l'abbaye et continuez à monter après le premier étage."
+de = "{npc:952} steht ganz oben im Glockenturm der Abtei, nicht im Erdgeschoss. Nimm die Wendeltreppe in der Abtei und steig über das erste Stockwerk hinaus weiter."
+es = "{npc:952} está en lo más alto del campanario de la abadía, no en la planta baja. Toma la escalera de caracol dentro de la abadía y sigue subiendo más allá del primer piso."
+pt = "{npc:952} fica no alto do campanário da abadia, não no térreo. Pegue a escada em espiral dentro da abadia e continue subindo depois do primeiro andar."
+ru = "{npc:952} стоит на самом верху колокольни аббатства, а не на первом этаже. Поднимитесь по винтовой лестнице внутри аббатства и идите выше второго этажа."
+ko = "{npc:952}은(는) 1층이 아니라 수도원 종탑 꼭대기에 있습니다. 수도원 안의 나선 계단을 타고 첫 번째 층을 지나 계속 올라가세요."
+zh_cn = "{npc:952}站在修道院钟楼的最顶层，不在一楼。走修道院内的螺旋楼梯，过了第一层继续往上爬。"
+zh_tw = "{npc:952}站在修道院鐘樓的最頂層，不在一樓。走修道院內的螺旋樓梯，過了第一層繼續往上爬。"
+
+# Goldtooth: he is on the lower level of Fargodeep Mine; the wooden platform up the stairs is
+# above the same map spot.
+[[note]]
+quest = 87
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:327} is on the lower level of the mine. The wooden platform up the stairs is above the same spot on the map: stay down. A kobold guards him."
+fr = "{npc:327} se trouve au niveau inférieur de la mine. La plate-forme en bois en haut des escaliers est au-dessus du même point de la carte : restez en bas. Un kobold le garde."
+de = "{npc:327} ist auf der unteren Ebene der Mine. Die Holzplattform oben an der Treppe liegt über derselben Stelle der Karte: bleib unten. Ein Kobold bewacht ihn."
+es = "{npc:327} está en el nivel inferior de la mina. La plataforma de madera al subir las escaleras está sobre el mismo punto del mapa: quédate abajo. Un kobold lo protege."
+pt = "{npc:327} fica no nível inferior da mina. A plataforma de madeira no alto da escada está sobre o mesmo ponto do mapa: fique embaixo. Um kobold o protege."
+ru = "{npc:327} находится на нижнем уровне шахты. Деревянный помост наверху лестницы расположен над той же точкой карты: оставайтесь внизу. Его охраняет кобольд."
+ko = "{npc:327}은(는) 광산 아래층에 있습니다. 계단 위 나무 발판은 지도에서 같은 지점의 위층이니 아래에 머무르세요. 코볼트 하나가 그를 지킵니다."
+zh_cn = "{npc:327}在矿洞的下层。楼梯上方的木平台在地图上是同一位置的上层：留在下面。有一个狗头人守着他。"
+zh_tw = "{npc:327}在礦坑的下層。樓梯上方的木平台在地圖上是同一位置的上層：留在下面。有一個狗頭人守著他。"
+
+# Princess Must Die!: Princess roams with two Porcine Entourage that join the fight.
+[[note]]
+quest = 88
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:330} roams the pumpkin patch with her guards ({npc:390} ×2), who join the fight. At level 9, deal with the guards first or bring a friend."
+fr = "{npc:330} parcourt le champ de citrouilles avec ses gardes ({npc:390} ×2), qui se joignent au combat. Au niveau 9, occupez-vous d'abord des gardes ou venez avec un ami."
+de = "{npc:330} streift mit ihren Wachen ({npc:390} ×2) durch das Kürbisfeld, die sich in den Kampf einmischen. Auf Stufe 9 kümmere dich zuerst um die Wachen oder nimm einen Freund mit."
+es = "{npc:330} recorre el huerto de calabazas con sus guardias ({npc:390} ×2), que se unen al combate. A nivel 9, encárgate primero de los guardias o ve con un amigo."
+pt = "{npc:330} anda pela plantação de abóboras com seus guardas ({npc:390} ×2), que entram na luta. No nível 9, cuide primeiro dos guardas ou leve um amigo."
+ru = "{npc:330} бродит по тыквенному полю со своей охраной ({npc:390} ×2), которая вступает в бой. На 9-м уровне сначала разберитесь с охраной или возьмите друга."
+ko = "{npc:330}은(는) 호위({npc:390} ×2)와 함께 호박밭을 돌아다니며, 호위도 전투에 끼어듭니다. 9레벨이라면 호위부터 처리하거나 친구와 함께 가세요."
+zh_cn = "{npc:330}带着护卫（{npc:390} ×2）在南瓜田里游荡，护卫会一起参战。9级时先解决护卫，或者找个朋友帮忙。"
+zh_tw = "{npc:330}帶著護衛（{npc:390} ×2）在南瓜田裡遊蕩，護衛會一起參戰。9級時先解決護衛，或者找個朋友幫忙。"
+
+# Discover Rolf's Fate: the murlocs around the remains pull in pairs and respawn quickly.
+[[note]]
+quest = 45
+phase = "turnin"
+level = "warning"
+en = "The murlocs around the remains come in pairs and respawn fast. Pull them away one at a time and click the remains as soon as the spot is clear, or come with a friend."
+fr = "Les murlocs autour de la dépouille viennent par deux et réapparaissent vite. Attirez-les un par un à l'écart et cliquez sur la dépouille dès que la place est libre, ou venez avec un ami."
+de = "Die Murlocs um die Überreste kommen paarweise und respawnen schnell. Zieh sie einzeln weg und klick die Überreste an, sobald die Stelle frei ist, oder komm mit einem Freund."
+es = "Los múrlocs alrededor de los restos vienen de dos en dos y reaparecen rápido. Atráelos uno a uno lejos y haz clic en los restos en cuanto el sitio quede libre, o ve con un amigo."
+pt = "Os murlocs em volta dos restos vêm em pares e ressurgem rápido. Puxe-os um de cada vez para longe e clique nos restos assim que o local estiver livre, ou leve um amigo."
+ru = "Мурлоки вокруг останков нападают парами и быстро появляются снова. Уводите их по одному и щелкните по останкам, как только место освободится, или возьмите друга."
+ko = "유해 주변 멀록은 둘씩 몰려오고 빠르게 다시 나타납니다. 하나씩 끌어내 처치하고 자리가 비자마자 유해를 클릭하거나, 친구와 함께 가세요."
+zh_cn = "遗骸周围的鱼人成对出现且刷新很快。把它们一只只引开，场地一清空就点击遗骸，或者找个朋友一起。"
+zh_tw = "遺骸周圍的魚人成對出現且重生很快。把牠們一隻隻引開，場地一清空就點擊遺骸，或者找個朋友一起。"
+
+# A Bundle of Trouble: the bundles are small and hidden by the grass at the foot of the trees.
+[[note]]
+quest = 5545
+phase = "objective"
+objective = 1
+level = "info"
+en = "The {item:13872} piles are small and hide in the grass at the foot of the trees. Lowering ground clutter in the graphics settings makes them much easier to see."
+fr = "Les tas ({item:13872}) sont petits et se cachent dans l'herbe au pied des arbres. Baisser la densité de la végétation au sol dans les options graphiques les rend bien plus visibles."
+de = "Die Haufen ({item:13872}) sind klein und verstecken sich im Gras am Fuß der Bäume. Wenn du die Bodenvegetation in den Grafikeinstellungen senkst, siehst du sie viel leichter."
+es = "Los montones ({item:13872}) son pequeños y se esconden en la hierba al pie de los árboles. Bajar la vegetación del suelo en las opciones gráficas hace que se vean mucho mejor."
+pt = "Os montes ({item:13872}) são pequenos e se escondem na grama ao pé das árvores. Reduzir a vegetação do solo nas opções gráficas os torna muito mais fáceis de ver."
+ru = "Вязанки ({item:13872}) маленькие и прячутся в траве у подножия деревьев. Если уменьшить детализацию растительности в настройках графики, их гораздо легче заметить."
+ko = "{item:13872} 더미는 작고 나무 밑동의 풀숲에 가려져 있습니다. 그래픽 설정에서 지면 디테일을 낮추면 훨씬 쉽게 보입니다."
+zh_cn = "{item:13872}堆很小，藏在树根旁的草丛里。在图像设置中调低地面杂物，就容易看到得多。"
+zh_tw = "{item:13872}堆很小，藏在樹根旁的草叢裡。在圖形設定中調低地面雜物，就容易看到得多。"
