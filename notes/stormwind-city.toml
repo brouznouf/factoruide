@@ -32,3 +32,35 @@ ru = "{item:2798} — обычный товар: купив 5 штук на ау
 ko = "{item:2798}은(는) 일반 거래 품목이라 경매장에서 5개를 사면 수집할 필요가 없습니다. 동굴에서는 {npc:580}만 지니고 있으며, 채광 기술이 있으면 {object:2054}와(과) {object:2055}에서도 얻을 수 있습니다."
 zh_cn = "{item:2798}是普通的交易物品：在拍卖行买5个就不用去刷。洞穴里只有{npc:580}身上有，采矿者还能从{object:2054}和{object:2055}中采到。"
 zh_tw = "{item:2798}是普通的交易物品：在拍賣場買5個就不用去刷。洞穴裡只有{npc:580}身上有，採礦者還能從{object:2054}和{object:2055}中採到。"
+
+# A Noble Brew: the Tear of Tilloa is a tiny flower in the fenced garden next to Stalvan Mistmantle's house, and he comes out after players who get close to the house.
+[[note]]
+quest = 335
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The {object:321} is a tiny white flower in the middle of the fenced garden beside the manor north of Darkshire, easy to miss in the grass. Keep away from the house: {npc:315} comes out after players who get close."
+fr = "{object:321} est une minuscule fleur blanche au milieu du jardin clôturé à côté du manoir au nord de Sombre-Comté, facile à manquer dans l'herbe. Restez loin de la maison : {npc:315} sort s'en prendre à qui s'approche."
+de = "{object:321} ist eine winzige weiße Blume mitten im eingezäunten Garten neben dem Herrenhaus nördlich von Dunkelhain, im Gras leicht zu übersehen. Halte Abstand zum Haus: {npc:315} kommt heraus, wenn man zu nahe kommt."
+es = "{object:321} es una diminuta flor blanca en medio del jardín vallado junto a la mansión al norte de Villa Oscura, fácil de pasar por alto entre la hierba. Aléjate de la casa: {npc:315} sale a por quien se acerca."
+pt = "{object:321} é uma minúscula flor branca no meio do jardim cercado ao lado da mansão ao norte de Vila Sombria, fácil de perder na grama. Fique longe da casa: {npc:315} sai atrás de quem se aproxima."
+ru = "{object:321} — крошечный белый цветок посреди огороженного сада у поместья к северу от Темнолесья, в траве его легко пропустить. Не подходите к дому: {npc:315} выходит к тем, кто приблизится."
+ko = "{object:321}은(는) 어둠골 북쪽 저택 옆 울타리 정원 한가운데 있는 아주 작은 흰 꽃으로, 풀 속에서 놓치기 쉽습니다. 집에 다가가지 마세요. 가까이 가면 {npc:315}이(가) 나옵니다."
+zh_cn = "{object:321}是一朵很小的白花，位于夜色镇以北庄园旁围栏花园的正中，在草丛里很容易错过。别靠近房子：靠近的玩家会引出{npc:315}。"
+zh_tw = "{object:321}是一朵很小的白花，位於夜色鎮以北莊園旁圍欄花園的正中，在草叢裡很容易錯過。別靠近房子：靠近的玩家會引出{npc:315}。"
+
+# The Missing Diplomat (Dashel Stonefist): he yields at low health instead of dying, but his two thugs often keep attacking afterwards; after a lost fight he can be talked to again.
+[[note]]
+quest = 1447
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:4961} gives up at about a quarter of his health, but his thugs ({npc:4969} ×2) often keep attacking for a while after: be ready to finish or outrun them. If you lose, talk to him again to restart the fight."
+fr = "{npc:4961} abandonne vers un quart de ses points de vie, mais ses hommes de main ({npc:4969} ×2) continuent souvent d'attaquer un moment : soyez prêt à les achever ou à les semer. En cas d'échec, reparlez-lui pour relancer le combat."
+de = "{npc:4961} gibt bei etwa einem Viertel seiner Gesundheit auf, aber seine Schläger ({npc:4969} ×2) greifen oft noch eine Weile an: sei bereit, sie zu erledigen oder abzuhängen. Verlierst du, sprich ihn erneut an, um den Kampf neu zu starten."
+es = "{npc:4961} se rinde hacia un cuarto de su salud, pero sus matones ({npc:4969} ×2) suelen seguir atacando un rato: prepárate para acabar con ellos o huir. Si pierdes, vuelve a hablar con él para reiniciar el combate."
+pt = "{npc:4961} se rende perto de um quarto da vida, mas seus capangas ({npc:4969} ×2) costumam continuar atacando por um tempo: esteja pronto para acabar com eles ou fugir. Se perder, fale com ele de novo para recomeçar a luta."
+ru = "{npc:4961} сдается примерно на четверти здоровья, но его громилы ({npc:4969} ×2) часто еще какое-то время атакуют: будьте готовы добить их или убежать. Если проиграете, поговорите с ним снова, чтобы начать бой заново."
+ko = "{npc:4961}은(는) 생명력이 4분의 1쯤 남으면 항복하지만, 부하들({npc:4969} ×2)은 한동안 계속 공격하는 경우가 많습니다. 처치하거나 따돌릴 준비를 하세요. 지면 다시 말을 걸어 전투를 다시 시작하세요."
+zh_cn = "{npc:4961}生命值降到约四分之一时会认输，但他的打手（{npc:4969} ×2）常会继续攻击一阵：准备好解决他们或甩掉他们。如果打输了，再和他对话即可重新开始战斗。"
+zh_tw = "{npc:4961}生命值降到約四分之一時會認輸，但他的打手（{npc:4969} ×2）常會繼續攻擊一陣：準備好解決他們或甩掉他們。如果打輸了，再和他對話即可重新開始戰鬥。"

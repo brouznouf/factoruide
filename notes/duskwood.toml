@@ -28,3 +28,79 @@ ru = "{npc:412}, элитный противник, которого подни�
 ko = "다른 플레이어의 퀘스트로 깨어난 정예 {npc:412}이(가) 갈림길을 지나가며 {npc:888}을(를) 죽입니다. 순찰대원이 없으면 돌아올 때까지 약 5분 기다리세요."
 zh_cn = "因其他玩家的任务而出现的精英{npc:412}经过路口时会杀死{npc:888}。如果守夜人不在，等大约5分钟他就会回来。"
 zh_tw = "因其他玩家的任務而出現的精英{npc:412}經過路口時會殺死{npc:888}。如果守夜人不在，等大約5分鐘他就會回來。"
+
+# The Legend of Stalvan (Moonbrook): the Old Footlocker is on the schoolhouse floor and blends in; the next step taken from it spawns a Forlorn Spirit that curses and polymorphs, and she returns at the chain's next chests.
+[[note]]
+quest = 67
+phase = "turnin"
+level = "warning"
+en = "The {object:3643} lies on the floor of the schoolhouse's back room, by the steps, and is easy to miss. Taking the next step from it spawns {npc:2044}: she curses you and polymorphs a pet or group member. She comes back at the chain's next chests."
+fr = "{object:3643} est posée au sol dans la salle du fond de l'école, près des marches, et passe inaperçue. Prendre l'étape suivante fait apparaître {npc:2044} : elle vous maudit et métamorphose un familier ou un membre du groupe. Elle revient aux coffres suivants de la chaîne."
+de = "{object:3643} liegt im hinteren Raum des Schulhauses bei den Stufen am Boden und ist leicht zu übersehen. Die nächste Quest daraus lässt {npc:2044} erscheinen: sie verflucht dich und verwandelt einen Begleiter oder ein Gruppenmitglied in ein Schaf. Sie kehrt bei den nächsten Truhen der Reihe zurück."
+es = "{object:3643} está en el suelo de la sala del fondo de la escuela, junto a los escalones, y pasa desapercibido. Aceptar el paso siguiente hace aparecer a {npc:2044}: te maldice y polimorfa a una mascota o a un miembro del grupo. Vuelve en los siguientes cofres de la cadena."
+pt = "{object:3643} fica no chão da sala dos fundos da escola, junto aos degraus, e passa despercebido. Aceitar a etapa seguinte faz surgir {npc:2044}: ela amaldiçoa você e transforma em ovelha um mascote ou membro do grupo. Ela volta nos próximos baús da série."
+ru = "{object:3643} стоит на полу в дальней комнате школы, у ступенек, — заметить непросто. Взяв следующее задание, вы вызовете {npc:2044}: она проклинает вас и превращает в овцу питомца или члена группы. Она появляется снова у следующих сундуков цепочки."
+ko = "{object:3643}은(는) 학교 안쪽 방의 계단 옆 바닥에 있어 놓치기 쉽습니다. 다음 단계를 받으면 {npc:2044}이(가) 나타나 저주를 걸고 소환수나 파티원을 양으로 변이시킵니다. 연계의 다음 상자들에서도 다시 나타납니다."
+zh_cn = "{object:3643}放在学校里屋台阶旁的地上，很容易错过。接下一步任务时会出现{npc:2044}：她会诅咒你，并把宠物或队友变成绵羊。在任务链后面的箱子处她还会再出现。"
+zh_tw = "{object:3643}放在學校裡屋臺階旁的地上，很容易錯過。接下一步任務時會出現{npc:2044}：她會詛咒你，並把寵物或隊友變成綿羊。在任務鏈後面的箱子處她還會再出現。"
+
+# Proving Your Worth: the Skeletal Warders are in the catacombs entered from the small building west of Raven Hill Cemetery; Mor'Ladim, a level 35 elite, wanders the cemetery.
+[[note]]
+quest = 323
+phase = "objective"
+objective = 3
+level = "warning"
+en = "Look for {npc:785} underground: the stairs down are in the small building west of the cemetery. {npc:522}, a level 35 elite, wanders the cemetery on the way."
+fr = "Cherchez {npc:785} sous terre : l'escalier se trouve dans le petit bâtiment à l'ouest du cimetière. {npc:522}, un élite de niveau 35, erre dans le cimetière sur le chemin."
+de = "Such {npc:785} unter der Erde: die Treppe hinab liegt im kleinen Gebäude westlich des Friedhofs. {npc:522}, ein Elitegegner der Stufe 35, streift unterwegs über den Friedhof."
+es = "Busca {npc:785} bajo tierra: la escalera está en el pequeño edificio al oeste del cementerio. {npc:522}, un élite de nivel 35, deambula por el cementerio en el camino."
+pt = "Procure {npc:785} no subsolo: a escada fica no pequeno edifício a oeste do cemitério. {npc:522}, uma elite de nível 35, vaga pelo cemitério no caminho."
+ru = "Ищите {npc:785} под землей: лестница вниз в небольшом здании к западу от кладбища. По пути по кладбищу бродит {npc:522}, элитный противник 35 уровня."
+ko = "{npc:785}은(는) 지하에 있습니다. 내려가는 계단은 묘지 서쪽의 작은 건물 안에 있습니다. 가는 길에 35레벨 정예 {npc:522}이(가) 묘지를 배회합니다."
+zh_cn = "{npc:785}在地下：下去的楼梯在墓地西边的小建筑里。途中35级精英{npc:522}在墓地游荡。"
+zh_tw = "{npc:785}在地下：下去的樓梯在墓地西邊的小建築裡。途中35級精英{npc:522}在墓地遊蕩。"
+
+# The Missing Diplomat (Sealed Note): Watcher Backus walks the road north of Darkshire to the path to Manor Mistmantle and back.
+[[note]]
+quest = 1243
+phase = "turnin"
+level = "info"
+en = "{npc:840} walks the road north of Darkshire up to the path to the manor, then back: if he is not by the town, look for him along it."
+fr = "{npc:840} parcourt la route au nord de Sombre-Comté jusqu'au chemin du manoir, puis revient : s'il n'est pas près de la ville, cherchez-le sur cette route."
+de = "{npc:840} geht die Straße nördlich von Dunkelhain bis zum Weg zum Herrenhaus und zurück: ist er nicht beim Ort, such ihn entlang der Straße."
+es = "{npc:840} recorre el camino al norte de Villa Oscura hasta el sendero de la mansión y vuelve: si no está junto al pueblo, búscalo por ese camino."
+pt = "{npc:840} percorre a estrada ao norte de Vila Sombria até a trilha da mansão e volta: se ele não estiver perto da vila, procure-o pela estrada."
+ru = "{npc:840} ходит по дороге к северу от Темнолесья до тропы к поместью и обратно: если его нет у города, ищите его на этой дороге."
+ko = "{npc:840}은(는) 어둠골 북쪽 길을 따라 저택으로 가는 길목까지 갔다가 돌아옵니다. 마을 근처에 없으면 그 길을 따라 찾아보세요."
+zh_cn = "{npc:840}沿夜色镇以北的道路走到通往庄园的小路，再折返：如果他不在镇子附近，就沿这条路找他。"
+zh_tw = "{npc:840}沿夜色鎮以北的道路走到通往莊園的小路，再折返：如果他不在鎮子附近，就沿這條路找他。"
+
+# The Missing Diplomat (Defias Docket): same watcher, same patrol as above.
+[[note]]
+quest = 1244
+phase = "turnin"
+level = "info"
+en = "{npc:840} walks the road north of Darkshire up to the path to the manor, then back: if he is not by the town, look for him along it."
+fr = "{npc:840} parcourt la route au nord de Sombre-Comté jusqu'au chemin du manoir, puis revient : s'il n'est pas près de la ville, cherchez-le sur cette route."
+de = "{npc:840} geht die Straße nördlich von Dunkelhain bis zum Weg zum Herrenhaus und zurück: ist er nicht beim Ort, such ihn entlang der Straße."
+es = "{npc:840} recorre el camino al norte de Villa Oscura hasta el sendero de la mansión y vuelve: si no está junto al pueblo, búscalo por ese camino."
+pt = "{npc:840} percorre a estrada ao norte de Vila Sombria até a trilha da mansão e volta: se ele não estiver perto da vila, procure-o pela estrada."
+ru = "{npc:840} ходит по дороге к северу от Темнолесья до тропы к поместью и обратно: если его нет у города, ищите его на этой дороге."
+ko = "{npc:840}은(는) 어둠골 북쪽 길을 따라 저택으로 가는 길목까지 갔다가 돌아옵니다. 마을 근처에 없으면 그 길을 따라 찾아보세요."
+zh_cn = "{npc:840}沿夜色镇以北的道路走到通往庄园的小路，再折返：如果他不在镇子附近，就沿这条路找他。"
+zh_tw = "{npc:840}沿夜色鎮以北的道路走到通往莊園的小路，再折返：如果他不在鎮子附近，就沿這條路找他。"
+
+# Wait for Sirra to Finish: completing it raises Stitches at Raven Hill, who then walks the road to Darkshire.
+[[note]]
+quest = 401
+phase = "turnin"
+level = "warning"
+en = "Finishing this step raises {npc:412}, a level 35 elite, who walks the road from the western cemetery to Darkshire and fights the guards there. You don't need to kill him: keep off that road for a few minutes."
+fr = "Terminer cette étape réveille {npc:412}, un élite de niveau 35, qui suit la route depuis le cimetière de l'ouest jusqu'à Sombre-Comté et y combat les gardes. Inutile de le tuer : évitez cette route quelques minutes."
+de = "Der Abschluss dieses Schritts erweckt {npc:412}, einen Elitegegner der Stufe 35, der die Straße vom Friedhof im Westen nach Dunkelhain entlangzieht und dort die Wachen bekämpft. Du musst ihn nicht töten: meide die Straße ein paar Minuten."
+es = "Completar este paso despierta a {npc:412}, un élite de nivel 35, que recorre el camino desde el cementerio del oeste hasta Villa Oscura y lucha allí con los guardias. No hace falta matarlo: evita ese camino unos minutos."
+pt = "Concluir esta etapa desperta {npc:412}, uma elite de nível 35, que segue a estrada do cemitério a oeste até Vila Sombria e luta com os guardas de lá. Não é preciso matá-lo: evite essa estrada por alguns minutos."
+ru = "Завершение этого шага поднимает {npc:412}, элитного противника 35 уровня: он идет по дороге от западного кладбища к Темнолесью и бьется там со стражей. Убивать его не нужно: несколько минут держитесь подальше от дороги."
+ko = "이 단계를 마치면 35레벨 정예 {npc:412}이(가) 깨어나 서쪽 묘지에서 어둠골까지 길을 따라 걸어와 경비병과 싸웁니다. 죽일 필요는 없으니 몇 분 동안 그 길을 피하세요."
+zh_cn = "完成这一步会唤醒35级精英{npc:412}，他会沿道路从西边的墓地走到夜色镇并与卫兵交战。不必杀他：几分钟内避开这条路即可。"
+zh_tw = "完成這一步會喚醒35級精英{npc:412}，他會沿道路從西邊的墓地走到夜色鎮並與衛兵交戰。不必殺他：幾分鐘內避開這條路即可。"

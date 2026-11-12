@@ -61,3 +61,50 @@ ru = "{npc:703} невосприимчив к урону от темной ма�
 ko = "{npc:703}은(는) 암흑 피해에 면역이며, 두 경비병이 항상 함께 싸웁니다. 먼저 주변 놀을 정리한 뒤 경비병만 남은 상태에서 상대하세요."
 zh_cn = "{npc:703}免疫暗影伤害，他的两名卫兵总会一起参战：先清掉他周围的豺狼人，再只带着他的卫兵和他交战。"
 zh_tw = "{npc:703}免疫暗影傷害，他的兩名衛兵總會一起參戰：先清掉他周圍的豺狼人，再只帶著他的衛兵和他交戰。"
+
+# Ur's Treatise on Shadow Magic: the book is on a shelf at the top of the Tower of Ilgalar, opposite the elite Morganth, guarded by a gnoll caster and two mana-burning demon dogs.
+[[note]]
+quest = 1938
+phase = "objective"
+objective = 1
+level = "warning"
+en = "The book sticks out of a shelf at the top of the tower, across the floor from {npc:397}: no need to fight him. The demon dogs by the shelf drain mana and interrupt looting; pull them down the stairs out of sight first."
+fr = "Le livre dépasse d'une étagère au sommet de la tour, à l'opposé de {npc:397} : inutile de le combattre. Les chiens démoniaques près de l'étagère brûlent le mana et interrompent la fouille ; attirez-les d'abord dans l'escalier, hors de vue."
+de = "Das Buch ragt oben im Turm aus einem Regal, auf der anderen Seite von {npc:397}: ihn musst du nicht bekämpfen. Die Dämonenhunde am Regal verbrennen Mana und unterbrechen das Plündern; lock sie zuerst außer Sicht die Treppe hinunter."
+es = "El libro sobresale de una estantería en lo alto de la torre, al otro lado de {npc:397}: no hace falta luchar contra él. Los perros demoníacos junto a la estantería queman maná e interrumpen el saqueo; atráelos antes escaleras abajo, fuera de su vista."
+pt = "O livro se destaca numa estante no topo da torre, do lado oposto a {npc:397}: não é preciso enfrentá-lo. Os cães demoníacos perto da estante queimam mana e interrompem a coleta; atraia-os antes escada abaixo, fora da linha de visão."
+ru = "Книга торчит из полки на верхнем этаже башни, напротив {npc:397}: сражаться с ним не нужно. Демонические псы у полки выжигают ману и прерывают сбор; сначала уведите их вниз по лестнице, из поля зрения."
+ko = "책은 탑 꼭대기 층, {npc:397}의 반대편 책장에 튀어나와 있습니다. 그와 싸울 필요는 없습니다. 책장 옆의 악마 개는 마나를 태우고 채집을 방해하니, 먼저 계단 아래 시야 밖으로 끌어내세요."
+zh_cn = "书插在塔顶一个书架上，位于{npc:397}的对面：不必与他交战。书架旁的恶魔犬会燃烧法力并打断拾取；先把它们引到楼梯下、脱离视线。"
+zh_tw = "書插在塔頂一個書架上，位於{npc:397}的對面：不必與他交戰。書架旁的惡魔犬會燃燒法力並打斷拾取；先把牠們引到樓梯下、脫離視線。"
+
+# Missing In Action: Keeshan is in an alcove off the back room of the cave; the escort fails for players who move too far from him, and the camps outside respawn while he walks out.
+[[note]]
+quest = 219
+phase = "objective"
+objective = 1
+level = "must_read"
+en = "{npc:349} waits in a small alcove off the lower level of the big room at the back of the cave. Stay close to him all the way: straying too far fails the escort. Pull groups to him rather than letting him charge in; the camps outside will have respawned."
+fr = "{npc:349} attend dans une petite alcôve en bas de la grande salle, au fond de la grotte. Restez près de lui tout du long : trop vous éloigner fait échouer l'escorte. Attirez les groupes vers lui au lieu de le laisser charger ; les camps dehors auront réapparu."
+de = "{npc:349} wartet in einer kleinen Nische unten im großen Raum hinten in der Höhle. Bleib den ganzen Weg nah bei ihm: zu weit weg scheitert die Eskorte. Zieh Gruppen zu ihm, statt ihn hineinstürmen zu lassen; die Lager draußen sind wieder da."
+es = "{npc:349} espera en un pequeño hueco abajo de la gran sala del fondo de la cueva. Quédate cerca de él todo el camino: alejarte demasiado hace fallar la escolta. Atrae los grupos hacia él en vez de dejarlo cargar; los campamentos de fuera habrán reaparecido."
+pt = "{npc:349} espera num pequeno nicho embaixo do grande salão no fundo da caverna. Fique perto dele o caminho todo: afastar-se demais faz a escolta falhar. Puxe os grupos até ele em vez de deixá-lo avançar; os acampamentos lá fora terão renascido."
+ru = "{npc:349} ждет в небольшой нише внизу большого зала в глубине пещеры. Держитесь рядом с ним всю дорогу: если отойти далеко, сопровождение провалится. Подводите врагов к нему, а не давайте ему бросаться на них; лагеря снаружи успеют возродиться."
+ko = "{npc:349}은(는) 동굴 안쪽 큰 방의 아래층에 있는 작은 틈에서 기다립니다. 내내 그의 곁에 머무세요. 너무 멀어지면 호위가 실패합니다. 그가 돌진하게 두지 말고 적을 그에게 끌어오세요. 바깥 야영지는 다시 생성되어 있을 것입니다."
+zh_cn = "{npc:349}在洞穴深处大厅下层的一个小凹室里等待。全程待在他身边：离得太远护送就会失败。把怪物引到他身边，别让他冲进去；洞外的营地届时已经刷新。"
+zh_tw = "{npc:349}在洞穴深處大廳下層的一個小凹室裡等待。全程待在他身邊：離得太遠護送就會失敗。把怪物引到他身邊，別讓他衝進去；洞外的營地屆時已經重生。"
+
+# Looking Further: the jar is at the top of Stonewatch Tower, between an elite caster and a patrolling elite sentry whose ranged attacks interrupt it; resurrecting on the ledge behind the barrels is the common solo way.
+[[note]]
+quest = 248
+phase = "turnin"
+level = "warning"
+en = "The jar stands at the top of the tower, watched by elite orcs whose ranged attacks interrupt you. Alone: die, resurrect on the ledge behind the barrels while the patrolling sentry is on the far side, use the jar, then jump down."
+fr = "La jarre se trouve au sommet de la tour, surveillée par des orcs élites dont les attaques à distance vous interrompent. En solo : mourez, ressuscitez sur le rebord derrière les tonneaux quand la sentinelle qui patrouille est de l'autre côté, utilisez la jarre puis sautez."
+de = "Der Krug steht oben auf dem Turm, bewacht von Elite-Orcs, deren Fernangriffe dich unterbrechen. Allein: stirb, belebe dich auf dem Sims hinter den Fässern wieder, wenn der patrouillierende Wachposten drüben ist, benutze den Krug und spring hinunter."
+es = "La jarra está en lo alto de la torre, vigilada por orcos élite cuyos ataques a distancia te interrumpen. En solitario: muere, resucita en la cornisa tras los barriles cuando el centinela que patrulla esté al otro lado, usa la jarra y salta abajo."
+pt = "O jarro fica no topo da torre, vigiado por orcs de elite cujos ataques à distância interrompem você. Sozinho: morra, ressuscite na borda atrás dos barris quando a sentinela que patrulha estiver do outro lado, use o jarro e pule."
+ru = "Кувшин стоит на вершине башни под охраной элитных орков, чьи атаки издалека прерывают действие. В одиночку: погибните, воскресните на выступе за бочками, когда патрульный часовой на другой стороне, используйте кувшин и спрыгните вниз."
+ko = "항아리는 탑 꼭대기에 있고, 원거리 공격으로 행동을 끊는 정예 오크들이 지킵니다. 혼자라면 죽은 뒤 순찰하는 보초가 반대편에 있을 때 통 뒤 난간에서 부활해 항아리를 사용하고 뛰어내리세요."
+zh_cn = "罐子在塔顶，由精英兽人看守，他们的远程攻击会打断你。单人的话：先死亡，等巡逻的哨兵走到另一边时在木桶后的边沿复活，使用罐子后跳下去。"
+zh_tw = "罐子在塔頂，由精英獸人看守，他們的遠程攻擊會打斷你。單人的話：先死亡，等巡邏的哨兵走到另一邊時在木桶後的邊緣復活，使用罐子後跳下去。"

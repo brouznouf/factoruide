@@ -1,0 +1,17 @@
+# Quest notes of the Wetlands. See notes/README.md for the format.
+
+# The Cursed Crew: First Mate Snellig spawns just inside a breach in the hull of the ship nearest the shore, on its land side.
+[[note]]
+quest = 289
+phase = "objective"
+objective = 3
+level = "info"
+en = "{npc:1159} waits on the lowest deck of the ship nearest the shore: enter through the hole in its hull on the shore side to reach him without swimming through the whole ship."
+fr = "{npc:1159} se tient au pont inférieur du navire le plus proche du rivage : entrez par la brèche de la coque côté terre pour l'atteindre sans traverser tout le navire à la nage."
+de = "{npc:1159} steht auf dem untersten Deck des Schiffs, das dem Ufer am nächsten liegt: steig durch das Loch im Rumpf auf der Landseite ein, um ihn zu erreichen, ohne durch das ganze Schiff zu schwimmen."
+es = "{npc:1159} está en la cubierta inferior del barco más cercano a la orilla: entra por el agujero del casco del lado de tierra para llegar a él sin cruzar todo el barco a nado."
+pt = "{npc:1159} fica no convés inferior do navio mais próximo da margem: entre pelo buraco no casco do lado da terra para chegar até ele sem atravessar o navio inteiro a nado."
+ru = "{npc:1159} находится на нижней палубе корабля, ближайшего к берегу: войдите через пробоину в корпусе со стороны суши, чтобы добраться до него, не проплывая весь корабль."
+ko = "{npc:1159}은(는) 해안에서 가장 가까운 배의 맨 아래 갑판에 있습니다. 육지 쪽 선체의 구멍으로 들어가면 배 전체를 헤엄쳐 지나지 않고 그에게 갈 수 있습니다."
+zh_cn = "{npc:1159}在离岸最近那艘船的最底层甲板：从靠陆地一侧船壳上的破洞进去，就不必游过整艘船。"
+zh_tw = "{npc:1159}在離岸最近那艘船的最底層甲板：從靠陸地一側船殼上的破洞進去，就不必游過整艘船。"

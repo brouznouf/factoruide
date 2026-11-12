@@ -141,3 +141,34 @@ quest = 1027
 phase = "objective"
 objective = 1
 icon = "pickup"
+
+# Elemental Bracers: the Divining Scroll given with the quest combines the five intact bracers into the Divined Scroll; Tideress, a stronger elemental, patrols the lake.
+[[note]]
+quest = 1016
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Once you have 5 {item:12220}, use the {item:5456} from your bags to turn them into the scroll you hand in. {npc:12759}, much stronger than the other elementals, patrols the lake."
+fr = "Une fois les 5 {item:12220} réunis, utilisez {item:5456} de vos sacs pour les changer en parchemin à rendre. {npc:12759}, un élémentaire bien plus fort que les autres, patrouille sur le lac."
+de = "Sobald du 5 {item:12220} hast, benutze {item:5456} aus deinen Taschen, um daraus die Schriftrolle zum Abgeben zu machen. {npc:12759}, ein viel stärkerer Elementar als die anderen, patrouilliert über den See."
+es = "Cuando tengas 5 {item:12220}, usa {item:5456} desde tus bolsas para convertirlos en el pergamino que debes entregar. {npc:12759}, un elemental mucho más fuerte que los demás, patrulla el lago."
+pt = "Quando tiver 5 {item:12220}, use {item:5456} das suas bolsas para transformá-los no pergaminho a entregar. {npc:12759}, um elemental bem mais forte que os outros, patrulha o lago."
+ru = "Собрав 5 шт. {item:12220}, используйте {item:5456} из сумки, чтобы превратить их в свиток для сдачи. По озеру патрулирует {npc:12759} — элементаль намного сильнее остальных."
+ko = "{item:12220} 5개를 모으면 가방의 {item:5456}을(를) 사용해 제출할 두루마리로 바꾸세요. 다른 정령보다 훨씬 강한 {npc:12759}이(가) 호수를 순찰합니다."
+zh_cn = "集齐5个{item:12220}后，使用背包里的{item:5456}将其变成要上交的卷轴。比其他元素强得多的{npc:12759}在湖中巡逻。"
+zh_tw = "集齊5個{item:12220}後，使用背包裡的{item:5456}將其變成要繳交的卷軸。比其他元素強得多的{npc:12759}在湖中巡邏。"
+
+# Raene's Cleansing (Krolg): he camps above the waterfall on the lake's southeast side, reached by a torch-lit path; he only answers a player transformed by Dartol's Rod, and attacking ends the form.
+[[note]]
+quest = 1030
+phase = "turnin"
+level = "warning"
+en = "{npc:3897} camps above the waterfall on the southeast side of the lake: follow the torches up the path east of the falls. Use {item:5462} before you reach him and do not attack him; attacking anything ends the disguise."
+fr = "{npc:3897} campe au-dessus de la cascade, au sud-est du lac : suivez les torches sur le sentier à l'est de la chute. Utilisez {item:5462} avant d'arriver et ne l'attaquez pas ; attaquer quoi que ce soit met fin au déguisement."
+de = "{npc:3897} lagert oberhalb des Wasserfalls im Südosten des Sees: folge den Fackeln den Pfad östlich der Fälle hinauf. Benutze {item:5462}, bevor du bei ihm ankommst, und greif ihn nicht an; jeder Angriff beendet die Verwandlung."
+es = "{npc:3897} acampa sobre la cascada, al sureste del lago: sigue las antorchas por el sendero al este de la caída. Usa {item:5462} antes de llegar y no lo ataques; atacar cualquier cosa termina el disfraz."
+pt = "{npc:3897} acampa acima da cachoeira, no sudeste do lago: siga as tochas pela trilha a leste da queda. Use {item:5462} antes de chegar e não o ataque; atacar qualquer coisa encerra o disfarce."
+ru = "{npc:3897} стоит лагерем над водопадом на юго-восточном берегу озера: идите по тропе с факелами к востоку от водопада. Используйте {item:5462} до встречи с ним и не нападайте на него: любая атака снимает облик."
+ko = "{npc:3897}은(는) 호수 남동쪽 폭포 위에 있습니다. 폭포 동쪽의 횃불이 놓인 길을 따라 올라가세요. 도착하기 전에 {item:5462}을(를) 사용하고 공격하지 마세요. 무엇이든 공격하면 변신이 풀립니다."
+zh_cn = "{npc:3897}在湖东南侧的瀑布上方：沿瀑布东边点着火把的小路上去。到达前使用{item:5462}，不要攻击他；攻击任何目标都会解除变形。"
+zh_tw = "{npc:3897}在湖東南側的瀑布上方：沿瀑布東邊點著火把的小路上去。到達前使用{item:5462}，不要攻擊他；攻擊任何目標都會解除變形。"
