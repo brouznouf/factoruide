@@ -1,0 +1,91 @@
+# Quest notes of Zephras Isle. See notes/README.md for the format.
+
+# The Great Outdoors: sitting by the campfire sometimes gives no credit; sitting, then typing /sit again (or /lay then /sit) makes it count.
+[[note]]
+quest = 96101
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "If sitting by the campfire gives no credit, type /sit again while already seated, or /lay then /sit."
+fr = "Si vous asseoir près du feu de camp ne valide rien, tapez à nouveau /sit en étant déjà assis, ou /lay puis /sit."
+de = "Wenn das Sitzen am Lagerfeuer nicht zählt, tippe im Sitzen noch einmal /sit, oder /lay und dann /sit."
+es = "Si sentarte junto a la hoguera no cuenta, escribe /sit otra vez estando ya sentado, o /lay y luego /sit."
+pt = "Se sentar junto à fogueira não contar, digite /sit de novo já sentado, ou /lay e depois /sit."
+ru = "Если сидение у костра не засчитывается, введите /sit еще раз, уже сидя, или /lay, а затем /sit."
+ko = "모닥불 옆에 앉아도 완료되지 않으면, 앉은 상태에서 /sit을 다시 입력하거나 /lay 후 /sit을 입력하세요."
+zh_cn = "如果坐在篝火旁没有完成目标，在已坐下的状态下再输入一次/sit，或先输入/lay再输入/sit。"
+zh_tw = "如果坐在營火旁沒有完成目標，在已坐下的狀態下再輸入一次/sit，或先輸入/lay再輸入/sit。"
+
+# The Criminal Element: the bandits' cave opens at about 48.8, 36.5; the corpse run is long and the cleared bandits respawn before the player gets back.
+[[note]]
+quest = 92517
+level = "warning"
+editions = ["forever"]
+en = "The bandits' cave opens at about 48.8, 36.5. Try not to die inside: the run back from the graveyard is long and the bandits you cleared are back before you return."
+fr = "La grotte des bandits s'ouvre vers 48.8, 36.5. Évitez de mourir à l'intérieur : le retour depuis le cimetière est long et les bandits tués sont réapparus avant votre retour."
+de = "Die Höhle der Banditen öffnet sich bei etwa 48.8, 36.5. Stirb dort möglichst nicht: Der Weg vom Friedhof zurück ist lang, und die besiegten Banditen sind wieder da, bevor du zurück bist."
+es = "La cueva de los bandidos se abre hacia 48.8, 36.5. Intenta no morir dentro: el regreso desde el cementerio es largo y los bandidos que mataste reaparecen antes de que vuelvas."
+pt = "A caverna dos bandidos se abre por volta de 48.8, 36.5. Tente não morrer lá dentro: a volta do cemitério é longa e os bandidos mortos reaparecem antes de você voltar."
+ru = "Вход в пещеру бандитов примерно на 48.8, 36.5. Постарайтесь не умереть внутри: путь от кладбища долгий, и убитые бандиты появятся снова раньше, чем вы вернетесь."
+ko = "산적 동굴 입구는 약 48.8, 36.5에 있습니다. 안에서 죽지 않도록 하세요. 무덤에서 돌아오는 길이 길고, 처치한 산적들이 그 전에 다시 나타납니다."
+zh_cn = "强盗洞穴的入口约在48.8, 36.5。尽量别死在里面：从墓地跑回来很远，你清掉的强盗在你回来前就会重生。"
+zh_tw = "強盜洞穴的入口約在48.8, 36.5。盡量別死在裡面：從墓地跑回來很遠，你清掉的強盜在你回來前就會重生。"
+
+# Among the Faithful: the overheard talk starts by clicking the wardrobe upstairs and choosing to hide; without the Mark of Akir disguise the village is hostile.
+[[note]]
+quest = 92528
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Keep the Mark of Akir disguise ({npc:251904} gives it again if it wore off), or the village attacks you. Upstairs in the house, click the wardrobe, choose to hide behind it, and wait until the talk ends."
+fr = "Gardez le déguisement de la Marque d'Akir ({npc:251904} vous le redonne s'il a disparu), sinon le village vous attaque. À l'étage de la maison, cliquez sur l'armoire, choisissez de vous cacher derrière et attendez la fin de la conversation."
+de = "Behalte die Tarnung durch das Mal von Akir ({npc:251904} gibt sie dir erneut, falls sie abgelaufen ist), sonst greift dich das Dorf an. Klick oben im Haus auf den Kleiderschrank, versteck dich dahinter und warte, bis das Gespräch endet."
+es = "Mantén el disfraz de la Marca de Akir ({npc:251904} te lo vuelve a dar si se te ha ido), o el poblado te atacará. En el piso de arriba de la casa, haz clic en el armario, elige esconderte detrás y espera a que acabe la conversación."
+pt = "Mantenha o disfarce da Marca de Akir ({npc:251904} dá de novo se tiver acabado), ou a vila ataca você. No andar de cima da casa, clique no guarda-roupa, escolha se esconder atrás dele e espere a conversa terminar."
+ru = "Сохраняйте маскировку Метки Акира (персонаж {npc:251904} выдаст ее снова, если она спала), иначе деревня нападет на вас. Наверху в доме щелкните по шкафу, выберите спрятаться за ним и дождитесь конца разговора."
+ko = "아키르의 표식 변장을 유지하세요. 사라졌다면 {npc:251904}이(가) 다시 줍니다. 없으면 마을이 공격해 옵니다. 집 위층에서 옷장을 클릭해 뒤에 숨기를 선택하고 대화가 끝날 때까지 기다리세요."
+zh_cn = "保持阿基尔印记的伪装（如果消失了，{npc:251904}会重新给你），否则村子会攻击你。在房子楼上点击衣柜，选择躲到后面，等对话结束。"
+zh_tw = "保持阿基爾印記的偽裝（如果消失了，{npc:251904}會重新給你），否則村子會攻擊你。在房子樓上點擊衣櫃，選擇躲到後面，等對話結束。"
+
+# Bugged: only some Skyhoppers count and nothing tells them apart; many of them sit inside the town's buildings and upstairs.
+[[note]]
+quest = 93949
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Only some {npc:251727} count, and they look exactly like the ordinary ones: kill every one you meet, checking inside the buildings and upstairs, where many of them sit."
+fr = "Seuls certains {npc:251727} comptent, et ils ressemblent exactement aux autres : tuez tous ceux que vous croisez, en fouillant l'intérieur des bâtiments et les étages, où beaucoup se trouvent."
+de = "Nur manche {npc:251727} zählen, und sie sehen genau wie die gewöhnlichen aus: Töte jeden, den du triffst, und sieh in den Gebäuden und oben nach, wo viele von ihnen sitzen."
+es = "Solo algunos {npc:251727} cuentan, y son idénticos a los normales: mata a todos los que veas y busca dentro de los edificios y en los pisos de arriba, donde hay muchos."
+pt = "Só alguns {npc:251727} contam, e são idênticos aos comuns: mate todos que encontrar, procurando dentro das construções e nos andares de cima, onde ficam muitos deles."
+ru = "Засчитываются только некоторые {npc:251727}, и они ничем не отличаются от обычных: убивайте всех подряд, заглядывая в здания и на верхние этажи, где их много."
+ko = "일부 {npc:251727}만 인정되며 일반 개체와 똑같이 생겼습니다. 보이는 대로 모두 처치하고, 많이 모여 있는 건물 안과 위층도 확인하세요."
+zh_cn = "只有部分{npc:251727}计数，而且和普通的长得一模一样：见到就杀，并查看建筑物内部和楼上，那里有很多。"
+zh_tw = "只有部分{npc:251727}計數，而且和普通的長得一模一樣：見到就殺，並查看建築物內部和樓上，那裡有很多。"
+
+# Flutterfly Dust: the swatter is used on a flutterfly before the fight; the dust mostly falls on the ground as a small white disc to pick up, seldom on the corpse.
+[[note]]
+quest = 92683
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Use the swatter from your bags on a Flutterfly before fighting it. The dust usually falls to the ground as a small white disc to pick up, not onto the corpse."
+fr = "Utilisez la tapette de vos sacs sur un papillon avant de le combattre. La poussière tombe le plus souvent au sol, en petit disque blanc à ramasser, et non sur le cadavre."
+de = "Benutze die Fliegenklatsche aus deinen Taschen auf einen Falter, bevor du ihn bekämpfst. Der Staub fällt meist als kleine weiße Scheibe zu Boden, die du aufheben musst, nicht in die Leiche."
+es = "Usa el matamoscas de tus bolsas sobre una mariposa antes de luchar contra ella. El polvo suele caer al suelo como un pequeño disco blanco que hay que recoger, no en el cadáver."
+pt = "Use o mata-moscas das suas bolsas numa borboleta antes de lutar com ela. O pó costuma cair no chão como um pequeno disco branco para pegar, não no cadáver."
+ru = "Используйте хлопушку из сумок на бабочке до боя с ней. Пыльца обычно падает на землю маленьким белым диском, который нужно подобрать, а не остается в трупе."
+ko = "싸우기 전에 가방의 파리채를 나비에게 사용하세요. 가루는 시체가 아니라 대개 땅에 작은 하얀 원반으로 떨어지니 직접 주우세요."
+zh_cn = "在战斗前对蝴蝶使用背包里的拍子。粉尘通常会以白色小圆片的形式掉在地上，需要手动拾取，而不是在尸体上。"
+zh_tw = "在戰鬥前對蝴蝶使用背包裡的拍子。粉塵通常會以白色小圓片的形式掉在地上，需要手動拾取，而不是在屍體上。"
+
+[[icon]]
+quest = 92683
+phase = "objective"
+objective = 1
+icon = "pickup"
+editions = ["forever"]

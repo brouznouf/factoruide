@@ -33,3 +33,37 @@ ru = "Поднимитесь по лестнице к бассейну с зел
 ko = "계단을 올라 {npc:11750} 옆의 초록 점액 웅덩이로 가서 가방의 머리를 사용한 뒤, 다시 내려가 {npc:2055}에게 가세요."
 zh_cn = "走上楼梯到{npc:11750}旁边的绿色软泥池，在那里使用背包里的头颅，然后下楼回到{npc:2055}那里。"
 zh_tw = "走上樓梯到{npc:11750}旁邊的綠色軟泥池，在那裡使用背包裡的頭顱，然後下樓回到{npc:2055}那裡。"
+
+# Unending Torment (skullcap and herbs): Tawny Grisette walks the Trade Quarter's upper ring by the bat handler; the skullcap and the essence are bought from vendors, the Blisterweed is a herb in a barrel behind the herbalism trainer.
+[[note]]
+quest = 97291
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "{npc:4554} walks around the upper ring of the Trade Quarter, the bat handler's level: buy the skullcap from her, and the essence from the poison vendor. {object:673933} grows in the leftmost barrel behind the herbalism trainer."
+fr = "{npc:4554} fait le tour de l'anneau supérieur du quartier commerçant, au niveau du maître des chauves-souris : achetez-lui le bolet, et l'essence au marchand de poisons. {object:673933} pousse dans le tonneau le plus à gauche derrière le maître herboriste."
+de = "{npc:4554} läuft auf dem oberen Ring des Handelsviertels herum, auf der Ebene des Fledermausführers: Kauf ihr den Pilz ab und die Essenz beim Giftverkäufer. {object:673933} wächst im linken Fass hinter dem Kräuterkundelehrer."
+es = "{npc:4554} recorre el anillo superior del Barrio Comercial, al nivel del maestro de murciélagos: cómprale el hongo a ella y la esencia al vendedor de venenos. {object:673933} crece en el barril de más a la izquierda detrás del instructor de herboristería."
+pt = "{npc:4554} anda pelo anel superior do Distrito Comercial, no nível do mestre de morcegos: compre o cogumelo dela e a essência do vendedor de venenos. {object:673933} cresce no barril mais à esquerda atrás do instrutor de herborismo."
+ru = "{npc:4554} ходит по верхнему кругу Торгового квартала, на уровне распорядителя летучих мышей: купите гриб у нее, а эссенцию у торговца ядами. {object:673933} растет в крайней левой бочке за учителем травничества."
+ko = "{npc:4554}은(는) 상업 지구 위층 원형 통로, 박쥐 조련사가 있는 층을 돌아다닙니다. 버섯은 그녀에게, 정수는 독 상인에게서 구입하세요. {object:673933}은(는) 약초학 기술자 뒤 가장 왼쪽 통에서 자랍니다."
+zh_cn = "{npc:4554}在商业区上层环廊（蝙蝠管理员那一层）来回走动：向她购买毒菇，精华则向毒药商人购买。{object:673933}长在草药学训练师身后最左边的木桶里。"
+zh_tw = "{npc:4554}在商業區上層環廊（蝙蝠管理員那一層）來回走動：向她購買毒菇，精華則向毒藥商人購買。{object:673933}長在草藥學訓練師身後最左邊的木桶裡。"
+
+# Unending Torment (serum): the serum is used from the bags near the huge creature hanging above Othmar's body, upstairs outside the room; clicking the creature does nothing.
+[[note]]
+quest = 97292
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "Leave {npc:2055}'s room and go up to the huge pink creature hanging above, then use the Hissing Serum from your bags next to it: clicking the creature itself does nothing."
+fr = "Sortez de la salle de {npc:2055} et montez jusqu'à l'énorme créature rose suspendue au-dessus, puis utilisez le sérum depuis vos sacs à côté d'elle : cliquer sur la créature ne fait rien."
+de = "Verlass den Raum von {npc:2055} und geh hinauf zu der riesigen rosa Kreatur, die darüber hängt, und benutze dort das Serum aus deinen Taschen: Ein Klick auf die Kreatur selbst bewirkt nichts."
+es = "Sal de la sala de {npc:2055} y sube hasta la enorme criatura rosa colgada encima; usa el suero desde tus bolsas a su lado: hacer clic en la criatura no sirve de nada."
+pt = "Saia da sala de {npc:2055} e suba até a enorme criatura rosa pendurada acima, então use o soro das suas bolsas ao lado dela: clicar na criatura não faz nada."
+ru = "Выйдите из зала, где стоит {npc:2055}, и поднимитесь к огромному розовому существу, висящему наверху, затем используйте сыворотку из сумок рядом с ним: щелчок по самому существу ничего не дает."
+ko = "{npc:2055}의 방을 나와 위에 매달린 거대한 분홍색 생물에게 올라간 뒤, 그 옆에서 가방의 혈청을 사용하세요. 생물을 직접 클릭해도 아무 일도 일어나지 않습니다."
+zh_cn = "离开{npc:2055}的房间，上楼到悬挂在上方的巨大粉色生物旁，然后在它旁边使用背包里的血清：直接点击那个生物没有用。"
+zh_tw = "離開{npc:2055}的房間，上樓到懸掛在上方的巨大粉色生物旁，然後在牠旁邊使用背包裡的血清：直接點擊那個生物沒有用。"
