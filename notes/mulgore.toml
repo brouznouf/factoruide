@@ -111,3 +111,20 @@ ru = "Задание сдается в большом шатре лагеря н
 ko = "완료 지점은 고원 꼭대기 야영지의 큰 천막 안입니다. 올라가는 길은 39.7, 16.9 근처에서 시작합니다."
 zh_cn = "交任务的地点在高原顶上营地的大帐篷里。上去的小路从39.7, 16.9附近开始。"
 zh_tw = "交任務的地點在高原頂上營地的大帳篷裡。上去的小路從39.7, 16.9附近開始。"
+
+# Kyle's Gone Missing!: Kyle runs a wide counterclockwise loop around Bloodhoof Village; using the strider meat near him completes the quest.
+[[note]]
+quest = 99411
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "{npc:277154} runs in a wide counterclockwise loop around Bloodhoof Village. Catch up with him and use the strider meat close by; he eats it and the quest is done."
+fr = "{npc:277154} court en une large boucle dans le sens inverse des aiguilles d'une montre autour du village de Sabot-de-Sang. Rattrapez-le et utilisez la viande de trotteur près de lui : il la mange et la quête est faite."
+de = "{npc:277154} läuft in einer weiten Runde gegen den Uhrzeigersinn um das Dorf der Bluthufe. Hol ihn ein und benutze das Schreiterfleisch in seiner Nähe; er frisst es und die Quest ist erledigt."
+es = "{npc:277154} corre en un amplio círculo en sentido antihorario alrededor del Poblado Pezuña de Sangre. Alcánzalo y usa la carne de zancudo cerca de él; se la come y la misión queda hecha."
+pt = "{npc:277154} corre num grande círculo no sentido anti-horário em volta da Aldeia Casco Sangrento. Alcance-o e use a carne de moa perto dele; ele a come e a missão está feita."
+ru = "{npc:277154} бегает по большому кругу против часовой стрелки вокруг деревни Кровавого Копыта. Догоните его и используйте мясо долгонога рядом с ним: он съест его, и задание выполнено."
+ko = "{npc:277154}은(는) 블러드후프 마을 주위를 시계 반대 방향으로 크게 돌며 달립니다. 따라잡아 가까이에서 질주새 고기를 사용하면 그가 먹고 퀘스트가 완료됩니다."
+zh_cn = "{npc:277154}绕着血蹄村逆时针大圈奔跑。追上他，在他附近使用陆行鸟肉；他吃掉后任务即完成。"
+zh_tw = "{npc:277154}繞著血蹄村逆時針大圈奔跑。追上他，在他附近使用陸行鳥肉；他吃掉後任務即完成。"

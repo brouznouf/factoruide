@@ -15,3 +15,35 @@ ru = "{item:15877} действует всего 5 минут после тог�
 ko = "{item:15877}은(는) 호수 바닥의 항아리에서 꺼낸 뒤 5분만 유지됩니다. 곧장 레물로스의 제단으로 헤엄쳐 가서 사용하세요."
 zh_cn = "{item:15877}从湖底的花瓶中取出后只持续5分钟：直接游到雷姆洛斯神殿并在那里使用。"
 zh_tw = "{item:15877}從湖底的花瓶中取出後只持續5分鐘：直接游到雷姆洛斯神殿並在那裡使用。"
+
+# The Great Cat Spirit relics: the statue at the barrow den entrance gives a weak stealth (caster form only) against level 23 spirits; taking a relic breaks it and the statue renews it.
+[[note]]
+quest = 98342
+phase = "objective"
+level = "warning"
+editions = ["forever"]
+en = "In caster form, click the cat statue at the barrow den's entrance for stealth; the level 23 spirits inside can still spot you. Taking a relic breaks stealth, but the statue renews it. Relics: across the bridge, one level down, then at the end of the cave."
+fr = "Hors forme animale, cliquez sur la statue de félin à l'entrée du refuge pour vous camoufler ; les esprits de niveau 23 peuvent quand même vous repérer. Prendre une relique rompt le camouflage, mais la statue le renouvelle. Reliques : après le pont, un niveau plus bas, puis au fond."
+de = "Klicke in Normalgestalt die Katzenstatue am Eingang des Hügelgrabs an, um getarnt zu werden; die Geister der Stufe 23 können dich trotzdem sehen. Ein Relikt zu nehmen bricht die Tarnung, aber die Statue erneuert sie. Relikte: hinter der Brücke, eine Ebene tiefer, am Höhlenende."
+es = "En forma normal, haz clic en la estatua felina de la entrada del túmulo para obtener sigilo; los espíritus de nivel 23 aún pueden verte. Coger una reliquia rompe el sigilo, pero la estatua lo renueva. Reliquias: tras el puente, un nivel más abajo y al fondo de la cueva."
+pt = "Na forma normal, clique na estátua felina na entrada do túmulo para ficar furtivo; os espíritos de nível 23 ainda podem ver você. Pegar uma relíquia quebra a furtividade, mas a estátua a renova. Relíquias: depois da ponte, um nível abaixo e no fundo da caverna."
+ru = "В обычном облике щелкните по статуе кошки у входа в курган, чтобы стать незаметным; духи 23 уровня все равно могут вас заметить. Взятие реликвии снимает незаметность, но статуя ее обновляет. Реликвии: за мостом, уровнем ниже и в конце пещеры."
+ko = "변신하지 않은 상태로 굴 입구의 고양이 석상을 클릭해 은신하세요. 안의 23레벨 정령은 그래도 당신을 발견할 수 있습니다. 유물을 집으면 은신이 풀리지만 석상이 다시 걸어 줍니다. 유물 위치: 다리 건너편, 한 층 아래, 동굴 끝."
+zh_cn = "以非变形形态点击墓穴入口的猎豹雕像获得潜行；里面23级的灵魂仍可能发现你。拾取圣物会打破潜行，但雕像会重新施加。圣物位置：过桥后、下一层、洞穴尽头。"
+zh_tw = "以非變形形態點擊墓穴入口的獵豹雕像獲得潛行；裡面23級的靈魂仍可能發現你。拾取聖物會打破潛行，但雕像會重新施加。聖物位置：過橋後、下一層、洞穴盡頭。"
+
+# The Great Cat Spirit relics: the statue at the barrow den entrance gives a weak stealth (caster form only) against level 23 spirits; taking a relic breaks it and the statue renews it.
+[[note]]
+quest = 98404
+phase = "objective"
+level = "warning"
+editions = ["forever"]
+en = "In caster form, click the cat statue at the barrow den's entrance for stealth; the level 23 spirits inside can still spot you. Taking a relic breaks stealth, but the statue renews it. Relics: across the bridge, one level down, then at the end of the cave."
+fr = "Hors forme animale, cliquez sur la statue de félin à l'entrée du refuge pour vous camoufler ; les esprits de niveau 23 peuvent quand même vous repérer. Prendre une relique rompt le camouflage, mais la statue le renouvelle. Reliques : après le pont, un niveau plus bas, puis au fond."
+de = "Klicke in Normalgestalt die Katzenstatue am Eingang des Hügelgrabs an, um getarnt zu werden; die Geister der Stufe 23 können dich trotzdem sehen. Ein Relikt zu nehmen bricht die Tarnung, aber die Statue erneuert sie. Relikte: hinter der Brücke, eine Ebene tiefer, am Höhlenende."
+es = "En forma normal, haz clic en la estatua felina de la entrada del túmulo para obtener sigilo; los espíritus de nivel 23 aún pueden verte. Coger una reliquia rompe el sigilo, pero la estatua lo renueva. Reliquias: tras el puente, un nivel más abajo y al fondo de la cueva."
+pt = "Na forma normal, clique na estátua felina na entrada do túmulo para ficar furtivo; os espíritos de nível 23 ainda podem ver você. Pegar uma relíquia quebra a furtividade, mas a estátua a renova. Relíquias: depois da ponte, um nível abaixo e no fundo da caverna."
+ru = "В обычном облике щелкните по статуе кошки у входа в курган, чтобы стать незаметным; духи 23 уровня все равно могут вас заметить. Взятие реликвии снимает незаметность, но статуя ее обновляет. Реликвии: за мостом, уровнем ниже и в конце пещеры."
+ko = "변신하지 않은 상태로 굴 입구의 고양이 석상을 클릭해 은신하세요. 안의 23레벨 정령은 그래도 당신을 발견할 수 있습니다. 유물을 집으면 은신이 풀리지만 석상이 다시 걸어 줍니다. 유물 위치: 다리 건너편, 한 층 아래, 동굴 끝."
+zh_cn = "以非变形形态点击墓穴入口的猎豹雕像获得潜行；里面23级的灵魂仍可能发现你。拾取圣物会打破潜行，但雕像会重新施加。圣物位置：过桥后、下一层、洞穴尽头。"
+zh_tw = "以非變形形態點擊墓穴入口的獵豹雕像獲得潛行；裡面23級的靈魂仍可能發現你。拾取聖物會打破潛行，但雕像會重新施加。聖物位置：過橋後、下一層、洞穴盡頭。"

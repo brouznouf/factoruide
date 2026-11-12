@@ -89,3 +89,201 @@ phase = "objective"
 objective = 1
 icon = "pickup"
 editions = ["forever"]
+
+# Standing Our Ground: talking to Aamelia sends her up the path; if another player just did it she gives no credit until she is back at the house. The credit is shared in a party.
+[[note]]
+quest = 92693
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "If another player speaks to {npc:252800} first, she runs up the path and gives you no credit: wait until she is back in front of the house, then talk to her. One member speaking to her counts for the whole party."
+fr = "Si un autre joueur parle à {npc:252800} avant vous, elle part sur le chemin sans rien vous valider : attendez qu'elle revienne devant la maison, puis parlez-lui. Un seul membre qui lui parle suffit pour tout le groupe."
+de = "Spricht ein anderer Spieler zuerst mit {npc:252800}, läuft sie den Pfad hinauf und es zählt nicht für dich: warte, bis sie wieder vor dem Haus steht, und sprich dann mit ihr. Spricht ein Gruppenmitglied mit ihr, zählt es für alle."
+es = "Si otro jugador habla antes con {npc:252800}, ella sube por el camino y no te cuenta: espera a que vuelva frente a la casa y habla con ella. Basta con que un miembro del grupo le hable para que cuente para todos."
+pt = "Se outro jogador falar com {npc:252800} antes, ela sobe o caminho e não conta para você: espere ela voltar para a frente da casa e fale com ela. Basta um membro do grupo falar com ela para contar para todos."
+ru = "Если с {npc:252800} первым заговорит другой игрок, она уйдет вверх по тропе и вам ничего не засчитается: дождитесь, пока она вернется к дому, и поговорите с ней. Если с ней заговорит один участник группы, засчитается всем."
+ko = "다른 플레이어가 먼저 {npc:252800}에게 말을 걸면 그녀가 길을 따라 올라가 버려 완료되지 않습니다. 집 앞으로 돌아올 때까지 기다렸다가 말을 거세요. 파티원 한 명이 말을 걸면 파티 전체가 완료됩니다."
+zh_cn = "如果其他玩家先和{npc:252800}交谈，她会沿小路跑上去，你不会获得进度：等她回到房子前再和她交谈。队伍中一人和她交谈，全队都算完成。"
+zh_tw = "如果其他玩家先和{npc:252800}交談，她會沿小路跑上去，你不會獲得進度：等她回到房子前再和她交談。隊伍中一人和她交談，全隊都算完成。"
+
+# A Grand Adventure: the talk objective only completes if the player stays for the whole story; leaving during it requires abandoning and retaking the quest.
+[[note]]
+quest = 92708
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Stay next to {npc:251968} until her whole story ends. If you walk away during it, the objective stays incomplete: abandon the quest and take it again to hear it once more."
+fr = "Restez près de {npc:251968} jusqu'à la fin de son récit. Si vous partez avant, l'objectif reste inachevé : abandonnez la quête et reprenez-la pour l'entendre à nouveau."
+de = "Bleib bei {npc:251968}, bis ihre ganze Geschichte zu Ende ist. Gehst du währenddessen weg, bleibt das Ziel offen: brich die Quest ab und nimm sie erneut an, um sie noch einmal zu hören."
+es = "Quédate junto a {npc:251968} hasta que termine toda su historia. Si te alejas antes, el objetivo queda incompleto: abandona la misión y vuelve a aceptarla para escucharla otra vez."
+pt = "Fique perto de {npc:251968} até a história dela terminar. Se você se afastar antes, o objetivo fica incompleto: abandone a missão e aceite de novo para ouvi-la outra vez."
+ru = "Оставайтесь рядом с {npc:251968}, пока она не закончит рассказ. Если уйти раньше, цель не засчитается: отмените задание и возьмите его снова, чтобы выслушать еще раз."
+ko = "{npc:251968}의 이야기가 모두 끝날 때까지 곁에 있으세요. 도중에 떠나면 목표가 완료되지 않으니, 퀘스트를 포기하고 다시 받아 이야기를 다시 들으세요."
+zh_cn = "待在{npc:251968}身边，直到她讲完整个故事。如果中途走开，目标不会完成：放弃任务后重新接受，再听一遍。"
+zh_tw = "待在{npc:251968}身邊，直到她講完整個故事。如果中途走開，目標不會完成：放棄任務後重新接受，再聽一遍。"
+
+# Making Our Move: the allies stay behind after their dialogue; the Blademasters are on the outer edge of the area.
+[[note]]
+quest = 92947
+phase = "objective"
+level = "info"
+editions = ["forever"]
+en = "The allies do not come with you after their talk: head straight to the area and start killing. The Blademasters stand along its outer edge, not in the central square."
+fr = "Les alliés ne vous suivent pas après leur discussion : allez directement sur place et commencez à tuer. Les maîtres-lames se trouvent sur le pourtour, pas sur la place centrale."
+de = "Die Verbündeten kommen nach ihrem Gespräch nicht mit: geh direkt zum Gebiet und fang an zu kämpfen. Die Klingenmeister stehen am äußeren Rand, nicht auf dem zentralen Platz."
+es = "Los aliados no te acompañan tras su charla: ve directo a la zona y empieza a matar. Los maestros de espadas están en el borde exterior, no en la plaza central."
+pt = "Os aliados não vão com você depois da conversa: siga direto para a área e comece a matar. Os mestres das lâminas ficam na borda externa, não na praça central."
+ru = "Союзники не идут с вами после разговора: сразу отправляйтесь на место и начинайте убивать. Мастера клинка стоят по внешнему краю, а не на центральной площади."
+ko = "아군은 대화가 끝난 뒤 따라오지 않습니다. 곧장 해당 지역으로 가서 처치를 시작하세요. 검귀는 중앙 광장이 아니라 바깥 가장자리에 있습니다."
+zh_cn = "盟友谈完话后不会跟着你：直接前往目标区域开始击杀。剑圣在外围边缘，不在中央广场。"
+zh_tw = "盟友談完話後不會跟著你：直接前往目標區域開始擊殺。劍聖在外圍邊緣，不在中央廣場。"
+
+# Confront Lorthuna: the fight restarts only after a wait when another player just finished it; the portal on the next platform sends the player back to the city.
+[[note]]
+quest = 92646
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "If someone just finished the fight, Lorthuna takes a while to come back: wait at the west end of the platform the portal leads to. Do not take the portal on the next platform before she dies; it sends you back to the city."
+fr = "Si quelqu'un vient de finir le combat, Lorthuna met un moment à revenir : attendez à l'extrémité ouest de la plateforme où mène le portail. Ne prenez pas le portail de la plateforme suivante avant sa mort : il vous ramène en ville."
+de = "Hat gerade jemand den Kampf beendet, dauert es eine Weile, bis Lorthuna zurückkehrt: warte am Westende der Plattform, zu der das Portal führt. Nimm das Portal auf der nächsten Plattform nicht vor ihrem Tod, es bringt dich zurück in die Stadt."
+es = "Si alguien acaba de terminar el combate, Lorthuna tarda en volver: espera en el extremo oeste de la plataforma a la que lleva el portal. No tomes el portal de la siguiente plataforma antes de que muera: te devuelve a la ciudad."
+pt = "Se alguém acabou de terminar a luta, Lorthuna demora a voltar: espere na ponta oeste da plataforma aonde o portal leva. Não pegue o portal da plataforma seguinte antes de ela morrer: ele leva você de volta à cidade."
+ru = "Если кто-то только что закончил бой, Lorthuna вернется не сразу: ждите у западного края платформы, куда ведет портал. Не входите в портал на следующей платформе, пока она жива: он вернет вас в город."
+ko = "누군가 방금 전투를 끝냈다면 Lorthuna가 다시 나타나기까지 시간이 걸립니다. 차원문으로 도착한 단상의 서쪽 끝에서 기다리세요. 그녀가 죽기 전에는 다음 단상의 차원문을 타지 마세요. 도시로 돌아가게 됩니다."
+zh_cn = "如果有人刚打完这场战斗，Lorthuna要过一阵才会再出现：在传送门通往的平台西端等候。她死前不要使用下一个平台上的传送门，它会把你送回城里。"
+zh_tw = "如果有人剛打完這場戰鬥，Lorthuna要過一陣才會再出現：在傳送門通往的平台西端等候。她死前不要使用下一個平台上的傳送門，它會把你送回城裡。"
+
+[[icon]]
+quest = 92646
+phase = "objective"
+objective = 1
+icon = "event"
+editions = ["forever"]
+
+# Mercy Falls on Deaf Ears: the ears drop far more often at the Shrine of Akir than elsewhere; the Stormchasers heal themselves and each other.
+[[note]]
+quest = 93165
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The ears drop rarely, far more often from the Al'Aketh at the Shrine of Akir. Stormchasers heal themselves and each other: interrupt them or pull one at a time."
+fr = "Les oreilles tombent rarement, bien plus souvent sur les Al'Aketh du Shrine of Akir. Les Stormchasers se soignent eux-mêmes et entre eux : interrompez-les ou attirez-les un par un."
+de = "Die Ohren fallen selten, viel häufiger bei den Al'Aketh am Shrine of Akir. Die Stormchasers heilen sich selbst und gegenseitig: unterbrich sie oder zieh sie einzeln."
+es = "Las orejas caen pocas veces, mucho más a menudo de los Al'Aketh del Shrine of Akir. Los Stormchasers se curan a sí mismos y entre ellos: interrúmpelos o atráelos de uno en uno."
+pt = "As orelhas caem raramente, bem mais vezes dos Al'Aketh no Shrine of Akir. Os Stormchasers curam a si mesmos e uns aos outros: interrompa-os ou puxe um de cada vez."
+ru = "Уши выпадают редко, гораздо чаще с Al'Aketh у Shrine of Akir. Stormchasers лечат себя и друг друга: прерывайте их или выманивайте по одному."
+ko = "귀는 드물게 떨어지며, Shrine of Akir의 Al'Aketh에게서 훨씬 자주 나옵니다. Stormchaser는 자신과 서로를 치유하니 차단하거나 하나씩 끌어오세요."
+zh_cn = "耳朵掉落很少，Shrine of Akir的Al'Aketh掉得多得多。Stormchaser会治疗自己和同伴：打断它们，或一次只拉一个。"
+zh_tw = "耳朵掉落很少，Shrine of Akir的Al'Aketh掉得多得多。Stormchaser會治療自己和同伴：打斷牠們，或一次只拉一個。"
+
+# Blood for Blood: the Preachers and Pillagers at the Shrine of Akir drop the item much more often than the other Al'Aketh.
+[[note]]
+quest = 93740
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The Al'Aketh Preachers and Pillagers at the Shrine of Akir drop these far more often than the other Al'Aketh."
+fr = "Les Al'Aketh Preachers et Pillagers du Shrine of Akir en lâchent bien plus souvent que les autres Al'Aketh."
+de = "Die Al'Aketh Preachers und Pillagers am Shrine of Akir lassen diese viel häufiger fallen als die übrigen Al'Aketh."
+es = "Los Al'Aketh Preachers y Pillagers del Shrine of Akir los sueltan mucho más a menudo que los demás Al'Aketh."
+pt = "Os Al'Aketh Preachers e Pillagers no Shrine of Akir deixam cair esses itens bem mais vezes que os outros Al'Aketh."
+ru = "Al'Aketh Preachers и Pillagers у Shrine of Akir роняют их гораздо чаще, чем остальные Al'Aketh."
+ko = "Shrine of Akir의 Al'Aketh Preacher와 Pillager가 다른 Al'Aketh보다 훨씬 자주 떨어뜨립니다."
+zh_cn = "Shrine of Akir的Al'Aketh Preacher和Pillager比其他Al'Aketh掉落得多得多。"
+zh_tw = "Shrine of Akir的Al'Aketh Preacher和Pillager比其他Al'Aketh掉落得多得多。"
+
+# Tears of the Lady: the moss objects hang on tree trunks rather than lying on the ground.
+[[note]]
+quest = 94485
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The moss hangs on the sides of the tree trunks, not on the ground: look up."
+fr = "La mousse pend sur les flancs des troncs d'arbres, pas au sol : levez les yeux."
+de = "Das Moos hängt an den Seiten der Baumstämme, nicht am Boden: schau nach oben."
+es = "El musgo cuelga de los lados de los troncos, no está en el suelo: mira hacia arriba."
+pt = "O musgo fica pendurado nas laterais dos troncos, não no chão: olhe para cima."
+ru = "Мох свисает со стволов деревьев, а не лежит на земле: смотрите вверх."
+ko = "이끼는 땅이 아니라 나무줄기 옆면에 매달려 있습니다. 위를 보세요."
+zh_cn = "苔藓挂在树干侧面，不在地上：抬头找。"
+zh_tw = "苔蘚掛在樹幹側面，不在地上：抬頭找。"
+
+# The Wounds of Betrayal: the druids are inside the cave below the cliff; clicking a druid from too far can block the count at 6/7, fixed by retaking the quest.
+[[note]]
+quest = 94489
+phase = "objective"
+objective = 2
+level = "warning"
+editions = ["forever"]
+en = "The druids are inside the cave whose entrance is at about 63.7, 36.2. Click each one from right next to them: clicks from too far can leave you stuck at 6/7. If that happens, abandon the quest and take it again."
+fr = "Les druides sont dans la grotte dont l'entrée est vers 63.7, 36.2. Cliquez sur chacun tout près de lui : un clic de trop loin peut vous bloquer à 6/7. Dans ce cas, abandonnez la quête et reprenez-la."
+de = "Die Druiden sind in der Höhle mit dem Eingang bei etwa 63.7, 36.2. Klicke jeden direkt neben ihm an: Klicks aus zu großer Entfernung können dich bei 6/7 festhängen lassen. Dann brich die Quest ab und nimm sie erneut an."
+es = "Los druidas están en la cueva cuya entrada está hacia 63.7, 36.2. Haz clic en cada uno justo a su lado: un clic desde demasiado lejos puede dejarte atascado en 6/7. Si pasa, abandona la misión y vuelve a aceptarla."
+pt = "Os druidas estão na caverna com entrada por volta de 63.7, 36.2. Clique em cada um bem ao lado dele: cliques de longe demais podem deixar você travado em 6/7. Se acontecer, abandone a missão e aceite de novo."
+ru = "Друиды в пещере со входом около 63.7, 36.2. Щелкайте по каждому, стоя вплотную: щелчок издалека может застопорить счет на 6/7. Тогда отмените задание и возьмите его снова."
+ko = "드루이드들은 입구가 63.7, 36.2 근처인 동굴 안에 있습니다. 각 드루이드 바로 옆에서 클릭하세요. 너무 멀리서 클릭하면 6/7에서 멈출 수 있습니다. 그렇게 되면 퀘스트를 포기하고 다시 받으세요."
+zh_cn = "德鲁伊们在入口约为63.7, 36.2的洞穴里。紧贴每个德鲁伊再点击：距离太远点击可能卡在6/7。如果卡住，放弃任务后重新接受。"
+zh_tw = "德魯伊們在入口約為63.7, 36.2的洞穴裡。緊貼每個德魯伊再點擊：距離太遠點擊可能卡在6/7。如果卡住，放棄任務後重新接受。"
+
+# Strength and Mercy: Ur'endra's cave is entered from the top of the cliff; the opening at the foot of the cliff does not lead to it.
+[[note]]
+quest = 94638
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "{npc:258443}'s cave opens on the clifftop, at about 53.7, 65.1: take the path up near 57.7, 60.9. The cave at the foot of the cliff does not lead there."
+fr = "La grotte de {npc:258443} s'ouvre en haut de la falaise, vers 53.7, 65.1 : prenez le chemin qui monte près de 57.7, 60.9. La grotte au pied de la falaise n'y mène pas."
+de = "Die Höhle von {npc:258443} liegt oben auf der Klippe, bei etwa 53.7, 65.1: nimm den Pfad nach oben bei 57.7, 60.9. Die Höhle am Fuß der Klippe führt nicht dorthin."
+es = "La cueva de {npc:258443} se abre en lo alto del acantilado, hacia 53.7, 65.1: toma el camino que sube cerca de 57.7, 60.9. La cueva al pie del acantilado no lleva allí."
+pt = "A caverna de {npc:258443} fica no alto do penhasco, por volta de 53.7, 65.1: pegue a trilha que sobe perto de 57.7, 60.9. A caverna no pé do penhasco não leva até lá."
+ru = "Вход в пещеру {npc:258443} наверху утеса, около 53.7, 65.1: поднимайтесь по тропе у 57.7, 60.9. Пещера у подножия утеса туда не ведет."
+ko = "{npc:258443}의 동굴은 절벽 위 53.7, 65.1 근처에 있습니다. 57.7, 60.9 근처의 오르막길로 가세요. 절벽 아래 동굴은 그곳으로 이어지지 않습니다."
+zh_cn = "{npc:258443}的洞穴开在悬崖顶上，约53.7, 65.1：从57.7, 60.9附近的小路上去。悬崖脚下的洞穴通不到那里。"
+zh_tw = "{npc:258443}的洞穴開在懸崖頂上，約53.7, 65.1：從57.7, 60.9附近的小路上去。懸崖腳下的洞穴通不到那裡。"
+
+# Boughs in the Wind: the bough on the ground has no sparkle and looks like a plain large branch.
+[[note]]
+quest = 93797
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The bough lies on the ground and does not sparkle: look for a large tree branch."
+fr = "La branche est posée au sol et ne scintille pas : cherchez une grosse branche d'arbre."
+de = "Der Zweig liegt am Boden und funkelt nicht: halte nach einem großen Ast Ausschau."
+es = "La rama está en el suelo y no brilla: busca una rama de árbol grande."
+pt = "O galho está no chão e não brilha: procure um galho grande de árvore."
+ru = "Ветвь лежит на земле и не сверкает: ищите большую древесную ветку."
+ko = "가지는 땅에 놓여 있고 반짝이지 않습니다. 큰 나뭇가지를 찾으세요."
+zh_cn = "树枝躺在地上，不会闪光：找一根大树枝。"
+zh_tw = "樹枝躺在地上，不會閃光：找一根大樹枝。"
+
+[[icon]]
+quest = 93797
+phase = "objective"
+objective = 1
+icon = "pickup"
+editions = ["forever"]
+
+# The Earthen Ring: the skycutter berths at the small pier beside Ayessa, not at the large docks, and can take several minutes.
+[[note]]
+quest = 95349
+level = "info"
+editions = ["forever"]
+en = "The skycutter docks at the small pier right by {npc:251968} (about 58, 80.7), not at the big docks. It may take several minutes to arrive."
+fr = "Le navire accoste au petit ponton juste à côté de {npc:251968} (vers 58, 80.7), pas aux grands quais. Il peut mettre plusieurs minutes à arriver."
+de = "Das Schiff legt am kleinen Steg direkt bei {npc:251968} an (etwa 58, 80.7), nicht an den großen Docks. Es kann einige Minuten dauern, bis es kommt."
+es = "El navío atraca en el pequeño muelle junto a {npc:251968} (hacia 58, 80.7), no en los muelles grandes. Puede tardar varios minutos en llegar."
+pt = "O navio atraca no pequeno píer ao lado de {npc:251968} (por volta de 58, 80.7), não nas docas grandes. Ele pode levar vários minutos para chegar."
+ru = "Корабль причаливает к маленькому пирсу рядом с {npc:251968} (около 58, 80.7), а не к большим докам. Ждать его можно несколько минут."
+ko = "배는 큰 부두가 아니라 {npc:251968} 바로 옆 작은 선착장(58, 80.7 근처)에 정박합니다. 도착까지 몇 분 걸릴 수 있습니다."
+zh_cn = "飞船停靠在{npc:251968}旁边的小码头（约58, 80.7），不是大码头。可能要等几分钟才到。"
+zh_tw = "飛船停靠在{npc:251968}旁邊的小碼頭（約58, 80.7），不是大碼頭。可能要等幾分鐘才到。"
