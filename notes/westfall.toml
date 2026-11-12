@@ -15,3 +15,56 @@ ru = "{object:290} стоит в доме фермы, где {npc:502} (уров
 ko = "{object:290}은(는) 농가 안에 있으며, 그곳의 {npc:502}(15레벨)와(과) {npc:504}은(는) 함께 싸웁니다. 먼저 마당을 정리한 뒤 문밖으로 끌어내고 덫사냥꾼부터 처치하세요."
 zh_cn = "{object:290}在农舍里，里面的{npc:502}（15级）和{npc:504}会一起出手。先清理院子，再把它们从门口引出来，先杀陷阱猎手。"
 zh_tw = "{object:290}在農舍裡，裡面的{npc:502}（15級）和{npc:504}會一起出手。先清理院子，再把牠們從門口引出來，先殺陷阱獵人。"
+
+# The Defias Brotherhood (messenger): he spawns in Moonbrook and walks the coast road to the Gold Coast Quarry and Jangolode Mine and back; non-aggressive, flees when low.
+[[note]]
+quest = 142
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{npc:550} spawns by the smithy of the ruined town in the south and walks north along the coast road, into the quarry, then the mine further north, and back: look along the road. He ignores you until attacked and flees when low: slow or stun him."
+fr = "{npc:550} apparaît près de la forge de la ville en ruine du sud et remonte la route côtière, entre dans la carrière, puis dans la mine plus au nord, et revient : cherchez-le sur la route. Il vous ignore tant qu'il n'est pas attaqué et fuit quand il est faible : ralentissez-le ou étourdissez-le."
+de = "{npc:550} erscheint bei der Schmiede der zerstörten Stadt im Süden und läuft die Küstenstraße nach Norden, in den Steinbruch, dann in die Mine weiter nördlich und zurück: such ihn entlang der Straße. Er ignoriert dich, bis du angreifst, und flieht bei wenig Leben: verlangsame oder betäube ihn."
+es = "{npc:550} aparece junto a la herrería del pueblo en ruinas del sur y recorre hacia el norte el camino de la costa, entra en la cantera, luego en la mina más al norte, y vuelve: búscalo a lo largo del camino. Te ignora hasta que lo atacas y huye cuando le queda poca vida: ralentízalo o atúrdelo."
+pt = "{npc:550} surge junto à ferraria da cidade em ruínas ao sul e segue para o norte pela estrada da costa, entra na pedreira, depois na mina mais ao norte, e volta: procure-o ao longo da estrada. Ele ignora você até ser atacado e foge quando está fraco: deixe-o lento ou atordoe-o."
+ru = "{npc:550} появляется у кузницы разрушенного городка на юге и идет на север по прибрежной дороге, в карьер, затем в шахту севернее и обратно: ищите его вдоль дороги. Он не нападает первым и убегает, когда ослабеет: замедлите или оглушите его."
+ko = "{npc:550}은(는) 남쪽 폐허 마을의 대장간 옆에 나타나 해안 길을 따라 북쪽으로 걸어 채석장에, 이어 더 북쪽의 광산에 들어갔다가 돌아옵니다. 길을 따라 찾아보세요. 공격하기 전에는 무시하며, 생명력이 낮아지면 도망가니 감속이나 기절을 거세요."
+zh_cn = "{npc:550}在南边废墟小镇的铁匠铺旁刷新，沿海岸道路向北走，进入采石场，再进入更北边的矿洞，然后返回：沿路寻找他。他在被攻击前不会理你，血量低时会逃跑：减速或击晕他。"
+zh_tw = "{npc:550}在南邊廢墟小鎮的鐵匠鋪旁重生，沿海岸道路向北走，進入採石場，再進入更北邊的礦坑，然後返回：沿路尋找他。他在被攻擊前不會理你，血量低時會逃跑：緩速或擊暈他。"
+
+[[icon]]
+quest = 142
+phase = "objective"
+objective = 1
+icon = "rare"
+
+# The Defias Brotherhood (escort): the traitor gives the quest himself and is away during someone else's escort (about 4.5 minutes); after abandoning, retake it from him.
+[[note]]
+quest = 155
+phase = "accept"
+level = "warning"
+en = "{npc:467} gives this quest himself, only while he waits below the tower: if someone is escorting him, wait about 5 minutes for his return. If you abandon the quest, take it again from him."
+fr = "{npc:467} donne lui-même cette quête, seulement quand il attend au pied de la tour : si quelqu'un l'escorte déjà, attendez environ 5 minutes son retour. Si vous abandonnez la quête, reprenez-la auprès de lui."
+de = "{npc:467} vergibt diese Quest selbst, nur wenn er unten am Turm wartet: Eskortiert ihn gerade jemand, warte etwa 5 Minuten auf seine Rückkehr. Brichst du die Quest ab, nimm sie wieder bei ihm an."
+es = "{npc:467} da esta misión él mismo, solo mientras espera al pie de la torre: si alguien lo está escoltando, espera unos 5 minutos a que vuelva. Si abandonas la misión, vuelve a aceptarla de él."
+pt = "{npc:467} dá esta missão ele mesmo, só enquanto espera ao pé da torre: se alguém o estiver escoltando, espere uns 5 minutos até ele voltar. Se abandonar a missão, pegue-a de novo com ele."
+ru = "{npc:467} сам выдает это задание, и только пока ждет у подножия башни: если его уже кто-то сопровождает, подождите около 5 минут, пока он вернется. Если вы отказались от задания, возьмите его снова у него."
+ko = "이 퀘스트는 {npc:467}이(가) 직접 주며, 탑 아래에서 기다리고 있을 때만 받을 수 있습니다. 누군가 호위 중이라면 돌아올 때까지 약 5분 기다리세요. 퀘스트를 포기했다면 그에게서 다시 받으세요."
+zh_cn = "这个任务由{npc:467}本人发布，且只在他于塔下等候时才能接取：如果有人正在护送他，等待约5分钟让他回来。如果放弃了任务，再找他重新接取。"
+zh_tw = "這個任務由{npc:467}本人發布，且只在他於塔下等候時才能接取：如果有人正在護送他，等待約5分鐘讓他回來。如果放棄了任務，再找他重新接取。"
+
+# The Defias Brotherhood (escort): the traitor does not stop for mobs unless attacked; at the Moonbrook fountain a caster pulls in a second one.
+[[note]]
+quest = 155
+phase = "objective"
+objective = 1
+level = "warning"
+en = "He runs off fast at first, then walks through the ruined town without stopping. Mobs there attack him, and at the fountain one caster pulls in another: stay close and be ready to handle the adds, or he dies."
+fr = "Il part d'abord en courant, puis traverse la ville en ruine sans s'arrêter. Les monstres l'y attaquent, et à la fontaine un lanceur de sorts en attire un autre : restez près de lui et soyez prêt à gérer les renforts, sinon il meurt."
+de = "Er rennt zuerst schnell los und geht dann ohne anzuhalten durch die zerstörte Stadt. Die Gegner dort greifen ihn an, und am Brunnen zieht ein Zauberwirker einen zweiten mit: bleib nah bei ihm und kümmere dich um die Adds, sonst stirbt er."
+es = "Al principio sale corriendo y luego cruza el pueblo en ruinas sin detenerse. Allí los enemigos lo atacan, y en la fuente un lanzador de hechizos atrae a otro: quédate cerca y prepárate para los refuerzos, o morirá."
+pt = "No início ele sai correndo e depois atravessa a cidade em ruínas sem parar. Os inimigos de lá o atacam, e na fonte um conjurador puxa outro: fique perto e esteja pronto para os reforços, ou ele morre."
+ru = "Сначала он быстро убегает, затем идет через разрушенный городок не останавливаясь. Противники там нападают на него, а у фонтана один заклинатель приводит другого: держитесь рядом и будьте готовы к подкреплениям, иначе он погибнет."
+ko = "처음에는 빠르게 달려가고, 이후 폐허 마을을 멈추지 않고 걸어서 지나갑니다. 그곳의 적들이 그를 공격하고, 분수대에서는 주문 시전자 하나가 다른 하나를 끌어옵니다. 가까이 붙어 추가 적을 처리할 준비를 하세요. 그렇지 않으면 그가 죽습니다."
+zh_cn = "他一开始会快速跑开，之后不停步地穿过废墟小镇。那里的怪物会攻击他，在喷泉处一个施法者还会引来另一个：紧跟着他，准备处理增援，否则他会死。"
+zh_tw = "他一開始會快速跑開，之後不停步地穿過廢墟小鎮。那裡的怪物會攻擊他，在噴泉處一個施法者還會引來另一個：緊跟著他，準備處理增援，否則他會死。"
