@@ -127,3 +127,20 @@ ru = "Исцелите {npc:12430} заклинанием «Малое исце�
 ko = "하급 치유(2레벨)로 {npc:12430}을(를) 치유한 뒤 신의 권능: 인내를 걸어 주세요. 하급 치유 1레벨은 인정되지 않으니 먼저 2레벨을 배우세요."
 zh_cn = "用次级治疗术（等级2）治疗{npc:12430}，然后对她施放真言术：韧。次级治疗术等级1不算数：先去学会等级2。"
 zh_tw = "用次級治療術（等級2）治療{npc:12430}，然後對她施放真言術:韌。次級治療術等級1不算數：先去學會等級2。"
+
+# The Great Outdoors: the sit credit often fails; typing /sit again while seated, or retaking the quest, gives it.
+[[note]]
+quest = 96604
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "If sitting by the campfire gives no credit, type /sit again while already seated and wait the full minute for Boosted Rest. Still stuck: abandon the quest, take it again and sit once more."
+fr = "Si s'asseoir près du feu de camp ne valide rien, tapez /sit à nouveau en étant déjà assis et attendez la minute entière pour Boosted Rest. Toujours bloqué : abandonnez la quête, reprenez-la et rasseyez-vous."
+de = "Zählt das Sitzen am Lagerfeuer nicht, gib im Sitzen erneut /sit ein und warte die volle Minute auf Boosted Rest. Klappt es immer noch nicht: brich die Quest ab, nimm sie neu an und setz dich wieder."
+es = "Si sentarte junto a la hoguera no cuenta, escribe /sit otra vez estando ya sentado y espera el minuto completo hasta Boosted Rest. Si sigue sin ir: abandona la misión, vuelve a aceptarla y siéntate de nuevo."
+pt = "Se sentar perto da fogueira não contar, digite /sit de novo já sentado e espere o minuto inteiro até Boosted Rest. Se ainda não funcionar: abandone a missão, aceite-a de novo e sente-se outra vez."
+ru = "Если сидение у костра не засчитывается, введите /sit еще раз, уже сидя, и подождите целую минуту до Boosted Rest. Не помогло: откажитесь от задания, возьмите его снова и сядьте еще раз."
+ko = "모닥불 옆에 앉아도 인정되지 않으면 앉은 상태에서 /sit을 다시 입력하고 Boosted Rest를 받을 때까지 1분을 꼬박 기다리세요. 그래도 안 되면 퀘스트를 포기하고 다시 받은 뒤 다시 앉으세요."
+zh_cn = "如果坐在篝火旁没有计数，在已坐下的状态下再输入一次/sit，并等满一分钟获得Boosted Rest。仍然不行：放弃任务，重新接取后再坐一次。"
+zh_tw = "如果坐在營火旁沒有計數，在已坐下的狀態下再輸入一次/sit，並等滿一分鐘獲得Boosted Rest。仍然不行：放棄任務，重新接取後再坐一次。"

@@ -297,3 +297,20 @@ ru = "Откройте {item:16783} в сумках: внутри {item:16746}, 
 ko = "가방에서 {item:16783}을(를) 여세요. 세 정찰병이 보고를 주기 전에 필요한 {item:16746}이(가) 들어 있습니다."
 zh_cn = "在背包中打开{item:16783}：里面有三名斥候给出报告前所需的{item:16746}。"
 zh_tw = "在背包中打開{item:16783}：裡面有三名斥候給出報告前所需的{item:16746}。"
+
+# A Void Path: credit comes only on the paving of the main road; the stretch below the stream near Astranaar works.
+[[note]]
+quest = 98252
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "Only the paved road itself gives credit, not its edges: head for the road just below the stream near Astranaar, on the western part of the marked area."
+fr = "Seule la route pavée elle-même compte, pas ses abords : visez la route juste sous le ruisseau près d'Astranaar, dans la partie ouest de la zone indiquée."
+de = "Nur die gepflasterte Straße selbst zählt, nicht ihr Rand: lauf zur Straße direkt unterhalb des Bachs bei Astranaar, im westlichen Teil des markierten Gebiets."
+es = "Solo cuenta el camino empedrado, no sus bordes: dirígete al camino justo debajo del arroyo cerca de Astranaar, en la parte oeste de la zona marcada."
+pt = "Só a estrada pavimentada conta, não as margens: vá até a estrada logo abaixo do riacho perto de Astranaar, na parte oeste da área marcada."
+ru = "Засчитывается только сама мощеная дорога, а не обочина: идите к дороге чуть ниже ручья возле Астранаара, в западной части отмеченной области."
+ko = "도로 가장자리가 아닌 포장된 도로 위에서만 인정됩니다. 아스트라나르 근처 개울 바로 아래, 표시된 구역의 서쪽 도로로 가세요."
+zh_cn = "只有铺好的道路本身才算，路边不算：前往阿斯特兰纳附近小溪正下方、标记区域西段的道路。"
+zh_tw = "只有鋪好的道路本身才算，路邊不算：前往阿斯特蘭納附近小溪正下方、標記區域西段的道路。"

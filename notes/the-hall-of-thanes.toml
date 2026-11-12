@@ -1,0 +1,18 @@
+# Quest notes of The Hall of Thanes. See notes/README.md for the format.
+
+# Important Heirlooms: the heirloom objects vary in look and are easy to miss; the last room holds the most.
+[[note]]
+quest = 96403
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The heirlooms do not all look alike and blend into the walls, chairs and tables: hover over objects as you go. Many are in the last room, behind the vaults around {npc:261319}."
+fr = "Les objets de famille n'ont pas tous la même apparence et se fondent dans les murs, chaises et tables : passez la souris sur les objets en avançant. Beaucoup sont dans la dernière salle, derrière les coffres autour de {npc:261319}."
+de = "Die Erbstücke sehen nicht alle gleich aus und gehen in Wänden, Stühlen und Tischen unter: fahr unterwegs mit der Maus über Gegenstände. Viele liegen im letzten Raum, hinter den Tresoren rund um {npc:261319}."
+es = "Las reliquias no se parecen todas y se confunden con paredes, sillas y mesas: pasa el ratón sobre los objetos al avanzar. Muchas están en la última sala, tras las cámaras acorazadas alrededor de {npc:261319}."
+pt = "As relíquias não são todas iguais e se confundem com paredes, cadeiras e mesas: passe o mouse sobre os objetos ao avançar. Muitas ficam na última sala, atrás dos cofres ao redor de {npc:261319}."
+ru = "Реликвии выглядят по-разному и сливаются со стенами, стульями и столами: наводите курсор на предметы по пути. Многие лежат в последнем зале, за хранилищами вокруг {npc:261319}."
+ko = "가보는 모양이 제각각이고 벽, 의자, 탁자에 섞여 잘 보이지 않으니 지나가면서 물체에 마우스를 올려 보세요. 마지막 방의 {npc:261319} 주변 금고 뒤에 많이 있습니다."
+zh_cn = "传家宝外形各不相同，容易混在墙壁、椅子和桌子中：前进时把鼠标移到物体上看看。最后一个房间里{npc:261319}周围的金库后面有很多。"
+zh_tw = "傳家寶外形各不相同，容易混在牆壁、椅子和桌子中：前進時把滑鼠移到物體上看看。最後一個房間裡{npc:261319}周圍的金庫後面有很多。"

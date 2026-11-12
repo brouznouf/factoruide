@@ -199,3 +199,52 @@ ru = "Пещера Берена кишит нежитью, которая воз
 ko = "베렌의 위험에는 매우 빨리 재생성되는 언데드가 가득하고, 돌은 동굴 가장 끝(입구 약 60.5, 72.5)에 있습니다. 파티로 들어가거나 싸우며 빠져나올 각오를 하세요."
 zh_cn = "贝伦的危险里满是重生极快的亡灵，而石头在洞穴最深处（入口约60.5, 72.5）：组队进入，否则准备好一路杀出来。"
 zh_tw = "貝倫的危險裡滿是重生極快的不死生物，而石頭在洞穴最深處（入口約60.5, 72.5）：組隊進入，否則準備好一路殺出來。"
+
+# The Horn of Xelthos: the freed prisoner opens the courtyard door, which stays open after a death, an alternative to the breaching charge.
+[[note]]
+quest = 78261
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Without the breaching charge, pull the lever of the cell beside {npc:3914} and talk to the prisoner: he opens the courtyard door, which stays open even if you die and run back."
+fr = "Sans la charge de brèche, tirez le levier de la cellule près de {npc:3914} et parlez au prisonnier : il ouvre la porte de la cour, qui reste ouverte même si vous mourez et revenez en courant."
+de = "Ohne die Sprengladung zieh den Hebel der Zelle neben {npc:3914} und sprich mit dem Gefangenen: Er öffnet das Hoftor, das offen bleibt, selbst wenn du stirbst und zurückläufst."
+es = "Sin la carga de brecha, tira de la palanca de la celda junto a {npc:3914} y habla con el prisionero: abre la puerta del patio, que sigue abierta aunque mueras y vuelvas corriendo."
+pt = "Sem a carga explosiva, puxe a alavanca da cela ao lado de {npc:3914} e fale com o prisioneiro: ele abre a porta do pátio, que continua aberta mesmo se você morrer e voltar correndo."
+ru = "Без подрывного заряда потяните рычаг камеры рядом с {npc:3914} и поговорите с пленником: он откроет дверь во двор, и она останется открытой, даже если вы умрете и вернетесь."
+ko = "돌파 폭약이 없다면 {npc:3914} 옆 감방의 레버를 당기고 죄수와 대화하세요. 그가 안뜰 문을 열어 주며, 죽고 다시 달려와도 문은 열린 채로 남습니다."
+zh_cn = "没有破门炸药的话，拉动{npc:3914}旁边牢房的拉杆并与囚犯交谈：他会打开庭院的门，即使你死亡后跑回来，门也保持打开。"
+zh_tw = "沒有破門炸藥的話，拉動{npc:3914}旁邊牢房的拉桿並與囚犯交談：他會打開庭院的門，即使你死亡後跑回來，門也保持打開。"
+
+# The Horn of Xelthos: the payment comes by a letter received in a capital, then is collected back at the dead drop.
+[[note]]
+quest = 78261
+phase = "turnin"
+level = "info"
+editions = ["forever"]
+en = "The reward is not given at the dead drop: visit a major city to receive a letter, then go back to the dead drop to collect it."
+fr = "La récompense n'est pas remise à la boîte aux lettres morte : allez dans une capitale pour recevoir une lettre, puis retournez à la boîte pour la récupérer."
+de = "Die Belohnung gibt es nicht am toten Briefkasten: geh in eine Hauptstadt, um einen Brief zu erhalten, und kehr dann zum toten Briefkasten zurück, um sie abzuholen."
+es = "La recompensa no se entrega en el buzón secreto: visita una capital para recibir una carta y vuelve luego al buzón para recogerla."
+pt = "A recompensa não é entregue no ponto de coleta: visite uma capital para receber uma carta e depois volte ao ponto de coleta para pegá-la."
+ru = "Награду не выдают в тайнике: посетите столицу, чтобы получить письмо, затем вернитесь к тайнику и заберите ее."
+ko = "보상은 비밀 수신함에서 바로 주어지지 않습니다. 대도시를 방문해 편지를 받은 뒤 비밀 수신함으로 돌아가 보상을 받으세요."
+zh_cn = "奖励不会在秘密投递点直接发放：先去一座主城收到一封信，再回到投递点领取。"
+zh_tw = "獎勵不會在秘密投遞點直接發放：先去一座主城收到一封信，再回到投遞點領取。"
+
+# The Horn of Xelthos: the payment comes by a letter received in a capital, then is collected back at the dead drop.
+[[note]]
+quest = 78307
+phase = "turnin"
+level = "info"
+editions = ["forever"]
+en = "The reward is not given at the dead drop: visit a major city to receive a letter, then go back to the dead drop to collect it."
+fr = "La récompense n'est pas remise à la boîte aux lettres morte : allez dans une capitale pour recevoir une lettre, puis retournez à la boîte pour la récupérer."
+de = "Die Belohnung gibt es nicht am toten Briefkasten: geh in eine Hauptstadt, um einen Brief zu erhalten, und kehr dann zum toten Briefkasten zurück, um sie abzuholen."
+es = "La recompensa no se entrega en el buzón secreto: visita una capital para recibir una carta y vuelve luego al buzón para recogerla."
+pt = "A recompensa não é entregue no ponto de coleta: visite uma capital para receber uma carta e depois volte ao ponto de coleta para pegá-la."
+ru = "Награду не выдают в тайнике: посетите столицу, чтобы получить письмо, затем вернитесь к тайнику и заберите ее."
+ko = "보상은 비밀 수신함에서 바로 주어지지 않습니다. 대도시를 방문해 편지를 받은 뒤 비밀 수신함으로 돌아가 보상을 받으세요."
+zh_cn = "奖励不会在秘密投递点直接发放：先去一座主城收到一封信，再回到投递点领取。"
+zh_tw = "獎勵不會在秘密投遞點直接發放：先去一座主城收到一封信，再回到投遞點領取。"

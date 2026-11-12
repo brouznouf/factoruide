@@ -92,3 +92,44 @@ ru = "{npc:1225} часто выходит из пещеры и спускает
 ko = "{npc:1225}은(는) 자주 동굴을 나와 길을 따라 아래 빈터로, 때로는 호수 쪽으로 내려갑니다. 동굴이 비어 있으면 재생성을 기다리기 전에 길 아래쪽을 찾아보세요."
 zh_cn = "{npc:1225}经常离开洞穴，沿小路走到下方的空地，有时会走向湖边：如果洞里没有，先到小路下方找找，再考虑等它重生。"
 zh_tw = "{npc:1225}經常離開洞穴，沿小路走到下方的空地，有時會走向湖邊：如果洞裡沒有，先到小路下方找找，再考慮等牠重生。"
+
+# Twisting the Knife: Daggerfang is a single named crocolisk walking the shore, often not up on arrival.
+[[note]]
+quest = 86758
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Daggerfang (level 15) patrols up and down the shore and may not be up when you arrive: work on {quest:385} with the nearby crocolisks while you wait for him."
+fr = "Daggerfang (niveau 15) patrouille le long de la rive et n'est pas toujours là à votre arrivée : avancez {quest:385} sur les crocilisques voisins en l'attendant."
+de = "Daggerfang (Stufe 15) patrouilliert am Ufer auf und ab und ist bei deiner Ankunft vielleicht nicht da: erledige währenddessen {quest:385} an den Krokilisken in der Nähe."
+es = "Daggerfang (nivel 15) patrulla arriba y abajo por la orilla y puede no estar cuando llegues: avanza {quest:385} con los crocoliscos cercanos mientras lo esperas."
+pt = "Daggerfang (nível 15) patrulha a margem de um lado para o outro e pode não estar lá quando você chegar: avance {quest:385} nos crocoliscos próximos enquanto o espera."
+ru = "Daggerfang (уровень 15) ходит туда и обратно вдоль берега и может отсутствовать, когда вы придете: пока ждете его, выполняйте {quest:385} на ближайших кроколисках."
+ko = "Daggerfang(15레벨)은(는) 물가를 오가며 순찰하므로 도착했을 때 없을 수 있습니다. 기다리는 동안 근처 악어로 {quest:385}을(를) 진행하세요."
+zh_cn = "Daggerfang（15级）沿着岸边来回巡逻，你到达时可能不在：等他的时候，先在附近的鳄鱼身上做{quest:385}。"
+zh_tw = "Daggerfang（15級）沿著岸邊來回巡邏，你到達時可能不在：等牠的時候，先在附近的鱷魚身上做{quest:385}。"
+
+# Banner of the Fallen: the banner starts trogg waves before the named trogg comes; it stays and can be used again after 30 s.
+[[note]]
+quest = 86585
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Plant the banner where you found it, next to Mountaineer Ylva: trogg waves come from both sides of the cave, then Headsplitter (level 15-17) runs in. If someone else tags him, plant it again after its 30-second cooldown."
+fr = "Plantez la bannière là où vous l'avez trouvée, près de Mountaineer Ylva : des vagues de troggs arrivent des deux côtés de la grotte, puis Headsplitter (niveau 15-17) accourt. Si un autre le touche avant vous, replantez-la après 30 secondes de recharge."
+de = "Stell das Banner dort auf, wo du es gefunden hast, neben Mountaineer Ylva: Troggwellen kommen von beiden Seiten der Höhle, dann stürmt Headsplitter (Stufe 15-17) heran. Markiert ihn jemand anderes zuerst, stell es nach 30 Sekunden Abklingzeit erneut auf."
+es = "Planta el estandarte donde lo encontraste, junto a Mountaineer Ylva: llegan oleadas de troggs por ambos lados de la cueva y luego aparece Headsplitter (nivel 15-17). Si otro lo marca antes, plántalo de nuevo tras su reutilización de 30 segundos."
+pt = "Finque o estandarte onde você o encontrou, ao lado de Mountaineer Ylva: ondas de troggs vêm dos dois lados da caverna, depois Headsplitter (nível 15-17) chega correndo. Se outro jogador o marcar antes, finque-o de novo após a recarga de 30 segundos."
+ru = "Установите знамя там, где нашли его, рядом с Mountaineer Ylva: волны троггов идут с обеих сторон пещеры, затем прибегает Headsplitter (уровень 15-17). Если его первым атакует другой игрок, установите знамя снова через 30 секунд."
+ko = "깃발을 찾은 자리, Mountaineer Ylva 옆에 꽂으세요. 동굴 양쪽에서 트로그 무리가 몰려온 뒤 Headsplitter(15-17레벨)이(가) 달려옵니다. 다른 사람이 먼저 선점하면 30초 재사용 대기시간 후 다시 꽂으세요."
+zh_cn = "把旗帜插回你找到它的地方，Mountaineer Ylva旁边：穴居人会从洞穴两侧一波波涌来，随后Headsplitter（15-17级）冲过来。如果被别人抢先攻击，30秒冷却后再插一次。"
+zh_tw = "把旗幟插回你找到它的地方，Mountaineer Ylva旁邊：穴居人會從洞穴兩側一波波湧來，隨後Headsplitter（15-17級）衝過來。如果被別人搶先攻擊，30秒冷卻後再插一次。"
+
+[[icon]]
+quest = 86758
+phase = "objective"
+objective = 1
+icon = "rare"
+editions = ["forever"]

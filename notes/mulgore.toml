@@ -61,3 +61,20 @@ ru = "{npc:3058} ходит по длинному кругу по часовой
 ko = "{npc:3058}은(는) {zone:1638}와 붉은 바위 사이의 평원을 시계 방향으로 길게 돕니다. 쫓아다니지 말고 그 중간쯤 나무가 있는 언덕 근처 경로에서 기다리세요. 기절시키는 새를 조심하세요."
 zh_cn = "{npc:3058}沿顺时针方向在{zone:1638}和红石岭之间的平原上绕一大圈。不要追着她跑，在两者中间那片长着树的小丘附近、她的路线上等她。小心会击晕的飞禽。"
 zh_tw = "{npc:3058}沿順時針方向在{zone:1638}和紅石丘之間的平原上繞一大圈。不要追著她跑，在兩者中間那片長著樹的小丘附近、她的路線上等她。小心會擊暈的飛禽。"
+
+# Ceasing Operations: the elite shredder roams past the mine's far exit and has an overload phase with faster attacks.
+[[note]]
+quest = 98427
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The key comes from an elite level 12 shredder wandering just outside the mine's far exit. When it overloads, stops in place and attacks faster, step away and heal until it ends."
+fr = "La clé vient d'un déchiqueteur élite de niveau 12 qui erre juste devant la sortie du fond de la mine. Quand il surchauffe, s'immobilise et frappe plus vite, éloignez-vous et soignez-vous jusqu'à la fin."
+de = "Der Schlüssel stammt von einem Elite-Schredder der Stufe 12, der direkt vor dem hinteren Ausgang der Mine umherläuft. Wenn er überlädt, stehen bleibt und schneller angreift, geh auf Abstand und heil dich, bis es vorbei ist."
+es = "La llave la suelta una trituradora élite de nivel 12 que deambula justo fuera de la salida del fondo de la mina. Cuando se sobrecarga, se queda quieta y ataca más rápido, aléjate y cúrate hasta que pase."
+pt = "A chave vem de um retalhador elite de nível 12 que vagueia logo fora da saída dos fundos da mina. Quando ele sobrecarrega, para no lugar e ataca mais rápido, afaste-se e cure-se até passar."
+ru = "Ключ выпадает из элитного крошшера 12-го уровня, который бродит прямо у дальнего выхода из шахты. Когда он перегревается, встает на месте и бьет быстрее, отойдите и лечитесь, пока это не закончится."
+ko = "열쇠는 광산 반대편 출구 바로 바깥을 돌아다니는 12레벨 정예 벌목기에서 얻습니다. 과부하로 제자리에 멈춰 더 빠르게 공격하면 물러나서 끝날 때까지 치유하세요."
+zh_cn = "钥匙来自一台在矿洞另一端出口外游荡的12级精英伐木机。当它过载、停在原地并加快攻击时，退开并治疗，直到效果结束。"
+zh_tw = "鑰匙來自一台在礦坑另一端出口外遊蕩的12級精英伐木機。當它過載、停在原地並加快攻擊時，退開並治療，直到效果結束。"

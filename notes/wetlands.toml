@@ -159,3 +159,18 @@ ru = "{npc:1364} стоит лишь в одном из своих мест: в 
 ko = "{npc:1364}은(는) 한 번에 한 곳에만 있습니다. 둔 모드르의 건물 안(여관 지하실 포함)이나 동쪽 언덕의 야영지입니다. 파란 공허방랑자를 찾으세요. 암흑 면역입니다."
 zh_cn = "{npc:1364}每次只出现在其中一个地点：丹莫德的某栋建筑里（包括旅店地窖）或东边山丘上的营地。找他那只蓝色的虚空行者。他免疫暗影。"
 zh_tw = "{npc:1364}每次只出現在其中一個地點：丹莫德的某棟建築裡（包括旅店地窖）或東邊山丘上的營地。找他那隻藍色的虛無行者。他免疫暗影。"
+
+# Spoils of War: every node is in the water around the harbor, many deep; crocolisks guard part of the iron.
+[[note]]
+quest = 98197
+level = "info"
+editions = ["forever"]
+en = "The timber and iron lie underwater all around the harbor, many on the seabed: bring {item:5996} or another way to breathe. Lowering ground clutter makes them easier to spot; level 26 crocolisks guard some of the iron."
+fr = "Le bois et le fer sont sous l'eau tout autour du port, souvent au fond : emportez {item:5996} ou un autre moyen de respirer. Baisser la densité du décor au sol aide à les repérer ; des crocilisques de niveau 26 gardent une partie du fer."
+de = "Holz und Eisen liegen überall um den Hafen unter Wasser, viel davon auf dem Meeresgrund: nimm {item:5996} oder ein anderes Mittel zum Atmen mit. Weniger Bodendetails machen sie leichter sichtbar; Krokilisken der Stufe 26 bewachen einen Teil des Eisens."
+es = "La madera y el hierro están bajo el agua alrededor del puerto, muchos en el fondo marino: lleva {item:5996} u otra forma de respirar. Bajar el detalle del suelo ayuda a verlos; crocoliscos de nivel 26 vigilan parte del hierro."
+pt = "A madeira e o ferro ficam debaixo d'água ao redor do porto, muitos no fundo do mar: leve {item:5996} ou outra forma de respirar. Reduzir os detalhes do solo ajuda a vê-los; crocoliscos de nível 26 guardam parte do ferro."
+ru = "Древесина и железо лежат под водой вокруг гавани, многие на дне: возьмите {item:5996} или другой способ дышать под водой. С меньшей детализацией земли их легче заметить; часть железа охраняют кроколиски 26-го уровня."
+ko = "목재와 철은 항구 주변 물속 곳곳에, 상당수는 바다 밑바닥에 있습니다. {item:5996} 등 수중 호흡 수단을 챙기세요. 지면 표현 설정을 낮추면 찾기 쉽고, 일부 철은 26레벨 악어가 지키고 있습니다."
+zh_cn = "木材和铁都在港口周围的水下，很多沉在海底：带上{item:5996}或其他水下呼吸手段。调低地面细节更容易看到它们；部分铁有26级鳄鱼看守。"
+zh_tw = "木材和鐵都在港口周圍的水下，很多沉在海底：帶上{item:5996}或其他水下呼吸手段。調低地面細節更容易看到它們；部分鐵有26級鱷魚看守。"

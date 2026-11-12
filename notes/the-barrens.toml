@@ -462,3 +462,20 @@ ru = "{npc:209797} бьёт больно: выманите его к прича�
 ko = "{npc:209797}은(는) 강하게 때립니다. 톱니항 부두 쪽으로 끌고 가서 경비병이 싸움에 끼어들게 하세요."
 zh_cn = "{npc:209797}攻击很高：把它引到棘齿城码头，让卫兵加入战斗。"
 zh_tw = "{npc:209797}攻擊很高：把牠引到棘齒城碼頭，讓衛兵加入戰鬥。"
+
+# Unwelcome Guests: the marines leave when their leader dies, and the quest cannot be shared.
+[[note]]
+quest = 95508
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The marines vanish as soon as Terry Longdrink dies, so focus him. The quest cannot be shared: in a group, each member does the fight in turn."
+fr = "Les marins disparaissent dès que Terry Longdrink meurt : concentrez-vous sur lui. La quête ne peut pas être partagée : en groupe, chacun fait le combat à son tour."
+de = "Die Marinesoldaten verschwinden, sobald Terry Longdrink stirbt: konzentrier dich auf ihn. Die Quest lässt sich nicht teilen: in einer Gruppe macht jeder den Kampf nacheinander."
+es = "Los marines desaparecen en cuanto muere Terry Longdrink: céntrate en él. La misión no se puede compartir: en grupo, cada miembro hace el combate por turnos."
+pt = "Os fuzileiros somem assim que Terry Longdrink morre: concentre-se nele. A missão não pode ser compartilhada: em grupo, cada membro faz a luta por vez."
+ru = "Морпехи исчезают, как только умирает Terry Longdrink: сосредоточьтесь на нем. Задание нельзя передать: в группе каждый проходит бой по очереди."
+ko = "Terry Longdrink이(가) 죽는 즉시 해병들이 사라지니 그에게 집중하세요. 퀘스트는 공유할 수 없으므로 파티원이 차례로 전투를 치러야 합니다."
+zh_cn = "Terry Longdrink一死，水兵们就会消失，所以集中攻击他。任务无法共享：组队时每个成员要轮流进行战斗。"
+zh_tw = "Terry Longdrink一死，水兵們就會消失，所以集中攻擊他。任務無法共享：組隊時每個成員要輪流進行戰鬥。"

@@ -31,3 +31,19 @@ ru = "Нежить с предметом {item:1894} находится вне �
 ko = "{item:1894}을(를) 가진 언데드는 던전 밖, 인스턴스 입구 앞 광산의 미니맵에 밝게 보이는 위쪽 옆 갱도에 있습니다. 둘씩 다니는 정예이니 같은 장소의 {quest:167}와(과) 함께 하세요."
 zh_cn = "携带{item:1894}的亡灵在副本外面：在副本传送门前的矿洞里，小地图上颜色较浅的上层侧道中。它们是成对出现的精英；可与同一地点的{quest:167}一起完成。"
 zh_tw = "攜帶{item:1894}的不死族在副本外面：在副本傳送門前的礦坑裡，小地圖上顏色較淺的上層側道中。牠們是成對出現的精英；可與同一地點的{quest:167}一起完成。"
+
+# Destruction in Deadmines: the turn-in and the next step wait outside the dungeon's back exit, so hearthing out costs a long walk back.
+[[note]]
+quest = 92753
+phase = "turnin"
+level = "info"
+editions = ["forever"]
+en = "Do not hearth out after the run: leave by the dungeon's back exit, where {npc:253279} waits and the chain goes on."
+fr = "Ne prenez pas votre pierre de foyer après le donjon : sortez par l'issue du fond, où {npc:253279} attend et où la suite commence."
+de = "Benutze nach dem Durchlauf nicht deinen Ruhestein: verlass den Dungeon durch den hinteren Ausgang, wo {npc:253279} wartet und die Questreihe weitergeht."
+es = "No uses la piedra de hogar tras la mazmorra: sal por la salida trasera, donde espera {npc:253279} y sigue la cadena."
+pt = "Não use a pedra de regresso após a masmorra: saia pela saída dos fundos, onde {npc:253279} espera e a sequência continua."
+ru = "Не используйте камень возвращения после подземелья: выходите через задний выход, где ждет {npc:253279} и продолжается цепочка."
+ko = "던전을 마친 뒤 귀환석을 쓰지 마세요. 뒤쪽 출구로 나가면 {npc:253279}이(가) 기다리고 있고 연계 퀘스트가 이어집니다."
+zh_cn = "副本结束后不要用炉石：从后门出口离开，{npc:253279}在那里等候，任务线由此继续。"
+zh_tw = "副本結束後不要用爐石：從後門出口離開，{npc:253279}在那裡等候，任務線由此繼續。"

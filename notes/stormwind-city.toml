@@ -141,3 +141,20 @@ ru = "Вход в кладовую — запертая дверь наверх�
 ko = "창고 입구는 트라이어스 치즈 가게 위층의 잠긴 문입니다. 그 앞에서 가방의 화물을 사용한 뒤 다시 내려가 {npc:483}에게 가세요."
 zh_cn = "储藏室入口是特莉亚斯奶酪店楼上那扇锁着的门：在门前使用背包里的货物，然后下楼回到{npc:483}那里。"
 zh_tw = "儲藏室入口是特莉亞斯乳酪店樓上那扇鎖著的門：在門前使用背包裡的貨物，然後下樓回到{npc:483}那裡。"
+
+# Gatehouse Goods: the shipment is placed upstairs inside the shop, by a locked door that never needs opening.
+[[note]]
+quest = 97222
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "Climb the stairs inside the shop and use the shipment from your bags right by the locked door at the top. The door stays shut: no key or lockpicking needed."
+fr = "Montez l'escalier dans la boutique et utilisez la cargaison depuis vos sacs juste à côté de la porte verrouillée en haut. La porte reste fermée : ni clé ni crochetage nécessaires."
+de = "Steig die Treppe im Laden hinauf und benutze die Lieferung aus deinen Taschen direkt neben der verschlossenen Tür oben. Die Tür bleibt zu: kein Schlüssel und kein Schlossknacken nötig."
+es = "Sube las escaleras dentro de la tienda y usa el cargamento desde tus bolsas justo al lado de la puerta cerrada de arriba. La puerta sigue cerrada: no hace falta llave ni forzar la cerradura."
+pt = "Suba a escada dentro da loja e use a remessa das suas bolsas bem ao lado da porta trancada no alto. A porta continua fechada: não precisa de chave nem de arrombar."
+ru = "Поднимитесь по лестнице в лавке и используйте груз из сумок прямо у запертой двери наверху. Дверь остается закрытой: ни ключ, ни взлом замка не нужны."
+ko = "가게 안의 계단을 올라가 위층의 잠긴 문 바로 옆에서 가방 속 화물을 사용하세요. 문은 닫힌 채로 두면 되며, 열쇠나 자물쇠 따기는 필요 없습니다."
+zh_cn = "走上店内的楼梯，在顶上那扇上锁的门旁边使用背包里的货物。门不会打开：不需要钥匙，也不用开锁。"
+zh_tw = "走上店內的樓梯，在頂上那扇上鎖的門旁邊使用背包裡的貨物。門不會打開：不需要鑰匙，也不用開鎖。"
