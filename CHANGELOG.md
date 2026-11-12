@@ -23,6 +23,9 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### WoW data
 
 - WoW Forever: the latest quest data, with 115 more quests a guide can take (most in Riverglades and Desolace), the Duskwood Missions left out again, and more names checked in Spanish and Korean.
+- About 200 more NPCs who walk a road (Gann Stonespire, the Defias Messenger, Duskwing...) show where to find them along their path.
+- Classic Era: hundreds of quest objectives shown in English again, not French.
+- Fixes from players' reports: rare drops and long respawns counted as players see them (Thick Yeti Hide, Book: The Powers Below, Zzarc' Vul...), quests that need an event or a rare item first (Assassin's Contract, Arena Master, Dagun, Gahz'rilla), the teleport up to Xylem's tower, and a few WoW Forever chains.
 
 ## 0.18.0 (2026-11-11)
 

@@ -136,12 +136,6 @@ remove_sources = [{ type = "vendor", id = 12862 }]
 id = 16765
 remove_sources = [{ type = "vendor", id = 12864 }]
 
-[[quest]]
-# Blackfathom Villainy: Argent Guard Thaelrid offers it only to those sent by In Search of Thaelrid
-# (Dawnwatcher Shaedlass, Darnassus): one series, the first quest required, not a mere lead-in.
-id = 1200
-pre_all = [1198]
-
 # Class quests teaching no spell, in every edition: the requirement is the quest.
 [[class_requirement]]
 class = "druid"
@@ -159,3 +153,153 @@ quests = [1531, 1532]
 # patrols: about 18 minutes waited on average, following him included.
 id = 215
 start_wait = 1100
+
+# Corrections from players' reports on each guide quest (2026-11-12).
+
+[[quest]]
+# Assassin's Contract: the contract drops from the Shadowy Assassins, who only come out in
+# Southshore when the town crier's event runs (after someone hands in the Dark Council quest);
+# players wait hours for it.
+id = 522
+start_wait = 14400
+
+[[quest]]
+# Arena Master: its item is in the Gurubashi Arena's chest, which appears every 3 hours and goes to
+# the first one to loot it.
+id = 7810
+start_wait = 10800
+
+[[quest]]
+# The Star, the Hand and the Heart: Dagun the Ravenous only rises when Enchanted Sea Kelp, a rare
+# loot of the Mirefin Oracles, is used at the Seaworn Altar: the kelp is part of the quest.
+id = 735
+objectives = [
+    { type = "item", id = 4639, amount = 1, text = "Enchanted Sea Kelp from the Mirefin Oracles, to summon Dagun at the Seaworn Altar" },
+    { type = "item", id = 4646, amount = 1 },
+    { type = "item", id = 4641, amount = 1 },
+    { type = "item", id = 4644, amount = 1 },
+]
+
+[[quest]]
+# Gahz'rilla: the gong of Zul'Farrak only summons him with the Mallet of Zul'Farrak: the Sacred
+# Mallet of Qiaga the Keeper, charged at the altar of Jintha'Alor.
+id = 2770
+objectives = [
+    { type = "item", id = 9241, amount = 1, text = "Sacred Mallet from Qiaga the Keeper" },
+    { type = "trigger", text = "Use the Sacred Mallet at the altar of Jintha'Alor", at = { zone = 47, x = 59.0, y = 77.0 } },
+    { type = "item", id = 8707, amount = 1 },
+]
+
+[[quest]]
+# Lost!: the quest ends by finding Ringo; the escort to Spraggle Frock is the next quest.
+id = 4492
+objectives = [{ type = "talk", id = 9999, amount = 1, text = "Find Ringo at Fire Plume Ridge" }]
+
+[[respawn]]
+# Noggle's Satchel (8282): players wait 5 to 10 minutes for it to come back.
+type = "object"
+id = 180435
+seconds = 450
+
+[[respawn]]
+# Henrig Lonebrow's Journal (1100): 2 to 3 minutes.
+type = "object"
+id = 19861
+seconds = 150
+
+[[respawn]]
+# Atal'ai Tablet outside the Sunken Temple (1475): 6 to 8 minutes.
+type = "object"
+id = 37099
+seconds = 420
+
+[[respawn]]
+# Silithid Harvester (897), a rare: hours between two spawns.
+type = "npc"
+id = 3253
+seconds = 21600
+
+[[respawn]]
+# Zzarc' Vul (181): 10 to 30 minutes.
+type = "npc"
+id = 300
+seconds = 1200
+
+[[drop]]
+# Thick Yeti Hide (2821): about a quarter of the yetis; most hides come from skinning.
+item = 8973
+npcs = [5292, 5293, 5295, 5346, 7848]
+chance = 0.25
+
+[[drop]]
+# Book: The Powers Below (968): players kill 100 to 300 Twilight cultists for it.
+item = 5352
+npcs = [2338, 2339]
+chance = 0.01
+
+[[drop]]
+# Pristine Spider Silk (1940): nearly every Carrion Recluse, a third of the hatchlings.
+item = 7267
+npcs = [949]
+chance = 0.95
+
+[[drop]]
+item = 7267
+npcs = [930]
+chance = 0.35
+
+[[drop]]
+# Roc Gizzard (1452): the Searing Rocs drop it far more often than the other rocs.
+item = 6257
+npcs = [5430]
+chance = 0.22
+
+[[drop]]
+item = 6257
+npcs = [5428, 5429]
+chance = 0.08
+
+[[drop]]
+# Tazan's Satchel (1963): nearly always on him while on the quest.
+item = 7209
+npcs = [6494]
+chance = 0.9
+
+[[drop]]
+# Shaman Voodoo Charm (2541): often 30 to 100 kills.
+item = 8363
+npcs = [2009]
+chance = 0.03
+
+[[item]]
+# Poisoned Water (6804): the bracers only come from the Discordant Surge (the elementals once the
+# Aspect of Neptulon is used on them), not the elementals as they are.
+id = 17309
+remove_sources = [
+    { type = "npc", id = 8519 },
+    { type = "npc", id = 8520 },
+    { type = "npc", id = 8521 },
+    { type = "npc", id = 8522 },
+]
+
+[[item]]
+# Captain's Documents (1202): in the chest only, the sharks do not carry them.
+id = 5882
+remove_sources = [{ type = "npc", id = 5434 }]
+
+[[spawn]]
+# Archmage Tervosh (The Missing Diplomat's turn-in, 1265) comes to Sentry Point for it, out of
+# Theramore's tower.
+type = "npc"
+id = 4967
+zone = 15
+x = 59.6
+y = 41.0
+
+[[spawn]]
+# Private Thorsen stands at the Rebel Camp between his patrols (Supplies to Private Thorsen's turn-in, 198).
+type = "npc"
+id = 738
+zone = 33
+x = 38.0
+y = 3.5

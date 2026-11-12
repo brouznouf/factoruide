@@ -2242,3 +2242,80 @@ id = 95799
 pre_all = [95787]
 ends = [{ type = "npc", id = 2916 }]
 remove_ends = [{ type = "npc", id = 2277 }]
+
+# Corrections from players' reports on each guide quest (2026-11-12).
+
+[[quest]]
+# Swelling Forces: offered once Return to Onu is handed in.
+id = 98013
+pre_all = [950]
+
+[[quest]]
+# Returning to Port: Wendel Mathers offers it after The Cook in the Cage.
+id = 97048
+pre_all = [97047]
+
+[[quest]]
+# Deliver the Second Shipment: after Driftwood, as Deliver the First Shipment from the same giver.
+id = 94929
+pre_all = [1398]
+
+[[quest]]
+# Razormaw Needling: taken without Crimson Crate Delivery, which only leads to it.
+id = 98245
+remove_pre = [98240]
+
+[[quest]]
+id = 98240
+breadcrumb_for = 98245
+
+[[drop]]
+# Primitive Key (Where's the Key?): 20 to 60 Bloodscalps killed for it.
+item = 277957
+npcs = [588, 595, 597, 660, 671, 699, 701]
+chance = 0.03
+
+[[drop]]
+# Fenris Isle Key: about 40 Rot Hides killed for it.
+item = 267412
+npcs = [1942, 1943, 1944, 1948]
+chance = 0.025
+
+[[drop]]
+# Malignant Rotclaw Flesh (Carnage), which brings Carnage out once placed at the cave: about 20
+# Maddened Rotclaws killed for it.
+item = 280331
+npcs = [271334]
+chance = 0.05
+
+[[respawn]]
+# Whispering Horror: about 10 minutes.
+type = "npc"
+id = 260396
+seconds = 600
+
+[[respawn]]
+# Encroaching Soldier and Outraged Pillager (Wrongly Blamed, Justly Corrected): about 6 minutes.
+type = "npc"
+id = 268622
+seconds = 360
+
+[[respawn]]
+type = "npc"
+id = 268623
+seconds = 360
+
+[[spawn]]
+# Discarded Fishing Toolbox (Silver of the Waves): more places along the shore.
+type = "object"
+id = 665289
+zone = 38
+x = 48.9
+y = 54.2
+
+[[spawn]]
+type = "object"
+id = 665289
+zone = 38
+x = 48.0
+y = 40.0

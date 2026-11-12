@@ -105,6 +105,15 @@ to = { zone = 1657, x = 29.13, y = 41.21 }   # area trigger 527
 seconds = 5
 instant = true
 
+# Archmage Xylem's tower stands on a cliff of Azshara no path climbs: Sanath Lim-yo, at its foot,
+# teleports visitors up to Nyrill, who sends them back down (Return Trip).
+[[link]]
+name = "Sanath Lim-yo's teleport - Xylem's tower"
+from = { zone = 16, x = 28.11, y = 50.09 }  # npc Sanath Lim-yo
+to = { zone = 16, x = 26.47, y = 46.27 }    # npc Nyrill
+seconds = 10
+instant = true
+
 # --- Class teleports a quest teaches ---
 # Taking "Moonglade" (level 10) teaches the druid Teleport: Moonglade (the quest's source spell
 # in VMaNGOS): the bear form quests are done there. It lands next to Dendrite Starblaze.

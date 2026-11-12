@@ -81,3 +81,10 @@ y = 62.4
 # (only the 1.12 quests' limits are known).
 id = 9663
 time_limit = 900
+
+[[drop]]
+# Poisoned Water (6804): the bracers come from the Discordant Surge, the elementals once the
+# Aspect of Neptulon is used on them (the shared overrides drop the untransformed ones).
+item = 17309
+npcs = [13279]
+chance = 1.0
