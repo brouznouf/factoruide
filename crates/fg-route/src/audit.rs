@@ -1309,7 +1309,9 @@ fn says_a_time(text: &str) -> bool {
 /// kobold, puis revenir voir le maréchal McBride.").
 fn foreign_text(conn: &Connection) -> Result<Vec<Finding>> {
     let mut stmt = conn.prepare("SELECT id, coalesce(name, ''), coalesce(objectives_text, '') FROM m_quest")?;
-    let rows = stmt.query_map([], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?)))?;
+    let rows = stmt.query_map([], |r| {
+        Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, String>(2)?))
+    })?;
     let mut out = Vec::new();
     for row in rows {
         let (id, name, text) = row?;
@@ -1332,8 +1334,8 @@ fn foreign_text(conn: &Connection) -> Result<Vec<Finding>> {
 /// often do (none in the English quest texts of the three game versions).
 fn reads_foreign(text: &str) -> bool {
     const WORDS: &[&str] = &[
-        "le", "les", "des", "du", "et", "à", "au", "aux", "pour", "avec", "dans", "puis", "der", "das", "und", "mit", "zu",
-        "für", "von", "los", "las", "con", "para", "del", "una", "que",
+        "le", "les", "des", "du", "et", "à", "au", "aux", "pour", "avec", "dans", "puis", "der", "das", "und", "mit",
+        "zu", "für", "von", "los", "las", "con", "para", "del", "una", "que",
     ];
     let lower = text.to_lowercase();
     let mut hits: Vec<&str> = (lower.split(|c: char| !c.is_alphabetic()))
@@ -1762,11 +1764,19 @@ mod tests {
     /// borrowed word ("Le Fishe") included, do not.
     #[test]
     fn objectives_in_another_language_read_as_foreign() {
-        assert!(reads_foreign("Tuer 10 Vermines kobold, puis revenir voir le maréchal McBride."));
-        assert!(reads_foreign("Bringt 10 Koboldkerzen zu Marshal McBride und sprecht mit ihm."));
-        assert!(reads_foreign("Lleva 10 velas de kobold al alguacil McBride para que las vea."));
+        assert!(reads_foreign(
+            "Tuer 10 Vermines kobold, puis revenir voir le maréchal McBride."
+        ));
+        assert!(reads_foreign(
+            "Bringt 10 Koboldkerzen zu Marshal McBride und sprecht mit ihm."
+        ));
+        assert!(reads_foreign(
+            "Lleva 10 velas de kobold al alguacil McBride para que las vea."
+        ));
         assert!(!reads_foreign("Kill 10 Kobold Vermin, then return to Marshal McBride."));
-        assert!(!reads_foreign("Bring Le Fishe's head to Stormwind and talk to the guard."));
+        assert!(!reads_foreign(
+            "Bring Le Fishe's head to Stormwind and talk to the guard."
+        ));
     }
 
     /// A door given for one faction only is found (the other would take the shared one), and a
