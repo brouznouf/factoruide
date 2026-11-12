@@ -111,3 +111,19 @@ ru = "{item:4986} действует 30 минут. Поднимайтесь н�
 ko = "{item:4986}은(는) 30분 동안만 유지됩니다. 대부분의 야영지를 피하려면 산의 남동쪽 비탈(47,24 또는 51,22 부근)로 오른 뒤, 꼭대기가 아니라 정상 바로 아래 동굴로 가세요. {object:3525}은(는) 동굴 안 몇 걸음 거리, 불타는 칼날 경비병들 뒤에 있습니다."
 zh_cn = "{item:4986}只能保持30分钟。从山的东南坡（约47,24或51,22）往上爬可避开大部分营地，然后前往峰顶下方的洞穴，而不是山顶：{object:3525}就在洞内几步处，有火刃卫兵把守。"
 zh_tw = "{item:4986}只能保持30分鐘。從山的東南坡（約47,24或51,22）往上爬可避開大部分營地，然後前往峰頂下方的洞穴，而不是山頂：{object:3525}就在洞內幾步處，有火刃衛兵把守。"
+
+# Garments of Spirituality: the heal only counts with Lesser Heal of rank 2.
+[[note]]
+quest = 5648
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Heal {npc:12430} with Lesser Heal (Rank 2), then cast Power Word: Fortitude on her. Rank 1 of Lesser Heal does not count: train rank 2 first."
+fr = "Soignez {npc:12430} avec Soins inférieurs (rang 2), puis lancez-lui Mot de pouvoir : Robustesse. Le rang 1 de Soins inférieurs ne compte pas : apprenez d'abord le rang 2."
+de = "Heile {npc:12430} mit Geringem Heilen (Rang 2) und wirke dann Machtwort: Seelenstärke auf sie. Rang 1 von Geringes Heilen zählt nicht: Lerne zuerst Rang 2."
+es = "Sana a {npc:12430} con Sanar inferior (rango 2) y lánzale Palabra de poder: entereza. El rango 1 de Sanar inferior no cuenta: aprende antes el rango 2."
+pt = "Cure {npc:12430} com Cura Menor (grau 2) e depois lance Palavra de Poder: Fortitude nela. O grau 1 de Cura Menor não conta: aprenda o grau 2 antes."
+ru = "Исцелите {npc:12430} заклинанием «Малое исцеление» (уровень 2), затем наложите на неё «Слово силы: Стойкость». Уровень 1 «Малого исцеления» не засчитывается: сначала выучите уровень 2."
+ko = "하급 치유(2레벨)로 {npc:12430}을(를) 치유한 뒤 신의 권능: 인내를 걸어 주세요. 하급 치유 1레벨은 인정되지 않으니 먼저 2레벨을 배우세요."
+zh_cn = "用次级治疗术（等级2）治疗{npc:12430}，然后对她施放真言术：韧。次级治疗术等级1不算数：先去学会等级2。"
+zh_tw = "用次級治療術（等級2）治療{npc:12430}，然後對她施放真言術:韌。次級治療術等級1不算數：先去學會等級2。"

@@ -47,3 +47,19 @@ ru = "Дождитесь, пока {npc:3401} договорит три репл
 ko = "{npc:3401}이(가) 세 마디를 다 할 때까지 기다린 뒤, 그를 대상으로 지정하고 채팅에 /salute를 입력하세요. 다른 방법으로는 목표가 완료되지 않습니다."
 zh_cn = "等{npc:3401}说完三句话，然后选中他并在聊天框输入/salute；其他任何操作都无法完成目标。"
 zh_tw = "等{npc:3401}說完三句話，然後選取他並在聊天框輸入/salute；其他任何操作都無法完成目標。"
+
+# The Shattered Hand: Gamon kneels in a busy inn and is often killed by passing players; he respawns within minutes.
+[[note]]
+quest = 1858
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:6466} is often killed by passing players. If he is dead, wait a few minutes in stealth for him to respawn, then pick his pocket for the key."
+fr = "{npc:6466} est souvent tué par les joueurs de passage. S'il est mort, attendez quelques minutes camouflé qu'il réapparaisse, puis faites-lui les poches pour la clé."
+de = "{npc:6466} wird oft von vorbeikommenden Spielern getötet. Ist er tot, warte ein paar Minuten getarnt auf seinen Respawn und bestiehl ihn dann für den Schlüssel."
+es = "{npc:6466} suele morir a manos de jugadores que pasan. Si está muerto, espera unos minutos en sigilo a que reaparezca y róbale la llave."
+pt = "{npc:6466} costuma ser morto por jogadores de passagem. Se ele estiver morto, espere alguns minutos em furtividade até ele reaparecer e bata a carteira dele para pegar a chave."
+ru = "{npc:6466} часто убивают проходящие мимо игроки. Если он мёртв, подождите несколько минут в незаметности, пока он возродится, затем обчистите его карманы, чтобы получить ключ."
+ko = "{npc:6466}은(는) 지나가는 플레이어에게 자주 죽습니다. 죽어 있다면 은신한 채 몇 분 기다렸다가 다시 나타나면 소매치기로 열쇠를 얻으세요."
+zh_cn = "{npc:6466}经常被路过的玩家杀死。如果他死了，就潜行等几分钟让他重生，然后对他搜索口袋拿到钥匙。"
+zh_tw = "{npc:6466}經常被路過的玩家殺死。如果他死了，就潛行等幾分鐘讓他重生，然後對他搜索口袋拿到鑰匙。"

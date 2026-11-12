@@ -46,3 +46,19 @@ ru = "Щёлкните по ящику в центре лесопилки, чт�
 ko = "제재소 한가운데 상자를 클릭해 통을 올려놓은 뒤, 연기가 나는 통 자체를 클릭하세요. {quest:6390}을(를) 받을 수 있으며, 이 단계로 퀘스트를 준 NPC에게 돌아갑니다."
 zh_cn = "点击伐木场中央的箱子把桶放上去，然后再点击冒烟的桶本身：它会提供{quest:6390}，也就是带你回去找任务发布者的那一步。"
 zh_tw = "點擊伐木場中央的箱子把桶放上去，然後再點擊冒煙的桶本身：它會提供{quest:6390}，也就是帶你回去找任務發布者的那一步。"
+
+# Proving Allegiance: the candle comes from the crate beside the quest giver, and another one can be taken after a failed fight.
+[[note]]
+quest = 409
+phase = "objective"
+objective = 1
+level = "info"
+en = "Take {item:3080} from {object:1586} beside {npc:1497}, then use it at the altar on the small island to summon {npc:1946}. She hits hard: if she kills you, take another candle from the crate and try again."
+fr = "Prenez une {item:3080} dans la {object:1586} à côté de {npc:1497}, puis utilisez-la sur l'autel de la petite île pour invoquer {npc:1946}. Elle frappe fort : si elle vous tue, reprenez une bougie dans la caisse et recommencez."
+de = "Nimm eine {item:3080} aus der {object:1586} neben {npc:1497} und benutze sie am Altar auf der kleinen Insel, um {npc:1946} zu beschwören. Sie schlägt hart zu: Tötet sie dich, nimm eine neue Kerze aus der Kiste und versuch es noch einmal."
+es = "Coge una {item:3080} del {object:1586} junto a {npc:1497} y úsala en el altar de la isla pequeña para invocar a {npc:1946}. Golpea fuerte: si te mata, coge otra vela del cajón y vuelve a intentarlo."
+pt = "Pegue uma {item:3080} no {object:1586} ao lado de {npc:1497} e use-a no altar da ilhota para invocar {npc:1946}. Ela bate forte: se ela matar você, pegue outra vela no caixote e tente de novo."
+ru = "Возьмите {item:3080} из предмета «{object:1586}» рядом с {npc:1497} и используйте её у алтаря на маленьком острове, чтобы призвать {npc:1946}. Она бьёт сильно: если она вас убьёт, возьмите из ящика новую свечу и попробуйте снова."
+ko = "{npc:1497} 옆의 {object:1586}에서 {item:3080}을(를) 꺼내 작은 섬의 제단에서 사용하면 {npc:1946}이(가) 소환됩니다. 공격이 강하니, 죽으면 상자에서 양초를 다시 꺼내 재도전하세요."
+zh_cn = "从{npc:1497}旁边的{object:1586}中拿一支{item:3080}，然后在小岛上的祭坛使用它召唤{npc:1946}。她攻击很猛：如果被她杀死，就从箱子里再拿一支蜡烛重试。"
+zh_tw = "從{npc:1497}旁邊的{object:1586}中拿一支{item:3080}，然後在小島上的祭壇使用它召喚{npc:1946}。她攻擊很猛：如果被她殺死，就從箱子裡再拿一支蠟燭重試。"

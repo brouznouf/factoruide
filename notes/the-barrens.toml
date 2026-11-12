@@ -337,3 +337,25 @@ ru = "Когда вы встанете на решётку, противники
 ko = "창살을 밟으면 도전자가 약 15초 간격으로 한 명씩 나오며 제한 시간은 10분입니다. 마지막 도전자를 쓰러뜨리면 물러나 회복하세요. {npc:6238}은(는) 공격하기 전까지 중립입니다."
 zh_cn = "站上铁栅后，挑战者约每15秒出现一个，限时10分钟。最后一个倒下后后退回血：{npc:6238}在你攻击前保持中立。"
 zh_tw = "站上鐵柵後，挑戰者約每15秒出現一個，限時10分鐘。最後一個倒下後後退回血：{npc:6238}在你攻擊前保持中立。"
+
+# Counterattack!: talking to Regthar starts the battle; Krom'zar only arrives after many centaurs die, and his banner is an object anyone on the quest can use.
+[[note]]
+quest = 4021
+phase = "objective"
+objective = 1
+level = "warning"
+en = "Ask {npc:3389} where the Kolkar are to start the battle. Kill centaurs beside the defenders until {npc:9456} arrives with two bodyguards; once he dies, click {object:164690} over his body. Anyone on the quest can take it."
+fr = "Demandez à {npc:3389} où sont les Kolkar pour lancer la bataille. Tuez des centaures aux côtés des défenseurs jusqu'à l'arrivée de {npc:9456} et de ses deux gardes du corps ; une fois mort, cliquez sur la {object:164690} au-dessus de son corps. Tout joueur sur la quête peut la prendre."
+de = "Frag {npc:3389}, wo die Kolkar sind, um die Schlacht zu starten. Töte Zentauren an der Seite der Verteidiger, bis {npc:9456} mit zwei Leibwächtern kommt; ist er tot, klicke auf {object:164690} über seiner Leiche. Jeder mit der Quest kann sie nehmen."
+es = "Pregunta a {npc:3389} dónde están los Kolkar para empezar la batalla. Mata centauros junto a los defensores hasta que llegue {npc:9456} con dos guardaespaldas; cuando muera, haz clic en el {object:164690} sobre su cuerpo. Cualquiera con la misión puede cogerlo."
+pt = "Pergunte a {npc:3389} onde estão os Kolkar para iniciar a batalha. Mate centauros ao lado dos defensores até {npc:9456} chegar com dois guarda-costas; quando ele morrer, clique no {object:164690} sobre o corpo. Qualquer um com a missão pode pegá-lo."
+ru = "Спросите у {npc:3389}, где колкары, чтобы начать битву. Убивайте кентавров вместе с защитниками, пока не появится {npc:9456} с двумя телохранителями; когда он умрёт, щёлкните по предмету «{object:164690}» над его телом. Взять его может любой с этим заданием."
+ko = "{npc:3389}에게 콜카르의 위치를 물어 전투를 시작하세요. 수비병과 함께 켄타우로스를 처치하다 보면 {npc:9456}이(가) 경호원 둘과 나타납니다. 처치 후 시체 위의 {object:164690}을(를) 클릭하세요. 퀘스트가 있는 누구나 가져갈 수 있습니다."
+zh_cn = "向{npc:3389}询问科卡尔人在哪里以开始战斗。和守卫一起杀半人马，直到{npc:9456}带着两名保镖出现；他死后点击他尸体上方的{object:164690}。任何接了任务的人都能拿。"
+zh_tw = "向{npc:3389}詢問科卡爾人在哪裡以開始戰鬥。和守衛一起殺半人馬，直到{npc:9456}帶著兩名保鏢出現；他死後點擊他屍體上方的{object:164690}。任何接了任務的人都能拿。"
+
+[[icon]]
+quest = 4021
+phase = "objective"
+objective = 1
+icon = "event"

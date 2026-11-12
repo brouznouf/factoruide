@@ -161,3 +161,19 @@ ru = "Ждите в хижине {npc:4720} рядом с чертежами: к
 ko = "{npc:4720}의 오두막 안 설계도 옆에서 기다리세요. {npc:4709}의 폭탄이 터지면 밖으로 뛰어나갔다가 곧 돌아옵니다. 가방에 빈칸을 두고 즉시 설계도를 여세요. 그가 먼저 돌아오면 폭발을 다시 부탁하세요."
 zh_cn = "在{npc:4720}小屋里的图纸旁边等着：{npc:4709}的炸弹一响他就会跑出去，很快又回来。立刻打开图纸，背包要留一个空位；如果他先回来了，就再请人引爆一次。"
 zh_tw = "在{npc:4720}小屋裡的圖紙旁邊等著：{npc:4709}的炸彈一響他就會跑出去，很快又回來。立刻打開圖紙，背包要留一個空位；如果他先回來了，就再請人引爆一次。"
+
+# The Sacred Flame: dousing the brazier consumes the phial; the hoof must be looted from that loot window or the phial is lost.
+[[note]]
+quest = 1197
+phase = "objective"
+objective = 1
+level = "must_read"
+en = "Dousing {object:20807} uses up {item:5868} and opens a loot window: take {item:5869} at once. Closing it or being interrupted before looting loses the phial, and you will need a new one."
+fr = "Éteindre le {object:20807} consomme la {item:5868} et ouvre une fenêtre de butin : prenez aussitôt le {item:5869}. La fermer ou être interrompu avant de le ramasser fait perdre la fiole, et il vous en faudra une nouvelle."
+de = "Das Löschen der {object:20807} verbraucht die {item:5868} und öffnet ein Beutefenster: Nimm sofort den {item:5869}. Schließt du es oder wirst vorher unterbrochen, ist die Phiole weg und du brauchst eine neue."
+es = "Apagar el {object:20807} gasta la {item:5868} y abre una ventana de botín: coge la {item:5869} enseguida. Si la cierras o te interrumpen antes de cogerla, pierdes la ampolla y necesitarás otra."
+pt = "Apagar o {object:20807} gasta o {item:5868} e abre uma janela de saque: pegue o {item:5869} na hora. Fechá-la ou ser interrompido antes de saquear faz perder o frasco, e você vai precisar de outro."
+ru = "Тушение предмета «{object:20807}» расходует {item:5868} и открывает окно добычи: сразу заберите {item:5869}. Если закрыть его или прерваться до этого, фиал будет потерян и понадобится новый."
+ko = "{object:20807}을(를) 끄면 {item:5868}이(가) 소모되고 전리품 창이 열리니 바로 {item:5869}을(를) 챙기세요. 줍기 전에 창을 닫거나 방해받으면 약병을 잃어 새로 구해야 합니다."
+zh_cn = "熄灭{object:20807}会消耗{item:5868}并打开拾取窗口：立刻拿走{item:5869}。拾取前关闭窗口或被打断，瓶子就没了，需要再弄一个。"
+zh_tw = "熄滅{object:20807}會消耗{item:5868}並打開拾取視窗：立刻拿走{item:5869}。拾取前關閉視窗或被打斷，瓶子就沒了，需要再弄一個。"

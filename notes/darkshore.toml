@@ -263,3 +263,19 @@ ru = "{npc:3692} не замечает противников, которых в
 ko = "{npc:3692}은(는) 당신이 끌어온 적을 무시하고 다른 적에게 걸어갑니다. 적이 먼저 그를 공격하게 두세요. 미리 동굴 밖으로 나가는 길의 털보를 정리하고 가까이 붙어 있으세요."
 zh_cn = "{npc:3692}会无视你拉来的怪，继续走向更多敌人：让怪先攻击他。事先清掉出洞路上的熊怪，并紧跟着他。"
 zh_tw = "{npc:3692}會無視你拉來的怪，繼續走向更多敵人：讓怪先攻擊他。事先清掉出洞路上的熊怪，並緊跟著他。"
+
+# One Shot. One Kill.: three waves of furbolgs, and the quest only completes a while after the last one dies.
+[[note]]
+quest = 5713
+phase = "objective"
+objective = 1
+level = "info"
+en = "Three waves of furbolgs attack, a named leader in the last one; you have time to recover between them. Fight next to {npc:11711}, who deals much of the damage, and stay after the last kill: the quest can take a minute or more to complete."
+fr = "Trois vagues de furbolgs attaquent, un chef nommé dans la dernière ; vous avez le temps de récupérer entre elles. Combattez près de {npc:11711}, qui fait une bonne partie des dégâts, et restez après la dernière : la quête peut mettre une minute ou plus à se valider."
+de = "Drei Wellen Furbolgs greifen an, in der letzten ein benannter Anführer; dazwischen bleibt Zeit zum Erholen. Kämpfe neben {npc:11711}, die viel Schaden macht, und bleib nach dem letzten Kill: Die Quest kann eine Minute oder länger brauchen."
+es = "Atacan tres oleadas de fúrbolg, con un líder con nombre en la última; entre ellas te da tiempo a recuperarte. Lucha junto a {npc:11711}, que hace buena parte del daño, y quédate tras la última: la misión puede tardar un minuto o más en completarse."
+pt = "Três ondas de furbolgs atacam, com um líder nomeado na última; dá tempo de se recuperar entre elas. Lute perto de {npc:11711}, que causa boa parte do dano, e fique após a última: a missão pode levar um minuto ou mais para ser concluída."
+ru = "Нападают три волны фурболгов, в последней — именной вожак; между ними есть время восстановиться. Сражайтесь рядом с {npc:11711}, она наносит много урона, и не уходите после последнего убийства: задание может засчитаться через минуту и больше."
+ko = "퍼볼그가 세 차례 공격하며, 마지막에는 이름 있는 우두머리가 옵니다. 사이사이 회복할 시간이 있습니다. 피해를 많이 주는 {npc:11711} 곁에서 싸우고, 마지막 처치 후에도 머무르세요. 퀘스트 완료까지 1분 이상 걸릴 수 있습니다."
+zh_cn = "熊怪会分三波进攻，最后一波有一个有名字的首领，波次之间有时间恢复。在{npc:11711}身边作战，她能打出不少伤害；最后一个死后别走开：任务可能要一分钟或更久才完成。"
+zh_tw = "熊怪會分三波進攻，最後一波有一個有名字的首領，波次之間有時間恢復。在{npc:11711}身邊作戰，她能打出不少傷害；最後一個死後別走開：任務可能要一分鐘或更久才完成。"

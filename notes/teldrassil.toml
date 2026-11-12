@@ -41,3 +41,49 @@ quest = 3661
 phase = "objective"
 objective = 1
 icon = "pickup"
+
+# Druid of the Claw: the charm only works when the corpse is selected before using it.
+[[note]]
+quest = 2561
+phase = "objective"
+objective = 1
+level = "info"
+en = "Kill {npc:7318}, then select his corpse before using {item:8363}. Using the charm first and clicking the corpse afterwards fails with an invalid target."
+fr = "Tuez {npc:7318}, puis ciblez son cadavre avant d'utiliser le {item:8363}. Utiliser le charme d'abord puis cliquer sur le cadavre échoue avec « cible incorrecte »."
+de = "Töte {npc:7318} und wähle dann seine Leiche aus, bevor du den {item:8363} benutzt. Benutzt du zuerst den Glücksbringer und klickst danach auf die Leiche, schlägt es mit ungültigem Ziel fehl."
+es = "Mata a {npc:7318} y selecciona su cadáver antes de usar el {item:8363}. Si usas primero el talismán y luego haces clic en el cadáver, falla por objetivo no válido."
+pt = "Mate {npc:7318} e selecione o cadáver dele antes de usar o {item:8363}. Usar o patuá primeiro e clicar no cadáver depois falha com alvo inválido."
+ru = "Убейте {npc:7318}, затем выберите его труп и только потом используйте {item:8363}. Если сначала использовать оберег, а потом щёлкнуть по трупу, будет ошибка «неверная цель»."
+ko = "{npc:7318}을(를) 처치한 뒤 시체를 먼저 대상으로 선택하고 {item:8363}을(를) 사용하세요. 부적을 먼저 사용하고 시체를 클릭하면 잘못된 대상이라며 실패합니다."
+zh_cn = "杀死{npc:7318}后，先选中他的尸体，再使用{item:8363}。先使用符咒再点击尸体会因目标无效而失败。"
+zh_tw = "殺死{npc:7318}後，先選取他的屍體，再使用{item:8363}。先使用符咒再點擊屍體會因目標無效而失敗。"
+
+# Mist: she follows a single player at a time and comes back about five minutes later.
+[[note]]
+quest = 938
+phase = "accept"
+level = "warning"
+en = "{npc:3568} follows only one player at a time. If she is not at her spot, someone else is leading her to the moonwell: wait about five minutes for her to come back."
+fr = "{npc:3568} ne suit qu'un seul joueur à la fois. Si elle n'est pas à sa place, quelqu'un d'autre la conduit au puits de lune : attendez environ cinq minutes qu'elle revienne."
+de = "{npc:3568} folgt immer nur einem Spieler. Ist sie nicht an ihrem Platz, führt sie gerade jemand anderes zum Mondbrunnen: Warte etwa fünf Minuten, bis sie zurückkommt."
+es = "{npc:3568} solo sigue a un jugador a la vez. Si no está en su sitio, otro la está llevando al pozo de la luna: espera unos cinco minutos a que vuelva."
+pt = "{npc:3568} segue só um jogador por vez. Se ela não estiver no lugar, outra pessoa a está levando ao poço lunar: espere uns cinco minutos até ela voltar."
+ru = "{npc:3568} следует только за одним игроком. Если её нет на месте, её уже ведёт к лунному колодцу кто-то другой: подождите около пяти минут, пока она вернётся."
+ko = "{npc:3568}은(는) 한 번에 한 플레이어만 따라갑니다. 제자리에 없다면 다른 사람이 달샘으로 데려가는 중이니, 돌아올 때까지 5분쯤 기다리세요."
+zh_cn = "{npc:3568}一次只跟随一名玩家。如果她不在原地，说明别人正带她去月亮井：等大约五分钟她就会回来。"
+zh_tw = "{npc:3568}一次只跟隨一名玩家。如果她不在原地，表示別人正帶她去月井：等大約五分鐘她就會回來。"
+
+# The Sprouted Fronds: Denalan's planter is reset each time another player turns in a quest to him.
+[[note]]
+quest = 2399
+phase = "accept"
+level = "warning"
+en = "Click {object:7510} in the planter as soon as {npc:2080} plants it: another player turning in a quest to him resets the planter. If no sprout grows, wait for someone else to turn in {quest:931} and click one quickly."
+fr = "Cliquez sur une {object:7510} dans la jardinière dès que {npc:2080} l'a plantée : un autre joueur qui lui rend une quête la réinitialise. Si rien ne pousse, attendez qu'un autre rende {quest:931} et cliquez vite sur une pousse."
+de = "Klicke auf einen {object:7510} im Pflanzkasten, sobald {npc:2080} ihn gepflanzt hat: Gibt ein anderer Spieler bei ihm eine Quest ab, wird der Kasten zurückgesetzt. Wächst nichts, warte, bis jemand {quest:931} abgibt, und klicke schnell."
+es = "Haz clic en una {object:7510} de la jardinera en cuanto {npc:2080} la plante: si otro jugador le entrega una misión, la jardinera se reinicia. Si no brota nada, espera a que otro entregue {quest:931} y haz clic rápido."
+pt = "Clique em uma {object:7510} no canteiro assim que {npc:2080} plantá-la: outro jogador entregando uma missão a ele reinicia o canteiro. Se nada brotar, espere alguém entregar {quest:931} e clique rápido."
+ru = "Щёлкните по предмету «{object:7510}» в кадке, как только {npc:2080} его посадит: если другой игрок сдаст ему задание, кадка сбросится. Если ничего не выросло, дождитесь, пока кто-то сдаст «{quest:931}», и быстро щёлкните."
+ko = "{npc:2080}이(가) 심자마자 화분의 {object:7510}을(를) 클릭하세요. 다른 플레이어가 그에게 퀘스트를 완료하면 화분이 초기화됩니다. 싹이 없으면 누군가 {quest:931}을(를) 완료할 때까지 기다렸다가 재빨리 클릭하세요."
+zh_cn = "{npc:2080}种下后立刻点击花盆里的{object:7510}：别的玩家向他交任务会重置花盆。如果什么都没长出来，就等别人交{quest:931}，然后迅速点击。"
+zh_tw = "{npc:2080}種下後立刻點擊花盆裡的{object:7510}：別的玩家向他交任務會重置花盆。如果什麼都沒長出來，就等別人交{quest:931}，然後迅速點擊。"
