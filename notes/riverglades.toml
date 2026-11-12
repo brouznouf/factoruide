@@ -1,0 +1,57 @@
+# Quest notes of the Riverglades. See notes/README.md for the format.
+
+# WANTED: Trapclaw: the crab spawns on the sea floor east of the docks, walks south-west towards them, respawns slowly; it is not elite.
+[[note]]
+quest = 95254
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The crab spawns on the sea floor around 87, 50 and walks south-west towards the docks. It respawns slowly, so you may have to wait. It is not elite and can be soloed."
+fr = "Le crabe apparaît au fond de la mer vers 87, 50 et marche vers le sud-ouest en direction des quais. Sa réapparition est lente, il faudra peut-être attendre. Il n'est pas élite et se fait en solo."
+de = "Die Krabbe erscheint auf dem Meeresgrund bei etwa 87, 50 und läuft nach Südwesten zu den Docks. Ihr Respawn ist langsam, du musst eventuell warten. Sie ist kein Elite und solo machbar."
+es = "El cangrejo aparece en el fondo del mar hacia 87, 50 y camina hacia el suroeste, en dirección a los muelles. Reaparece despacio, así que quizá tengas que esperar. No es élite y se puede hacer solo."
+pt = "O caranguejo surge no fundo do mar por volta de 87, 50 e anda para o sudoeste rumo às docas. Ele reaparece devagar, então talvez seja preciso esperar. Não é elite e dá para fazer sozinho."
+ru = "Краб появляется на морском дне около 87, 50 и идёт на юго-запад к причалам. Он возрождается медленно, возможно, придётся подождать. Он не элитный, его можно убить в одиночку."
+ko = "게는 87, 50 부근 바다 밑에서 나타나 남서쪽 부두 쪽으로 걸어갑니다. 재생성이 느리니 기다려야 할 수도 있습니다. 정예가 아니라 혼자서도 잡을 수 있습니다."
+zh_cn = "这只螃蟹在大约87, 50的海底刷新，然后向西南走向码头。它刷新很慢，可能要等一会儿。它不是精英，可以单刷。"
+zh_tw = "這隻螃蟹在大約87, 50的海底重生，然後向西南走向碼頭。牠重生很慢，可能要等一會兒。牠不是菁英，可以單刷。"
+
+[[icon]]
+quest = 95254
+phase = "objective"
+objective = 1
+icon = "rare"
+editions = ["forever"]
+
+# In Need of Relief: the turn-in NPC is the escort of the next quest; while someone escorts him, he is gone until a few minutes after the escort ends.
+[[note]]
+quest = 96125
+phase = "turnin"
+level = "warning"
+editions = ["forever"]
+en = "If the NPC you turn in to is not in his cave, someone is doing his escort: he is back a few minutes after it ends."
+fr = "Si le PNJ à qui rendre la quête n'est pas dans sa grotte, quelqu'un fait son escorte : il revient quelques minutes après la fin de celle-ci."
+de = "Ist der NPC, bei dem du abgibst, nicht in seiner Höhle, macht gerade jemand seine Eskorte: er ist ein paar Minuten nach deren Ende zurück."
+es = "Si el PNJ al que entregas la misión no está en su cueva, alguien está haciendo su escolta: vuelve unos minutos después de que termine."
+pt = "Se o PNJ a quem você entrega a missão não estiver na caverna, alguém está fazendo a escolta dele: ele volta alguns minutos depois que ela termina."
+ru = "Если НИП, которому нужно сдать задание, нет в его пещере, кто-то его сопровождает: он вернётся через несколько минут после конца сопровождения."
+ko = "퀘스트를 완료할 NPC가 동굴에 없다면 누군가 그를 호위하는 중입니다. 호위가 끝나고 몇 분 뒤에 돌아옵니다."
+zh_cn = "如果交任务的NPC不在他的洞里，说明有人正在护送他：护送结束几分钟后他就会回来。"
+zh_tw = "如果交任務的NPC不在他的洞裡，表示有人正在護送他：護送結束幾分鐘後他就會回來。"
+
+# If a Tree Falls, and No One Hears...: the turn-in NPC sits on the back of the wagon and is away while another player escorts him.
+[[note]]
+quest = 94857
+phase = "turnin"
+level = "warning"
+editions = ["forever"]
+en = "The NPC you turn in to sits on the back of the wagon. If he is missing, another player is escorting him: wait for him to come back."
+fr = "Le PNJ à qui rendre la quête est assis à l'arrière du chariot. S'il n'y est pas, un autre joueur l'escorte : attendez qu'il revienne."
+de = "Der NPC, bei dem du abgibst, sitzt hinten auf dem Wagen. Fehlt er, eskortiert ihn gerade ein anderer Spieler: warte, bis er zurück ist."
+es = "El PNJ al que entregas la misión está sentado en la parte trasera del carro. Si no está, otro jugador lo está escoltando: espera a que vuelva."
+pt = "O PNJ a quem você entrega a missão fica sentado na traseira da carroça. Se ele não estiver lá, outro jogador o está escoltando: espere ele voltar."
+ru = "НИП, которому нужно сдать задание, сидит в задней части повозки. Если его нет, его сопровождает другой игрок: дождитесь его возвращения."
+ko = "퀘스트를 완료할 NPC는 마차 뒤쪽에 앉아 있습니다. 보이지 않으면 다른 플레이어가 그를 호위하는 중이니 돌아올 때까지 기다리세요."
+zh_cn = "交任务的NPC坐在马车后部。如果他不在，说明有其他玩家正在护送他：等他回来。"
+zh_tw = "交任務的NPC坐在馬車後方。如果他不在，表示有其他玩家正在護送他：等他回來。"

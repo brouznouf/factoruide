@@ -237,3 +237,36 @@ ru = "Нежить, с которой падают кости, находитс�
 ko = "뼈를 떨어뜨리는 언데드는 지하에 있습니다. 지하 묘지 입구는 약 13, 65의 불탄 집 안에 있습니다."
 zh_cn = "掉落骨头的亡灵在地下：地下墓穴的入口在大约13, 65处一座烧毁的房子里。"
 zh_tw = "掉落骨頭的不死族在地下：地下墓穴的入口在大約13, 65處一座燒毀的房子裡。"
+
+# Discipline: the item counts on any Deathguard of Deathknell or around Brill, not only the quest's listed one.
+[[note]]
+quest = 99134
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The quest item works on any Deathguard in {zone:154} or around Brill, not only the one the map shows."
+fr = "L'objet de quête fonctionne sur n'importe quel garde de la Mort du {zone:154} ou des environs de Brill, pas seulement celui que montre la carte."
+de = "Der Questgegenstand wirkt auf jede Todeswache in {zone:154} oder rund um Brill, nicht nur auf die auf der Karte."
+es = "El objeto de misión funciona con cualquier guardia de la Muerte de {zone:154} o de los alrededores de Rémol, no solo con el que muestra el mapa."
+pt = "O item de missão funciona em qualquer guarda da morte de {zone:154} ou dos arredores de Brill, não só no que o mapa mostra."
+ru = "Предмет задания действует на любого стража смерти в {zone:154} или около Брилла, а не только на того, что показан на карте."
+ko = "퀘스트 아이템은 지도에 표시된 경비병만이 아니라 {zone:154} 또는 브릴 주변의 모든 죽음의 경비병에게 쓸 수 있습니다."
+zh_cn = "任务物品对{zone:154}或布瑞尔附近的任何亡灵卫兵都有效，不只是地图上标出的那个。"
+zh_tw = "任務物品對{zone:154}或布瑞爾附近的任何亡靈衛兵都有效，不只是地圖上標出的那個。"
+
+# Seeking Refuge: the escort NPC waits at the top of the tower past fast-respawning enemies; while someone escorts him he is gone up to about ten minutes.
+[[note]]
+quest = 99144
+phase = "accept"
+level = "warning"
+editions = ["forever"]
+en = "{npc:275954} waits at the top of the tower, past enemies that respawn quickly. If he is not there, someone is escorting him: he comes back a few minutes later (up to about 10)."
+fr = "{npc:275954} attend au sommet de la tour, après des ennemis qui réapparaissent vite. S'il n'y est pas, quelqu'un l'escorte : il revient quelques minutes plus tard (jusqu'à 10 environ)."
+de = "{npc:275954} wartet oben auf dem Turm, hinter Gegnern mit schnellem Respawn. Ist er nicht da, eskortiert ihn gerade jemand: er kommt ein paar Minuten später zurück (bis etwa 10)."
+es = "{npc:275954} espera en lo alto de la torre, tras enemigos que reaparecen rápido. Si no está, alguien lo está escoltando: vuelve unos minutos después (hasta unos 10)."
+pt = "{npc:275954} espera no alto da torre, depois de inimigos que reaparecem rápido. Se ele não estiver lá, alguém o está escoltando: ele volta alguns minutos depois (até uns 10)."
+ru = "{npc:275954} ждёт на вершине башни, за врагами, которые быстро возрождаются. Если его нет, кто-то его сопровождает: он вернётся через несколько минут (до 10)."
+ko = "{npc:275954}은(는) 빠르게 재생성되는 적들을 지나 탑 꼭대기에서 기다립니다. 없다면 누군가 그를 호위하는 중이니 몇 분 뒤(최대 약 10분)에 돌아옵니다."
+zh_cn = "{npc:275954}在塔顶等候，途中的敌人刷新很快。如果他不在，说明有人正在护送他：几分钟后（最多约10分钟）他会回来。"
+zh_tw = "{npc:275954}在塔頂等候，途中的敵人重生很快。如果他不在，表示有人正在護送他：幾分鐘後（最多約10分鐘）他會回來。"

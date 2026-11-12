@@ -112,3 +112,19 @@ ru = "Возьмите {item:5687} из объекта {object:19595} — фон
 ko = "굴 입구 왼쪽 등불인 {object:19595}에서 {item:5687}을(를) 꺼내세요. 각 은닉처와 {object:19599}은(는) 정예 두세 마리가 지키고, 한 곳은 정예 요정용이 지킵니다. 깊숙한 보물 더미에서 퀘스트를 완료하세요."
 zh_cn = "从{object:19595}（巢穴入口左边的灯）取出{item:5687}。每个藏匿处和{object:19599}都有两三个精英把守，其中一处是精英精灵龙。在深处的宝藏处交任务。"
 zh_tw = "從{object:19595}（巢穴入口左邊的燈）取出{item:5687}。每個藏匿處和{object:19599}都有兩三個菁英把守，其中一處是菁英精靈龍。在深處的寶藏處交任務。"
+
+# Rekindle: the firepit takes the quest only once its fire has burnt out; while it burns, nothing can be clicked.
+[[note]]
+quest = 80001
+phase = "turnin"
+level = "warning"
+editions = ["forever"]
+en = "The firepit can only be lit again once its fire has gone out: if it is burning, wait for it to die down, then click it."
+fr = "Le foyer ne peut être rallumé qu'une fois son feu éteint : s'il brûle, attendez qu'il s'éteigne, puis cliquez dessus."
+de = "Die Feuerstelle lässt sich erst wieder anzünden, wenn ihr Feuer erloschen ist: brennt es, warte, bis es ausgeht, und klick sie dann an."
+es = "La hoguera solo se puede volver a encender cuando su fuego se ha apagado: si arde, espera a que se apague y luego haz clic en ella."
+pt = "A fogueira só pode ser reacesa quando o fogo dela se apagar: se estiver queimando, espere apagar e então clique nela."
+ru = "Костёр можно разжечь снова, только когда его огонь погаснет: если он горит, подождите, пока он потухнет, затем нажмите на него."
+ko = "모닥불은 불이 꺼진 뒤에만 다시 피울 수 있습니다. 타고 있다면 꺼질 때까지 기다린 뒤 클릭하세요."
+zh_cn = "火堆要等火熄灭后才能重新点燃：如果还在燃烧，等它熄灭后再点击。"
+zh_tw = "火堆要等火熄滅後才能重新點燃：如果還在燃燒，等它熄滅後再點擊。"

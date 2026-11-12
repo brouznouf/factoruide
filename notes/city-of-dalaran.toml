@@ -1,0 +1,17 @@
+# Quest notes of the City of Dalaran (the dungeon). See notes/README.md for the format.
+
+# Starving Arcane: the remnants spawn partly at random, some in corners off the main path; a full clear often has fewer than the quest needs.
+[[note]]
+quest = 92457
+phase = "objective"
+level = "warning"
+editions = ["forever"]
+en = "{npc:247003} and {npc:247001} spawn partly at random and some hide in corners off the main path: check every side room. One run is often not enough for all of them."
+fr = "{npc:247003} et {npc:247001} apparaissent en partie au hasard et certains se cachent dans des recoins hors du chemin principal : fouillez chaque salle annexe. Souvent, un seul passage ne suffit pas pour tous les trouver."
+de = "{npc:247003} und {npc:247001} erscheinen teils zufällig, manche verstecken sich in Ecken abseits des Hauptwegs: sieh in jeden Nebenraum. Ein Durchlauf reicht oft nicht für alle."
+es = "{npc:247003} y {npc:247001} aparecen en parte al azar y algunos se esconden en rincones fuera del camino principal: revisa cada sala lateral. A menudo una sola incursión no basta para todos."
+pt = "{npc:247003} e {npc:247001} surgem em parte ao acaso e alguns se escondem em cantos fora do caminho principal: verifique cada sala lateral. Muitas vezes uma só incursão não basta para todos."
+ru = "{npc:247003} и {npc:247001} появляются отчасти случайно, некоторые прячутся в углах в стороне от основного пути: осмотрите каждое боковое помещение. Одного прохождения часто не хватает на всех."
+ko = "{npc:247003}와(과) {npc:247001}은(는) 일부가 무작위로 나타나며, 몇몇은 주 경로에서 벗어난 구석에 숨어 있습니다. 옆방을 모두 살펴보세요. 한 번 돌아서는 다 채우지 못하는 경우가 많습니다."
+zh_cn = "{npc:247003}和{npc:247001}的刷新部分随机，有些藏在主路以外的角落：每个侧室都要查看。往往一次副本不够打齐。"
+zh_tw = "{npc:247003}和{npc:247001}的重生部分隨機，有些藏在主路以外的角落：每個側室都要查看。往往一次副本不夠打齊。"
