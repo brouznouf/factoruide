@@ -328,3 +328,20 @@ ru = "Алтарь находится глубоко под водой сред�
 ko = "제단은 정예 멀록들 사이 깊은 물속에 있습니다. {item:5996} 등 숨 쉴 방법을 챙기고, 멀록을 피해 제단 바로 위에서 수직으로 내려가세요. {npc:2624}은(는) 물속에서 발을 얼려 묶을 수 있으니 수면 쪽으로 끌어올려 싸우세요."
 zh_cn = "祭坛在深水中，周围都是精英鱼人：带上{item:5996}或其他水下呼吸手段，从祭坛正上方垂直潜下去以避开它们。{npc:2624}能在水下把你冻在原地，所以把他拉到靠近水面的地方再打。"
 zh_tw = "祭壇在深水中，周圍都是精英魚人：帶上{item:5996}或其他水下呼吸手段，從祭壇正上方垂直潛下去以避開牠們。{npc:2624}能在水下把你凍在原地，所以把他拉到靠近水面的地方再打。"
+
+# Where's the Key?: the key is a rare drop from the trolls of the ruins, a few percent at most.
+[[note]]
+quest = 97329
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The key is a rare drop from the trolls of the ruins: count on 20 to 60 kills, so collect it while doing the other troll quests there."
+fr = "La clé est un butin rare des trolls des ruines : comptez 20 à 60 victimes, récupérez-la donc en faisant les autres quêtes sur les trolls du coin."
+de = "Der Schlüssel ist eine seltene Beute der Trolle in den Ruinen: rechne mit 20 bis 60 Kills, also sammle ihn bei den anderen Troll-Quests dort mit."
+es = "La llave es un botín raro de los trols de las ruinas: cuenta con 20 a 60 muertes, así que consíguela mientras haces las otras misiones de trols de allí."
+pt = "A chave é um saque raro dos trolls das ruínas: conte com 20 a 60 abates, então pegue-a enquanto faz as outras missões de trolls dali."
+ru = "Ключ — редкая добыча троллей в руинах: рассчитывайте на 20–60 убийств, так что добывайте его попутно с другими заданиями на троллей там."
+ko = "열쇠는 폐허의 트롤이 드물게 떨어뜨립니다. 20~60마리는 잡아야 하니 그곳의 다른 트롤 퀘스트를 하면서 함께 얻으세요."
+zh_cn = "钥匙是废墟中巨魔的稀有掉落：预计要杀20到60个，所以在做那里的其他巨魔任务时顺便收集。"
+zh_tw = "鑰匙是廢墟中食人妖的稀有掉落：預計要殺20到60個，所以在做那裡的其他食人妖任務時順便收集。"

@@ -220,3 +220,20 @@ ru = "{npc:250842} лежит мёртвым на огороженном кла�
 ko = "{npc:250842}은(는) {npc:250657} 옆 담장 두른 묘지 안에 죽은 채 누워 있습니다. 그곳의 적을 처치하고 시신 옆에 서세요. 클릭할 것은 없습니다."
 zh_cn = "{npc:250842}死在{npc:250657}旁边的围墙墓地里：清掉那里的怪物，站到他的尸体旁即可，无需点击任何东西。"
 zh_tw = "{npc:250842}死在{npc:250657}旁邊的圍牆墓地裡：清掉那裡的怪物，站到他的屍體旁即可，無需點擊任何東西。"
+
+# As Above, So Below: the Shadowvale undead are in an underground catacomb whose entrance is hidden inside a burned house.
+[[note]]
+quest = 99152
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The undead that drop the bones are underground: the catacomb entrance is inside a burned house at about 13, 65."
+fr = "Les morts-vivants qui lâchent les os sont sous terre : l'entrée des catacombes se trouve dans une maison incendiée, vers 13 65."
+de = "Die Untoten, die die Knochen fallen lassen, sind unter der Erde: Der Eingang zu den Katakomben liegt in einem abgebrannten Haus bei etwa 13, 65."
+es = "Los no-muertos que sueltan los huesos están bajo tierra: la entrada a las catacumbas está dentro de una casa quemada, hacia 13, 65."
+pt = "Os mortos-vivos que derrubam os ossos ficam no subsolo: a entrada das catacumbas fica dentro de uma casa queimada, por volta de 13, 65."
+ru = "Нежить, с которой падают кости, находится под землёй: вход в катакомбы — в сгоревшем доме примерно в 13, 65."
+ko = "뼈를 떨어뜨리는 언데드는 지하에 있습니다. 지하 묘지 입구는 약 13, 65의 불탄 집 안에 있습니다."
+zh_cn = "掉落骨头的亡灵在地下：地下墓穴的入口在大约13, 65处一座烧毁的房子里。"
+zh_tw = "掉落骨頭的不死族在地下：地下墓穴的入口在大約13, 65處一座燒毀的房子裡。"

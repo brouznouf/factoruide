@@ -87,3 +87,20 @@ ru = "Щёлкните по предмету «{object:7510}» в кадке, к
 ko = "{npc:2080}이(가) 심자마자 화분의 {object:7510}을(를) 클릭하세요. 다른 플레이어가 그에게 퀘스트를 완료하면 화분이 초기화됩니다. 싹이 없으면 누군가 {quest:931}을(를) 완료할 때까지 기다렸다가 재빨리 클릭하세요."
 zh_cn = "{npc:2080}种下后立刻点击花盆里的{object:7510}：别的玩家向他交任务会重置花盆。如果什么都没长出来，就等别人交{quest:931}，然后迅速点击。"
 zh_tw = "{npc:2080}種下後立刻點擊花盆裡的{object:7510}：別的玩家向他交任務會重置花盆。如果什麼都沒長出來，就等別人交{quest:931}，然後迅速點擊。"
+
+# Escaping Ban'ethil: the escorted sentinel charges any hostile mob in sight, pauses on the way and fails the quest if left behind; respawn about 10 minutes.
+[[note]]
+quest = 99053
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Lynessa attacks every hostile mob she sees, even those others drag past, and stops a few times on the way up: stay close or the escort fails. Clear the furbolgs around her alcove first. She respawns in about 10 minutes."
+fr = "Lynessa attaque tous les monstres hostiles qu'elle voit, même ceux que d'autres traînent à côté, et s'arrête plusieurs fois en montant : restez près d'elle ou l'escorte échoue. Nettoyez d'abord les furbolgs autour de son alcôve. Elle réapparaît en 10 minutes environ."
+de = "Lynessa greift jeden feindlichen Gegner an, den sie sieht, auch solche, die andere vorbeiziehen, und hält unterwegs mehrmals an: bleib in ihrer Nähe, sonst scheitert die Eskorte. Räume zuerst die Furbolgs um ihre Nische. Ihr Respawn dauert etwa 10 Minuten."
+es = "Lynessa ataca a todo enemigo que ve, incluso los que otros arrastran cerca, y se detiene varias veces al subir: quédate cerca o la escolta fracasa. Limpia antes a los fúrbolgs alrededor de su hueco. Reaparece en unos 10 minutos."
+pt = "Lynessa ataca todo inimigo que vê, até os que outros arrastam por perto, e para algumas vezes na subida: fique perto ou a escolta falha. Limpe antes os furbolgs em volta do nicho dela. Ela reaparece em cerca de 10 minutos."
+ru = "Lynessa нападает на всех враждебных существ, которых видит, даже на тех, кого тащат мимо другие, и несколько раз останавливается по пути: держитесь рядом, иначе сопровождение провалится. Сначала зачистите фурболгов у её ниши. Она возрождается примерно через 10 минут."
+ko = "Lynessa은(는) 다른 플레이어가 끌고 지나가는 몬스터까지 눈에 보이는 적대 몬스터를 모두 공격하고, 올라가는 길에 몇 번 멈춥니다. 가까이 붙어 있지 않으면 호위가 실패합니다. 먼저 그녀가 있는 구석 주변의 퍼볼그를 처치하세요. 약 10분 후 다시 나타납니다."
+zh_cn = "Lynessa会攻击她看到的所有敌对怪物，连别人拉过去的也不放过，而且上行途中会停下好几次：紧跟着她，否则护送失败。先清掉她所在凹室周围的熊怪。她大约10分钟重生。"
+zh_tw = "Lynessa會攻擊她看到的所有敵對怪物，連別人拉過去的也不放過，而且上行途中會停下好幾次：緊跟著她，否則護送失敗。先清掉她所在凹室周圍的熊怪。她大約10分鐘重生。"

@@ -174,3 +174,53 @@ ru = "Древесина и железо лежат под водой вокру
 ko = "목재와 철은 항구 주변 물속 곳곳에, 상당수는 바다 밑바닥에 있습니다. {item:5996} 등 수중 호흡 수단을 챙기세요. 지면 표현 설정을 낮추면 찾기 쉽고, 일부 철은 26레벨 악어가 지키고 있습니다."
 zh_cn = "木材和铁都在港口周围的水下，很多沉在海底：带上{item:5996}或其他水下呼吸手段。调低地面细节更容易看到它们；部分铁有26级鳄鱼看守。"
 zh_tw = "木材和鐵都在港口周圍的水下，很多沉在海底：帶上{item:5996}或其他水下呼吸手段。調低地面細節更容易看到它們；部分鐵有26級鱷魚看守。"
+
+# Carnage: the flesh drops at a low rate from the Maddened Rotclaws, and Carnage only appears once it is placed at the cave entrance in the east.
+[[note]]
+quest = 98283
+phase = "objective"
+level = "warning"
+editions = ["forever"]
+en = "{npc:271334} drop the flesh rarely: expect a dozen kills or more. Carnage does not stand around; he appears only once you place the flesh at the cave entrance near 69.5, 34.7."
+fr = "Les {npc:271334} lâchent rarement la chair : comptez une douzaine de victimes ou plus. Carnage n'est pas là en permanence ; il n'apparaît qu'une fois la chair déposée à l'entrée de la grotte, vers 69,5 34,7."
+de = "{npc:271334} lässt das Fleisch nur selten fallen: rechne mit einem Dutzend Kills oder mehr. Carnage steht nicht einfach herum; er erscheint erst, wenn du das Fleisch am Höhleneingang bei 69,5 34,7 ablegst."
+es = "{npc:271334} suelta la carne muy pocas veces: cuenta con una docena de muertes o más. Carnage no está siempre ahí; solo aparece cuando colocas la carne en la entrada de la cueva, cerca de 69,5 34,7."
+pt = "{npc:271334} raramente derruba a carne: conte com uma dúzia de abates ou mais. Carnage não fica parado por ali; ele só aparece depois que você coloca a carne na entrada da caverna, perto de 69,5 34,7."
+ru = "{npc:271334} редко оставляет плоть: рассчитывайте на дюжину убийств и больше. Carnage не стоит на месте постоянно — он появляется, только когда вы положите плоть у входа в пещеру около 69.5, 34.7."
+ko = "{npc:271334}은(는) 살점을 드물게 떨어뜨립니다. 열두 마리 이상은 잡을 각오를 하세요. Carnage은(는) 늘 있는 것이 아니라, 69.5, 34.7 근처 동굴 입구에 살점을 놓아야만 나타납니다."
+zh_cn = "{npc:271334}很少掉落血肉：预计要杀十几只甚至更多。Carnage平时并不在场，只有把血肉放在69.5, 34.7附近的洞口后才会出现。"
+zh_tw = "{npc:271334}很少掉落血肉：預計要殺十幾隻甚至更多。Carnage平時並不在場，只有把血肉放在69.5, 34.7附近的洞口後才會出現。"
+
+# Razormaw Needling: the incisors drop well only around the eastern cave, where the Highland Razormaws are many; the western hills have few of them.
+[[note]]
+quest = 98245
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "Farm the incisors around the eastern cave near 69, 31: the western hills have only a few {npc:1018}. Watch for {npc:1140} inside the cave."
+fr = "Récupérez les incisives autour de la grotte de l'est, vers 69 31 : les collines de l'ouest n'ont que quelques {npc:1018}. Attention à {npc:1140} dans la grotte."
+de = "Sammle die Schneidezähne rund um die östliche Höhle bei 69, 31: In den westlichen Hügeln gibt es nur wenige {npc:1018}. Achte in der Höhle auf {npc:1140}."
+es = "Consigue los incisivos alrededor de la cueva del este, cerca de 69, 31: en las colinas del oeste hay pocos {npc:1018}. Cuidado con {npc:1140} dentro de la cueva."
+pt = "Junte os incisivos em volta da caverna a leste, perto de 69, 31: as colinas a oeste têm poucos {npc:1018}. Cuidado com {npc:1140} dentro da caverna."
+ru = "Добывайте резцы у восточной пещеры около 69, 31: на западных холмах {npc:1018} мало. Остерегайтесь {npc:1140} внутри пещеры."
+ko = "앞니는 69, 31 근처 동쪽 동굴 주변에서 모으세요. 서쪽 언덕에는 {npc:1018}이(가) 몇 마리뿐입니다. 동굴 안의 {npc:1140}을(를) 조심하세요."
+zh_cn = "去东边69, 31附近的洞穴周围收集门牙：西边的山丘上{npc:1018}很少。小心洞里的{npc:1140}。"
+zh_tw = "去東邊69, 31附近的洞穴周圍收集門牙：西邊的山丘上{npc:1018}很少。小心洞裡的{npc:1140}。"
+
+# Understanding Our Present: Goaz Warder waits on a ledge reached from the hill above the camp, not from below; it roots itself often, which helps ranged players.
+[[note]]
+quest = 98216
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "Goaz Warder stands on a ledge above the camp: climb the hill from the tree near 31.2, 48.6, go up the boards past {npc:1353} and drop onto the ledge. Use the Goaz Stone on it; it often roots itself, so ranged classes can kite it."
+fr = "Goaz Warder se tient sur une corniche au-dessus du camp : montez la colline depuis l'arbre vers 31,2 48,6, grimpez les planches après {npc:1353} et sautez sur la corniche. Utilisez la Goaz Stone sur lui ; il s'immobilise souvent, les classes à distance peuvent le kiter."
+de = "Goaz Warder steht auf einem Felsvorsprung über dem Lager: Steig vom Baum bei 31,2 48,6 den Hügel hinauf, über die Bretter an {npc:1353} vorbei und spring auf den Vorsprung. Benutze den Goaz Stone an ihm; er wurzelt sich oft selbst fest, Fernkämpfer können ihn kiten."
+es = "Goaz Warder está en una cornisa sobre el campamento: sube la colina desde el árbol cerca de 31,2 48,6, sigue por las tablas más allá de {npc:1353} y salta a la cornisa. Usa la Goaz Stone en él; suele inmovilizarse, así que las clases a distancia pueden kitearlo."
+pt = "Goaz Warder fica numa saliência acima do acampamento: suba a colina a partir da árvore perto de 31,2 48,6, siga pelas tábuas passando por {npc:1353} e pule na saliência. Use a Goaz Stone nele; ele costuma se enraizar, então classes à distância podem kitá-lo."
+ru = "Goaz Warder стоит на уступе над лагерем: поднимитесь на холм от дерева около 31.2, 48.6, пройдите по доскам мимо {npc:1353} и спрыгните на уступ. Используйте на нём Goaz Stone; он часто обездвиживает себя, и бойцы дальнего боя могут его кайтить."
+ko = "Goaz Warder은(는) 야영지 위 바위턱에 있습니다. 31.2, 48.6 근처 나무에서 언덕을 올라 {npc:1353}을(를) 지나 판자를 타고 오른 뒤 바위턱으로 뛰어내리세요. Goaz Stone을(를) 사용하세요. 자주 스스로 묶이므로 원거리 직업은 카이팅할 수 있습니다."
+zh_cn = "Goaz Warder站在营地上方的岩架上：从31.2, 48.6附近的树爬上山坡，沿木板经过{npc:1353}，再跳到岩架上。对它使用Goaz Stone；它经常定住自己，远程职业可以风筝它。"
+zh_tw = "Goaz Warder站在營地上方的岩架上：從31.2, 48.6附近的樹爬上山坡，沿木板經過{npc:1353}，再跳到岩架上。對它使用Goaz Stone；它經常定住自己，遠程職業可以風箏它。"
