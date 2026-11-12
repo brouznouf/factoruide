@@ -1,0 +1,53 @@
+# Quest notes of the Alterac Mountains. See notes/README.md for the format.
+
+# Preserving Knowledge: the bookcase is in the ruins' town hall, guarded by the elite Muckrake; it can be looted without killing him.
+[[note]]
+quest = 540
+phase = "objective"
+objective = 2
+level = "warning"
+en = "Loot {object:1760} at the back of the town hall in the ruins; {npc:2421} (elite, level 40) guards it. No need to kill him: stealth, fear or stun him, or loot while he faces away, then run or hearth."
+fr = "Fouillez {object:1760} au fond de l'hôtel de ville des ruines ; {npc:2421} (élite, niveau 40) la garde. Inutile de le tuer : camouflez-vous, apeurez-le ou étourdissez-le, ou fouillez quand il a le dos tourné, puis fuyez ou utilisez votre pierre de foyer."
+de = "Plündere {object:1760} hinten im Rathaus der Ruinen; {npc:2421} (Elite, Stufe 40) bewacht es. Du musst ihn nicht töten: Schleich dich an, furchte oder betäube ihn oder plündere, während er dir den Rücken zukehrt, und lauf dann weg oder nutz den Ruhestein."
+es = "Saquea {object:1760} al fondo del ayuntamiento de las ruinas; {npc:2421} (élite, nivel 40) la vigila. No hace falta matarlo: usa sigilo, miedo o aturdimiento, o saquea mientras te da la espalda, y luego huye o usa la piedra de hogar."
+pt = "Saqueie {object:1760} no fundo da prefeitura das ruínas; {npc:2421} (elite, nível 40) a guarda. Não é preciso matá-lo: use furtividade, medo ou atordoamento, ou saqueie enquanto ele está de costas, e depois fuja ou use a pedra de regresso."
+ru = "Обыщите объект «{object:1760}» в глубине ратуши в руинах; его охраняет {npc:2421} (элитный, 40-й уровень). Убивать его не нужно: используйте незаметность, страх или оглушение или обыщите, пока он стоит спиной, затем бегите или используйте камень возвращения."
+ko = "폐허 시청 안쪽의 {object:1760}을(를) 뒤지세요. {npc:2421}(정예, 40레벨)이(가) 지키고 있습니다. 죽일 필요는 없습니다. 은신, 공포, 기절을 쓰거나 등을 돌렸을 때 뒤진 뒤 달아나거나 귀환석을 쓰세요."
+zh_cn = "在废墟市政厅后部搜索{object:1760}；{npc:2421}（精英，40级）守着它。不必杀死他：潜行、恐惧或击晕他，或趁他背对你时拾取，然后逃跑或使用炉石。"
+zh_tw = "在廢墟市政廳後方搜索{object:1760}；{npc:2421}（菁英，40級）守著它。不必殺死他：潛行、恐懼或擊暈他，或趁他背對你時拾取，然後逃跑或使用爐石。"
+
+# Assassin's Contract: the Shadowy Assassins appear only during the Southshore alert event (the crier calls the guards), which follows some minutes after Noble Deaths or Dark Council is turned in.
+[[note]]
+quest = 522
+phase = "accept"
+level = "warning"
+en = "{item:3668} drops from {npc:2434}, which appear stealthed in pairs around Southshore only during an event, when the town crier calls the guards to their posts. It seems to start some minutes after {quest:512} or {quest:537} is handed in. Do most of the damage yourself."
+fr = "{item:3668} est laissé par {npc:2434}, qui n'apparaissent, camouflés et par deux, autour d'Austrivage que lors d'un événement, quand le crieur appelle les gardes à leurs postes. Il semble suivre de quelques minutes la remise de {quest:512} ou {quest:537}. Infligez l'essentiel des dégâts."
+de = "{item:3668} droppt von {npc:2434}, die nur während eines Ereignisses getarnt und zu zweit rund um Süderstade auftauchen, wenn der Ausrufer die Wachen auf ihre Posten ruft. Es scheint einige Minuten nach der Abgabe von {quest:512} oder {quest:537} zu beginnen. Mach selbst den meisten Schaden."
+es = "{item:3668} lo suelta {npc:2434}, que solo aparecen en sigilo y por parejas alrededor de Costasur durante un evento, cuando el pregonero llama a los guardias a sus puestos. Parece empezar unos minutos después de entregar {quest:512} o {quest:537}. Haz tú la mayor parte del daño."
+pt = "{item:3668} cai de {npc:2434}, que só aparecem furtivos e em pares ao redor da Costa Sul durante um evento, quando o pregoeiro chama os guardas aos postos. Parece começar alguns minutos depois da entrega de {quest:512} ou {quest:537}. Cause você mesmo a maior parte do dano."
+ru = "{item:3668} выпадает из существ «{npc:2434}», которые появляются невидимыми и парами вокруг Южнобережья только во время события, когда глашатай зовёт стражу на посты. Похоже, оно начинается через несколько минут после сдачи заданий {quest:512} или {quest:537}. Нанесите большую часть урона сами."
+ko = "{item:3668}은(는) {npc:2434}에게서 떨어집니다. 이들은 마을 포고꾼이 경비병을 배치하라고 외치는 이벤트 중에만 사우스쇼어 주변에 은신한 채 둘씩 나타납니다. {quest:512} 또는 {quest:537} 완료 몇 분 뒤에 시작되는 것으로 보입니다. 피해 대부분을 직접 입히세요."
+zh_cn = "{item:3668}由{npc:2434}掉落，它们只在一个事件期间潜行成对出现在南海镇周围，此时镇上的传令官会召集卫兵各就各位。事件似乎在交付{quest:512}或{quest:537}几分钟后开始。请亲自打出大部分伤害。"
+zh_tw = "{item:3668}由{npc:2434}掉落，它們只在一個事件期間潛行成對出現在南海鎮周圍，此時鎮上的傳令官會召集衛兵各就各位。事件似乎在交付{quest:512}或{quest:537}幾分鐘後開始。請親自打出大部分傷害。"
+
+[[icon]]
+quest = 522
+phase = "accept"
+icon = "event"
+
+# Baron's Demise: Baron Vardus is up at one of several spots (camps north of Strahnbrad, the inn's cellar behind the casks).
+[[note]]
+quest = 523
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:2306} stands at only one of his spots at a time: the Syndicate camps north of the ruined town, or the cellar of its inn, behind the casks. Check them in turn."
+fr = "{npc:2306} ne se trouve qu'à un seul de ses emplacements à la fois : les camps du Syndicat au nord du village en ruine, ou la cave de son auberge, derrière les tonneaux. Vérifiez-les tour à tour."
+de = "{npc:2306} steht immer nur an einem seiner Orte: in den Lagern des Syndikats nördlich des verfallenen Dorfs oder im Keller des dortigen Gasthauses hinter den Fässern. Sieh nacheinander nach."
+es = "{npc:2306} solo está en uno de sus puntos a la vez: los campamentos del Sindicato al norte del pueblo en ruinas, o el sótano de su posada, detrás de los barriles. Revísalos uno a uno."
+pt = "{npc:2306} fica em apenas um dos seus pontos por vez: os acampamentos do Sindicato ao norte da vila em ruínas, ou o porão da estalagem, atrás dos barris. Verifique um por um."
+ru = "{npc:2306} находится только в одном из своих мест: в лагерях Синдиката к северу от разрушенного городка или в подвале его таверны, за бочками. Проверяйте их по очереди."
+ko = "{npc:2306}은(는) 한 번에 한 곳에만 있습니다. 폐허가 된 마을 북쪽의 비밀결사 야영지들이나 마을 여관 지하실의 술통 뒤를 차례로 확인하세요."
+zh_cn = "{npc:2306}每次只会出现在其中一个地点：废弃小镇北边的辛迪加营地，或镇上旅店地窖里的酒桶后面。依次查看。"
+zh_tw = "{npc:2306}每次只會出現在其中一個地點：廢棄小鎮北邊的辛迪加營地，或鎮上旅店地窖裡的酒桶後面。依次查看。"

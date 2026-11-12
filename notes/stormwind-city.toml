@@ -95,3 +95,17 @@ ru = "Зайдите на нижний этаж башни: поиск заве�
 ko = "탑의 아래층으로 들어가면 수색이 완료되고 {npc:4967}이(가) 그곳에 나타나 퀘스트를 받습니다. 나타나지 않으면 밖으로 나갔다가 다시 들어오거나 몇 분 기다리세요. 다른 플레이어가 다음 단계를 진행 중일 수 있습니다."
 zh_cn = "走进塔的底层：搜查完成，{npc:4967}会出现在那里接收任务。如果他没出现，出去再进来，或等几分钟：可能有其他玩家正在做下一步。"
 zh_tw = "走進塔的底層：搜查完成，{npc:4967}會出現在那裡接收任務。如果他沒出現，出去再進來，或等幾分鐘：可能有其他玩家正在做下一步。"
+
+# A Meal Served Cold: a failed timed quest can be taken again without abandoning, which would delete the haunch; another timed quest blocks it.
+[[note]]
+quest = 212
+level = "warning"
+en = "If the 30-minute timer runs out while you hold {item:2476}, do not abandon the quest, or the haunch vanishes: take it again from {npc:1141} and hand it in at once. Another timed quest in your log keeps you from taking this one."
+fr = "Si le délai de 30 minutes expire alors que vous avez {item:2476}, n'abandonnez pas la quête, sinon le cuissot disparaît : reprenez-la auprès de {npc:1141} et rendez-la aussitôt. Une autre quête à durée limitée dans votre journal vous empêche de prendre celle-ci."
+de = "Läuft der 30-Minuten-Timer ab, während du {item:2476} hast, brich die Quest nicht ab, sonst verschwindet die Keule: Nimm sie erneut bei {npc:1141} an und gib sie sofort ab. Eine andere zeitlich begrenzte Quest im Log verhindert, dass du diese annimmst."
+es = "Si el temporizador de 30 minutos se agota mientras tienes {item:2476}, no abandones la misión o el muslo desaparecerá: vuelve a aceptarla de {npc:1141} y entrégala enseguida. Otra misión con tiempo límite en tu registro te impide aceptar esta."
+pt = "Se o cronômetro de 30 minutos acabar enquanto você tem {item:2476}, não abandone a missão, ou o pernil some: aceite-a de novo com {npc:1141} e entregue na hora. Outra missão com tempo limite no registro impede você de aceitar esta."
+ru = "Если 30-минутный таймер истёк, а у вас есть {item:2476}, не отказывайтесь от задания, иначе окорок исчезнет: возьмите его снова у персонажа {npc:1141} и сразу сдайте. Другое задание с ограничением времени в журнале не даёт взять это."
+ko = "{item:2476}을(를) 가진 채 30분 제한 시간이 끝나도 퀘스트를 포기하지 마세요. 포기하면 넓적다리가 사라집니다. {npc:1141}에게서 다시 받아 바로 완료하세요. 시간 제한 퀘스트가 이미 목록에 있으면 이 퀘스트를 받을 수 없습니다."
+zh_cn = "如果30分钟计时结束时你还持有{item:2476}，不要放弃任务，否则腿肉会消失：从{npc:1141}那里重新接取任务并立即交付。任务日志中有其他限时任务时无法接取此任务。"
+zh_tw = "如果30分鐘計時結束時你還持有{item:2476}，不要放棄任務，否則腿肉會消失：從{npc:1141}那裡重新接取任務並立即交付。任務日誌中有其他限時任務時無法接取此任務。"

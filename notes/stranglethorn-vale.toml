@@ -280,3 +280,35 @@ ru = "{object:287} — небольшая стопка тёмно-зелёных
 ko = "{object:287}은(는) 기지에 하나뿐인 2층 집의 위층 뒷벽에 놓인 작은 진녹색 책 더미입니다. 벽과 색이 비슷해 눈에 잘 띄지 않습니다."
 zh_cn = "{object:287}是一小摞深绿色的书，在营地里唯一一栋两层房子的楼上，靠着后墙：它和墙几乎融为一体。"
 zh_tw = "{object:287}是一小疊深綠色的書，在營地裡唯一一棟兩層房子的樓上，靠著後牆：它和牆幾乎融為一體。"
+
+# Favor for Krazek: the ore is a mining node in the Drywhisker Gorge kobold cave (Mining or auction house); the path up hides behind a rock and a split tree east of Hammerfall.
+[[note]]
+quest = 627
+phase = "objective"
+objective = 1
+level = "warning"
+en = "{item:4278} comes from {object:2653} nodes in a kobold cave: you need Mining, or buy the ore at the auction house. The narrow path up to the cave hides behind a big rock and a split tree, east of the Horde fort."
+fr = "{item:4278} s'obtient sur les gisements ({object:2653}) d'une grotte de kobolds : il faut le Minage, ou achetez le minerai à l'hôtel des ventes. L'étroit sentier qui monte à la grotte est caché derrière un gros rocher et un arbre fendu, à l'est du fort de la Horde."
+de = "{item:4278} stammt von Vorkommen ({object:2653}) in einer Koboldhöhle: Du brauchst Bergbau oder kaufst das Erz im Auktionshaus. Der schmale Pfad hinauf zur Höhle liegt versteckt hinter einem großen Felsen und einem gespaltenen Baum, östlich der Hordefestung."
+es = "{item:4278} sale de depósitos ({object:2653}) en una cueva de kóbolds: necesitas Minería, o compra el mineral en la casa de subastas. El estrecho sendero que sube a la cueva se oculta tras una gran roca y un árbol partido, al este del fuerte de la Horda."
+pt = "{item:4278} vem de depósitos ({object:2653}) numa caverna de kobolds: é preciso ter Mineração, ou compre o minério na casa de leilões. A trilha estreita que sobe até a caverna fica escondida atrás de uma grande rocha e uma árvore rachada, a leste do forte da Horda."
+ru = "{item:4278} добывается из залежей ({object:2653}) в пещере кобольдов: нужно Горное дело, или купите руду на аукционе. Узкая тропа к пещере скрыта за большим валуном и расщеплённым деревом, к востоку от крепости Орды."
+ko = "{item:4278}은(는) 코볼트 동굴의 {object:2653}에서 캡니다. 채광 기술이 필요하며, 없으면 경매장에서 사세요. 동굴로 오르는 좁은 길은 호드 요새 동쪽, 큰 바위와 갈라진 나무 뒤에 숨어 있습니다."
+zh_cn = "{item:4278}来自狗头人洞穴里的{object:2653}：需要采矿技能，或者在拍卖行购买矿石。通往洞穴的狭窄小路藏在部落要塞东边一块大岩石和一棵裂开的树后面。"
+zh_tw = "{item:4278}來自狗頭人洞穴裡的{object:2653}：需要採礦技能，或者在拍賣場購買礦石。通往洞穴的狹窄小路藏在部落要塞東邊一塊大岩石和一棵裂開的樹後面。"
+
+# Water Elementals: lesser water elementals are immune to Frost.
+[[note]]
+quest = 601
+phase = "objective"
+objective = 1
+level = "info"
+en = "{npc:691} is immune to Frost: casters should rely on Fire, Arcane or other schools here."
+fr = "{npc:691} est insensible au Givre : les lanceurs de sorts doivent miser ici sur le Feu, l'Arcane ou d'autres écoles."
+de = "{npc:691} ist immun gegen Frost: Zauberwirker setzen hier besser auf Feuer, Arkan oder andere Schulen."
+es = "{npc:691} es inmune a la Escarcha: los lanzadores de hechizos deben usar aquí Fuego, Arcano u otras escuelas."
+pt = "{npc:691} é imune a Gelo: conjuradores devem usar aqui Fogo, Arcano ou outras escolas."
+ru = "{npc:691} невосприимчив к магии льда: заклинателям лучше использовать здесь огонь, тайную магию или другие школы."
+ko = "{npc:691}은(는) 냉기에 면역입니다. 주문 시전자는 이곳에서 화염, 비전 등 다른 계열을 쓰세요."
+zh_cn = "{npc:691}免疫冰霜：施法者在这里应使用火焰、奥术或其他系别的法术。"
+zh_tw = "{npc:691}免疫冰霜：施法者在這裡應使用火焰、秘法或其他系別的法術。"

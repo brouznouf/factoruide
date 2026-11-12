@@ -106,3 +106,19 @@ ru = "{npc:2755} — элитный противник, постоянно пр�
 ko = "{npc:2755}은(는) 정령을 계속 불러내는 정예입니다. 파티를 꾸려 그녀만 집중 공격하고 정령은 무시하세요. {item:4472}은(는) 사용하면 사라지고 그녀는 약 10분 뒤 떠납니다. 다시 하려면 퀘스트를 포기하고 {zone:3}의 {npc:2785}에게서 다시 받으세요."
 zh_cn = "{npc:2755}是精英，会不断召唤元素帮手：组队前往，集中攻击她，无视帮手。{item:4472}使用后就会消失，她约10分钟后离开：若要重试，放弃任务，再到{zone:3}找{npc:2785}重新接取。"
 zh_tw = "{npc:2755}是精英，會不斷召喚元素幫手：組隊前往，集中攻擊她，無視幫手。{item:4472}使用後就會消失，她約10分鐘後離開：若要重試，放棄任務，再到{zone:3}找{npc:2785}重新接取。"
+
+# Worth Its Weight in Gold: the shadow hunters live only in the cave south-east of Witherbark Village; its entrance is reached by a trail past two snake statues.
+[[note]]
+quest = 691
+phase = "objective"
+objective = 3
+level = "info"
+en = "{npc:2557} is found only inside a cave in the hills south-east of the troll village, and its mouth is hard to spot: follow the trail past two snake statues to reach it."
+fr = "{npc:2557} ne se trouve que dans une grotte des collines au sud-est du village troll, dont l'entrée est difficile à repérer : suivez le sentier qui passe devant deux statues de serpent pour l'atteindre."
+de = "{npc:2557} findest du nur in einer Höhle in den Hügeln südöstlich des Trolldorfs, deren Eingang schwer zu sehen ist: Folge dem Pfad an zwei Schlangenstatuen vorbei, um sie zu erreichen."
+es = "{npc:2557} solo se encuentra dentro de una cueva en las colinas al sudeste del poblado trol, y su entrada es difícil de ver: sigue el sendero que pasa junto a dos estatuas de serpiente para llegar."
+pt = "{npc:2557} só é encontrado dentro de uma caverna nas colinas a sudeste da aldeia troll, e a entrada é difícil de ver: siga a trilha que passa por duas estátuas de serpente para chegar lá."
+ru = "{npc:2557} встречается только в пещере в холмах к юго-востоку от деревни троллей, и вход в неё трудно заметить: идите по тропе мимо двух статуй змей."
+ko = "{npc:2557}은(는) 트롤 마을 남동쪽 언덕의 동굴 안에만 있으며 입구를 찾기 어렵습니다. 뱀 석상 두 개를 지나는 오솔길을 따라가세요."
+zh_cn = "{npc:2557}只在巨魔村庄东南方山丘中的一个洞穴里出现，洞口很难发现：沿着经过两座蛇像的小路走就能到达。"
+zh_tw = "{npc:2557}只在食人妖村莊東南方山丘中的一個洞穴裡出現，洞口很難發現：沿著經過兩座蛇像的小路走就能到達。"

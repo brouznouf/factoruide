@@ -47,3 +47,18 @@ ru = "Щёлкнув по {object:131474}, выслушайте {npc:7172} до 
 ko = "{object:131474}를 클릭한 뒤 {npc:7172}의 이야기를 끝까지 듣고, 다시 원반을 클릭해 퀘스트를 완료하고 다음 퀘스트를 받으세요. 방을 나가기 전에 모두 끝내야 합니다. 나가면 던전을 다시 돌아야 합니다."
 zh_cn = "点击{object:131474}后，与{npc:7172}对话直到他讲完，再次点击圆盘完成任务并接下一个任务。离开房间前全部做完：出去之后就得重新清一遍副本。"
 zh_tw = "點擊{object:131474}後，與{npc:7172}對話直到他講完，再次點擊圓盤完成任務並接下一個任務。離開房間前全部做完：出去之後就得重新清一遍副本。"
+
+# A Sign of Hope: Hammertoe Grez kneels in a side cave of the outer tunnels before the drop to the instance; he can be killed or leave after the next step, then respawns.
+[[note]]
+quest = 721
+phase = "turnin"
+level = "warning"
+en = "{npc:2909} kneels by a campfire behind crates in a small side cave, just before the ledge you drop from to reach the instance door. If he is not there, wait: he comes back after about 6 minutes."
+fr = "{npc:2909} est agenouillé près d'un feu de camp, derrière des caisses, dans une petite grotte latérale, juste avant la corniche d'où l'on saute vers l'entrée de l'instance. S'il n'est pas là, attendez : il revient au bout d'environ 6 minutes."
+de = "{npc:2909} kniet an einem Lagerfeuer hinter Kisten in einer kleinen Seitenhöhle, kurz vor dem Felsvorsprung, von dem du zum Instanzeingang hinunterspringst. Ist er nicht da, warte: Er kommt nach etwa 6 Minuten zurück."
+es = "{npc:2909} está arrodillado junto a una hoguera, tras unas cajas, en una pequeña cueva lateral, justo antes de la cornisa desde la que saltas a la entrada de la instancia. Si no está, espera: vuelve en unos 6 minutos."
+pt = "{npc:2909} fica ajoelhado junto a uma fogueira, atrás de caixotes, numa pequena caverna lateral, logo antes da borda de onde você pula para a entrada da instância. Se ele não estiver lá, espere: ele volta em cerca de 6 minutos."
+ru = "{npc:2909} стоит на коленях у костра за ящиками в небольшой боковой пещере, прямо перед уступом, с которого спрыгивают к входу в подземелье. Если его нет, подождите: он появляется снова примерно через 6 минут."
+ko = "{npc:2909}은(는) 인스턴스 입구로 뛰어내리는 바위 턱 바로 앞, 작은 곁굴의 상자 뒤 모닥불 옆에 무릎을 꿇고 있습니다. 보이지 않으면 기다리세요. 약 6분 뒤에 다시 나타납니다."
+zh_cn = "{npc:2909}跪在一个小侧洞里的篝火旁，躲在箱子后面，就在跳下去前往副本入口的岩架之前。如果他不在，请等待：大约6分钟后会重新出现。"
+zh_tw = "{npc:2909}跪在一個小側洞裡的營火旁，躲在箱子後面，就在跳下去前往副本入口的岩架之前。如果他不在，請等待：大約6分鐘後會重新出現。"
