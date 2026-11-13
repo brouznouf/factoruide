@@ -6,11 +6,20 @@ Writing an entry: one short line per change, saying what the player sees or gets
 
 An addon change also goes, in the same words, under Unreleased in that addon's own `addon/<addon>/CHANGELOG.md`: its changelog on CurseForge and Wago.
 
-## Unreleased
+## 0.20.0 (2026-11-13)
+
+WoW Forever's new dungeons and reputation quests in the guides, class quests always planned, and fixes from players' reports.
+
+### App
+
+- A new version of a guide (set up again, computed again, edited or imported) is the one sent to the game, even after an older one was chosen with "Use this version".
+- A new guide's name filled in from its character follows the level to reach: lowering it to 40 no longer leaves "Name 25-60" on the guide, its file and its Polestar title.
 
 ### Guides
 
-- Townsfolk the game data knows little of no longer pass for monsters guarding the quest givers around them: the guides keep those quests (Southshore, Lakeshire, Goldshire).
+- Class quests are always in the guide, started as soon as they can be: the dwarf shaman's and the Horde rogues' guides could not be made.
+- Townsfolk the game data knows little of no longer pass for monsters guarding the quests around them, nor do creatures far above the quest's level: the guides keep those quests (Southshore, Tarren Mill, Lakeshire, Goldshire, and many in Feralas and Winterspring).
+- Skyborne guides no longer take the portal from Stormwind to Dalaran, removed from the game; the one from Dalaran to Stormwind is taken for Welcome to Azeroth only.
 - Quests asking for a reputation are planned: the guide first kills the creatures whose kills give it ("Kill 50 Gelkis Mauler for reputation with Magram Clan Centaur"). A new setting picks Desolace's centaur clan: Auto, Magram or Gelkis.
 
 ### Addon
@@ -23,6 +32,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - The Drowned City, a dungeon of levels 35-40 off Stranglethorn Vale: its quests are done during its run (the four tablets of The Drowned City, the Saltseers, Var'Taka).
 - Krol'dok Stronghold (40-45), Alcaz Prison (48-53) and Blackmaw Hold (55-60), WoW Forever's other new dungeons: their quests are done during their run.
 - The Magram and Gelkis quests of the Valley of Bones ask for Honored with their clan, with their objectives.
+- WoW Forever: Skyborne shamans of the Horde get Storm, Earth, and Fire and the rest of its chain.
 
 ## 0.19.0 (2026-11-12)
 
@@ -31,7 +41,6 @@ Quest notes in the guides, with tips and warnings on tricky quests, and fixes to
 ### App
 
 - Steps show how their quest is taken (an item, an object, a mob's drop, an event) or their objective done, and a mark when a note tells more about the quest.
-- A new guide's name filled in from its character follows the level to reach: lowering it to 40 no longer leaves "Name 25-60" on the guide, its file and its Polestar title.
 
 ### Guides
 
