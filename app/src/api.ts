@@ -104,6 +104,8 @@ export interface Params {
   reputation_goals: ReputationGoal[];
   /** Seconds each point missing from the goals at the end of the guide is worth. */
   reputation_weight: number;
+  /** Desolace's centaur clan the character sides with (the other clan's quests are left out). */
+  desolace_clan: "auto" | "gelkis" | "magram";
   min_efficiency: number;
   hearth_cooldown: number;
   hearth_cast: number;

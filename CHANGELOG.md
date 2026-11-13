@@ -11,6 +11,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Guides
 
 - Townsfolk the game data knows little of no longer pass for monsters guarding the quest givers around them: the guides keep those quests (Southshore, Lakeshire, Goldshire).
+- Quests asking for a reputation are planned: the guide first kills the creatures whose kills give it ("Kill 50 Gelkis Mauler for reputation with Magram Clan Centaur"). A new setting picks Desolace's centaur clan: Auto, Magram or Gelkis.
 
 ### Addon
 
@@ -20,6 +21,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - The latest quest data: more quests known in Riverglades, Shen'dralas and Stranglethorn Vale, and Riverglades chains completed with their missing objectives.
 - The Drowned City, a dungeon of levels 35-40 off Stranglethorn Vale: its quests are done during its run (the four tablets of The Drowned City, the Saltseers, Var'Taka).
+- The Magram and Gelkis quests of the Valley of Bones ask for Honored with their clan, with their objectives.
 
 ## 0.19.0 (2026-11-12)
 

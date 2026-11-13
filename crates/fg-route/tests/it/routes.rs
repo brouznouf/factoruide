@@ -4748,6 +4748,6 @@ fn siding_with_a_desolace_clan_leaves_the_others_quests_out() {
     let conn = reputation_fixture(2500);
     let planned = |side: &[&str]| quest(&prepare_in(&conn, "human", "warrior", 6, side, None), 90111).is_some();
     assert!(planned(&[]), "either clan");
-    assert!(planned(&["desolace_clan=92"]), "the quest's clan");
-    assert!(!planned(&["desolace_clan=93"]), "the other clan");
+    assert!(planned(&["desolace_clan=gelkis"]), "the quest's clan");
+    assert!(!planned(&["desolace_clan=magram"]), "the other clan");
 }
