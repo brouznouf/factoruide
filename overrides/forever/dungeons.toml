@@ -25,3 +25,21 @@ area = 16550
 name = "The Drowned City"
 entrance = { zone = 33, x = 21.5, y = 27.8 } # underwater, west of the Vile Reef (players' notes)
 levels = [35, 40]
+
+[[dungeon]]
+area = 16842
+name = "Krol'dok Stronghold"
+entrance = { zone = 16591, x = 37.5, y = 37.5 } # a cave west of the fortress gates (players' guides)
+levels = [40, 45]
+
+[[dungeon]]
+area = 16620
+name = "Alcaz Prison"
+entrance = { zone = 15, x = 75.0, y = 15.0 } # the basement of the large building on Alcaz Island (players' guides)
+levels = [48, 53]
+
+[[dungeon]]
+area = 16554
+name = "Blackmaw Hold"
+entrance = { zone = 16, x = 38.7, y = 33.4 } # the furbolg tunnel; its portal lies deep inside (players' guides, unconfirmed)
+levels = [55, 60]

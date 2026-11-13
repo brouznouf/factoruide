@@ -3235,3 +3235,70 @@ id = 263899 # Undying Offering
 zone = 16550
 x = -1
 y = -1
+
+# Krol'dok Stronghold, Alcaz Prison and Blackmaw Hold (dungeons): no source places what is inside.
+# The creatures their quests need, from the dungeons' NPC lists and players' notes of their bosses,
+# placed in the dungeon: done during its run.
+
+[[spawn]]
+type = "npc"
+id = 258964 # Nar'gurk
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 258968 # Overlord Mugg
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 268423 # Zalfan Moonshadow
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 258042 # Twilight Grunt
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 258100 # Twilight Warlock
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 258102 # Twilight Outrider
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 258104 # Twilight Lieutenant
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 255702 # Blazeroar
+zone = 16620
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 247209 # Elder Shaman Bloodmane
+zone = 16554
+x = -1
+y = -1
