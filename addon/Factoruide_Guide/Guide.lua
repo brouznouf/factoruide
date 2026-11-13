@@ -1400,6 +1400,12 @@ function Guide:WantsQuest(questID)
     return not IsDone(step, at)
 end
 
+--- Whether accepting this quest starts an escort or an event (the guide's step says so).
+function Guide:IsEscort(questID)
+    local at = route and questID and acceptIndex[questID]
+    return at ~= nil and route.steps[at].es == true
+end
+
 --- Fields of the guide state that belong to the route in use: the step shown, the steps
 --- marked by their index and the quests marked done by hand.
 local PROGRESS = { "step", "marks", "skippedQuests", "handedIn", "player" }

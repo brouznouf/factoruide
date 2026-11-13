@@ -2543,6 +2543,26 @@ fn crowded_server_waits_for_escorts_and_rare_spawns() {
     assert!(wait(33) / 8.0 < wait(34) / 2.0, "wolves: {} s for 8 meats", wait(33));
 }
 
+/// Taking an escort starts it at once: its accept step tells the addon, which never takes it by
+/// itself (in a group, the others would not have time to turn in the quest before it). Miran's
+/// escort is one, Bellygrub's meat is not.
+#[test]
+fn addon_knows_escorts() {
+    let human = human_warrior();
+    let escort = |id: i64| human.model.quests[quest(human, id).unwrap() as usize].escort;
+    assert!(escort(309), "Protecting the Shipment");
+    assert!(!escort(34), "Bellygrub");
+    let mut p = quests_at_start(1);
+    p.model.quests[0].escort = true;
+    let planner = planner(&p);
+    let route = vec![Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)];
+    let guide = fg_route::export::build(&planner, &p.profile, &route);
+    let lua = fg_route::export::to_lua(std::slice::from_ref(&guide));
+    let line = |k: &str| lua.lines().find(|l| l.contains(&format!("k = \"{k}\""))).unwrap().to_owned();
+    assert!(line("accept").contains("es = true"), "{}", line("accept"));
+    assert!(!line("turnin").contains("es = true"), "{}", line("turnin"));
+}
+
 /// The clean-up at the end of the search never makes the route worse: cutting the stops after
 /// the target level would drop a turn-in planned there that was made at hand before, losing its
 /// XP to grinding (it did).

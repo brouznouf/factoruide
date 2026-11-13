@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Escort and event quests are never accepted automatically, nor joined when a party member starts them: in a group, everyone has time to turn in the quest before.
+
 ## 0.19.0 (2026-11-12)
 
 - Steps show how their quest is taken or their objective done, and a yellow, orange or red mark when a note tells more about the quest; the step's tooltip lists the notes.

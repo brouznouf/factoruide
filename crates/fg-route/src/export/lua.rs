@@ -306,6 +306,9 @@ pub fn to_lua(routes: &[Route]) -> String {
             if s.keep {
                 fields.push("kp = true".into());
             }
+            if s.escort {
+                fields.push("es = true".into());
+            }
             fields.push(format!("lvl = {}", s.level));
             if duration >= 1.0 {
                 fields.push(format!("d = {duration}"));

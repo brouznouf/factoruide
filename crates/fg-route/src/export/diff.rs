@@ -856,6 +856,7 @@ mod tests {
             party: Vec::new(),
             members: None,
             keep: false,
+            escort: false,
             event: None,
             spots: Vec::new(),
             patrol: false,

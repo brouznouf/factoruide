@@ -172,6 +172,7 @@ impl Q {
             xp_observed: false,
             time_limit: None,
             start_wait: 0.0,
+            escort: false,
             starts: Vec::new(),
             ends: Vec::new(),
             objectives: Vec::new(),

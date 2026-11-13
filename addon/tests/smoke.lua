@@ -2157,7 +2157,7 @@ onQuest[8101] = nil
 print("dungeon group ok")
 
 -- Only the guide's quests: those it still takes, not those it abandons, marked done by hand or
--- out of it, nor escorts shared by the group (the event does not tell which quest).
+-- out of it. Never an escort, nor one shared by the group.
 FG:Save("autoAccept", nil)
 FG.Routes["accept-test"] = {
     race = 7,
@@ -2170,6 +2170,7 @@ FG.Routes["accept-test"] = {
         { k = "abandon", t = "Abandon Unwanted (not in this guide)", q = 9001, lvl = 21 },
         { k = "accept", t = "Accept Wanted", q = 9002, lvl = 21 },
         { k = "accept", t = "Accept Skipped", q = 9003, lvl = 21 },
+        { k = "accept", t = "Accept Escort", q = 9004, es = true, lvl = 21 },
         { k = "grind", t = "Grind", lvl = 60 },
     },
 }
@@ -2186,6 +2187,11 @@ assert(taken(9002), "a quest of the guide is taken")
 FG.Guide:ToggleSkip(3) -- right click on its step
 assert(not taken(9003), "a quest marked done by hand is not taken")
 assert(not taken(9999), "a quest out of the guide is not taken")
+assert(not taken(9004), "an escort of the guide is not taken")
+FG:Save("routeQuestsOnly", false)
+assert(not taken(9004), "an escort is not taken with every quest either")
+assert(taken(9999), "a quest out of the guide is taken with every quest")
+FG:Save("routeQuestsOnly", nil)
 -- Classic and TBC have no quests taken on sight (no QuestGetAutoAccept).
 local autoAccept = QuestGetAutoAccept
 QuestGetAutoAccept = nil
@@ -2208,8 +2214,10 @@ assert(opened({ 9999, 9002 }) == 2, "the guide's quest opened")
 assert(opened({ 9999 }) == nil, "a quest out of the guide is not opened")
 assert(opened({ 0 }) == 1, "a quest without ID is opened")
 calls.ConfirmAcceptQuest = nil
+FG:Save("routeQuestsOnly", false)
 fire("QUEST_ACCEPT_CONFIRM", "Friend", "Shared Escort")
 assert(not calls.ConfirmAcceptQuest, "a shared escort is not confirmed")
+FG:Save("routeQuestsOnly", nil)
 GetQuestID = questID
 print("guide quests only ok")
 

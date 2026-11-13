@@ -290,6 +290,10 @@ pub struct Step {
     /// quest, a planned reward, training.
     #[serde(default, skip_serializing_if = "std::ops::Not::not")]
     pub keep: bool,
+    /// Accepting it starts an escort or an event: the addon never takes it by itself (in a
+    /// group, the others would not have time to turn in the quest before it).
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub escort: bool,
     /// The event of the replay it is written from (index in its trace; not saved): ties a guide
     /// built from a replay back to it (`job::timeline`). None for the steps added after it
     /// (checkpoints, the quests of the character's log given up first).
@@ -353,6 +357,7 @@ impl Step {
             party: Vec::new(),
             members: None,
             keep: false,
+            escort: false,
             event: None,
         }
     }

@@ -6,9 +6,11 @@ local FG = Factoruide
 local function Skip() return IsShiftKeyDown() end
 
 --- Whether a quest may be accepted automatically: with "only the guide's quests", one the guide
---- still takes.
+--- still takes. Never an escort or an event: it starts at once, in a group the others would not
+--- have time to turn in the quest before it.
 local function Wanted(questID)
     if not FG:Get("autoAccept") then return false end
+    if FG.Guide ~= nil and FG.Guide:IsEscort(questID) then return false end
     if FG:Get("routeQuestsOnly") then return FG.Guide ~= nil and FG.Guide:WantsQuest(questID) end
     return true
 end
@@ -62,12 +64,6 @@ FG:On("QUEST_DETAIL", function()
     elseif Wanted(GetQuestID()) then
         AcceptQuest()
     end
-end)
-
--- Escort quests shared by a party member (the event does not tell which quest: not with "only
--- the guide's quests").
-FG:On("QUEST_ACCEPT_CONFIRM", function()
-    if FG:Get("autoAccept") and not FG:Get("routeQuestsOnly") and not Skip() then ConfirmAcceptQuest() end
 end)
 
 FG:On("QUEST_PROGRESS", function()
