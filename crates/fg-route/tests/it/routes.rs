@@ -744,6 +744,25 @@ fn a_creature_of_no_known_faction_in_a_capital_guards_nothing() {
     assert_eq!(guard(14), 61, "a monster's faction");
 }
 
+/// Out of the capitals too, a creature of no known faction or side around a quest giver is a
+/// townsman (WoW Forever's Southshore Defenders, placed by the sources with no side), not a
+/// hostile guard; one of a hostile faction still is.
+#[test]
+fn a_creature_of_no_known_faction_beside_a_giver_guards_nothing() {
+    let guard = |faction: i64| {
+        let conn = Fixture::new(Edition::Classic)
+            .file("classic_northshire")
+            .toml(&format!(
+                "[[npc]]\nid = 90100\nname = \"Townsfolk\"\nlevel = 61\nfaction = {faction}\nat = [{{ zone = 12, x = 48.9, y = 40.3 }}, {{ zone = 12, x = 49.0, y = 40.0 }}, {{ zone = 12, x = 48.8, y = 40.1 }}]\n"
+            ))
+            .open();
+        let p = prepare_in(&conn, "human", "warrior", 10, &[], None);
+        p.model.quests[quest(&p, 33).unwrap() as usize].start_guard.level
+    };
+    assert!(guard(0) < 61, "no faction known");
+    assert_eq!(guard(14), 61, "a monster's faction");
+}
+
 /// The Deadmines' Collecting Memories and Oh Brother... are filed under the dungeon but their
 /// items drop from elites in the quarry beside its entrance (GitHub #82): done with the dungeon's
 /// group, at that place; Red Silk Bandanas also drops inside and stays a dungeon objective.

@@ -20,6 +20,10 @@ pub struct Guards {
     /// Spawns of the mobs only the other side likes (a Kul Tiras camp, for the Horde): hostile
     /// to the character too, but not to the other side, so left out of `cells`.
     rivals: Cells,
+    /// Spawns of the creatures of neither a faction nor a side known (WoW Forever's own NPCs the
+    /// sources know little of): townsfolk around a giver, but maybe monsters out in the field,
+    /// so left out of `cells` and counted only around the places found where they lie.
+    unknown: Cells,
     /// Every one of them (only those at the same place merged: one spawn point the sources give
     /// for several mobs that take turns), to count the mobs of a pull.
     mobs: HashMap<(i64, i64, i64), Vec<(f32, f32)>>,
@@ -68,6 +72,7 @@ impl Guards {
         })?;
         let mut cells = Cells::default();
         let mut rivals = Cells::default();
+        let mut unknown_cells = Cells::default();
         let mut mobs: HashMap<(i64, i64, i64), Vec<(f32, f32)>> = HashMap::new();
         let mut seen = HashSet::new();
         for (zone, x, y, min, max, rank, friendly, unknown) in rows.iter() {
@@ -100,9 +105,11 @@ impl Guards {
                 (p.x / Self::SAME).floor() as i64,
                 (p.y / Self::SAME).floor() as i64,
                 level,
+                *unknown,
             );
             if seen.insert(same) {
-                cells.entry(Self::cell(p.continent, p.x, p.y)).or_default().push((
+                let to = if *unknown { &mut unknown_cells } else { &mut cells };
+                to.entry(Self::cell(p.continent, p.x, p.y)).or_default().push((
                     p.x as f32,
                     p.y as f32,
                     level,
@@ -110,7 +117,12 @@ impl Guards {
                 ));
             }
         }
-        Ok(Self { cells, rivals, mobs })
+        Ok(Self {
+            cells,
+            rivals,
+            unknown: unknown_cells,
+            mobs,
+        })
     }
 
     /// Hostile mobs that come together when the one at `p` is pulled, itself included (1 when
@@ -142,21 +154,27 @@ impl Guards {
         )
     }
 
-    /// The mobs within `RADIUS` of `p`: the strongest level, and how many are close to it.
-    /// Nobody for a lone mob: it can be walked around, or only shows up during an event (Eliza
-    /// near Abercrombie's hut).
+    /// The mobs within `RADIUS` of an objective's place `p` (creatures of no known side
+    /// included): the strongest level, and how many are close to it. Nobody for a lone mob: it
+    /// can be walked around, or only shows up during an event (Eliza near Abercrombie's hut).
     pub fn around(&self, p: &Pos) -> Guard {
-        self.around_in(p, false)
+        self.around_in(p, false, true)
+    }
+
+    /// The same around what gives or takes back a quest (a creature, an object): the creatures
+    /// of no known side standing by it are its townsfolk, not guards.
+    pub fn around_giver(&self, p: &Pos) -> Guard {
+        self.around_in(p, false, false)
     }
 
     /// The same with the mobs of the other side that are hostile to the character: for a place
     /// found where it lies (an item, an object), not a town's givers, which the other side's
     /// guards stand around.
     pub fn around_hostile(&self, p: &Pos) -> Guard {
-        self.around_in(p, true)
+        self.around_in(p, true, true)
     }
 
-    fn around_in(&self, p: &Pos, rivals: bool) -> Guard {
+    fn around_in(&self, p: &Pos, rivals: bool, unknown: bool) -> Guard {
         let r = Self::RADIUS;
         let (lo, hi) = (
             Self::cell(p.continent, p.x - r, p.y - r),
@@ -167,7 +185,9 @@ impl Guards {
             for cy in lo.2..=hi.2 {
                 let cell = (p.continent, cx, cy);
                 let others = if rivals { self.rivals.get(&cell) } else { None };
-                for &(x, y, level, elite) in self.cells.get(&cell).into_iter().chain(others).flatten() {
+                let unknown = if unknown { self.unknown.get(&cell) } else { None };
+                let all = self.cells.get(&cell).into_iter().chain(others).chain(unknown);
+                for &(x, y, level, elite) in all.flatten() {
                     let (dx, dy) = (f64::from(x) - p.x, f64::from(y) - p.y);
                     if dx * dx + dy * dy <= r * r {
                         near.push((level, elite));

@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### Guides
+
+- Townsfolk the game data knows little of no longer pass for monsters guarding the quest givers around them: the guides keep those quests (Southshore, Lakeshire, Goldshire).
+
 ### Addon
 
 - Escort and event quests are never accepted automatically, nor joined when a party member starts them: in a group, everyone has time to turn in the quest before.

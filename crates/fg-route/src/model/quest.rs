@@ -26,13 +26,14 @@ impl QuestBuilder<'_> {
                 // Inside a dungeon (an item dropped there, an NPC there): done during the group's
                 // run, the creatures around its entrance outside guard nothing of it.
                 .filter(|l| l.inside.is_none())
-                // A creature gives the quest in a town its own side's guards watch; an item is
-                // found where it lies, among the camps of the other side too.
+                // A creature or an object gives the quest in a town its own side's guards watch,
+                // among its townsfolk; an item is found where it lies, among the camps of the
+                // other side too.
                 .map(|l| {
                     if l.kind == EntityKind::Item {
                         self.sources.guards.around_hostile(&l.pos)
                     } else {
-                        self.sources.guards.around(&l.pos)
+                        self.sources.guards.around_giver(&l.pos)
                     }
                 })
                 .fold(super::types::Guard::default(), super::types::Guard::max)
