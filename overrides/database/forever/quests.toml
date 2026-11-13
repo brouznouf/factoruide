@@ -177,20 +177,6 @@ id = 94864
 races_mask = 4294967308
 
 [[quest]]
-# The Skyborne druid's chain (98341 -> 98404 -> 98738, back to Dendrite Starblaze) follows either
-# side's trainer quest; the quest series only shows the Horde's.
-id = 98341
-pre_any = [98393]
-
-[[quest]]
-id = 98362 # To Thunder Bluff
-pre_any = [98738]
-
-[[quest]]
-id = 98397 # To Darnassus
-pre_any = [98738]
-
-[[quest]]
 id = 98404
 classes_mask = 1024
 pre_all = [98341]
@@ -221,12 +207,6 @@ pre_all = [94427]
 # Life quests have Narm or Henze Faulk as a creature).
 id = 94438
 objectives = [{ type = "creature", id = 257663, amount = 1 }]
-
-[[quest]]
-# Contingency Plan, Darnassus's (Priestess Alathea): taken to High Priestess Mims in Ironforge
-# like the others (its text), a turn-in no source has.
-id = 94820
-ends = [{ type = "npc", id = 258785 }]
 
 [[spawn]]
 # Call of Water (dwarf shaman): the Minor Manifestation of Water appears in the middle of Stendel's
@@ -895,13 +875,10 @@ objectives = [{ type = "talk", id = 2055, amount = 1, text = "Deliver the Abomin
 [[quest]]
 id = 95998
 objectives = [{ type = "object", id = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" }]
-# The Great Outdoors: Sam Sarsaparilla gives it; William Pestle (the sources') does not (Forever's
-# quest page lists Sam only).
 
 [[quest]]
 id = 96101
 objectives = [{ type = "object", id = 460003, amount = 1, text = "Sit by the Basic Campfire until you get Boosted Rest" }]
-races_mask = 12884901888 # both Skyborne: they start on Zephras Isle, the quest page shows both sides
 
 [[quest]]
 id = 96604
@@ -1046,14 +1023,6 @@ remove_pre = [92432]
 # Streets: in game, Image of Archmage Modera does not offer it to a level 28 character.
 id = 92458
 pre_all = [92432]
-
-[[quest]]
-# Call of Air (Skyborne shaman): taken back by Prate Cloudseer in Thousand Needles (the quest's
-# tooltip). No source knows its giver; its text is a Skyborne shaman trainer's ("I could grant you
-# your totem of air, but..."), so the two who give Call of Fire are assumed (unconfirmed).
-id = 96136
-starts = [{ type = "npc", id = 252382 }, { type = "npc", id = 254082 }]
-ends = [{ type = "npc", id = 5905 }]
 
 # Library books: the book starts nothing in game; Owen Thadd or Garion Wendell offers the quest
 # while the book is in the bags (the sources list the book's object as a giver too). The book is
@@ -1473,14 +1442,9 @@ item = 247884
 npcs = [3206, 3207]
 chance = 0.2
 
-# The Hall of Thanes (Old Ironforge, level 15): the sources list no objective for An Ancient Grudge,
-# and none for the spirit of Faldrim Anvilmar The Restless Dead asks to put to rest (its tooltip:
-# "Faldrim Anvilmar slain"), so the first was never planned and the second left him out. One
-# kill serves both.
-[[quest]]
-id = 96395
-objectives = [{ type = "creature", id = 261306, amount = 1 }]
-
+# The Hall of Thanes (Old Ironforge, level 15): the sources list no objective for the spirit of
+# Faldrim Anvilmar The Restless Dead asks to put to rest (its tooltip: "Faldrim Anvilmar slain"),
+# so it left him out. The same kill serves An Ancient Grudge.
 [[quest]]
 id = 96394
 objectives = [
@@ -1615,10 +1579,44 @@ friendly_to = "AH"
 id = 268047 # Theramore Emissary
 friendly_to = "A"
 
+# Townsfolk the sources place with no side: taken for hostile creatures, they made the givers
+# around them look guarded (Hillsbrad's camps, Mulgore, Zephras Isle) or stood as monsters in
+# the capitals. Their side is the reaction on Forever's NPC pages.
 [[npc]]
-# Lakeshire's guards (Stormwind faction, friendly to the Alliance on Forever's NPC page): taken
-# for hostile creatures, they kept Guard Howe's and Deputy Feldon's quests out of the guides.
-id = 275075 # Lakeshire Protector
+id = 274942 # Bob McNaught
+friendly_to = "A"
+
+[[npc]]
+id = 260061 # Lieutenant Maclan
+friendly_to = "A"
+
+[[npc]]
+id = 269699 # Thaddeus Brillyard
+friendly_to = "A"
+
+[[npc]]
+id = 249399 # Brave Bentzel
+friendly_to = "H"
+
+[[npc]]
+id = 251461 # Altairus
+friendly_to = "AH"
+
+[[npc]]
+id = 271919 # Aeigelyges, Windshapers, in Orgrimmar
+friendly_to = "H"
+
+# Darnassus's faction on their NPC pages (no reaction given), standing in Stormwind and Darnassus.
+[[npc]]
+id = 274921 # Caretaker Kalvan
+friendly_to = "A"
+
+[[npc]]
+id = 274906 # Elyquen Starwatch
+friendly_to = "A"
+
+[[npc]]
+id = 274904 # Larkin Smokethorn
 friendly_to = "A"
 
 [[npc]]
@@ -2236,12 +2234,8 @@ id = 95798
 pre_all = [95788]
 
 [[quest]]
-# Findings for the Explorer's League: the translations go to Historian Karnik in Ironforge, not
-# back to Loremaster Dibbs.
 id = 95799
 pre_all = [95787]
-ends = [{ type = "npc", id = 2916 }]
-remove_ends = [{ type = "npc", id = 2277 }]
 
 # Corrections from players' reports on each guide quest (2026-11-12).
 
@@ -2319,3 +2313,728 @@ id = 665289
 zone = 38
 x = 48.0
 y = 40.0
+
+# Quests other quests need first, with their objectives or places unknown (2026-11-13): their
+# chains were left out. Objectives as the quests' pages give them; places of the objects from
+# their pages, of the ones no page places from players' comments (approx).
+
+# Riverglades.
+[[quest]]
+# Digging for Answers: the Twilight miner is in the cellar under a ruined house in Sunnyglade
+# (stairs at 50.0, 46.0).
+id = 94727
+objectives = [{ type = "trigger", text = "Convince a Twilight's Hammer miner in the cellar under Sunnyglade", at = { zone = 16591, x = 50.0, y = 46.0 } }]
+
+[[quest]]
+# No Soldier Left Behind: a Twilight Key from the Twilight Champions frees each scout in the
+# Twilight's Shroud.
+id = 94888
+objectives = [{ type = "item", id = 265821, amount = 5, text = "Twilight Key: free 5 Farholde Scouts in the Twilight's Shroud" }]
+
+[[drop]]
+item = 265821 # Twilight Key
+npcs = [256799]
+chance = 0.45
+
+[[quest]]
+# Rise Up!: the Ogre Miners are recruited, not killed.
+id = 95432
+objectives = [{ type = "talk", id = 260995, amount = 5, text = "Recruit Ogre Miners" }]
+
+[[quest]]
+# Sickening Lights: the ritual circles are in the caves under Sunnyglade, which the cellar at
+# 50.0, 46.0 leads to (approx).
+id = 95602
+objectives = [{ type = "trigger", text = "Destroy 5 Twilight Ritual Circles in the caves under Sunnyglade", at = { zone = 16591, x = 50.0, y = 46.0 } }]
+
+[[quest]]
+# Abominable Magics: samples from the cultists of the caves under Sunnyglade (Twilight
+# Ritualists, Empowered Brutes) and their ritual circles; one sample a cultist (approx).
+id = 95642
+objectives = [{ type = "creature", id = 262169, amount = 25, text = "Fill the Crystal Catalyst with 25 samples from Twilight's Hammer cultists" }]
+
+# Shen'dralas.
+[[quest]]
+# Powering the Pylons: the Mana Sieve on the temple's top floor, Coalesced Mana Crystals from the
+# arcane explosions around, then the two pylons repaired with the Pile of Pylon Parts.
+id = 96018
+objectives = [
+    { type = "trigger", text = "Take the Mana Sieve on the temple's top floor", at = { zone = 16651, x = 46.1, y = 78.1 } },
+    { type = "trigger", text = "Repair the western pylon", at = { zone = 16651, x = 43.5, y = 34.2 } },
+    { type = "trigger", text = "Repair the eastern pylon", at = { zone = 16651, x = 73.0, y = 23.3 } },
+]
+
+# Fragments of the Pylons: one piece at the Magram village, one at the Gelkis village (Desolace).
+[[object]]
+id = 607122
+name = "Pylon Shard"
+zone = 405
+
+[[spawn]]
+type = "object"
+id = 607122
+zone = 405
+x = 68.1
+y = 79.1
+
+[[object]]
+id = 607123
+name = "Pylon Shard"
+zone = 405
+
+[[spawn]]
+type = "object"
+id = 607123
+zone = 405
+x = 36.1
+y = 85.6
+
+# Stranglethorn Vale.
+[[quest]]
+# Zimmix's Great Escape: an escort from the Ruins of Zul'Kunda, where Zimmix waits.
+id = 97331
+objectives = [{ type = "trigger", text = "Escort Zimmix Sputterspark to safety", at = { zone = 33, x = 23.4, y = 12.6 } }]
+
+# Places of the objects holding these quests' items (Food for the Taking, Scraps of Knowledge,
+# It Takes Guts, Rog'mar Supplies, Anything of Value).
+[[object]]
+id = 616740
+name = "Feed Satchel"
+zone = 16591
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 43.1
+y = 82.4
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 43.1
+y = 82.5
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 44.6
+y = 79.8
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 45
+y = 80.5
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 45.4
+y = 81.9
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 45.9
+y = 79.2
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 46.1
+y = 79.8
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 46.2
+y = 82.9
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 46.3
+y = 81.8
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 46.5
+y = 83.5
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 46.6
+y = 82.2
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 46.6
+y = 83.3
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 46.7
+y = 80.7
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 48.3
+y = 83.5
+
+[[spawn]]
+type = "object"
+id = 616740
+zone = 16591
+x = 48.4
+y = 83.4
+
+[[object]]
+id = 623246
+name = "Twilight Page"
+zone = 16591
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 43.3
+y = 47.7
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 44
+y = 47.2
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 44.2
+y = 50.4
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 44.2
+y = 50.5
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 45
+y = 49.5
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 45
+y = 51.8
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 45.1
+y = 49.4
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 45.3
+y = 46
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 45.4
+y = 55.9
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 45.7
+y = 55.7
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 45.8
+y = 50.2
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 46.2
+y = 48
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 46.3
+y = 52.2
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 46.4
+y = 52.8
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 46.5
+y = 52.8
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 47.3
+y = 51.3
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 47.6
+y = 45.1
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 47.9
+y = 46.1
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 47.9
+y = 48.2
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 48.3
+y = 46.7
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 48.4
+y = 48.8
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 48.5
+y = 48.8
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 48.8
+y = 47.3
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 49.4
+y = 49.7
+
+[[spawn]]
+type = "object"
+id = 623246
+zone = 16591
+x = 49.5
+y = 49.7
+
+[[object]]
+id = 630588
+name = "Rotflesh Mushroom"
+zone = 16591
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 73.4
+y = 24.6
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 73.9
+y = 26.7
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 74.1
+y = 25.4
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 74.1
+y = 25.5
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 74.8
+y = 25.6
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 74.8
+y = 27
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 75.1
+y = 25.1
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 75.5
+y = 27.1
+
+[[spawn]]
+type = "object"
+id = 630588
+zone = 16591
+x = 75.7
+y = 26.2
+
+[[object]]
+id = 654618
+name = "Rog'mar Supply Crate"
+zone = 16591
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 57.1
+y = 36.5
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 57.2
+y = 36.3
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 57.5
+y = 36.5
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 57.6
+y = 36.2
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 59.4
+y = 37.9
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 59.4
+y = 38.8
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 59.5
+y = 38
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 59.6
+y = 38.8
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.2
+y = 32.1
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.2
+y = 40.6
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.4
+y = 35
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.5
+y = 35
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.5
+y = 40.6
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.6
+y = 32.1
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.6
+y = 33.2
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.7
+y = 33.5
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 60.7
+y = 39.8
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 61.1
+y = 35.7
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 62.4
+y = 35
+
+[[spawn]]
+type = "object"
+id = 654618
+zone = 16591
+x = 62.5
+y = 35.1
+
+[[object]]
+id = 661518
+name = "Stolen Shipment"
+zone = 33
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 22.8
+y = 11.1
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 22.9
+y = 12.2
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 23.2
+y = 13
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 23.4
+y = 8.1
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 23.4
+y = 10
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 23.8
+y = 8.9
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 24.1
+y = 12.2
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 24.2
+y = 10.4
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 24.4
+y = 12.8
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 24.8
+y = 10.7
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 24.8
+y = 13
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.1
+y = 9.3
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.2
+y = 9.9
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.8
+y = 9.4
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.8
+y = 10
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.8
+y = 12.7
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.9
+y = 8.1
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.9
+y = 11.4
+
+[[spawn]]
+type = "object"
+id = 661518
+zone = 33
+x = 25.9
+y = 11.5
+

@@ -16,6 +16,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - Escort and event quests are never accepted automatically, nor joined when a party member starts them: in a group, everyone has time to turn in the quest before.
 
+### WoW data
+
+- The latest quest data: more quests known in Riverglades, Shen'dralas and Stranglethorn Vale, and Riverglades chains completed with their missing objectives.
+
 ## 0.19.0 (2026-11-12)
 
 Quest notes in the guides, with tips and warnings on tricky quests, and fixes to the quest data from players' reports.
