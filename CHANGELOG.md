@@ -19,6 +19,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### WoW data
 
 - The latest quest data: more quests known in Riverglades, Shen'dralas and Stranglethorn Vale, and Riverglades chains completed with their missing objectives.
+- The Drowned City, a dungeon of levels 35-40 off Stranglethorn Vale: its quests are done during its run (the four tablets of The Drowned City, the Saltseers, Var'Taka).
 
 ## 0.19.0 (2026-11-12)
 

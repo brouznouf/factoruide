@@ -19,3 +19,9 @@ levels = [24, 29]
 [[dungeon]]
 area = 16544 # City of Dalaran, quests of level 33
 levels = [28, 33]
+
+[[dungeon]]
+area = 16550
+name = "The Drowned City"
+entrance = { zone = 33, x = 21.5, y = 27.8 } # underwater, west of the Vile Reef (players' notes)
+levels = [35, 40]

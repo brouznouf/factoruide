@@ -3038,3 +3038,125 @@ zone = 33
 x = 25.9
 y = 11.5
 
+# The Drowned City (dungeon, levels 35-40): no source places what is inside. The four tablets of
+# The Drowned City and Take Two With Water stand by its bosses (down the stairs by the pool, by
+# Var'Taka, in a skull's mouth by Captain Dreadrise, behind Min'loth); the creatures its quests
+# need are on its NPC list. Placed in the dungeon, done during its run.
+
+[[object]]
+id = 642943
+name = "The First Tablet of I'lalai"
+zone = 16550
+
+[[spawn]]
+type = "object"
+id = 642943
+zone = 16550
+x = -1
+y = -1
+
+[[object]]
+id = 642944
+name = "The Second Tablet of I'lalai"
+zone = 16550
+
+[[spawn]]
+type = "object"
+id = 642944
+zone = 16550
+x = -1
+y = -1
+
+[[object]]
+id = 642945
+name = "The Third Tablet of I'lalai"
+zone = 16550
+
+[[spawn]]
+type = "object"
+id = 642945
+zone = 16550
+x = -1
+y = -1
+
+[[object]]
+id = 642946
+name = "The Fourth Tablet of I'lalai"
+zone = 16550
+
+[[spawn]]
+type = "object"
+id = 642946
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 258924 # Var'Taka
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 260042 # Captain Dreadrise
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 260202 # Deathless Marrow
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 260353 # Saltseer Coroner
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 259979 # Saltseer Murderer
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 259981 # Saltseer Cultist
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 259987 # Saltseer Manhunter
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 258792 # Risen Sentry
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 263196 # Profane Necromancer
+zone = 16550
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 263899 # Undying Offering
+zone = 16550
+x = -1
+y = -1
