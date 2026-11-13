@@ -312,3 +312,36 @@ reason = "One objective (Witherbark Tusk) on the trolls' hill: no ramp the terra
 check = "terrain-gaps"
 key = "Loch Modan: Mo'grosh Stronghold"
 reason = "One objective (Chok'sul's Head) in the eastern hills: no ramp the terrain shows, walked in a straight line"
+
+# Quests the sources give the whole faction while only the races of their prerequisite reach
+# them (prerequisite-races): the other races never get them, in the game as in the guides.
+
+[[accept]]
+check = "prerequisite-races"
+key = "quest 3901"
+reason = "Rattling the Rattlecages: follows The Mindless Ones, Tirisfal's starting chain for the undead"
+
+[[accept]]
+check = "prerequisite-races"
+key = "quest 92579"
+reason = "To Valanaar (Horde): follows Havoc in the Highlands, a Skyborne quest"
+
+[[accept]]
+check = "prerequisite-races"
+key = "quest 92701"
+reason = "To Valanaar (Alliance): follows Havoc in the Highlands, a Skyborne quest"
+
+[[accept]]
+check = "prerequisite-races"
+key = "quest 92596"
+reason = "The High Order: follows The Next Step, a Skyborne quest"
+
+[[accept]]
+check = "prerequisite-races"
+key = "quest 93739"
+reason = "Exploring the Horde: follows Welcome to Azeroth, the Skyborne of the Horde's arrival quest"
+
+[[accept]]
+check = "prerequisite-races"
+key = "quest 97244"
+reason = "Call of Fire: the second quest of the Skyborne of the Horde's own fire totem chain (97243)"

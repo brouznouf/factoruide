@@ -100,6 +100,15 @@ pub const CHECKS: &[Check] = &[
         error: true,
     },
     Check {
+        name: "prerequisite-races",
+        what: "quests for races (of a class they can play) that none of the quests needed first is \
+               for: those races never get the quest, nor the rest of its chain. Mostly a quest the \
+               sources give the whole faction while only the races of its prerequisite reach it \
+               (accept it); a class chain a race of the class cannot start is a prerequisite with \
+               races missing: give them in the quest data (`races_mask`)",
+        error: false,
+    },
+    Check {
         name: "ambiguous-floors",
         what: "places of quests of unknown height (no spawn of the server data at them, nor of \
                the same NPC or object near) in a cell where floors lie far over each other (a \
@@ -294,6 +303,11 @@ pub fn audit(
     let mut hostile: Option<Vec<Hostile>> = None;
     if on("exclusive-prerequisites") {
         for f in exclusive_prerequisites(conn, &overrides.quest_overrides)? {
+            found.insert((f.check, f.key.clone()), f);
+        }
+    }
+    if on("prerequisite-races") {
+        for f in prerequisite_races(conn, overrides)? {
             found.insert((f.check, f.key.clone()), f);
         }
     }
@@ -1596,6 +1610,105 @@ fn exclusive_prerequisites(conn: &Connection, corrected: &[crate::model::QuestOv
     Ok(out)
 }
 
+/// Quests for races that none of their prerequisites is for: each of the `pre_all` quests, or
+/// one of the `pre_any` quests, must be for the race. Only the edition's races, of a class the
+/// quest is for (the game's CharBaseInfo; without it any class goes). A mask of 0 or none is
+/// everyone. The quests whose prerequisites an edition's `quests.toml` replaces are left out.
+fn prerequisite_races(conn: &Connection, overrides: &Overrides) -> Result<Vec<Finding>> {
+    let mut quests: HashMap<i64, (String, i64, i64)> = HashMap::new();
+    let mut stmt = conn.prepare(
+        "SELECT id, name, coalesce(races_mask, 0), coalesce(classes_mask, 0) FROM m_quest
+         WHERE status = 'available'",
+    )?;
+    for row in stmt.query_map([], |r| {
+        Ok((
+            r.get::<_, i64>(0)?,
+            r.get::<_, Option<String>>(1)?,
+            r.get::<_, i64>(2)?,
+            r.get::<_, i64>(3)?,
+        ))
+    })? {
+        let (id, name, races, classes) = row?;
+        quests.insert(id, (name.unwrap_or_default(), races, classes));
+    }
+    // The races, with the classes each can play (none known: any).
+    let pairs: Option<HashSet<(i64, i64)>> = conn
+        .prepare("SELECT RaceID, ClassID FROM client_charbaseinfo")
+        .ok()
+        .map(|mut stmt| {
+            stmt.query_map([], |r| Ok((r.get(0)?, r.get(1)?)))
+                .map(|rows| rows.filter_map(rusqlite::Result::ok).collect())
+        })
+        .transpose()?;
+    let races: Vec<(&String, i64, i64)> = (overrides.races.iter())
+        .map(|(key, def)| {
+            let classes = pairs.as_ref().map_or(-1, |pairs| {
+                (1..64)
+                    .filter(|c| pairs.contains(&(def.id, *c)))
+                    .fold(0, |mask, c| mask | 1 << (c - 1))
+            });
+            (key, crate::model::race_bit(def.id), classes)
+        })
+        .collect();
+    let mut needs: BTreeMap<i64, (Vec<i64>, Vec<i64>)> = BTreeMap::new();
+    let mut stmt = conn.prepare(
+        "SELECT DISTINCT quest_id, kind, other_id FROM m_quest_link WHERE kind IN ('pre_all', 'pre_any')
+         ORDER BY 1, 3",
+    )?;
+    for row in stmt.query_map([], |r| {
+        Ok((r.get::<_, i64>(0)?, r.get::<_, String>(1)?, r.get::<_, i64>(2)?))
+    })? {
+        let (quest, kind, other) = row?;
+        if overrides
+            .quest_overrides
+            .iter()
+            .any(|c| c.id == quest && (c.pre_all.is_some() || c.pre_any.is_some()))
+        {
+            continue;
+        }
+        let entry = needs.entry(quest).or_default();
+        if kind == "pre_all" { &mut entry.0 } else { &mut entry.1 }.push(other);
+    }
+    let is_for = |mask: i64, bit: i64| mask == 0 || mask & bit != 0;
+    let mut out = Vec::new();
+    for (quest, (all, any)) in needs {
+        let Some((name, own, classes)) = quests.get(&quest) else {
+            continue;
+        };
+        if *own == 0 {
+            continue;
+        }
+        let known = |ids: &[i64]| {
+            ids.iter()
+                .filter_map(|id| quests.get(id).map(|q| (*id, q.1)))
+                .collect::<Vec<_>>()
+        };
+        let (all, any) = (known(&all), known(&any));
+        let lost: Vec<String> = (races.iter())
+            .filter(|(_, bit, playable)| is_for(*own, *bit) && (*classes == 0 || playable & classes != 0))
+            .filter(|(_, bit, _)| {
+                all.iter().any(|(_, mask)| !is_for(*mask, *bit))
+                    || (!any.is_empty() && !any.iter().any(|(_, mask)| is_for(*mask, *bit)))
+            })
+            .map(|(key, _, _)| (*key).clone())
+            .collect();
+        if lost.is_empty() {
+            continue;
+        }
+        let first: Vec<String> = (all.iter().chain(&any))
+            .map(|(id, _)| format!("{} ({id})", quests[id].0))
+            .collect();
+        out.push(Finding {
+            check: "prerequisite-races",
+            key: format!("quest {quest}"),
+            detail: format!("{name} ({quest}) is for races none of {} is for", first.join(", ")),
+            races: lost,
+            npcs: Vec::new(),
+        });
+    }
+    Ok(out)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -1777,6 +1890,44 @@ mod tests {
         assert!(!reads_foreign(
             "Bring Le Fishe's head to Stormwind and talk to the guard."
         ));
+    }
+
+    /// Heed My Call's case: a Horde shaman quest needing first a quest the Skyborne of the Horde
+    /// cannot take is found for them (not for the undead, who play no shaman); another
+    /// prerequisite for them, or the first widened, and it is not.
+    #[test]
+    fn a_quest_for_races_none_of_its_prerequisites_is_for_is_found() {
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../../overrides");
+        let overrides = Overrides::load_edition(&dir, crate::xp::Edition::Forever).unwrap();
+        let conn = Connection::open_in_memory().unwrap();
+        // Orcs, taurens and trolls (162), and the Skyborne of the Horde (bit 33).
+        conn.execute_batch(
+            "CREATE TABLE m_quest (id, name, races_mask, classes_mask, status);
+             CREATE TABLE m_quest_link (quest_id, kind, other_id);
+             CREATE TABLE client_charbaseinfo (RaceID, ClassID);
+             INSERT INTO client_charbaseinfo VALUES (2, 7), (6, 7), (8, 7), (96, 7), (5, 8);
+             INSERT INTO m_quest VALUES
+               (1, 'Heed My Call', 8589934754 + 16, 64, 'available'),
+               (2, 'Storm, Earth, and Fire', 162, 64, 'available'),
+               (3, 'Their own way in', 8589934592, 64, 'available');
+             INSERT INTO m_quest_link VALUES (1, 'pre_any', 2);",
+        )
+        .unwrap();
+        let found = prerequisite_races(&conn, &overrides).unwrap();
+        assert_eq!(found.len(), 1);
+        assert_eq!(
+            (found[0].key.as_str(), found[0].races.as_slice()),
+            ("quest 1", ["skyborne_horde".to_owned()].as_slice())
+        );
+
+        conn.execute_batch("INSERT INTO m_quest_link VALUES (1, 'pre_any', 3)")
+            .unwrap();
+        assert!(prerequisite_races(&conn, &overrides).unwrap().is_empty());
+        conn.execute_batch(
+            "DELETE FROM m_quest_link WHERE other_id = 3; UPDATE m_quest SET races_mask = 8589934754 WHERE id = 2",
+        )
+        .unwrap();
+        assert!(prerequisite_races(&conn, &overrides).unwrap().is_empty());
     }
 
     /// A door given for one faction only is found (the other would take the shared one), and a

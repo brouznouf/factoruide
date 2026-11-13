@@ -67,6 +67,13 @@ id = 99153
 pre_all = [96896]
 
 [[quest]]
+# Storm, Earth, and Fire, the Horde's: the sources give it orcs, taurens and trolls, but Heed My
+# Call, which needs it first, is for the Skyborne of the Horde too (a player report: their
+# shamans could not have the chain). The Horde's shaman races (prerequisite-races check).
+id = 79361
+races_mask = 8589934754
+
+[[quest]]
 # The dwarf shaman's totem quests (Call of Earth, Fire, Water, Air and their saptas): the quest
 # caches give them the whole Alliance, and dwarves are its only shamans (client_charbaseinfo).
 id = 94449
