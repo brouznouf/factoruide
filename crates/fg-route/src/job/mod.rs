@@ -326,7 +326,13 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
     }
     required::check_start(&model, &profile, &members)?;
     model.initial.abilities = model.abilities.initial(start, profile.from_level);
-    model.initial.reputation = reputation::starting(conn, &params.reputation_goals, &profile, start, &mut start_notes)?;
+    model.initial.reputation = reputation::starting(
+        conn,
+        &model.followed_factions(&params),
+        &profile,
+        start,
+        &mut start_notes,
+    )?;
     let mut notes = notes::model_notes(&model, &world);
     notes.extend(start_notes);
     Ok(Prepared {

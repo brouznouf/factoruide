@@ -95,6 +95,15 @@ impl StepWriter<'_> {
                 near,
                 zone,
             } => self.grind_mobs(&mut step, t, *mobs, *seconds, near, *zone),
+            Event::GrindReputation {
+                faction,
+                camp,
+                kills,
+                seconds,
+                near,
+                zone,
+                ..
+            } => self.grind_reputation(&mut step, *faction, *camp, *kills, *seconds, near, *zone),
             Event::CatchUp {
                 members,
                 seconds,
@@ -592,6 +601,42 @@ impl StepWriter<'_> {
         step.say.push(
             Phrase::new("grind.mobs")
                 .arg("mobs", num(i64::from(mobs)))
+                .arg("minutes", num((seconds / 60.0).ceil() as i64)),
+        );
+        self.place(near, Some(zone))
+    }
+
+    /// Creatures to kill for the reputation a quest asks for.
+    #[expect(clippy::too_many_arguments, reason = "the fields of the event, unpacked")]
+    fn grind_reputation(
+        &self,
+        step: &mut Step,
+        faction: i64,
+        camp: usize,
+        kills: u32,
+        seconds: f64,
+        near: &Pos,
+        zone: i64,
+    ) -> Place {
+        let model = &self.planner.model;
+        let id = faction;
+        let camp = &model.reputation_camps[&faction][camp];
+        step.kind = StepKind::Grind;
+        step.target = Some(Target {
+            kind: TargetKind::Npc,
+            id: camp.npc,
+            name: camp.name.clone(),
+        });
+        let name = model
+            .faction_names
+            .get(&id)
+            .cloned()
+            .unwrap_or_else(|| format!("Faction {id}"));
+        step.say.push(
+            Phrase::new("grind.reputation")
+                .arg("mobs", num(i64::from(kills)))
+                .arg("npc", Arg::Npc(camp.npc, camp.name.clone()))
+                .arg("faction", Arg::Text(name))
                 .arg("minutes", num((seconds / 60.0).ceil() as i64)),
         );
         self.place(near, Some(zone))

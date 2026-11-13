@@ -46,8 +46,19 @@ impl QuestBuilder<'_> {
         }
         // A negative spell is one the character must not know yet: the spell the quest teaches
         // (Camping 101's Camp Tent), never known before taking it.
-        if matches!(skill, Some(None)) || r.rep.unwrap_or(0) != 0 || r.spell.unwrap_or(0) > 0 {
+        if matches!(skill, Some(None)) || r.spell.unwrap_or(0) > 0 {
             return Err("needs a profession, reputation or spell");
+        }
+        if let Some(faction) = r.rep.filter(|&f| f != 0) {
+            if self.params.rival_clan_chosen(faction) {
+                return Err("reputation with the other clan chosen");
+            }
+            if !self
+                .sources
+                .reputation_reachable(faction, r.rep_min.unwrap_or(0) as f64)
+            {
+                return Err("needs a reputation no kill gives");
+            }
         }
         Ok(())
     }

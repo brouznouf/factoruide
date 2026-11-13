@@ -558,6 +558,9 @@ impl Planner<'_> {
                     Event::Abandon { quest } => Edit::Abandon { quest: quest as u32 },
                     Event::Grind { to_level, .. } => Edit::GrindTo { level: to_level },
                     Event::GrindMobs { mobs, .. } => Edit::Grind { mobs },
+                    // Kept as its kills where they were done (an edited route follows no
+                    // reputation).
+                    Event::GrindReputation { kills, .. } => Edit::Grind { mobs: kills },
                     // Profession trainer visits belong to the planner: an edited route has none.
                     // A dungeon is entered by its first stop inside.
                     Event::Reward { .. }

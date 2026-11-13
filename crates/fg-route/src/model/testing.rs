@@ -204,6 +204,7 @@ impl Q {
             start_guard: Guard::default(),
             end_guard: Guard::default(),
             reputation: Vec::new(),
+            required_reputation: None,
             members: 0xFF,
         };
         Self {
@@ -1070,6 +1071,8 @@ pub fn bare(quests: Vec<Quest>, dungeons: Vec<Dungeon>, start: Loc, params: &Par
         initial: Initial::default(),
         names: Names::default(),
         faction_names: HashMap::new(),
+        reputation_factions: Vec::new(),
+        reputation_camps: HashMap::new(),
         explore: Vec::new(),
         explore_by_zone: FxHashMap::default(),
         farm: super::FarmMobs::default(),

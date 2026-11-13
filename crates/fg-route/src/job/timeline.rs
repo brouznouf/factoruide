@@ -964,6 +964,7 @@ impl<'r> Replay<'r> {
                 }
                 Event::Grind { seconds, near, .. }
                 | Event::GrindMobs { seconds, near, .. }
+                | Event::GrindReputation { seconds, near, .. }
                 | Event::CatchUp { seconds, near, .. } => {
                     let walk = (e.time - t - seconds).max(0.0);
                     if apart(&at, near) {

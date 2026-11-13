@@ -104,15 +104,48 @@ impl Worth<'_> {
         // Past the target level (forced zones, reputation goals), XP is worth nothing: only the
         // reputation the goals still miss is.
         let past = s.level >= self.to_level;
+        let (grind, grind_xp) = self.reputation_grind(s, i, level);
         let worth = if past {
             self.reputation_xp(s, i, level)
         } else {
-            self.quest_worth(i, level) + self.growth.gear_xp(s, i, level) + self.reputation_xp(s, i, level)
+            self.quest_worth(i, level) + grind_xp + self.growth.gear_xp(s, i, level) + self.reputation_xp(s, i, level)
         };
         if past && worth <= 0.0 {
             return false;
         }
-        self.beats_grinding(s, worth, trip + self.quest_cost(i, level, s.bonus, s.abilities), level)
+        self.beats_grinding(
+            s,
+            worth,
+            trip + grind + self.quest_cost(i, level, s.bonus, s.abilities),
+            level,
+        )
+    }
+
+    /// The kills quest `i` takes first when it asks for a standing the character lacks
+    /// (`Simulator::grind_reputation`): their time and the XP they give, (0, 0) with the
+    /// standing.
+    fn reputation_grind(&self, s: &State, i: u32, level: i64) -> (f64, f64) {
+        let Some((faction, min)) = self.quest(i).required_reputation else {
+            return (0.0, 0.0);
+        };
+        let Some(k) = self.model.followed_index(self.params, faction) else {
+            return (0.0, 0.0);
+        };
+        let missing = min - f64::from(s.reputation[k]);
+        if missing <= 0.0 {
+            return (0.0, 0.0);
+        }
+        let camps = self.model.reputation_camps.get(&faction).map_or(&[][..], Vec::as_slice);
+        let Some(camp) =
+            (camps.iter().filter(|c| c.gain.cap >= min)).max_by(|a, b| a.gain.value.total_cmp(&b.gain.value))
+        else {
+            return (f64::INFINITY, 0.0);
+        };
+        let kills = (missing / camp.gain.value).ceil();
+        let rules = self.growth.rules();
+        let content = xp::content_at(s.pos.continent, s.pos.zone);
+        let each = rules.mob_xp(level, level, content) / self.combat.grind_rate(level, s.bonus, &s.pos);
+        (kills * each, kills * rules.mob_xp(level, camp.level, content))
     }
 
     /// Whether `worth` XP for `cost` seconds beats grinding.

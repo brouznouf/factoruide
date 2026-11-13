@@ -253,7 +253,9 @@ impl QuestBuilder<'_> {
                 .get_item(quest, target, text, amount)?
                 .map(|o| Objective { item: true, ..o })),
             ObjectiveKind::Trigger => self.explore(quest, text, extra.as_deref()).map(Some),
-            ObjectiveKind::Other => Err("reputation/spell objective"),
+            // Asked for before the quest is taken (`Quest::required_reputation`).
+            ObjectiveKind::Reputation => Ok(None),
+            ObjectiveKind::Other => Err("spell objective"),
         }
     }
 
@@ -335,7 +337,7 @@ impl QuestBuilder<'_> {
                         .or(quest_dungeon)
                 }
             }
-            ObjectiveKind::Trigger | ObjectiveKind::Other => None,
+            ObjectiveKind::Trigger | ObjectiveKind::Reputation | ObjectiveKind::Other => None,
         }?;
         let dungeon = &self.sources.dungeons[d];
         let name = self.sources.entities.name(kind.entity(), target);

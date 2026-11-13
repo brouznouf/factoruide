@@ -181,7 +181,7 @@ impl<'s> Simulator<'s> {
             log: 0,
             grind_used: 0,
             farm_used: 0,
-            reputation: (0..self.params.reputation_goals.len())
+            reputation: (0..self.params.reputation_goals.len() + self.model.reputation_factions.len())
                 .map(|g| init.reputation.get(g).copied().unwrap_or(0.0) as f32)
                 .collect(),
             forced_left: 0,

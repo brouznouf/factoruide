@@ -535,6 +535,20 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
         ],
     ),
     (
+        "grind.reputation",
+        [
+            "Kill {mobs} {npc} for reputation with {faction} (~{minutes} min)",
+            "Tuer {mobs} {npc} pour la réputation auprès de {faction} (~{minutes} min)",
+            "{mobs} {npc} für Ruf bei {faction} töten (~{minutes} Min.)",
+            "Matar {mobs} {npc} por reputación con {faction} (~{minutes} min)",
+            "Matar {mobs} {npc} pela reputação com {faction} (~{minutes} min)",
+            "Убить {npc} ({mobs}) ради репутации: {faction} (~{minutes} мин)",
+            "{faction} 평판을 위해 {npc} {mobs}마리 처치 (~{minutes}분)",
+            "击杀{mobs}只{npc}以获得{faction}声望（约{minutes}分钟）",
+            "擊殺{mobs}隻{npc}以獲得{faction}聲望（約{minutes}分鐘）",
+        ],
+    ),
+    (
         "checkpoint",
         [
             "Checkpoint: be level {level} before going on (grind if needed)",

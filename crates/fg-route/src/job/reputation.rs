@@ -3,7 +3,6 @@
 
 use super::start::StartState;
 use crate::model::Profile;
-use crate::params::ReputationGoal;
 use anyhow::Result;
 use rusqlite::{Connection, OptionalExtension};
 
@@ -45,29 +44,28 @@ pub fn race_base(conn: &Connection, faction: i64, race_bit: i64, class_bit: i64)
     }))
 }
 
-/// The points with each goal's faction at the start of the guide: the addon's record of the
-/// character, else the race's (a character the addon saw before it recorded reputations: then
-/// a note says so).
+/// The points with each faction the route follows (`Model::reputation_factions`) at the start
+/// of the guide: the addon's record of the character, else the race's (a character the addon
+/// saw before it recorded reputations: then a note says so).
 pub fn starting(
     conn: &Connection,
-    goals: &[ReputationGoal],
+    factions: &[i64],
     profile: &Profile,
     start: Option<&StartState>,
     notes: &mut Vec<String>,
 ) -> Result<Vec<f64>> {
-    let mut out = Vec::with_capacity(goals.len());
-    for goal in goals {
-        let seen = start.and_then(|s| s.reputation.iter().find(|r| r.id == goal.faction));
+    let mut out = Vec::with_capacity(factions.len());
+    for &faction in factions {
+        let seen = start.and_then(|s| s.reputation.iter().find(|r| r.id == faction));
         let points = if let Some(r) = seen {
             r.value
         } else {
             if start.is_some_and(|s| s.reputation.is_empty()) {
                 notes.push(format!(
-                    "reputation {} of the character unknown (recorded by a newer addon): the race's start counted",
-                    goal.faction
+                    "reputation {faction} of the character unknown (recorded by a newer addon): the race's start counted"
                 ));
             }
-            race_base(conn, goal.faction, profile.race_bit(), profile.class_bit())?.unwrap_or(0)
+            race_base(conn, faction, profile.race_bit(), profile.class_bit())?.unwrap_or(0)
         };
         out.push(points as f64);
     }

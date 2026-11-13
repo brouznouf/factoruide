@@ -102,6 +102,7 @@ impl QuestBuilder<'_> {
                 .into_iter()
                 .map(|(f, v)| (f, v as f64 * self.profile.reputation_rate()))
                 .collect(),
+            required_reputation: r.rep.filter(|&f| f != 0).map(|f| (f, r.rep_min.unwrap_or(0) as f64)),
             // A profession quest is for those leveling the profession.
             members: self.profile.members_of(r.races, r.classes)
                 & skill

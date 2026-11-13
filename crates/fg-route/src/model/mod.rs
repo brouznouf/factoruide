@@ -20,6 +20,7 @@ mod objectives;
 mod places;
 mod pvp;
 mod quest;
+pub mod reputation;
 mod required;
 pub mod requirements;
 mod rewards;
@@ -194,6 +195,7 @@ pub fn load(
         ),
     };
     let graveyards = graveyards(conn, world, &sources)?;
+    let (reputation_factions, reputation_camps) = reputation_factions(&quests, &sources, params);
     let own_knowledge = abilities.initial(starts.first().copied(), profile.from_level);
     let known_class_powers = profile
         .class_powers
@@ -236,7 +238,14 @@ pub fn load(
         initial: Initial::default(),
         known_class_prerequisites: known_prerequisites,
         names: Names::load_for(conn, params.edition, profile.locale.as_deref().unwrap_or("enUS"))?,
-        faction_names: faction_names(conn, params),
+        faction_names: faction_names(
+            conn,
+            &(params.reputation_goals.iter().map(|g| g.faction))
+                .chain(reputation_factions.iter().copied())
+                .collect::<Vec<_>>(),
+        ),
+        reputation_factions,
+        reputation_camps,
         explore,
         explore_by_zone,
         farm,
@@ -364,23 +373,45 @@ fn graveyards(conn: &Connection, world: &World, sources: &Sources) -> Result<Vec
         .collect())
 }
 
-/// Names of the factions of the reputation goals.
-fn faction_names(conn: &Connection, params: &Params) -> HashMap<i64, String> {
+/// Names of the factions the route follows.
+fn faction_names(conn: &Connection, factions: &[i64]) -> HashMap<i64, String> {
     let mut out = HashMap::new();
-    for goal in &params.reputation_goals {
+    for &faction in factions {
         let name: Option<String> = conn
-            .query_row(
-                "SELECT Name_lang FROM client_faction WHERE ID = ?1",
-                [goal.faction],
-                |r| r.get(0),
-            )
+            .query_row("SELECT Name_lang FROM client_faction WHERE ID = ?1", [faction], |r| {
+                r.get(0)
+            })
             .ok();
-        out.insert(
-            goal.faction,
-            name.unwrap_or_else(|| format!("Faction {}", goal.faction)),
-        );
+        out.insert(faction, name.unwrap_or_else(|| format!("Faction {faction}")));
     }
     out
+}
+
+/// The factions whose reputation the route follows besides the goals'
+/// (`Model::reputation_factions`), and the creatures to kill for those quests ask a standing
+/// with.
+fn reputation_factions(
+    quests: &[Quest],
+    sources: &Sources,
+    params: &Params,
+) -> (Vec<i64>, HashMap<i64, Vec<reputation::RepCamp>>) {
+    let goals: Vec<i64> = params.reputation_goals.iter().map(|g| g.faction).collect();
+    let mut factions: Vec<i64> = Vec::new();
+    let mut camps = HashMap::new();
+    for (faction, _) in quests.iter().filter_map(|q| q.required_reputation) {
+        if camps.contains_key(&faction) {
+            continue;
+        }
+        let own = sources.reputation_camps.get(&faction).cloned().unwrap_or_default();
+        let touched = std::iter::once(faction).chain(own.iter().flat_map(|c| c.effects.iter().map(|e| e.faction)));
+        for f in touched {
+            if !goals.contains(&f) && !factions.contains(&f) {
+                factions.push(f);
+            }
+        }
+        camps.insert(faction, own);
+    }
+    (factions, camps)
 }
 
 /// Every quest the character can do, and the others with why they are left out.

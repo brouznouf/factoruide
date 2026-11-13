@@ -79,6 +79,35 @@ struct Npc {
     /// The sides it talks to: A, H, AH.
     friendly_to: Option<String>,
     respawn: Option<f64>,
+    /// The reputation each kill gives or takes.
+    #[serde(default)]
+    reputation: Vec<KillReputation>,
+}
+
+/// Reputation a kill gives (negative: takes) with a faction while the standing is at most
+/// `max_standing` (0 Hated .. 7 Exalted, default Friendly).
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct KillReputation {
+    faction: i64,
+    value: i64,
+    #[serde(default = "friendly")]
+    max_standing: i64,
+    /// A or H when only that side gets it.
+    #[serde(default)]
+    side: String,
+}
+
+fn friendly() -> i64 {
+    4
+}
+
+/// The standing a quest asks for: points from Neutral's bottom (Friendly 3000, Honored 9000).
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct ReputationRequirement {
+    faction: i64,
+    min: i64,
 }
 
 #[derive(Debug, Deserialize)]
@@ -171,6 +200,7 @@ struct Quest {
     extra: Option<String>,
     /// The JSON of what the quest requires.
     requirements: Option<String>,
+    required_reputation: Option<ReputationRequirement>,
 }
 
 /// Where an item comes from: dropped by an NPC, an object or an item, or sold by a vendor (its
@@ -512,6 +542,16 @@ fn insert(conn: &Connection, edition: Edition, file: &File) -> Result<()> {
         for at in &n.at {
             spawn(conn, "npc", n.id, at, n.respawn)?;
         }
+        for k in &n.reputation {
+            conn.execute(
+                "CREATE TABLE IF NOT EXISTS m_npc_reputation (npc_id INTEGER, faction INTEGER, value INTEGER, max_standing INTEGER, side TEXT)",
+                [],
+            )?;
+            conn.execute(
+                "INSERT INTO m_npc_reputation VALUES (?1, ?2, ?3, ?4, ?5)",
+                params![n.id, k.faction, k.value, k.max_standing, k.side],
+            )?;
+        }
     }
     for o in &file.object {
         if conn.query_row("SELECT count(*) FROM m_object WHERE id = ?1", [o.id], |r| {
@@ -643,6 +683,12 @@ fn quest(conn: &Connection, q: &Quest) -> Result<()> {
             q.objectives_text,
         ],
     )?;
+    if let Some(rep) = &q.required_reputation {
+        conn.execute(
+            "UPDATE m_quest SET required_min_rep_faction = ?2, required_min_rep_value = ?3 WHERE id = ?1",
+            params![q.id, rep.faction, rep.min],
+        )?;
+    }
     let relation = |role: &str, kind: &str, id: i64| {
         conn.execute(
             "INSERT INTO m_quest_relation (quest_id, role, entity_type, entity_id, sources) VALUES (?1, ?2, ?3, ?4, 'fixture')",

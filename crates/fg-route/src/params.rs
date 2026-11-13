@@ -236,6 +236,10 @@ pub struct Params {
     /// Seconds of the guide each reputation point missing from `reputation_goals` at its end is
     /// worth: quests giving the reputation are planned until the goal is reached.
     pub reputation_weight: f64,
+    /// Desolace's centaur clan the character sides with: Gelkis (92) or Magram (93), whose
+    /// standing each kill of the other clan gives; none: either, as the route finds best. The
+    /// quests asking for the other clan's standing are left out.
+    pub desolace_clan: Option<i64>,
     /// Minimum quest efficiency, relative to grinding, to be worth accepting.
     pub min_efficiency: f64,
     /// Hearthstone cooldown and cast time.
@@ -590,6 +594,7 @@ impl Default for Params {
             preferred_zone_weight: 0.5,
             reputation_goals: vec![],
             reputation_weight: 10.0,
+            desolace_clan: None,
             min_efficiency: 0.5,
             hearth_cooldown: 3600.0,
             hearth_cast: 10.0,
@@ -879,6 +884,17 @@ impl Params {
             (params.dungeon_from, params.dungeon_to) = params.progression.dungeon_window();
         }
         Ok(params)
+    }
+}
+
+/// Desolace's two centaur clans (Faction IDs): Gelkis and Magram.
+pub const DESOLACE_CLANS: [i64; 2] = [92, 93];
+
+impl Params {
+    /// Whether `faction` is the Desolace clan the character does not side with.
+    pub fn rival_clan_chosen(&self, faction: i64) -> bool {
+        self.desolace_clan
+            .is_some_and(|c| c != faction && DESOLACE_CLANS.contains(&c) && DESOLACE_CLANS.contains(&faction))
     }
 }
 

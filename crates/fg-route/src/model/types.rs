@@ -592,6 +592,9 @@ pub struct Quest {
     /// Reputation points its turn-in gives the character, by Faction ID (the human's Diplomacy
     /// counted).
     pub reputation: Vec<(i64, f64)>,
+    /// The standing it asks for before it is offered: Faction ID and points from Neutral's
+    /// bottom (Friendly 3000).
+    pub required_reputation: Option<(i64, f64)>,
     /// The members of the group it is for (race and class), a bit each: the character's 1.
     pub members: u8,
 }
@@ -661,8 +664,15 @@ pub struct Model {
     pub initial: Initial,
     /// Names in the guide's language.
     pub names: Names,
-    /// Names of the factions of the reputation goals (Faction ID -> name in the database).
+    /// Names of the factions of the reputation goals and of `reputation_factions` (Faction ID ->
+    /// name in the database).
     pub faction_names: HashMap<i64, String>,
+    /// The factions whose reputation the route follows besides the goals' (`State::reputation`
+    /// holds the goals' first, then these): those quests ask a standing with, and the ones the
+    /// kills for those take from.
+    pub reputation_factions: Vec<i64>,
+    /// The creatures to kill for the reputation of each faction a quest asks a standing with.
+    pub reputation_camps: HashMap<i64, Vec<super::reputation::RepCamp>>,
     /// Areas that give XP when discovered.
     pub explore: Vec<ExploreArea>,
     /// Indexes into `explore` by zone.
@@ -936,5 +946,22 @@ impl EntityKind {
             "dungeon" => Some(Self::Dungeon),
             _ => None,
         }
+    }
+}
+
+impl Model {
+    /// The factions `State::reputation` follows, in its order: the goals', then
+    /// `reputation_factions`.
+    pub fn followed_factions(&self, params: &crate::params::Params) -> Vec<i64> {
+        (params.reputation_goals.iter().map(|g| g.faction))
+            .chain(self.reputation_factions.iter().copied())
+            .collect()
+    }
+
+    /// The index of `faction` in `followed_factions`, without building it.
+    pub fn followed_index(&self, params: &crate::params::Params, faction: i64) -> Option<usize> {
+        let goals = &params.reputation_goals;
+        (goals.iter().position(|g| g.faction == faction))
+            .or_else(|| (self.reputation_factions.iter().position(|&f| f == faction)).map(|k| goals.len() + k))
     }
 }

@@ -334,9 +334,9 @@ impl Simulator<'_> {
                 .count() as u32;
             s.forced_left = s.forced_left.saturating_sub(u32::from(q.zone_forced) + closed);
         }
-        for (g, goal) in self.params.reputation_goals.iter().enumerate() {
+        for (g, followed) in self.model.followed_factions(self.params).into_iter().enumerate() {
             for &(faction, points) in &q.reputation {
-                if faction == goal.faction {
+                if faction == followed {
                     s.reputation[g] += points as f32;
                 }
             }
@@ -416,6 +416,7 @@ impl Simulator<'_> {
         // Chosen once, before grinding to it: the place the stop is gated by is the one gone to.
         let spot = self.spot_of(s, stop);
         self.grind_to_gate(s, stop, spot, record);
+        self.grind_reputation(s, stop, record);
         let loc = self.arrive(s, stop, spot, record);
         if !(Self::timed(stop.kind) && self.failed_in_time(s, stop.index, record)) {
             let rewards = if stop.kind == Kind::TurnIn {
@@ -724,6 +725,57 @@ impl Simulator<'_> {
                     .unwrap_or(0)
             })
             .fold(combat.guard_level(&q.end_guard, s.might()), i64::max)
+    }
+
+    /// Before taking a quest asking for a standing the character does not have: kill, at the
+    /// nearest place of the creatures whose kills bring it there, as many as it takes
+    /// (`Event::GrindReputation`), what each kill takes from other factions counted too.
+    fn grind_reputation(&self, s: &mut State, stop: Stop, record: &mut impl FnMut(&State, Event)) {
+        if stop.kind != Kind::Accept || self.mode == Mode::Replay || self.explicit {
+            return;
+        }
+        let Some((faction, min)) = self.quest(stop.index).required_reputation else {
+            return;
+        };
+        let Some(k) = self.model.followed_index(self.params, faction) else {
+            return;
+        };
+        let have = f64::from(s.reputation[k]);
+        if have >= min {
+            return;
+        }
+        let camps = self.model.reputation_camps.get(&faction).map_or(&[][..], Vec::as_slice);
+        let best = (camps.iter().enumerate())
+            .filter(|(_, c)| c.gain.cap >= min)
+            .flat_map(|(i, c)| c.places.iter().map(move |p| (i, p)))
+            .min_by(|a, b| s.pos.dist(&a.1.0).total_cmp(&s.pos.dist(&b.1.0)));
+        let Some((i, &(near, zone))) = best else {
+            return;
+        };
+        let camp = &camps[i];
+        self.go(s, &near, zone, record);
+        if !s.time.is_finite() {
+            return;
+        }
+        let kills = ((min - have) / camp.gain.value).ceil().max(1.0) as u32;
+        let seconds = self.growth().kill_for_reputation(s, kills, camp.level);
+        for effect in &camp.effects {
+            if let Some(j) = self.model.followed_index(self.params, effect.faction) {
+                s.reputation[j] = effect.after(f64::from(s.reputation[j]), f64::from(kills)) as f32;
+            }
+        }
+        record(
+            s,
+            Event::GrindReputation {
+                faction,
+                camp: i,
+                kills,
+                points: f64::from(s.reputation[k]),
+                seconds,
+                near,
+                zone,
+            },
+        );
     }
 
     fn grind_to_gate(

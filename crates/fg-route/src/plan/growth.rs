@@ -15,7 +15,7 @@ pub(crate) struct Growth<'g> {
 }
 
 impl<'g> Growth<'g> {
-    fn rules(self) -> &'static xp::Rules {
+    pub(crate) fn rules(self) -> &'static xp::Rules {
         self.params.edition.rules()
     }
 
@@ -392,6 +392,35 @@ impl<'g> Growth<'g> {
             s.rested -= consumed;
             self.mates_kill(s, killed);
             self.gain(s, need);
+        }
+        s.time += t;
+        s.spent.grinding += t;
+        t
+    }
+
+    /// Kill `kills` creatures of `level` where the character stands for the reputation they
+    /// give, each as long as one of its own level takes, with the XP they give (none past the
+    /// game's cap). Returns the time spent, counted as grinding.
+    pub(crate) fn kill_for_reputation(self, s: &mut State, kills: u32, level: i64) -> f64 {
+        /// Seconds a kill takes when the rate gives none (the game's cap).
+        const KILL_SECONDS: f64 = 30.0;
+        let combat = Combat {
+            params: self.params,
+            dungeons: &self.model.dungeons,
+        };
+        let content = xp::content_at(s.pos.continent, s.pos.zone);
+        let share = self.params.group_xp_share();
+        let each = self.rules().mob_xp(s.level, s.level, content) * share / combat.grind_rate(s.level, s.bonus, &s.pos);
+        let each = if each.is_finite() && each > 0.0 {
+            each
+        } else {
+            KILL_SECONDS
+        };
+        let t = each * f64::from(kills);
+        self.gather(s, s.pos.zone, f64::from(kills));
+        if s.level < self.rules().max_level {
+            let xp = (self.rules().mob_xp(s.level, level, content) * share) as i64 * i64::from(kills);
+            s.spent.grind_xp += self.gain_kills(s, xp);
         }
         s.time += t;
         s.spent.grinding += t;

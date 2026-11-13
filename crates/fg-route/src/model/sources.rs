@@ -67,7 +67,10 @@ pub(super) enum ObjectiveKind {
     Item,
     /// Reach an area.
     Trigger,
-    /// Reputation, spell...: not planned.
+    /// Keep a standing with a faction (the target) of `amount` points: the standing the quest
+    /// asks for before it is taken.
+    Reputation,
+    /// Spell...: not planned.
     Other,
 }
 
@@ -89,6 +92,7 @@ impl ObjectiveKind {
             "object" => Self::Object,
             "item" => Self::Item,
             "trigger" => Self::Trigger,
+            "reputation" => Self::Reputation,
             _ => Self::Other,
         }
     }
@@ -144,6 +148,8 @@ pub(super) struct Sources {
     pub(super) tokens: HashSet<i64>,
     /// Parent of each area (AreaTable), when zones are forced (`Params::forced_zones`).
     pub(super) area_parents: HashMap<i64, i64>,
+    /// The creatures to kill for the reputation of each faction a quest asks a standing with.
+    pub(super) reputation_camps: HashMap<i64, Vec<super::reputation::RepCamp>>,
 }
 
 impl Sources {
@@ -163,11 +169,30 @@ impl Sources {
         entities.borrow_heights(world);
         let (dungeons, dungeon_by_area, inside) =
             load_dungeons(conn, world, profile.faction, &profile.dungeons, &reachable)?;
-        let rows = quest_rows(conn)?;
+        let mut rows = quest_rows(conn)?;
         let objectives = objective_rows(conn)?;
+        // A standing to keep is the one the quest asks for, when the data gives none.
+        for r in rows.iter_mut().filter(|r| r.rep.unwrap_or(0) == 0) {
+            let kept = (objectives.get(&r.id).into_iter().flatten()).find(|o| o.0 == ObjectiveKind::Reputation);
+            if let Some(&(_, Some(faction), _, _, amount)) = kept {
+                (r.rep, r.rep_min) = (Some(faction), amount);
+            }
+        }
         let (item_origins, drop_chance) = item_origins(conn, params)?;
         let links = links(conn, profile)?;
+        let kill_reputation = super::reputation::load(conn, profile.faction, profile.reputation_rate())?;
+        let mut reputation_camps = HashMap::new();
+        for faction in rows
+            .iter()
+            .filter_map(|r| r.rep)
+            .filter(|&f| f != 0)
+            .collect::<std::collections::BTreeSet<_>>()
+        {
+            let camps = super::reputation::camps(conn, world, &kill_reputation, faction, &reachable)?;
+            reputation_camps.insert(faction, camps);
+        }
         Ok(Self {
+            reputation_camps,
             elites: EliteSpawns::new(&entities, world),
             guards: super::Guards::load(conn, world, profile.faction)?,
             class_quest_ids: class_quest_ids(
@@ -205,6 +230,12 @@ impl Sources {
                 area_parents(conn)?
             },
         })
+    }
+
+    /// Whether kills can bring the reputation with `faction` to `min` points: a creature whose
+    /// kills give it up to there stands where the character can go.
+    pub(super) fn reputation_reachable(&self, faction: i64, min: f64) -> bool {
+        (self.reputation_camps.get(&faction).into_iter().flatten()).any(|c| c.gain.cap >= min)
     }
 
     /// Whether area `area` is one of `zones` or lies in one of them.
@@ -329,7 +360,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
                 (SELECT json_group_array(json_extract(t.value, '$[1]'))
                  FROM json_each(extra, '$.extra_objectives') e, json_each(e.value, '$.\"5\"') t
                  WHERE json_extract(t.value, '$[0]') = 'object'),
-                {reward_spell}, objectives_text, json_extract(extra, '$.start_wait')
+                {reward_spell}, objectives_text, json_extract(extra, '$.start_wait'), required_min_rep_value
          FROM m_quest WHERE status = 'available'"
     ))?;
     let rows = stmt.query_map([], |r| {
@@ -363,6 +394,7 @@ fn quest_rows(conn: &Connection) -> Result<Vec<QuestRow>> {
             reward_spell: r.get(24)?,
             objectives_text: r.get(25)?,
             start_wait: r.get(26)?,
+            rep_min: r.get(27)?,
         })
     })?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
@@ -658,7 +690,9 @@ pub(super) struct QuestRow {
     pub(super) classes: Option<i64>,
     pub(super) skill: Option<i64>,
     pub(super) skill_value: Option<i64>,
+    /// The faction it asks a standing with, and the points from Neutral's bottom.
     pub(super) rep: Option<i64>,
+    pub(super) rep_min: Option<i64>,
     pub(super) spell: Option<i64>,
     pub(super) breadcrumb_for: Option<i64>,
     pub(super) requirements: Option<String>,

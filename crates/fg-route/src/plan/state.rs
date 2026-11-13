@@ -134,6 +134,17 @@ pub enum Event {
         near: Pos,
         zone: i64,
     },
+    /// Creatures killed for the reputation they give before a quest asking for a standing
+    /// (`faction`: its ID; `camp`: index in its `Model::reputation_camps`), up to `points`.
+    GrindReputation {
+        faction: i64,
+        camp: usize,
+        kills: u32,
+        points: f64,
+        seconds: f64,
+        near: Pos,
+        zone: i64,
+    },
     /// Mobs of the character's level killed where it stands (a step of an edited route).
     GrindMobs {
         mobs: u32,
@@ -396,8 +407,8 @@ pub(crate) struct State {
     /// and `Params::farm_cap`).
     pub(crate) grind_used: i64,
     pub(crate) farm_used: i64,
-    /// Points with the faction of each reputation goal (`Params::reputation_goals`; none
-    /// without goals).
+    /// Points with each faction the route follows (`Model::reputation_factions`: the goals'
+    /// first; none without goals or quests asking for a standing).
     pub(crate) reputation: Vec<f32>,
     /// Quests of the forced zones not done yet (nor closed by an exclusive one): the guide
     /// goes on past the target level until they are.

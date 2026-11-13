@@ -2577,7 +2577,12 @@ fn addon_knows_escorts() {
     let route = vec![Stop::quest(0, Kind::Accept), Stop::quest(0, Kind::TurnIn)];
     let guide = fg_route::export::build(&planner, &p.profile, &route);
     let lua = fg_route::export::to_lua(std::slice::from_ref(&guide));
-    let line = |k: &str| lua.lines().find(|l| l.contains(&format!("k = \"{k}\""))).unwrap().to_owned();
+    let line = |k: &str| {
+        lua.lines()
+            .find(|l| l.contains(&format!("k = \"{k}\"")))
+            .unwrap()
+            .to_owned()
+    };
     assert!(line("accept").contains("es = true"), "{}", line("accept"));
     assert!(!line("turnin").contains("es = true"), "{}", line("turnin"));
 }
@@ -4681,4 +4686,68 @@ fn a_dungeon_is_run_from_the_minimum_level_of_its_must_have_quest() {
     p.model.quests[i].completion_window.min_level = Some(18);
     p.model.quests[i].implicit_window = false;
     assert!(dungeon_level(&p) >= 18, "asked at level 18: run from it");
+}
+
+/// Creatures whose kills give reputation 92 (+20 up to Friendly) and a quest asking for some.
+fn reputation_fixture(min: i64) -> Connection {
+    Fixture::new(Edition::Classic)
+        .file("classic_northshire")
+        .toml(&format!(
+            r#"
+[[npc]]
+id = 90110
+name = "Rival Centaur"
+level = 4
+at = [{{ zone = 12, x = 47.0, y = 36.0 }}, {{ zone = 12, x = 47.3, y = 36.2 }}, {{ zone = 12, x = 47.6, y = 36.4 }}]
+reputation = [{{ faction = 92, value = 20 }}]
+
+[[quest]]
+id = 90111
+name = "Clan Errand"
+level = 3
+giver = 197
+required_reputation = {{ faction = 92, min = {min} }}
+objectives = [{{ creature = 6, amount = 2 }}]
+"#
+        ))
+        .open()
+}
+
+/// A quest asking for a standing with a faction is planned: before taking it, the character
+/// kills creatures whose kills give that reputation until it has enough (a human starts at 2000
+/// with it, and gets 22 a kill with Diplomacy: 23 kills for 2500).
+#[test]
+fn a_quest_asking_for_reputation_is_taken_after_kills_that_give_it() {
+    let conn = reputation_fixture(2500);
+    let p = prepare_in(&conn, "human", "warrior", 6, &[], None);
+    let q = quest(&p, 90111).expect("the quest is planned");
+    let route = [Stop::quest(q, Kind::Accept)];
+    let mut trace = Vec::new();
+    assert!(planner(&p).simulate(&route, Some(&mut trace)).is_some());
+    let kills: u32 = (trace.iter())
+        .filter_map(|t| match t.event {
+            Event::GrindReputation { kills, .. } => Some(kills),
+            _ => None,
+        })
+        .sum();
+    assert_eq!(kills, 23);
+}
+
+/// A standing no kill gives (beyond Friendly: Honored's bottom at most) keeps the quest out.
+#[test]
+fn a_quest_asking_for_more_reputation_than_kills_give_is_left_out() {
+    let conn = reputation_fixture(9500);
+    let p = prepare_in(&conn, "human", "warrior", 6, &[], None);
+    assert!(quest(&p, 90111).is_none());
+}
+
+/// Siding with one Desolace clan leaves out the quests asking for the other's standing; either
+/// (the default) keeps them.
+#[test]
+fn siding_with_a_desolace_clan_leaves_the_others_quests_out() {
+    let conn = reputation_fixture(2500);
+    let planned = |side: &[&str]| quest(&prepare_in(&conn, "human", "warrior", 6, side, None), 90111).is_some();
+    assert!(planned(&[]), "either clan");
+    assert!(planned(&["desolace_clan=92"]), "the quest's clan");
+    assert!(!planned(&["desolace_clan=93"]), "the other clan");
 }
