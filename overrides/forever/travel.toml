@@ -74,8 +74,9 @@ seconds = 30
 one_way = true
 after_quest = 95349
 
-# Dalaran and Stormwind's Wizard's Sanctum: portals for the Skyborne only (players report that
-# other races cannot take them; not checked in game).
+# Dalaran to Stormwind: the portal of "Welcome to Azeroth", the quest Denaaris Stargale gives on
+# arrival ("Take the Skyborne Portal to Stormwind"), only while it is held. No portal leads back
+# to Dalaran.
 [[link]]
 name = "Skyborne Portal to Stormwind"
 faction = "Alliance"
@@ -85,13 +86,5 @@ to = { zone = 1519, x = 74.0, y = 45.0 }   # approx: arrival in Stormwind
 seconds = 15
 instant = true
 one_way = true
-
-[[link]]
-name = "Skyborne Portal to Dalaran"
-faction = "Alliance"
-races = ["skyborne"]
-from = { zone = 1519, x = 50.4, y = 86.0 } # approx: Wizard's Sanctum, by Larimaine Purdue
-to = { zone = 36, x = 12.04, y = 56.21 }   # approx: the Sky Enclave, by the portal back
-seconds = 15
-instant = true
-one_way = true
+after_quest = 94947
+while_held = true
