@@ -2364,6 +2364,81 @@ objectives = [
     { type = "trigger", text = "Repair the eastern pylon", at = { zone = 16651, x = 73.0, y = 23.3 } },
 ]
 
+# The Magram and Gelkis clans' chains (Valley of Bones): each quest asks to keep Honored with
+# its clan (its objective "Magram Clan Centaur (Honored)" or "Gelkis Clan Centaur (Honored)"),
+# reached by killing the other clan's centaurs in Desolace. Their objectives from the quests'
+# pages. Still out of the guides: Corrupting Tears (Imbued Tears bought for Carved Centaur
+# Totems) and Facing the Truth (the Accursed Skull's place) start them.
+[[quest]]
+id = 92873 # Proof of Concept: the staff, used at the ritual place, raises two Nascent Undead Ravagers
+required_reputation = { faction = 93, min = 9000 }
+objectives = [{ type = "trigger", text = "Raise and slay Nascent Undead Ravagers with the Rudimentary Necromancy Staff for 426 Well Cursed Bones", at = { zone = 405, x = 68.4, y = 84.6 } }]
+
+[[quest]]
+id = 92893 # No Mercy for the Weak
+required_reputation = { faction = 93, min = 9000 }
+objectives = [{ type = "creature", id = 253431, amount = 5 }]
+
+[[quest]]
+id = 92894 # Bone Raising: the Haggard Bones raised with the Enhanced Necromancy Staff (or slain)
+required_reputation = { faction = 93, min = 9000 }
+objectives = [{ type = "talk", id = 253446, amount = 10, text = "Raise or slay Haggard Bones" }]
+
+[[quest]]
+id = 93066 # Bristleback Retreat
+required_reputation = { faction = 93, min = 9000 }
+objectives = [
+    { type = "creature", id = 253524, amount = 4 },
+    { type = "creature", id = 253525, amount = 6 },
+    { type = "creature", id = 253526, amount = 6 },
+]
+
+[[quest]]
+id = 93129 # Threat of Starvation: the Stolen Supplies are in the Centaur Supplies
+required_reputation = { faction = 93, min = 9000 }
+objectives = [{ type = "item", id = 256892, amount = 6 }]
+
+[[quest]]
+# A Cleansing Cry: Mulara is in the cave of Gelkis Village (its entrance over the bridge), the
+# Tears of Theradras further in.
+id = 93044
+required_reputation = { faction = 92, min = 9000 }
+objectives = [
+    { type = "trigger", text = "Speak with Mulara in the cave of Gelkis Village", at = { zone = 405, x = 38.4, y = 90.7 } },
+    { type = "item", id = 255878, amount = 3 },
+]
+
+[[object]]
+id = 587299
+name = "Tear of Theradras"
+zone = 405
+
+[[spawn]]
+type = "object"
+id = 587299
+zone = 405
+x = 38.9
+y = 95.2
+
+[[spawn]]
+type = "object"
+id = 587299
+zone = 405
+x = 39.1
+y = 95.5
+
+[[quest]]
+# Test Your Theory: Uthek's Staff lies by the pond in Desolace; joined with the Draenethyst
+# Crystal, it dispels the Accursed Skull on the pile beside it.
+id = 93045
+required_reputation = { faction = 92, min = 9000 }
+objectives = [{ type = "trigger", text = "Dispel the Accursed Skull with Uthek's Draenethyst Staff", at = { zone = 405, x = 42.0, y = 82.0 } }]
+
+[[quest]]
+id = 93062 # Bone Burying: the Haggard Bones laid to rest with Uthek's Draenethyst Staff
+required_reputation = { faction = 92, min = 9000 }
+objectives = [{ type = "talk", id = 253446, amount = 8, text = "Lay Haggard Bones to rest" }]
+
 # Fragments of the Pylons: one piece at the Magram village, one at the Gelkis village (Desolace).
 [[object]]
 id = 607122
