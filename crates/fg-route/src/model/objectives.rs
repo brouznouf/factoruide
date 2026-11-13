@@ -179,7 +179,7 @@ impl QuestBuilder<'_> {
         // Mobs to kill set the power by themselves; objects, areas and NPCs to talk to may
         // stand among stronger ones.
         for o in objs.iter_mut().filter(|o| o.kills <= 0.0 && o.dungeon_of().is_none()) {
-            o.guard = self.sources.guards.around(&o.loc.pos);
+            o.guard = self.sources.guards.around(&o.loc.pos, r.level.unwrap_or(1).max(1));
         }
         self.spots_and_crowd(r, objs);
     }

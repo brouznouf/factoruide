@@ -31,7 +31,7 @@ impl QuestBuilder<'_> {
                 // other side too.
                 .map(|l| {
                     if l.kind == EntityKind::Item {
-                        self.sources.guards.around_hostile(&l.pos)
+                        self.sources.guards.around_hostile(&l.pos, r.level.unwrap_or(1).max(1))
                     } else {
                         self.sources.guards.around_giver(&l.pos)
                     }

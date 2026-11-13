@@ -763,6 +763,39 @@ fn a_creature_of_no_known_faction_beside_a_giver_guards_nothing() {
     assert_eq!(guard(14), 61, "a monster's faction");
 }
 
+/// The creatures of no known side around an objective guard it out in the field, near the quest's
+/// level; not in a town of the character's side (Southshore Defenders by Serge Hinott, in Tarren
+/// Mill), nor far above the quest (level 55 by a level 20 quest). One of a hostile faction still
+/// guards it there.
+#[test]
+fn a_creature_of_no_known_faction_guards_an_objective_only_out_of_town_near_its_level() {
+    let guard = |faction: i64, level: i64, friend: bool| {
+        let at =
+            "[{ zone = 12, x = 60.0, y = 60.0 }, { zone = 12, x = 60.1, y = 60.1 }, { zone = 12, x = 59.9, y = 60.1 }]";
+        let mut toml = format!(
+            "[[npc]]\nid = 90100\nname = \"Defender\"\nlevel = {level}\nfaction = {faction}\nat = {at}\n\n\
+             [[quest]]\nid = 90200\nname = \"Wait for the cure\"\nlevel = 5\nraces_mask = 77\nzone = 12\nxp = 300\n\
+             starts = [{{ npc = 197 }}]\nends = [{{ npc = 197 }}]\n\
+             objectives = [{{ trigger = \"Cure Completed\", at = {{ zone = 12, x = 60.0, y = 60.0 }} }}]\n"
+        );
+        if friend {
+            toml.push_str("\n[[npc]]\nid = 90101\nname = \"Apothecary\"\nlevel = 30\nfaction = 12\nfriendly_to = \"A\"\nat = [{ zone = 12, x = 60.05, y = 60.0 }]\n");
+        }
+        let conn = Fixture::new(Edition::Classic)
+            .file("classic_northshire")
+            .toml(&toml)
+            .open();
+        let p = prepare_in(&conn, "human", "warrior", 10, &[], None);
+        p.model.quests[quest(&p, 90200).unwrap() as usize].objectives[0]
+            .guard
+            .level
+    };
+    assert_eq!(guard(0, 8, false), 8, "out in the field, near the quest's level");
+    assert_eq!(guard(0, 8, true), 0, "in a town of the character's side");
+    assert_eq!(guard(0, 55, false), 0, "far above the quest");
+    assert_eq!(guard(14, 55, true), 55, "a monster's faction");
+}
+
 /// The Deadmines' Collecting Memories and Oh Brother... are filed under the dungeon but their
 /// items drop from elites in the quarry beside its entrance (GitHub #82): done with the dungeon's
 /// group, at that place; Red Silk Bandanas also drops inside and stays a dungeon objective.
