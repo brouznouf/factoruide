@@ -2805,6 +2805,8 @@ fn a_guide_is_written_in_any_language() {
     let saved = |locale: &str| {
         let p = prepare_request(&PlanRequest {
             locale: Some(locale.into()),
+            // The quests of these tests only: no class quest to go far for.
+            required_class_quests: Some(vec![]),
             ..request("orc", "warlock", 4, &[])
         });
         let planner = planner(&p);

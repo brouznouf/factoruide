@@ -46,12 +46,6 @@ impl Availability<'_> {
             .unwrap_or(s.level)
     }
 
-    pub(crate) fn completion_ceiling(&self, s: &State, i: u32) -> i64 {
-        self.completion_members(s, i)
-            .map(|(_, level)| level)
-            .max()
-            .unwrap_or(s.level)
-    }
     /// The prerequisites of quest `i` are done: in a group, by each member it is for (before the
     /// route, or turned in on it). The quests to hold in the log are the character's own.
     pub(crate) fn prereqs_met(&self, s: &State, i: u32) -> bool {

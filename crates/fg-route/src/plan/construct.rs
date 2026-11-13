@@ -6,9 +6,6 @@ use super::{Planner, ZoneChange};
 use crate::params::Construction;
 use crate::world::Pos;
 
-/// Leave room for a deadline chain before the last two levels of its completion window.
-const DEADLINE_AHEAD: i64 = 2;
-
 /// A stop `nearest_stop` weighs: where it is, its weights, the quest that must be worth taking
 /// on the trip, and the least score the trip's bound gives.
 struct Candidate {
@@ -355,17 +352,14 @@ impl Planner<'_> {
                 add(stop, weight, None, bound.at(&self.places().pos(s, stop)));
             }
         }
-        let deadline = candidates
+        // Must-have quests first, as soon as they can be done, the nearest of them first: the rest
+        // of the route is arranged around them (a long class chain left for later turns gray
+        // before its end).
+        if candidates
             .iter()
-            .filter(|c| c.stop.is_quest())
-            .filter_map(|c| {
-                let deadline = self.quest(c.stop.index).priority_deadline?;
-                let level = self.availability().completion_ceiling(s, c.stop.index);
-                (deadline < self.rules().max_level && deadline <= level + DEADLINE_AHEAD).then_some(deadline)
-            })
-            .min();
-        if let Some(deadline) = deadline {
-            candidates.retain(|c| !c.stop.is_quest() || self.quest(c.stop.index).priority_deadline == Some(deadline));
+            .any(|c| c.stop.is_quest() && self.quest(c.stop.index).priority_deadline.is_some())
+        {
+            candidates.retain(|c| !c.stop.is_quest() || self.quest(c.stop.index).priority_deadline.is_some());
         }
         // Staying in a zone only matters while it has something left to do: with few stops left
         // there, the weight of leaving it fades to nothing (`Params::zone_stay_quests`).
@@ -1306,27 +1300,6 @@ mod deadline_tests {
         let required = route.iter().position(|s| *s == Stop::quest(0, Kind::TurnIn)).unwrap();
         let optional = route.iter().position(|s| *s == Stop::quest(1, Kind::TurnIn)).unwrap();
         assert!(required < optional, "{route:?}");
-    }
-
-    #[test]
-    fn priority_uses_the_highest_member_still_needing_the_deadline_quest() {
-        let mut p = crate::plan::tests::quests_at_start(2);
-        p.model.quests[0].required = true;
-        p.model.quests[0].mandatory = true;
-        p.model.quests[0].priority_deadline = Some(4);
-        p.model.quests[0].starts[0].pos.x += 10_000.0;
-        p.model.quests[1].xp = 500;
-        p.model.initial.mates = vec![crate::model::MateStart {
-            level: 3,
-            ..Default::default()
-        }];
-        for need in [3, 1] {
-            p.model.initial.need = vec![need, 3];
-            let plan = Planner::new(&p.model, &p.world, &p.params, &p.profile);
-            let state = plan.sim().initial_state();
-            let next = plan.nearest_stop(&state, None).unwrap();
-            assert_eq!(next, Stop::quest(u32::from(need != 3), Kind::Accept));
-        }
     }
 }
 

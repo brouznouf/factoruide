@@ -362,7 +362,8 @@ pub struct Params {
     /// Seconds a change of zone costs the optimizer on top of the trip (0 = only the trip): finding
     /// one's way and the NPCs of another zone, which makes a few quests far away not worth it.
     pub zone_change_weight: f64,
-    /// Cost of a class quest left out (keeps them in the route).
+    /// Cost of a forced zone's quest, a forced dungeon or a reputation goal left out (keeps them
+    /// in the route). Class quests and the player's must-haves are never traded: `MUST_HAVE_LEFT_OUT`.
     pub mandatory_penalty: f64,
     /// Seconds each quest the route takes and gives up costs the optimizer (gone gray, its
     /// dungeon run without it): taking a quest, killing for one of its objectives and dropping it

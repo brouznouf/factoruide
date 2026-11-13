@@ -14,6 +14,10 @@ const TIMED_SHARE: f64 = 0.75;
 /// for it.
 const AT_HAND: f64 = 100.0;
 
+/// Cost of a class quest or a quest the player asked for left out: more than any route could save,
+/// so the search never trades one for time. Only one that cannot be done at all stays out.
+const MUST_HAVE_LEFT_OUT: f64 = 1e7;
+
 impl Simulator<'_> {
     /// Training after a step: the class, then the professions. Not inside a dungeon (its steps
     /// of unknown places stand at its entrance, maybe by a trainer): once out of it.
@@ -1071,7 +1075,8 @@ impl Simulator<'_> {
         // flights and missing goals cost.
         s.time
             + self.weights(&s.spent)
-            + (missing + zone + dungeons + self.reputation_goals_unmet(s)) as f64 * self.params.mandatory_penalty
+            + f64::from(missing) * MUST_HAVE_LEFT_OUT
+            + (zone + dungeons + self.reputation_goals_unmet(s)) as f64 * self.params.mandatory_penalty
             + s.spent.reputation_missing * self.params.reputation_weight
             + f64::from(s.spent.missing_profession_quests) * self.params.profession_quest_weight
     }

@@ -266,10 +266,10 @@ pub(super) fn settle_class_quest_versions(quests: &mut [Quest], versions: &[(Cla
     }
 }
 
-/// The levels a must-have quest is done at when its window says nothing: while the game shows it
-/// yellow (orange when the progression is risky) or green, not before (too hard) nor once it is
-/// gray (no XP). A must-have is a quest the player asked for or a class requirement; a quest
-/// already gray when the guide starts has no limit, nothing could be done about it.
+/// The levels a must-have quest is done at when its window says nothing: from the level the game
+/// shows it yellow (orange when the progression is risky), not before (too hard). A must-have is a
+/// quest the player asked for or a class requirement. It is always done: turning gray never makes
+/// a route invalid, the route goes for it as early as it can instead (`priority_deadline`).
 pub(super) fn default_completion_windows(quests: &mut [Quest], profile: &Profile, params: &Params) {
     let above = match params.progression {
         crate::params::Progression::Risky => 4,
@@ -279,31 +279,35 @@ pub(super) fn default_completion_windows(quests: &mut [Quest], profile: &Profile
         .filter(|c| c.selected)
         .flat_map(|c| c.quests.iter().copied())
         .collect();
-    for q in quests.iter_mut() {
+    let mut due: Vec<(i64, usize)> = Vec::new();
+    for (i, q) in quests.iter_mut().enumerate() {
         let asked = profile.required_quests.iter().any(|r| r.id == q.id);
         let must_have = q.mandatory && (asked || required_by_class.contains(&q.id));
-        if !must_have || q.completion_window.min_level.is_some() || q.completion_window.max_level.is_some() {
+        if !must_have {
             continue;
         }
+        // The level it must be done by orders the must-haves (the earliest first): the player's,
+        // or the level it turns gray at; one already gray, or never yellow before its minimum
+        // level, comes first.
         let gray_from = (q.level..=q.level + 40).find(|&l| crate::xp::Rules::gray_level(l) >= q.level);
-        // A quest that cannot be taken before it is gray (its level under its minimum) has no limit.
-        let max = gray_from
+        let last = gray_from
             .map(|l| l - 1)
-            .filter(|&m| m >= profile.from_level && m >= q.min_level);
+            .filter(|&m| m >= profile.from_level && m >= q.min_level)
+            .unwrap_or(profile.from_level);
+        due.push((q.completion_window.max_level.unwrap_or(last), i));
+        if q.completion_window.min_level.is_some() || q.completion_window.max_level.is_some() {
+            continue;
+        }
         let min = (q.level - above).max(1);
         q.completion_window = CompletionWindow {
             min_level: Some(min).filter(|&m| m > profile.from_level),
-            max_level: max,
+            max_level: None,
         };
         q.implicit_window = true;
     }
-    // The route goes for them before the level they turn gray: the quest and what leads to it get
-    // the deadline, the earliest of those sharing a prerequisite winning.
+    // The route goes for them as soon as it can: the quest and what leads to it get the deadline,
+    // the earliest of those sharing a prerequisite winning.
     let index: HashMap<i64, usize> = quests.iter().enumerate().map(|(i, q)| (q.id, i)).collect();
-    let mut due: Vec<(i64, usize)> = (quests.iter().enumerate())
-        .filter(|(_, q)| q.implicit_window)
-        .filter_map(|(i, q)| Some((q.completion_window.max_level?, i)))
-        .collect();
     due.sort_unstable();
     for (max, i) in due {
         let mut stack = vec![i];
