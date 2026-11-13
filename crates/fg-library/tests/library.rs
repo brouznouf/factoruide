@@ -97,6 +97,49 @@ fn a_summary_needs_the_guide_file() {
     assert_eq!(library.info(&id("a")).unwrap().installed, None);
 }
 
+/// A guide of no step, as the planner would give it.
+fn empty_guide(name: &str) -> (fg_route::job::PlanRequest, fg_route::job::PlanOutcome) {
+    let request = serde_json::from_value(serde_json::json!({
+        "race": "dwarf", "class": "warrior", "from_level": 1, "to_level": 2, "name": name,
+    }))
+    .unwrap();
+    let outcome = serde_json::from_value(serde_json::json!({
+        "route": {
+            "name": name, "race_id": 3, "class_id": 1, "class": "WARRIOR", "faction": "Alliance",
+            "from_level": 1, "to_level": 2, "total_time": 0.0, "total_time_text": "0h00", "quests": 0,
+            "breakdown": {
+                "travel": 0.0, "flights": 0.0, "fighting": 0.0, "grinding": 0.0, "overhead": 0.0,
+                "quest_xp": 0, "mob_xp": 0, "grind_xp": 0,
+            },
+            "steps": [],
+        },
+        "notes": [],
+    }))
+    .unwrap();
+    (request, outcome)
+}
+
+/// A version chosen for the game stays it until the player makes a new one: the new version
+/// (computed again, set up again, edited or imported) is the one the game gets.
+#[test]
+fn a_new_version_is_followed_even_when_an_older_one_was_chosen() {
+    let files = Memory::default();
+    let library = Library::new(&files, Edition::Classic);
+    let (request, outcome) = empty_guide("A");
+    for _ in 0..2 {
+        library
+            .add_version(&request, &outcome, None, fg_library::Origin::COMPUTED, 0)
+            .unwrap();
+    }
+    library.set_installed(&id("a"), Some(1)).unwrap();
+    assert_eq!(library.followed_version(&id("a")), Some(1));
+
+    library
+        .add_version(&request, &outcome, None, fg_library::Origin::COMPUTED, 0)
+        .unwrap();
+    assert_eq!(library.followed_version(&id("a")), Some(3));
+}
+
 #[test]
 fn a_corrupt_file_says_which() {
     let files = Memory::default();

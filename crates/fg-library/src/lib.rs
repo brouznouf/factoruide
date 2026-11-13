@@ -156,7 +156,8 @@ impl<'a, F: Files> Library<'a, F> {
         out
     }
 
-    /// Adds a version to the guide of this name (created when new).
+    /// Adds a version to the guide of this name (created when new): the one its characters follow
+    /// from now on, even when an older one was chosen.
     ///
     /// # Errors
     ///
@@ -171,15 +172,12 @@ impl<'a, F: Files> Library<'a, F> {
     ) -> Result<VersionMeta> {
         let route = &outcome.route;
         let id = GuideId::from_name(&route.name);
-        let info = self.info(&id).unwrap_or(GuideInfo {
-            name: route.name.clone(),
-            installed: None,
-        });
+        // The player made this version: the game gets it, even over an older one chosen before.
         self.write_info(
             &id,
             &GuideInfo {
                 name: route.name.clone(),
-                ..info
+                installed: None,
             },
         )?;
         let version = self.versions(&id).first().map_or(1, |v| v.version + 1);
