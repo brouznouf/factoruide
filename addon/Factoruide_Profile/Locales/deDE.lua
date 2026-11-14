@@ -1,6 +1,7 @@
 -- German texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.deDE = {
+    ["Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."] = "Maximale Berufsfertigkeit unbekannt. Aktualisiere Factoruide Profile oder prüfe den Rang und überspringe diesen Schritt manuell.",
     ["take from the bank: %s"] = "aus der Bank holen: %s",
     ["can stay in the bank: %s"] = "kann in der Bank bleiben: %s",
     ["NOW"] = "JETZT",

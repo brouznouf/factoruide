@@ -409,7 +409,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
               professionExtras={
                 <Toggle
                   label={t("Étapes chez les maîtres de métier")}
-                  help={t("Avec des métiers : une étape chez le maître pour apprendre chaque métier et, avant que le niveau de compétence atteigne le plafond de son rang, chaque rang suivant. Un maître près de la route est visité en passant ; un maître loin demande un trajet, compté dans le temps de la route. Pas d'étape pour un rang qu'aucun maître n'enseigne.")}
+                  help={t("Planifier les visites pour apprendre vos métiers et leurs rangs, avec le trajet compris. Le rang expert en cuisine, pêche et secourisme demande d’acheter et de lire leurs livres.")}
                   checked={params.profession_trainers}
                   onChange={(v) => set("profession_trainers", v)}
                 />

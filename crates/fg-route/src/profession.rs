@@ -6,6 +6,69 @@
 
 use serde::{Deserialize, Serialize};
 
+/// A rank learned from a book instead of a trainer.
+#[derive(Debug, Clone, Copy)]
+pub struct ProfessionBook {
+    pub item: i64,
+    pub name: &'static str,
+    pub line: i64,
+    pub cap: i64,
+    pub skill: i64,
+    pub level: i64,
+    /// Verified sellers and the faction they serve; their positions come from the database.
+    pub vendors: &'static [(i64, &'static str)],
+}
+
+impl ProfessionBook {
+    /// TBC 2.4 removed the level requirement from the Expert Fishing book; all three Expert
+    /// books then require only skill 125. https://www.wowhead.com/tbc/item=16083.
+    pub(crate) fn minimum_level(&self, edition: crate::xp::Edition) -> i64 {
+        if edition == crate::xp::Edition::Tbc {
+            1
+        } else {
+            self.level
+        }
+    }
+}
+
+/// Expert Cooking is learned by reading this book at Cooking 125, without a character-level
+/// requirement. The bundled catalogs omit the item and its vendor stock.
+/// Sources: https://www.wowhead.com/forever/item=16072/expert-cookbook and
+/// https://www.icy-veins.com/wow-forever/cooking-leveling-guide.
+pub const EXPERT_COOKBOOK: ProfessionBook = ProfessionBook {
+    item: 16072,
+    name: "Expert Cookbook",
+    line: 185,
+    cap: 225,
+    skill: 125,
+    level: 1,
+    vendors: &[(12033, "H"), (3955, "A")],
+};
+
+/// Sources: https://db.icy-veins.com/wow-forever/items/16083 and /16084. Fishing's book
+/// requires character level 20; First Aid's, like Cooking's, requires only skill 125.
+pub const EXPERT_FISHING_BOOK: ProfessionBook = ProfessionBook {
+    item: 16083,
+    name: "Expert Fishing - The Bass and You",
+    line: 356,
+    cap: 225,
+    skill: 125,
+    level: 20,
+    vendors: &[(2626, "AH")],
+};
+
+pub const EXPERT_FIRST_AID_BOOK: ProfessionBook = ProfessionBook {
+    item: 16084,
+    name: "Expert First Aid - Under Wraps",
+    line: 129,
+    cap: 225,
+    skill: 125,
+    level: 1,
+    vendors: &[(13476, "H"), (2805, "A")],
+};
+
+pub const EXPERT_BOOKS: [&ProfessionBook; 3] = [&EXPERT_COOKBOOK, &EXPERT_FISHING_BOOK, &EXPERT_FIRST_AID_BOOK];
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Kind {

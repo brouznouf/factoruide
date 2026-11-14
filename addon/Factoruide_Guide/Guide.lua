@@ -28,6 +28,9 @@ local L = {
     noRoute = T("No guide chosen for this character.\nType /fg and click Follow beside a guide."),
     noGuides = T("No guide yet.\nMake one in the Factoruide web app, then type /fg and click Import a guide…"),
     done = T("Route finished!"),
+    unknownCap = T(
+        "Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."
+    ),
     yards = T("yd"),
     prevStep = T("Previous step"),
     nextStep = T("Next step"),
@@ -227,13 +230,20 @@ local function ObjectivesLoading(q)
     return false
 end
 
---- Skill line of a "profession" step (its target is the trainer), from the route professions.
+--- Skill line of a "profession" step (targeting a trainer or book vendor), from the route professions.
 local function ProfessionLine(step)
     if step.line then return step.line end
     for _, p in ipairs(route.professions or {}) do
         if step.t:find(p.name, 1, true) then return p.line end
     end
     return 0
+end
+
+local function ProfessionRank(step) return step.k == "profession" and step.sk ~= nil end
+
+--- A rank is learned only when the game reports its cap, including older guides' named skills.
+local function RankLearned(step)
+    return step.sk ~= nil and (select(2, FG.ProfessionSkill(ProfessionLine(step))) or 0) >= step.sk
 end
 
 local IsDone
@@ -306,6 +316,7 @@ function IsDone(step, index)
     if
         step.lvl
         and not ObjectiveGuide()
+        and not ProfessionRank(step)
         and UnitLevel("player") - step.lvl >= OUTDATED_LEVELS
         and not (q and QuestLog.IsOnQuest(q))
     then
@@ -361,12 +372,10 @@ function IsDone(step, index)
     elseif step.k == "practice" then
         local rank = FG.ProfessionSkill(step.id)
         return rank ~= nil and rank >= step.sk
-    elseif
-        step.k == "profession"
-        and step.sk
-        and (select(2, FG.ProfessionSkill(ProfessionLine(step))) or 0) >= step.sk
-    then
-        return true -- rank already learned
+    elseif ProfessionRank(step) then
+        -- Opening any trainer, a visit mark or an unread book does not prove a rank was learned.
+        -- Explicit manual skips were handled above.
+        return RankLearned(step)
     elseif
         step.k == "flight_master"
         or step.k == "train"
@@ -820,6 +829,11 @@ local function TaskView(step, index, withProgress)
         if rank then
             v.have, v.need = rank, step.sk
         end
+    elseif ProfessionRank(step) then
+        v.name = step.t
+        if withProgress and step.sk and step.sk > 75 and not select(2, FG.ProfessionSkill(ProfessionLine(step))) then
+            v.sub = L.unknownCap
+        end
     else
         v.name = step.t
     end
@@ -1179,13 +1193,37 @@ end
 
 -- Navigation -------------------------------------------------------------------
 
+--- Newly generated guides identify a flight excursion that only serves profession ranks and
+--- returns to its departure point. Check those ranks before leaving; once underway, keep the
+--- return flight. Group peers do not report their skill caps, so their trips stay conservative.
+local function SkipProfessionTrip()
+    local step = route.steps[state.step]
+    local last = step and step.pte
+    if not last or route.players or UnitOnTaxi("player") or state.marks[state.step] then return false end
+    local origin, destination = Distance(step), Distance(route.steps[last])
+    -- The player can still be walking toward the airport. Compare both ends instead of making
+    -- them arrive there first; a guide loaded at the destination must retain its return trip.
+    if not origin or not destination or origin >= destination then return false end
+    for i = state.step + 1, last do
+        local target = route.steps[i]
+        if target.k == "profession" and not RankLearned(target) then return false end
+    end
+    for i = state.step, last do
+        if route.steps[i].k == "fly" then state.marks[i] = true end
+    end
+    state.step = last + 1
+    return true
+end
+
 --- Skip forward over finished steps. `fromEvent` resumes after manual navigation.
 --- Skip the following steps already done (they are done together, e.g. several quests
 --- accepted at once).
 local function SkipDone()
     -- Background objectives (done along the way) do not stop the guide: the tracker shows them.
     while route.steps[state.step] do
+        SkipProfessionTrip()
         local step = route.steps[state.step]
+        if not step then break end
         local done, passed = step.bg, step.bg
         if not done then
             done, passed = IsDone(step, state.step)
@@ -1199,6 +1237,7 @@ end
 --- Move on once every step of the current group is done (not when we navigated to a group done
 --- already); until then the current step is the group's first one not done.
 function Guide:Advance()
+    if route and SkipProfessionTrip() then SkipDone() end
     if route and route.steps[state.step] then
         -- A take-off is the flight of the first fly step of the group not taken yet.
         local onTaxi = UnitOnTaxi("player") and true or false
@@ -1268,7 +1307,7 @@ local QUEST_STEPS = { accept = true, turnin = true, objective = true }
 local function PassVisits()
     local pending = {}
     for i, step in ipairs(route.steps) do
-        if VISITS[step.k] then
+        if VISITS[step.k] and not ProfessionRank(step) then
             if not state.marks[i] then table.insert(pending, i) end
         elseif QUEST_STEPS[step.k] and not step.bg then
             local done, passed = IsDone(step, i)
@@ -1560,7 +1599,7 @@ end)
 local function Mark(kind)
     if not route then return end
     for _, index in ipairs(CurrentGroup()) do
-        if route.steps[index].k == kind then state.marks[index] = true end
+        if route.steps[index].k == kind and not ProfessionRank(route.steps[index]) then state.marks[index] = true end
     end
 end
 FG:On("TAXIMAP_OPENED", function() Mark("flight_master") end)

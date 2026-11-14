@@ -503,6 +503,33 @@ if not profileOnly then fire("ADDON_LOADED", "Factoruide_Guide") end
 fire("PLAYER_LOGIN")
 local char = FactoruideDB.characters["Brouz-Realm"]
 
+-- The profile keeps the learned cap even when current skill has not reached the old cap.
+do
+    local professions, professionInfo = GetProfessions, GetProfessionInfo
+    local skillLines, skillInfo = GetNumSkillLines, GetSkillLineInfo
+    GetProfessions = function() return 5 end
+    GetProfessionInfo = function() return "Cuisine", 0, 125, 225, 0, 0, 185 end
+    FG.Profile:Snapshot()
+    local skill = FactoruideDB.profiles["Brouz-Realm"].professions[1]
+    assert(skill.line == 185 and skill.rank == 125 and skill.cap == 225, "known Expert cap saved")
+
+    GetProfessions, GetProfessionInfo = nil, nil
+    GetNumSkillLines = function() return 1 end
+    GetSkillLineInfo = function() return "Cuisine", false, false, 150, 0, 0, 150 end
+    fire("SKILL_LINES_CHANGED")
+    FG.Profile:Snapshot()
+    skill = FactoruideDB.profiles["Brouz-Realm"].professions[1]
+    assert(skill.line == 185 and skill.rank == 150 and skill.cap == 150, "skills-list cap saved")
+    GetSkillLineInfo = function() return "Monte", false, false, 75, 0, 0, 75 end
+    fire("SKILL_LINES_CHANGED")
+    FG.Profile:Snapshot()
+    assert(FactoruideDB.profiles["Brouz-Realm"].riding == 75, "legacy French Riding name retained")
+    GetProfessions, GetProfessionInfo = professions, professionInfo
+    GetNumSkillLines, GetSkillLineInfo = skillLines, skillInfo
+    fire("SKILL_LINES_CHANGED")
+    FG.Profile:Snapshot()
+end
+
 -- Another addon shows the guide: this one only records, and does nothing else.
 if profileOnly then
     assert(FG.Guide == nil and FG.Routes == nil and FG.Get == nil, "no guide without Factoruide_Guide")
@@ -636,9 +663,190 @@ assert(next[233], "quest 233 found in the route")
 print("tracker ok")
 
 -- Professions: practice steps are done once the skill reaches their target.
-local cooking = 20
+do
+    local skillAPI, professions, professionInfo = C_SkillInfo, GetProfessions, GetProfessionInfo
+    local count, info, expand, collapse = GetNumSkillLines, GetSkillLineInfo, ExpandSkillHeader, CollapseSkillHeader
+    local tradeSkillUI = C_TradeSkillUI
+    local lines = { 171, 164, 333, 202, 182, 165, 186, 393, 197, 185, 356, 129 }
+    -- Forever's ID lookup is independent of skill-list headers and translated addon text.
+    C_SkillInfo = {
+        GetSkillLineInfoByID = function(line)
+            assert(line and line > 0, "native skill lookup requires an identified skill line")
+            return { skillID = line, name = "Client skill " .. line, rank = 125, maxRank = 225, isHeader = false }
+        end,
+    }
+    GetProfessions, GetProfessionInfo, GetNumSkillLines, GetSkillLineInfo = nil, nil, nil, nil
+    assert(
+        FG.ProfessionSkill(0) == nil and FG.ProfessionSkill(nil) == nil,
+        "unresolved older steps never query a native skill ID"
+    )
+    for _, line in ipairs(lines) do
+        local rank, cap, name = FG.ProfessionSkill(line)
+        assert(rank == 125 and cap == 225 and name == "Client skill " .. line, "read profession by its client skill ID")
+    end
+    GetProfessions = function() return 1 end
+    GetProfessionInfo = function() return "Listed Cooking", 0, 130, 150, 0, 0, 185 end
+    local listedRank, listedCap = FG.ProfessionSkill(185)
+    assert(listedRank == 130 and listedCap == 150, "listed professions take precedence over the ID fallback")
+    assert(select(2, FG.ProfessionSkill(356)) == 225, "the ID fallback supplies skills not listed by GetProfessions")
+    C_SkillInfo.GetSkillLineInfoByID = function(line)
+        return { skillID = line, name = "Unlearned skill", rank = 0, maxRank = 75, isHeader = false }
+    end
+    assert(FG.ProfessionSkill(171) == nil, "a zero-rank native struct is not a learned profession")
+
+    C_SkillInfo = nil
+    GetProfessions, GetProfessionInfo = nil, nil
+    C_TradeSkillUI = { GetTradeSkillDisplayName = function(line) return "Client skill " .. line end }
+    GetNumSkillLines = function() return #lines end
+    GetSkillLineInfo = function(index) return "Client skill " .. lines[index], false, false, 125, 0, 0, 225 end
+    fire("SKILL_LINES_CHANGED")
+    for _, line in ipairs(lines) do
+        local rank, cap, name = FG.ProfessionSkill(line)
+        assert(
+            rank == 125 and cap == 225 and name == "Client skill " .. line,
+            "legacy client names match all profession IDs without UI translations"
+        )
+    end
+    local headers = {
+        { name = "Primary", expanded = false, { name = "Client alchemy", rank = 90, cap = 150 } },
+        {
+            name = "Secondary",
+            expanded = false,
+            { name = "Client cooking", rank = 125, cap = 225 },
+            { name = "Client fishing", rank = 130, cap = 150 },
+        },
+    }
+    local opened, closed = {}, {}
+    local function Rows()
+        local rows = {}
+        for _, header in ipairs(headers) do
+            rows[#rows + 1] = header
+            if header.expanded then
+                for _, row in ipairs(header) do
+                    rows[#rows + 1] = row
+                end
+            end
+        end
+        return rows
+    end
+    GetNumSkillLines = function() return #Rows() end
+    GetSkillLineInfo = function(index)
+        local row = Rows()[index]
+        return row.name, row.expanded ~= nil, row.expanded, row.rank, 0, 0, row.cap
+    end
+    ExpandSkillHeader = function(index)
+        opened[#opened + 1] = index
+        Rows()[index].expanded = true
+        fire("SKILL_LINES_CHANGED")
+    end
+    CollapseSkillHeader = function(index)
+        closed[#closed + 1] = index
+        Rows()[index].expanded = false
+        fire("SKILL_LINES_CHANGED")
+    end
+    C_TradeSkillUI = {
+        GetTradeSkillDisplayName = function(line)
+            return ({
+                [171] = "Client alchemy",
+                [185] = "Client cooking",
+                [356] = "Client fishing",
+                [182] = "Client herbalism",
+            })[line]
+        end,
+    }
+    -- Start on an eligible profession quest with the proven API, then invalidate the legacy
+    -- snapshot without reading it. The next read comes from Refresh, outside Advance.
+    GetProfessions = function() return 1 end
+    GetProfessionInfo = function() return "Client cooking", 0, 125, 225, 0, 0, 185 end
+    FG.Routes["skill-header-events"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 5,
+        toLevel = 60,
+        time = 1,
+        steps = {
+            { k = "accept", t = "Eligible Cooking quest", q = 812346, line = 185, sk = 125, lvl = 5 },
+            { k = "grind", t = "Continue", lvl = 60 },
+        },
+    }
+    useRoute("skill-header-events")
+    fire("SKILL_LINES_CHANGED")
+    GetProfessions, GetProfessionInfo = nil, nil
+    local recordStep, recorded, delivered, watching = FG.Collector.RecordStep, 0, 0, true
+    FG.Collector.RecordStep = function() recorded = recorded + 1 end
+    FG:On("SKILL_LINES_CHANGED", function()
+        if watching then delivered = delivered + 1 end
+    end)
+    FG.Guide:Refresh()
+    assert(
+        char.guide.step == 1 and recorded == 0,
+        "reading hidden skills neither skips an eligible quest nor records it done"
+    )
+    assert(delivered == 0, "header read notifications never reach Guide, Tracker or other addon handlers")
+    local rank, cap, name = FG.ProfessionSkill(185)
+    assert(
+        rank == 125 and cap == 225 and name == "Client cooking",
+        "legacy lookup uses the client's localized skill display name"
+    )
+    assert(
+        table.concat(opened, ",") == "2,1" and table.concat(closed, ",") == "1,2",
+        "multiple headers restore their original indexes"
+    )
+    assert(not headers[1].expanded and not headers[2].expanded, "collapsed headers are restored after reading")
+    for _ = 1, 10 do
+        for _, line in ipairs(lines) do
+            FG.ProfessionSkill(line)
+        end
+        FG.Guide:Refresh()
+    end
+    assert(
+        #opened == 2 and #closed == 2 and delivered == 0,
+        "repeated readers reuse the snapshot without a header event storm"
+    )
+
+    -- The external event invalidates before readers run, and header events during that read
+    -- do not dispatch recursively. A real cap change is observable in that same event.
+    headers[2][2].cap = 225
+    local observed
+    FG:On("SKILL_LINES_CHANGED", function()
+        if watching then observed = select(2, FG.ProfessionSkill(356)) end
+    end)
+    fire("SKILL_LINES_CHANGED")
+    assert(
+        observed == 225 and delivered == 1,
+        "external skill changes invalidate before handlers and publish the new cap"
+    )
+    assert(#opened == 4 and #closed == 4, "external change permits exactly one refreshed hidden snapshot")
+    assert(char.guide.step == 1 and recorded == 0, "external refresh also preserves the eligible quest")
+    watching = false
+    FG.Collector.RecordStep = recordStep
+
+    -- A visible requested skill is read without touching the other collapsed category.
+    GetProfessions = function() return 1 end
+    GetProfessionInfo = function() return "Client cooking", 0, 125, 225, 0, 0, 185 end
+    headers[1].expanded, headers[1][1].name, opened, closed = true, "Client herbalism", {}, {}
+    fire("SKILL_LINES_CHANGED")
+    GetProfessions, GetProfessionInfo = nil, nil
+    rank, cap, name = FG.ProfessionSkill(182)
+    assert(
+        rank == 90 and cap == 150 and name == "Client herbalism",
+        "visible Herbalism uses the client skill display name"
+    )
+    assert(#opened == 0 and #closed == 0, "visible skill lookup does not expand a different category")
+    rank, cap = FG.ProfessionSkill(356)
+    assert(rank == 130 and cap == 225, "a hidden skill then reads the remaining category")
+    assert(headers[1].expanded and not headers[2].expanded, "an already open header stays open")
+    assert(table.concat(opened, ",") == "3" and table.concat(closed, ",") == "3", "only the collapsed header changes")
+    C_SkillInfo, GetProfessions, GetProfessionInfo = skillAPI, professions, professionInfo
+    GetNumSkillLines, GetSkillLineInfo, ExpandSkillHeader, CollapseSkillHeader = count, info, expand, collapse
+    C_TradeSkillUI = tradeSkillUI
+    useRoute(nil)
+    fire("SKILL_LINES_CHANGED")
+end
+local cooking = { rank = 20, cap = 75 }
 GetProfessions = function() return nil, nil, nil, nil, 5, nil end
-GetProfessionInfo = function(i) return "Cuisine", 0, cooking, 75, 0, 0, 185 end
+GetProfessionInfo = function(i) return "Cuisine", 0, cooking.rank, cooking.cap, 0, 0, 185 end
 FG.Routes["prof-test"] = {
     race = 7,
     class = 8,
@@ -678,12 +886,229 @@ Press("skip")
 assert(char.guide.route == nil and char.guide.step, "nothing happens")
 useRoute("prof-test")
 assert(char.guide.step == 2, "rank already learned, step " .. char.guide.step)
-cooking = 25
+cooking.rank = 25
 fire("SKILL_LINES_CHANGED")
 assert(char.guide.step == 3, "practice done, step " .. char.guide.step)
 playerLevel = 5
 FG.Tracker:Refresh()
 print("professions ok")
+
+-- A profession rank learned from a book is done only after using it raises the skill cap.
+-- Visiting its vendor/trainer or completing a later quest cannot replace learning the rank.
+do
+    local wasTrainer, itemCount = IsTradeskillTrainer, FG.ItemCount
+    cooking.rank, cooking.cap, playerLevel = 125, 150, 20
+    FG.Routes["prof-book-test"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 20,
+        toLevel = 60,
+        time = 1,
+        steps = {
+            {
+                k = "profession",
+                t = "Buy and read Expert Cookbook",
+                e = "npc",
+                id = 3955,
+                n = "Book vendor",
+                line = 185,
+                sk = 225,
+                lvl = 20,
+            },
+            { k = "turnin", t = "Later quest", q = 8220, lvl = 20 },
+            { k = "grind", t = "Grind", lvl = 60 },
+        },
+    }
+    completed[8220] = true
+    useRoute("prof-book-test")
+    assert(char.guide.step == 1 and not char.guide.marks[1], "later quest does not pass the book")
+    char.guide.marks[1] = true -- A saved automatic visit mark is not proof the book was read.
+    FG.Guide:Resync()
+    assert(char.guide.step == 1, "book ignores automatic visit marks without the learned cap")
+    char.guide.marks[1] = nil
+    fire("MERCHANT_SHOW")
+    FG.Guide:Advance()
+    assert(char.guide.step == 1 and not char.guide.marks[1], "opening the merchant does not learn the book")
+    IsTradeskillTrainer = function() return true end
+    fire("TRAINER_SHOW")
+    FG.Guide:Advance()
+    assert(char.guide.step == 1 and not char.guide.marks[1], "opening a trainer does not learn the book")
+    FG.ItemCount = function(id) return id == 16072 and 1 or itemCount(id) end
+    FG.Guide:Advance()
+    assert(char.guide.step == 1, "owning the unread book does not learn its rank")
+    playerLevel = 40
+    FG.Guide:Resync()
+    assert(char.guide.step == 1, "character levels do not replace the profession book")
+    FG.Guide:ToggleSkip(1)
+    assert(char.guide.marks[1] == "skip" and char.guide.step == 3, "manual completion still skips the book")
+    FG.Guide:UndoLastMark()
+    assert(char.guide.step == 1 and not char.guide.marks[1], "undo restores the unread book")
+    playerLevel = 20
+    cooking.cap = 225
+    fire("SKILL_LINES_CHANGED")
+    assert(char.guide.step == 3, "learning the cap finishes the book while cooking skill is still 125")
+
+    -- The legacy skills list uses the game's language, even when the addon displays English.
+    do
+        local professions, professionInfo = GetProfessions, GetProfessionInfo
+        local skillLines, skillInfo, gameLocale = GetNumSkillLines, GetSkillLineInfo, GetLocale
+        local displayLocale = FactoruideDB.settings.locale
+        GetProfessions, GetProfessionInfo = nil, nil
+        FactoruideDB.settings.locale = "enUS"
+        GetNumSkillLines = function() return 1 end
+        for _, client in ipairs({ { "deDE", "Kochkunst" }, { "esMX", "Cocina" } }) do
+            GetLocale = function() return client[1] end
+            GetSkillLineInfo = function() return client[2], false, false, 125, 0, 0, cooking.cap end
+            cooking.cap = 150
+            FG.Guide:Resync()
+            assert(char.guide.step == 1, client[1] .. ": unread book still needed")
+            cooking.cap = 225
+            fire("SKILL_LINES_CHANGED")
+            assert(char.guide.step == 3, client[1] .. ": learned book recognized through localized skills list")
+            local rank, cap, name = FG.ProfessionSkill(185)
+            assert(rank == 125 and cap == 225 and name == client[2], "localized skill and cap read")
+            assert(FG.Lang() == "enUS", "client language is independent of addon display language")
+        end
+        GetProfessions, GetProfessionInfo = professions, professionInfo
+        GetNumSkillLines, GetSkillLineInfo, GetLocale = skillLines, skillInfo, gameLocale
+        FactoruideDB.settings.locale = displayLocale
+    end
+
+    -- Book and ordinary trainer ranks share the same cap completion rule.
+    cooking.cap = 150
+    FG.Guide:Resync()
+    local readSkill = FG.ProfessionSkill
+    FG.ProfessionSkill = function() return nil end -- An older Profile addon cannot read this client's skill API.
+    FG.Guide:Resync()
+    assert(char.guide.step == 1, "an unreadable rank remains pending")
+    assert(
+        FG.Guide.view.tasks[1].sub
+            == FG.T(
+                "Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."
+            ),
+        "old Profile users get an actionable prompt"
+    )
+    fire("TRAINER_SHOW")
+    FG.Guide:Advance()
+    assert(char.guide.step == 1, "unreadable caps do not revive trainer-window false completion")
+    FG.Guide:ToggleSkip(1)
+    assert(char.guide.step == 3, "an unreadable rank can be skipped explicitly after checking it")
+    FG.ProfessionSkill = readSkill
+
+    -- Legacy visit-only steps have no rank to observe and retain their interaction completion.
+    FG.Routes["prof-legacy-visit-test"] = {
+        race = 7,
+        class = 8,
+        faction = "Alliance",
+        fromLevel = 20,
+        toLevel = 60,
+        time = 1,
+        steps = {
+            { k = "profession", t = "Visit trainer", lvl = 40 },
+            { k = "grind", t = "Grind", lvl = 60 },
+        },
+    }
+    useRoute("prof-legacy-visit-test")
+    assert(char.guide.step == 1, "legacy visit starts pending")
+    fire("TRAINER_SHOW")
+    FG.Guide:Advance()
+    assert(char.guide.step == 2 and char.guide.marks[1], "legacy visit still completes on interaction")
+    IsTradeskillTrainer, FG.ItemCount = wasTrainer, itemCount
+    cooking.rank, cooking.cap, playerLevel = 25, 75, 5
+    completed[8220] = nil
+end
+print("profession books ok")
+
+-- Pure profession flight excursions are checked before departure. Other journeys and the
+-- return leg of a trip already started must remain, even after its ranks have been learned.
+do
+    local savedProfessions, savedInfo, savedTaxi = GetProfessions, GetProfessionInfo, UnitOnTaxi
+    local fishingCap, known, flying, sequence = 225, true, false, 0
+    cooking.rank, cooking.cap, playerLevel = 125, 225, 20
+    GetProfessions = function() return 1, nil, nil, 2 end
+    GetProfessionInfo = function(index)
+        if not known then return nil end
+        if index == 1 then return "Cooking", 0, 125, cooking.cap, 0, 0, 185 end
+        return "Fishing", 0, 125, fishingCap, 0, 0, 356
+    end
+    UnitOnTaxi = function() return flying end
+    local function Trip(pte, players, x)
+        sequence = sequence + 1
+        local name = "prof-trip-" .. sequence
+        FG.Routes[name] = {
+            race = 7,
+            class = 8,
+            faction = "Alliance",
+            fromLevel = 20,
+            toLevel = 60,
+            time = sequence,
+            players = players,
+            steps = {
+                { k = "fly", t = "Fly to trainers", pte = pte, m = 1426, x = x or 29.93, y = 71.2, lvl = 20 },
+                { k = "profession", t = "Train Cooking", line = 185, sk = 225, m = 1456, x = 50, y = 50, lvl = 20 },
+                { k = "profession", t = "Train Fishing", line = 356, sk = 225, m = 1456, x = 50, y = 50, lvl = 20 },
+                { k = "fly", t = "Return", m = 1456, x = 50, y = 50, lvl = 20 },
+                { k = "grind", t = "Continue route", lvl = 60 },
+            },
+        }
+        useRoute(name)
+        return FG.Routes[name]
+    end
+    Trip(4)
+    assert(char.guide.step == 5, "all ranks known: skip the entire round trip before leaving")
+    assert(char.guide.marks[1] and char.guide.marks[4], "skipped flights stay passed on resync")
+    assert(not char.guide.marks[2] and not char.guide.marks[3], "rank proof remains the live caps")
+    FG.Guide:Resync()
+    assert(char.guide.step == 5, "resync does not resurrect skipped flights")
+    Trip(4, nil, 5)
+    assert(
+        char.guide.step == 5,
+        "known ranks skip the excursion before walking over 100 yards to the departure airport"
+    )
+
+    fishingCap = 150
+    Trip(4)
+    assert(char.guide.step == 1, "a second profession still needing its rank preserves the trip")
+    fire("TRAINER_SHOW")
+    FG.Guide:Advance()
+    assert(char.guide.step == 1, "an unrelated trainer window does not cancel the trip")
+    fishingCap = 225
+    fire("SKILL_LINES_CHANGED")
+    assert(char.guide.step == 5, "live cap change before departure skips the now-unneeded trip")
+
+    fishingCap = 150
+    Trip(4)
+    flying = true
+    FG.Guide:Advance()
+    flying = false
+    FG.Guide:Advance()
+    fishingCap = 225
+    fire("SKILL_LINES_CHANGED")
+    assert(char.guide.step == 4, "learning the last rank after departure keeps the return flight")
+    FG.Guide:Advance()
+    assert(char.guide.step == 4, "return flight waits for its own takeoff")
+
+    known = false
+    Trip(4)
+    assert(char.guide.step == 1, "unavailable skill information cannot cancel a trip")
+    known = true
+    Trip(4, nil, 80)
+    assert(char.guide.step == 1, "a character closer to the destination retains the trip and its return flight")
+    flying = true
+    Trip(4)
+    assert(char.guide.step == 1, "a character already in flight does not cancel an excursion")
+    flying = false
+    Trip(4, { { n = "Brouz-Realm", race = 7, class = 8 }, { n = "Pata-Realm", race = 1, class = 1 } })
+    assert(char.guide.step == 1, "our caps cannot cancel another group member's training trip")
+    local mixed = Trip(nil)
+    mixed.steps[3] = { k = "turnin", t = "Other business", q = 812345, lvl = 20 }
+    FG.Guide:Resync()
+    assert(char.guide.step == 1, "shared and older unannotated journeys keep their travel")
+    GetProfessions, GetProfessionInfo, UnitOnTaxi = savedProfessions, savedInfo, savedTaxi
+    cooking.rank, cooking.cap, playerLevel = 25, 75, 5
+end
+print("profession trips ok")
 
 -- Skipping: outdated steps, exclusive alternatives, by hand.
 playerLevel = 21

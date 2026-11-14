@@ -1,6 +1,7 @@
 -- Korean texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.koKR = {
+    ["Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."] = "전문 기술의 숙련도 상한을 확인할 수 없습니다. Factoruide Profile을 업데이트하거나 등급을 확인한 후 이 단계를 직접 건너뛰세요.",
     ["take from the bank: %s"] = "은행에서 꺼낼 것: %s",
     ["can stay in the bank: %s"] = "은행에 둬도 되는 것: %s",
     ["NOW"] = "지금",

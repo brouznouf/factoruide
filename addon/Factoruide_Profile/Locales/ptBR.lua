@@ -1,6 +1,7 @@
 -- Brazilian Portuguese texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.ptBR = {
+    ["Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."] = "Não foi possível ler o limite da profissão. Atualize o Factoruide Profile ou verifique o grau e pule esta etapa manualmente.",
     ["take from the bank: %s"] = "pegar no banco: %s",
     ["can stay in the bank: %s"] = "pode ficar no banco: %s",
     ["NOW"] = "AGORA",

@@ -47,8 +47,8 @@ end
 local function Professions()
     local out = {}
     for _, line in ipairs(SKILL_LINES) do
-        local rank = FG.ProfessionSkill(line)
-        if rank and rank > 0 then table.insert(out, { line = line, rank = rank }) end
+        local rank, cap = FG.ProfessionSkill(line)
+        if rank and rank > 0 then table.insert(out, { line = line, rank = rank, cap = cap }) end
     end
     return out
 end

@@ -127,11 +127,14 @@ pub struct Bind {
     pub areas: Vec<i64>,
 }
 
-/// A profession skill (skill line ID, rank).
+/// A profession skill (skill line ID, current skill and the learned skill cap).
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize)]
 pub struct Skill {
     pub line: i64,
     pub rank: i64,
+    /// The learned rank's cap, when recorded by the addon. Older profiles only have the skill.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cap: Option<i64>,
 }
 
 /// An inn the hearthstone is bound to is this close to where the binding was seen (yards).
@@ -175,6 +178,11 @@ impl StartState {
             rested: self.rested.max(0),
             gear: self.gear.clone(),
             completed: Some(self.completed.iter().map(|q| q.0).collect()),
+            profession_caps: self
+                .professions
+                .iter()
+                .filter_map(|skill| skill.cap.map(|cap| (skill.line, cap)))
+                .collect(),
             ..Initial::default()
         };
         let in_log: HashSet<QuestId> = self.log.iter().map(|q| q.id).collect();
@@ -473,7 +481,11 @@ mod tests {
     fn professions_follow_the_character() {
         let start = StartState {
             level: 30,
-            professions: vec![Skill { line: 186, rank: 200 }],
+            professions: vec![Skill {
+                line: 186,
+                rank: 200,
+                cap: None,
+            }],
             ..StartState::default()
         };
         let mut goals = vec![goal("mining"), goal("herbalism")];
@@ -484,5 +496,22 @@ mod tests {
         let herbalism = ProfessionPlan::new(&goals[1]).unwrap();
         assert_eq!(herbalism.skill_at(30), 0);
         assert!(herbalism.skill_at(35) > 0);
+    }
+
+    #[test]
+    fn imported_profession_caps_are_preserved_without_guessing_older_profiles() {
+        for (json, expected) in [
+            (
+                r#"{"level":25,"professions":[{"line":185,"rank":125,"cap":225}]}"#,
+                vec![(185, 225)],
+            ),
+            (r#"{"level":25,"professions":[{"line":185,"rank":150}]}"#, vec![]),
+        ] {
+            let start: StartState = serde_json::from_str(json).unwrap();
+            let saved = serde_json::to_value(&start).unwrap();
+            assert_eq!(saved["professions"][0].get("cap").is_some(), !expected.is_empty());
+            let prepared = crate::testing::Scenario::new().start(start).build();
+            assert_eq!(prepared.model.initial.profession_caps, expected);
+        }
     }
 }

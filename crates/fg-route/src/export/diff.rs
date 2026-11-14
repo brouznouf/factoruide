@@ -825,6 +825,7 @@ mod tests {
             notes: Vec::new(),
             target,
             zone: Some(format!("zone {zone}")),
+            from_taxi: None,
             zone_id: Some(zone),
             map: Some(MapPointOut {
                 ui_map: zone,

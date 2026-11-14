@@ -1,6 +1,7 @@
 -- Russian texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.ruRU = {
+    ["Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."] = "Не удалось определить предел навыка профессии. Обновите Factoruide Profile либо проверьте ранг и пропустите этот шаг вручную.",
     ["take from the bank: %s"] = "взять из банка: %s",
     ["can stay in the bank: %s"] = "может остаться в банке: %s",
     ["NOW"] = "СЕЙЧАС",

@@ -1,6 +1,7 @@
 -- Traditional Chinese texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.zhTW = {
+    ["Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."] = "無法讀取專業技能上限。請更新 Factoruide Profile，或確認技能等級後手動略過此步驟。",
     ["take from the bank: %s"] = "從銀行取出：%s",
     ["can stay in the bank: %s"] = "可留在銀行：%s",
     ["NOW"] = "目前",

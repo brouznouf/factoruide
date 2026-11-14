@@ -241,14 +241,16 @@ pub struct FloorPoint {
     pub y: f32,
 }
 
-/// A trainer of a profession.
+/// A place to learn profession ranks: a trainer, or a vendor selling a rank's book.
 #[derive(Debug, Clone)]
 pub struct ProfessionTrainer {
     /// The profession's skill line.
     pub line: i64,
-    /// The highest skill cap its title says it teaches (75, 150, 225 or 300).
+    /// The highest skill cap the trainer teaches, or the book's exact cap (75, 150, 225 or 300).
     pub cap: i64,
     pub loc: Loc,
+    /// A book grants only its own rank, not the lower ranks a trainer can also teach.
+    pub book: Option<&'static crate::profession::ProfessionBook>,
 }
 
 #[derive(Debug, Clone)]
@@ -772,6 +774,9 @@ pub struct Initial {
     pub progress: Vec<(usize, u8, f64)>,
     /// Items worn (IDs).
     pub gear: Vec<i64>,
+    /// Profession skill caps (skill line, cap). Missing entries use the skill curve as before.
+    /// A group combines reported caps with per-member skill inference for older profiles.
+    pub profession_caps: Vec<(i64, i64)>,
     /// Level of the last class training (default: the starting level).
     pub trained: Option<i64>,
     pub abilities: u64,
