@@ -29,6 +29,17 @@ export interface PolestarString {
   fits: boolean;
 }
 
+/** A guide exported as a Polestar guide pack ready to copy into the game (`export_polestar_addon`). */
+export interface PolestarAddon {
+  /** The addon folder the desktop app wrote, or the zip the browser downloads. */
+  path: string;
+  /** The folder's name (`<Character>_Polestar`) and its pack's title in Polestar's menus. */
+  folder: string;
+  title: string;
+  /** Desktop: the game's AddOns folder of WoW Forever, where it goes. */
+  addons: string | null;
+}
+
 /** A character's export (Export my character) pasted in the web app. */
 /** A quest to choose as a must-have one: its name in the guide's language when known. */
 export interface QuestChoice {
@@ -644,6 +655,11 @@ export const api = {
   polestarInstalled: () => invoke<boolean>("polestar_installed"),
   /** Export a guide version into a pack folder for Polestar's own tools in `dir` (WoW Forever only): the pack's folder. */
   exportPolestar: (guide: string, version: number, dir: string) => invoke<string | WebFile>("export_polestar", { guide, version, dir }).then(saved),
+  /** Export a guide version as a Polestar guide pack ready to copy into the game: its addon folder written in `dir` (WoW Forever only; the web build downloads it as a zip). */
+  exportPolestarAddon: (guide: string, version: number, dir: string) =>
+    invoke<PolestarAddon | (WebFile & { folder: string; title: string })>("export_polestar_addon", { guide, version, dir }).then(
+      (r): PolestarAddon => ("path" in r ? r : { path: saved(r), folder: r.folder, title: r.title, addons: null }),
+    ),
   /** Whether the addon in the game has the current settings. */
   addonSynced: () => invoke<boolean>("addon_synced"),
   /** Open a page of the project's repository in the browser. */

@@ -36,8 +36,8 @@ mod characters;
 /// Contributions to the contribution server.
 mod contributions;
 use addon::{
-    ADDON_VERSION, addon_synced, export_polestar, guide_text, install_addon, install_polestar, open_link,
-    polestar_installed, polestar_installed_in, polestar_string, write_data,
+    ADDON_VERSION, addon_synced, export_polestar, export_polestar_addon, guide_text, install_addon, install_polestar,
+    open_link, polestar_installed, polestar_installed_in, polestar_string, write_data,
 };
 use job::DATA_ADDON;
 /// Guides, planning and the editor.
@@ -576,6 +576,7 @@ fn main() {
             addon_synced,
             polestar_installed,
             export_polestar,
+            export_polestar_addon,
             polestar_string,
             open_link,
             wow_status,

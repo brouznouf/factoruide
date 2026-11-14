@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { open } from "@tauri-apps/plugin-dialog";
-import { api, type Edition, type PolestarString } from "../api";
+import { api, type Edition, type PolestarAddon, type PolestarString } from "../api";
 import { useT } from "../i18n";
 import { IS_WEB } from "../web/mode";
 import { Icon } from "./Icons";
@@ -66,6 +66,7 @@ export function ExportMenu({ guide, version, edition, prominent, onDone }: Guide
   const t = useT();
   const [text, setText] = useState<string | null>(null);
   const [polestar, setPolestar] = useState<PolestarString | "loading" | null>(null);
+  const [addon, setAddon] = useState<PolestarAddon | null>(null);
   const run = (action: () => Promise<string>) =>
     action()
       .then((message) => onDone({ message }))
@@ -107,7 +108,21 @@ export function ExportMenu({ guide, version, edition, prominent, onDone }: Guide
             },
           },
           {
-            label: "Polestar",
+            label: t("Polestar : addon"),
+            hint: t("Le guide en entier, sans limite d'étapes : un dossier d'addon prêt à copier dans le dossier Interface\\AddOns de WoW Forever."),
+            run: () => {
+              const write = async () => {
+                if (IS_WEB) return api.exportPolestarAddon(guide, version, "");
+                const dir = await open({ directory: true, title: t("Dossier où écrire l'addon Polestar") });
+                return typeof dir === "string" ? api.exportPolestarAddon(guide, version, dir) : null;
+              };
+              write()
+                .then((written) => written && setAddon(written))
+                .catch((e) => onDone({ error: String(e) }));
+            },
+          },
+          {
+            label: t("Polestar : source .guide"),
             hint: t("Le guide au format .guide de Polestar (en anglais), pour ses outils Planner et Play."),
             run: () =>
               run(async () => {
@@ -148,16 +163,52 @@ export function ExportMenu({ guide, version, edition, prominent, onDone }: Guide
           ]}
           warning={
             polestar !== "loading" && !polestar.fits
-              ? t(
-                  "Trop long pour Polestar : son import n'accepte pour l'instant que 60 étapes et 50 000 caractères, et ce guide fait {steps} étapes et {chars} caractères. Utilisez plutôt « Polestar : tous les guides » dans l'export global.",
-                  { steps: polestar.steps, chars: polestar.text.length.toLocaleString() },
-                )
+              ? t("Trop long pour Polestar : son import n'accepte pour l'instant que 60 étapes et 50 000 caractères, et ce guide fait {steps} étapes et {chars} caractères. Utilisez plutôt « Polestar : addon » : le guide en entier, prêt à copier dans le jeu.", {
+                  steps: polestar.steps,
+                  chars: polestar.text.length.toLocaleString(),
+                })
               : undefined
           }
           onClose={() => setPolestar(null)}
         />
       )}
+      {addon && (
+        <StepsDialog
+          title={t("Addon Polestar prêt")}
+          steps={[
+            addon.addons
+              ? t("Copiez le dossier {path} dans le dossier AddOns de WoW Forever : {addons}", { path: addon.path, addons: addon.addons })
+              : t("Décompressez {file} dans le dossier Interface\\AddOns de WoW Forever.", { file: addon.path }),
+            t("Redémarrez le jeu : un nouveau dossier d'addon n'est lu qu'au démarrage."),
+            t("Dans Polestar, page Community guides (/polestar packs), choisissez « {title} » sous « Suggest guides from ».", { title: addon.title }),
+          ]}
+          note={t("Les guides de ce personnage exportés avant restent dans {folder} ; exporter de nouveau un guide le remplace.", { folder: addon.folder })}
+          onClose={() => setAddon(null)}
+        />
+      )}
     </>
+  );
+}
+
+/** What to do with a file or folder the app wrote, step by step. */
+function StepsDialog({ title, steps, note, onClose }: { title: string; steps: string[]; note?: string; onClose: () => void }) {
+  const t = useT();
+  return (
+    <div className="welcome-overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div className="panel export-dialog" role="dialog" aria-modal="true" aria-labelledby="steps-dialog-title">
+        <h2 id="steps-dialog-title">{title}</h2>
+        <ol className="export-steps">
+          {steps.map((step) => (
+            <li key={step}>{step}</li>
+          ))}
+        </ol>
+        {note && <p className="muted">{note}</p>}
+        <div className="setup-actions">
+          <span />
+          <button onClick={onClose}>{t("Fermer")}</button>
+        </div>
+      </div>
+    </div>
   );
 }
 

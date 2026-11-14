@@ -271,6 +271,36 @@ fn export_polestar(guide: &GuideId, v: u32) -> CmdResult<serde_json::Value> {
     Ok(serde_json::json!({ "file": format!("{folder}.zip"), "base64": base64(&crate::zip::zip(&files)) }))
 }
 
+/// A guide version as a Polestar guide pack ready to copy into the game: a zip of the addon
+/// folder of its character's pack (`<Character>_Polestar`), the guide written in the language it
+/// was made in. Polestar exists on WoW Forever only.
+fn export_polestar_addon(guide: &GuideId, v: u32) -> CmdResult<serde_json::Value> {
+    use fg_route::export::polestar::{PackAddon, guide_name};
+    if edition() != Edition::Forever {
+        return Err("Polestar is for WoW Forever only".into());
+    }
+    let saved = guides(Edition::Forever).version(guide, v)?;
+    let route = render(Edition::Forever, &saved.outcome.route, None)?;
+    let addon = PackAddon::of(saved.meta.character.as_deref(), &saved.meta.name);
+    let name = guide_name(guide.as_str());
+    let file = format!("Guide_{name}.lua");
+    let folder = &addon.folder;
+    let files = vec![
+        (
+            format!("{folder}/{folder}.toc"),
+            addon.toc(APP_VERSION, std::slice::from_ref(&file)).into_bytes(),
+        ),
+        (format!("{folder}/Pack.lua"), addon.pack_lua(APP_VERSION).into_bytes()),
+        (format!("{folder}/{file}"), addon.guide_lua(&name, &route).into_bytes()),
+    ];
+    Ok(serde_json::json!({
+        "file": format!("{folder}.zip"),
+        "base64": base64(&crate::zip::zip(&files)),
+        "folder": addon.folder,
+        "title": addon.title,
+    }))
+}
+
 // Shared guides --------------------------------------------------------------------------
 
 /// A version as a .fgguide file to download.
@@ -684,6 +714,10 @@ fn run(cmd: &str, a: serde_json::Value) -> CmdResult<serde_json::Value> {
         "export_polestar" => {
             let g = args::<GuideArgs>(a)?;
             export_polestar(&g.guide, version_of(&g)?)
+        }
+        "export_polestar_addon" => {
+            let g = args::<GuideArgs>(a)?;
+            export_polestar_addon(&g.guide, version_of(&g)?)
         }
         "wow_status" => Ok(json!({ "root": "", "clients": [], "problem": null })),
         "detect_wow" => Ok(json!([])),
