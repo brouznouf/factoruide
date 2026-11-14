@@ -257,8 +257,8 @@ pub struct Objective {
     pub text: String,
     /// Expected number of kills, their level, and object interactions.
     pub kills: f64,
-    /// Of `kills`, those a drop rate under `Params::low_drop_chance` adds over what that rate
-    /// would ask (`Params::low_drop_weight`): 0 for the others.
+    /// Of `kills`, those that drop nothing for an item objective (`1 - rate` of them), weighed by
+    /// `Params::low_drop_weight`: 0 for the other objectives.
     pub low_drop_kills: f64,
     pub mob_level: i64,
     pub uses: f64,

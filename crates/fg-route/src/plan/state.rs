@@ -503,7 +503,7 @@ pub struct Breakdown {
     /// for respawns, for an event or for the other players, buying, exploring.
     #[serde(default)]
     pub waiting: f64,
-    /// The kills a drop rate under `Params::low_drop_chance` adds (part of `fighting`).
+    /// The kills of quest items that drop nothing (part of `fighting`).
     #[serde(default)]
     pub low_drop: f64,
     /// Copper spent on flights.

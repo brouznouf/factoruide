@@ -44,8 +44,8 @@ export const sections: Section[] = [
       { key: "all_class_quests", kind: "bool", label: "Toutes les quêtes de classe", help: "Impose toutes les quêtes de ta classe, pas seulement celles qui donnent un sort : plus long, mais rien n'est laissé de côté." },
       { key: "solo_elite_kills", kind: "number", label: "Élites seules (en solo)", help: "Sans les quêtes élites, garde celles qui demandent au plus ce nombre de kills d'élite (Hogger, Tharil'zun, Mor'Ladim...). 0 = aucune.", min: 0, max: 5, step: 1 },
       { key: "elite_kill_factor", kind: "number", label: "Durée d'un kill d'élite", help: "Par rapport à un mob normal du même niveau (les élites donnent 2× l'XP).", unit: "×", min: 1, max: 6, step: 0.5 },
-      { key: "low_drop_chance", kind: "number", label: "Taux de butin faible", help: "Un objet de quête qui tombe moins souvent que ce taux demande des kills en plus : ce sont eux que le poids ci-dessous compte.", unit: "%", scale: 0.01, min: 1, max: 100, step: 5 },
-      { key: "low_drop_weight", kind: "number", label: "Poids des kills pour un butin faible", help: "Les kills qu'un taux de butin sous le seuil ajoute comptent ce nombre de fois leur temps, comme le farm : 1 (défaut) = leur temps seul ; plus haut = le guide évite les quêtes à butin rare quand d'autres valent presque autant.", min: 1, max: 5, step: 0.25 },
+      { key: "min_drop_chance", kind: "number", label: "Taux de butin minimum", help: "Une quête dont un objet tombe moins souvent que ce taux, même sur le meilleur monstre, est retirée du guide (sauf quêtes de classe et quêtes demandées). 0 (défaut) = aucune.", unit: "%", scale: 0.01, min: 0, max: 100, step: 5 },
+      { key: "low_drop_weight", kind: "number", label: "Poids des kills sans butin", help: "Les kills qui ne font pas tomber l'objet de quête comptent ce poids en plus de leur temps : plus le taux est bas, plus la quête pèse. 0 (défaut) = leur temps seul ; plus haut = le guide évite les quêtes à butin rare quand d'autres valent presque autant.", min: 0, max: 5, step: 0.25 },
       {
         key: "progression",
         kind: "select",

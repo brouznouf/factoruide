@@ -423,10 +423,11 @@ fn build_quests(
 ) -> (Vec<Quest>, Vec<(i64, String, String)>) {
     let mut builder = QuestBuilder::new(sources, world, profile, params);
     // The quests the player asked for (see `asked_quests`) are done even when their mobs are
-    // elites, or an item they ask for is only sold at the auction house.
+    // elites, an item they ask for is only sold at the auction house or drops seldom.
     let for_asked = Params {
         allow_elite: true,
         auction_house: true,
+        min_drop_chance: 0.0,
         ..params.clone()
     };
     let mut asked = QuestBuilder::new(sources, world, profile, &for_asked);

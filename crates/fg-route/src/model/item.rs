@@ -128,6 +128,15 @@ impl QuestBuilder<'_> {
                 ..buy(pos, zone, 10.0 + wait, Vec::new())
             }
         } else if let Some((pos, zone, _)) = best_cluster(&places.mobs, Some(&quest.anchor)) {
+            // Dropping too seldom for the player even from its best mob: the quest is left out,
+            // unless it is a class quest (never left out).
+            let best = (places.mob_ids.iter())
+                .filter_map(|id| self.sources.drop_chance.get(&(target, *id)).copied())
+                .fold(0.0, f64::max);
+            if best > 0.0 && best < self.params.min_drop_chance && !self.sources.class_quest_ids.contains(&quest.row.id)
+            {
+                return Err("quest item drop rate under the minimum");
+            }
             let farm =
                 |pos: Pos, zone: i64| self.farm(quest, target, &places.mob_ids, count, at(pos, zone), text.clone());
             let first = farm(pos, zone);
@@ -433,14 +442,10 @@ impl QuestBuilder<'_> {
                 .collect();
             Spots::new(&points, &pos)
         };
-        let low = self.params.low_drop_chance;
+        let kills = count / chance * self.per_player;
         Objective {
-            kills: count / chance * self.per_player,
-            low_drop_kills: if chance < low {
-                (count / chance - count / low) * self.per_player
-            } else {
-                0.0
-            },
+            kills,
+            low_drop_kills: kills * (1.0 - chance),
             mob_level,
             elite: here.iter().all(|id| entities.is_elite(*id)),
             count,
@@ -553,11 +558,11 @@ values = { area = 1581, name = "The Deadmines", entrance_zone = 40, entrance_x =
         );
         assert_eq!(objective.mobs, vec![(990002, "Outdoor dropper".into())]);
         assert_eq!(objective.uses, 0.0);
-        assert_eq!(objective.low_drop_kills, 0.0, "twenty-five percent is not a low rate");
+        assert_eq!(objective.low_drop_kills, 18.0, "three kills in four drop nothing");
     }
 
     /// Two kinds of ghouls dropping a rib one time in ten, side by side: 24-25 and 26-27.
-    fn ghoul_ribs(params: &serde_json::Value) -> job::Prepared {
+    fn ghoul_ribs(params: &serde_json::Value, required: &[i64]) -> job::Prepared {
         let conn = Fixture::new(Edition::Classic)
             .toml(
                 r#"
@@ -606,7 +611,8 @@ objectives = [{ creature = 990102, amount = 8 }]
             .expect("an object")
             .extend(params.as_object().cloned().unwrap_or_default());
         let request = serde_json::from_value(serde_json::json!({
-            "race":"human", "class":"warrior", "from_level":23, "to_level":30, "params": all
+            "race":"human", "class":"warrior", "from_level":23, "to_level":30, "params": all,
+            "required_quests": required
         }))
         .unwrap();
         let overrides = job::Overrides::load_edition(
@@ -618,13 +624,26 @@ objectives = [{ creature = 990102, amount = 8 }]
     }
 
     #[test]
-    fn a_low_drop_rate_counts_the_kills_it_adds_over_the_threshold() {
-        let p = ghoul_ribs(&serde_json::json!({}));
+    fn the_kills_that_drop_nothing_are_counted_for_their_weight() {
+        let p = ghoul_ribs(&serde_json::json!({}), &[]);
         let ribs = &p.model.quests[p.model.index[&990105]].objectives[0];
         assert_eq!(ribs.kills, 50.0, "five ribs at ten percent");
-        assert_eq!(ribs.low_drop_kills, 30.0, "twenty more than at twenty-five percent");
-        let p = ghoul_ribs(&serde_json::json!({"low_drop_chance": 0.1}));
-        let ribs = &p.model.quests[p.model.index[&990105]].objectives[0];
-        assert_eq!(ribs.low_drop_kills, 0.0, "at the threshold");
+        assert_eq!(ribs.low_drop_kills, 45.0, "nine kills in ten drop nothing");
+        let cull = &p.model.quests[p.model.index[&990106]].objectives[0];
+        assert_eq!(cull.low_drop_kills, 0.0, "a kill objective drops nothing to wait for");
+    }
+
+    #[test]
+    fn a_quest_item_dropping_under_the_minimum_leaves_its_quest_out() {
+        let p = ghoul_ribs(&serde_json::json!({"min_drop_chance": 0.2}), &[]);
+        assert!(!p.model.index.contains_key(&990105), "ten percent is under twenty");
+        assert!(p.model.index.contains_key(&990106), "the kill quest stays");
+        let p = ghoul_ribs(&serde_json::json!({"min_drop_chance": 0.1}), &[]);
+        assert!(p.model.index.contains_key(&990105), "at the minimum, the quest stays");
+        let p = ghoul_ribs(&serde_json::json!({"min_drop_chance": 0.2}), &[990105]);
+        assert!(
+            p.model.index.contains_key(&990105),
+            "asked for by the player, the quest stays"
+        );
     }
 }

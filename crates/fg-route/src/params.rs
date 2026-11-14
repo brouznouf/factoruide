@@ -285,10 +285,12 @@ pub struct Params {
     pub power_scale: f64,
     pub dungeon_loot_share: f64,
     pub gear_value: f64,
-    /// An item dropping less often than `low_drop_chance` asks for kills that drop nothing more
-    /// than that rate would: those weigh `low_drop_weight` times their time in the score and when
-    /// a quest is weighed against grinding (1: their time only), as grinding does.
-    pub low_drop_chance: f64,
+    /// A quest item whose best known drop rate is under `min_drop_chance` leaves its quest out,
+    /// unless the player asked for the quest (0: none left out).
+    pub min_drop_chance: f64,
+    /// The kills of a quest item that drop nothing (`1 - rate` of them) weigh this much more
+    /// than their time, in the score and when a quest is weighed against grinding: the rarer the
+    /// drop, the heavier the quest (0: their time only).
     pub low_drop_weight: f64,
     /// Class quests giving a pet or a form are done as soon as taken when that costs at most
     /// this many seconds: the route only counts their power in faster fights, not the safety.
@@ -624,8 +626,8 @@ impl Default for Params {
             power_scale: 1.0,
             dungeon_loot_share: 0.35,
             gear_value: 0.5,
-            low_drop_chance: 0.25,
-            low_drop_weight: 1.0,
+            min_drop_chance: 0.0,
+            low_drop_weight: 0.0,
             class_power_slack: 600.0,
             tidy_slack: 30.0,
             tidy_radius: 100.0,
@@ -864,10 +866,10 @@ impl Params {
         [1.0, 1.0, 1.166, 1.3, 1.4][n as usize - 1] / n as f64
     }
 
-    /// What a second of the kills a low drop rate adds weighs on top of itself (see
+    /// What a second of the kills that drop nothing weighs on top of itself (see
     /// `low_drop_weight`).
     pub(crate) fn low_drop_extra(&self) -> f64 {
-        (self.low_drop_weight - 1.0).max(0.0)
+        self.low_drop_weight.max(0.0)
     }
 }
 

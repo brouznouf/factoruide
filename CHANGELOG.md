@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### Guides
+
+- Two new settings for quest items that drop rarely: a minimum drop rate under which their quest is left out, and a weight that makes the guide avoid them the rarer they drop. Both are off by default.
+
 ### WoW data
 
 - WoW Forever: the latest quest data, with the Shen'dralas chains in their order, quest givers corrected in Stranglethorn Vale, Riverglades and Desolace, and more names checked in Spanish, Korean and Russian.
