@@ -6,6 +6,10 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Profession rank steps complete only when the cap is learned or manually skipped; unreadable upgrade caps show guidance.
+- New solo guides skip profession-only return flights when every planned rank is already learned.
+- Regenerate older guides that name the wrong profession trainer, or skip those steps manually.
+
 ## 0.20.0 (2026-11-13)
 
 - Escort and event quests are never accepted automatically, nor joined when a party member starts them: in a group, everyone has time to turn in the quest before.

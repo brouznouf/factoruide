@@ -288,7 +288,7 @@ export interface StartState {
   flights: number[];
   /** `flights` is final (deduced and edited in the app): the planner does not deduce them again. */
   flights_final?: boolean;
-  professions: { line: number; rank: number }[];
+  professions: { line: number; rank: number; cap?: number }[];
   riding: number;
   gear: number[];
   spells: number[];
@@ -370,6 +370,8 @@ export interface Step {
   /** What the quest notes tell about it, in the guide's language, the one that matters most first. */
   notes?: StepNote[];
   target?: { kind: string; id: number; name: string };
+  /** Departure taxi node of a flight, used to recognize profession-only return trips. */
+  from_taxi?: number;
   zone?: string;
   /** The zone's ID (AreaTable). */
   zone_id?: number;

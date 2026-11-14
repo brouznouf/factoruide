@@ -1,6 +1,7 @@
 -- Brazilian Portuguese texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.ptBR = {
+    ["Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."] = "Aprenda este grau de profissão. Se já o aprendeu, atualize o Factoruide Profile ou pule esta etapa manualmente.",
     ["take from the bank: %s"] = "pegar no banco: %s",
     ["can stay in the bank: %s"] = "pode ficar no banco: %s",
     ["NOW"] = "AGORA",

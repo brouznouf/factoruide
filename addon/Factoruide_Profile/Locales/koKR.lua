@@ -1,6 +1,7 @@
 -- Korean texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.koKR = {
+    ["Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."] = "이 전문 기술 등급을 배우세요. 이미 배웠다면 Factoruide Profile을 업데이트하거나 이 단계를 직접 건너뛰세요.",
     ["take from the bank: %s"] = "은행에서 꺼낼 것: %s",
     ["can stay in the bank: %s"] = "은행에 둬도 되는 것: %s",
     ["NOW"] = "지금",

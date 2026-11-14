@@ -745,6 +745,20 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
         ],
     ),
     (
+        "profession.book",
+        [
+            "Buy {item} from {who} and read it to raise your {profession} skill cap to {cap}",
+            "Acheter {item} auprès de {who} et le lire pour augmenter le plafond de {profession} à {cap}",
+            "{item} bei {who} kaufen und lesen, um die Fertigkeitsgrenze für {profession} auf {cap} zu erhöhen",
+            "Comprar {item} a {who} y leerlo para aumentar el límite de {profession} a {cap}",
+            "Comprar {item} de {who} e ler para aumentar o limite de {profession} para {cap}",
+            "Купить {item} у {who} и прочитать, чтобы повысить предел навыка «{profession}» до {cap}",
+            "{who}에게서 {item} 구매 후 읽어 {profession} 숙련도 한도를 {cap}(으)로 올리기",
+            "向{who}购买{item}并阅读，将{profession}技能上限提高至{cap}",
+            "向{who}購買{item}並閱讀，將{profession}技能上限提高至{cap}",
+        ],
+    ),
+    (
         "bind",
         [
             "Set your hearthstone at {who} ({zone})",

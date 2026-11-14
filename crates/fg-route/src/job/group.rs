@@ -30,6 +30,51 @@ pub(super) fn join(
     for m in mates {
         init.known &= m.known_flights(world);
     }
+    // A shared profession rank is known only as far as every player leveling it. When some
+    // caps were recorded, infer each older profile's cap from its own skill, rather than letting
+    // the leading character's skill override another player's reported lower cap.
+    init.profession_caps = model
+        .professions
+        .iter()
+        .filter_map(|plan| {
+            let line = crate::profession::find(&plan.key)?.skill_id;
+            let skills: Vec<_> = std::iter::once(character)
+                .chain(mates.iter().copied())
+                .enumerate()
+                .filter(|(member, _)| plan.members & (1 << member) != 0)
+                .map(|(_, member)| member.professions.iter().find(|skill| skill.line == line))
+                .collect();
+            if !skills
+                .iter()
+                .any(|skill| skill.is_some_and(|skill| skill.cap.is_some()))
+            {
+                return None;
+            }
+            skills
+                .into_iter()
+                .map(|skill| {
+                    skill.map_or(0, |skill| {
+                        skill.cap.unwrap_or_else(|| {
+                            crate::plan::RANKS
+                                .iter()
+                                .enumerate()
+                                .filter(|(index, rank)| {
+                                    if *index == 0 {
+                                        skill.rank > 0
+                                    } else {
+                                        skill.rank > rank.due
+                                    }
+                                })
+                                .map(|(_, rank)| rank.cap)
+                                .max()
+                                .unwrap_or(0)
+                        })
+                    })
+                })
+                .min()
+                .map(|cap| (line, cap))
+        })
+        .collect();
     let bind = character.bind_inn(model, world);
     if bind.is_none() || mates.iter().any(|m| m.bind_inn(model, world) != bind) {
         model.initial.unbound = true;
@@ -67,4 +112,50 @@ pub(super) fn join(
     });
     init.turned = (0..need.len()).filter(|&i| need[i] == 0).collect();
     init.need = need;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::job::Skill;
+    use crate::model::ProfessionPlan;
+    use crate::profession::ProfessionGoal;
+
+    #[test]
+    fn profession_caps_require_every_owner_but_ignore_other_members() {
+        let player = |(cap, rank)| StartState {
+            level: 25,
+            professions: vec![Skill { line: 185, rank, cap }],
+            ..StartState::default()
+        };
+        for (leader, mate, owners, expected) in [
+            ((Some(225), 150), (Some(150), 150), 0b11, vec![(185, 150)]),
+            ((Some(150), 150), (Some(225), 150), 0b11, vec![(185, 150)]),
+            ((Some(225), 125), (Some(225), 125), 0b11, vec![(185, 225)]),
+            ((Some(225), 125), (None, 150), 0b11, vec![(185, 150)]),
+            ((None, 200), (Some(150), 150), 0b11, vec![(185, 150)]),
+            ((None, 150), (None, 150), 0b11, vec![]),
+            ((None, 150), (Some(225), 125), 0b10, vec![(185, 225)]),
+            ((Some(225), 125), (None, 150), 0b01, vec![(185, 225)]),
+        ] {
+            let mut prepared = crate::testing::Scenario::new().start(player(leader)).build();
+            let mut plan = ProfessionPlan::new(&ProfessionGoal {
+                key: "cooking".into(),
+                target: 225,
+                start_level: None,
+                milestones: vec![],
+            })
+            .unwrap();
+            plan.members = owners;
+            prepared.model.professions = vec![plan];
+            join(
+                &mut prepared.model,
+                &prepared.world,
+                &player(leader),
+                &[&player(mate)],
+                &mut Vec::new(),
+            );
+            assert_eq!(prepared.model.initial.profession_caps, expected);
+        }
+    }
 }

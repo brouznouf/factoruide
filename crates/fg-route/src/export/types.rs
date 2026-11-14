@@ -192,6 +192,10 @@ pub struct Step {
     pub notes: Vec<StepNote>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub target: Option<Target>,
+    /// Departure taxi node of a flight. Together with its target this identifies return trips
+    /// without relying on localized text or step indexes that change when a guide is edited.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub from_taxi: Option<i64>,
     /// Zone of the step (its English name, written in a language by `render`) and its ID.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub zone: Option<String>,
@@ -327,6 +331,7 @@ impl Step {
             icon: None,
             notes: Vec::new(),
             target: None,
+            from_taxi: None,
             zone: None,
             zone_id: None,
             map: None,

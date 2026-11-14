@@ -106,10 +106,17 @@ level:
   and each one left out costs `profession_quest_weight`. With `profession_trainers` (off by
   default) the planner also visits the trainers (`plan/profession_trainers.rs`, called after every
   step with the class training): a trainer within `train_radius` teaches each rank the character can
-  learn (level and skill the rank asks) as a detour; a farther one is a trip, once the curve passes
+  learn and needs for the goal (level and skill the rank asks) as a detour; a farther one is a trip, once the curve passes
   the cap of the rank before. The time counts in the route, the visit is a `profession` step, and
-  the state (`State::ranks`) remembers the ranks learned. A rank no trainer teaches gets no
-  visit. A guide edited by hand has none (the editor plans no trainer).
+  the state (`State::ranks`) remembers the ranks learned. Cooking, Fishing and First Aid use
+  books for Expert (skill 125, cap 225); Fishing also asks level 20 outside TBC. Imported caps
+  record learned ranks; older profiles infer them from skill. The addon requires the cap or a
+  manual skip, and prompts when an upgrade cap is unreadable. Legacy skill reads cache and
+  restore collapsed headers; only external skill changes invalidate them or reach guide handlers.
+  Lua export marks pure profession return-flight trips using their departure nodes and final
+  step indexes. Solo players can skip an already-learned trip before departure; trips underway,
+  shared/group trips and older guides retain travel. Other ranks no source teaches get no visit.
+  The editor plans no trainer; curves remain estimates, without practice, recipes or affordability.
 - **Every action is a step**: each take, objective and turn-in of a quest is a stop of the route,
   done at that stop and nowhere else (no quest taken in passing at another stop, no objective
   finished on the way), so that each one can be moved or removed in the guide editor. What doing

@@ -4161,7 +4161,11 @@ fn a_group_guide_levels_each_players_professions() {
     };
     let mut a = player("A-Realm", 2, "warrior", 10);
     a.xp = 500;
-    a.professions = vec![job::Skill { line: 393, rank: 50 }];
+    a.professions = vec![job::Skill {
+        line: 393,
+        rank: 50,
+        cap: None,
+    }];
     let request = PlanRequest {
         start: Some(a),
         professions: vec![skinning()],

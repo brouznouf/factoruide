@@ -1,6 +1,7 @@
 -- German texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.deDE = {
+    ["Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."] = "Lerne diesen Berufsrang. Falls du ihn bereits gelernt hast, aktualisiere Factoruide Profile oder überspringe diesen Schritt manuell.",
     ["take from the bank: %s"] = "aus der Bank holen: %s",
     ["can stay in the bank: %s"] = "kann in der Bank bleiben: %s",
     ["NOW"] = "JETZT",

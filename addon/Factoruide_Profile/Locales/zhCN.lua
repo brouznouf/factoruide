@@ -1,6 +1,7 @@
 -- Simplified Chinese texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.zhCN = {
+    ["Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."] = "请学习此专业技能等级。如果已经学会，请更新 Factoruide Profile 或手动跳过此步骤。",
     ["take from the bank: %s"] = "从银行取出：%s",
     ["can stay in the bank: %s"] = "可留在银行：%s",
     ["NOW"] = "当前",

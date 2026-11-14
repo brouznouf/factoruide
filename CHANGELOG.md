@@ -8,6 +8,17 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### Guides
+
+- Expert Cooking, Fishing and First Aid visit their book sellers; profession trainers are chosen for the ranks they teach.
+
+### Addon
+
+- Profession rank steps complete only when the cap is learned or manually skipped; unreadable upgrade caps show guidance.
+- New solo guides skip profession-only return flights when every planned rank is already learned.
+- Regenerate older guides that name the wrong profession trainer, or skip those steps manually.
+- Saved profiles include learned profession caps, including localized skills under collapsed headers.
+
 ### WoW data
 
 - WoW Forever: the latest quest data, with the Shen'dralas chains in their order, quest givers corrected in Stranglethorn Vale, Riverglades and Desolace, and more names checked in Spanish, Korean and Russian.

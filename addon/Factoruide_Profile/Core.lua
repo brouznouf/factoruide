@@ -25,12 +25,13 @@ function FG.ChosenLang()
     return known[lang] and lang or nil
 end
 
---- The addon's language (a game locale: "frFR", "deDE"...).
-function FG.Lang()
-    local lang = FG.ChosenLang() or (GetLocale and GetLocale()) or "enUS"
+local function TranslationLocale(lang)
     if lang == "esMX" and not FG.Locales.esMX then return "esES" end
     return lang
 end
+
+--- The addon's language (a game locale: "frFR", "deDE"...).
+function FG.Lang() return TranslationLocale(FG.ChosenLang() or (GetLocale and GetLocale()) or "enUS") end
 
 --- `text` (English) in the addon's language.
 function FG.T(text)
@@ -52,7 +53,11 @@ end)()
 
 local frame = CreateFrame("Frame")
 FG.frame = frame
-local handlers = {}
+-- The Profile addon also uses the legacy skill cache when the Guide addon is absent.
+local handlers = { SKILL_LINES_CHANGED = {} }
+frame:RegisterEvent("SKILL_LINES_CHANGED")
+local readingSkills = false
+local legacySkills
 
 --- Register a handler for an event; several modules may listen to the same event.
 function FG:On(event, fn)
@@ -90,6 +95,12 @@ function FG:Try(where, fn, ...)
 end
 
 frame:SetScript("OnEvent", function(_, event, ...)
+    if event == "SKILL_LINES_CHANGED" then
+        -- Header expansion is only a read. Its synchronous notifications must not advance the
+        -- guide or schedule readers again. Real skill changes invalidate before any handler runs.
+        if readingSkills then return end
+        legacySkills = nil
+    end
     for _, fn in ipairs(handlers[event]) do
         FG:Try(event, fn, ...)
     end
@@ -253,7 +264,7 @@ end
 
 function FG:CharacterKey() return UnitName("player") .. "-" .. (GetNormalizedRealmName() or GetRealmName() or "") end
 
--- Skill names in the skills list, for clients without GetProfessions (matched by name).
+-- English translation keys and legacy names for clients without GetProfessions.
 local SKILL_NAMES = {
     [171] = { "Alchemy", "Alchimie" },
     [164] = { "Blacksmithing", "Forge" },
@@ -270,21 +281,83 @@ local SKILL_NAMES = {
     [762] = { "Riding", "Monte" },
 }
 
+local function ReadSkillRows()
+    local snapshot = { rows = {}, collapsed = {} }
+    for i = 1, GetNumSkillLines() do
+        local name, header, expanded, rank, _, _, cap = GetSkillLineInfo(i)
+        if header and not expanded then
+            snapshot.collapsed[#snapshot.collapsed + 1] = i
+        elseif not header and name then
+            snapshot.rows[name] = { rank, cap, name }
+        end
+    end
+    return snapshot
+end
+
+--- Visible rows need no header changes. If a requested skill is hidden, read all headers once;
+--- subsequent Guide, Tracker and Nearby reads reuse that snapshot until a real skill event.
+local function LegacyProfessionSkill(line)
+    local names = SKILL_NAMES[line] or {}
+    local english = names[1]
+    local strings = FG.Locales[TranslationLocale((GetLocale and GetLocale()) or "enUS")]
+    local localized = strings and english and strings[english]
+    local clientName = C_TradeSkillUI
+        and C_TradeSkillUI.GetTradeSkillDisplayName
+        and C_TradeSkillUI.GetTradeSkillDisplayName(line)
+    local function Find()
+        local rows = legacySkills.rows
+        return rows[clientName] or rows[english] or rows[names[2]] or rows[localized]
+    end
+    if not legacySkills then legacySkills = ReadSkillRows() end
+    local found = Find()
+    if
+        not found
+        and not legacySkills.expanded
+        and #legacySkills.collapsed > 0
+        and ExpandSkillHeader
+        and CollapseSkillHeader
+        and not readingSkills
+    then
+        local collapsed = legacySkills.collapsed
+        readingSkills = true
+        local ok, err = pcall(function()
+            -- Original collapsed-list indexes stay valid when opening from the bottom.
+            for i = #collapsed, 1, -1 do
+                ExpandSkillHeader(collapsed[i])
+            end
+            legacySkills = ReadSkillRows()
+            legacySkills.expanded = true
+            -- Closing from the top restores the original indexes of the later headers.
+            for _, index in ipairs(collapsed) do
+                CollapseSkillHeader(index)
+            end
+        end)
+        readingSkills = false
+        if not ok then
+            legacySkills = nil
+            error(err)
+        end
+        found = Find()
+    end
+    if found then return unpack(found) end
+    return nil
+end
+
 --- Skill of a profession by skill line ID: rank, max rank, localized name (nil if unknown).
 function FG.ProfessionSkill(line)
+    -- Older named guide steps use 0 when no supported profession can be identified.
+    if not line or line <= 0 then return nil end
     if GetProfessions and GetProfessionInfo then
         for _, index in pairs({ GetProfessions() }) do
             local name, _, rank, maxRank, _, _, skillLine = GetProfessionInfo(index)
             if skillLine == line then return rank, maxRank, name end
         end
     end
-    if GetNumSkillLines and GetSkillLineInfo then
-        local names = SKILL_NAMES[line] or {}
-        for i = 1, GetNumSkillLines() do
-            local name, header, _, rank, _, _, maxRank = GetSkillLineInfo(i)
-            if not header and (name == names[1] or name == names[2]) then return rank, maxRank, name end
-        end
+    if C_SkillInfo and C_SkillInfo.GetSkillLineInfoByID then
+        local skill = C_SkillInfo.GetSkillLineInfoByID(line)
+        if skill and not skill.isHeader and skill.rank > 0 then return skill.rank, skill.maxRank, skill.name end
     end
+    if GetNumSkillLines and GetSkillLineInfo then return LegacyProfessionSkill(line) end
     return nil
 end
 

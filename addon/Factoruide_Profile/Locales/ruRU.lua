@@ -1,6 +1,7 @@
 -- Russian texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.ruRU = {
+    ["Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."] = "Изучите этот ранг профессии. Если он уже изучен, обновите Factoruide Profile или пропустите этот шаг вручную.",
     ["take from the bank: %s"] = "взять из банка: %s",
     ["can stay in the bank: %s"] = "может остаться в банке: %s",
     ["NOW"] = "СЕЙЧАС",

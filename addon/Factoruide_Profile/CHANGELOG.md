@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Saved profiles include learned profession caps, including localized skills under collapsed headers.
+
 ## 0.17.0 (2026-11-09)
 
 - The objective guide's level warning in every language of the game.

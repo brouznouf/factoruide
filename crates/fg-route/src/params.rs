@@ -196,7 +196,7 @@ pub struct Params {
     /// With professions: a stop at their trainer to learn each profession and, before the skill
     /// reaches the cap of its rank, each next rank. A trainer close to the route (`train_radius`) is
     /// a detour; a far one is a trip, once the skill needs the rank. Both count in the route's
-    /// time. No stop for a rank no trainer teaches.
+    /// time. Expert secondary ranks visit book vendors; ranks without a source get no stop.
     pub profession_trainers: bool,
     /// Greedy construction: levels below the character a quest can be without penalty, and
     /// the penalty per level beyond (quests turned in late give less XP).
