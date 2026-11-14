@@ -985,7 +985,7 @@ do
     assert(
         FG.Guide.view.tasks[1].sub
             == FG.T(
-                "Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."
+                "Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."
             ),
         "old Profile users get an actionable prompt"
     )

@@ -1,7 +1,7 @@
 -- Spanish (also Mexican Spanish) texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.esES = {
-    ["Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."] = "No se puede leer el límite de la profesión. Actualiza Factoruide Profile o comprueba el rango y omite este paso manualmente.",
+    ["Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."] = "Aprende este rango de profesión. Si ya lo has aprendido, actualiza Factoruide Profile u omite este paso manualmente.",
     ["take from the bank: %s"] = "sacar del banco: %s",
     ["can stay in the bank: %s"] = "puede quedarse en el banco: %s",
     ["NOW"] = "AHORA",

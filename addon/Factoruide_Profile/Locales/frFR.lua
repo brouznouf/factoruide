@@ -1,7 +1,7 @@
 -- French texts of the addon: English text -> translation (see FG.T in Core.lua).
 local _, FG = ...
 FG.Locales.frFR = {
-    ["Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."] = "Plafond du métier indisponible. Mettez Factoruide Profile à jour, ou vérifiez le rang et passez cette étape manuellement.",
+    ["Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."] = "Apprenez ce rang de métier. S’il est déjà appris, mettez Factoruide Profile à jour ou passez cette étape manuellement.",
     ["take from the bank: %s"] = "à prendre à la banque : %s",
     ["can stay in the bank: %s"] = "peut rester à la banque : %s",
     ["NOW"] = "MAINTENANT",

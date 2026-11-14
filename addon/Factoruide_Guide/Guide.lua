@@ -29,7 +29,7 @@ local L = {
     noGuides = T("No guide yet.\nMake one in the Factoruide web app, then type /fg and click Import a guide…"),
     done = T("Route finished!"),
     unknownCap = T(
-        "Profession cap unavailable. Update Factoruide Profile, or verify the rank and skip this step manually."
+        "Learn this profession rank. If already learned, update Factoruide Profile or skip this step manually."
     ),
     yards = T("yd"),
     prevStep = T("Previous step"),
