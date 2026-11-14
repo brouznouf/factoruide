@@ -6,6 +6,12 @@ Writing an entry: one short line per change, saying what the player sees or gets
 
 An addon change also goes, in the same words, under Unreleased in that addon's own `addon/<addon>/CHANGELOG.md`: its changelog on CurseForge and Wago.
 
+## Unreleased
+
+### WoW data
+
+- WoW Forever: the latest quest data, with the Shen'dralas chains in their order, quest givers corrected in Stranglethorn Vale, Riverglades and Desolace, and more names checked in Spanish, Korean and Russian.
+
 ## 0.20.0 (2026-11-13)
 
 WoW Forever's new dungeons and reputation quests in the guides, class quests always planned, and fixes from players' reports.

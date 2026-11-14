@@ -1594,16 +1594,8 @@ id = 274942 # Bob McNaught
 friendly_to = "A"
 
 [[npc]]
-id = 260061 # Lieutenant Maclan
-friendly_to = "A"
-
-[[npc]]
 id = 269699 # Thaddeus Brillyard
 friendly_to = "A"
-
-[[npc]]
-id = 249399 # Brave Bentzel
-friendly_to = "H"
 
 [[npc]]
 id = 251461 # Altairus
