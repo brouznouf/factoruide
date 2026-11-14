@@ -183,7 +183,7 @@ impl QuestBuilder<'_> {
             // Unknown source: mobs of the quest level around the quest giver.
             Objective {
                 kills: count / self.params.default_drop_chance * self.per_player,
-                mob_level: quest.level,
+                mob_level: quest.level as f64,
                 count,
                 ..Objective::plain(at(quest.anchor, quest.zone), text, 0.0)
             }
@@ -348,7 +348,7 @@ impl QuestBuilder<'_> {
         let fit: Vec<i64> = ids
             .iter()
             .copied()
-            .filter(|id| entities.npc_level(*id) <= quest.level + 3)
+            .filter(|id| entities.npc_level(*id) <= (quest.level + 3) as f64)
             .collect();
         if fit.is_empty() { ids } else { fit }
     }
@@ -418,12 +418,11 @@ impl QuestBuilder<'_> {
             })
             .collect();
         let here = if here.is_empty() { mob_ids.to_vec() } else { here };
-        // The mobs there are all fought: the middle of their ranges on average, rounded up as
-        // one mob's (`npc_level`), not the lowest of them.
+        // The mobs there are all fought: the average of their levels, not the lowest of them.
         let mob_level = if here.is_empty() {
-            quest.level
+            quest.level as f64
         } else {
-            (here.iter().map(|id| entities.npc_mid(*id)).sum::<f64>() / here.len() as f64).ceil() as i64
+            here.iter().map(|id| entities.npc_level(*id)).sum::<f64>() / here.len() as f64
         };
         let chances: Vec<f64> = here
             .iter()
@@ -650,11 +649,11 @@ objectives = [{ creature = 990102, amount = 8 }]
     }
 
     #[test]
-    fn mobs_are_fought_at_the_middle_of_their_levels_rounded_up() {
+    fn mobs_are_fought_at_the_average_of_their_levels() {
         let p = ghoul_ribs(&serde_json::json!({}), &[]);
         let cull = &p.model.quests[p.model.index[&990106]].objectives[0];
-        assert_eq!(cull.mob_level, 25, "a 24-25 mob");
+        assert_eq!(cull.mob_level, 24.5, "a 24-25 mob");
         let ribs = &p.model.quests[p.model.index[&990105]].objectives[0];
-        assert_eq!(ribs.mob_level, 26, "24-25 and 26-27 together, not the lowest");
+        assert_eq!(ribs.mob_level, 25.5, "24-25 and 26-27 together, not the lowest");
     }
 }

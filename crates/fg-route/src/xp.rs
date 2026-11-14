@@ -243,6 +243,19 @@ impl Rules {
         }
     }
 
+    /// XP for killing normal mobs of `mob` level on average (a 24-25 mob is 24.5): the average
+    /// of the XP of the levels around it.
+    pub fn mean_mob_xp(&self, level: i64, mob: f64, content: usize) -> f64 {
+        let low = mob.floor();
+        let share = mob - low;
+        let xp = |m: f64| self.mob_xp(level, m as i64, content);
+        if share > 0.0 {
+            xp(low) * (1.0 - share) + xp(low + 1.0) * share
+        } else {
+            xp(low)
+        }
+    }
+
     /// XP for killing a normal mob of `mob` level, in a zone of expansion `content` (0 =
     /// Azeroth, 1 = Outland...).
     pub fn mob_xp(&self, level: i64, mob: i64, content: usize) -> f64 {
@@ -345,6 +358,14 @@ mod tests {
         }
         assert!((classic.mob_xp(25, 22, 0) - 170.0 * 8.0 / 11.0).abs() < 1e-9);
         assert!(forever.mob_xp(25, 18, 0).abs() < 1e-9, "gray");
+    }
+
+    #[test]
+    fn a_mob_of_two_levels_gives_the_average_of_their_xp() {
+        let r = Edition::Classic.rules();
+        let both = f64::midpoint(r.mob_xp(25, 24, 0), r.mob_xp(25, 25, 0));
+        assert!((r.mean_mob_xp(25, 24.5, 0) - both).abs() < 1e-9);
+        assert!((r.mean_mob_xp(25, 25.0, 0) - r.mob_xp(25, 25, 0)).abs() < 1e-9);
     }
 
     #[test]

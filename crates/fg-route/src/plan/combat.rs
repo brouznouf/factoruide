@@ -46,7 +46,7 @@ impl Combat<'_> {
         }
         let mut need = q.level as f64;
         if o.kills > 0.0 {
-            let mut mob = o.mob_level as f64
+            let mut mob = o.mob_level
                 + if o.kills <= 2.0 {
                     -1.0
                 } else {
@@ -100,7 +100,7 @@ impl Combat<'_> {
 
     /// XP of one mob of an objective (elites give twice the XP), the character's share in a group.
     pub fn mob_xp(self, level: i64, o: &Objective) -> f64 {
-        let mut x = self.rules().mob_xp(level, o.mob_level, self.content(o)) * self.params.group_xp_share();
+        let mut x = self.rules().mean_mob_xp(level, o.mob_level, self.content(o)) * self.params.group_xp_share();
         if o.elite {
             x *= 2.0;
         }

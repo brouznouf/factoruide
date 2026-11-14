@@ -10,7 +10,7 @@ pub(super) struct Givers {
     pub(super) starts: Vec<Loc>,
     pub(super) ends: Vec<Loc>,
     /// Work to get the item that starts the quest: kills, at mob level, object uses.
-    pub(super) start_work: (f64, i64, f64),
+    pub(super) start_work: (f64, f64, f64),
     /// The mob dropping that item (ID, name), when it is looted from one, and its spawns.
     pub(super) start_mob: Option<(i64, String)>,
     pub(super) start_spots: Option<Spots>,
@@ -27,7 +27,7 @@ pub(super) struct Givers {
 enum ItemStart {
     Looted {
         at: Loc,
-        work: (f64, i64, f64),
+        work: (f64, f64, f64),
         /// The mob it drops from (ID, name) and its spawns; none from an object.
         mob: Option<(i64, String)>,
         spots: Option<Spots>,
@@ -48,7 +48,7 @@ impl QuestBuilder<'_> {
         let mut givers = Givers {
             starts: Vec::new(),
             ends: Vec::new(),
-            start_work: (0.0, 0, 0.0),
+            start_work: (0.0, 0.0, 0.0),
             start_mob: None,
             start_spots: None,
             start_dungeon: None,
@@ -177,7 +177,7 @@ impl QuestBuilder<'_> {
                     None => self.inside(d),
                 }
             },
-            work: (0.0, 0, 0.0),
+            work: (0.0, 0.0, 0.0),
             mob,
             spots: None,
             dungeon: Some(d),
@@ -228,7 +228,7 @@ impl QuestBuilder<'_> {
         if let Some((pos, zone, _)) = best_cluster(&objects, Some(&start.pos)) {
             return ItemStart::Looted {
                 at: looted(pos, zone),
-                work: (0.0, 0, 1.0),
+                work: (0.0, 0.0, 1.0),
                 mob: None,
                 spots: None,
                 dungeon: None,

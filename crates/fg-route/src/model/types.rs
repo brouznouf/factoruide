@@ -260,7 +260,7 @@ pub struct Objective {
     /// Of `kills`, those that drop nothing for an item objective (`1 - rate` of them), weighed by
     /// `Params::low_drop_weight`: 0 for the other objectives.
     pub low_drop_kills: f64,
-    pub mob_level: i64,
+    pub mob_level: f64,
     pub uses: f64,
     /// Fixed extra time (buying, exploring).
     pub extra: f64,
@@ -552,7 +552,7 @@ pub struct Quest {
     pub breadcrumb_for: Option<i64>,
     /// Work to get the item that starts the quest (kills at mob level, object uses).
     pub start_kills: f64,
-    pub start_mob_level: i64,
+    pub start_mob_level: f64,
     pub start_uses: f64,
     /// The mob dropping the item that starts the quest (ID, name), for the guide to name it,
     /// and its spawns (the guide's other places to look for it).

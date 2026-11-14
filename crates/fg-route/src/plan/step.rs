@@ -295,7 +295,7 @@ impl Simulator<'_> {
             let start = &q.starts[0].pos;
             let content = xp::content_at(start.continent, start.zone);
             let mob_xp = (q.start_kills
-                * self.rules().mob_xp(s.level, q.start_mob_level, content)
+                * self.rules().mean_mob_xp(s.level, q.start_mob_level, content)
                 * self.params.group_xp_share()) as i64;
             s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
             self.growth().gather(s, q.starts[0].zone, q.start_kills);

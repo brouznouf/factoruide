@@ -436,7 +436,7 @@ impl StepWriter<'_> {
         step.objective = Some(k);
         step.slot = Some(o.slot.unwrap_or(0));
         step.elite = o.elite;
-        step.mob_level = (o.kills > 0.0 && o.mob_level > 0).then_some(o.mob_level);
+        step.mob_level = (o.kills > 0.0 && o.mob_level > 0.0).then_some(o.mob_level.round() as i64);
         for (id, name) in o.mobs.iter().take(4) {
             if !step.mob_ids.contains(id) {
                 step.mobs.push(name.clone());
@@ -928,7 +928,7 @@ impl StepWriter<'_> {
                     Some((id, name)) if loc.kind == EntityKind::Item => {
                         step.mobs.push(name.clone());
                         step.mob_ids.push(*id);
-                        step.mob_level = (q.start_mob_level > 0).then_some(q.start_mob_level);
+                        step.mob_level = (q.start_mob_level > 0.0).then_some(q.start_mob_level.round() as i64);
                         step.spots = self.spots(q.start_spots.as_ref(), &loc.pos, loc.zone);
                         Phrase::new("accept.item.mob").arg("mob", Arg::Npc(*id, name.clone()))
                     }

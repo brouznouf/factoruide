@@ -851,8 +851,8 @@ impl Params {
     /// power (what gear and spells add, see `power`). The level difference keeps its weight (gear
     /// does not remove misses, resists and the danger of mobs above the character): power only
     /// makes every fight faster, by 10% per level.
-    pub fn kill_time(&self, level: i64, bonus: f64, mob: i64) -> f64 {
-        self.kill_time * kill_factor((mob - level) as f64) * power_speed(bonus) / self.group_damage()
+    pub fn kill_time(&self, level: i64, bonus: f64, mob: f64) -> f64 {
+        self.kill_time * kill_factor(mob - level as f64) * power_speed(bonus) / self.group_damage()
     }
 
     /// Damage of the group, in solo players.

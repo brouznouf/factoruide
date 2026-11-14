@@ -1189,7 +1189,7 @@ fn gathering_next_to_kills_overlaps_them() {
             text: format!("objective {i}"),
             kills,
             low_drop_kills: 0.0,
-            mob_level: 1,
+            mob_level: 1.0,
             uses,
             extra: 0.0,
             dungeon: None,
@@ -2673,7 +2673,7 @@ fn kills_east_of_start(p: &Prepared, dx: f64, kills: f64, mob_level: i64) -> Obj
         text: format!("kill x{kills} at {dx} yd"),
         kills,
         low_drop_kills: 0.0,
-        mob_level,
+        mob_level: mob_level as f64,
         uses: 0.0,
         extra: 0.0,
         dungeon: None,
@@ -2960,7 +2960,7 @@ fn small_spot_in_pairs_is_harder_and_slower() {
     assert!(o.pack >= 1.5, "{} mobs per pull", o.pack);
     let q = &p.model.quests[quest(p, 20).unwrap() as usize];
     let need = planner(p).combat().need(q, &o);
-    assert!(need >= o.mob_level as f64 + p.params.pack_extra() + 0.5, "need {need}");
+    assert!(need >= o.mob_level + p.params.pack_extra() + 0.5, "need {need}");
     assert!(o.extra > 0.0, "respawns waited for");
     let crowded = objective(&prepare("human", "warrior", 30, &["progression=cautious", "crowded=1"])).extra;
     let fixed = objective(&prepare(

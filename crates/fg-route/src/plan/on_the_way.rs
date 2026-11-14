@@ -244,7 +244,7 @@ impl Simulator<'_> {
             if kills <= 0.0 {
                 continue;
             }
-            time += kills * p.kill_time(s.level, s.bonus, level);
+            time += kills * p.kill_time(s.level, s.bonus, level as f64);
             gained += kills * each;
             killed += kills;
         }
