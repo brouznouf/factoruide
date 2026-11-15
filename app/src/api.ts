@@ -642,7 +642,7 @@ export const api = {
   installAddon: () => invoke<number>("install_addon").then((n) => (settingsChanged(), n)),
   /** Whether Polestar is installed in WoW Forever. */
   polestarInstalled: () => invoke<boolean>("polestar_installed"),
-  /** Export a guide version into a pack folder for Polestar's own tools in `dir` (WoW Forever only): the pack's folder. */
+  /** Export a guide version as a guide of the Polestar pack addon (Factoruide_Polestar) in `dir`, the pack's other guides kept (web: a zip of the pack with it alone; WoW Forever only): the pack's folder. */
   exportPolestar: (guide: string, version: number, dir: string) => invoke<string | WebFile>("export_polestar", { guide, version, dir }).then(saved),
   /** Whether the addon in the game has the current settings. */
   addonSynced: () => invoke<boolean>("addon_synced"),

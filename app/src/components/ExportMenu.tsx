@@ -107,16 +107,16 @@ export function ExportMenu({ guide, version, edition, prominent, onDone }: Guide
             },
           },
           {
-            label: "Polestar",
-            hint: t("Le guide au format .guide de Polestar (en anglais), pour ses outils Planner et Play."),
+            label: t("Polestar : addon"),
+            hint: t("Le guide comme addon Polestar (Factoruide_Polestar), sans limite d'étapes, à copier dans le dossier Interface\\AddOns de WoW Forever."),
             run: () =>
               run(async () => {
-                const dir = await open({ directory: true, title: t("Dossier où exporter le pack Polestar") });
+                const dir = await open({ directory: true, title: t("Dossier où exporter l'addon Polestar") });
                 if (typeof dir !== "string") return "";
                 const path = await api.exportPolestar(guide, version, dir);
                 return IS_WEB
-                  ? t("Pack Polestar téléchargé ({path}) : décompressez-le et ouvrez son dossier dans Planner ou Play de Polestar.", { path })
-                  : t("Guide exporté pour Polestar dans {path} : ouvrez ce dossier dans Planner ou Play de Polestar.", { path });
+                  ? t("Téléchargé : {path}. Décompressez-le dans Interface\\AddOns (il remplace les guides de Factoruide_Polestar), redémarrez le jeu, puis choisissez Factoruide sous « Suggest guides from » (/polestar packs).", { path })
+                  : t("Guide ajouté à l'addon Polestar {path} : copiez ce dossier dans Interface\\AddOns, redémarrez le jeu, puis choisissez Factoruide sous « Suggest guides from » (/polestar packs).", { path });
               }),
           },
         ]
@@ -149,7 +149,7 @@ export function ExportMenu({ guide, version, edition, prominent, onDone }: Guide
           warning={
             polestar !== "loading" && !polestar.fits
               ? t(
-                  "Trop long pour Polestar : son import n'accepte pour l'instant que 60 étapes et 50 000 caractères, et ce guide fait {steps} étapes et {chars} caractères. Utilisez plutôt « Polestar : tous les guides » dans l'export global.",
+                  "Trop long pour Polestar : son import n'accepte pour l'instant que 60 étapes et 50 000 caractères, et ce guide fait {steps} étapes et {chars} caractères. Utilisez plutôt « Polestar : addon ».",
                   { steps: polestar.steps, chars: polestar.text.length.toLocaleString() },
                 )
               : undefined

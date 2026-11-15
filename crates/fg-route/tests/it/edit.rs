@@ -231,7 +231,7 @@ fn manual_guide_starts_empty_and_takes_its_steps() {
         !editor.timeline(&manual, &names).legs.is_empty(),
         "the grind on the map"
     );
-    assert_ne!(fg_route::export::polestar::source("manual", route), "");
+    assert!(fg_route::export::polestar::guide_lua("manual", route).contains("RegisterGuide"));
 
     // The computed guide's first steps, added one by one: less grinding at the end.
     let end = first(&guide().plan, |s| matches!(s, RouteStep::TurnIn { .. })) + 1;

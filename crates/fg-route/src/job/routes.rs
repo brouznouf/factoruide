@@ -215,67 +215,45 @@ pub fn write_polestar_strings(
     Ok(routes.len())
 }
 
-/// Write a pack's folder for Polestar's own tools (`export::polestar::source`) into `dir` from
-/// every saved route: its `pack.json` and a `.guide` file each, in English.
-pub fn write_polestar_source(
-    conn: &Connection,
-    edition: Edition,
-    routes_dir: &Path,
-    dir: &Path,
-    version: &str,
-) -> Result<usize> {
-    let routes = render_routes(conn, edition, &load_routes(routes_dir)?, Some("enUS"))?;
-    add_polestar_source_pack(dir, version)?;
-    for r in &routes {
-        add_polestar_source(dir, &slug(&r.name), r, version)?;
-    }
-    Ok(routes.len())
-}
-
-/// The folder made for a pack for Polestar's own tools (not the in-game pack's addon folder,
-/// `export::polestar::ADDON`).
-pub const POLESTAR_SOURCE_FOLDER: &str = "Factoruide_Polestar_Pack";
-
-/// The folder a pack for Polestar's own tools goes in when `picked` is chosen for it: `picked`
-/// itself when it already holds a pack (its `pack.json`), else its subfolder
-/// [`POLESTAR_SOURCE_FOLDER`].
-pub fn polestar_source_dir(picked: &Path) -> PathBuf {
-    if picked.join("pack.json").is_file() {
+/// The pack's addon folder (`export::polestar::ADDON`) when `picked` is chosen for it: `picked`
+/// itself when it is that folder, else that folder in it.
+pub fn polestar_addon_dir(picked: &Path) -> PathBuf {
+    if picked.file_name().is_some_and(|n| n == export::polestar::ADDON) {
         picked.to_owned()
     } else {
-        picked.join(POLESTAR_SOURCE_FOLDER)
+        picked.join(export::polestar::ADDON)
     }
 }
 
-/// Add a guide (`id`, its route written in English) to the pack for Polestar's own tools in
-/// `dir`, made when missing: its `.guide` file, replaced if there, the pack's other guides kept,
-/// and the pack's `pack.json` written again. A folder holding another pack is left as it is.
+/// Add a guide (`id`, its route written in the game's language) to the Polestar pack's addon in
+/// `dir`, made when missing: its file, replaced if there, the pack's other guides kept, and the
+/// `.toc` loading them written again. A folder holding something else is left as it is.
 /// Returns the guide's file.
-pub fn add_polestar_source(dir: &Path, id: &str, route: &Route, version: &str) -> Result<PathBuf> {
-    add_polestar_source_pack(dir, version)?;
-    let file = dir.join(format!("{}.guide", export::polestar::guide_name(id)));
-    std::fs::write(&file, export::polestar::source(id, route))?;
-    Ok(file)
-}
-
-/// Make `dir` a pack for Polestar's own tools: its `pack.json`, unless it holds another pack.
-fn add_polestar_source_pack(dir: &Path, version: &str) -> Result<()> {
-    let manifest = dir.join("pack.json");
-    if let Ok(text) = std::fs::read_to_string(&manifest) {
-        let id = serde_json::from_str::<serde_json::Value>(text.trim_start_matches('\u{feff}'))
-            .ok()
-            .and_then(|v| v.get("id")?.as_str().map(str::to_owned));
-        if id.as_deref() != Some(export::polestar::PACK_ID) {
-            anyhow::bail!(
-                "{} holds another Polestar pack ({}): choose another folder",
-                dir.display(),
-                id.as_deref().unwrap_or("no id")
-            );
-        }
+pub fn add_polestar_guide(dir: &Path, id: &str, route: &Route, version: &str) -> Result<PathBuf> {
+    use export::polestar::{ADDON, PACK_TAG, guide_file, guide_lua, pack_frame};
+    let toc = dir.join(format!("{ADDON}.toc"));
+    let ours = std::fs::read_to_string(&toc).is_ok_and(|t| t.lines().any(|l| l.trim() == PACK_TAG));
+    let empty = std::fs::read_dir(dir).map_or(true, |mut d| d.next().is_none());
+    if !ours && !empty {
+        anyhow::bail!(
+            "{} is not Factoruide's Polestar pack: choose another folder",
+            dir.display()
+        );
     }
     std::fs::create_dir_all(dir)?;
-    std::fs::write(manifest, export::polestar::pack_json(version))?;
-    Ok(())
+    let file = dir.join(guide_file(id));
+    std::fs::write(&file, guide_lua(id, route))?;
+    // The pack's guides before one file each, left out of the new .toc.
+    let _ = std::fs::remove_file(dir.join("Guides.lua"));
+    let mut guides: Vec<String> = std::fs::read_dir(dir)?
+        .filter_map(|e| e.ok()?.file_name().into_string().ok())
+        .filter(|n| n.strip_prefix("Guide_").and_then(|r| r.strip_suffix(".lua")).is_some())
+        .collect();
+    guides.sort();
+    for (name, content) in pack_frame(&guides, version) {
+        std::fs::write(dir.join(name), content)?;
+    }
+    Ok(file)
 }
 
 /// Routes written in `locale` (None: each in the language it was made in), the names of each
@@ -360,43 +338,64 @@ mod tests {
     }
 
     #[test]
-    fn a_picked_folder_gets_its_own_pack_folder_unless_it_is_the_pack() {
-        let picked = temp_dir("polestar-picked");
-        let pack = polestar_source_dir(&picked);
-        assert_eq!(pack, picked.join(POLESTAR_SOURCE_FOLDER));
-        add_polestar_source(&pack, "dwarf-warrior", &route("Dwarf warrior"), "1.0.0").unwrap();
-        // The pack chosen again: its own folder.
-        assert_eq!(polestar_source_dir(&pack), pack);
-        std::fs::remove_dir_all(&picked).unwrap();
+    fn a_picked_folder_gets_the_pack_folder_unless_it_is_the_pack() {
+        let picked = Path::new("/games/AddOns");
+        let pack = polestar_addon_dir(picked);
+        assert_eq!(pack, picked.join(export::polestar::ADDON));
+        assert_eq!(polestar_addon_dir(&pack), pack, "the pack's folder chosen again");
     }
 
     #[test]
     fn guides_are_added_to_the_pack_and_replaced_the_others_kept() {
-        let dir = temp_dir("polestar-pack").join("pack");
-        let file = add_polestar_source(&dir, "dwarf-warrior", &route("Dwarf warrior"), "1.0.0").unwrap();
-        assert_eq!(file, dir.join("dwarf-warrior.guide"));
-        add_polestar_source(&dir, "troll-mage", &route("Troll mage"), "1.0.0").unwrap();
-        add_polestar_source(&dir, "dwarf-warrior", &route("Dwarf warrior again"), "1.1.0").unwrap();
-        assert_eq!(files(&dir), ["dwarf-warrior.guide", "pack.json", "troll-mage.guide"]);
-        let guide = std::fs::read_to_string(dir.join("dwarf-warrior.guide")).unwrap();
-        assert!(guide.contains("guide factoruide/dwarf-warrior\n"));
-        assert!(guide.contains("title \"Dwarf warrior again\"\n"));
-        let manifest: serde_json::Value =
-            serde_json::from_str(&std::fs::read_to_string(dir.join("pack.json")).unwrap()).unwrap();
-        assert_eq!(manifest["id"], "factoruide");
-        assert_eq!(manifest["version"], "1.1.0");
+        let dir = temp_dir("polestar-pack").join(export::polestar::ADDON);
+        let file = add_polestar_guide(&dir, "dwarf-warrior", &route("Dwarf warrior"), "1.0.0").unwrap();
+        assert_eq!(file, dir.join("Guide_dwarf-warrior.lua"));
+        add_polestar_guide(&dir, "troll-mage", &route("Troll mage"), "1.0.0").unwrap();
+        add_polestar_guide(&dir, "dwarf-warrior", &route("Dwarf warrior again"), "1.1.0").unwrap();
+        assert_eq!(
+            files(&dir),
+            [
+                "Factoruide_Polestar.toc",
+                "Guide_dwarf-warrior.lua",
+                "Guide_troll-mage.lua",
+                "Pack.lua"
+            ]
+        );
+        let guide = std::fs::read_to_string(dir.join("Guide_dwarf-warrior.lua")).unwrap();
+        assert!(guide.contains("Dwarf warrior again"), "replaced");
+        let toc = std::fs::read_to_string(dir.join("Factoruide_Polestar.toc")).unwrap();
+        assert!(toc.contains("## Version: 1.1.0\n"));
+        assert!(
+            toc.ends_with("\nPack.lua\nGuide_dwarf-warrior.lua\nGuide_troll-mage.lua\n"),
+            "{toc}"
+        );
         std::fs::remove_dir_all(dir.parent().unwrap()).unwrap();
     }
 
+    /// A pack written by the app before one file per guide: its old guides file goes, the toc
+    /// no longer loading it.
     #[test]
-    fn another_pack_is_left_as_it_is() {
+    fn the_old_pack_of_one_guides_file_takes_the_new_form() {
+        let dir = temp_dir("polestar-old");
+        for (name, content) in export::polestar::pack(&[], "1.0.0") {
+            std::fs::write(dir.join(name), content).unwrap();
+        }
+        std::fs::write(dir.join("Guides.lua"), "-- old").unwrap();
+        add_polestar_guide(&dir, "troll-mage", &route("Troll mage"), "1.1.0").unwrap();
+        assert_eq!(
+            files(&dir),
+            ["Factoruide_Polestar.toc", "Guide_troll-mage.lua", "Pack.lua"]
+        );
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn a_folder_that_is_not_the_pack_is_left_as_it_is() {
         let dir = temp_dir("polestar-other");
-        let theirs = "{ \"id\": \"joe-routes\" }\n";
-        std::fs::write(dir.join("pack.json"), theirs).unwrap();
-        let err = add_polestar_source(&dir, "dwarf-warrior", &route("Dwarf warrior"), "1.0.0").unwrap_err();
-        assert!(err.to_string().contains("joe-routes"));
-        assert_eq!(files(&dir), ["pack.json"]);
-        assert_eq!(std::fs::read_to_string(dir.join("pack.json")).unwrap(), theirs);
+        std::fs::write(dir.join("Factoruide_Polestar.toc"), "## Title: something else\n").unwrap();
+        let err = add_polestar_guide(&dir, "dwarf-warrior", &route("Dwarf warrior"), "1.0.0").unwrap_err();
+        assert!(err.to_string().contains("not Factoruide's Polestar pack"));
+        assert_eq!(files(&dir), ["Factoruide_Polestar.toc"]);
         std::fs::remove_dir_all(&dir).unwrap();
     }
 }

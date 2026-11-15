@@ -243,8 +243,8 @@ fn polestar_string(guide: &GuideId, v: u32) -> CmdResult<serde_json::Value> {
     serde_json::to_value(STUDIO.polestar_string(&WebHost, guide, v)?).map_err(err)
 }
 
-/// A guide version written for Polestar's own tools: a zip of a pack folder holding its
-/// `.guide` file (in English). Polestar exists on WoW Forever only.
+/// A guide version as the Polestar pack's addon holding it alone, in the game's language: a zip
+/// of its folder to unzip in the game's AddOns folder. Polestar exists on WoW Forever only.
 fn export_polestar(guide: &GuideId, v: u32) -> CmdResult<serde_json::Value> {
     if edition() != Edition::Forever {
         return Err("Polestar is for WoW Forever only".into());
@@ -252,22 +252,14 @@ fn export_polestar(guide: &GuideId, v: u32) -> CmdResult<serde_json::Value> {
     let route = render(
         Edition::Forever,
         &guides(Edition::Forever).version(guide, v)?.outcome.route,
-        Some("enUS"),
+        None,
     )?;
-    let folder = job::POLESTAR_SOURCE_FOLDER;
-    let files = vec![
-        (
-            format!("{folder}/pack.json"),
-            fg_route::export::polestar::pack_json(APP_VERSION).into_bytes(),
-        ),
-        (
-            format!(
-                "{folder}/{}.guide",
-                fg_route::export::polestar::guide_name(guide.as_str())
-            ),
-            fg_route::export::polestar::source(guide.as_str(), &route).into_bytes(),
-        ),
-    ];
+    let folder = fg_route::export::polestar::ADDON;
+    let files: Vec<(String, Vec<u8>)> =
+        fg_route::export::polestar::pack(&[(job::slug(&route.name), route)], APP_VERSION)
+            .into_iter()
+            .map(|(name, content)| (format!("{folder}/{name}"), content.into_bytes()))
+            .collect();
     Ok(serde_json::json!({ "file": format!("{folder}.zip"), "base64": base64(&crate::zip::zip(&files)) }))
 }
 

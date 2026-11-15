@@ -143,10 +143,10 @@ pub(crate) fn polestar_installed_in(settings: &Settings) -> bool {
         .exists()
 }
 
-/// Export a guide version for Polestar's own tools (route planner, playground): its `.guide`
-/// file (in English) added to the pack folder in `dir` (the folder chosen, or a pack folder made
-/// in it), the pack's other guides kept. Returns the pack's folder. Polestar exists on WoW
-/// Forever only.
+/// Export a guide version as a guide of the Polestar pack's addon (`Factoruide_Polestar`) in
+/// `dir` (the folder chosen, or that folder made in it), in the game's language, the pack's other
+/// guides kept: the player copies the folder into the game. Returns the pack's folder. Polestar
+/// exists on WoW Forever only.
 #[tauri::command(async)]
 pub(crate) fn export_polestar(
     state: State<'_, AppState>,
@@ -157,9 +157,9 @@ pub(crate) fn export_polestar(
     if state.edition() != Edition::Forever {
         return Err("Polestar is for WoW Forever only".into());
     }
-    let route = state.render(&state.library().version(&guide, version)?.outcome.route, Some("enUS"))?;
-    let pack = job::polestar_source_dir(Path::new(&dir));
-    job::add_polestar_source(&pack, guide.as_str(), &route, env!("CARGO_PKG_VERSION")).map_err(err)?;
+    let route = state.render(&state.library().version(&guide, version)?.outcome.route, None)?;
+    let pack = job::polestar_addon_dir(Path::new(&dir));
+    job::add_polestar_guide(&pack, &job::slug(&route.name), &route, env!("CARGO_PKG_VERSION")).map_err(err)?;
     Ok(pack.display().to_string())
 }
 

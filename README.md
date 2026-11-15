@@ -205,12 +205,11 @@ hide the guide or all the addon's windows, time per level, quest item, the optio
 On WoW Forever with [Polestar](https://github.com/fitzforge/polestar) installed, the app also
 writes your guides as a Polestar guide pack (Factoruide_Polestar; the web app downloads it). In Polestar, choose Factoruide
 under "Suggest guides from" on the "Community guides" page: it offers each character the guide of
-its race and class. **Export for Polestar…** on a guide writes it as Polestar's guide source (a
-`.guide` file, in English) into a pack folder for Polestar's own tools, which its Planner and Play
-open: `Factoruide_Polestar_Pack` in the folder you choose (or the folder itself when it is that
-pack). Exporting another guide adds its `.guide` file to the pack and keeps the others; exporting
-a guide again replaces its file. `fg polestar --source --out <dir>` writes such a pack from the
-planned routes.
+its race and class. A guide's **Export → Polestar: addon** adds that guide alone to a
+`Factoruide_Polestar` folder you choose (or the folder itself when it is the pack), keeping the
+pack's other guides, with no step limit: copy the folder into `Interface\AddOns` and restart the
+game (the web app downloads the pack with that guide). **Export → Polestar: import text** gives
+the text to paste on Polestar's Import page (`/polestar import`), for guides of up to 60 steps.
 
 - Guide: follows the guide chosen for the character (in the options' guides; the only one of
   its race and class by itself) and advances by itself; previous and next step, start over on the

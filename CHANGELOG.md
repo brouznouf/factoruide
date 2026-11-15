@@ -8,6 +8,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### App
+
+- WoW Forever: **Export → Polestar: addon** puts one guide, however long, into the Factoruide_Polestar addon folder you choose, next to the guides already there, ready to copy into the game. It replaces the export to Polestar's .guide format, which the game could not load.
+
 ### Guides
 
 - Two new settings for quest items that drop rarely: a minimum drop rate under which their quest is left out, and a weight that makes the guide avoid them the rarer they drop. Both are off by default.

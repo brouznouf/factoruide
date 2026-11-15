@@ -308,7 +308,7 @@ that wins. A longer calculation gives a shorter guide.
 
 `export/` turns the best route into steps: a guide for the app (JSON) and a route for the addon
 (Lua). The app shows the route improving live while the search runs. On WoW Forever the guides can
-also go to Polestar as a guide pack (`export/polestar/`, its pack format 3, Polestar 0.2.5; `source.rs` writes the same steps as Polestar's own `.guide` source, which the app and `fg polestar --source` write into a pack folder, `job::add_polestar_source`): a goal per step,
+also go to Polestar as a guide pack (`export/polestar/`, its pack format 3, Polestar 0.2.5, a file per guide; `job::add_polestar_guide` adds one guide to a pack folder): a goal per step,
 the goals at one NPC in one step, and travels and notes in the step of the goal after them, since
 Polestar counts a travel done once a later goal of its step is (place names differ by language).
 
