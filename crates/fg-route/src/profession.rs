@@ -6,6 +6,61 @@
 
 use serde::{Deserialize, Serialize};
 
+/// A book teaching the expert rank (225) of a secondary profession: their trainers stop at
+/// journeyman. Read at skill 125, bought from a few vendors (the faction they serve, "AH" both).
+#[derive(Debug)]
+pub struct ExpertBook {
+    pub line: i64,
+    pub item: i64,
+    pub name: &'static str,
+    /// Character level to read it on Classic and Forever (TBC dropped it).
+    pub level: i64,
+    pub vendors: &'static [(i64, &'static str)],
+}
+
+impl ExpertBook {
+    /// Character level to read it in `edition`.
+    pub(crate) fn level_in(&self, edition: crate::xp::Edition) -> i64 {
+        if edition == crate::xp::Edition::Tbc {
+            1
+        } else {
+            self.level
+        }
+    }
+}
+
+pub const EXPERT_BOOKS: [ExpertBook; 3] = [
+    ExpertBook {
+        line: 185,
+        item: 16072,
+        name: "Expert Cookbook",
+        level: 1,
+        // Wulan (Desolace), Shandrina (Ashenvale).
+        vendors: &[(12033, "H"), (3955, "A")],
+    },
+    ExpertBook {
+        line: 356,
+        item: 16083,
+        name: "Expert Fishing - The Bass and You",
+        level: 20,
+        // Old Man Heming (Booty Bay).
+        vendors: &[(2626, "AH")],
+    },
+    ExpertBook {
+        line: 129,
+        item: 16084,
+        name: "Expert First Aid - Under Wraps",
+        level: 1,
+        // Balai Lok'Wein (Dustwallow Marsh), Deneb Walker (Arathi Highlands).
+        vendors: &[(13476, "H"), (2805, "A")],
+    },
+];
+
+/// The expert book of profession `line`, if its expert rank comes from one.
+pub(crate) fn expert_book(line: i64) -> Option<&'static ExpertBook> {
+    EXPERT_BOOKS.iter().find(|b| b.line == line)
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum Kind {

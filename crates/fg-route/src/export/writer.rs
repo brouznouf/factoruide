@@ -718,19 +718,21 @@ impl StepWriter<'_> {
     /// Profession training: learn the profession, or its next rank (`ranks`: a bit each).
     fn profession_train(&self, step: &mut Step, profession: usize, trainer: usize, ranks: u8) -> Place {
         let model = self.planner.model;
-        let (plan, npc) = (&model.professions[profession], &model.profession_trainers[trainer].loc);
+        let teacher = &model.profession_trainers[trainer];
+        let (plan, npc) = (&model.professions[profession], &teacher.loc);
         step.kind = StepKind::Profession;
         step.line = Some(crate::profession::skill_line(&plan.key));
         let top = (RANKS.iter().enumerate()).rev().find(|(r, _)| ranks & 1 << r != 0);
         step.skill = top.map(|(_, rank)| rank.cap);
+        let phrase = match teacher.book {
+            Some(book) => Phrase::new("profession.book").arg("book", Arg::Item(book.item, book.name.to_owned())),
+            None if ranks & 1 != 0 => Phrase::new("profession.learn"),
+            None => Phrase::new("profession.rank"),
+        };
         step.say.push(
-            Phrase::new(if ranks & 1 != 0 {
-                "profession.learn"
-            } else {
-                "profession.rank"
-            })
-            .arg("profession", Arg::Profession(plan.key.clone(), plan.name.clone()))
-            .arg("who", Arg::Npc(npc.id, npc.name.clone())),
+            phrase
+                .arg("profession", Arg::Profession(plan.key.clone(), plan.name.clone()))
+                .arg("who", Arg::Npc(npc.id, npc.name.clone())),
         );
         step.target = Some(Target {
             kind: TargetKind::Npc,

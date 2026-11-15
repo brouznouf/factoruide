@@ -745,6 +745,20 @@ pub(super) const TEMPLATES: &[(&str, [&str; 9])] = &[
         ],
     ),
     (
+        "profession.book",
+        [
+            "Buy {book} from {who} and read it to learn Expert {profession}",
+            "Acheter {book} auprès de {who} et le lire pour apprendre {profession} (expert)",
+            "{book} bei {who} kaufen und lesen, um {profession} (Experte) zu lernen",
+            "Comprar {book} a {who} y leerlo para aprender {profession} (experto)",
+            "Comprar {book} de {who} e lê-lo para aprender {profession} (perito)",
+            "Купить «{book}» ({who}) и прочитать, чтобы изучить профессию «{profession}» (специалист)",
+            "{who}에게서 {book} 구입 후 읽어 {profession} (전문가) 배우기",
+            "向{who}购买{book}并阅读，学习{profession}（专家）",
+            "向{who}購買{book}並閱讀，學習{profession}（專家）",
+        ],
+    ),
+    (
         "bind",
         [
             "Set your hearthstone at {who} ({zone})",

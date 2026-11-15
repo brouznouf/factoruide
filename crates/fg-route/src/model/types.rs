@@ -249,6 +249,8 @@ pub struct ProfessionTrainer {
     /// The highest skill cap its title says it teaches (75, 150, 225 or 300).
     pub cap: i64,
     pub loc: Loc,
+    /// A vendor of this book, which teaches the expert rank only, rather than a trainer.
+    pub book: Option<&'static crate::profession::ExpertBook>,
 }
 
 #[derive(Debug, Clone)]

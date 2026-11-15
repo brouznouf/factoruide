@@ -45,6 +45,9 @@ pub(crate) const RANKS: [Rank; 4] = [
     },
 ];
 
+/// Index of the expert rank in `RANKS` (a book for the secondary professions).
+const EXPERT: usize = 2;
+
 impl Simulator<'_> {
     /// The ranks a character starting at `level` already knows: its skill (the curve at that level,
     /// which goes through the skill of a character met in game) asks the first rank once it has
@@ -79,11 +82,16 @@ impl Simulator<'_> {
         for (p, plan) in self.model.professions.iter().enumerate().take(s.ranks.len()) {
             let line = crate::profession::skill_line(&plan.key);
             let skill = plan.curve.get(s.level.clamp(0, 60) as usize).copied().unwrap_or(0);
+            let book = crate::profession::expert_book(line);
             // The ranks open (the game lets them be learned), not learned yet, and needed.
             let mut open = 0u8;
             let mut needed = 0u8;
             for (r, rank) in RANKS.iter().enumerate() {
-                if s.ranks[p] & 1 << r == 0 && s.level >= rank.level.max(plan.start) && skill >= rank.skill {
+                let level = match book {
+                    Some(book) if r == EXPERT => book.level_in(self.params.edition),
+                    _ => rank.level,
+                };
+                if s.ranks[p] & 1 << r == 0 && s.level >= level.max(plan.start) && skill >= rank.skill {
                     open |= 1 << r;
                     if skill > rank.due {
                         needed |= 1 << r;
@@ -95,7 +103,7 @@ impl Simulator<'_> {
             }
             let teaching = |ranks: u8| {
                 (self.model.profession_trainers.iter().enumerate())
-                    .filter(move |(_, t)| t.line == line && ranks & Self::taught_by(t.cap) != 0)
+                    .filter(move |(_, t)| t.line == line && ranks & Self::taught_by(t) != 0)
                     .map(|(k, t)| (k, t.loc.pos))
             };
             let close = teaching(open)
@@ -112,18 +120,22 @@ impl Simulator<'_> {
                     .map(|(k, _)| k),
             };
             if let Some(k) = trainer {
-                return Some((p, k, open & Self::taught_by(self.model.profession_trainers[k].cap)));
+                return Some((p, k, open & Self::taught_by(&self.model.profession_trainers[k])));
             }
         }
         None
     }
 
-    /// The ranks (a bit each) a trainer whose title says `cap` teaches: those up to it.
-    fn taught_by(cap: i64) -> u8 {
+    /// The ranks (a bit each) a trainer teaches: those up to the cap its title says, or the expert
+    /// rank alone for a vendor of its book.
+    fn taught_by(trainer: &crate::model::ProfessionTrainer) -> u8 {
+        if trainer.book.is_some() {
+            return 1 << EXPERT;
+        }
         RANKS
             .iter()
             .enumerate()
-            .filter(|(_, r)| r.cap <= cap)
+            .filter(|(_, r)| r.cap <= trainer.cap)
             .fold(0, |bits, (r, _)| bits | 1 << r)
     }
 
