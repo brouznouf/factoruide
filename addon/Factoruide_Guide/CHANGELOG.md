@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- WoW Forever: a click on a quest in the quest panel makes the game track it, as from the game's own tracker, and a click on the step already shown sets the game's waypoint again.
+
 ## 0.20.0 (2026-11-13)
 
 - Escort and event quests are never accepted automatically, nor joined when a party member starts them: in a group, everyone has time to turn in the quest before.

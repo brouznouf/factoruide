@@ -19,6 +19,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Kills count for every quest in your log that wants them, as in the game (the scarlet warriors to kill also drop the rings to bring back): guide times and levels are closer to what you play, and quests on the same monsters are done together.
 - Profession trainer visits go to trainers that teach the rank you need: Expert Cooking, Fishing and First Aid come from their book, bought from its vendor, and crafting trainers teach the rank below their title (an Expert Blacksmith teaches Journeyman).
 
+### Addon
+
+- WoW Forever: a click on a quest in the quest panel makes the game track it, as from the game's own tracker, and a click on the step already shown sets the game's waypoint again.
+
 ### WoW data
 
 - WoW Forever: the latest quest data, with the Shen'dralas chains in their order, quest givers corrected in Stranglethorn Vale, Riverglades and Desolace, and more names checked in Spanish, Korean and Russian.

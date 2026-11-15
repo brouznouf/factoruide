@@ -367,7 +367,10 @@ C_Map = {
 UiMapPoint = {
     CreateFromCoordinates = function(m, x, y) return { m = m, x = x, y = y } end,
 }
-C_SuperTrack = { SetSuperTrackedUserWaypoint = function() end }
+C_SuperTrack = {
+    SetSuperTrackedUserWaypoint = function() end,
+    SetSuperTrackedQuestID = function(q) C_SuperTrack.quest = q end,
+}
 C_QuestLog = {
     GetAllCompletedQuestIDs = function() return {} end,
     GetNumQuestLogEntries = function() return 0 end,
@@ -1640,6 +1643,9 @@ FG.Guide:PointToStep(5)
 assert(waypoint and waypoint.x == 0.32, "hand-picked step pointed at")
 FG.Guide:Advance()
 assert(waypoint.x == 0.32, "still pointed at after a refresh")
+waypoint = nil -- moved or cleared by something else
+FG.Guide:PointToStep(5)
+assert(waypoint and waypoint.x == 0.32, "the step pointed at again sets the game's waypoint again")
 onQuest[6006] = true
 FG.Guide:Advance()
 assert(waypoint.x ~= 0.32, "back to the route once taken")
@@ -2722,6 +2728,14 @@ C_QuestLog.GetInfo = function(i) return { questID = 8100 + i, title = "Quest " .
 FG:Set("trackerAll", true)
 FG.Tracker:Refresh()
 assert(#FG.Tracker.shown == 6 and FG.Tracker.lines == 6, "a line a quest, got " .. FG.Tracker.lines)
+-- A click on a quest makes the game track it, as from the game's own tracker.
+for _, f in ipairs(frames) do
+    if rawget(f, "questID") == 8102 and f._shown then
+        f:GetScript("OnClick")(f, "LeftButton")
+        break
+    end
+end
+assert(C_SuperTrack.quest == 8102, "the clicked quest tracked by the game: " .. tostring(C_SuperTrack.quest))
 FG:Save("guideMode", "minimal")
 FG.Tracker:Refresh()
 assert(FG.Tracker.lines == 6, "the same with the minimal guide")

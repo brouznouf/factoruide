@@ -1805,10 +1805,12 @@ function Guide:NextStepByQuest()
 end
 
 --- Point the compass and the waypoint at a step until it is done (or another step is picked).
+--- The game's waypoint is set again even for the step already pointed at: something else may
+--- have moved or cleared it.
 function Guide:PointToStep(index)
     local step = route and route.steps[index]
     if not step or not step.m then return end
-    pointed, detour = index, nil
+    pointed, detour, waypointStep = index, nil, nil
     self:Refresh()
 end
 

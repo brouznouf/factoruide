@@ -232,8 +232,13 @@ local function Line(i)
         if self.questID then
             if IsShiftKeyDown() and FG.Guide and FG.Guide.PointToQuest then
                 FG.Guide:PointToQuest(self.questID)
-            elseif QuestMapFrame_OpenToQuestDetails then
-                QuestMapFrame_OpenToQuestDetails(self.questID)
+            else
+                -- The game tracks the quest, as from its own tracker that this one hides: its
+                -- waypoint and the addons drawing a way to the tracked quest follow it.
+                if C_SuperTrack and C_SuperTrack.SetSuperTrackedQuestID then
+                    C_SuperTrack.SetSuperTrackedQuestID(self.questID)
+                end
+                if QuestMapFrame_OpenToQuestDetails then QuestMapFrame_OpenToQuestDetails(self.questID) end
             end
         elseif self.itemID and FG.Bank then
             FG.Bank:ToggleMark(self.itemID)
