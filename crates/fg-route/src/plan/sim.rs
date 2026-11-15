@@ -299,6 +299,7 @@ impl<'s> Simulator<'s> {
             growth: self.growth(),
             availability: self.availability(),
             to_level: self.profile.to_level,
+            credit: &self.ix.credit,
         }
     }
 

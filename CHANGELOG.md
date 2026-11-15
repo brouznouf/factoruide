@@ -12,6 +12,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - Two new settings for quest items that drop rarely: a minimum drop rate under which their quest is left out, and a weight that makes the guide avoid them the rarer they drop. Both are off by default.
 - Monsters count at the average of their level range, and a camp of several kinds at the average of them all rather than its lowest: fewer camps turn out tougher than the guide planned.
+- Kills count for every quest in your log that wants them, as in the game (the scarlet warriors to kill also drop the rings to bring back): guide times and levels are closer to what you play, and quests on the same monsters are done together.
 
 ### WoW data
 

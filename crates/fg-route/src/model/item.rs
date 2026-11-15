@@ -140,6 +140,20 @@ impl QuestBuilder<'_> {
             let farm =
                 |pos: Pos, zone: i64| self.farm(quest, target, &places.mob_ids, count, at(pos, zone), text.clone());
             let first = farm(pos, zone);
+            // Every mob dropping it gives progress when killed, wherever (for another quest).
+            let credit: Vec<(i64, f64)> = (places.sources.iter())
+                .filter(|(t, id)| {
+                    *t == SourceKind::Npc
+                        && (self.params.allow_elite || !self.sources.entities.is_elite(*id))
+                        && !self.sources.entities.friendly.contains(id)
+                })
+                .map(|(_, id)| {
+                    let chance = (self.sources.drop_chance.get(&(target, *id)).copied())
+                        .unwrap_or(self.params.default_drop_chance);
+                    (*id, chance / (count * self.per_player).max(1.0))
+                })
+                .collect();
+            let first = Objective { credit, ..first };
             Objective {
                 alts: alternatives(
                     &places.mobs,

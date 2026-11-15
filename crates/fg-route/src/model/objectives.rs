@@ -68,6 +68,7 @@ impl Objective {
             elite: false,
             count: 1.0,
             mobs: vec![],
+            credit: vec![],
             pull: 1.0,
             spawns: 0,
             pack: 1.0,
@@ -500,6 +501,7 @@ impl QuestBuilder<'_> {
                 .iter()
                 .map(|id| (*id, entities.name(EntityKind::Npc, *id)))
                 .collect(),
+            credit: credited.iter().map(|id| (*id, 1.0 / kills.max(1.0))).collect(),
             spots: if elite { None } else { Spots::new(&points, &pos) },
             ..Objective::plain(loc(pos, zone), String::new(), 0.0)
         };

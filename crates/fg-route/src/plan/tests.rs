@@ -186,6 +186,7 @@ fn quests_at_hand_are_looked_for_where_the_stop_went() {
         text: "Gather object".into(),
         kills: 0.0,
         low_drop_kills: 0.0,
+        credit: vec![],
         mob_level: 0.0,
         uses: 1.0,
         extra: 1200.0,
@@ -249,6 +250,7 @@ fn objective_started_counts_its_share_at_another_place() {
         text: "Gather 10 items".into(),
         kills: 20.0,
         low_drop_kills: 0.0,
+        credit: vec![],
         mob_level: 1.0,
         uses: 0.0,
         extra: 0.0,
@@ -395,6 +397,64 @@ fn fighting_with_turn_ins(planner: &Planner<'_>, route: &[Stop]) -> f64 {
     planner.simulate_full(&full, None).unwrap().1.fighting
 }
 
+/// Quest 0 kills 10 of mob 1, quest 1 loots 8 items dropping from it half the time, at the same
+/// camp; quest 2 is given at the start.
+fn shared_camp() -> Prepared {
+    let mut p = camp_of_two_objectives();
+    let mob = vec![(1, "mob 1".to_owned())];
+    let kill = &mut p.model.quests[0].objectives[0];
+    kill.mobs = mob;
+    kill.credit = vec![(1, 0.1)];
+    let mut loot = kill.clone();
+    loot.text = "8 items".into();
+    loot.kills = 16.0;
+    loot.count = 8.0;
+    loot.credit = vec![(1, 0.5 / 8.0)];
+    p.model.quests[1].objectives = vec![loot];
+    p
+}
+
+/// As in the game, quest 0's kills drop quest 1's items while quest 1 is in the log, whether
+/// its stop comes next or later: 6 kills left of its 16. Quest 1's 16 kills alone, without
+/// quest 0, for the measure.
+#[test]
+fn kills_of_one_mob_count_for_every_quest_wanting_it() {
+    let p = shared_camp();
+    let planner = planner(&p);
+    let (a, b) = (Stop::quest(0, Kind::Objective(0)), Stop::quest(1, Kind::Objective(0)));
+    let elsewhere = Stop::quest(2, Kind::Accept);
+    let fighting = |route: &[Stop]| fighting_with_turn_ins(&planner, route);
+    let alone = fighting(&[b]);
+    for route in [vec![a, b], vec![a, elsewhere, b]] {
+        let added = fighting(&route) - fighting(&[a]);
+        assert!(
+            (added / alone - 6.0 / 16.0).abs() < 0.05,
+            "{route:?}: {added} / {alone}"
+        );
+    }
+}
+
+/// The construction takes the quest wanting the same mobs, given where the character stands,
+/// before going to the camp: quest 1 is not in the log yet.
+#[test]
+fn the_quest_sharing_a_camp_is_taken_before_going_there() {
+    let mut p = shared_camp();
+    p.model.initial.accepted = vec![0];
+    p.model.quests[1].xp = 1000;
+    let near = planner(&p);
+    let s = near.sim().initial_state();
+    let kill = Stop::quest(0, Kind::Objective(0));
+    assert_eq!(near.sharing_first(&s, kill), Stop::quest(1, Kind::Accept));
+    // Not when its own objective is elsewhere.
+    let mut far = shared_camp();
+    far.model.initial.accepted = vec![0];
+    far.model.quests[1].xp = 1000;
+    far.model.quests[1].objectives[0].loc.pos.x += 1000.0;
+    let apart = planner(&far);
+    let s = apart.sim().initial_state();
+    assert_eq!(apart.sharing_first(&s, kill), kill);
+}
+
 /// Kill and gathering objectives at a camp 100 yards east of the start, for quests 0 and 1 (in
 /// the log), and a third quest given at the start.
 fn camp_of_two_objectives() -> Prepared {
@@ -408,6 +468,7 @@ fn camp_of_two_objectives() -> Prepared {
         text: "Kill 10 mobs".into(),
         kills: 10.0,
         low_drop_kills: 0.0,
+        credit: vec![],
         mob_level: 1.0,
         uses: 0.0,
         extra: 0.0,
@@ -611,6 +672,7 @@ fn road_of_mobs() -> (Prepared, crate::world::Pos, crate::world::Pos) {
         text: "Kill 3 wolves".into(),
         kills: 3.0,
         low_drop_kills: 0.0,
+        credit: vec![],
         mob_level: 1.0,
         uses: 0.0,
         extra: 0.0,
@@ -721,6 +783,7 @@ fn greedy_grinds_to_the_mobs_of_a_quest_in_reach() {
         text: "Kill the chief".into(),
         kills: 1.0,
         low_drop_kills: 0.0,
+        credit: vec![],
         mob_level: 7.0,
         uses: 0.0,
         extra: 0.0,
@@ -948,6 +1011,7 @@ fn timed_quest_taken_once_strong_enough_for_its_objectives() {
         text: "Kill a strong mob".into(),
         kills: 1.0,
         low_drop_kills: 0.0,
+        credit: vec![],
         mob_level: 12.0,
         uses: 0.0,
         extra: 0.0,

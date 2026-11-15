@@ -996,7 +996,41 @@ impl Simulator<'_> {
         let mob_xp = (kills * self.combat().mob_xp(s.level, o)) as i64;
         s.spent.mob_xp += self.growth().gain_kills(s, mob_xp);
         self.hold(s, i, k);
+        self.credit_kills(s, quest, k, o, kills);
         (kill_work, uses * self.params.object_time)
+    }
+
+    /// The `kills` of objective `k` of `quest` at `o` count for the other objectives of the log
+    /// wanting those mobs, wherever they are done, as in the game: their share done
+    /// (`State::started`), the objective done once it is whole.
+    fn credit_kills(&self, s: &mut State, quest: u32, k: u8, o: &Objective, kills: f64) {
+        if kills <= 0.0 || o.mobs.is_empty() {
+            return;
+        }
+        let each_kind = kills / o.mobs.len() as f64;
+        for (mob, _) in &o.mobs {
+            let Some(credits) = self.ix.credit.get(mob) else {
+                continue;
+            };
+            for &(j, k2, each) in credits {
+                let ju = j as usize;
+                if j == quest && k2 == k || !s.accepted[ju] || s.turned[ju] || s.objectives[ju] & (1 << k2) != 0 {
+                    continue;
+                }
+                let share = each_kind * each;
+                let total = if let Some(e) = s.started.iter_mut().find(|e| e.0 == j && e.1 == k2) {
+                    e.2 = (e.2 + share).min(1.0);
+                    e.2
+                } else {
+                    s.started.push((j, k2, share.min(1.0)));
+                    share
+                };
+                if total >= 1.0 - 1e-9 {
+                    s.started.retain(|e| !(e.0 == j && e.1 == k2));
+                    self.hold(s, ju, k2);
+                }
+            }
+        }
     }
 
     /// Dungeon `i` entered: its run's fixed time, its mobs' XP, the boss loot the character may

@@ -8,7 +8,7 @@
 
 use super::Simulator;
 use super::state::{Kind, State, Stop};
-use crate::model::{Objective, Quest};
+use crate::model::Objective;
 
 impl Simulator<'_> {
     /// Objective `k` of `quest` at the place the character goes to from `s`.
@@ -27,7 +27,7 @@ impl Simulator<'_> {
         let open = self.trips().open_links(s);
         let mut best = (f64::INFINITY, o);
         for place in std::iter::once(o).chain(&o.alts) {
-            let there = self.spot_work(s, q, place);
+            let there = self.spot_work(s, quest, k, place);
             if there >= best.0 {
                 continue;
             }
@@ -65,15 +65,17 @@ impl Simulator<'_> {
 
     /// Time of the work at a place, with the grinding to the level it requires; its respawns
     /// waited for with the kills done there just before (`Together`).
-    fn spot_work(&self, s: &State, q: &Quest, o: &Objective) -> f64 {
+    fn spot_work(&self, s: &State, quest: u32, k: u8, o: &Objective) -> f64 {
+        let q = self.quest(quest);
         let gate = self.combat().level_at(q, o, s.might());
         let grind = if gate > s.level {
             self.growth().grind_time(s, gate)
         } else {
             0.0
         };
-        grind + o.kills * self.combat().kill_time(s.level, s.bonus, o) + o.uses * self.params.object_time + o.extra
+        let kills = o.kills * (1.0 - s.share_done(quest, k)).max(0.0);
+        grind + kills * self.combat().kill_time(s.level, s.bonus, o) + o.uses * self.params.object_time + o.extra
             - o.pool.wait
-            + self.shared_wait(&s.together, o, o.kills)
+            + self.shared_wait(&s.together, o, kills)
     }
 }

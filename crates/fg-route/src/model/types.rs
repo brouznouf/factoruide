@@ -272,6 +272,11 @@ pub struct Objective {
     pub count: f64,
     /// NPCs to target for it (mobs to kill, or that drop the item): ID and English name.
     pub mobs: Vec<(i64, String)>,
+    /// Every mob whose kill gives progress on it, with the share of the objective one kill
+    /// gives: 1 / kills for a kill objective, the drop rate over the items asked for a loot
+    /// objective. Kills for another objective count for it, wherever it is
+    /// (`plan::State::started`).
+    pub credit: Vec<(i64, f64)>,
     /// Where its mobs or objects are, to kill or loot those met on the way to other stops (kill
     /// and loot objectives on normal mobs, objects to use or loot).
     pub spots: Option<Spots>,
@@ -358,6 +363,14 @@ pub struct Vendor {
 }
 
 impl Objective {
+    /// Whether it is done around `pos`: its place, or a spawn of its mobs, within `radius` of it
+    /// (a camp of harpies spread over a hillside is one place). Never in a dungeon.
+    pub fn around(&self, pos: &Pos, radius: f64) -> bool {
+        self.dungeon_of().is_none()
+            && (self.loc.pos.continent == pos.continent && self.loc.pos.dist(pos) <= radius
+                || self.spots.as_ref().is_some_and(|s| s.near(pos, radius)))
+    }
+
     /// The dungeon the objective belongs to: done by entering it (`dungeon`), or inside it.
     pub fn dungeon_of(&self) -> Option<usize> {
         self.dungeon.or(self.loc.inside.map(usize::from))
@@ -434,6 +447,17 @@ impl Spots {
             max,
             points,
         })
+    }
+
+    /// Whether one of the spawns is within `radius` of `pos`.
+    #[must_use]
+    pub fn near(&self, pos: &Pos, radius: f64) -> bool {
+        pos.continent == self.continent
+            && pos.x >= self.min.0 - radius
+            && pos.x <= self.max.0 + radius
+            && pos.y >= self.min.1 - radius
+            && pos.y <= self.max.1 + radius
+            && (self.points.iter()).any(|&(x, y)| (x - pos.x).hypot(y - pos.y) <= radius)
     }
 
     /// Other places to look for them than around `first` (world x, y): the centres of up to

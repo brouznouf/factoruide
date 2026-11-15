@@ -20,6 +20,8 @@ pub(crate) struct Worth<'w> {
     pub(crate) growth: Growth<'w>,
     pub(crate) availability: Availability<'w>,
     pub(crate) to_level: i64,
+    /// The objectives each mob's kills give progress on (`Indexes::credit`).
+    pub(crate) credit: &'w std::collections::HashMap<i64, Vec<(u32, u8, f64)>>,
 }
 
 impl Worth<'_> {
@@ -59,6 +61,54 @@ impl Worth<'_> {
             + q.start_uses * self.params.object_time
             + q.start_wait;
         travel + work + start + self.params.stop_overhead * (2 + q.objectives.len()) as f64
+    }
+
+    /// The kills quest `i` shares with the open objectives of the log wanting the same mobs
+    /// (around the same place only when `near`, `Objective::around`), which count once for
+    /// both as in the game: the time they save and the XP they no longer give.
+    pub(crate) fn shared_saving(&self, s: &State, i: u32, level: i64, near: bool) -> (f64, f64) {
+        let q = self.quest(i);
+        let (mut saved, mut xp) = (0.0, 0.0);
+        for o in &q.objectives {
+            if o.kills <= 0.0 || o.mobs.is_empty() || o.dungeon_of().is_some() {
+                continue;
+            }
+            let ours = o.kills / o.mobs.len() as f64;
+            let mut kills = 0.0;
+            for (mob, _) in &o.mobs {
+                let Some(credits) = self.credit.get(mob) else { continue };
+                let theirs = (credits.iter())
+                    .filter(|&&(j, k, _)| {
+                        let ju = j as usize;
+                        j != i
+                            && s.accepted[ju]
+                            && !s.turned[ju]
+                            && s.objectives[ju] & (1 << k) == 0
+                            && (!near || {
+                                let theirs = &self.model.quests[ju].objectives[usize::from(k)];
+                                let r = self.params.gather_radius;
+                                theirs.around(&o.loc.pos, r) || o.around(&theirs.loc.pos, r)
+                            })
+                    })
+                    .map(|&(_, _, each)| 1.0 / each.max(1e-9))
+                    .fold(0.0, f64::max);
+                kills += ours.min(theirs);
+            }
+            saved += kills * self.combat.kill_time(level, s.bonus, o);
+            xp += kills * self.combat.mob_xp(level, o);
+        }
+        (saved, xp)
+    }
+
+    /// Accept weight from the kills quest `i` shares with the log (`shared_saving`): the share
+    /// of its cost it saves, so that quests sharing a camp are taken together.
+    pub(crate) fn shared_weight(&self, s: &State, i: u32, level: i64) -> f64 {
+        let (saved, _) = self.shared_saving(s, i, level, true);
+        if saved <= 0.0 {
+            return 1.0;
+        }
+        let cost = self.quest_cost(i, level, s.bonus, s.abilities).max(1.0);
+        (1.0 - saved / cost).clamp(0.3, 1.0)
     }
 
     pub(crate) fn quest_value(&self, i: u32, level: i64) -> f64 {
@@ -107,10 +157,12 @@ impl Worth<'_> {
         // reputation the goals still miss is.
         let past = s.level >= self.to_level;
         let (grind, grind_xp) = self.reputation_grind(s, i, level);
+        let (saved, saved_xp) = self.shared_saving(s, i, level, false);
         let worth = if past {
             self.reputation_xp(s, i, level)
         } else {
             self.quest_worth(i, level) + grind_xp + self.growth.gear_xp(s, i, level) + self.reputation_xp(s, i, level)
+                - saved_xp
         };
         if past && worth <= 0.0 {
             return false;
@@ -118,7 +170,7 @@ impl Worth<'_> {
         self.beats_grinding(
             s,
             worth,
-            trip + grind + self.quest_cost(i, level, s.bonus, s.abilities),
+            trip + grind + (self.quest_cost(i, level, s.bonus, s.abilities) - saved).max(0.0),
             level,
         )
     }
@@ -244,9 +296,11 @@ impl Worth<'_> {
         if self.params.efficiency_power <= 0.0 {
             return 1.0;
         }
+        let (saved, saved_xp) = self.shared_saving(s, i, level, false);
         let efficiency =
-            (self.quest_worth(i, level) + self.growth.gear_xp(s, i, level) + self.reputation_xp(s, i, level))
-                / self.quest_cost(i, level, s.bonus, s.abilities).max(1.0);
+            (self.quest_worth(i, level) + self.growth.gear_xp(s, i, level) + self.reputation_xp(s, i, level)
+                - saved_xp)
+                / (self.quest_cost(i, level, s.bonus, s.abilities) - saved).max(1.0);
         let reference = self.combat.grind_rate(level, s.bonus, &s.pos) * 2.0;
         (reference / efficiency.max(1e-6))
             .powf(self.params.efficiency_power)

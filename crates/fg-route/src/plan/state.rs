@@ -363,8 +363,9 @@ pub(crate) struct State {
     pub(crate) completion_error: Option<(u32, u8, i64)>,
     /// Timed quests of the log: (quest, time by which the route must turn it in).
     pub(crate) timers: Vec<(u32, f64)>,
-    /// Objectives started before the route (a character met in game), with the share already
-    /// done (0 to 1): (quest, objective, share). A share, not kills: the places of an objective
+    /// Objectives started before the route (a character met in game) or by the kills for other
+    /// objectives (`Simulator::credit_kills`), with the share already done (0 to 1): (quest,
+    /// objective, share). A share, not kills: the places of an objective
     /// may need different kills (their drop rates differ).
     pub(crate) started: Vec<(u32, u8, f64)>,
     /// The objective stops done one after the other at the same place (see `Together`).
@@ -418,6 +419,14 @@ pub(crate) struct State {
 }
 
 impl State {
+    /// The share of objective `k` of `quest` done before its stop: before the route, or by the
+    /// kills for other objectives (`started`).
+    pub(crate) fn share_done(&self, quest: u32, k: u8) -> f64 {
+        (self.started.iter())
+            .find(|e| e.0 == quest && e.1 == k)
+            .map_or(0.0, |e| e.2)
+    }
+
     pub(crate) fn member_levels(&self, mates: usize) -> impl Iterator<Item = (u8, i64)> + '_ {
         std::iter::once((self.order[0], self.level)).chain(
             self.mates[..mates]

@@ -31,6 +31,9 @@ pub(crate) struct Indexes {
     pub(crate) breadcrumbs: Vec<Vec<u32>>,
     /// The objectives inside each dungeon: (quest, objective).
     pub(crate) in_dungeon: Vec<Vec<(u32, u8)>>,
+    /// The objectives each mob's kills give progress on: (quest, objective, share per kill).
+    /// Only objectives of kills or loot that need nothing done first.
+    pub(crate) credit: std::collections::HashMap<i64, Vec<(u32, u8, f64)>>,
 }
 
 impl Indexes {
@@ -50,7 +53,18 @@ impl Indexes {
                 }
             }
         }
+        let mut credit: std::collections::HashMap<i64, Vec<(u32, u8, f64)>> = std::collections::HashMap::new();
+        for (i, q) in model.quests.iter().enumerate() {
+            for (k, o) in q.objectives.iter().enumerate() {
+                if o.kills > 0.0 && o.after == 0 && o.dungeon_of().is_none() {
+                    for &(mob, each) in &o.credit {
+                        credit.entry(mob).or_default().push((i as u32, k as u8, each));
+                    }
+                }
+            }
+        }
         Self {
+            credit,
             camp: camp_index(model, params.camp_radius),
             vendors: vendor_index(model, params.sell_radius),
             blocks,

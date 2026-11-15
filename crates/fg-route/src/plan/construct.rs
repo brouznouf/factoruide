@@ -335,7 +335,8 @@ impl Planner<'_> {
                         * dungeon
                         * preferred
                         * self.worth().level_fit(i, s.level)
-                        * self.worth().efficiency_weight(s, i, s.level),
+                        * self.worth().efficiency_weight(s, i, s.level)
+                        * self.worth().shared_weight(s, i, s.level),
                     Some(i),
                     lower,
                 );
@@ -374,7 +375,7 @@ impl Planner<'_> {
             }
         }
         if let Some(stop) = self.least_score(s, candidates) {
-            return Some(stop);
+            return Some(self.sharing_first(s, stop));
         }
 
         // Zone exhausted: move on to the closest quest worth doing on its own, wherever it is.
@@ -418,6 +419,54 @@ impl Planner<'_> {
             }
         }
         self.least_score(s, candidates)
+    }
+
+    /// Before going to the camp of an objective stop, the quest wanting the same mobs there to
+    /// take first, when its detour costs less than the kills it then shares (the scraps of canvas
+    /// on the sailors of Vanquish the Betrayers): `stop` itself otherwise.
+    pub(crate) fn sharing_first(&self, s: &State, stop: Stop) -> Stop {
+        let Kind::Objective(k) = stop.kind else { return stop };
+        let sim = self.sim();
+        let o = sim.spot(s, stop.index, k);
+        if o.kills <= 0.0 || o.dungeon_of().is_some() {
+            return stop;
+        }
+        let trips = self.trips();
+        let at = trips.at(s);
+        let open = trips.open_links(s);
+        let reach = self.params.reach(s.level, s.might());
+        let direct = trips.fastest(s, &o.loc.pos).0;
+        let r = self.params.gather_radius;
+        let mut best: Option<(f64, Stop)> = None;
+        for (mob, _) in &o.mobs {
+            let Some(credits) = self.ix.credit.get(mob) else {
+                continue;
+            };
+            for &(j, k2, _) in credits {
+                let ju = j as usize;
+                let q = self.quest(j);
+                let theirs = &q.objectives[usize::from(k2)];
+                if j == stop.index
+                    || s.accepted[ju]
+                    || s.turned[ju]
+                    || q.min_level > s.level
+                    || self.combat().guard_need(&q.start_guard) > reach
+                    || !(theirs.around(&o.loc.pos, r) || o.around(&theirs.loc.pos, r))
+                    || !self.availability().can_accept(s, j)
+                {
+                    continue;
+                }
+                let accept = Stop::quest(j, Kind::Accept);
+                let giver = self.places().pos(s, accept);
+                let trip = trips.fastest(s, &giver).0;
+                let detour = trip + at.leg(&giver, &o.loc.pos, s.level, s.known, open).0 - direct;
+                let gain = self.worth().shared_saving(s, j, s.level, true).0 - detour;
+                if gain > 0.0 && best.is_none_or(|(g, _)| gain > g) && self.worth().worth_it(s, j, s.level, trip) {
+                    best = Some((gain, accept));
+                }
+            }
+        }
+        best.map_or(stop, |(_, accept)| accept)
     }
 
     /// The candidate of least score (the first of equal ones), weighed from the least bound up.
