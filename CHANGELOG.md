@@ -6,6 +6,12 @@ Writing an entry: one short line per change, saying what the player sees or gets
 
 An addon change also goes, in the same words, under Unreleased in that addon's own `addon/<addon>/CHANGELOG.md`: its changelog on CurseForge and Wago.
 
+## Unreleased
+
+### WoW data
+
+- WoW Forever: the latest quest data, with named monsters and quest givers at the places they really stand instead of dozens of sightings, and more quests seen in game by players.
+
 ## 0.21.0 (2026-11-16)
 
 Kills count for every quest that wants them, trainers that teach the rank you need, guides exported as a Polestar addon, and more WoW Forever quests in the guides.
