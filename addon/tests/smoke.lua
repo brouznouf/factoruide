@@ -1381,6 +1381,26 @@ end
 assert(sold == 1, "one grey item sold, got " .. sold)
 print("merchant ok")
 
+-- Merchant, WoW Forever: the item a quest wants is read with C_MerchantFrame (the old
+-- GetMerchantItemInfo is gone) and bought.
+do
+    local realPurchases, realMoney = FG.Guide.Purchases, GetMoney
+    local bought = 0
+    FG.Guide.Purchases = function() return { [5000] = 2 } end
+    GetMoney = function() return 1000 end
+    GetMerchantNumItems = function() return 1 end
+    GetMerchantItemID = function() return 5000 end
+    C_MerchantFrame = {
+        GetItemInfo = function() return { price = 10, stackCount = 1, numAvailable = -1 } end,
+    }
+    BuyMerchantItem = function() bought = bought + 1 end
+    fire("MERCHANT_SHOW")
+    assert(bought == 2, "two bought for the quest, got " .. bought)
+    FG.Guide.Purchases, GetMoney = realPurchases, realMoney
+    GetMerchantNumItems, GetMerchantItemID, C_MerchantFrame, BuyMerchantItem = nil, nil, nil, nil
+end
+print("merchant quest items ok")
+
 -- Skins: a skin registered through the public API styles every frame made so far.
 local skinned = {}
 FactoruideAPI.RegisterSkin("Test", function(frame, kind) skinned[kind] = (skinned[kind] or 0) + 1 end)
@@ -2826,6 +2846,15 @@ bags[4306] = nil
 UnitLevel = function() return playerLevel end
 completed[9001], onQuest[9001] = true, nil
 assert(#FG.Bank:Items(true) == 0, "turned in: nothing to keep")
+-- Before the Profile addon made the character's saved data (early tracker refresh): nothing, no error.
+do
+    local realCharacters = FactoruideDB.characters
+    FactoruideDB.characters = {}
+    local none, later = FG.Bank:Items(true)
+    assert(#none == 0 and later == 0, "no character data yet: no item")
+    FG.Bank:ToggleMark(2589)
+    FactoruideDB.characters = realCharacters
+end
 completed[9001], bags[2589], bank[2589] = nil, nil, nil
 print("items to keep ok")
 
@@ -3877,6 +3906,16 @@ guids.target, levels.target = spawnGUID(301, 5), secretLevel
 fire("PLAYER_TARGET_CHANGED")
 guids.target, levels.target = koboldGUID, 5
 fire("PLAYER_TARGET_CHANGED")
+-- Low health alert while the health is secret (WoW Forever in combat; a table here: arithmetic
+-- on it errors, as on a secret): not read, no error (checked below).
+do
+    local secretHealth = {}
+    secret[secretHealth] = true
+    UnitHealth, UnitHealthMax = function() return secretHealth end, function() return 100 end
+    UnitIsDeadOrGhost = function() return false end
+    fire("UNIT_HEALTH", "player")
+    UnitHealth, UnitHealthMax, UnitIsDeadOrGhost = nil, nil, nil
+end
 
 -- Fight 1: the target turns secret when the fight begins (the GUID read before is used), the
 -- kill is told by the XP message only (secret attacker on PARTY_KILL).

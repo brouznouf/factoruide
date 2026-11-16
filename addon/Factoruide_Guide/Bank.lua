@@ -18,8 +18,10 @@ local L = {
 -- needed this many levels later or more: left there.
 local SOON, LATER = 3, 6
 
+--- The character's saved data, nil before the Profile addon made it at login.
 local function Char()
-    local char = FactoruideDB.characters[FG:CharacterKey()]
+    local char = FactoruideDB.characters and FactoruideDB.characters[FG:CharacterKey()]
+    if not char then return nil end
     char.bank = char.bank or {}
     char.bankMarks = char.bankMarks or {}
     return char
@@ -34,6 +36,7 @@ function Bank:Items(all)
     local char = Char()
     local level = UnitLevel("player")
     local shown, later = {}, 0
+    if not char then return shown, later end
     for _, item in ipairs(items) do
         local name, _, _, _, _, _, _, _, _, icon = FG.ItemInfo(item.id)
         item.name = name or item.name
@@ -59,7 +62,9 @@ end
 
 --- Mark an item as being in the bank (or not), by hand.
 function Bank:ToggleMark(id)
-    local marks = Char().bankMarks
+    local char = Char()
+    if not char then return end
+    local marks = char.bankMarks
     marks[id] = not marks[id] or nil
     if FG.Tracker then FG.Tracker:Refresh() end
 end
@@ -68,6 +73,7 @@ end
 --- was seen replaces the marks by hand.
 local function Scan()
     local char = Char()
+    if not char then return end
     for _, item in ipairs(FG.Guide and FG.Guide:ItemsToKeep() or {}) do
         local all, bags = FG.ItemCount(item.id, true) or 0, FG.ItemCount(item.id) or 0
         char.bank[item.id] = math.max(0, all - bags)

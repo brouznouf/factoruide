@@ -37,7 +37,10 @@ end)
 local warned = false
 FG:On("UNIT_HEALTH", function(unit)
     if unit ~= "player" or not FG:Get("safetyAlerts") then return end
-    local share = UnitHealth("player") / math.max(1, UnitHealthMax("player"))
+    -- WoW Forever hides the health in combat (secret values): no alert then.
+    local health, most = FG.Readable(UnitHealth("player")), FG.Readable(UnitHealthMax("player"))
+    if not health or not most then return end
+    local share = health / math.max(1, most)
     if share < 0.35 and not warned and not UnitIsDeadOrGhost("player") then
         warned = true
         Warn(string.format(T("Low health: %d%%"), math.floor(share * 100)))

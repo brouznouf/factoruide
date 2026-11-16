@@ -23,6 +23,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### Addon
 
 - WoW Forever: a click on a quest in the quest panel makes the game track it, as from the game's own tracker, and a click on the step already shown sets the game's waypoint again.
+- WoW Forever: the items a quest needs are bought at the merchant, as on Classic and TBC, and the low health alert in combat and the items to keep at login no longer run into errors.
 
 ### WoW data
 

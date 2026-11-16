@@ -48,6 +48,18 @@ local function Repair()
     end
 end
 
+--- Price, units per purchase and stock left (-1: unlimited) of the merchant's item at `index`:
+--- the modern API (WoW Forever) has its table, Classic and TBC the old function.
+local function MerchantItem(index)
+    if C_MerchantFrame and C_MerchantFrame.GetItemInfo then
+        local info = C_MerchantFrame.GetItemInfo(index)
+        if not info then return nil end
+        return info.price, info.stackCount, info.numAvailable
+    end
+    local _, _, price, quantity, available = GetMerchantItemInfo(index)
+    return price, quantity, available
+end
+
 --- Best item of these families the character can use, among those the merchant sells:
 --- merchant index, item ID, stack size, price per unit.
 local function BestOffer(families)
@@ -62,9 +74,14 @@ local function BestOffer(families)
         for _, entry in ipairs(family) do
             local need, id = entry[1], entry[2]
             if need <= level and sold[id] and (not best or need > best.level) then
-                local _, _, price, quantity = GetMerchantItemInfo(sold[id])
-                best =
-                    { index = sold[id], id = id, level = need, unit = price / math.max(1, quantity or 1), ids = family }
+                local price, quantity = MerchantItem(sold[id])
+                best = {
+                    index = sold[id],
+                    id = id,
+                    level = need,
+                    unit = (price or 0) / math.max(1, quantity or 1),
+                    ids = family,
+                }
             end
         end
     end
@@ -119,7 +136,7 @@ local function QuestItems()
         local id = GetMerchantItemID and GetMerchantItemID(i)
         local want = id and wanted[id]
         if want then
-            local _, _, price, quantity, available = GetMerchantItemInfo(i)
+            local price, quantity, available = MerchantItem(i)
             local missing = want - (FG.ItemCount(id) or 0)
             local each = math.max(1, quantity or 1)
             local buys = math.ceil(missing / each)

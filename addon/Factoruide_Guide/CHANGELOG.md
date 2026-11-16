@@ -7,6 +7,7 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 ## Unreleased
 
 - WoW Forever: a click on a quest in the quest panel makes the game track it, as from the game's own tracker, and a click on the step already shown sets the game's waypoint again.
+- WoW Forever: the items a quest needs are bought at the merchant, as on Classic and TBC, and the low health alert in combat and the items to keep at login no longer run into errors.
 
 ## 0.20.0 (2026-11-13)
 
