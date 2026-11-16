@@ -55,3 +55,102 @@ ru = "НИП, которому нужно сдать задание, сидит 
 ko = "퀘스트를 완료할 NPC는 마차 뒤쪽에 앉아 있습니다. 보이지 않으면 다른 플레이어가 그를 호위하는 중이니 돌아올 때까지 기다리세요."
 zh_cn = "交任务的NPC坐在马车后部。如果他不在，说明有其他玩家正在护送他：等他回来。"
 zh_tw = "交任務的NPC坐在馬車後方。如果他不在，表示有其他玩家正在護送他：等他回來。"
+
+# Wheeler's Fleeing Steeds: the horse waits by the river bend north of Wheeler's Grange, is not always up, and two pairs of coyotes ambush the escort back to the farm.
+[[note]]
+quest = 94618
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The horse waits by the river bend north of the farm, around 53.6, 66.4; if it is not there, wait a little for it to appear. Feed it and lead it back to Benjy Wheeler: two pairs of coyotes ambush you on the way."
+fr = "Le cheval attend près du coude de la rivière au nord de la ferme, vers 53.6, 66.4 ; s'il n'y est pas, attendez un peu qu'il apparaisse. Nourrissez-le et ramenez-le à Benjy Wheeler : deux paires de coyotes vous tendent une embuscade en route."
+de = "Das Pferd wartet an der Flussbiegung nördlich des Hofs, bei etwa 53.6, 66.4; ist es nicht da, warte kurz, bis es erscheint. Füttere es und führe es zu Benjy Wheeler zurück: Unterwegs greifen dich zweimal zwei Kojoten an."
+es = "El caballo espera junto al recodo del río al norte de la granja, hacia 53.6, 66.4; si no está, espera un poco a que aparezca. Dale de comer y llévalo de vuelta con Benjy Wheeler: dos parejas de coyotes te emboscan por el camino."
+pt = "O cavalo espera perto da curva do rio ao norte da fazenda, por volta de 53.6, 66.4; se ele não estiver lá, espere um pouco até aparecer. Alimente-o e leve-o de volta a Benjy Wheeler: dois pares de coiotes emboscam você no caminho."
+ru = "Лошадь ждёт у излучины реки к северу от фермы, около 53.6, 66.4; если её нет, подождите немного, пока она появится. Накормите её и отведите к Benjy Wheeler: по дороге на вас дважды нападут по два койота."
+ko = "말은 농장 북쪽 강굽이 근처 53.6, 66.4 부근에서 기다립니다. 보이지 않으면 나타날 때까지 잠시 기다리세요. 먹이를 준 뒤 Benjy Wheeler에게 데려가세요. 가는 길에 코요테 두 마리씩 두 번 매복해 있습니다."
+zh_cn = "马在农场北边的河湾旁等着，大约在53.6, 66.4；如果它不在，稍等片刻它就会出现。喂它之后把它带回Benjy Wheeler那里：路上会有两拨各两只郊狼伏击你。"
+zh_tw = "馬在農場北邊的河灣旁等著，大約在53.6, 66.4；如果牠不在，稍等片刻牠就會出現。餵牠之後把牠帶回Benjy Wheeler那裡：路上會有兩批各兩隻郊狼伏擊你。"
+
+# WANTED: Ghostmaw (Alliance and Horde): the elite crocolisk spawns in the north of the river and swims down it to the south.
+[[note]]
+quest = 95991
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Ghostmaw (elite) does not stay in one place: it appears in the river around 65.1, 35.7 and swims down it all the way south. Wait at its spawn or follow the river to find it."
+fr = "Ghostmaw (élite) ne reste pas en place : il apparaît dans la rivière vers 65.1, 35.7 et la descend jusqu'au sud. Attendez-le à son point d'apparition ou suivez la rivière pour le trouver."
+de = "Ghostmaw (Elite) bleibt nicht an einem Ort: Es erscheint im Fluss bei etwa 65.1, 35.7 und schwimmt ihn hinab bis in den Süden. Warte an seinem Spawnpunkt oder folge dem Fluss, um es zu finden."
+es = "Ghostmaw (élite) no se queda quieto: aparece en el río hacia 65.1, 35.7 y lo recorre río abajo hasta el sur. Espéralo donde aparece o sigue el río para encontrarlo."
+pt = "Ghostmaw (elite) não fica parado: ele surge no rio por volta de 65.1, 35.7 e desce por ele até o sul. Espere-o onde ele surge ou siga o rio para encontrá-lo."
+ru = "Ghostmaw (элитный) не стоит на месте: он появляется в реке около 65.1, 35.7 и плывёт вниз по ней до самого юга. Ждите его у точки появления или идите вдоль реки, чтобы найти его."
+ko = "Ghostmaw(정예)는 한곳에 머물지 않습니다. 65.1, 35.7 부근 강에서 나타나 강을 따라 남쪽 끝까지 내려갑니다. 나타나는 곳에서 기다리거나 강을 따라가며 찾으세요."
+zh_cn = "Ghostmaw（精英）不会待在一个地方：它在大约65.1, 35.7的河里出现，然后顺流一路游到南边。在它的刷新点等它，或者沿河去找它。"
+zh_tw = "Ghostmaw（菁英）不會待在一個地方：牠在大約65.1, 35.7的河裡出現，然後順流一路游到南邊。在牠的重生點等牠，或者沿河去找牠。"
+
+[[icon]]
+quest = 95991
+phase = "objective"
+objective = 1
+icon = "rare"
+editions = ["forever"]
+
+# Same for the Horde's WANTED: Ghostmaw.
+[[note]]
+quest = 95992
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "Ghostmaw (elite) does not stay in one place: it appears in the river around 65.1, 35.7 and swims down it all the way south. Wait at its spawn or follow the river to find it."
+fr = "Ghostmaw (élite) ne reste pas en place : il apparaît dans la rivière vers 65.1, 35.7 et la descend jusqu'au sud. Attendez-le à son point d'apparition ou suivez la rivière pour le trouver."
+de = "Ghostmaw (Elite) bleibt nicht an einem Ort: Es erscheint im Fluss bei etwa 65.1, 35.7 und schwimmt ihn hinab bis in den Süden. Warte an seinem Spawnpunkt oder folge dem Fluss, um es zu finden."
+es = "Ghostmaw (élite) no se queda quieto: aparece en el río hacia 65.1, 35.7 y lo recorre río abajo hasta el sur. Espéralo donde aparece o sigue el río para encontrarlo."
+pt = "Ghostmaw (elite) não fica parado: ele surge no rio por volta de 65.1, 35.7 e desce por ele até o sul. Espere-o onde ele surge ou siga o rio para encontrá-lo."
+ru = "Ghostmaw (элитный) не стоит на месте: он появляется в реке около 65.1, 35.7 и плывёт вниз по ней до самого юга. Ждите его у точки появления или идите вдоль реки, чтобы найти его."
+ko = "Ghostmaw(정예)는 한곳에 머물지 않습니다. 65.1, 35.7 부근 강에서 나타나 강을 따라 남쪽 끝까지 내려갑니다. 나타나는 곳에서 기다리거나 강을 따라가며 찾으세요."
+zh_cn = "Ghostmaw（精英）不会待在一个地方：它在大约65.1, 35.7的河里出现，然后顺流一路游到南边。在它的刷新点等它，或者沿河去找它。"
+zh_tw = "Ghostmaw（菁英）不會待在一個地方：牠在大約65.1, 35.7的河裡出現，然後順流一路游到南邊。在牠的重生點等牠，或者沿河去找牠。"
+
+[[icon]]
+quest = 95992
+phase = "objective"
+objective = 1
+icon = "rare"
+editions = ["forever"]
+
+# Digging for Answers: the miner is in the caves under Sunnyglade, reached by stairs in a ruined house next to the big tree.
+[[note]]
+quest = 94727
+phase = "objective"
+objective = 1
+level = "warning"
+editions = ["forever"]
+en = "The caves under Sunnyglade are reached by the stairs in a ruined house next to the big tree, at 50.0, 46.0. The miner stands right at the bottom; the quests that follow are also done down there."
+fr = "On accède aux grottes sous Sunnyglade par l'escalier d'une maison en ruine à côté du grand arbre, en 50.0, 46.0. Le mineur se tient juste en bas ; les quêtes suivantes se font aussi là-dessous."
+de = "Zu den Höhlen unter Sunnyglade gelangst du über die Treppe in einem zerstörten Haus neben dem großen Baum, bei 50.0, 46.0. Der Minenarbeiter steht direkt unten; die folgenden Quests erledigst du ebenfalls dort unten."
+es = "A las cuevas bajo Sunnyglade se llega por la escalera de una casa en ruinas junto al gran árbol, en 50.0, 46.0. El minero está justo abajo; las misiones siguientes también se hacen ahí abajo."
+pt = "As cavernas sob Sunnyglade são acessadas pela escada de uma casa em ruínas ao lado da grande árvore, em 50.0, 46.0. O mineiro fica logo lá embaixo; as missões seguintes também são feitas lá."
+ru = "В пещеры под Sunnyglade ведёт лестница в разрушенном доме рядом с большим деревом, в точке 50.0, 46.0. Шахтёр стоит прямо внизу; следующие задания тоже выполняются там."
+ko = "Sunnyglade 아래 동굴은 큰 나무 옆 폐허가 된 집 안의 계단(50.0, 46.0)으로 내려갑니다. 광부는 계단 바로 아래에 있으며, 이어지는 퀘스트도 그 아래에서 진행합니다."
+zh_cn = "Sunnyglade下方的洞穴要从大树旁一座废弃房屋里的楼梯下去，位置在50.0, 46.0。矿工就站在楼梯下面；后续任务也在那下面完成。"
+zh_tw = "Sunnyglade下方的洞穴要從大樹旁一座廢棄房屋裡的樓梯下去，位置在50.0, 46.0。礦工就站在樓梯下面；後續任務也在那下面完成。"
+
+# Abominable Magics: the cultists are in the caves under Sunnyglade (stairs in the ruined house at 50.0, 46.0); the catalyst is used on their corpses.
+[[note]]
+quest = 95642
+phase = "objective"
+objective = 1
+level = "info"
+editions = ["forever"]
+en = "The cultists are in the caves under Sunnyglade: take the stairs in the ruined house next to the big tree, at 50.0, 46.0. Use the catalyst on their corpses and on the ritual circles."
+fr = "Les cultistes sont dans les grottes sous Sunnyglade : prenez l'escalier de la maison en ruine à côté du grand arbre, en 50.0, 46.0. Utilisez le catalyseur sur leurs cadavres et sur les cercles rituels."
+de = "Die Kultisten sind in den Höhlen unter Sunnyglade: Nimm die Treppe im zerstörten Haus neben dem großen Baum, bei 50.0, 46.0. Benutze den Katalysator an ihren Leichen und an den Ritualkreisen."
+es = "Los cultistas están en las cuevas bajo Sunnyglade: baja por la escalera de la casa en ruinas junto al gran árbol, en 50.0, 46.0. Usa el catalizador sobre sus cadáveres y sobre los círculos rituales."
+pt = "Os cultistas estão nas cavernas sob Sunnyglade: desça a escada da casa em ruínas ao lado da grande árvore, em 50.0, 46.0. Use o catalisador nos cadáveres deles e nos círculos rituais."
+ru = "Культисты находятся в пещерах под Sunnyglade: спуститесь по лестнице в разрушенном доме рядом с большим деревом, в точке 50.0, 46.0. Используйте катализатор на их трупах и на ритуальных кругах."
+ko = "광신도들은 Sunnyglade 아래 동굴에 있습니다. 큰 나무 옆 폐허가 된 집의 계단(50.0, 46.0)으로 내려가세요. 촉매는 그들의 시체와 의식의 법진에 사용합니다."
+zh_cn = "邪教徒在Sunnyglade下方的洞穴里：从大树旁那座废弃房屋里的楼梯下去，位置在50.0, 46.0。对他们的尸体和仪式法阵使用催化剂。"
+zh_tw = "邪教徒在Sunnyglade下方的洞穴裡：從大樹旁那座廢棄房屋裡的樓梯下去，位置在50.0, 46.0。對他們的屍體和儀式法陣使用催化劑。"

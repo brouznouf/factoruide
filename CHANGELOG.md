@@ -18,6 +18,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - Monsters count at the average of their level range, and a camp of several kinds at the average of them all rather than its lowest: fewer camps turn out tougher than the guide planned.
 - Kills count for every quest in your log that wants them, as in the game (the scarlet warriors to kill also drop the rings to bring back): guide times and levels are closer to what you play, and quests on the same monsters are done together.
 - Profession trainer visits go to trainers that teach the rank you need: Expert Cooking, Fishing and First Aid come from their book, bought from its vendor, and crafting trainers teach the rank below their title (an Expert Blacksmith teaches Journeyman).
+- WoW Forever, Riverglades: notes on where the lost horse waits and its ambushes, on Ghostmaw's path down the river, and on the way into the caves under Sunnyglade.
 
 ### Addon
 
