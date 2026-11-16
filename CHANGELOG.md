@@ -26,6 +26,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### WoW data
 
 - WoW Forever: the latest quest data, with the Shen'dralas chains in their order, quest givers corrected in Stranglethorn Vale, Riverglades and Desolace, and more names checked in Spanish, Korean and Russian.
+- WoW Forever: Riverglades places measured in game (the Foreman's Crate, the lost horse, Ghostmaw along the river), with the horse escort and What We Lost back in the guides, more quest XP measured by players, and more names checked in Spanish, French, German and Korean.
 
 ## 0.20.0 (2026-11-13)
 

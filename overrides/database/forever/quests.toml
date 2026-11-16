@@ -2336,6 +2336,23 @@ npcs = [256799]
 chance = 0.45
 
 [[quest]]
+# Wheeler's Fleeing Steeds: the horse waits by the river bend north of Wheeler's Grange, is fed
+# there, then escorted back to Benjy Wheeler, where it takes the quest; coyotes ambush it twice
+# on the way.
+id = 94618
+objectives = [{ type = "trigger", text = "Escort the Lost Horse back to Wheeler's Grange", at = { zone = 16591, x = 53.0, y = 66.0 } }]
+
+[[quest]]
+# What We Lost: the Farmers' Mementos come from a Twilight Raider patrolling near Elbrim's Farm
+# (one kill gave all five in game), each buried in a patch of Loose Soil in the graveyard west of
+# the farm.
+id = 94829
+objectives = [
+    { type = "creature", id = 256952, amount = 1, text = "Loot the Farmers' Mementos from a Twilight Raider" },
+    { type = "trigger", text = "Bury the mementos in the five patches of Loose Soil of the graves", at = { zone = 16591, x = 48.4, y = 43.8 } },
+]
+
+[[quest]]
 # Rise Up!: the Ogre Miners are recruited, not killed.
 id = 95432
 objectives = [{ type = "talk", id = 260995, amount = 5, text = "Recruit Ogre Miners" }]
