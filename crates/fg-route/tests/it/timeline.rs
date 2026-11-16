@@ -293,3 +293,37 @@ fn log_quests_with_nothing_done_are_not_held() {
     // All three stay in the log, to be abandoned or not by the guide.
     assert_eq!(prepared.model.initial.log.len(), 3);
 }
+
+/// The starts are offered by play time, one per zone they begin in, the slow ones kept: routes
+/// this little improved are only roughly ranked, the choice is the player's. Here the quests of
+/// The Barrens ask three times the kills of Durotar's, each zone enough for the level.
+#[test]
+fn starts_are_offered_by_play_time_none_dropped() {
+    use fg_route::testing::{Q, Scenario};
+    let mut s = Scenario::new()
+        .levels(12, 13)
+        .zone(2, "Durotar")
+        .zone(3, "The Barrens")
+        .trainer(1, 50.0, 50.0)
+        .inn("Valley Inn", 1, 54.0, 54.0)
+        .flight_master(23, "Orgrimmar", 2, 50.0, 50.0)
+        .flight_master(25, "Crossroads", 3, 50.0, 50.0)
+        .knows_flight(23)
+        .knows_flight(25);
+    for (zone, kills) in [(2, 6), (3, 18)] {
+        for i in 0..6 {
+            let x = 20.0 + 10.0 * i as f64;
+            s = s.mobs(zone, x, 70.0, 12, 30).quest(
+                Q::new(100 * zone + i, &format!("Quest {zone}-{i}"))
+                    .level(12)
+                    .xp(2000)
+                    .giver(zone, x, 30.0)
+                    .kill("Beast", 12, kills, zone, x, 70.0),
+            );
+        }
+    }
+    let preview = s.starts();
+    let options: Vec<(i64, f64)> = preview.options.iter().map(|o| (o.zone, o.time)).collect();
+    assert_eq!(options.iter().map(|o| o.0).collect::<Vec<_>>(), [2, 3], "{options:?}");
+    assert!(options[1].1 > options[0].1 * 1.25, "{options:?}");
+}

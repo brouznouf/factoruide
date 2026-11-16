@@ -6,7 +6,7 @@ import { RunView } from "../components/RunView";
 import { MIN_CHOICE_LEVEL } from "../paramSchema";
 import { StartsChoice } from "../components/StartsChoice";
 import type { WorldPoint } from "../components/WorldMap";
-import { gameLocale, useLang, useT } from "../i18n";
+import { gameLocale, useAreaName, useLang, useT } from "../i18n";
 
 export interface WizardStart {
   /** Configuration to start from. */
@@ -48,6 +48,7 @@ interface Props {
 export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onObjectives }: Props) {
   const t = useT();
   const lang = useLang();
+  const areaName = useAreaName();
   const [step, setStep] = useState<Step>("config");
   const [compareStarts, setCompareStarts] = useState(compareStartsSaved);
   // The starts to choose from, and how far their comparison is.
@@ -181,6 +182,11 @@ export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onObject
     }
     running.current = false;
     if (pickedEarly.current != null) return run(withStart(pickedEarly.current));
+    // Every start begins in the same zone: nothing to choose, the guide goes on from it, said.
+    if (found.length === 1) {
+      const zone = options.zones.find((z) => z.id === found[0].zone);
+      return run(withStart(found[0].start_zone), t("Tous les départs essayés commencent à {zone} : le guide part de là.", { zone: zone ? areaName(zone) : `#${found[0].zone}` }));
+    }
     if (found.length < 2) return run(request);
     onBusy?.(false);
     setStarts((prev) => (prev.length ? prev : found));
@@ -190,7 +196,8 @@ export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onObject
     setStep("starts");
   };
 
-  const run = async (request: PlanRequest) => {
+  /** Compute the guide; `note` is shown with it once saved (why it was computed this way). */
+  const run = async (request: PlanRequest, note: string | null = null) => {
     if (running.current) return;
     running.current = true;
     onBusy?.(true);
@@ -213,7 +220,7 @@ export function NewRoutePage({ options, start, onBusy, onDraft, onDone, onObject
       setStep("config");
       onDone(
         meta,
-        interrupted.current === "stop" ? t("Optimisation arrêtée avant la fin : voici le meilleur guide trouvé jusque-là. « Relancer le calcul » le cherche jusqu'au bout.") : null,
+        interrupted.current === "stop" ? t("Optimisation arrêtée avant la fin : voici le meilleur guide trouvé jusque-là. « Relancer le calcul » le cherche jusqu'au bout.") : note,
       );
     } catch (e) {
       // Cancelled: back to the configuration (the same one), nothing saved.

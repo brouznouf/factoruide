@@ -3,9 +3,6 @@ import { fmtTime, type Options, type StartCandidate, type StartOption } from "..
 import { useAreaName, useT } from "../i18n";
 import { loadImage } from "./WorldMap";
 
-/** A start is left out when it is this much slower (by score) than the best one. */
-const WORTH_SHOWING = 1.25;
-
 interface Props {
   /** The zones a start can be forced to, known at once, and the starts computed so far. */
   candidates: StartCandidate[];
@@ -42,8 +39,10 @@ function ZonePicture({ map }: { map: number }) {
 
 /**
  * The ways the guide can begin: the zones at once, each start filling in as it is computed (the
- * time of the guide it leads to, the score the planner ranks by in a tooltip, its steps and
- * quests). One can be chosen before the others are done; the best score is chosen until then.
+ * time of the guide it leads to and how much slower than the fastest, the score the planner ranks
+ * by in a tooltip, its steps and quests). None is hidden for being slow: these guides are barely
+ * improved, their times only roughly ranked. One can be chosen before the others are done; the
+ * fastest is chosen until then.
  */
 export function StartsChoice({ candidates, results, finished, tried, previous, details, zones, onPick, onBack }: Props) {
   const t = useT();
@@ -53,13 +52,13 @@ export function StartsChoice({ candidates, results, finished, tried, previous, d
     const z = zones.find((x) => x.id === zone);
     return z ? areaName(z) : `#${zone}`;
   };
-  // The starts computed, the best first, one per zone, those far behind the best left out.
-  const sorted = [...results].sort((a, b) => a.score - b.score);
-  const best = sorted[0]?.score ?? Infinity;
+  // The starts computed, the shortest play time first, one per zone they begin in.
+  const sorted = [...results].sort((a, b) => a.time - b.time || a.score - b.score);
+  const fastest = sorted[0]?.time ?? 0;
   const seen = new Set<number>();
   const done: StartOption[] = [];
   for (const o of sorted) {
-    if (seen.has(o.zone) || o.score > best * WORTH_SHOWING) continue;
+    if (seen.has(o.zone)) continue;
     seen.add(o.zone);
     done.push(o);
   }
@@ -72,7 +71,7 @@ export function StartsChoice({ candidates, results, finished, tried, previous, d
       <p className="muted">
         {t("Plusieurs départs sont possibles : chacun est un guide calculé rapidement, avant d'être optimisé à fond. Le plus rapide est choisi d'office.")}{" "}
         {finished
-          ? t("{tried} départs calculés, {shown} réellement différents : ceux qui commencent dans la même zone sont regroupés, ceux bien plus lents sont écartés.", { tried, shown: done.length })
+          ? t("{tried} départs calculés, {shown} réellement différents : ceux qui commencent dans la même zone sont regroupés.", { tried, shown: done.length })
           : t("Calcul en cours : choisissez dès maintenant, ou attendez les autres.")}
       </p>
       <div className="starts-grid" role="radiogroup" aria-label={t("Départs possibles")}>
@@ -85,7 +84,10 @@ export function StartsChoice({ candidates, results, finished, tried, previous, d
                 {i === 0 && <span className="start-best">{finished ? t("Le plus rapide") : t("Le plus rapide jusqu'ici")}</span>}
                 {previous ? s.start_zone === previous && <span className="start-previous">{t("Départ précédent")}</span> : null}
               </div>
-              <div className="start-time">{fmtTime(s.time)}</div>
+              <div className="start-time">
+                {fmtTime(s.time)}
+                {i > 0 && fastest > 0 && <span className="start-slower"> {t("+{n} %", { n: Math.round((s.time / fastest - 1) * 100) })}</span>}
+              </div>
               <div
                 className="start-score"
                 title={t("Temps noté : le temps sur lequel le moteur classe les guides. Il compte en plus les vols, le grind et les changements de zone, c'est pourquoi il peut différer du temps de jeu estimé.")}

@@ -4901,6 +4901,11 @@ path.gm-arrows.gm-arrows-under {
   font-size: 1.5rem;
   font-weight: 700;
 }
+.start-slower {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted, inherit);
+}
 .start-score,
 .start-counts {
   font-size: 0.8rem;

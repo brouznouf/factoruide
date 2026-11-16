@@ -19,8 +19,6 @@ const PREVIEW_EFFORT: f64 = 0.02;
 const MAX_STARTS: usize = 8;
 /// Below this level the character's first quests are in one place: no choice of start is offered.
 const MIN_CHOICE_LEVEL: i64 = 10;
-/// A start whose score is this much above the best one is not worth showing.
-const WORTH_SHOWING: f64 = 1.25;
 
 /// A way to begin the guide.
 #[derive(Debug, Clone, Serialize)]
@@ -61,9 +59,10 @@ pub struct StartPreview {
     pub details: Vec<String>,
 }
 
-/// The starts the character can choose from, the best score first; fewer than two when there
-/// is nothing to choose (a guide with zones imposed, a start below level 10, or no other zone
-/// worth starting in).
+/// The starts the character can choose from, the shortest play time first, one per zone they
+/// really begin in; fewer than two when there is nothing to choose (a guide with zones imposed,
+/// a start below level 10, or every start beginning in the same zone). None is left out for being
+/// slow: these routes are barely improved, their times only roughly ranked.
 /// `progress` gets `@starts <candidates as JSON>` once the zones are known, then `@start
 /// <option as JSON>` as each start is computed, so that the app shows them as they come.
 pub fn preview_starts(
@@ -197,22 +196,16 @@ pub(crate) fn preview_starts_of(
         progress(&JobEvent::Start(&option));
         found.push(option);
     }
-    // One per zone (two starts that begin in the same zone are the same start), the best first,
-    // those far behind the best left out.
+    // One per zone (two starts that begin in the same zone are the same start), the shortest
+    // play time first: the time shown, not the score, whose weights (abandons, zone changes,
+    // grinding) outweigh the time on routes this little improved.
     let tried = found.len();
-    found.sort_by(|a, b| a.score.total_cmp(&b.score));
+    found.sort_by(|a, b| a.time.total_cmp(&b.time).then(a.score.total_cmp(&b.score)));
     let mut out: Vec<StartOption> = Vec::new();
     for option in found {
-        if out.iter().any(|o| o.zone == option.zone) {
-            continue;
+        if !out.iter().any(|o| o.zone == option.zone) {
+            out.push(option);
         }
-        if out
-            .first()
-            .is_some_and(|best| option.score > best.score * WORTH_SHOWING)
-        {
-            continue;
-        }
-        out.push(option);
     }
     Ok(StartPreview {
         tried,
