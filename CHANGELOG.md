@@ -11,6 +11,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 ### WoW data
 
 - WoW Forever: the latest quest data, with named monsters and quest givers at the places they really stand instead of dozens of sightings, and more quests seen in game by players.
+- WoW Forever: more quest and creature names right in Spanish and French, and drop rates measured in game by players.
 
 ## 0.21.0 (2026-11-16)
 
