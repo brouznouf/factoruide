@@ -189,6 +189,15 @@ classes_mask = 1024
 pre_all = [98341]
 
 [[quest]]
+# The Darkreaver Menace, from Eldrun Stormbreaker in Ironforge's Forlorn Caverns: the Alliance
+# shamans' Scholomance quest, after Material Assistance (Forever's quest page: Class Shaman, Side
+# Alliance, series Material Assistance then this one). The sources gave it no class nor side.
+id = 97169
+classes_mask = 64
+races_mask = 4294967373
+pre_all = [97168]
+
+[[quest]]
 id = 92466
 races_mask = 8589934592
 
@@ -1590,10 +1599,6 @@ friendly_to = "A"
 # around them look guarded (Hillsbrad's camps, Mulgore, Zephras Isle) or stood as monsters in
 # the capitals. Their side is the reaction on Forever's NPC pages.
 [[npc]]
-id = 274942 # Bob McNaught
-friendly_to = "A"
-
-[[npc]]
 id = 269699 # Thaddeus Brillyard
 friendly_to = "A"
 
@@ -1937,10 +1942,6 @@ remove_spawns = true
 
 [[npc]]
 id = 274917 # Boborus Overvolt
-remove_spawns = true
-
-[[npc]]
-id = 268048 # Darkspear Emissary
 remove_spawns = true
 
 [[npc]]
@@ -3313,3 +3314,207 @@ id = 247209 # Elder Shaman Bloodmane
 zone = 16554
 x = -1
 y = -1
+
+# A Thorn in the Paw (93407): its Thorn Seeds come from the Thorn Bushes of Mount Hyjal's summit
+# forests (100 %), an object no source places. Its 26 places are those of Forever's object page.
+# Bait the Beast (93444) needs the quest first.
+[[object]]
+id = 617435
+name = "Thorn Bush"
+zone = 616
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 71.9
+y = 38.7
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 72.1
+y = 37.2
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 72.2
+y = 42.4
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 72.2
+y = 42.5
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 72.3
+y = 43.9
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 72.8
+y = 40.8
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 72.9
+y = 37
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 73.1
+y = 44.3
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 73.1
+y = 44.5
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 73.5
+y = 40.5
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 73.6
+y = 40.4
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 73.8
+y = 43.5
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 73.9
+y = 43.4
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 74.2
+y = 45.5
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 74.3
+y = 45.2
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 74.5
+y = 44.4
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 74.7
+y = 39.7
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 75.8
+y = 40.8
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 76
+y = 41.8
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 76.1
+y = 39.8
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 76.4
+y = 39.1
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 77.1
+y = 41.3
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 77.3
+y = 36.9
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 78
+y = 40.7
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 79.4
+y = 36.5
+
+[[spawn]]
+type = "object"
+id = 617435
+zone = 616
+x = 79.5
+y = 36.3
+
+[[quest]]
+# Ends Meet: the Veteran of the Third War tells his story at the broken cannon of Mourning's Rest,
+# where he stands (the quest before, Praise, sends the player to him "near the broken cannon").
+# Soldier's Solace (96558) needs the quest first.
+id = 93567
+objectives = [{ type = "talk", id = 265375, amount = 1, text = "Veteran's story told" }]
+
+[[quest]]
+# Praise: meet the Veteran of the Third War near the broken cannon in Mourning's Rest (the quest's
+# text, and its objective in the players' quest caches: the Veteran, 265375), where it also ends.
+# Ends Meet (93567) needs the quest first.
+id = 92102
+objectives = [{ type = "talk", id = 265375, amount = 1, text = "Veteran of the Third War met in Mount Hyjal" }]
