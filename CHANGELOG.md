@@ -12,6 +12,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - WoW Forever: the latest quest data, with named monsters and quest givers at the places they really stand instead of dozens of sightings, and more quests seen in game by players.
 - WoW Forever: more quest and creature names right in Spanish and French, and drop rates measured in game by players.
+- WoW Forever: Krol'dok Moulding for the Horde, begun by the mould Tunk drops in Krol'dok Stronghold.
 
 ## 0.21.0 (2026-11-16)
 

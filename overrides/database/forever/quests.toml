@@ -2244,6 +2244,12 @@ remove_pre = [98240]
 id = 98240
 breadcrumb_for = 98245
 
+[[quest]]
+# Krol'dok Moulding (Horde): begun by the item Tunk drops in Krol'dok Stronghold, as the
+# Alliance quest of the same name (94980) is begun by 267138.
+id = 94973
+starts = [{ type = "item", id = 267137 }]
+
 [[drop]]
 # Primitive Key (Where's the Key?): 20 to 60 Bloodscalps killed for it.
 item = 277957
@@ -3283,6 +3289,13 @@ y = -1
 [[spawn]]
 type = "npc"
 id = 258104 # Twilight Lieutenant
+zone = 16842
+x = -1
+y = -1
+
+[[spawn]]
+type = "npc"
+id = 259256 # Tunk, who drops both Krol'dok Moulding items (267137, 267138)
 zone = 16842
 x = -1
 y = -1
