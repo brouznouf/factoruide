@@ -185,7 +185,6 @@ races_mask = 4294967308
 
 [[quest]]
 id = 98404
-classes_mask = 1024
 pre_all = [98341]
 
 [[quest]]
@@ -1491,11 +1490,6 @@ races_mask = 146
 
 [[quest]]
 # (as above)
-id = 1944
-races_mask = 146
-
-[[quest]]
-# (as above)
 id = 1945
 races_mask = 146
 
@@ -1523,21 +1517,6 @@ races_mask = 4294967361
 [[quest]]
 # (as above)
 id = 1919
-races_mask = 4294967361
-
-[[quest]]
-# (as above)
-id = 1921
-races_mask = 4294967361
-
-[[quest]]
-# (as above)
-id = 1938
-races_mask = 4294967361
-
-[[quest]]
-# (as above)
-id = 1940
 races_mask = 4294967361
 
 [[quest]]
@@ -2245,12 +2224,6 @@ remove_pre = [98240]
 id = 98240
 breadcrumb_for = 98245
 
-[[quest]]
-# Krol'dok Moulding (Horde): begun by the item Tunk drops in Krol'dok Stronghold, as the
-# Alliance quest of the same name (94980) is begun by 267138.
-id = 94973
-starts = [{ type = "item", id = 267137 }]
-
 [[drop]]
 # Primitive Key (Where's the Key?): 20 to 60 Bloodscalps killed for it.
 item = 277957
@@ -2375,6 +2348,17 @@ objectives = [
 # pages. Still out of the guides: Corrupting Tears (Imbued Tears bought for Carved Centaur
 # Totems) and Facing the Truth (the Accursed Skull's place) start them.
 [[quest]]
+# Valley of Bones and Outcast Necromancers, from Warug and Orgrul: Horde, as the rest of the
+# Magram chain (their Forever quest pages: Side Horde, series Magram Alliance).
+id = 92841
+races_mask = 8589934770
+
+[[quest]]
+# (as above)
+id = 92846
+races_mask = 8589934770
+
+[[quest]]
 id = 92873 # Proof of Concept: the staff, used at the ritual place, raises two Nascent Undead Ravagers
 required_reputation = { faction = 93, min = 9000 }
 objectives = [{ type = "trigger", text = "Raise and slay Nascent Undead Ravagers with the Rudimentary Necromancy Staff for 426 Well Cursed Bones", at = { zone = 405, x = 68.4, y = 84.6 } }]
@@ -2434,8 +2418,10 @@ y = 95.5
 
 [[quest]]
 # Test Your Theory: Uthek's Staff lies by the pond in Desolace; joined with the Draenethyst
-# Crystal, it dispels the Accursed Skull on the pile beside it.
+# Crystal, it dispels the Accursed Skull on the pile beside it. Its quest page gives it no side
+# (the Gelkis chain is the Alliance's: A Cleansing Cry before it).
 id = 93045
+races_mask = 0
 required_reputation = { faction = 92, min = 9000 }
 objectives = [{ type = "trigger", text = "Dispel the Accursed Skull with Uthek's Draenethyst Staff", at = { zone = 405, x = 42.0, y = 82.0 } }]
 

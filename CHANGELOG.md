@@ -14,6 +14,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - WoW Forever: more quest and creature names right in Spanish and French, and drop rates measured in game by players.
 - WoW Forever: Krol'dok Moulding for the Horde, begun by the mould Tunk drops in Krol'dok Stronghold.
 - WoW Forever: more Mount Hyjal quests in the guides (A Thorn in the Paw, Praise and Ends Meet), The Darkreaver Menace for Alliance shamans only, and the newest quests of the client.
+- WoW Forever: Just Compensation, Anthion's Parting Words and the epic riding quests now have their giver, the Magram clan quests of Desolace for the Horde only, and more Alterac Valley and Warsong Gulch names in French and Spanish.
 
 ## 0.21.0 (2026-11-16)
 
