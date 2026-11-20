@@ -16,6 +16,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 - WoW Forever: more Mount Hyjal quests in the guides (A Thorn in the Paw, Praise and Ends Meet), The Darkreaver Menace for Alliance shamans only, and the newest quests of the client.
 - WoW Forever: Just Compensation, Anthion's Parting Words and the epic riding quests now have their giver, the Magram clan quests of Desolace for the Horde only, and more Alterac Valley and Warsong Gulch names in French and Spanish.
 - WoW Forever: In Demand - Plague Records, In Demand - Titan Relics and Ott's Finest Work now have their giver, more quest and object names in French, German and Spanish, and fresher drop rates measured in game by players.
+- WoW Forever: nine quest chains no longer broken, Your First Horse, Swift as the Wind, Scalebeard and Bait the Beast in the guides, creatures at fresher places, and more names in Spanish, French, Russian and Korean.
 
 ## 0.21.0 (2026-11-16)
 
