@@ -190,9 +190,8 @@ pre_all = [98341]
 [[quest]]
 # The Darkreaver Menace, from Eldrun Stormbreaker in Ironforge's Forlorn Caverns: the Alliance
 # shamans' Scholomance quest, after Material Assistance (Forever's quest page: Class Shaman, Side
-# Alliance, series Material Assistance then this one). The sources gave it no class nor side.
+# Alliance, series Material Assistance then this one). The sources give its class but no side.
 id = 97169
-classes_mask = 64
 races_mask = 4294967373
 pre_all = [97168]
 
@@ -1569,10 +1568,6 @@ friendly_to = "AH"
 [[npc]]
 id = 185317 # Incubus
 friendly_to = "AH"
-
-[[npc]]
-id = 268047 # Theramore Emissary
-friendly_to = "A"
 
 # Townsfolk the sources place with no side: taken for hostile creatures, they made the givers
 # around them look guarded (Hillsbrad's camps, Mulgore, Zephras Isle) or stood as monsters in
