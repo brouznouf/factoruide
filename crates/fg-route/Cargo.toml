@@ -13,7 +13,7 @@ miniz_oxide = "0.9"
 # Without parking_lot: its locks panic in the browser when a thread has to wait (no parking on wasm without nightly).
 quick_cache = { version = "0.6", default-features = false, features = ["ahash"] }
 rand = "0.10"
-rusqlite = { version = "0.41", features = ["bundled"] }
+rusqlite = { version = "0.43", features = ["bundled"] }
 rustc-hash = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
@@ -30,7 +30,7 @@ workspace = true
 
 [dev-dependencies]
 # The prepare example lists the slow queries (`Connection::profile`).
-rusqlite = { version = "0.41", features = ["bundled", "trace"] }
+rusqlite = { version = "0.43", features = ["bundled", "trace"] }
 # The integration tests build their worlds with `fg_route::testing`.
 fg-route = { path = ".", features = ["testing"] }
 criterion = { version = "0.8.2", default-features = false, features = ["cargo_bench_support"] }
