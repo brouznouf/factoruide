@@ -14,14 +14,14 @@ path = "src/main.rs"
 anyhow.workspace = true
 fg-route = { path = "../fg-route" }
 clap = { version = "4", features = ["derive", "env"] }
-rusqlite = { version = "0.41", features = ["bundled", "fallible_uint"] }
+rusqlite = { version = "0.43", features = ["bundled", "fallible_uint"] }
 serde_json = "1"
 zstd = "0.14"
 
 [dev-dependencies]
 # The tests run the program on a small world declared in fg-route's fixture files.
 fg-route = { path = "../fg-route", features = ["testing"] }
-rusqlite = { version = "0.41", features = ["bundled", "serialize"] }
+rusqlite = { version = "0.43", features = ["bundled", "serialize"] }
 
 [lints]
 workspace = true
