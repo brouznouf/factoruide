@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- The target macro names the monsters and NPCs in the game's language, whatever the guide's language.
+
 ## 0.21.0 (2026-11-16)
 
 - WoW Forever: a click on a quest in the quest panel makes the game track it, as from the game's own tracker, and a click on the step already shown sets the game's waypoint again.

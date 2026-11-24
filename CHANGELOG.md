@@ -20,6 +20,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### Addon
 
+- The target macro names the monsters and NPCs in the game's language, whatever the guide's language.
 - Your profile no longer loses its done quests, professions or quest log after a loading screen.
 
 ### WoW data

@@ -11,6 +11,29 @@ local MAX_BODY = 255
 local Macro = { names = {}, body = nil, pending = false }
 FG.TargetMacro = Macro
 
+-- The names in the game's language, by NPC ID: /targetexact wants the client's names, while the
+-- guide's are in the language it was made in. The game gives the name of a creature it knows
+-- (its cache) in a tooltip of its link; one it does not know yet comes back empty, and the game
+-- asks the server for it: asked again a moment later, a few times.
+local localized = {} -- NPC ID -> name
+local RETRY_DELAY, RETRIES = 2, 5
+local retries = 0
+
+--- The game's name of NPC `id`, nil when it does not know it (yet).
+local function GameName(id)
+    if not id then return nil end
+    if localized[id] then return localized[id] end
+    if not (C_TooltipInfo and C_TooltipInfo.GetHyperlink) then return nil end
+    local ok, data = pcall(C_TooltipInfo.GetHyperlink, string.format("unit:Creature-0-0-0-0-%d-0000000000", id))
+    local line = ok and type(data) == "table" and type(data.lines) == "table" and data.lines[1]
+    local name = line and FG.Readable(line.leftText)
+    if type(name) == "string" and name ~= "" then
+        localized[id] = name
+        return name
+    end
+    return nil
+end
+
 local function Body(names)
     local lines = { "/cleartarget" }
     for _, name in ipairs(names) do
@@ -52,11 +75,17 @@ local function Write(body, create)
     return index
 end
 
---- Names to target for these steps (the ones still to do).
+--- Names to target for these steps (the ones still to do), in the game's language when it
+--- knows them (else the guide's, and asked again a moment later).
 function Macro:SetSteps(steps)
     if not FG:Get("targetMacro") then return end
-    local names, seen = {}, {}
-    local function add(name)
+    if steps ~= self.steps then retries = 0 end
+    self.steps = steps
+    local names, seen, missing = {}, {}, false
+    local function add(name, id)
+        local own = GameName(id)
+        if id and not own then missing = true end
+        name = own or name
         if name and name ~= "" and not seen[name] then
             seen[name] = true
             table.insert(names, name)
@@ -64,12 +93,18 @@ function Macro:SetSteps(steps)
     end
     for _, step in ipairs(steps) do
         if step.mobs then
-            for _, name in ipairs(step.mobs) do
-                add(name)
+            for i, name in ipairs(step.mobs) do
+                add(name, step.mi and step.mi[i])
             end
         elseif step.e == "npc" then
-            add(step.n)
+            add(step.n, step.id)
         end
+    end
+    if missing and retries < RETRIES and C_Timer and C_TooltipInfo then
+        retries = retries + 1
+        C_Timer.After(RETRY_DELAY, function()
+            if self.steps == steps then self:SetSteps(steps) end
+        end)
     end
     local body = Body(names)
     if body ~= self.body then
