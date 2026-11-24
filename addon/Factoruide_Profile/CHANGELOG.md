@@ -6,6 +6,8 @@ under Unreleased; `scripts/release.sh` gives them the release's version.
 
 ## Unreleased
 
+- Your profile no longer loses its done quests, professions or quest log after a loading screen.
+
 ## 0.17.0 (2026-11-09)
 
 - The objective guide's level warning in every language of the game.

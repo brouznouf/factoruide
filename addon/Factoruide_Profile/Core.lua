@@ -251,7 +251,24 @@ function FG.PlayerPosition()
     return mapID, math.floor(x * 10000 + 0.5) / 100, math.floor(y * 10000 + 0.5) / 100
 end
 
-function FG:CharacterKey() return UnitName("player") .. "-" .. (GetNormalizedRealmName() or GetRealmName() or "") end
+-- The realm's normalized name is nil during a loading screen: the first key made with it stays,
+-- or the same character would get a second key (the realm's name with its spaces).
+local characterKey
+function FG:CharacterKey()
+    if characterKey then return characterKey end
+    local realm = GetNormalizedRealmName()
+    if realm then
+        characterKey = UnitName("player") .. "-" .. realm
+        return characterKey
+    end
+    return UnitName("player") .. "-" .. (GetRealmName() or "")
+end
+
+-- During a loading screen the game can answer empty lists (done quests, professions...) without
+-- an error: the profile is not read then.
+FG.loading = false
+FG:On("LOADING_SCREEN_ENABLED", function() FG.loading = true end)
+FG:On("LOADING_SCREEN_DISABLED", function() FG.loading = false end)
 
 -- Skill names in the skills list, for clients without GetProfessions (matched by name).
 local SKILL_NAMES = {

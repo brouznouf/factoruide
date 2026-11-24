@@ -19,7 +19,13 @@ local UNKNOWN_FLIGHT = Enum and Enum.FlightPathState and Enum.FlightPathState.Un
 
 local profile -- this character's saved profile
 
-local function CompletedQuests() return QuestLog.GetAllCompletedQuestIDs() or {} end
+--- Done quests are never undone: an empty answer while some were known (the game's data not
+--- there yet) is an error, and the known ones stay.
+local function CompletedQuests()
+    local ids = QuestLog.GetAllCompletedQuestIDs() or {}
+    if #ids == 0 and profile.completed and #profile.completed > 0 then error("the game gave no done quest") end
+    return ids
+end
 
 --- Quests in the log, with what their objectives have so far.
 local function LogQuests()
@@ -136,13 +142,16 @@ end
 local function Changed(name, fn, full)
     if not (full or changed[name]) then return profile[name] end
     changed[name] = false
-    return Part(name, fn)
+    local value = Part(name, fn)
+    -- Failed: read again at the next minute.
+    if profile.errors and profile.errors[name] then changed[name] = true end
+    return value
 end
 
 --- Record everything the app needs about the character now; `full` false (the minute's
 --- snapshot): the costly parts only when they changed.
 function Profile:Snapshot(full)
-    if not profile then return end
+    if not profile or FG.loading then return end
     full = full ~= false
     profile.errors = nil
     profile.name = FG:CharacterKey()
@@ -201,7 +210,6 @@ FG:On("PLAYER_LOGIN", function()
     C_Timer.NewTicker(60, function() FG:Try("profile", Profile.Snapshot, Profile, false) end)
 end)
 
-FG:On("PLAYER_LEAVING_WORLD", function() Profile:Snapshot() end)
 FG:On("PLAYER_LOGOUT", function() Profile:Snapshot() end)
 
 -- Binding the hearthstone says so in the chat: the character stands next to the innkeeper.

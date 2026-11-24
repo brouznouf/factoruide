@@ -1555,6 +1555,31 @@ FG.Profile:Snapshot()
 assert(not profile.errors, "no error left")
 print("profile parts ok")
 
+-- A loading screen (a portal, a dungeon, a boat): the game's lists can come back empty and the
+-- realm without its name. Nothing is read then, and the profile stays whole.
+do
+    local professions, realm = GetProfessions, GetNormalizedRealmName
+    fire("LOADING_SCREEN_ENABLED")
+    GetProfessions = function() return nil end
+    GetNormalizedRealmName = function() return nil end
+    GetRealmName = function() return "The Realm" end
+    C_QuestLog.GetAllCompletedQuestIDs = function() return {} end
+    fire("PLAYER_LEAVING_WORLD")
+    FG.Profile:Snapshot(false)
+    assert(#profile.completed == 2 and #profile.professions == 1, "not read during a loading screen")
+    assert(FG:CharacterKey() == "Brouz-Realm" and profile.name == "Brouz-Realm", "the character keeps its key")
+    fire("LOADING_SCREEN_DISABLED")
+    -- After it, the game can still answer an empty list of done quests: done quests are never
+    -- forgotten, the empty answer is kept as an error.
+    GetProfessions, GetNormalizedRealmName = professions, realm
+    FG.Profile:Snapshot()
+    assert(#profile.completed == 2 and profile.errors.completed, "done quests kept on an empty answer")
+    C_QuestLog.GetAllCompletedQuestIDs = function() return { 179, 233 } end
+    FG.Profile:Snapshot()
+    assert(not profile.errors, "no error left")
+end
+print("loading screen ok")
+
 -- Reputations: every faction of the panel, those under a collapsed header too (opened for the
 -- reading, closed again), headers without points of their own left out.
 local factionRows = {
