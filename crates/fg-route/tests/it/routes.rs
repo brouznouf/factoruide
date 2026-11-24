@@ -4794,3 +4794,74 @@ fn siding_with_a_desolace_clan_leaves_the_others_quests_out() {
     assert!(planned(&["desolace_clan=gelkis"]), "the quest's clan");
     assert!(!planned(&["desolace_clan=magram"]), "the other clan");
 }
+
+/// A Donation of Wool (GitHub #190): sixty cloth for a city's reputation, turned in to its cloth
+/// quartermaster. Left out of the guides unless the advanced setting asks for them; the paladin's
+/// Tome of Divinity, which also asks for cloth, stays.
+#[test]
+fn cloth_donations_are_planned_only_when_asked() {
+    let conn = Fixture::new(Edition::Forever)
+        .toml(
+            r#"
+[[npc]]
+id = 14722
+name = "Clavicus Knavingham"
+subname = "Alliance Cloth Quartermaster"
+level = 55
+friendly_to = "A"
+at = [{ zone = 1519, x = 54.2, y = 60.6 }]
+
+[[npc]]
+id = 6171
+name = "Duthorian Rall"
+level = 30
+friendly_to = "A"
+at = [{ zone = 1519, x = 52.6, y = 47.6 }]
+
+[[npc]]
+id = 116
+name = "Defias Bandit"
+level = 14
+at = [{ zone = 12, x = 52.0, y = 70.0 }, { zone = 12, x = 53.0, y = 71.0 }]
+
+[[item]]
+id = 2592
+name = "Wool Cloth"
+level = 15
+class = 7
+drops = [{ npc = 116, chance = 0.3 }]
+
+[[quest]]
+id = 7807
+name = "A Donation of Wool"
+level = 60
+min_level = 12
+xp = 650
+giver = 14722
+objectives = [{ item = 2592, amount = 60 }]
+
+[[quest]]
+id = 1641
+name = "The Tome of Divinity"
+level = 12
+min_level = 12
+xp = 650
+giver = 6171
+objectives = [{ item = 2592, amount = 10 }]
+"#,
+        )
+        .open();
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let planned = |donations: bool| {
+        let request: PlanRequest = serde_json::from_value(serde_json::json!({
+            "race": "human", "class": "paladin", "from_level": 12, "to_level": 20,
+            "params": overrides.params.with_overrides(&[format!("cloth_donations={donations}")]).unwrap(),
+        }))
+        .unwrap();
+        let p = job::prepare(&conn, &overrides, &request, &|_| {}).unwrap();
+        let has = |id: i64| p.model.quests.iter().any(|q| q.id == id);
+        (has(7807), has(1641))
+    };
+    assert_eq!(planned(false), (false, true), "no donation by default");
+    assert_eq!(planned(true), (true, true), "donations when asked");
+}

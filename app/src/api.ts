@@ -71,6 +71,8 @@ export interface Params {
   elite_pull_levels: number;
   pvp_quests: boolean;
   pvp_mark_time: number;
+  /** Cloth donations to the cities (A Donation of Wool...): left out unless on. */
+  cloth_donations?: boolean;
   /** Crowded server (a launch): escorts, events and targets with few spawns take waiting. */
   crowded: number;
   crowd_event_time: number;

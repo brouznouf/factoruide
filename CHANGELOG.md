@@ -16,6 +16,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - WoW Forever: loot is sold to merchants players have seen in the game rather than to NPCs the data only guesses sell, such as a Kor'kron Elite guard in Orgrimmar.
 - WoW Forever: The Darkmoon Faire quest, offered by the Faire's barker, is no longer in the guides, like the Faire's other quests: the Faire is only there one week a month.
+- Cloth donations to the cities (A Donation of Wool and the others) are no longer in the guides: the cloth is better used by professions. A new advanced setting, Cloth donations to the cities, brings them back.
 
 ### Addon
 

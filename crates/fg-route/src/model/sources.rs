@@ -141,6 +141,9 @@ pub(super) struct Sources {
     /// XP of quests the quest data has no value for: the most common reward column for their level.
     pub(super) default_xp: HashMap<i64, i64>,
     pub(super) pvp: HashSet<i64>,
+    /// Cloth donations (A Donation of Wool, Additional Runecloth...): turned in to a city's cloth
+    /// quartermaster for its reputation.
+    pub(super) cloth_donations: HashSet<i64>,
     /// Quests whose reward is an item (an item that starts another quest is got there).
     pub(super) reward_of: HashMap<i64, Vec<i64>>,
     /// Items without any known source that several quests ask for (marks of honor, tokens,
@@ -208,6 +211,7 @@ impl Sources {
             links,
             default_xp: default_xp(conn, params)?,
             pvp: pvp_quests(conn, &rows, &objectives)?,
+            cloth_donations: cloth_donations(conn)?,
             reward_of: reward_of(conn)?,
             tokens: tokens(&objectives, &item_origins),
             entities,
@@ -644,6 +648,18 @@ fn read_item_origins(
         item_sources.entry(i).or_default().push((from, id));
     }
     Ok((item_sources, drop_chance))
+}
+
+/// The quests turned in to a cloth quartermaster ("Alliance Cloth Quartermaster", "Windshapers
+/// Cloth Quartermaster"...): the cloth donations.
+fn cloth_donations(conn: &Connection) -> Result<HashSet<i64>> {
+    Ok(conn
+        .prepare(
+            "SELECT DISTINCT r.quest_id FROM m_quest_relation r JOIN m_npc n ON n.id = r.entity_id
+             WHERE r.role = 'end' AND r.entity_type = 'npc' AND n.subname LIKE '%Cloth Quartermaster'",
+        )?
+        .query_map([], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?)
 }
 
 fn reward_of(conn: &Connection) -> Result<HashMap<i64, Vec<i64>>> {

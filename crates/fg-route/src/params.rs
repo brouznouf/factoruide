@@ -90,6 +90,9 @@ pub struct Params {
     /// `pvp_mark_time` seconds of battleground.
     pub pvp_quests: bool,
     pub pvp_mark_time: f64,
+    /// Cloth donations to the cities (A Donation of Wool...): sixty cloth for reputation and some
+    /// XP, cloth the professions would rather use. Left out unless on.
+    pub cloth_donations: bool,
     /// How crowded the server is, from 0 (nobody else) to 1 (a launch): escorts and events wait
     /// up to `crowd_event_time` for their turn, and up to `crowd_players` other players farm the
     /// same mobs and objects, leaving fewer of them (see `respawn_time`). Times
@@ -547,6 +550,7 @@ impl Default for Params {
             allow_elite: false,
             all_class_quests: false,
             pvp_quests: false,
+            cloth_donations: false,
             pvp_mark_time: 900.0,
             crowded: 0.0,
             crowd_event_time: 900.0,
