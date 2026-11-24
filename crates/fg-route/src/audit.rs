@@ -176,6 +176,14 @@ pub const CHECKS: &[Check] = &[
         error: true,
     },
     Check {
+        name: "darkmoon-quests",
+        what: "quests given or taken back by a Darkmoon Faire NPC (its title) that the data files \
+               elsewhere than under the Faire (-364): the guides leave the Faire's quests out, as \
+               it is there one week a month, but not these. File them under the Faire in the \
+               quest data (`zone_or_sort = -364`)",
+        error: true,
+    },
+    Check {
         name: "assumed-vendors",
         what: "vendors with no title that no source saw in the game (server data, game cache, \
                players): their vendor flag can be a guess from what a page lists as sold (WoW \
@@ -186,6 +194,36 @@ pub const CHECKS: &[Check] = &[
         error: false,
     },
 ];
+
+/// Quests a Darkmoon Faire NPC gives or takes back, filed elsewhere than under the Faire.
+fn darkmoon_quests(conn: &Connection) -> Result<Vec<Finding>> {
+    let mut stmt = conn.prepare(
+        "SELECT DISTINCT q.id, q.name, n.name FROM m_quest q
+         JOIN m_quest_relation r ON r.quest_id = q.id AND r.entity_type = 'npc'
+         JOIN m_npc n ON n.id = r.entity_id
+         WHERE q.status = 'available' AND coalesce(q.zone_or_sort, 0) != -364
+           AND n.subname LIKE 'Darkmoon Faire%'
+         ORDER BY q.id",
+    )?;
+    let rows: Vec<(i64, String, String)> = stmt
+        .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
+        .collect::<rusqlite::Result<_>>()?;
+    let mut out: Vec<Finding> = Vec::new();
+    for (id, name, npc) in rows {
+        // One finding per quest, naming the first of its Faire NPCs.
+        if out.last().is_some_and(|f| f.key == format!("quest {id}")) {
+            continue;
+        }
+        out.push(Finding {
+            check: "darkmoon-quests",
+            key: format!("quest {id}"),
+            detail: format!("{name} ({id}), with {npc}"),
+            races: Vec::new(),
+            npcs: Vec::new(),
+        });
+    }
+    Ok(out)
+}
 
 /// Vendors (vendor flag) with no title that no source seen in the game knows
 /// (`model::SEEN_IN_GAME`), and that stand somewhere.
@@ -351,6 +389,11 @@ pub fn audit(
     }
     if on("prerequisite-races") {
         for f in prerequisite_races(conn, overrides)? {
+            found.insert((f.check, f.key.clone()), f);
+        }
+    }
+    if on("darkmoon-quests") {
+        for f in darkmoon_quests(conn)? {
             found.insert((f.check, f.key.clone()), f);
         }
     }
@@ -1938,6 +1981,34 @@ mod tests {
         assert!(!reads_foreign(
             "Bring Le Fishe's head to Stormwind and talk to the guard."
         ));
+    }
+
+    /// The Darkmoon Faire's case (GitHub #184): a quest the Faire's barker gives, filed under
+    /// Ironforge, is found; filed under the Faire, or given by someone else, it is not.
+    #[test]
+    fn a_darkmoon_faire_quest_filed_elsewhere_is_found() {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch(
+            "CREATE TABLE m_quest (id, name, zone_or_sort, status);
+             CREATE TABLE m_quest_relation (quest_id, role, entity_type, entity_id);
+             CREATE TABLE m_npc (id, name, subname);
+             INSERT INTO m_npc VALUES
+               (14842, 'Melnan Darkstone', 'Darkmoon Faire Barker'),
+               (14828, 'Gelvas Grimegate', 'Darkmoon Faire Ticket Redemption'),
+               (1365, 'Goli Krumn', NULL);
+             INSERT INTO m_quest VALUES
+               (7905, 'The Darkmoon Faire', 1537, 'available'),
+               (7907, 'Darkmoon Beast Deck', -364, 'available'),
+               (7926, 'The Darkmoon Faire', 1637, 'removed'),
+               (1, 'An Ironforge quest', 1537, 'available');
+             INSERT INTO m_quest_relation VALUES
+               (7905, 'start', 'npc', 14842), (7905, 'end', 'npc', 14828),
+               (7907, 'end', 'npc', 14828), (7926, 'end', 'npc', 14828),
+               (1, 'start', 'npc', 1365);",
+        )
+        .unwrap();
+        let keys: Vec<String> = darkmoon_quests(&conn).unwrap().into_iter().map(|f| f.key).collect();
+        assert_eq!(keys, ["quest 7905"]);
     }
 
     /// The Kor'kron Elite's case (GitHub #191): a guard with no title the quest data alone says

@@ -3510,3 +3510,10 @@ remove_spawns = true
 [[npc]]
 id = 230565 # Ironforge Guard
 remove_spawns = true
+
+# The Darkmoon Faire (Alliance): the Faire's barker gives it and its ticket redemption takes it
+# back, but the game files it under Ironforge, so the guides kept it while the Faire was gone
+# (GitHub #184). Filed under the Faire, it is left out as the Faire's other quests are.
+[[quest]]
+id = 7905
+zone_or_sort = -364
