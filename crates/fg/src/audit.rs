@@ -60,6 +60,8 @@ pub fn run(
         );
         for f in &of {
             match reason(&f.key) {
+                // Checks of the data as a whole name no race.
+                None if f.races.is_empty() => println!("  [{}] {}\n      {}", name, f.key, f.detail),
                 None => println!(
                     "  [{}] {}\n      {} (races: {})",
                     name,

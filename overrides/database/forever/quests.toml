@@ -3499,3 +3499,14 @@ objectives = [{ type = "talk", id = 265375, amount = 1, text = "Veteran's story 
 # Ends Meet (93567) needs the quest first.
 id = 92102
 objectives = [{ type = "talk", id = 265375, amount = 1, text = "Veteran of the Third War met in Mount Hyjal" }]
+
+# A Kor'kron Elite in Orgrimmar and an Ironforge Guard in Ironforge the sources make vendors (of a
+# Season of Discovery set, from what a page lists as sold): players find only the guards there
+# (GitHub #191). Their places are dropped, so no guide sends anyone to sell to them.
+[[npc]]
+id = 230566 # Kor'kron Elite
+remove_spawns = true
+
+[[npc]]
+id = 230565 # Ironforge Guard
+remove_spawns = true

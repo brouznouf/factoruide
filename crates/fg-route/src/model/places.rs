@@ -237,26 +237,59 @@ impl NpcFinder<'_> {
         }
         // The vendor flag of the client the data was read from (1.12 for Classic and Forever).
         let flag = if edition == crate::xp::Edition::Tbc { 128 } else { 4 };
-        let mut stmt = self.conn.prepare(
-            "SELECT id, coalesce(subname, '') FROM m_npc
-             WHERE (npc_flags & ?1) != 0 AND (friendly_to IS NULL OR instr(friendly_to, ?2) > 0)",
+        let has_sources: bool = self.conn.query_row(
+            "SELECT count(*) > 0 FROM pragma_table_info('m_npc') WHERE name = 'sources'",
+            [],
+            |r| r.get(0),
         )?;
-        let rows: Vec<(i64, String)> = stmt
-            .query_map(rusqlite::params![flag, self.faction], |r| Ok((r.get(0)?, r.get(1)?)))?
+        let sources = if has_sources { "coalesce(sources, '')" } else { "''" };
+        let mut stmt = self.conn.prepare(&format!(
+            "SELECT id, coalesce(subname, ''), {sources} FROM m_npc
+             WHERE (npc_flags & ?1) != 0 AND (friendly_to IS NULL OR instr(friendly_to, ?2) > 0)"
+        ))?;
+        let rows: Vec<(i64, String, String)> = stmt
+            .query_map(rusqlite::params![flag, self.faction], |r| {
+                Ok((r.get(0)?, r.get(1)?, r.get(2)?))
+            })?
             .collect::<rusqlite::Result<_>>()?;
         // The demon trainers' shops (and Gorzeeki's, who has no title) open for warlocks only,
         // though the NPCs carry the vendor flag; seen in game on WoW Forever. TBC's data does not
         // show the same restriction.
         let can_use_warlock_shops =
             edition == crate::xp::Edition::Tbc || profile.class_ids().into_iter().all(|class| class == 9);
-        Ok(rows
+        let vendors = rows
             .into_iter()
-            .filter(|(id, title)| {
+            .filter(|(id, title, _)| {
                 can_use_warlock_shops || (*id != 14437 && !matches!(title.as_str(), "Demon Trainer" | "Demon Master"))
             })
-            .filter_map(|(id, _)| self.place(id))
-            .collect())
+            .filter_map(|(id, _, sources)| {
+                // A database without sources (tests, older builds): every vendor counts as seen.
+                let seen = !has_sources || sources.split(',').any(|s| SEEN_IN_GAME.contains(&s));
+                Some((self.place(id)?, seen))
+            })
+            .collect();
+        Ok(prefer_seen_in_game(vendors))
     }
+}
+
+/// The sources that saw an NPC in the game itself: the server emulator's (Classic NPCs), the game
+/// client's cache, the players' recordings, and checked by hand. A vendor flag from the other
+/// sources alone can be a guess from what some page lists as sold (WoW Forever: guards that
+/// would sell a Season of Discovery set).
+pub const SEEN_IN_GAME: [&str; 5] = ["vmangos", "client_cache", "collector", "player_cache", "manual"];
+
+/// How close a vendor seen in the game must be for one only assumed to give way to it (yards).
+const SEEN_VENDOR_NEAR: f64 = 300.0;
+
+/// The vendors to use: those seen in the game, and those only assumed where none seen in the game
+/// stands nearby (a new place of WoW Forever no player recorded yet).
+fn prefer_seen_in_game(vendors: Vec<(Loc, bool)>) -> Vec<Loc> {
+    let seen: Vec<_> = vendors.iter().filter(|(_, seen)| *seen).map(|(l, _)| l.pos).collect();
+    vendors
+        .into_iter()
+        .filter(|(loc, is_seen)| *is_seen || seen.iter().all(|p| p.dist(&loc.pos) > SEEN_VENDOR_NEAR))
+        .map(|(loc, _)| loc)
+        .collect()
 }
 
 /// The highest skill cap a profession trainer's title says it teaches; `None` for the trainers
@@ -318,7 +351,36 @@ fn rank_cap_of_title(title: &str, kind: crate::profession::Kind, edition: crate:
 mod tests {
     use super::*;
     use crate::profession::Kind;
+    use crate::world::Pos;
     use crate::xp::Edition;
+
+    /// A vendor only some data says sells (none saw it in the game) gives way to one seen in
+    /// the game nearby, and is kept where it is the only one around.
+    #[test]
+    fn a_vendor_seen_in_game_comes_before_one_only_assumed_nearby() {
+        let at = |id: i64, x: f64| Loc {
+            pos: Pos {
+                continent: 1,
+                x,
+                y: 0.0,
+                zone: 1637,
+                z: None,
+            },
+            zone: 1637,
+            kind: EntityKind::Npc,
+            id,
+            name: String::new(),
+            inside: None,
+            floor: None,
+        };
+        let kept = prefer_seen_in_game(vec![
+            (at(230566, 0.0), false),    // a guard the data says sells, next to
+            (at(3313, 100.0), true),     // a vendor seen in the game,
+            (at(244512, 5000.0), false), // and an assumed one alone far away.
+        ]);
+        let ids: Vec<i64> = kept.iter().map(|l| l.id).collect();
+        assert_eq!(ids, [3313, 244512]);
+    }
 
     #[test]
     fn a_title_says_how_far_a_trainer_teaches() {

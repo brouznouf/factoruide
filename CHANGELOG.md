@@ -12,6 +12,10 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 - A character the addon could not fully read in game says which parts (done quests, professions...) and how to read them again.
 
+### Guides
+
+- WoW Forever: loot is sold to merchants players have seen in the game rather than to NPCs the data only guesses sell, such as a Kor'kron Elite guard in Orgrimmar.
+
 ### Addon
 
 - Your profile no longer loses its done quests, professions or quest log after a loading screen.

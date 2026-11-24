@@ -175,7 +175,50 @@ pub const CHECKS: &[Check] = &[
                the text (timed-quests) miss them. Rebuild the data with the English text first",
         error: true,
     },
+    Check {
+        name: "assumed-vendors",
+        what: "vendors with no title that no source saw in the game (server data, game cache, \
+               players): their vendor flag can be a guess from what a page lists as sold (WoW \
+               Forever: guards that would sell a Season of Discovery set). The guides prefer a \
+               vendor seen in the game nearby. Check the NPC on Wowhead or in game: drop its \
+               places in the quest data when no one stands there for players, or accept a real \
+               vendor",
+        error: false,
+    },
 ];
+
+/// Vendors (vendor flag) with no title that no source seen in the game knows
+/// (`model::SEEN_IN_GAME`), and that stand somewhere.
+fn assumed_vendors(conn: &Connection) -> Result<Vec<Finding>> {
+    let has_sources: bool = conn.query_row(
+        "SELECT count(*) > 0 FROM pragma_table_info('m_npc') WHERE name = 'sources'",
+        [],
+        |r| r.get(0),
+    )?;
+    if !has_sources {
+        return Ok(Vec::new());
+    }
+    let mut stmt = conn.prepare(
+        "SELECT n.id, n.name, coalesce(n.sources, '') FROM m_npc n
+         WHERE coalesce(n.npc_flags, 0) & 4 != 0 AND coalesce(n.subname, '') = ''
+           AND EXISTS (SELECT 1 FROM m_spawn s WHERE s.entity_type = 'npc' AND s.entity_id = n.id)
+         ORDER BY n.id",
+    )?;
+    let rows: Vec<(i64, String, String)> = stmt
+        .query_map([], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?
+        .collect::<rusqlite::Result<_>>()?;
+    Ok(rows
+        .into_iter()
+        .filter(|(_, _, sources)| !sources.split(',').any(|s| crate::model::SEEN_IN_GAME.contains(&s)))
+        .map(|(id, name, sources)| Finding {
+            check: "assumed-vendors",
+            key: format!("npc {id}"),
+            detail: format!("{name} ({id}), vendor by {sources} only"),
+            races: Vec::new(),
+            npcs: Vec::new(),
+        })
+        .collect())
+}
 
 /// Why a quest is left out when its objectives or their places are unknown to the data (the
 /// reasons of the quest builder that say "unknown").
@@ -308,6 +351,11 @@ pub fn audit(
     }
     if on("prerequisite-races") {
         for f in prerequisite_races(conn, overrides)? {
+            found.insert((f.check, f.key.clone()), f);
+        }
+    }
+    if on("assumed-vendors") {
+        for f in assumed_vendors(conn)? {
             found.insert((f.check, f.key.clone()), f);
         }
     }
@@ -1890,6 +1938,31 @@ mod tests {
         assert!(!reads_foreign(
             "Bring Le Fishe's head to Stormwind and talk to the guard."
         ));
+    }
+
+    /// The Kor'kron Elite's case (GitHub #191): a guard with no title the quest data alone says
+    /// sells is found; a titled vendor, one seen in the game, or one standing nowhere is not.
+    #[test]
+    fn a_vendor_only_assumed_with_no_title_is_found() {
+        let conn = Connection::open_in_memory().unwrap();
+        conn.execute_batch(
+            "CREATE TABLE m_npc (id, name, subname, npc_flags, sources);
+             CREATE TABLE m_spawn (entity_type, entity_id, zone_id, x, y);
+             INSERT INTO m_npc VALUES
+               (230566, 'Kor''kron Elite', NULL, 4, 'questie'),
+               (3313, 'Trak''gen', 'General Supplies', 4, 'questie,vmangos'),
+               (214096, 'Dokimi', 'Supply Officer', 4, 'questie'),
+               (5611, 'Barkeep Morag', NULL, 4, 'client_cache,questie'),
+               (14304, 'Kor''kron Elite', NULL, 0, 'questie,vmangos'),
+               (222685, 'Quartermaster Kyleen', NULL, 4, 'wowhead,questie');
+             INSERT INTO m_spawn VALUES
+               ('npc', 230566, 1637, 34.8, 38.4), ('npc', 3313, 1637, 45.0, 55.0),
+               ('npc', 214096, 1638, 40.0, 40.0), ('npc', 5611, 1637, 54.0, 68.0),
+               ('npc', 14304, 1637, 34.8, 38.6);",
+        )
+        .unwrap();
+        let keys: Vec<String> = assumed_vendors(&conn).unwrap().into_iter().map(|f| f.key).collect();
+        assert_eq!(keys, ["npc 230566"]);
     }
 
     /// Heed My Call's case: a Horde shaman quest needing first a quest the Skyborne of the Horde

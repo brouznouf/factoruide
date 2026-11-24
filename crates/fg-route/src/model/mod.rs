@@ -47,6 +47,7 @@ use crate::world::World;
 use anyhow::Result;
 use builder::QuestBuilder;
 use places::Places;
+pub use places::SEEN_IN_GAME;
 use rusqlite::Connection;
 use sources::Sources;
 use std::collections::{HashMap, HashSet};
