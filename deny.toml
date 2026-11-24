@@ -6,15 +6,6 @@ all-features = true
 [advisories]
 # Unmaintained crates are reported, but only for direct dependencies.
 unmaintained = "workspace"
-# zip 4 comes only with tauri-plugin-updater (Windows), whose releases still ask for it (the
-# plugin's next version moves to zip 9). These flaws are about symlinks and Unix permissions when
-# extracting an archive; the updater only extracts packages whose signature by the publisher's key
-# it has checked first. To remove once tauri-plugin-updater depends on zip 9.
-ignore = [
-    { id = "RUSTSEC-2026-0367", reason = "zip via tauri-plugin-updater only, signed packages, no fixed release yet" },
-    { id = "RUSTSEC-2026-0368", reason = "zip via tauri-plugin-updater only, signed packages, no fixed release yet" },
-    { id = "RUSTSEC-2026-0369", reason = "zip via tauri-plugin-updater only, signed packages, no fixed release yet" },
-]
 
 [licenses]
 confidence-threshold = 0.9
