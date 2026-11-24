@@ -10,6 +10,7 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ### App
 
+- A character made in the app above level 10 starts at its capital's inn, its hearthstone bound there, instead of its starting zone; Start from chooses another inn.
 - A character the addon could not fully read in game says which parts (done quests, professions...) and how to read them again.
 
 ### Guides

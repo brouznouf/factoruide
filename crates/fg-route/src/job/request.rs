@@ -82,6 +82,10 @@ pub struct PlanRequest {
     /// replaces `from_level`).
     #[serde(default)]
     pub start: Option<super::StartState>,
+    /// A character made in the app (no `start`): the innkeeper (NPC ID) where it stands and is
+    /// bound. None: its capital's above level 10, its starting place below.
+    #[serde(default)]
+    pub start_inn: Option<i64>,
     /// The other players of a group guide, as their addon recorded them (empty: solo). The guide
     /// is the same for everyone (see `members`).
     #[serde(default)]

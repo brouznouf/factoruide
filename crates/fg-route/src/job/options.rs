@@ -15,6 +15,8 @@ pub struct Options {
     pub zones: Vec<ZoneOption>,
     /// The flight paths of the game version, to tick those a character knows.
     pub flights: Vec<FlightOption>,
+    /// The innkeepers a character made in the app can start at (`PlanRequest::start_inn`).
+    pub inns: Vec<InnOption>,
     pub dungeons: Vec<DungeonOption>,
     /// Factions quests give reputation with, for the guides' reputation goals.
     pub factions: Vec<FactionOption>,
@@ -43,6 +45,17 @@ pub struct ClassPowerOption {
     pub gear: f64,
 }
 
+/// An innkeeper: where a character made in the app can stand and be bound.
+#[derive(Debug, Clone, Serialize)]
+pub struct InnOption {
+    /// NPC ID.
+    pub id: i64,
+    pub name: String,
+    pub zone: String,
+    /// A, H, AH or empty (anyone).
+    pub friendly_to: String,
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct RaceOption {
     pub key: String,
@@ -53,6 +66,8 @@ pub struct RaceOption {
     pub classes: Vec<String>,
     /// The NPC its new characters start next to (races sharing a starting place share it).
     pub start_npc: i64,
+    /// Its capital's innkeeper: where its characters made in the app start above level 10.
+    pub capital_inn: Option<i64>,
 }
 
 #[derive(Debug, Clone, Serialize)]
@@ -119,6 +134,7 @@ pub fn options(conn: &Connection, overrides: &Overrides) -> Result<Options> {
                 faction: r.faction,
                 classes: race_classes(conn, r.id)?,
                 start_npc: r.start_npc,
+                capital_inn: r.capital_inn,
             })
         })
         .collect::<Result<_>>()?;
@@ -241,11 +257,35 @@ pub fn options(conn: &Connection, overrides: &Overrides) -> Result<Options> {
         .into_iter()
         .filter(|f| f.alliance || f.horde)
         .collect();
+    // Innkeepers that stand somewhere, by zone then name.
+    let inns: Vec<InnOption> = conn
+        .prepare(
+            "SELECT n.id, n.name, coalesce(a.AreaName_lang, ''), coalesce(n.friendly_to, '')
+             FROM m_npc n
+             JOIN (SELECT entity_id, min(zone_id) AS zone_id FROM m_spawn WHERE entity_type = 'npc' GROUP BY entity_id) s
+               ON s.entity_id = n.id
+             LEFT JOIN client_areatable a ON a.ID = s.zone_id
+             WHERE n.subname = 'Innkeeper'
+             ORDER BY 3, 2",
+        )
+        .and_then(|mut stmt| {
+            stmt.query_map([], |r| {
+                Ok(InnOption {
+                    id: r.get(0)?,
+                    name: r.get(1)?,
+                    zone: r.get(2)?,
+                    friendly_to: r.get(3)?,
+                })
+            })?
+            .collect::<rusqlite::Result<Vec<_>>>()
+        })
+        .unwrap_or_default();
     Ok(Options {
         races,
         classes,
         zones,
         flights,
+        inns,
         dungeons,
         factions,
         class_quests: class_quests(conn, overrides)?,
@@ -447,6 +487,7 @@ mod tests {
             faction,
             classes: vec![],
             start_npc: 0,
+            capital_inn: None,
         };
         let races = [
             race(4, "nightelf", crate::faction::Faction::Alliance),

@@ -22,6 +22,8 @@ export interface PlayerSetup {
   klass: string;
   level: number;
   professions: ProfessionGoal[];
+  /** A new character: the innkeeper (NPC ID) it starts at; null: its capital's above level 10, its starting place below. */
+  inn?: number | null;
 }
 
 /** A new character of the first race and class the game offers. */
@@ -131,6 +133,10 @@ export function PlayerBlock({ index, player, options, characters, group, problem
   const raceInfo = options.races.find((r) => r.key === player.race);
   const classes = options.classes.filter((c) => !raceInfo?.classes.length || raceInfo.classes.includes(c.key));
   const factions = [...new Set(options.races.map((r) => r.faction))];
+  // The inns a new character of this side can start at, and its capital's.
+  const side = raceInfo?.faction === "Horde" ? "H" : "A";
+  const inns = (options.inns ?? []).filter((inn) => !inn.friendly_to || inn.friendly_to.includes(side));
+  const capitalInn = inns.find((inn) => inn.id === raceInfo?.capital_inn);
 
   const pick = (c: CharacterInfo | null) => {
     onPicked?.(c);
@@ -224,7 +230,7 @@ export function PlayerBlock({ index, player, options, characters, group, problem
             onChange={(e) => {
               const race = options.races.find((r) => r.key === e.target.value);
               const klass = race && race.classes.length && !race.classes.includes(player.klass) ? race.classes[0] : player.klass;
-              onChange({ ...player, race: e.target.value, klass });
+              onChange({ ...player, race: e.target.value, klass, inn: null });
             }}
           >
             {factions.map((f) => (
@@ -261,6 +267,25 @@ export function PlayerBlock({ index, player, options, characters, group, problem
             onChange={(e) => onChange({ ...player, level: Number(e.target.value) })}
           />
         </label>
+        {!player.start && !group && (
+          <label className="field">
+            <span>
+              {t("Partir de")}
+              <Hint text={t("Où le personnage se trouve, sa pierre de foyer liée à cette auberge. Automatique : l'auberge de sa capitale au-dessus du niveau 10, sa zone de départ en dessous.")} />
+            </span>
+            <select value={player.inn ?? ""} onChange={(e) => onChange({ ...player, inn: e.target.value ? Number(e.target.value) : null })}>
+              <option value="">
+                {player.level > 10 && capitalInn ? t("Automatique ({place})", { place: `${capitalInn.zone}` }) : t("Automatique (zone de départ)")}
+              </option>
+              {raceInfo && <option value={raceInfo.start_npc}>{t("Zone de départ")}</option>}
+              {inns.map((inn) => (
+                <option key={inn.id} value={inn.id}>
+                  {inn.zone} · {inn.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        )}
       </div>
       <div className="character-extras">
         <div>

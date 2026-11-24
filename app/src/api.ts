@@ -223,6 +223,8 @@ export interface PlanRequest {
   locale?: string | null;
   /** The character as the addon recorded it in game: the guide goes on from there. */
   start?: StartState | null;
+  /** A new character (no `start`): the innkeeper (NPC ID) where it stands and is bound; none: its capital's above level 10, its starting place below. */
+  start_inn?: number | null;
   /** The other players of a group guide, as their addon recorded them (empty: solo). */
   mates?: StartState[];
   /** The professions each of `mates` levels, in their order. */
@@ -472,7 +474,9 @@ export interface NamedId {
 
 export interface Options {
   /** `classes`: class keys the race can play. */
-  races: { key: string; id: number; name: string; faction: string; classes: string[]; start_npc: number }[];
+  races: { key: string; id: number; name: string; faction: string; classes: string[]; start_npc: number; capital_inn?: number | null }[];
+  /** Innkeepers a new character can start at: NPC ID, name, zone and the sides they welcome (A, H, AH or empty). */
+  inns?: { id: number; name: string; zone: string; friendly_to: string }[];
   classes: NamedId[];
   zones: { id: number; name: string; names?: Record<string, string>; continent: number }[];
   /** The flight paths of the game version (TaxiNodes), and the sides that can use them. */

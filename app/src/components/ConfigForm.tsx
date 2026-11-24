@@ -250,6 +250,7 @@ export function ConfigForm({ options, initial, startCharacter, defaultLocale, on
     professions: own.professions,
     locale,
     start: group ? asStart(own, 0, options) : own.start,
+    start_inn: !group && !own.start ? (own.inn ?? null) : null,
     mates: group ? players.slice(1).map((p, k) => asStart(p, k + 1, options)) : [],
     mate_professions: group ? players.slice(1).map((p) => p.professions) : [],
   });

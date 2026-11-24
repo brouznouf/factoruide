@@ -1,5 +1,6 @@
 # Starting point of each race: the NPC players spawn next to, and the flight paths a new
-# character knows (`start_flights`, TaxiNodes IDs: its capital's).
+# character knows (`start_flights`, TaxiNodes IDs: its capital's), and its capital's innkeeper
+# (`capital_inn`): where a character made in the app above level 10 starts and is bound.
 # `id` is the ChrRaces ID; `mask` is the quest race bit (Forever encoding of the quest data).
 #
 # This file: the races of every game version; <edition>/races.toml adds those of one version.
@@ -9,45 +10,53 @@ id = 1
 faction = "Alliance"
 start_npc = 823 # Deputy Willem, Northshire
 start_flights = [2] # Stormwind
+capital_inn = 6740 # Innkeeper Allison, Stormwind City
 
 [dwarf]
 id = 3
 faction = "Alliance"
 start_npc = 658 # Sten Stoutarm, Coldridge Valley
 start_flights = [6] # Ironforge
+capital_inn = 5111 # Innkeeper Firebrew, Ironforge
 
 [gnome]
 id = 7
 faction = "Alliance"
 start_npc = 658 # Sten Stoutarm, Coldridge Valley
 start_flights = [6] # Ironforge
+capital_inn = 5111 # Innkeeper Firebrew, Ironforge
 
 [nightelf]
 id = 4
 faction = "Alliance"
 start_npc = 2079 # Conservator Ilthalaine, Shadowglen
 start_flights = [26, 27] # Auberdine, Rut'theran Village
+capital_inn = 6735 # Innkeeper Saelienne, Darnassus
 
 [orc]
 id = 2
 faction = "Horde"
 start_npc = 3143 # Gornek, Valley of Trials
 start_flights = [23] # Orgrimmar
+capital_inn = 6929 # Innkeeper Gryshka, Orgrimmar
 
 [troll]
 id = 8
 faction = "Horde"
 start_npc = 3143 # Gornek, Valley of Trials
 start_flights = [23] # Orgrimmar
+capital_inn = 6929 # Innkeeper Gryshka, Orgrimmar
 
 [undead]
 id = 5
 faction = "Horde"
 start_npc = 1568 # Undertaker Mordo, Deathknell
 start_flights = [11] # Undercity
+capital_inn = 6741 # Innkeeper Norman, Undercity
 
 [tauren]
 id = 6
 faction = "Horde"
 start_npc = 2981 # Chief Hawkwind, Camp Narache
 start_flights = [22] # Thunder Bluff
+capital_inn = 6746 # Innkeeper Pala, Thunder Bluff

@@ -16,6 +16,10 @@ pub struct RaceDef {
     /// Flight paths a new character knows (TaxiNodes IDs): the game gives the capital's.
     #[serde(default)]
     pub start_flights: Vec<i64>,
+    /// The innkeeper of its capital (NPC ID): where a character made in the app above level 10
+    /// stands and is bound, rather than its starting place.
+    #[serde(default)]
+    pub capital_inn: Option<i64>,
 }
 
 /// Everything configurable on disk in `overrides/`.
@@ -163,6 +167,14 @@ impl Overrides {
         (self.races.values())
             .find(|r| r.id == race_id)
             .map_or(&[], |r| &r.start_flights)
+    }
+
+    /// The innkeeper of the race's capital, when known.
+    pub fn capital_inn(&self, race_id: i64) -> Option<i64> {
+        self.races
+            .values()
+            .find(|r| r.id == race_id)
+            .and_then(|r| r.capital_inn)
     }
 
     pub fn load(dir: &Path) -> Result<Self> {

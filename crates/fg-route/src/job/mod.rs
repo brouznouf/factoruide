@@ -300,9 +300,16 @@ pub fn prepare(conn: &Connection, overrides: &Overrides, req: &PlanRequest, prog
             members.iter().skip(1).map(|m| with_deduced(m)).collect(),
         )
     });
-    match &starting {
-        Some((start, mates)) => start_from(&mut model, &world, &mut params, start, mates, &mut start_notes),
-        None => model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id)),
+    if let Some((start, mates)) = &starting {
+        start_from(&mut model, &world, &mut params, start, mates, &mut start_notes);
+    } else {
+        model.initial.known = start::flight_bits(&world, overrides.start_flights(profile.race_id));
+        new_character_inn(
+            &mut model,
+            req.start_inn,
+            overrides.capital_inn(profile.race_id),
+            profile.from_level,
+        );
     }
     settle_objective_guide(&mut model, &world, &params, &profile)?;
     if let Some((start, _)) = &starting {
@@ -426,6 +433,24 @@ pub(crate) fn check_exclusive_choices(model: &Model, members: &[&StartState]) ->
         }
     }
     Ok(())
+}
+
+/// Above this level a character made in the app starts at its capital's inn: no one at that level
+/// still stands in their starting valley.
+const NEW_CHARACTER_CAPITAL_LEVEL: i64 = 10;
+
+/// Where a character made in the app stands and is bound: the inn chosen, else its capital's
+/// above `NEW_CHARACTER_CAPITAL_LEVEL`, else its starting place (the model's default).
+fn new_character_inn(model: &mut Model, chosen: Option<i64>, capital: Option<i64>, from_level: i64) {
+    let Some(innkeeper) = chosen.or(capital.filter(|_| from_level > NEW_CHARACTER_CAPITAL_LEVEL)) else {
+        return;
+    };
+    // The starting place itself (chosen above level 10): the model's default.
+    let Some(i) = (model.inns.iter().enumerate()).position(|(i, l)| i != model.start_inn && l.id == innkeeper) else {
+        return;
+    };
+    model.initial.pos = Some((model.inns[i].pos, model.inns[i].zone));
+    model.initial.bind = Some(i);
 }
 
 /// The model from where `start` stands (what it did, its log, its place), and the other players

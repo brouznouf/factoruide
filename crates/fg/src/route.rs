@@ -86,6 +86,7 @@ pub fn run(conn: &Connection, opts: &RouteOptions) -> Result<()> {
         professions: opts.professions.clone(),
         locale: opts.locale.clone(),
         start: opts.start.as_deref().map(read_profile).transpose()?,
+        start_inn: None,
         mates: opts.mates.iter().map(|p| read_profile(p)).collect::<Result<_>>()?,
         mate_professions: vec![],
         objectives: opts.objectives.clone(),
@@ -319,6 +320,7 @@ pub fn share(conn: &Connection, overrides_dir: &Path, opts: &ShareOptions, out: 
         objectives: Vec::new(),
         dungeon: None,
         start: None,
+        start_inn: None,
     };
     let walks = std::sync::Arc::new(fg_route::terrain::Walks::default());
     let outcome = plan(conn, &overrides, &request, Some(&walks))?;

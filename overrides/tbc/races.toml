@@ -5,9 +5,11 @@ id = 11
 faction = "Alliance"
 start_npc = 16475 # Megelon, Ammen Vale (Azuremyst Isle)
 start_flights = [94] # The Exodar
+capital_inn = 16739 # Caregiver Breel, The Exodar
 
 [bloodelf]
 id = 10
 faction = "Horde"
 start_npc = 15278 # Magistrix Erona, Sunstrider Isle (Eversong Woods)
 start_flights = [82] # Silvermoon City
+capital_inn = 16618 # Innkeeper Velandra, Silvermoon City

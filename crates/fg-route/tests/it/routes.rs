@@ -71,6 +71,7 @@ fn request(race: &str, class: &str, to_level: i64, params: &[&str]) -> PlanReque
         objectives: Vec::new(),
         dungeon: None,
         start: None,
+        start_inn: None,
     }
 }
 
@@ -145,6 +146,7 @@ fn loot_vendors_for(edition: Edition, class: &str, mates: &[&str]) -> Vec<i64> {
         params: Some(o.params.clone()),
         required_class_quests: Some(vec![]),
         start: Some(player("Lead-Realm", 5, class, 1)),
+        start_inn: None,
         mates: mates
             .iter()
             .enumerate()
@@ -603,6 +605,7 @@ fn an_objective_preview_counts_the_zone_and_tells_what_is_left_out() {
         &PlanRequest {
             objectives: vec![GuideObjective::Zone(141)],
             start: Some(start),
+            start_inn: None,
             ..request("nightelf", "warrior", 8, &[])
         },
     )
@@ -4172,6 +4175,7 @@ fn a_group_guide_levels_each_players_professions() {
     a.professions = vec![job::Skill { line: 393, rank: 50 }];
     let request = PlanRequest {
         start: Some(a),
+        start_inn: None,
         professions: vec![skinning()],
         mates: vec![player("B-Realm", 2, "warrior", 10)],
         mate_professions: vec![vec![]],
@@ -4208,6 +4212,7 @@ fn new_characters_level_together_from_the_start() {
     troll.faction = Some(fg_route::faction::Faction::Horde);
     let request = PlanRequest {
         start: Some(orc),
+        start_inn: None,
         mates: vec![troll],
         mate_professions: vec![vec![]],
         dungeon: None,
@@ -4864,4 +4869,49 @@ objectives = [{ item = 2592, amount = 10 }]
     };
     assert_eq!(planned(false), (false, true), "no donation by default");
     assert_eq!(planned(true), (true, true), "donations when asked");
+}
+
+/// A character made in the app above level 10 (GitHub #186): it starts at its race's capital inn,
+/// bound there, instead of its starting valley; or at the inn chosen; a new character at level 1
+/// still starts in its valley.
+#[test]
+fn a_new_character_above_level_ten_starts_at_its_capital_or_the_inn_chosen() {
+    let conn = Fixture::new(Edition::Forever)
+        .toml(
+            r#"
+[[npc]]
+id = 6740
+name = "Innkeeper Allison"
+subname = "Innkeeper"
+level = 30
+friendly_to = "A"
+at = [{ zone = 1519, x = 52.6, y = 65.7 }]
+
+[[npc]]
+id = 295
+name = "Innkeeper Farley"
+subname = "Innkeeper"
+level = 30
+friendly_to = "A"
+at = [{ zone = 12, x = 43.8, y = 65.8 }]
+"#,
+        )
+        .open();
+    let overrides = Overrides::load_edition(&repo().join("overrides"), Edition::Forever).unwrap();
+    let start = |from_level: i64, inn: Option<i64>| {
+        let request: PlanRequest = serde_json::from_value(serde_json::json!({
+            "race": "human", "class": "mage", "from_level": from_level, "to_level": from_level + 1,
+            "start_inn": inn,
+        }))
+        .unwrap();
+        let p = job::prepare(&conn, &overrides, &request, &|_| {}).unwrap();
+        let at = p.model.initial.pos.map(|(_, zone)| zone);
+        let bound = p.model.initial.bind.map(|i| p.model.inns[i].id);
+        (at, bound)
+    };
+    assert_eq!(start(41, None), (Some(1519), Some(6740)), "Stormwind's inn");
+    assert_eq!(start(41, Some(295)), (Some(12), Some(295)), "the inn chosen");
+    assert_eq!(start(1, None), (None, None), "the starting valley");
+    // Its starting place chosen (its start NPC, Deputy Willem): there, even at level 41.
+    assert_eq!(start(41, Some(823)), (None, None), "the starting valley chosen");
 }

@@ -429,6 +429,7 @@ pub fn audit(
             objectives: Vec::new(),
             dungeon: None,
             start: None,
+            start_inn: None,
         };
         let prepared = match job::prepare(conn, overrides, &request, &|_| {}) {
             Ok(p) => p,
