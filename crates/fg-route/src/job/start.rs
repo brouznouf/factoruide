@@ -7,7 +7,7 @@ use crate::model::{Initial, Model, Objective, Quest};
 use crate::params::Params;
 use crate::world::World;
 use serde::{Deserialize, Serialize};
-use std::collections::HashSet;
+use std::collections::{BTreeMap, HashSet};
 
 /// A quest's ID in the game data. Saved as the plain number.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Default, Serialize, Deserialize)]
@@ -77,6 +77,10 @@ pub struct StartState {
     pub reputation: Vec<Standing>,
     /// When it was recorded (unix seconds).
     pub time: i64,
+    /// The parts the game failed to give the addon at the last save (part -> error): they hold
+    /// what an earlier save saw.
+    #[serde(skip_serializing_if = "BTreeMap::is_empty")]
+    pub errors: BTreeMap<String, String>,
 }
 
 /// Points with a faction (Faction ID), counted from the bottom of Neutral.
@@ -439,6 +443,22 @@ mod tests {
             ..met
         };
         assert_eq!(settled.with_deduced_flights(&[2], Some(vec![6])).flights, [26]);
+    }
+
+    /// The parts the game failed to give the addon reach the page, which says so.
+    #[test]
+    fn a_profile_tells_the_parts_the_game_failed_to_give() {
+        let read =
+            serde_json::from_str::<StartState>(r#"{"errors":{"completed":"the game gave no done quest"}}"#).unwrap();
+        assert_eq!(read.errors.keys().collect::<Vec<_>>(), ["completed"]);
+        let shown = serde_json::to_value(&read).unwrap();
+        assert_eq!(shown["errors"]["completed"], "the game gave no done quest");
+        assert!(
+            serde_json::to_value(StartState::default())
+                .unwrap()
+                .get("errors")
+                .is_none()
+        );
     }
 
     /// The sides the addon records, in any case; the game's "Neutral" or nothing is no side.

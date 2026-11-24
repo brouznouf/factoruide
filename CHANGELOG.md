@@ -8,6 +8,14 @@ An addon change also goes, in the same words, under Unreleased in that addon's o
 
 ## Unreleased
 
+### App
+
+- A character the addon could not fully read in game says which parts (done quests, professions...) and how to read them again.
+
+### Addon
+
+- Your profile no longer loses its done quests, professions or quest log after a loading screen.
+
 ### WoW data
 
 - WoW Forever: the latest quest data, with named monsters and quest givers at the places they really stand instead of dozens of sightings, and more quests seen in game by players.

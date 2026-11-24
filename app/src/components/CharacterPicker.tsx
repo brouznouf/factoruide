@@ -30,6 +30,20 @@ export function CharacterPicker({ characters, start, onPick, options, recorded, 
   const pick = (name: string) => onPick(characters?.find((c) => c.profile.name === name) ?? null);
   // The export of a character, pasted here (a friend's, or on the web build).
   const [pasting, setPasting] = useState(false);
+  // The parts the game failed to give the addon at the last save.
+  const parts: Record<string, string> = {
+    character: t("niveau et XP"),
+    position: t("position"),
+    completed: t("quêtes faites"),
+    log: t("journal de quêtes"),
+    professions: t("métiers"),
+    riding: t("monte"),
+    gear: t("équipement"),
+    spells: t("sorts"),
+    reputation: t("réputations"),
+    bind: t("pierre de foyer"),
+  };
+  const unread = Object.keys(start?.errors ?? {}).map((k) => parts[k] ?? k);
   const xpShare = start && start.xp_max > 0 ? Math.floor((100 * start.xp) / start.xp_max) : 0;
 
   return (
@@ -78,6 +92,13 @@ export function CharacterPicker({ characters, start, onPick, options, recorded, 
           {start.bind && <span>{t("Pierre de foyer : {place}", { place: start.bind.name })}</span>}
           <span className="muted">{t("Enregistré le {date}", { date: date(start.time) })}</span>
         </div>
+      )}
+      {start && unread.length > 0 && (
+        <small className="field-error">
+          {t("En jeu, l'addon n'a pas pu lire : {parts}. Ce sont les valeurs d'un enregistrement précédent ; tapez /reload en jeu, puis enregistrez ou exportez de nouveau.", {
+            parts: unread.join(", "),
+          })}
+        </small>
       )}
       {start && latest && latest.profile.time > start.time && (
         <small>

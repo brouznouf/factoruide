@@ -300,6 +300,8 @@ export interface StartState {
   money: number;
   /** When it was recorded (unix seconds). */
   time: number;
+  /** The parts the game failed to give the addon at the last save (part -> error). */
+  errors?: Record<string, string>;
 }
 
 /** A character found in the game's saved variables. */
