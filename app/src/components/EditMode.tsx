@@ -69,12 +69,8 @@ export function useEditedView(version: GuideVersion, draft: Draft): EditedView |
     const catalog = draft.opened?.catalog;
     if (!view || !catalog) return null;
     const route = version.outcome.route;
-    let before: Step | null = null;
-    const lines = items.map((x) => {
-      const line = replayed.get(x.key) ?? draftLine(x.step, label(x.step), before);
-      before = line;
-      return line;
-    });
+    const lines: Step[] = [];
+    for (const x of items) lines.push(replayed.get(x.key) ?? draftLine(x.step, label(x.step), lines.at(-1) ?? null));
     const played = viewItems.map((x) => replayed.get(x.key)!);
     const total = view.report.total_time;
     return {
